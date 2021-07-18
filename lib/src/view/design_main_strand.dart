@@ -301,20 +301,30 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
   List<ContextMenuItem> context_menu_strand(Strand strand, {Domain domain, Address address, bool is_5p}) => [
         ContextMenuItem(
-          title: 'assign DNA',
-          tooltip: '''\
+          title: 'edit DNA',
+          nested: [
+            ContextMenuItem(
+              title: 'assign DNA',
+              tooltip: '''\
 Assign a specific DNA sequence to this strand (and optionally assign complementary
 sequence to strands bound to it).
 ''',
-          on_click: assign_dna,
-        ),
-        ContextMenuItem(
-          title: 'assign DNA complement from bound strands',
-          tooltip: '''\
+              on_click: assign_dna,
+            ),
+            ContextMenuItem(
+              title: 'assign DNA complement from bound strands',
+              tooltip: '''\
 If other strands bound to this strand (or the selected strands) have DNA already 
 assigned, assign the complementary DNA sequence to this strand.
 ''',
-          on_click: assign_dna_complement_from_bound_strands,
+              on_click: assign_dna_complement_from_bound_strands,
+            ),
+            if (strand.dna_sequence != null)
+              ContextMenuItem(
+                title: 'remove DNA',
+                on_click: remove_dna,
+              ),
+          ].build()
         ),
         ContextMenuItem(
           title: 'assign domain name complement from bound strands',
@@ -324,11 +334,6 @@ assigned, assign the complementary domain names sequence to this strand.
 ''',
           on_click: assign_domain_name_complement_from_bound_strands,
         ),
-        if (strand.dna_sequence != null)
-          ContextMenuItem(
-            title: 'remove DNA',
-            on_click: remove_dna,
-          ),
         ContextMenuItem(
           title: 'add modification',
           on_click: () => add_modification(domain, address, is_5p),

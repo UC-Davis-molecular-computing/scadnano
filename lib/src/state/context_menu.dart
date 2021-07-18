@@ -29,7 +29,6 @@ abstract class ContextMenu
 
   BuiltList<ContextMenuItem> get items;
 
-  @nullable
   Point<num> get position;
 }
 

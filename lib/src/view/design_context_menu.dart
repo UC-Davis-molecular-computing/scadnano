@@ -66,9 +66,7 @@ class DesignContextMenuComponent extends UiStatefulComponent2<DesignContextMenuP
       ..style = {
         'left': left,
         'top': top,
-      })((Dom.ul()
-        ..className = 'context-menu-list'
-        )(props.context_menu.items.map(menuItemToLi)));
+      })(contextMenuToUl(props.context_menu));
   }
 }
 
@@ -108,6 +106,28 @@ class DesignContextSubmenuComponent extends UiStatefulComponent2<DesignContextSu
   }
 
   @override
+  void componentDidUpdate(Map prevProps, _, [__]) {
+    var tPrevProps = typedPropsFactory(prevProps);
+
+    // if main context menu has been moved (e.g. by immediately right clicking another strand)
+    // then trigger a state change, which will then be picked up in the else if block
+    if (tPrevProps.context_menu.position != props.context_menu.position) {
+      setState(newState()
+        ..width = 0
+        ..height = 0
+      );
+    }
+    else if (state.width == 0) {
+      setState(newState()
+        ..width = state.container.current.offsetWidth
+        ..height = state.container.current.offsetHeight
+        ..left = state.container.current.getBoundingClientRect().left
+        ..top = state.container.current.getBoundingClientRect().top
+      );
+    }
+  }
+
+  @override
   render() {
     // this shouldn't fire, submenus should never have null ContextMenus
     if (props.context_menu == null) {
@@ -124,28 +144,28 @@ class DesignContextSubmenuComponent extends UiStatefulComponent2<DesignContextSu
       ..ref = state.container
       ..className = classList.join(' ')
       ..id = 'context-menu'
-      )((Dom.ul()
-        ..className = 'context-menu-list'
-        )(props.context_menu.items.map(menuItemToLi)));
+      )(contextMenuToUl(props.context_menu));
   }
 }
 
-ReactElement menuItemToLi(ContextMenuItem item)
-{
-  var hasChildren = item.nested != null;
-  
-  return (Dom.li()
-      ..key = item.title
-      ..className = hasChildren ? 'has-submenu' : ''
-      )(
-        (Dom.span()
-          ..title = item.tooltip ?? ""
-          ..onClick = item.on_click != null ? (_) {
-            app.dispatch(actions.ContextMenuHide());
-            item.on_click();
-          } : null
-          ..className = 'context-menu-item'
-          )(item.title),
-        hasChildren ? (DesignContextSubmenu()..context_menu = ContextMenu(items: item.nested))() : null
-      );
+ReactElement contextMenuToUl(ContextMenu menu) {
+  return (Dom.ul()
+        ..className = 'context-menu-list'
+        )([
+          for (var item in menu.items)
+            (Dom.li()
+              ..key = item.title
+              ..className = item.nested != null ? 'has-submenu' : ''
+              )(
+                (Dom.span()
+                  ..title = item.tooltip ?? ""
+                  ..onClick = item.on_click != null ? (_) {
+                    app.dispatch(actions.ContextMenuHide());
+                    item.on_click();
+                  } : null
+                  ..className = 'context-menu-item'
+                  )(item.title),
+                item.nested != null ? (DesignContextSubmenu()..context_menu = ContextMenu(items: item.nested, position: menu.position))() : null
+              )
+        ]);
 }
