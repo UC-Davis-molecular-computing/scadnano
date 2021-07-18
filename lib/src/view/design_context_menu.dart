@@ -30,6 +30,8 @@ mixin DesignContextMenuState on UiState {
 
 class DesignContextMenuComponent extends UiStatefulComponent2<DesignContextMenuProps, DesignContextMenuState> with PureComponent {
 
+  final num MENU_PADDING = 20;
+
   @override
   Map get initialState => (newState()
     ..width = 0
@@ -56,8 +58,8 @@ class DesignContextMenuComponent extends UiStatefulComponent2<DesignContextMenuP
     }
 
     int left = props.context_menu.position.x, top = props.context_menu.position.y;
-    if (left + state.width > window.innerWidth) left -= state.width;
-    if (top + state.height > window.innerHeight) top -= state.height;
+    if (left + state.width > window.innerWidth) left -= left + state.width - window.innerWidth + MENU_PADDING;
+    if (top + state.height > window.innerHeight) top -= top + state.height - window.innerHeight + MENU_PADDING;
 
     return (Dom.div()
       ..ref = state.container
