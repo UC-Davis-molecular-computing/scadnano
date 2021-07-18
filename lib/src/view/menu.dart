@@ -779,16 +779,16 @@ In a large design, this can slow down the performance, so uncheck it when not in
       DropdownDivider({'key': 'divider-not-full-design'}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile()))
-        ..display = 'Export cadnano v2'
+        ..display = 'cadnano v2'
         ..key = 'export-cadnano')(),
       (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.ExportCodenanoFile()))
-        ..display = 'Export codenano'
-        ..key = 'export-codenano')(),
-      (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.OxdnaExport()))
-        ..display = 'Export oxDNA'
+        ..display = 'oxDNA'
         ..key = 'export-oxdna')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.ExportCodenanoFile()))
+        ..display = 'codenano'
+        ..key = 'export-codenano')(),
     );
   }
 
