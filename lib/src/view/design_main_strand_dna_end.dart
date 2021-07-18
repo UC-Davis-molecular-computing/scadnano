@@ -3,6 +3,7 @@ import 'dart:html';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
+import 'package:scadnano/src/state/address.dart';
 import 'package:scadnano/src/state/context_menu.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/group.dart';
@@ -41,7 +42,8 @@ mixin DesignMainDNAEndPropsMixin on UiProps {
   HelixGroup group;
   Geometry geometry;
   bool selected;
-  List<ContextMenuItem> Function(Strand strand, {bool is_5p}) context_menu_strand;
+  List<ContextMenuItem> Function(Strand strand, {Domain domain, Address address, bool is_5p})
+      context_menu_strand;
   bool drawing_potential_crossover;
   bool moving_this_dna_end;
 }
@@ -150,9 +152,13 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     if (!event.shiftKey) {
       event.preventDefault();
       event.stopPropagation();
+      var address = props.is_5p ? props.domain.address_5p : props.domain.address_3p;
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
-              items: props.context_menu_strand(props.strand, is_5p: props.is_5p).build(),
+              items: props
+                  .context_menu_strand(props.strand,
+                      domain: props.domain, address: address, is_5p: props.is_5p)
+                  .build(),
               position: event.page)));
     }
   }
