@@ -506,7 +506,6 @@ class DesignViewComponent {
       // start drawing selection rope, or continue it
       bool toggle = key != constants.KEY_CODE_SELECT;
       app.dispatch(actions.SelectionRopeCreate(toggle: toggle));
-      // print('key pressed: ${key}');
     }
 
     // Ctrl+C/Ctrl+V for copy/paste
