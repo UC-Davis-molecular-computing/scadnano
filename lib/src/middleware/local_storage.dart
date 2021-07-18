@@ -11,9 +11,8 @@ import '../state/local_storage_design_choice.dart';
 
 import '../json_serializable.dart';
 import '../state/app_state.dart';
-import '../app.dart';
 import '../actions/actions.dart' as actions;
-import '../constants.dart' as constants;
+import '../util.dart' as util;
 
 part 'local_storage.g.dart';
 

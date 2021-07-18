@@ -315,7 +315,7 @@ BuiltList<Strand> remove_deletions_and_insertions(BuiltList<Strand> strands, App
   for (var strand in strands) {
     strand_to_deletions[strand] = {};
     strand_to_insertions[strand] = {};
-    for (var domain in strand.domains()) {
+    for (var domain in strand.domains) {
       strand_to_deletions[strand][domain] = {};
       strand_to_insertions[strand][domain] = {};
     }

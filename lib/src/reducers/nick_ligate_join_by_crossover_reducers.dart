@@ -143,7 +143,6 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
   // Need strange logic with offset because Domain.end is exclusive.
   Domain other_domain;
   BuiltSet<Domain> domains_adjacent;
-  DNAEnd other_strand_end;
   if (dna_end_clicked.is_start)
     domains_adjacent = state.design.domains_on_helix_at(helix, offset - 1);
   else
@@ -152,7 +151,6 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
     Strand strand_adj = state.design.substrand_to_strand[domain_adj];
     var ends = strand.ligatable_ends_with(strand_adj);
     if (ends != null) {
-      other_strand_end = ends.item1;
       other_domain = domain_adj;
       break;
     }
@@ -512,9 +510,9 @@ Strand join_two_strands_with_substrands(Strand strand1, Strand strand2, List<Sub
   } else if (strand_5p.dna_sequence != null && strand_3p.dna_sequence != null) {
     dna = strand_5p.dna_sequence + strand_3p.dna_sequence;
   } else if (strand_5p.dna_sequence == null) {
-    dna = constants.DNA_BASE_WILDCARD * strand_5p.dna_length() + strand_3p.dna_sequence;
+    dna = constants.DNA_BASE_WILDCARD * strand_5p.dna_length + strand_3p.dna_sequence;
   } else if (strand_3p.dna_sequence == null) {
-    dna = strand_5p.dna_sequence + constants.DNA_BASE_WILDCARD * strand_3p.dna_length();
+    dna = strand_5p.dna_sequence + constants.DNA_BASE_WILDCARD * strand_3p.dna_length;
   }
 
   // include 5' mod from 5' strand and 3' mod from 3' strand.
@@ -525,7 +523,7 @@ Strand join_two_strands_with_substrands(Strand strand1, Strand strand2, List<Sub
   var mods_int = strand_5p.modifications_int.toMap();
   for (int idx in strand_3p.modifications_int.keys) {
     var mod_3p = strand_3p.modifications_int[idx];
-    int new_idx = strand_5p.dna_length() + idx;
+    int new_idx = strand_5p.dna_length + idx;
     mods_int[new_idx] = mod_3p;
   }
 

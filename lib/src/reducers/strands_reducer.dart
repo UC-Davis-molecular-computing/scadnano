@@ -9,6 +9,7 @@ import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:tuple/tuple.dart';
 
+import 'assign_domain_names_reducer.dart';
 import 'strands_move_reducer.dart' as strands_move_reducer;
 import 'domains_move_reducer.dart' as domains_move_reducer;
 import '../state/group.dart';
@@ -38,6 +39,10 @@ Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([
 ]);
 
 GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGlobalReducers([
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.AssignDomainNameComplementFromBoundStrands>( //
+      assign_domain_name_complement_from_bound_strands_reducer),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.AssignDomainNameComplementFromBoundDomains>( //
+      assign_domain_name_complement_from_bound_domains_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.AssignDNAComplementFromBoundStrands>(
       assign_dna_reducer_complement_from_bound_strands),
   // TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandsAutoPaste>(strands_autopaste_strands_reducer),
@@ -313,7 +318,7 @@ BuiltList<Strand> strands_dna_ends_move_commit_reducer(
     int ss_idx = record.substrand_idx;
     Strand strand = strands_builder[strand_idx];
     StrandBuilder strand_builder = strand.toBuilder();
-    Domain substrand = strand.domains()[ss_idx];
+    Domain substrand = strand.domains[ss_idx];
     DomainBuilder substrand_builder = substrand.toBuilder();
     if (substrand.deletions.contains(offset)) {
       substrand_builder.deletions.remove(offset);

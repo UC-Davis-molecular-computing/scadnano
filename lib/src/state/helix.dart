@@ -58,6 +58,9 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     Point<num> svg_position = null,
     String group = constants.default_group_name,
   }) {
+    if (grid == null) {
+      grid = Grid.none;
+    }
     if (major_tick_start == null) {
       major_tick_start = min_offset;
     }

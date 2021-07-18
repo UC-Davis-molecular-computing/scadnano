@@ -1,3 +1,5 @@
+// @dart=2.9
+
 import 'dart:convert';
 
 import 'package:test/test.dart';
@@ -56,7 +58,6 @@ Design design_from_string(String str) {
 /// Returns an [AppState] based on design.
 AppState app_state_from_design(Design design, {bool in_browser = false}) {
   var ui_state = AppUIState.from_design(design);
-  Clipboard clipboard = in_browser ? BrowserClipboard() : CLIClipboard();
   var state = (DEFAULT_AppState.toBuilder()
         ..design.replace(design)
         ..ui_state.replace(ui_state)

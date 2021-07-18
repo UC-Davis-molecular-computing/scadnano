@@ -1,6 +1,10 @@
+// @dart=2.9
+
 import 'dart:convert';
 
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/reducers/helices_reducer.dart';
+import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/position3d.dart';
 import 'package:test/test.dart';
 
@@ -12,10 +16,30 @@ import 'package:scadnano/src/extension_methods.dart';
 
 import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/constants.dart' as constants;
+import 'package:scadnano/src/actions/actions.dart' as actions;
 
 import 'utils.dart';
 
 main() {
+  group('helices_view_order__after_removing_helices', () {
+    test('remove_2_helices', () {
+      var helices = [
+        for (int i = 0; i < 6; i++) Helix(idx: i, grid: Grid.square, grid_position: GridPosition(0, i))
+      ];
+      var design = Design(helices: helices, grid: Grid.square);
+      var state = app_state_from_design(design);
+
+      expect(design.default_group().helices_view_order.toList(), [0, 1, 2, 3, 4, 5]);
+
+      // select helices 3 and 4 (out of 0, 1, 2, 3, 4, 5)
+      state = state.rebuild((b) => b..ui_state.storables.side_selected_helix_idxs.replace([3, 4]));
+      var action = actions.HelixRemoveAllSelected();
+      design = helix_remove_all_selected_design_global_reducer(design, state, action);
+
+      expect(design.default_group().helices_view_order.toList(), [0, 1, 2, 5]);
+    });
+  });
+
   test('JSON_no_groups_ensure_grid_in_JSON', () {
     var json_str = '''
 {
@@ -454,8 +478,7 @@ main() {
     expect(design.groups.length, 1);
     expect(design.default_group().grid, Grid.square);
     expect(design.default_group().helices_view_order, [12, 15, 17, 13].build());
-    expect(
-        design.default_group().helices_view_order_inverse, {12: 0, 15: 1, 17: 2, 13: 3}.build());
+    expect(design.default_group().helices_view_order_inverse, {12: 0, 15: 1, 17: 2, 13: 3}.build());
   });
 
   test('x_and_z_coordinates_of_group_and_none_grid_helices_should_swap_for_early_version', () {

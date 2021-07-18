@@ -194,7 +194,7 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
 
   Future<void> ask_for_loopout_name() async {
     int name_idx = 0;
-    var items = List<DialogItem>(1);
+    var items = List<DialogItem>.filled(1, null);
     items[name_idx] = DialogText(label: 'name', value: props.loopout.name ?? '');
     var dialog = Dialog(title: 'set loopout name', items: items);
 

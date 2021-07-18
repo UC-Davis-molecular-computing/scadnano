@@ -14,7 +14,6 @@ import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
 import 'package:scadnano/src/state/substrand.dart';
 
-import '../state/copy_info.dart';
 import '../state/address.dart';
 import '../state/app_ui_state_storables.dart';
 import '../state/domain.dart';
@@ -1655,6 +1654,8 @@ abstract class ShowMouseoverRectToggle
 abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<ExportDNA, ExportDNABuilder> {
   bool get include_scaffold;
 
+  bool get include_only_selected_strands;
+
   ExportDNAFormat get export_dna_format;
 
   @nullable
@@ -1665,11 +1666,13 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
   /************************ begin BuiltValue boilerplate ************************/
   factory ExportDNA(
       {bool include_scaffold,
+      bool include_only_selected_strands,
       ExportDNAFormat export_dna_format,
       StrandOrder strand_order = null,
       bool column_major = true}) {
     return ExportDNA.from((b) => b
       ..include_scaffold = include_scaffold
+      ..include_only_selected_strands = include_only_selected_strands
       ..export_dna_format = export_dna_format
       ..strand_order = strand_order
       ..column_major = column_major);
@@ -2406,6 +2409,52 @@ abstract class AssignDNAComplementFromBoundStrands
 
   static Serializer<AssignDNAComplementFromBoundStrands> get serializer =>
       _$assignDNAComplementFromBoundStrandsSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class AssignDomainNameComplementFromBoundStrands
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<AssignDomainNameComplementFromBoundStrands, AssignDomainNameComplementFromBoundStrandsBuilder> {
+  BuiltList<Strand> get strands;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory AssignDomainNameComplementFromBoundStrands(Iterable<Strand> strands) {
+    return AssignDomainNameComplementFromBoundStrands.from((b) => b..strands.replace(strands));
+  }
+
+  factory AssignDomainNameComplementFromBoundStrands.from(
+          [void Function(AssignDomainNameComplementFromBoundStrandsBuilder) updates]) =
+      _$AssignDomainNameComplementFromBoundStrands;
+
+  AssignDomainNameComplementFromBoundStrands._();
+
+  static Serializer<AssignDomainNameComplementFromBoundStrands> get serializer =>
+      _$assignDomainNameComplementFromBoundStrandsSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class AssignDomainNameComplementFromBoundDomains
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<AssignDomainNameComplementFromBoundDomains, AssignDomainNameComplementFromBoundDomainsBuilder> {
+  BuiltList<Domain> get domains;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory AssignDomainNameComplementFromBoundDomains(Iterable<Domain> domains) {
+    return AssignDomainNameComplementFromBoundDomains.from((b) => b..domains.replace(domains));
+  }
+
+  factory AssignDomainNameComplementFromBoundDomains.from(
+          [void Function(AssignDomainNameComplementFromBoundDomainsBuilder) updates]) =
+      _$AssignDomainNameComplementFromBoundDomains;
+
+  AssignDomainNameComplementFromBoundDomains._();
+
+  static Serializer<AssignDomainNameComplementFromBoundDomains> get serializer =>
+      _$assignDomainNameComplementFromBoundDomainsSerializer;
 
   @memoized
   int get hashCode;
@@ -3286,19 +3335,32 @@ abstract class Autobreak with BuiltJsonSerializable implements Action, Built<Aut
   static Serializer<Autobreak> get serializer => _$autobreakSerializer;
 }
 
-// // copy selected object details
-// abstract class CopySelectedObjectTextToSystemClipboard
-//     with BuiltJsonSerializable
-//     implements
-//         Action,
-//         Built<CopySelectedObjectTextToSystemClipboard, CopySelectedObjectTextToSystemClipboardBuilder> {
-//   /************************ begin BuiltValue boilerplate ************************/
-//   factory CopySelectedObjectTextToSystemClipboard(
-//           [void Function(CopySelectedObjectTextToSystemClipboardBuilder) updates]) =
-//       _$CopySelectedObjectTextToSystemClipboard;
-//
-//   CopySelectedObjectTextToSystemClipboard._();
-//
-//   static Serializer<CopySelectedObjectTextToSystemClipboard> get serializer =>
-//       _$copySelectedObjectTextToSystemClipboardSerializer;
-// }
+abstract class ZoomSpeedSet
+    with BuiltJsonSerializable
+    implements Action, Built<ZoomSpeedSet, ZoomSpeedSetBuilder> {
+  num get speed;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ZoomSpeedSet({num speed}) = _$ZoomSpeedSet._;
+
+  ZoomSpeedSet._();
+
+  static Serializer<ZoomSpeedSet> get serializer => _$zoomSpeedSetSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class OxdnaExport
+    with BuiltJsonSerializable
+    implements Action, Built<OxdnaExport, OxdnaExportBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory OxdnaExport() = _$OxdnaExport;
+
+  OxdnaExport._();
+
+  static Serializer<OxdnaExport> get serializer => _$oxdnaExportSerializer;
+
+  @memoized
+  int get hashCode;
+}

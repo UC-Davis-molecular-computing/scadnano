@@ -18,7 +18,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     int min_set_by_domain_idx = 1;
     int apply_to_all_idx = 2;
 
-    var items = List<DialogItem>(3);
+    var items = List<DialogItem>.filled(3, null);
     items[min_idx] = DialogInteger(label: 'minimum', value: helix.min_offset);
     items[min_set_by_domain_idx] = DialogCheckbox(label: 'set minimum by existing domains', value: false);
     items[apply_to_all_idx] = DialogCheckbox(label: 'apply to all helices', value: helix_change_apply_to_all);
@@ -58,7 +58,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     int max_set_by_domain_idx = 1;
     int apply_to_all_idx = 2;
 
-    var items = List<DialogItem>(3);
+    var items = List<DialogItem>.filled(3, null);
     items[max_idx] = DialogInteger(label: 'maximum', value: helix.max_offset);
     items[max_set_by_domain_idx] = DialogCheckbox(label: 'set maximum by existing domains', value: false);
     items[apply_to_all_idx] = DialogCheckbox(label: 'apply to all helices', value: helix_change_apply_to_all);
@@ -148,7 +148,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     int apply_to_all_idx = 7;
     int apply_to_some_idx = 8;
     int apply_to_some_helices_idx = 9;
-    List<DialogItem> items = List<DialogItem>(10);
+    List<DialogItem> items = List<DialogItem>.filled(10, null);
     items[regular_spacing_checkbox_idx] =
         DialogCheckbox(label: 'regular spacing', value: helix.has_major_tick_distance());
     items[regular_spacing_distance_idx] =
