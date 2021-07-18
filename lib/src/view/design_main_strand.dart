@@ -352,7 +352,7 @@ assigned, assign the complementary domain names sequence to this strand.
           title: 'set domain name',
           on_click: () => set_domain_name(domain),
         ),
-        if (domain?.name != null)
+        if (domain.name != null)
           ContextMenuItem(
               title: 'remove domain name',
               on_click: () => app.dispatch(actions.SubstrandNameSet(name: null, substrand: domain))),
