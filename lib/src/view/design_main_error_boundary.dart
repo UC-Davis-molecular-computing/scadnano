@@ -111,7 +111,8 @@ class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
     if (!props.shouldLogErrors) return;
 
     final message =
-        'An unrecoverable error was caught by an ErrorBoundary (attempting to remount it was unsuccessful): \nInfo: ${info.componentStack}';
+        'An unrecoverable error was caught by an ErrorBoundary (attempting to remount it was unsuccessful): '
+        '\nInfo: ${info.componentStack}';
 
     (props.logger ?? Logger(_loggerName)).severe(message, error, info.dartStackTrace);
   }
