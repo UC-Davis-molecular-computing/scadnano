@@ -155,13 +155,12 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     if (!event.shiftKey) {
       event.preventDefault();
       event.stopPropagation();
-      // var address = props.is_5p ? props.domain.address_5p : props.domain.address_3p;
+      var address = props.is_5p ? props.domain.address_5p : props.domain.address_3p;
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
               items: props
                   .context_menu_strand(props.strand,
-                      // domain: props.domain, address: address,
-                  is_5p: props.is_5p)
+                      domain: props.domain, address: address, is_5p: props.is_5p)
                   .build(),
               position: event.page)));
     }
