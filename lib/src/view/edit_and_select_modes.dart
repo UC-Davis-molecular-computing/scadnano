@@ -7,7 +7,6 @@ import '../view/redraw_counter_component_mixin.dart';
 
 import '../app.dart';
 import '../state/edit_mode.dart';
-import '../state/app_state.dart';
 import '../state/select_mode.dart';
 import '../state/select_mode_state.dart';
 import '../actions/actions.dart' as actions;

@@ -14,7 +14,6 @@ import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
 import 'package:scadnano/src/state/substrand.dart';
 
-import '../state/copy_info.dart';
 import '../state/address.dart';
 import '../state/app_ui_state_storables.dart';
 import '../state/domain.dart';

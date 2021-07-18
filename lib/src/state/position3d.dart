@@ -23,6 +23,8 @@ abstract class Position3D with BuiltJsonSerializable implements Built<Position3D
     } else if (map.containsKey('origin')) {
       var origin = map['origin'];
       return Position3D(x: origin['x'], y: origin['y'], z: origin['z']);
+    } else {
+      return null;
     }
   }
 
@@ -45,10 +47,8 @@ abstract class Position3D with BuiltJsonSerializable implements Built<Position3D
 
   static Position3D origin = Position3D();
 
-  @override
   Position3D operator *(num scalar) => Position3D(x: x * scalar, y: y * scalar, z: z * scalar);
 
-  @override
   Position3D operator +(Position3D other) => Position3D(x: x + other.x, y: y + other.y, z: z + other.z);
 
   String xy([int digits_precision = 1]) =>

@@ -54,7 +54,7 @@ abstract class DesignSideRotationData
 
   /// Converts from raw parameters (helix, offset) to data for users to see backbone angles in side view
   static List<DesignSideRotationData> from_params(Design design, List<DesignSideRotationParams> params) {
-    var design_side_rotation_datas_builder = List<DesignSideRotationData>();
+    List<DesignSideRotationData> design_side_rotation_datas_builder = [];
     for (var param in params) {
       int helix_idx = param.helix_idx;
       int offset = param.offset;

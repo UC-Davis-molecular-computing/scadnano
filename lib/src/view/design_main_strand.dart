@@ -1,13 +1,14 @@
 import 'dart:html';
 
+import 'package:meta/meta.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
-import 'package:scadnano/src/state/modification.dart';
 
 import 'design_main_strand_and_domain_names.dart';
 import 'transform_by_helix_group.dart';
+import '../state/modification.dart';
 import '../state/address.dart';
 import '../state/geometry.dart';
 import '../state/group.dart';
@@ -308,7 +309,9 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     app.dispatch(action);
   }
 
-  List<ContextMenuItem> context_menu_strand(Strand strand, {Domain domain, Address address, bool is_5p}) => [
+  List<ContextMenuItem> context_menu_strand(Strand strand,
+          {@required Domain domain, @required Address address, @required bool is_5p}) =>
+      [
         ContextMenuItem(
           title: 'assign DNA',
           tooltip: '''\
@@ -449,7 +452,7 @@ after:
     int idt_text_idx = 2;
     int index_of_dna_base_idx = 3;
     // int id_idx = 4;
-    var items = List<DialogItem>(4);
+    var items = List<DialogItem>.filled(4, null);
     items[modification_type_idx] = DialogRadio(
         label: 'modification type', options: {"3'", "5'", "internal"}, selected_idx: selected_index);
 
@@ -556,7 +559,7 @@ after:
 
   Future<void> ask_for_strand_name() async {
     int name_idx = 0;
-    var items = List<DialogItem>(1);
+    var items = List<DialogItem>.filled(1, null);
     items[name_idx] = DialogText(label: 'name', value: props.strand.name ?? '');
     var dialog = Dialog(title: 'set strand name', items: items);
 
@@ -570,7 +573,7 @@ after:
 
   Future<void> ask_for_domain_name(Domain domain) async {
     int name_idx = 0;
-    var items = List<DialogItem>(1);
+    var items = List<DialogItem>.filled(1, null);
     items[name_idx] = DialogText(label: 'name', value: domain.name ?? '');
     var dialog = Dialog(title: 'set domain name', items: items);
 
