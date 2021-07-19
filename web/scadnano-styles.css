@@ -889,3 +889,16 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
 /************************************************
 ** END Slice Bar
 ************************************************/
+.submenu_item a::after{
+    transform: rotate(270deg);
+}
+.submenu_item > div{
+    top: 0;
+    left: 100%;
+}
+.submenu_item a{
+    color:rgb(33, 37, 41);
+}
+.submenu_item:hover{
+    background-color: #f8f9fa;
+}
