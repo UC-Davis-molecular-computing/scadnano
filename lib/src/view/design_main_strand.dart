@@ -327,14 +327,6 @@ assigned, assign the complementary DNA sequence to this strand.
           ].build()
         ),
         ContextMenuItem(
-          title: 'assign domain name complement from bound strands',
-          tooltip: '''\
-If other strands bound to this strand (or the selected strands) have domain names already 
-assigned, assign the complementary domain names sequence to this strand.
-''',
-          on_click: assign_domain_name_complement_from_bound_strands,
-        ),
-        ContextMenuItem(
           title: 'add modification',
           on_click: () => add_modification(domain, address, is_5p),
         ),
@@ -359,6 +351,14 @@ assigned, assign the complementary domain names sequence to this strand.
             ContextMenuItem(
               title: 'set domain name',
               on_click: () => set_domain_name(domain),
+            ),
+            ContextMenuItem(
+              title: 'assign domain name complement from bound strands',
+              tooltip: '''\
+If other strands bound to this strand (or the selected strands) have domain names already 
+assigned, assign the complementary domain names sequence to this strand.
+''',
+              on_click: assign_domain_name_complement_from_bound_strands,
             ),
             if (domain.name != null)
               ContextMenuItem(
