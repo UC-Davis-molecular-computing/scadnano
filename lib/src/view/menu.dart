@@ -494,12 +494,10 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
   }
 
   ReactElement view_menu_show_dna() {
-    return NavDropdown({
-      'title': 'Show DNA',
-      'id': 'view_menu_show_dna-dropdown',
-      'key': 'view_menu_show_dna-dropdown',
-      'className': 'submenu_item',
-    },[
+    return (MenuDropdownRight()
+      ..title = 'Show DNA'
+      ..className = 'submenu_item'
+    )([
       (MenuBoolean()
         ..value = props.show_dna
         ..display = 'Show DNA sequences'
@@ -523,12 +521,10 @@ helix with the opposite orientation.'''
   }
 
   ReactElement view_menu_show_labels() {
-    return NavDropdown({
-      'title': 'Show Names',
-      'id': 'view_menu_show_labels-dropdown',
-      'key': 'view_menu_show_labels-dropdown',
-      'className': 'submenu_item',
-    },[
+    return (MenuDropdownRight()
+      ..title = 'Show Names'
+      ..className = 'submenu_item'
+    )([
       (MenuBoolean()
         ..value = props.show_strand_names
         ..display = 'Show strand names'
@@ -571,12 +567,10 @@ helix with the opposite orientation.'''
   }
 
   ReactElement view_menu_mods() {
-    return NavDropdown({
-      'title': 'Modification Settings',
-      'id': 'view_menu_mods-dropdown',
-      'key': 'view_menu_mods-dropdown',
-      'className': 'submenu_item',
-    },[
+    return (MenuDropdownRight()
+      ..title = 'Modification Settings'
+      ..className = 'submenu_item'
+    )([
       (MenuBoolean()
         ..value = props.show_modifications
         ..display = 'Show modifications'
@@ -602,12 +596,10 @@ helix with the opposite orientation.'''
   }
 
   ReactElement view_menu_display_major_tick_offsets() {
-    return NavDropdown({
-      'title': 'Major Tick Offset Settings',
-      'id': 'view_menu_display_major_tick_offsets-dropdown',
-      'key': 'view_menu_display_major_tick_offsets-dropdown',
-      'className': 'submenu_item',
-    },[
+    return (MenuDropdownRight()
+      ..title = 'Major Tick Offset Settings'
+      ..className = 'submenu_item'
+    )([
       (MenuBoolean()
         ..value = props.display_of_major_ticks_offsets
         ..display = 'Display major tick offsets'
@@ -634,12 +626,10 @@ helix with the opposite orientation.'''
   }
 
   ReactElement view_menu_display_major_tick_widths() {
-    return NavDropdown({
-      'title': 'Major Tick Width Settings',
-      'id': 'view_menu_display_major_tick_widths-dropdown',
-      'key': 'view_menu_display_major_tick_widths-dropdown',
-      'className': 'submenu_item',
-    },[
+    return (MenuDropdownRight()
+      ..title = 'Major Tick Width Settings'
+      ..className = 'submenu_item'
+    )([
       (MenuBoolean()
         ..value = props.display_major_tick_widths
         ..display = 'Display major tick widths'
