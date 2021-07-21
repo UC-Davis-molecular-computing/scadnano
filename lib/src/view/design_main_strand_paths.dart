@@ -83,7 +83,6 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
     List<ReactElement> ends = []; // add after so clicking on ends takes priority
     var substrand = strand.substrands.first;
 
-    bool draw_prev_dom = false;
     for (int i = 0; i < strand.substrands.length; i++) {
       substrand = strand.substrands[i];
 
@@ -92,7 +91,6 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
         Helix helix = props.helices[domain.helix];
         bool draw_domain = should_draw_domain(
             domain.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
-        draw_prev_dom = draw_domain;
         if (draw_domain) {
           paths.add((DesignMainDomain()
             ..domain = domain

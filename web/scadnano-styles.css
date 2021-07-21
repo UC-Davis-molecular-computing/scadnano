@@ -411,20 +411,31 @@ html, body {
 ** BEGIN SVG layout
 ************************************************/
 
-/*.panzoomable {*/
-/*    cursor: move; !* fallback: no `url()` support or images disabled *!*/
-/*    cursor: url(images/grab.png), auto; !* fallback: Internet Explorer *!*/
-/*    cursor: -webkit-grab; !* Chrome 1-21, Safari 4+ *!*/
-/*    cursor: -moz-grab; !* Firefox 1.5-26 *!*/
-/*    cursor: grab; !* W3C standards syntax, should come least *!*/
-/*}*/
+/* show open hand when cursor is over SVG background itself */
+.panzoomable {
+    cursor: move; /* fallback: no `url()` support or images disabled */
+    cursor: url(images/grab.png), auto; /* fallback: Internet Explorer */
+    cursor: -webkit-grab; /* Chrome 1-21, Safari 4+ */
+    cursor: -moz-grab; /* Firefox 1.5-26 */
+    cursor: grab; /* W3C standards syntax, should come least */
+}
 
-/*.panzoomable.dragging {*/
-/*    cursor: url(images/grabbing.png), auto;*/
-/*    cursor: -webkit-grabbing;*/
-/*    cursor: -moz-grabbing;*/
-/*    cursor: grabbing;*/
-/*}*/
+/* show regular cursor arrow when cursor is over an element in the SVG, not the SVG background itself */
+:not(svg) {
+    cursor: default;
+}
+
+/* show closed hand when dragging (when mouse left button is down) */
+.panzoomable.dragging {
+    cursor: url(images/grabbing.png), auto;
+    cursor: -webkit-grabbing;
+    cursor: -moz-grabbing;
+    cursor: grabbing;
+}
+
+.selection-box-drawable {
+    cursor: crosshair;
+}
 
 .domain-name-text, .strand-name-text {
     text-anchor: middle;

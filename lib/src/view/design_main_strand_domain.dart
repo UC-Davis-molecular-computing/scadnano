@@ -1,6 +1,7 @@
 import 'dart:html';
 import 'dart:math';
 
+import 'package:meta/meta.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
@@ -30,13 +31,16 @@ UiFactory<DesignMainDomainProps> DesignMainDomain = _$DesignMainDomain;
 mixin DesignMainDomainPropsMixin on UiProps {
   Domain domain;
   Color color;
-  String dna_sequence; 
+  String dna_sequence;
 
   Helix helix;
   String strand_tooltip;
   Strand strand;
   String transform;
-  List<ContextMenuItem> Function(Strand strand, {Domain domain, Address address}) context_menu_strand;
+
+  List<ContextMenuItem> Function(Strand strand,
+      {@required Domain domain, @required Address address, @required bool is_5p}) context_menu_strand;
+
   bool selected;
 
   BuiltMap<int, Helix> helices;

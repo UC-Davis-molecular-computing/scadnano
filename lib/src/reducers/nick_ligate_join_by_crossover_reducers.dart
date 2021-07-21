@@ -143,7 +143,6 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
   // Need strange logic with offset because Domain.end is exclusive.
   Domain other_domain;
   BuiltSet<Domain> domains_adjacent;
-  DNAEnd other_strand_end;
   if (dna_end_clicked.is_start)
     domains_adjacent = state.design.domains_on_helix_at(helix, offset - 1);
   else
@@ -152,7 +151,6 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
     Strand strand_adj = state.design.substrand_to_strand[domain_adj];
     var ends = strand.ligatable_ends_with(strand_adj);
     if (ends != null) {
-      other_strand_end = ends.item1;
       other_domain = domain_adj;
       break;
     }

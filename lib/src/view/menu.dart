@@ -790,16 +790,16 @@ In a large design, this can slow down the performance, so uncheck it when not in
       DropdownDivider({'key': 'divider-not-full-design'}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile()))
-        ..display = 'Export cadnano v2'
+        ..display = 'cadnano v2'
         ..key = 'export-cadnano')(),
       (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.ExportCodenanoFile()))
-        ..display = 'Export codenano'
-        ..key = 'export-codenano')(),
-      (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.OxdnaExport()))
-        ..display = 'Export oxDNA'
+        ..display = 'oxDNA'
         ..key = 'export-oxdna')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.ExportCodenanoFile()))
+        ..display = 'codenano'
+        ..key = 'export-codenano')(),
     );
   }
 
@@ -996,7 +996,7 @@ However, it may be less stable than the main site.'''
 }
 
 Future<void> ask_for_autobreak_parameters() async {
-  var items = List<DialogItem>(4);
+  var items = List<DialogItem>.filled(4, null);
   int target_length_idx = 0;
   int min_length_idx = 1;
   int max_length_idx = 2;
@@ -1029,7 +1029,7 @@ Future<void> ask_for_geometry(Geometry geometry) async {
   int bases_per_turn_idx = 3;
   int minor_groove_angle_idx = 4;
 
-  var items = List<DialogItem>(5);
+  var items = List<DialogItem>.filled(5, null);
   items[rise_per_base_pair_idx] =
       DialogFloat(label: 'rise per base pair (nm)', value: geometry.rise_per_base_pair);
   items[helix_radius_idx] = DialogFloat(label: 'helix radius (nm)', value: geometry.helix_radius);

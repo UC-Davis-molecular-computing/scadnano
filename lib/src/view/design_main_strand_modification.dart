@@ -138,7 +138,7 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
     int display_text_idx = 0;
     int idt_text_idx = 1;
     // int id_idx = 2;
-    var items = List<DialogItem>(2);
+    var items = List<DialogItem>.filled(2, null);
     items[display_text_idx] = DialogText(label: 'display text', value: props.modification.display_text);
     items[idt_text_idx] = DialogText(label: 'idt text', value: props.modification.idt_text);
     // items[id_idx] = DialogText(label: 'id', value: props.modification.id);
@@ -183,21 +183,18 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
       if (new_mod is Modification5Prime) {
         var selectable_mods_5p = List<SelectableModification5Prime>.from(
             selectable_mods.where((mod) => mod is SelectableModification5Prime));
-        var new_mod_5p = new_mod as Modification5Prime;
         action =
-            actions.Modifications5PrimeEdit(modifications: selectable_mods_5p, new_modification: new_mod_5p);
+            actions.Modifications5PrimeEdit(modifications: selectable_mods_5p, new_modification: new_mod);
       } else if (new_mod is Modification3Prime) {
         var selectable_mods_3p = List<SelectableModification3Prime>.from(
             selectable_mods.where((mod) => mod is SelectableModification3Prime));
-        var new_mod_3p = new_mod as Modification3Prime;
         action =
-            actions.Modifications3PrimeEdit(modifications: selectable_mods_3p, new_modification: new_mod_3p);
+            actions.Modifications3PrimeEdit(modifications: selectable_mods_3p, new_modification: new_mod);
       } else if (new_mod is ModificationInternal) {
         var selectable_mods_int = List<SelectableModificationInternal>.from(
             selectable_mods.where((mod) => mod is SelectableModificationInternal));
-        var new_mod_int = new_mod as ModificationInternal;
         action = actions.ModificationsInternalEdit(
-            modifications: selectable_mods_int, new_modification: new_mod_int);
+            modifications: selectable_mods_int, new_modification: new_mod);
       }
     } else {
       print('WARNING: selectable_mods should have at least one element in it by this line');

@@ -1,7 +1,8 @@
 // @dart=2.9
 
-import 'package:scadnano/src/state/clipboard.dart';
 @Timeout(Duration(seconds: 5))
+
+import 'package:scadnano/src/state/clipboard.dart';
 import 'package:test/test.dart';
 
 import 'package:built_collection/built_collection.dart';
@@ -35,7 +36,6 @@ main() {
     AppState state;
     List<int> all_helices = [0, 1];
     var origin_address = Address(helix_idx: 0, offset: 0, forward: true);
-    BuiltMap<int, int> original_helices_view_order_inverse;
     Store<AppState> store;
     // need Store.dispatch for middleware side effects of copying to (mock) system clipboard
     //  app_state_from_design by default uses mock Clipboard object with write and read functions,
@@ -49,7 +49,6 @@ main() {
       design = design.strand(0, 20).move(10).cross(1).move(-5).commit();
       orig_strand = design.strands[0];
       second_strand = design.strands[1];
-      original_helices_view_order_inverse = design.default_group().helices_view_order_inverse;
       store = store_from_design(design);
       state = store.state;
     });
