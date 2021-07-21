@@ -390,7 +390,7 @@ after:
             on_click: () => reflect(true, true),
             tooltip: '''\
 replace strand(s) with horizontal mirror image, 
-with polarity reversed "vertically"
+with polarity reversed "vertically" 
 
 For example,
 before:
