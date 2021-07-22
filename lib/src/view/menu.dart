@@ -496,6 +496,8 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
   ReactElement view_menu_show_dna() {
     return (MenuDropdownRight()
       ..title = 'Show DNA'
+      ..id = 'view_menu_show_dna-dropdown'
+      ..key = 'view_menu_show_dna-dropdown'
       ..className = 'submenu_item'
     )([
       (MenuBoolean()
@@ -523,6 +525,8 @@ helix with the opposite orientation.'''
   ReactElement view_menu_show_labels() {
     return (MenuDropdownRight()
       ..title = 'Show Names'
+      ..id = 'view_menu_show_labels-dropdown'
+      ..key = 'view_menu_show_labels-dropdown'
       ..className = 'submenu_item'
     )([
       (MenuBoolean()
@@ -569,6 +573,8 @@ helix with the opposite orientation.'''
   ReactElement view_menu_mods() {
     return (MenuDropdownRight()
       ..title = 'Modification Settings'
+      ..id = 'view_menu_mods-dropdown'
+      ..key = 'view_menu_mods-dropdown'
       ..className = 'submenu_item'
     )([
       (MenuBoolean()
@@ -598,6 +604,8 @@ helix with the opposite orientation.'''
   ReactElement view_menu_display_major_tick_offsets() {
     return (MenuDropdownRight()
       ..title = 'Major Tick Offset Settings'
+      ..id = 'view_menu_display_major_tick_offsets-dropdown'
+      ..key = 'view_menu_display_major_tick_offsets-dropdown'
       ..className = 'submenu_item'
     )([
       (MenuBoolean()
@@ -628,6 +636,8 @@ helix with the opposite orientation.'''
   ReactElement view_menu_display_major_tick_widths() {
     return (MenuDropdownRight()
       ..title = 'Major Tick Width Settings'
+      ..id = 'view_menu_display_major_tick_widths-dropdown'
+      ..key = 'view_menu_display_major_tick_widths-dropdown'
       ..className = 'submenu_item'
     )([
       (MenuBoolean()
