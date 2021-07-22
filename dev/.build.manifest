@@ -885,6 +885,7 @@ packages/test/src/runner/browser/static/favicon.ico
 packages/test/src/runner/browser/static/host.css
 packages/test/src/runner/browser/static/host.dart.js
 packages/test/src/runner/browser/static/index.html
+packages/transformer_utils/.DS_Store
 packages/w_common/src/test_fixtures/sass/_test_package_import.scss
 pandoc.css
 react_dnd_imports.js
