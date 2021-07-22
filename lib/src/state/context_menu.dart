@@ -41,7 +41,7 @@ abstract class ContextMenuItem
 
   static Serializer<ContextMenuItem> get serializer => _$contextMenuItemSerializer;
 
-  factory ContextMenuItem({String title, Callback on_click, String tooltip}) = _$ContextMenuItem._;
+  factory ContextMenuItem({String title, Callback on_click, String tooltip, BuiltList<ContextMenuItem> nested}) = _$ContextMenuItem._;
 
   @memoized
   int get hashCode;
@@ -50,9 +50,13 @@ abstract class ContextMenuItem
 
   String get title;
 
+  @nullable
   @BuiltValueField(serialize: false, compare: false)
   Callback get on_click;
 
   @nullable
   String get tooltip;
+
+  @nullable
+  BuiltList<ContextMenuItem> get nested;
 }
