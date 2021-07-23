@@ -21,34 +21,34 @@ BuiltList<Strand> delete_all_reducer(
   }
 
   var select_mode_state = state.ui_state.select_mode_state;
-  if (select_mode_state.strands_selectable()) {
+  if (select_mode_state.strands_selectable) {
     // strands
     var strands_to_remove = Set<Strand>.from(items.where((item) => item is Strand));
     strands = _remove_strands(strands, strands_to_remove);
-  } else if (select_mode_state.linkers_selectable()) {
+  } else if (select_mode_state.linkers_selectable) {
     // crossovers/loopouts
     var crossovers = Set<Crossover>.from(items.where((item) => item is Crossover));
     var loopouts = Set<Loopout>.from(items.where((item) => item is Loopout));
     strands = _remove_crossovers_and_loopouts(strands, state, crossovers, loopouts);
-  } else if (select_mode_state.ends_selectable()) {
+  } else if (select_mode_state.ends_selectable) {
     // DNA ends
     var ends = items.where((item) => item is DNAEnd);
     var domains = ends.map((end) => state.design.end_to_domain[end]);
     strands = remove_domains(strands, state, domains);
-  } else if (select_mode_state.domains_selectable()) {
+  } else if (select_mode_state.domains_selectable) {
     // domains
     var domains = List<Domain>.from(items.where((item) => item is Domain));
     strands = remove_domains(strands, state, domains);
-  } else if (select_mode_state.deletions_selectable() || select_mode_state.insertions_selectable()) {
+  } else if (select_mode_state.deletions_selectable || select_mode_state.insertions_selectable) {
     // deletions/insertions
-    List<SelectableDeletion> deletions = select_mode_state.deletions_selectable()
+    List<SelectableDeletion> deletions = select_mode_state.deletions_selectable
         ? List<SelectableDeletion>.from(items.where((item) => item is SelectableDeletion))
         : [];
-    List<SelectableInsertion> insertions = select_mode_state.insertions_selectable()
+    List<SelectableInsertion> insertions = select_mode_state.insertions_selectable
         ? List<SelectableInsertion>.from(items.where((item) => item is SelectableInsertion))
         : [];
     strands = remove_deletions_and_insertions(strands, state, deletions, insertions);
-  } else if (select_mode_state.modifications_selectable()) {
+  } else if (select_mode_state.modifications_selectable) {
     // modifications
     var modifications =
         List<SelectableModification>.from(items.where((item) => item is SelectableModification));

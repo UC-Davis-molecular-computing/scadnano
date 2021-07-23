@@ -40,7 +40,8 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
     return map;
   }
 
-  bool has_error() => error_message != null && error_message.length > 0;
+  @memoized
+  bool get has_error => error_message != null && error_message.length > 0;
 
   /*********************************** begin built_value boilerplate ***********************************/
 

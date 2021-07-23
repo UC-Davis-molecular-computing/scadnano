@@ -731,7 +731,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     json_map.addAll(unused_fields.toMap());
 
     if (has_default_groups()) {
-      json_map[constants.grid_key] = default_group().grid.to_json();
+      json_map[constants.grid_key] = default_group().grid.to_json;
     }
 
     if (!this.geometry.is_default()) {
@@ -1046,7 +1046,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
           group_json[constants.pitch_key] = new_pitch;
           group_json[constants.yaw_key] = new_yaw;
           group_json[constants.position_key] = group.position.build().to_json_serializable();
-          group_json[constants.grid_key] = group.grid.to_json();
+          group_json[constants.grid_key] = group.grid.to_json;
           new_groups[new_group_name] =
               HelixGroup.from_json(group_json, helix_idxs: helix_list.map((e) => e.idx)).toBuilder();
 
@@ -1093,7 +1093,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     if (position_x_z_should_swap) {
       for (var helix_builder in helix_builders_map.values) {
         if (grid_is_none && !using_groups ||
-            using_groups && group_builders_map[helix_builder.group].grid.is_none()) {
+            using_groups && group_builders_map[helix_builder.group].grid.is_none) {
           // prior to version 0.13.0, x and z had the opposite role
           num swap = helix_builder.position_.x;
           helix_builder.position_.x = helix_builder.position_.z;

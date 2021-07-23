@@ -655,7 +655,7 @@ class DesignViewComponent {
   }
 
   render(AppState state) {
-    if (state.has_error()) {
+    if (state.has_error) {
       if (!root_element.children.contains(this.error_message_pane)) {
         this.root_element.children.clear();
         this.root_element.children.add(this.error_message_pane);
@@ -863,7 +863,7 @@ class DesignViewComponent {
     if (edit_mode_is_pencil()) {
       var displayed_group_name = app.state.ui_state.displayed_group_name;
       var displayed_grid = app.state.design.groups[displayed_group_name].grid;
-      if (!displayed_grid.is_none()) {
+      if (!displayed_grid.is_none) {
         bool invert_y = app.state.ui_state.invert_xy;
         Geometry geometry = app.state.design.geometry;
         var new_grid_pos = util.grid_position_of_mouse_in_side_view(displayed_grid, invert_y, geometry,

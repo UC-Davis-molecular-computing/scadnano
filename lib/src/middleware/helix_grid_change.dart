@@ -13,8 +13,8 @@ import '../state/app_state.dart';
 // at most one helix (i.e., function mapping real-coordinates to grid-coordinates is 1-1)
 helix_grid_offsets_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   if (action is actions.GridChange &&
-      !action.grid.is_none() &&
-      store.state.design.groups[action.group_name].grid.is_none()) {
+      !action.grid.is_none &&
+      store.state.design.groups[action.group_name].grid.is_none) {
     Geometry geometry = store.state.design.geometry;
     Map<int, GridPosition> new_grid_positions_map = {
       for (var helix in store.state.design.helices_in_group(action.group_name).values)
@@ -32,8 +32,8 @@ helix_grid_offsets_middleware(Store<AppState> store, dynamic action, NextDispatc
           var gp2 = new_grid_positions_map[h2idx];
           if (gp1 == gp2) {
             var helices = store.state.design.helices;
-            var pos1 = helices[h1idx].position3d();
-            var pos2 = helices[h2idx].position3d();
+            var pos1 = helices[h1idx].position3d;
+            var pos2 = helices[h2idx].position3d;
             var msg = '''\
 This design cannot be automatically converted to the ${action.grid.name} grid.
 Two helices, with idx values ${h1idx} and ${h2idx}, have positions that are

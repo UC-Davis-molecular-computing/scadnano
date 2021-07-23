@@ -37,7 +37,7 @@ final USING_REACT_DND = false;
 
 UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainProps>(
   mapStateToProps: (state) {
-    if (state.has_error()) {
+    if (state.has_error) {
       return (DesignMain()..has_error = true);
     } else {
       return (DesignMain()
@@ -48,7 +48,7 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..domain_label_font_size = state.ui_state.domain_name_font_size
         ..major_tick_offset_font_size = state.ui_state.major_tick_offset_font_size
         ..major_tick_width_font_size = state.ui_state.major_tick_width_font_size
-        ..has_error = state.has_error()
+        ..has_error = state.has_error
         ..edit_modes = state.ui_state.edit_modes
         ..strands_move = state.ui_state.strands_move
         ..strand_creation = state.ui_state.strand_creation

@@ -24,7 +24,7 @@ part 'design_side.over_react.g.dart';
 // are rendered manually top-level by vanilla Dart DOM code), we need to say what to do here when state has an error.
 UiFactory<DesignSideProps> ConnectedDesignSide = connect<AppState, DesignSideProps>(
   mapStateToProps: (state) {
-    if (state.has_error()) {
+    if (state.has_error) {
       return DesignSide();
     } else {
       var displayed_group = state.design.groups[state.ui_state.displayed_group_name];

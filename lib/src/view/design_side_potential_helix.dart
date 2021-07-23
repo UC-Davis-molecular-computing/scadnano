@@ -26,7 +26,7 @@ mixin DesignSidePotentialHelixProps on UiProps {
 class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotentialHelixProps> {
   @override
   render() {
-    if (!props.grid.is_none()) {
+    if (!props.grid.is_none) {
       if (props.grid_position == null) {
         return null;
       }
@@ -35,7 +35,7 @@ class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotential
     Point<num> svg_ideal_pos;
     Grid grid = props.grid;
 
-    if (grid.is_none()) {
+    if (grid.is_none) {
       svg_ideal_pos = props.mouse_svg_pos;
     } else {
       svg_ideal_pos =
@@ -43,7 +43,7 @@ class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotential
     }
 
     String tooltip = '';
-    if (props.grid.is_none()) {
+    if (props.grid.is_none) {
       Position3D pos = util.svg_side_view_to_position3d(props.mouse_svg_pos, props.invert_y, props.geometry);
       tooltip = '(x, y) = ${pos.x.toStringAsFixed(2)}, ${pos.y.toStringAsFixed(2)}';
     } else {
@@ -62,7 +62,7 @@ class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotential
   _handle_click(SyntheticMouseEvent event) {
     // unlike DesignSideHelix, no need to check edit_mode here since PotentialHelix only displayed when
     // edit mode has helix on
-    if (props.grid.is_none()) {
+    if (props.grid.is_none) {
       Position3D position =
           util.svg_side_view_to_position3d(props.mouse_svg_pos, props.invert_y, props.geometry);
       app.dispatch(actions.HelixAdd(position: position));

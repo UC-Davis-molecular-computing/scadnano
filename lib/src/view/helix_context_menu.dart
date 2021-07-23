@@ -127,14 +127,14 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     int default_regular_distance;
     List<int> default_periodic_distances;
     int default_start = helix.major_tick_start;
-    if (helix.has_major_tick_distance()) {
+    if (helix.has_major_tick_distance) {
       default_regular_distance = helix.major_tick_distance;
       default_periodic_distances = [default_regular_distance];
-    } else if (helix.has_major_tick_periodic_distances()) {
+    } else if (helix.has_major_tick_periodic_distances) {
       default_regular_distance = helix.major_tick_periodic_distances.first;
       default_periodic_distances = helix.major_tick_periodic_distances.toList();
     } else {
-      default_regular_distance = grid.default_major_tick_distance();
+      default_regular_distance = grid.default_major_tick_distance;
       default_periodic_distances = [default_regular_distance];
     }
 
@@ -150,16 +150,16 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     int apply_to_some_helices_idx = 9;
     List<DialogItem> items = List<DialogItem>.filled(10, null);
     items[regular_spacing_checkbox_idx] =
-        DialogCheckbox(label: 'regular spacing', value: helix.has_major_tick_distance());
+        DialogCheckbox(label: 'regular spacing', value: helix.has_major_tick_distance);
     items[regular_spacing_distance_idx] =
         DialogInteger(label: 'regular distance', value: default_regular_distance);
     items[major_tick_start_idx] = DialogInteger(label: 'starting major tick', value: default_start);
     items[periodic_spacing_checkbox_idx] =
-        DialogCheckbox(label: 'periodic spacing', value: helix.has_major_tick_periodic_distances());
+        DialogCheckbox(label: 'periodic spacing', value: helix.has_major_tick_periodic_distances);
     items[periodic_spacing_distances_idx] =
         DialogText(label: 'periodic distances', value: "${default_periodic_distances.join(' ')}");
     items[major_ticks_checkbox_idx] =
-        DialogCheckbox(label: 'explicit list of major tick spacing', value: helix.has_major_ticks());
+        DialogCheckbox(label: 'explicit list of major tick spacing', value: helix.has_major_ticks);
     items[major_ticks_distances_idx] = DialogText(
         label: 'distances (space-separated)',
         value: helix.major_ticks == null ? '' : util.deltas(helix.major_ticks).join(' '));

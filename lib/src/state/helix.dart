@@ -168,13 +168,16 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     return pos;
   }
 
-  bool has_grid_position() => this.grid_position != null;
+  @memoized
+  bool get has_grid_position => this.grid_position != null;
 
-  bool has_position() => this.position_ != null;
+  @memoized
+  bool get has_position => this.position_ != null;
 
   /// Gets 3D position (in "SVG coordinates" for the x,y,z) of Helix (offset 0).
   /// If [null], then [grid_position] must be non-[null], and it is auto-calculated from that.
-  Position3D position3d() {
+  @memoized
+  Position3D get position3d {
     if (position_ != null) {
       return position_;
     }
@@ -183,31 +186,40 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   /// Calculates x-y angle in degrees, according to position3d(), from this [Helix] to [other].
   num angle_to(Helix other) {
-    var pos1 = position3d();
-    var pos2 = other.position3d();
+    var pos1 = position3d;
+    var pos2 = other.position3d;
     num x = pos2.x - pos1.x;
     num y = pos2.y - pos1.y;
     num angle_radians = (atan2(x, -y)) % (2 * pi); // using SVG "reverse y" coordinates
     return util.to_degrees(angle_radians);
   }
 
-  bool has_default_group() => group == constants.default_group_name;
+  @memoized
+  bool get has_default_group => group == constants.default_group_name;
 
-  bool has_default_roll() => util.are_close(roll, constants.default_roll);
+  @memoized
+  bool get has_default_roll => util.are_close(roll, constants.default_roll);
 
-  bool has_default_major_tick_distance() => major_tick_distance == null;
+  @memoized
+  bool get has_default_major_tick_distance => major_tick_distance == null;
 
-  bool has_default_major_tick_periodic_distances() => major_tick_periodic_distances.isEmpty;
+  @memoized
+  bool get has_default_major_tick_periodic_distances => major_tick_periodic_distances.isEmpty;
 
-  bool has_default_major_tick_start() => major_tick_start == min_offset;
+  @memoized
+  bool get has_default_major_tick_start => major_tick_start == min_offset;
 
-  bool has_default_major_ticks() => major_ticks == null;
+  @memoized
+  bool get has_default_major_ticks => major_ticks == null;
 
-  bool has_major_tick_distance() => !has_default_major_tick_distance();
+  @memoized
+  bool get has_major_tick_distance => !has_default_major_tick_distance;
 
-  bool has_major_ticks() => !has_default_major_ticks();
+  @memoized
+  bool get has_major_ticks => !has_default_major_ticks;
 
-  bool has_major_tick_periodic_distances() =>
+  @memoized
+  bool get has_major_tick_periodic_distances =>
       major_tick_periodic_distances != null && major_tick_periodic_distances.length >= 2;
 
   dynamic to_json_serializable({bool suppress_indent = false}) {
@@ -215,35 +227,35 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
     // if we have major ticks or position, it's harder to read Helix on one line,
     // so don't wrap it in NoIndent, but still wrap longer sub-objects in them
-    bool use_no_indent = has_default_major_ticks() && !has_position();
+    bool use_no_indent = has_default_major_ticks && !has_position;
 
-    if (!has_default_roll()) {
+    if (!has_default_roll) {
       json_map[constants.roll_key] = util.to_int_if_close(roll);
     }
 
-    if (has_grid_position()) {
+    if (has_grid_position) {
       var gp = this.grid_position.to_json_serializable(suppress_indent: suppress_indent);
       json_map[constants.grid_position_key] = suppress_indent && !use_no_indent ? NoIndent(gp) : gp;
     }
 
-    if (has_position()) {
+    if (has_position) {
       var pos = this.position.to_json_serializable(suppress_indent: suppress_indent);
       json_map[constants.position_key] = suppress_indent && !use_no_indent ? NoIndent(pos) : pos;
     }
 
-    if (!has_default_major_tick_distance()) {
+    if (!has_default_major_tick_distance) {
       json_map[constants.major_tick_distance_key] = major_tick_distance;
     }
 
-    if (!has_default_major_tick_start()) {
+    if (!has_default_major_tick_start) {
       json_map[constants.major_tick_start_key] = major_tick_start;
     }
 
-    if (!has_default_group()) {
+    if (!has_default_group) {
       json_map[constants.group_key] = group;
     }
 
-    if (has_major_tick_periodic_distances()) {
+    if (has_major_tick_periodic_distances) {
       var distances = major_tick_periodic_distances.toList();
       json_map[constants.major_tick_periodic_distances_key] =
           suppress_indent && !use_no_indent ? NoIndent(distances) : distances;
@@ -251,7 +263,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
     json_map.addAll(unused_fields.toMap());
 
-    if (!has_default_major_ticks()) {
+    if (!has_default_major_ticks) {
       var ticks = this.major_ticks.toList();
       json_map[constants.major_ticks_key] = suppress_indent && !use_no_indent ? NoIndent(ticks) : ticks;
     }
@@ -269,7 +281,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
     // svg_height is height of whole helix, including both forward and reverse strand
     // must divide by 2 to get height of one strand, then divide by 2 again to go halfway into square
-    num y = svg_height() / 4.0 + this.svg_position.y;
+    num y = svg_height / 4.0 + this.svg_position.y;
     if (!forward) {
       y += geometry.base_height_svg;
     }
@@ -352,23 +364,27 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     return helix_builder;
   }
 
-  num svg_width() => geometry.base_width_svg * this.num_bases();
+  @memoized
+  num get svg_width => geometry.base_width_svg * this.num_bases;
 
-  num svg_height() => geometry.base_height_svg * 2;
+  @memoized
+  num get svg_height => geometry.base_height_svg * 2;
 
-  int num_bases() => this.max_offset - this.min_offset;
+  @memoized
+  int get num_bases => this.max_offset - this.min_offset;
 
   /// Calculates full list of major tick marks, in sorted order,
   /// whether using [Helix.major_tick_distance], or [Helix.major_ticks].
   /// They are used in reverse order to determine precedence. (e.g., [Helix.major_ticks]
   /// overrides [Helix.major_tick_distance].
-  List<int> calculate_major_ticks() {
+  @memoized
+  List<int> get calculate_major_ticks {
     List<int> ticks = [];
-    if (has_major_ticks()) {
+    if (has_major_ticks) {
       var sorted_ticks = major_ticks.toList();
       sorted_ticks.sort();
       ticks = sorted_ticks;
-    } else if (has_major_tick_periodic_distances()) {
+    } else if (has_major_tick_periodic_distances) {
       int distance_idx = -1;
       int distance = null;
       for (int tick = major_tick_start; tick <= max_offset; tick += distance) {
@@ -379,7 +395,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     } else {
       int distance = major_tick_distance != null && major_tick_distance > 0
           ? major_tick_distance
-          : grid.default_major_tick_distance();
+          : grid.default_major_tick_distance;
       if (distance > 0) {
         ticks = [for (int tick = major_tick_start; tick <= max_offset; tick += distance) tick];
       }

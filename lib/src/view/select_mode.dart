@@ -58,7 +58,7 @@ class SelectModeComponent extends UiComponent2<SelectModeProps> with RedrawCount
                   ? 'select-mode-button-selected'
                   : 'select-mode-button-unselected')
           ..addTestId('scadnano.SelectModeComponent.button.${mode.name}')
-          ..key = mode.display_name())(mode.display_name())
+          ..key = mode.display_name)(mode.display_name)
     };
     var elts = [
       (Dom.label()..key = 'label')('Selectable:'),
