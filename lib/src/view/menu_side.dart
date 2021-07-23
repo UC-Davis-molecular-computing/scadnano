@@ -158,7 +158,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
     int roll_idx = 5;
     int yaw_idx = 6;
     int helices_view_order_idx = 7;
-    var items = List<DialogItem>(8);
+    var items = List<DialogItem>.filled(8, null);
     items[name_idx] = DialogText(label: 'name', value: props.displayed_group_name);
     items[position_x_idx] = DialogFloat(label: 'x', value: group.position.x);
     items[position_y_idx] = DialogFloat(label: 'y', value: group.position.y);

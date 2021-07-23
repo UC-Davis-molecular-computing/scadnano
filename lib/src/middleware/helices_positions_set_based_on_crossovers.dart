@@ -145,7 +145,7 @@ Please select only one, or select none to default to the first crossover between
 // "First" refers to having the lowest offset on helix h1.
 Tuple2<Address, Address> _first_crossover_addresses_between_helices(
     Helix helix_top, Helix helix_bot, Design design,
-    {@required bool use_scaffold = true, @required bool use_staple = true}) {
+    {@required bool use_scaffold, @required bool use_staple}) {
   BuiltList<Tuple2<Address, Crossover>> address_crossovers_on_top =
       design.address_crossover_pairs_by_helix_idx[helix_top.idx];
   BuiltList<Tuple2<Address, Crossover>> address_crossovers_on_bot =

@@ -14,7 +14,6 @@ import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
 import 'package:scadnano/src/state/substrand.dart';
 
-import '../state/copy_info.dart';
 import '../state/address.dart';
 import '../state/app_ui_state_storables.dart';
 import '../state/domain.dart';
@@ -2410,6 +2409,52 @@ abstract class AssignDNAComplementFromBoundStrands
 
   static Serializer<AssignDNAComplementFromBoundStrands> get serializer =>
       _$assignDNAComplementFromBoundStrandsSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class AssignDomainNameComplementFromBoundStrands
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<AssignDomainNameComplementFromBoundStrands, AssignDomainNameComplementFromBoundStrandsBuilder> {
+  BuiltList<Strand> get strands;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory AssignDomainNameComplementFromBoundStrands(Iterable<Strand> strands) {
+    return AssignDomainNameComplementFromBoundStrands.from((b) => b..strands.replace(strands));
+  }
+
+  factory AssignDomainNameComplementFromBoundStrands.from(
+          [void Function(AssignDomainNameComplementFromBoundStrandsBuilder) updates]) =
+      _$AssignDomainNameComplementFromBoundStrands;
+
+  AssignDomainNameComplementFromBoundStrands._();
+
+  static Serializer<AssignDomainNameComplementFromBoundStrands> get serializer =>
+      _$assignDomainNameComplementFromBoundStrandsSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class AssignDomainNameComplementFromBoundDomains
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<AssignDomainNameComplementFromBoundDomains, AssignDomainNameComplementFromBoundDomainsBuilder> {
+  BuiltList<Domain> get domains;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory AssignDomainNameComplementFromBoundDomains(Iterable<Domain> domains) {
+    return AssignDomainNameComplementFromBoundDomains.from((b) => b..domains.replace(domains));
+  }
+
+  factory AssignDomainNameComplementFromBoundDomains.from(
+          [void Function(AssignDomainNameComplementFromBoundDomainsBuilder) updates]) =
+      _$AssignDomainNameComplementFromBoundDomains;
+
+  AssignDomainNameComplementFromBoundDomains._();
+
+  static Serializer<AssignDomainNameComplementFromBoundDomains> get serializer =>
+      _$assignDomainNameComplementFromBoundDomainsSerializer;
 
   @memoized
   int get hashCode;

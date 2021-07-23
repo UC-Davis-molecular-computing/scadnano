@@ -352,7 +352,7 @@ abstract class Strand
   /// (i.e., index on the whole strand) to the modification.
   @memoized
   BuiltList<BuiltMap<int, ModificationInternal>> get internal_modifications_on_substrand_absolute_idx {
-    var mods = List<Map<int, ModificationInternal>>(substrands.length);
+    var mods = List<Map<int, ModificationInternal>>.filled(substrands.length, null);
     for (int i = 0; i < substrands.length; i++) {
       mods[i] = Map<int, ModificationInternal>();
     }
@@ -423,6 +423,7 @@ abstract class Strand
     }
     throw AssertionError("should be unreachable");
   }
+
 
   @memoized
   BuiltMap<int, BuiltList<Domain>> get domains_on_helix {

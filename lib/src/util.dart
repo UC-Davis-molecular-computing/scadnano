@@ -402,7 +402,14 @@ Tuple2<int, int> repeated_element_indices<T>(List<T> list) {
   return null;
 }
 
+/// Indicates if left button is pressed during [event],
+/// even if the left button was not the one pressed, e.g., if it is pressed while moving or pressing
+/// the right button.
+/// NOTE: Returns false if left mouse button goes up. For that use left_mouse_button_caused_mouse_event.
 bool left_mouse_button_pressed_during_mouse_event(MouseEvent event) => event.buttons & 1 == 1;
+
+/// Indicates if left mouse button going down or up caused [event].
+bool left_mouse_button_caused_mouse_event(MouseEvent event) => event.button == 0;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // transforming of points

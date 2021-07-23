@@ -306,6 +306,8 @@ part 'serializers.g.dart';
   NewDesignSet,
   OxdnaExport,
   Design,
+  AssignDomainNameComplementFromBoundStrands,
+  AssignDomainNameComplementFromBoundDomains,
   // BrowserClipboard,
   // CLIClipboard,
 ])

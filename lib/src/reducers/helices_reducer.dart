@@ -338,7 +338,6 @@ Design helix_add_design_reducer(Design design, AppState state, actions.HelixAdd 
   }
 
   // add helix's review order entry
-  int num_helices_in_group = design.helix_idxs_in_group[state.ui_state.displayed_group_name].length;
   var group = design.groups[state.ui_state.displayed_group_name];
   var new_helices_view_order = group.helices_view_order.toList();
   new_helices_view_order.add(new_idx);
@@ -397,13 +396,15 @@ Design helix_remove_all_selected_design_global_reducer(
 
   var new_helices = remove_helices_assuming_no_domains(design.helices, helix_idxs);
 
-  // remove helix's review order entry
+  // remove view order entries for helices that are being removed
   var group = design.groups[state.ui_state.displayed_group_name];
-  var old_view_orders = {
+  Set<List<int>> old_view_orders = {
     [for (var helix_idx in helix_idxs) group.helices_view_order_inverse[helix_idx]]
   };
-  var new_helices_view_order = group.helices_view_order.toList();
-  new_helices_view_order.removeWhere((order) => old_view_orders.contains(order));
+  List<int> new_helices_view_order = group.helices_view_order.toList();
+  for (var old_view_order in old_view_orders) {
+    new_helices_view_order.removeWhere((order) => old_view_order.contains(order));
+  }
   var new_group = group.rebuild((b) => b..helices_view_order.replace(new_helices_view_order));
   var new_groups = design.groups.toMap();
   new_groups[state.ui_state.displayed_group_name] = new_group;

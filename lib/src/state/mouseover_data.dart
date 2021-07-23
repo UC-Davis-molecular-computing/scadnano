@@ -61,7 +61,7 @@ abstract class MouseoverData
   /// Converts from raw mouseover data (helix, offset, forward) to data user wants to see in the footer (substrand)
   static List<MouseoverData> from_params(Design design, Iterable<MouseoverParams> params) {
     Domain domain_in_direction = null;
-    var mouseover_datas_builder = List<MouseoverData>();
+    List<MouseoverData> mouseover_datas_builder = [];
     for (var param in params) {
       int helix_idx = param.helix_idx;
       int offset = param.offset;

@@ -1,13 +1,14 @@
 import 'dart:html';
 
+import 'package:meta/meta.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
-import 'package:scadnano/src/state/modification.dart';
 
 import 'design_main_strand_and_domain_names.dart';
 import 'transform_by_helix_group.dart';
+import '../state/modification.dart';
 import '../state/address.dart';
 import '../state/geometry.dart';
 import '../state/group.dart';
@@ -189,6 +190,26 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     app.dispatch(action);
   }
 
+  assign_domain_name_complement_from_bound_strands({Domain domain}) {
+    if (app.state.ui_state.select_mode_state.domains_selectable()) {
+      List<Domain> domains_selected = app.state.ui_state.selectables_store.selected_domains.toList();
+
+      if (!domains_selected.contains(domain)) {
+        domains_selected.add(domain);
+      }
+
+      var action = actions.AssignDomainNameComplementFromBoundDomains(domains_selected);
+      app.dispatch(action);
+    } else {
+      List<Strand> strands_selected = app.state.ui_state.selectables_store.selected_strands.toList();
+      if (!strands_selected.contains(props.strand)) {
+        strands_selected.add(props.strand);
+      }
+      var action = actions.AssignDomainNameComplementFromBoundStrands(strands_selected);
+      app.dispatch(action);
+    }
+  }
+
   add_modification(Domain domain, Address address, bool is_5p) =>
       app.disable_keyboard_shortcuts_while(() => ask_for_add_modification(domain, address, is_5p));
 
@@ -288,7 +309,9 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     app.dispatch(action);
   }
 
-  List<ContextMenuItem> context_menu_strand(Strand strand, {Domain domain, Address address, bool is_5p}) => [
+  List<ContextMenuItem> context_menu_strand(Strand strand,
+          {@required Domain domain, @required Address address, @required bool is_5p}) =>
+      [
         ContextMenuItem(
           title: 'assign DNA',
           tooltip: '''\
@@ -304,6 +327,14 @@ If other strands bound to this strand (or the selected strands) have DNA already
 assigned, assign the complementary DNA sequence to this strand.
 ''',
           on_click: assign_dna_complement_from_bound_strands,
+        ),
+        ContextMenuItem(
+          title: 'assign domain name complement from bound strands',
+          tooltip: '''\
+If other strands bound to this strand (or the selected strands) have domain names already 
+assigned, assign the complementary domain names sequence to this strand. To use this feature for individual domains, set select mode to domain.
+''',
+          on_click: () => assign_domain_name_complement_from_bound_strands(domain: domain),
         ),
         if (strand.dna_sequence != null)
           ContextMenuItem(
@@ -421,7 +452,7 @@ after:
     int idt_text_idx = 2;
     int index_of_dna_base_idx = 3;
     // int id_idx = 4;
-    var items = List<DialogItem>(4);
+    var items = List<DialogItem>.filled(4, null);
     items[modification_type_idx] = DialogRadio(
         label: 'modification type', options: {"3'", "5'", "internal"}, selected_idx: selected_index);
 
@@ -528,7 +559,7 @@ after:
 
   Future<void> ask_for_strand_name() async {
     int name_idx = 0;
-    var items = List<DialogItem>(1);
+    var items = List<DialogItem>.filled(1, null);
     items[name_idx] = DialogText(label: 'name', value: props.strand.name ?? '');
     var dialog = Dialog(title: 'set strand name', items: items);
 
@@ -542,7 +573,7 @@ after:
 
   Future<void> ask_for_domain_name(Domain domain) async {
     int name_idx = 0;
-    var items = List<DialogItem>(1);
+    var items = List<DialogItem>.filled(1, null);
     items[name_idx] = DialogText(label: 'name', value: domain.name ?? '');
     var dialog = Dialog(title: 'set domain name', items: items);
 
