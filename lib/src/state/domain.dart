@@ -321,7 +321,7 @@ abstract class Domain
   int get offset_5p => this.forward ? this.start : this.end - 1;
 
   /// 3' end, INCLUSIVE
-  @memoized
+  @memoized 
   int get offset_3p => this.forward ? this.end - 1 : this.start;
 
   int dna_length() => (this.end - this.start) - this.deletions.length + this.num_insertions;
