@@ -27,28 +27,31 @@ abstract class SelectModeState implements Built<SelectModeState, SelectModeState
 
   bool is_selectable(Selectable selectable) => modes.contains(selectable.select_mode);
 
-  bool strands_selectable() => modes.contains(SelectModeChoice.strand);
+  @memoized
+  bool get strands_selectable => modes.contains(SelectModeChoice.strand);
 
-  bool linkers_selectable() =>
+  @memoized
+  bool get linkers_selectable =>
       modes.contains(SelectModeChoice.crossover) || modes.contains(SelectModeChoice.loopout);
 
-  bool ends_selectable() =>
+  @memoized
+  bool get ends_selectable =>
       modes.contains(SelectModeChoice.end_3p_strand) ||
       modes.contains(SelectModeChoice.end_5p_strand) ||
       modes.contains(SelectModeChoice.end_3p_domain) ||
       modes.contains(SelectModeChoice.end_5p_domain);
 
-  bool domains_selectable() =>
-      modes.contains(SelectModeChoice.domain);
+  @memoized
+  bool get domains_selectable => modes.contains(SelectModeChoice.domain);
 
-  bool deletions_selectable() =>
-      modes.contains(SelectModeChoice.deletion);
+  @memoized
+  bool get deletions_selectable => modes.contains(SelectModeChoice.deletion);
 
-  bool insertions_selectable() =>
-      modes.contains(SelectModeChoice.insertion);
+  @memoized
+  bool get insertions_selectable => modes.contains(SelectModeChoice.insertion);
 
-  bool modifications_selectable() =>
-      modes.contains(SelectModeChoice.modification);
+  @memoized
+  bool get modifications_selectable => modes.contains(SelectModeChoice.modification);
 
   String to_json() {
     List<String> lst = [for (var mode in modes) mode.name];

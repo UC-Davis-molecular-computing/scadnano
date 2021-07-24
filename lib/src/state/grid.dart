@@ -21,13 +21,16 @@ class Grid extends EnumClass {
 
   static Grid valueOf(String name) => _$valueOf(name);
 
-  String to_json() => name;
+  @memoized
+  String get to_json => name;
 
-  bool is_none() => this == none;
+  @memoized
+  bool get is_none => this == none;
 
   static Serializer<Grid> get serializer => _$gridSerializer;
 
-  int default_major_tick_distance() {
+  @memoized
+  int get default_major_tick_distance {
     if (this == Grid.hex || this == Grid.honeycomb) {
       return 7;
     } else if (this == Grid.square) {

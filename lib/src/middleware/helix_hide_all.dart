@@ -17,7 +17,7 @@ helix_hide_all_middleware(Store<AppState> store, dynamic action, NextDispatcher 
           action is actions.HelixRemove ||
           action is actions.LoadDNAFile ||
           action is actions.SetAppUIStateStorable) &&
-      !store.state.has_error()) {
+      !store.state.has_error) {
     var ui_state = store.state.ui_state;
     var design = store.state.design;
     if (ui_state.only_display_selected_helices &&

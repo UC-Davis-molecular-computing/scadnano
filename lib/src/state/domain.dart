@@ -321,10 +321,10 @@ abstract class Domain
   int get offset_5p => this.forward ? this.start : this.end - 1;
 
   /// 3' end, INCLUSIVE
-  @memoized
+  @memoized 
   int get offset_3p => this.forward ? this.end - 1 : this.start;
 
-  int dna_length() => (this.end - this.start) - this.deletions.length + this.num_insertions();
+  int dna_length() => (this.end - this.start) - this.deletions.length + this.num_insertions;
 
   /// Number of bases in this [Domain] between [left] and [right] offsets (INCLUSIVE).
   int dna_length_in(int left, int right) {
@@ -372,7 +372,8 @@ abstract class Domain
   }
 
   /// List of offsets (inclusive at each end) in 5' - 3' order.
-  List<int> offsets_in_5p_3p_order() {
+  @memoized
+  List<int> get offsets_in_5p_3p_order {
     List<int> offsets = [];
     if (this.forward) {
       for (int offset = this.start; offset < this.end; offset++) {
@@ -509,9 +510,8 @@ abstract class Domain
         (!this.forward && offset_edge < offset_to_test && offset_to_test < this.end);
   }
 
-  int num_insertions() {
-    return num_insertions_in_list(insertions);
-  }
+  @memoized
+  int get num_insertions => num_insertions_in_list(insertions);
 
   static int num_insertions_in_list(Iterable<Insertion> insertions) {
     int num = 0;
