@@ -211,19 +211,26 @@ Strand move_strand(
       int delta_offset,
       bool delta_forward}) {
   List<Substrand> substrands = strand.substrands.toList();
+  var list_of_domains = [...strand.domains];
   if (delta_forward) {
     substrands = substrands.reversed.toList();
+    list_of_domains = list_of_domains.reversed.toList();
   }
+  
+  int counter = 0;
+
   for (int i = 0; i < substrands.length; i++) {
     Substrand substrand = substrands[i];
     Substrand new_substrand = substrand;
     if (substrand is Domain) {
+
       num original_view_order = original_helices_view_order_inverse[substrand.helix];
       num new_view_order = original_view_order + delta_view_order;
       int new_helix_idx = current_group.helices_view_order[new_view_order];
       assert(new_helix_idx != null);
       Domain domain_moved = substrand.rebuild(
             (b) => b
+          ..name = list_of_domains[list_of_domains.length - counter - 1].name
           ..is_first = i == 0
           ..is_last = i == substrands.length - 1
           ..helix = new_helix_idx
@@ -235,6 +242,7 @@ Strand move_strand(
               substrand.insertions.map((i) => i.rebuild((ib) => ib..offset = i.offset + delta_offset))),
       );
       new_substrand = domain_moved;
+      counter++;
     }
     substrands[i] = new_substrand;
   }
