@@ -38,27 +38,29 @@ main() {
     */
     test('self_complementary_strand__no_insertions', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
+      // var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square),Helix(idx: 1, max_offset: 100, grid: Grid.square) ]; (this is the fix)
       var design = Design(helices: helices, grid: Grid.square);
 
       design =
           design.strand(0, 0).move(8).with_domain_name("A").cross(1).move(-8).with_domain_name("B").commit();
-      var state = app_state_from_design(design);
-      print(state.design.default_group().helices_view_order);
-      var new_strand = move_strand(strand: design.strands[0], original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse, current_group: state.design.groups["default_group"], delta_view_order: state.design.default_group().helices_view_order[0], delta_offset: 10, delta_forward: true);
-      
-      print(design.strands[0]);
-      print(new_strand);
+      // var select = actions.AssignDomainNameComplementFromBoundDomains([design.all_domains[0]]);
       // var state = app_state_from_design(design);
-      // StrandsMove strands_move = StrandsMove(
-      //   strands_moving:  design.strands,
-      //   all_strands: design.strands,
-      //   original_address: Address(forward: true, helix_idx: 0, offset: 4),
-      //   helices: state.design.helices,
-      //   groups: state.design.groups,
-      //   original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
-      //   copy: false,
-      // ).rebuild((b) => b..current_address = Address(forward: false, helix_idx: 0, offset: 8).toBuilder());
-      // state = app_state_reducer(state, StrandsMoveCommit(strands_move: strands_move, autopaste: false));
+      // print(state.design.default_group().helices_view_order);
+      // var new_strand = move_strand(strand: design.strands[0], original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse, current_group: state.design.groups["default_group"], delta_view_order: state.design.default_group().helices_view_order[0], delta_offset: 10, delta_forward: true);
+      
+      // print(design.strands[0]);
+      // print(new_strand);
+      var state = app_state_from_design(design);
+      StrandsMove strands_move = StrandsMove(
+        strands_moving:  design.strands,
+        all_strands: design.strands,
+        original_address: Address(forward: true, helix_idx: 0, offset: 4),
+        helices: state.design.helices,
+        groups: state.design.groups,
+        original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
+        copy: false,
+      ).rebuild((b) => b..current_address = Address(forward: false, helix_idx: 0, offset: 8).toBuilder());
+      state = app_state_reducer(state, StrandsMoveCommit(strands_move: strands_move, autopaste: false));
     });
   });
 }
