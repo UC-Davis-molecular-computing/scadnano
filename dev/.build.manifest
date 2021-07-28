@@ -163,7 +163,6 @@ external-libs/react-svg-pan-zoom/react_svg_pan_zoom.js
 external-libs/simpledrag.js
 external-libs/svg-pan-zoom.js
 external-libs/svg-pan-zoom.min.js
-external-libs/xlsx.full.min.js
 images/favicon.ico
 images/grab.png
 images/grabbing.png
