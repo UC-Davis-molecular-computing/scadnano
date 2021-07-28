@@ -247,7 +247,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         components.add((Dom.br()..key = 'br-$radio_idx')());
         components.add((Dom.input()
           ..type = 'radio'
-          ..id = 'radio-${radio_idx}'
+          ..id = 'radio-${item.label}-${radio_idx}'
           ..disabled = disabled
           ..name = item.label
           ..checked = (item.selected_idx == radio_idx)
