@@ -84,7 +84,7 @@ class OxdnaVector {
 }
 
 // Constants related to oxdna export
-const _GROOVE_GAMMA = 20;
+const _GROOVE_GAMMA = 20.0;
 const _BASE_DIST = 0.6;
 final _OXDNA_ORIGIN = OxdnaVector(0, 0, 0);
 
@@ -103,9 +103,9 @@ class OxdnaNucleotide {
 
   OxdnaNucleotide(this.center, this.normal, this.forward, this.base);
 
-  OxdnaVector get b => -normal.rotate(-_GROOVE_GAMMA, forward).normalize();
-
   OxdnaVector get r => center - b * _BASE_DIST;
+
+  OxdnaVector get b => -normal;
 
   OxdnaVector get n => forward;
 }
@@ -277,7 +277,7 @@ OxdnaSystem convert_design_to_oxdna_system(Design design) {
     }
   }
 
-  // propagate the modifier so it stays consistent accross domains
+  // propagate the modifier so it stays consistent across domains
   for (int idx in design.helices.keys) {
     var helix = design.helices[idx];
     for (int offset = helix.min_offset + 1; offset < helix.max_offset; offset++) {
@@ -307,6 +307,10 @@ OxdnaSystem convert_design_to_oxdna_system(Design design) {
           seq = seq.split('').reversed.join(''); // reverse DNA sequence
         }
 
+        // oxDNA will rotate angles by +/- _GROOVE_GAMMA, so we first unrotate by that amount
+        var groove_gamma_correction = domain.forward ? _GROOVE_GAMMA : -_GROOVE_GAMMA;
+        normal = normal.rotate(groove_gamma_correction, forward);
+
         // dict / set for insertions / deletions to make lookup easier and cheaper when there are lots of them
         var deletions = Set<int>.from(domain.deletions);
         Map<int, int> insertions = {};
@@ -330,7 +334,8 @@ OxdnaSystem convert_design_to_oxdna_system(Design design) {
                 var r = origin +
                     forward * (offset + mod - num + i) * geometry.rise_per_base_pair * NM_TO_OX_UNITS;
                 var b = normal.rotate(step_rot * (offset + mod - num + i), forward);
-                var nuc = OxdnaNucleotide(r, b, forward, seq[index]);
+                var n = domain.forward ? -forward : forward;
+                var nuc = OxdnaNucleotide(r, b, n, seq[index]);
                 dom_strand.nucleotides.add(nuc);
                 index += 1;
               }
@@ -338,7 +343,8 @@ OxdnaSystem convert_design_to_oxdna_system(Design design) {
 
             var r = origin + forward * (offset + mod) * geometry.rise_per_base_pair * NM_TO_OX_UNITS;
             var b = normal.rotate(step_rot * (offset + mod), forward);
-            var nuc = OxdnaNucleotide(r, b, forward, seq[index]);
+            var n = domain.forward ? -forward : forward;
+            var nuc = OxdnaNucleotide(r, b, n, seq[index]);
             dom_strand.nucleotides.add(nuc);
             index += 1;
           }
