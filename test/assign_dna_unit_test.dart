@@ -113,31 +113,104 @@ main() {
       expect(all_strands[0].dna_sequence, "AACGTACGATGCATCC");
       expect(all_strands[1].dna_sequence, "GGATGCATCGTACGTT");
     });
-    test('AssignDNAComplementFromBoundStrands__insertions', () {
-      //TODO: Add insertion art to the ASCII art 
-      //     0               16
-      //     AACGTACGATGCATCC
-      // 0   [--------------->
-      //     <---------------]
+    test('AssignDNAComplementFromBoundStrands__insertions__one_bound_strand', () {
+      //     0                  16
+      //     AACGTATCGCGATGCATCC
+      // 0   [-------I: 3------->
+      //     <-------I: 3-------]
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design.strand(0, 0).move(16).add_insertion(0, 8, 3).with_sequence('AACGTATCGCGATGCATCC').commit();
       design = design.strand(0, 16).move(-16).add_insertion(0, 8, 3).commit();
-      print(json_encode(design));
 
-      var action = actions.AssignDNAComplementFromBoundStrands(design.strands);
+      var action = actions.AssignDNAComplementFromBoundStrands([design.strands[1]]);
+      var state = app_state_from_design(design);
+      var all_strands = assign_dna_reducer_complement_from_bound_strands(design.strands, state, action);
+
+      //     0                  16
+      //     AACGTATCGCGATGCATCC
+      // 0   [-------I: 3------->
+      //     <-------I: 3-------]
+      //     TTGCATAGCGCTACGTAGG  
+      expect(all_strands[0].dna_sequence, "AACGTATCGCGATGCATCC");
+      expect(all_strands[1].dna_sequence, "GGATGCATCGCGATACGTT");
+    });
+
+    test('AssignDNAComplementFromBoundStrands__insertions__two_bound_strands', () {
+      //     0                  16
+      //     
+      // 0   [-------I: 3------>
+      //     <---]<--I: 3------]
+      //     TTGCATAGCGCTACGTAGG
+      var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
+      var design = Design(helices: helices, grid: Grid.square);
+
+      design = design.strand(0, 0).move(16).add_insertion(0, 8, 3).commit();
+      design = design.strand(0, 5).move(-5).with_sequence("ACGTT").commit();
+      design = design.strand(0, 16).move(-11).add_insertion(0, 8, 3).with_sequence('GGATGCATCGCGAT').commit();
+
+      var action = actions.AssignDNAComplementFromBoundStrands([design.strands[0]]);
+      var state = app_state_from_design(design);
+      var all_strands = assign_dna_reducer_complement_from_bound_strands(design.strands, state, action);
+
+      //     0                  16
+      //     AACGTATCGCGATGCATCC
+      // 0   [-------I: 3------>
+      //     <---]<--I: 3------]
+      //     TTGCATAGCGCTACGTAGG
+      expect(all_strands[0].dna_sequence, "AACGTATCGCGATGCATCC");
+      expect(all_strands[1].dna_sequence, "ACGTT");
+      expect(all_strands[2].dna_sequence, "GGATGCATCGCGAT");
+    });
+      test('AssignDNAComplementFromBoundStrands__deletions__one_bound_strand', () {
+      //     0               16
+      //     AACGTACG TGCATCC
+      // 0   [-------X------>
+      //     <-------X------]
+
+      var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
+      var design = Design(helices: helices, grid: Grid.square);
+
+      design = design.strand(0, 0).move(16).add_deletion(0, 8).with_sequence('AACGTACGTGCATCC').commit();
+      design = design.strand(0, 16).move(-16).add_deletion(0, 8).commit();
+
+      var action = actions.AssignDNAComplementFromBoundStrands([design.strands[1]]);
       var state = app_state_from_design(design);
       var all_strands = assign_dna_reducer_complement_from_bound_strands(design.strands, state, action);
 
       //     0               16
-      //     AACGTACGATGCATCC
-      //             
-      // 0   [-------------->
-      //     <--------------]
-      //     TTGCATGCTACGTAGG
-      expect(all_strands[0].dna_sequence, "AACGTATCGCGATGCATCC");
-      expect(all_strands[1].dna_sequence, "GGATGCATCGCGATACGTT");
+      //     AACGTACG TGCATCC
+      // 0   [-------X------>
+      //     <-------X------]
+      //     TTGCATGC ACGTAGG
+      expect(all_strands[0].dna_sequence, "AACGTACGTGCATCC");
+      expect(all_strands[1].dna_sequence, "GGATGCACGTACGTT");
+    });
+    test('AssignDNAComplementFromBoundStrands__deletions__two_bound_strands', () {
+      //     0               16
+      // 0   [-------X------>
+      //     <---]<--X------]
+      //     TTGCATAG GCTACGT
+      var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
+      var design = Design(helices: helices, grid: Grid.square);
+
+      design = design.strand(0, 0).move(16).add_deletion(0, 8).commit();
+      design = design.strand(0, 5).move(-5).with_sequence("ACGTT").commit();
+      design = design.strand(0, 16).move(-11).add_deletion(0, 8).with_sequence('TGCATCGGAT').commit();
+
+      var action = actions.AssignDNAComplementFromBoundStrands([design.strands[0]]);
+      var state = app_state_from_design(design);
+      var all_strands = assign_dna_reducer_complement_from_bound_strands(design.strands, state, action);
+
+      //     0               16
+      //     AACGTATC CGATGCA
+      // 0   [-------X------>
+      //     <---]<--X------]
+      //     TTGCATAG GCTACGT
+      expect(all_strands[0].dna_sequence, "AACGTATCCGATGCA");
+      expect(all_strands[1].dna_sequence, "ACGTT");
+      expect(all_strands[2].dna_sequence, "TGCATCGGAT");
     });
   });
   
