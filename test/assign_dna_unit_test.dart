@@ -26,7 +26,7 @@ import 'utils.dart';
 
 main() {
   group('Assign/remove dna test: ', () {
-    test('AssignDNA_test_FILE', () {
+    test('AssignDNA', () {
       //     0               16
       // 0   [--------------->
       //     <---------------]
@@ -67,15 +67,108 @@ main() {
           warn_on_change: false,
         ),
       );
-      // //     0               16
-      // //     AACGTACGATGCATCC
-      // // 0   [-------------->
-      // //     <--------------]
-      // //     GCTCCCCGACAACCTA
+      //     0               16
+      //     AACGTACGATGCATCC
+      // 0   [-------------->
+      //     <--------------]
+      //     GCTCCCCGACAACCTA
       expect(state.design.strands[0].dna_sequence, "AACGTACGATGCATCC");
       expect(state.design.strands[1].dna_sequence, "ATCCAACAGCCCCTCG");
     });
+    test('AssignDNA__hairpin', () {
+      //     0   4
+      //     
+      // 0   [---\
+      //         ) 
+      //         ) 
+      //         ) 
+      //         ) 
+      //         ) 
+      //     <---/
+      //
+      var helices = [Helix(idx: 0, max_offset: 5, grid: Grid.square)];
+      var design = Design(helices: helices, grid: Grid.square);
 
+      design = design.strand(0, 0).move(5).loopout(0, 5).move(-5).commit();
+
+      AppState state = app_state_from_design(design);
+      Strand strand = design.strands.first;
+      String dna_sequence = 'AAACCTGCAC';
+
+      state = app_state_reducer(
+          state,
+          AssignDNA(
+            strand: strand,
+            assign_complements: true,
+            dna_sequence: dna_sequence,
+            warn_on_change: true,
+          ));
+
+      //     0   4
+      //     AAACC
+      // 0   [---\
+      //         ) T
+      //         ) G
+      //         ) C
+      //         ) A
+      //         ) C
+      //     <---/
+      //     TTTGG
+      expect(state.design.strands.length, 1);
+      expect(state.design.strands[0].dna_sequence, "AAACCTGCACGGTTT");
+    });
+    test('AssignDNA__from_strand_with_loopout', () {
+      //     0   4
+      //      
+      //     [---\
+      // 0   <---]
+      //           ) 
+      //           ) 
+      //           ) 
+      //           ) 
+      //           ) 
+      //     [--->
+      // 1   <---/
+      //     
+
+      var helices = [Helix(idx: 0, max_offset: 5, grid: Grid.square), Helix(idx: 1, max_offset: 5, grid: Grid.square)];
+      var design = Design(helices: helices, grid: Grid.square);
+
+      design = design.strand(0, 0).move(5).loopout(1, 5).move(-5).commit();
+      design = design.strand(0, 5).move(-5).commit();
+      design = design.strand(1, 0).move(5).commit();
+
+      AppState state = app_state_from_design(design);
+      Strand strand = design.strands.first;
+      String dna_sequence = 'AAACCTGCACATTCG';
+
+      state = app_state_reducer(
+          state,
+          AssignDNA(
+            strand: strand,
+            assign_complements: true,
+            dna_sequence: dna_sequence,
+            warn_on_change: true,
+          ));
+          
+      //     0   4
+      //     AAACC
+      //     [---\
+      // 0   <---]
+      //     TTTGG ) T
+      //           ) G
+      //           ) C
+      //           ) A
+      //     CGAAT ) C
+      //     [--->
+      // 1   <---/
+      //     GCTTA
+      
+      expect(state.design.strands.length, 3);
+      expect(state.design.strands[0].dna_sequence, "AAACCTGCACATTCG");
+      expect(state.design.strands[1].dna_sequence, "GGTTT");
+      expect(state.design.strands[2].dna_sequence, "CGAAT");
+    });
     test('RemoveDNA (see issue #109)', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
