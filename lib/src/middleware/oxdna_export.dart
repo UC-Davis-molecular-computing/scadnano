@@ -123,7 +123,7 @@ class OxdnaStrand {
 class OxdnaSystem {
   List<OxdnaStrand> strands = [];
 
-  OxdnaVector compute_bounding_box() {
+  OxdnaVector compute_bounding_box([bool cubic = true]) {
     OxdnaVector min_vec = null;
     OxdnaVector max_vec = null;
 
@@ -142,7 +142,12 @@ class OxdnaSystem {
     if (min_vec != null && max_vec != null) {
       // 5 is arbitrarily chosen so that the box has a bit of wiggle room
       // 1.5 multiplier is to make all crossovers appear (advice from Oxdna authors)
-      return (max_vec - min_vec + OxdnaVector(5, 5, 5)) * 1.5; // changed
+      var box = (max_vec - min_vec + OxdnaVector(5, 5, 5)) * 1.5;
+      if (cubic) { // oxDNA requires cubic bounding box with default simulation options
+        var max_side = max(box.x, max(box.y, box.z));
+        box = OxdnaVector(max_side, max_side, max_side);
+      }
+      return box;
     } else {
       return OxdnaVector(1, 1, 1);
     }
