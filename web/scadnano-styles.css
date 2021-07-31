@@ -212,7 +212,7 @@ html, body {
     top: 0;
 }
 
-.has-submenu:hover .context-menu {
+.has-submenu:hover > .context-menu {
     visibility: visible;
 }
 
