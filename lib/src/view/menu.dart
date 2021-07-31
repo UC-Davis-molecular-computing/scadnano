@@ -877,6 +877,43 @@ In a large design, this can slow down the performance, so uncheck it when not in
       ),
       DropdownItem(
         {
+          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/issues',
+          'target': '_blank',
+          'title': '''\
+To file a bug report or feature request for the scadnano web interface, 
+click on "New issue" on the top right of the Issues page on at the 
+scadnano Github repository.
+
+If it is a bug report, please include as much detailed information as 
+possible, including screenshots if applicable, and a copy of the .sc file 
+that caused the error, and an exact description of the steps needed to
+help us reproduce the error.
+
+Note that you cannot upload a .sc file directly to GitHub, but if you put 
+the .sc file in a .zip file, then it can be uploaded.'''
+        },
+        'Bug report/feature request (web interface)',
+      ),
+      DropdownItem(
+        {
+          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues',
+          'target': '_blank',
+          'title': '''\
+To file a bug report or feature request for the Python scripting library, 
+click on "New issue" on the top right of the Issues page on at the 
+scadnano-python-package Github repository.
+
+If it is a bug report, please include as much detailed information as 
+possible, including a copy of the .sc file that caused the error, and an 
+exact description of the steps needed to help us reproduce the error.
+
+Note that you cannot upload a .sc file directly to GitHub, but if you put 
+the .sc file in a .zip file, then it can be uploaded.'''
+        },
+        'Bug report/feature request (Python library)',
+      ),
+      DropdownItem(
+        {
           'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/releases',
           'target': '_blank',
           //TODO: figure out how to give a DropdownItem a tooltip
