@@ -46,11 +46,11 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 
     // for helix circles
     var cx = -(2 * geometry.base_width_svg + geometry.distance_between_helices_svg / 2);
-    var cy = props.helix.svg_position.y + props.helix.svg_height() / 2.0;
+    var cy = props.helix.svg_position.y + props.helix.svg_height / 2.0;
 
     // for helix horizontal lines
-    num width = props.helix.svg_width();
-    num height = props.helix.svg_height();
+    num width = props.helix.svg_width;
+    num height = props.helix.svg_height;
 
     var horz_line_paths = _horz_line_paths(props.helix);
     var vert_line_paths = _vert_line_paths(props.helix);
@@ -156,7 +156,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   final num DISTANCE_OFFSET_DISPLAY_FROM_HELIX = 3;
 
   _major_tick_offsets_svg_group() {
-    List<int> major_ticks = props.helix.calculate_major_ticks();
+    List<int> major_ticks = props.helix.calculate_major_ticks;
 
     // offset if DNA sequences and/or domain labels are present
     num offset = 0;
@@ -189,7 +189,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   }
 
   _major_tick_widths_svg_group() {
-    List<int> major_ticks = props.helix.calculate_major_ticks();
+    List<int> major_ticks = props.helix.calculate_major_ticks;
 
     // offset if DNA sequences and/or domain labels are present
     num offset = 0;
@@ -200,7 +200,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       offset += props.helix.geometry.base_height_svg;
     }
     num y =
-        props.helix.svg_position.y + props.helix.svg_height() + DISTANCE_OFFSET_DISPLAY_FROM_HELIX + offset;
+        props.helix.svg_position.y + props.helix.svg_height + DISTANCE_OFFSET_DISPLAY_FROM_HELIX + offset;
 
     var offset_texts_elements = [];
     Map<num, int> map_offset_to_distance = {};
@@ -235,8 +235,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   }
 
   String _horz_line_paths(Helix helix) {
-    num width = helix.svg_width();
-    num height = helix.svg_height();
+    num width = helix.svg_width;
+    num height = helix.svg_height;
     num x_start = helix.min_offset *  props.helix.geometry.base_width_svg;
     num x_end = x_start + width;
     num y_start = helix.svg_position.y;
@@ -253,7 +253,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 
   /// Return Map {'minor': thin_lines, 'major': thick_lines} to paths describing minor and major vertical lines.
   Map<String, String> _vert_line_paths(Helix helix) {
-    List<int> major_ticks = helix.calculate_major_ticks();
+    List<int> major_ticks = helix.calculate_major_ticks;
 //  var major_tick_distance =
 //      helix.has_major_tick_distance() ? helix.major_tick_distance : design_major_tick_distance;
 //  Set<int> major_ticks = (helix.has_major_ticks()
@@ -271,7 +271,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       var x = base_minus_min_offset * props.helix.geometry.base_width_svg;
       var path_cmds = major_ticks.contains(base) ? path_cmds_vert_major : path_cmds_vert_minor;
       path_cmds.add('M $x $y');
-      path_cmds.add('v ${helix.svg_height()}');
+      path_cmds.add('v ${helix.svg_height}');
       x += props.helix.geometry.base_width_svg;
     }
 

@@ -148,7 +148,7 @@ Using all 288 offsets on each of the 24 helices means the scaffold will be lengt
 
 ## Create first domain of scaffold
 
-**NOTE**: Since this tutorial was written, there is a faster way to rapidly create the scaffold and staples of 
+**NOTE**: Since this tutorial was written, there is a slightly faster way to rapidly create the scaffold and staples of the design, using two features: [autopaste](https://github.com/UC-Davis-molecular-computing/scadnano/issues/580) and [join selected ends by crossovers](https://github.com/UC-Davis-molecular-computing/scadnano/issues/581). Below we indicate when using one of these features would be faster than the tutorial steps.
 
 Now we show how to create DNA strands. As in cadnano, there's a distinction between a strand and a DNA sequence. Although scadnano allows you to assign DNA sequences to strands at any time, it is best to wait until the strand design is finalized to assign a DNA sequence to any strand. Many operations attempt to preserve the DNA that has been assigned so far, but many will be undefined (for example, lengthening a strand) and others may not be what you want (for example, copying an existing strand with DNA assigned and pasting it elsewhere, where it may require a different sequence).
 
@@ -409,7 +409,7 @@ Then paste the same 4 again to make 12:
 
 
 ### Autopaste to create staples
-The rest of the instructions for creating the other left edge staples are slightly more time-consuming than using the new [autopaste](https://github.com/UC-Davis-molecular-computing/scadnano/issues/580) feature. With autopaste, one need only copy the top staple, then press Ctrl+Shift+V repeatedly to create all the other left edge staples. Eventually this tutorial will be updated to officially suggest autopaste, rather than recursive manual copy/pasting, to create most of the staples.
+The instructions above for creating the other left edge staples (after manually drawing the first one on top) are slightly more time-consuming than using the new [autopaste](https://github.com/UC-Davis-molecular-computing/scadnano/issues/580) feature. With autopaste, one need only copy the top staple, then press Ctrl+Shift+V repeatedly to create all the other left edge staples. Eventually this tutorial will be updated to officially suggest autopaste, rather than recursive manual copy/pasting, to create most of the staples.
 
 
 

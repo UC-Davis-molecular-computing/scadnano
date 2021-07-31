@@ -166,7 +166,7 @@ BuiltSet<int> helix_selections_adjust_reducer(
 
 select.Box helix_to_box(Helix helix) {
   //FIXME: this is making boxes that are not far enough apart
-  var position3d = helix.position3d();
+  var position3d = helix.position3d;
   num x, y, width, height;
   var svg_pos = util.position3d_to_side_view_svg(position3d, helix.invert_xy, helix.geometry);
   x = svg_pos.x - helix.geometry.helix_radius_svg;

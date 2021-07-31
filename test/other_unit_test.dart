@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'dart:html';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
+import 'package:scadnano/src/json_serializable.dart';
+import 'package:scadnano/src/reducers/insertion_deletion_reducer.dart';
 import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/grid_position.dart';
@@ -14,6 +16,7 @@ import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/position3d.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:test/test.dart';
+import 'package:scadnano/src/actions/actions.dart' as actions;
 
 import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/util.dart' as util;
@@ -21,7 +24,6 @@ import 'package:scadnano/src/util.dart' as util;
 import 'utils.dart';
 
 main() {
-
   test('util.position3d_to_grid_position', () {
     var grid = Grid.square;
     var geometry = Geometry(helix_radius: 2.0, inter_helix_gap: 1.0);
@@ -67,6 +69,44 @@ main() {
     expect(2, deletions.length);
     expect(5, deletions[0]);
     expect(7, deletions[1]);
+  });
+
+/* 0       8       
+    |-------|
+    [------> 
+    <--x---]
+*/
+  test('duplicate_deletions_in_design_removed', () {
+    var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
+    var design = Design(helices: helices, grid: Grid.square);
+    design = design.strand(0, 0).move(8).commit();
+    design = design.strand(1, 8).move(-8).add_deletion(1, 4).commit();
+    var action = actions.DeletionAdd(domain: design.all_domains[0], offset: 4, all_helices: true);
+    var new_domains = deletion_add_reducer(design.all_domains[0], action);
+    expect(1, new_domains.deletions.length);
+    expect(4, new_domains.deletions[0]);
+    new_domains = deletion_add_reducer(design.all_domains[1], action);
+    expect(1, new_domains.deletions.length);
+    expect(4, new_domains.deletions[0]);
+  });
+
+  /* 0       8       
+    |-------|
+    [------> 
+    <--X---]
+*/
+  test('duplicate_inseritons_in_design_removed', () {
+    var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
+    var design = Design(helices: helices, grid: Grid.square);
+    design = design.strand(0, 0).move(8).commit();
+    design = design.strand(1, 8).move(-8).add_insertion(1, 4, 1).commit();
+    var action = actions.InsertionAdd(domain: design.all_domains[0], offset: 4, all_helices: true);
+    var new_domains = insertion_add_reducer(design.all_domains[0], action);
+    expect(1, new_domains.insertions.length);
+    expect(4, new_domains.insertions[0].offset);
+    new_domains = insertion_add_reducer(design.all_domains[1], action);
+    expect(1, new_domains.insertions.length);
+    expect(4, new_domains.insertions[0].offset);
   });
 
   test('duplicate_insertions_in_JSON_removed', () {
@@ -183,12 +223,13 @@ main() {
     // ensure x and z are swapped after reading in
     //TODO: test for swapping x and z positions in versions < 0.9.0 temporarily disabled until
     // codenano/scadnano versions are aligned
-   expect(design.helices[0].position3d().x, 30);
-   expect(design.helices[0].position3d().y, 60);
-   expect(design.helices[0].position3d().z, 10);
-   expect(design.helices[1].position3d().x, 50);
-   expect(design.helices[1].position3d().y, 80);
-   expect(design.helices[1].position3d().z, 20);
+   expect(design.helices[0].position3d.x, 30);
+   expect(design.helices[0].position3d.y, 60);
+   expect(design.helices[0].position3d.z, 10);
+   expect(design.helices[1].position3d.x, 50);
+   expect(design.helices[1].position3d.y, 80);
+   expect(design.helices[1].position3d.z, 20);
+
   });
 
   group('strand_maker_tests', () {
@@ -421,7 +462,13 @@ main() {
   test('helix.svg_x_to_offset_when_min_offset_is_non-zero', () {
     // Tweak rise per base pair so that svg base width will be exactly 10
     var rise_per_base_pair = 10 / 30.12;
-    var helix = Helix(idx: 0, grid: Grid.square, svg_position: Point(1, 2), min_offset: -5, max_offset: 8, geometry: Geometry(rise_per_base_pair: rise_per_base_pair));
+    var helix = Helix(
+        idx: 0,
+        grid: Grid.square,
+        svg_position: Point(1, 2),
+        min_offset: -5,
+        max_offset: 8,
+        geometry: Geometry(rise_per_base_pair: rise_per_base_pair));
 
     expect(helix.svg_x_to_offset(1), -5);
     expect(helix.svg_x_to_offset(3), -5); // base interior

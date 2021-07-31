@@ -97,7 +97,7 @@ main() {
      */
     Design design = Design.from_json(jsonDecode(json_str), false);
     var expected_position = Position3D(x: 1, y: 2, z: 3);
-    var actual_position = design.helices[0].position3d();
+    var actual_position = design.helices[0].position3d;
     expect(actual_position, expected_position);
   });
 
@@ -136,7 +136,7 @@ main() {
      */
     Design design = Design.from_json(jsonDecode(json_str), false);
     var expected_position = Position3D(x: 1, y: 2, z: 3);
-    var actual_position = design.helices[0].position3d();
+    var actual_position = design.helices[0].position3d;
     expect(actual_position, expected_position);
   });
 
@@ -171,7 +171,7 @@ main() {
      */
     Design design = Design.from_json(jsonDecode(json_str), false);
     var expected_position = Position3D(x: 1, y: 2, z: 3);
-    var actual_position = design.helices[0].position3d();
+    var actual_position = design.helices[0].position3d;
     expect(actual_position, expected_position);
   });
 
@@ -208,7 +208,7 @@ main() {
      */
     Design design = Design.from_json(jsonDecode(json_str), false);
     var expected_position = Position3D(x: 1, y: 2, z: 3);
-    var actual_position = design.helices[0].position3d();
+    var actual_position = design.helices[0].position3d;
     expect(actual_position, expected_position);
   });
 
@@ -5490,12 +5490,12 @@ main() {
 
       expect(state.design.default_group().grid, Grid.none);
       num eps = 0.0001;
-      expect(state.design.helices[0].position3d().x, closeTo(expected_position_h0.x, eps));
-      expect(state.design.helices[0].position3d().y, closeTo(expected_position_h0.y, eps));
-      expect(state.design.helices[0].position3d().z, closeTo(expected_position_h0.z, eps));
-      expect(state.design.helices[1].position3d().x, closeTo(expected_position_h1.x, eps));
-      expect(state.design.helices[1].position3d().y, closeTo(expected_position_h1.y, eps));
-      expect(state.design.helices[1].position3d().z, closeTo(expected_position_h1.z, eps));
+      expect(state.design.helices[0].position3d.x, closeTo(expected_position_h0.x, eps));
+      expect(state.design.helices[0].position3d.y, closeTo(expected_position_h0.y, eps));
+      expect(state.design.helices[0].position3d.z, closeTo(expected_position_h0.z, eps));
+      expect(state.design.helices[1].position3d.x, closeTo(expected_position_h1.x, eps));
+      expect(state.design.helices[1].position3d.y, closeTo(expected_position_h1.y, eps));
+      expect(state.design.helices[1].position3d.z, closeTo(expected_position_h1.z, eps));
     });
 
     test('GridChange_none_to_square', () {
@@ -5507,8 +5507,8 @@ main() {
       Helix original_helix0 = no_grid_two_helices_design.helices[0];
       Helix original_helix1 = no_grid_two_helices_design.helices[1];
       Geometry geometry = no_grid_two_helices_design.geometry;
-      Position3D expected_position0 = original_helix0.position3d();
-      Position3D expected_position1 = original_helix1.position3d();
+      Position3D expected_position0 = original_helix0.position3d;
+      Position3D expected_position1 = original_helix1.position3d;
       // Since positions start out with positive x coordinates, but grid positions set these based
       // on min_offset, x coordinates should become 0.
       expected_position0 =

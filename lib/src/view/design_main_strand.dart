@@ -191,7 +191,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
   }
 
   assign_domain_name_complement_from_bound_strands({Domain domain}) {
-    if (app.state.ui_state.select_mode_state.domains_selectable()) {
+    if (app.state.ui_state.select_mode_state.domains_selectable) {
       List<Domain> domains_selected = app.state.ui_state.selectables_store.selected_domains.toList();
 
       if (!domains_selected.contains(domain)) {

@@ -157,7 +157,7 @@ setup_file_drag_and_drop_listener(Element drop_zone) {
     var ext = path.extension(filename);
     if (dot_exts.contains(ext)) {
       var confirm =
-          app.state.has_error() || window.confirm('Are you sure you want to replace the current design?');
+          app.state.has_error || window.confirm('Are you sure you want to replace the current design?');
 
       if (confirm) {
         FileReader file_reader = new FileReader();

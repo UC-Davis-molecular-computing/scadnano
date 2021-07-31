@@ -55,8 +55,8 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
     String grid_position_str;
 
     String tooltip;
-    if (props.grid.is_none()) {
-      var pos = props.helix.position3d();
+    if (props.grid.is_none) {
+      var pos = props.helix.position3d;
       int precision = constants.NUM_DIGITS_PRECISION_POSITION_DISPLAYED;
       tooltip = '${pos.x.toStringAsFixed(precision)}, ${pos.y.toStringAsFixed(precision)}';
       grid_position_str = '${pos.x.toStringAsFixed(1)},${pos.y.toStringAsFixed(1)}';
@@ -102,7 +102,7 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
       children.add(rot_component);
     }
 
-    Position3D pos3d = props.helix.position3d();
+    Position3D pos3d = props.helix.position3d;
     Point<num> center = util.position3d_to_side_view_svg(pos3d, props.helix.invert_xy, props.helix.geometry);
 
     return (Dom.g()
