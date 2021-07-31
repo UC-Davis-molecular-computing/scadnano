@@ -12,6 +12,7 @@ import 'package:scadnano/src/reducers/nick_ligate_join_by_crossover_reducers.dar
 import 'package:scadnano/src/reducers/assign_domain_names_reducer.dart';
 import 'package:scadnano/src/reducers/strands_reducer.dart';
 import 'package:scadnano/src/state/address.dart';
+import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/grid.dart';
@@ -29,38 +30,279 @@ import 'utils.dart';
 
 main() {
   group('DomainLabelMove', () {
-    /* 0       8
+    test('self_complementary_strand__no_loopouts', () {
+      /* 0       8
        |-------|
          ABC        
     0  [------\
     1  <------/
          XYZ      
     */
-    test('self_complementary_strand__no_insertions', () {
-      var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
-      // var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square),Helix(idx: 1, max_offset: 100, grid: Grid.square) ]; (this is the fix)
+      var helices = [
+        Helix(idx: 0, max_offset: 100, grid: Grid.square),
+        Helix(idx: 1, max_offset: 100, grid: Grid.square)
+      ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design =
-          design.strand(0, 0).move(8).with_domain_name("A").cross(1).move(-8).with_domain_name("B").commit();
-      // var select = actions.AssignDomainNameComplementFromBoundDomains([design.all_domains[0]]);
-      // var state = app_state_from_design(design);
-      // print(state.design.default_group().helices_view_order);
-      // var new_strand = move_strand(strand: design.strands[0], original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse, current_group: state.design.groups["default_group"], delta_view_order: state.design.default_group().helices_view_order[0], delta_offset: 10, delta_forward: true);
-      
-      // print(design.strands[0]);
-      // print(new_strand);
-      var state = app_state_from_design(design);
-      StrandsMove strands_move = StrandsMove(
-        strands_moving:  design.strands,
-        all_strands: design.strands,
-        original_address: Address(forward: true, helix_idx: 0, offset: 4),
-        helices: state.design.helices,
-        groups: state.design.groups,
-        original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
-        copy: false,
-      ).rebuild((b) => b..current_address = Address(forward: false, helix_idx: 0, offset: 8).toBuilder());
-      state = app_state_reducer(state, StrandsMoveCommit(strands_move: strands_move, autopaste: false));
+      design = design
+          .strand(0, 0)
+          .move(8)
+          .with_domain_name("ABC")
+          .cross(1)
+          .move(-8)
+          .with_domain_name("XYZ")
+          .commit();
+
+      AppState state = app_state_from_design(design);
+      StrandsMove strandsMove = null;
+      //Select Strands
+      BuiltList<Selectable> selectables = [design.strands[0]].toBuiltList();
+      int offset = 4;
+      int helix_idx = 0;
+      bool forward = true;
+      Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      state = app_state_reducer(state, SelectAll(selectables: selectables, only: true));
+      state = app_state_reducer(
+          state,
+          StrandsMoveStartSelectedStrands(
+            address: address,
+            copy: false,
+            original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
+          ));
+
+      //Adjust Address
+      offset = 4;
+      helix_idx = 0;
+      forward = false;
+      address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
+      strandsMove = state.ui_state.strands_move;
+
+      //Stop Moving
+      state = app_state_reducer(state, StrandsMoveStop());
+
+      //Commit the Move
+      state = app_state_reducer(state, StrandsMoveCommit(strands_move: strandsMove, autopaste: false));
+      /* 0       8
+       |-------|        
+    0    XYZ
+       <------\
+    1  [------/
+         ABC      
+    */
+      expect(state.design.all_domains[0].name, "ABC");
+      expect(state.design.all_domains[0].helix, 1);
+
+      expect(state.design.all_domains[1].name, "XYZ");
+      expect(state.design.all_domains[1].helix, 0);
+    });
+
+    test('self_complementary_strand__with_loopouts', () {
+      /* 0       8
+       |-------|
+         ABC        
+    0  [------\
+                )
+                )
+    1  <------/
+         XYZ      
+    */
+      var helices = [
+        Helix(idx: 0, max_offset: 100, grid: Grid.square),
+        Helix(idx: 1, max_offset: 100, grid: Grid.square)
+      ];
+      var design = Design(helices: helices, grid: Grid.square);
+
+      design = design
+          .strand(0, 0)
+          .move(8)
+          .with_domain_name("ABC")
+          .loopout(1, 2)
+          .move(-8)
+          .with_domain_name("XYZ")
+          .commit();
+
+      AppState state = app_state_from_design(design);
+      StrandsMove strandsMove = null;
+      //Select Strands
+      BuiltList<Selectable> selectables = [design.strands[0]].toBuiltList();
+      int offset = 4;
+      int helix_idx = 0;
+      bool forward = true;
+      Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      state = app_state_reducer(state, SelectAll(selectables: selectables, only: true));
+      state = app_state_reducer(
+          state,
+          StrandsMoveStartSelectedStrands(
+            address: address,
+            copy: false,
+            original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
+          ));
+
+      //Adjust Address
+      offset = 4;
+      helix_idx = 0;
+      forward = false;
+      address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
+      strandsMove = state.ui_state.strands_move;
+
+      //Stop Moving
+      state = app_state_reducer(state, StrandsMoveStop());
+
+      //Commit the Move
+      state = app_state_reducer(state, StrandsMoveCommit(strands_move: strandsMove, autopaste: false));
+      /* 0       8
+       |-------|
+         ABC        
+    0  <------\
+                )
+                )
+    1  [------/
+         XYZ      
+    */
+      expect(state.design.all_domains[0].name, "ABC");
+      expect(state.design.all_domains[0].helix, 1);
+
+      expect(state.design.all_domains[1].name, "XYZ");
+      expect(state.design.all_domains[1].helix, 0);
+    });
+    test('circular_strand__no_loopouts', () {
+      /* 0       8
+       |-------|
+         ABC        
+    0  /------\
+    1  \------/
+         XYZ      
+    */
+      var helices = [
+        Helix(idx: 0, max_offset: 100, grid: Grid.square),
+        Helix(idx: 1, max_offset: 100, grid: Grid.square)
+      ];
+      var design = Design(helices: helices, grid: Grid.square);
+
+      design = design
+          .strand(0, 0)
+          .move(8)
+          .with_domain_name("ABC")
+          .cross(1)
+          .move(-8)
+          .with_domain_name("XYZ")
+          .as_circular()
+          .commit();
+      AppState state = app_state_from_design(design);
+      StrandsMove strandsMove = null;
+      //Select Strands
+      BuiltList<Selectable> selectables = [design.strands[0]].toBuiltList();
+      int offset = 4;
+      int helix_idx = 0;
+      bool forward = true;
+      Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      state = app_state_reducer(state, SelectAll(selectables: selectables, only: true));
+      state = app_state_reducer(
+          state,
+          StrandsMoveStartSelectedStrands(
+            address: address,
+            copy: false,
+            original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
+          ));
+
+      //Adjust Address
+      offset = 4;
+      helix_idx = 0;
+      forward = false;
+      address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
+      strandsMove = state.ui_state.strands_move;
+
+      //Stop Moving
+      state = app_state_reducer(state, StrandsMoveStop());
+
+      //Commit the Move
+      state = app_state_reducer(state, StrandsMoveCommit(strands_move: strandsMove, autopaste: false));
+      /* 0       8
+       |-------|
+         XYZ        
+    0  /------\
+    1  \------/
+         ABC      
+    */
+      expect(state.design.all_domains[0].name, "ABC");
+      expect(state.design.all_domains[0].helix, 1);
+
+      expect(state.design.all_domains[1].name, "XYZ");
+      expect(state.design.all_domains[1].helix, 0);
+    });
+
+    test('circular_strand__with_loopouts', () {
+      /* 0       8
+       |-------|
+         ABC        
+    0  /------\
+                )
+                )
+    1  \------/
+         XYZ      
+    */
+      var helices = [
+        Helix(idx: 0, max_offset: 100, grid: Grid.square),
+        Helix(idx: 1, max_offset: 100, grid: Grid.square)
+      ];
+      var design = Design(helices: helices, grid: Grid.square);
+
+      design = design
+          .strand(0, 0)
+          .move(8)
+          .with_domain_name("ABC")
+          .loopout(1, 2)
+          .move(-8)
+          .with_domain_name("XYZ")
+          .as_circular()
+          .commit();
+      AppState state = app_state_from_design(design);
+      StrandsMove strandsMove = null;
+      //Select Strands
+      BuiltList<Selectable> selectables = [design.strands[0]].toBuiltList();
+      int offset = 4;
+      int helix_idx = 0;
+      bool forward = true;
+      Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      state = app_state_reducer(state, SelectAll(selectables: selectables, only: true));
+      state = app_state_reducer(
+          state,
+          StrandsMoveStartSelectedStrands(
+            address: address,
+            copy: false,
+            original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
+          ));
+
+      //Adjust Address
+      offset = 4;
+      helix_idx = 0;
+      forward = false;
+      address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
+      strandsMove = state.ui_state.strands_move;
+
+      //Stop Moving
+      state = app_state_reducer(state, StrandsMoveStop());
+
+      //Commit the Move
+      state = app_state_reducer(state, StrandsMoveCommit(strands_move: strandsMove, autopaste: false));
+      /* 0       8
+       |-------|
+         XYZ        
+    0  /------\
+                )
+                )
+    1  \------/
+         ABC      
+    */
+      expect(state.design.all_domains[0].name, "ABC");
+      expect(state.design.all_domains[0].helix, 1);
+
+      expect(state.design.all_domains[1].name, "XYZ");
+      expect(state.design.all_domains[1].helix, 0);
     });
   });
 }
