@@ -143,7 +143,8 @@ class OxdnaSystem {
       // 5 is arbitrarily chosen so that the box has a bit of wiggle room
       // 1.5 multiplier is to make all crossovers appear (advice from Oxdna authors)
       var box = (max_vec - min_vec + OxdnaVector(5, 5, 5)) * 1.5;
-      if (cubic) { // oxDNA requires cubic bounding box with default simulation options
+      if (cubic) {
+        // oxDNA requires cubic bounding box with default simulation options
         var max_side = max(box.x, max(box.y, box.z));
         box = OxdnaVector(max_side, max_side, max_side);
       }
@@ -156,7 +157,11 @@ class OxdnaSystem {
   Tuple2<String, String> oxdna_output() {
     OxdnaVector bbox = compute_bounding_box();
 
-    List<String> dat_list = ['t = 0\nb = ${bbox.x} ${bbox.y} ${bbox.z}\nE = 0 0 0'];
+    List<String> dat_list = [
+      't = 0',
+      'b = ${bbox.x} ${bbox.y} ${bbox.z}',
+      'E = 0 0 0',
+    ];
     List<String> top_list = [];
 
     int nuc_count = 0;
@@ -200,7 +205,6 @@ Tuple3<OxdnaVector, OxdnaVector, OxdnaVector> oxdna_get_helix_vectors(Design des
   /*
     TODO: document functions/methods with docstrings
     :param helix:
-    :param grid:
     :return: return tuple (origin, forward, normal)
         origin  -- the starting point of the center of a helix, assumed to be at offset 0
         forward -- the direction in which the helix propagates
@@ -216,7 +220,7 @@ Tuple3<OxdnaVector, OxdnaVector, OxdnaVector> oxdna_get_helix_vectors(Design des
   forward = forward.rotate(design.yaw_of_helix(helix), normal);
   forward = forward.rotate(-design.pitch_of_helix(helix), OxdnaVector(1, 0, 0));
   normal = normal.rotate(-design.pitch_of_helix(helix), OxdnaVector(1, 0, 0));
-  normal = normal.rotate(helix.roll, forward);
+  normal = normal.rotate(-helix.roll, forward);
 
   double x = 0.0;
   double y = 0.0;

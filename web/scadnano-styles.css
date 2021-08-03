@@ -174,6 +174,7 @@ html, body {
     background: #F9F9F9;
     box-shadow: 3px 3px 2px #E9E9E9;
     border-radius: 4px;
+    z-index: 1;
 }
 
 .context-menu-list {
@@ -187,12 +188,55 @@ html, body {
     color: #333333;
 }
 
-.context-menu-item {
-    padding: 3px;
-    padding-left: 10px;
+.has-submenu {
+    position: relative;
 }
 
-.context-menu-item:hover {
+.has-submenu .context-menu {
+    visibility: hidden;
+}
+
+.context-menu.right {
+    left: 100%;
+}
+
+.context-menu.left {
+    right: 100%;
+}
+
+.context-menu.top {
+    bottom: 0;
+}
+
+.context-menu.bottom {
+    top: 0;
+}
+
+.has-submenu:hover > .context-menu {
+    visibility: visible;
+}
+
+.context-menu-item {
+    display: block;
+    min-width: max-content;
+    padding: 3px 10px;
+    position: relative;
+}
+
+.has-submenu > .context-menu-item::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    border-top: .3em solid transparent;
+    border-right: 0;
+    border-bottom: .3em solid transparent;
+    border-left: .3em solid;
+}
+
+.context-menu-item:hover, 
+.has-submenu:hover > .context-menu-item {
     color: white;
     background: #284570;
     border-radius: 2px;

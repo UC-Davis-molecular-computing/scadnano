@@ -477,15 +477,11 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
 
   view_menu() {
     var elts = [
-      ...view_menu_show_dna(),
-      DropdownDivider({'key': 'divider-show-dna'}),
-      ...view_menu_show_labels(),
-      DropdownDivider({'key': 'divider-show-labels'}),
-      ...view_menu_mods(),
-      DropdownDivider({'key': 'divider-mods'}),
-      ...view_menu_display_major_tick_offsets(),
-      DropdownDivider({'key': 'divider-major-tick-offsets'}),
-      ...view_menu_display_major_tick_widths(),
+      view_menu_show_dna(),
+      view_menu_show_labels(),
+      view_menu_mods(),
+      view_menu_display_major_tick_offsets(),
+      view_menu_display_major_tick_widths(),
       DropdownDivider({'key': 'divider-major-tick-widths'}),
       ...view_menu_zoom_speed(),
       DropdownDivider({'key': 'divider-zoom_speed'}),
@@ -497,8 +493,13 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
     }, elts);
   }
 
-  List view_menu_show_dna() {
-    return [
+  ReactElement view_menu_show_dna() {
+    return (MenuDropdownRight()
+      ..title = 'Show DNA'
+      ..id = 'view_menu_show_dna-dropdown'
+      ..key = 'view_menu_show_dna-dropdown'
+      ..className = 'submenu_item'
+    )([
       (MenuBoolean()
         ..value = props.show_dna
         ..display = 'Show DNA sequences'
@@ -518,11 +519,16 @@ helix with the opposite orientation.'''
           props.dispatch(actions.ShowMismatchesSet(!props.show_mismatches));
         }
         ..key = 'show-mismatches')(),
-    ];
+    ]);
   }
 
-  List view_menu_show_labels() {
-    return [
+  ReactElement view_menu_show_labels() {
+    return (MenuDropdownRight()
+      ..title = 'Show Names'
+      ..id = 'view_menu_show_labels-dropdown'
+      ..key = 'view_menu_show_labels-dropdown'
+      ..className = 'submenu_item'
+    )([
       (MenuBoolean()
         ..value = props.show_strand_names
         ..display = 'Show strand names'
@@ -561,11 +567,16 @@ helix with the opposite orientation.'''
           props.dispatch(actions.ShowDomainNameMismatchesSet(!props.show_domain_name_mismatches));
         }
         ..key = 'show-domain-name-mismatches')(),
-    ];
+    ]);
   }
 
-  List view_menu_mods() {
-    return [
+  ReactElement view_menu_mods() {
+    return (MenuDropdownRight()
+      ..title = 'Modification Settings'
+      ..id = 'view_menu_mods-dropdown'
+      ..key = 'view_menu_mods-dropdown'
+      ..className = 'submenu_item'
+    )([
       (MenuBoolean()
         ..value = props.show_modifications
         ..display = 'Show modifications'
@@ -587,11 +598,16 @@ helix with the opposite orientation.'''
         ..tooltip = 'Adjust to change the font size of text display for modifications.'
         ..on_new_value = ((num font_size) => props.dispatch(actions.ModificationFontSizeSet(font_size)))
         ..key = 'mod-font-size')(),
-    ];
+    ]);
   }
 
-  List view_menu_display_major_tick_offsets() {
-    return [
+  ReactElement view_menu_display_major_tick_offsets() {
+    return (MenuDropdownRight()
+      ..title = 'Major Tick Offset Settings'
+      ..id = 'view_menu_display_major_tick_offsets-dropdown'
+      ..key = 'view_menu_display_major_tick_offsets-dropdown'
+      ..className = 'submenu_item'
+    )([
       (MenuBoolean()
         ..value = props.display_of_major_ticks_offsets
         ..display = 'Display major tick offsets'
@@ -614,11 +630,16 @@ helix with the opposite orientation.'''
         ..tooltip = 'Adjust to change the font size of major tick offsets.'
         ..on_new_value = ((num font_size) => props.dispatch(actions.MajorTickOffsetFontSizeSet(font_size)))
         ..key = 'major-tick-offset-font-size')(),
-    ];
+    ]);
   }
 
-  List<ReactElement> view_menu_display_major_tick_widths() {
-    return [
+  ReactElement view_menu_display_major_tick_widths() {
+    return (MenuDropdownRight()
+      ..title = 'Major Tick Width Settings'
+      ..id = 'view_menu_display_major_tick_widths-dropdown'
+      ..key = 'view_menu_display_major_tick_widths-dropdown'
+      ..className = 'submenu_item'
+    )([
       (MenuBoolean()
         ..value = props.display_major_tick_widths
         ..display = 'Display major tick widths'
@@ -642,7 +663,7 @@ helix with the opposite orientation.'''
         ..tooltip = 'Adjust to change the font size of major tick offsets.'
         ..on_new_value = ((num font_size) => props.dispatch(actions.MajorTickWidthFontSizeSet(font_size)))
         ..key = 'major-tick-width-font-size')(),
-    ];
+    ]);
   }
 
   List<ReactElement> view_menu_zoom_speed() {
@@ -853,6 +874,43 @@ In a large design, this can slow down the performance, so uncheck it when not in
           'target': '_blank',
         },
         'Python scripting API',
+      ),
+      DropdownItem(
+        {
+          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/issues',
+          'target': '_blank',
+          'title': '''\
+To file a bug report or feature request for the scadnano web interface, 
+click on "New issue" on the top right of the Issues page on at the 
+scadnano Github repository.
+
+If it is a bug report, please include as much detailed information as 
+possible, including screenshots if applicable, and a copy of the .sc file 
+that caused the error, and an exact description of the steps needed to
+help us reproduce the error.
+
+Note that you cannot upload a .sc file directly to GitHub, but if you put 
+the .sc file in a .zip file, then it can be uploaded.'''
+        },
+        'Bug report/feature request (web interface)',
+      ),
+      DropdownItem(
+        {
+          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues',
+          'target': '_blank',
+          'title': '''\
+To file a bug report or feature request for the Python scripting library, 
+click on "New issue" on the top right of the Issues page on at the 
+scadnano-python-package Github repository.
+
+If it is a bug report, please include as much detailed information as 
+possible, including a copy of the .sc file that caused the error, and an 
+exact description of the steps needed to help us reproduce the error.
+
+Note that you cannot upload a .sc file directly to GitHub, but if you put 
+the .sc file in a .zip file, then it can be uploaded.'''
+        },
+        'Bug report/feature request (Python library)',
       ),
       DropdownItem(
         {
