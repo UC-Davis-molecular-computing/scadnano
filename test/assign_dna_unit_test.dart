@@ -789,7 +789,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design.strand(0, 0).move(5).commit();
-      design = design.strand(0, 10).move(10).commit();
+      design = design.strand(0, 10).move(-10).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand = design.strands.first;
@@ -902,9 +902,9 @@ main() {
             dna_sequence: dna_sequence,
             warn_on_change: true,
           ));
-      expect(state.design.strands[1].dna_sequence, 'TTT');
+      expect(state.design.strands[1].dna_sequence, 'CCC');
       expect(state.design.strands[2].dna_sequence, 'GGG');
-      expect(state.design.strands[3].dna_sequence, 'CCC');
+      expect(state.design.strands[3].dna_sequence, 'TTT');
     });
 
     test('AssignDNA__two_helices_with_multiple_domain_intersections', () {
@@ -993,9 +993,9 @@ main() {
                       Helix(idx: 1, max_offset: 6, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(1, 3).move(-3).cross(0).move(6).cross(1).move(-3).commit();
-      design = design.strand(1, 0).move(3).cross(0).move(-3).commit();
-      design = design.strand(0, 6).move(-3).cross(1).move(3).commit();
+      design = design.strand(1, 3).move(-3).add_deletion(1, 1).cross(0).move(6).add_deletion(0, 1).add_deletion(0, 4).cross(1).move(-3).add_deletion(1, 4).commit();
+      design = design.strand(1, 0).move(3).add_deletion(1, 1).cross(0).move(-3).add_deletion(0, 1).commit();
+      design = design.strand(0, 6).move(-3).add_deletion(0, 4).cross(1).move(3).add_deletion(1, 4).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand = design.strands.first;
@@ -1044,7 +1044,7 @@ main() {
       state = app_state_reducer(
           state,
           AssignDNA(
-            strand: design.strands[1],
+            strand: design.strands[2],
             assign_complements: true,
             dna_sequence: 'CCT',
             warn_on_change: true,
@@ -1053,7 +1053,7 @@ main() {
       state = app_state_reducer(
           state,
           AssignDNA(
-            strand: design.strands[2],
+            strand: design.strands[1],
             assign_complements: true,
             dna_sequence: 'GGA',
             warn_on_change: true,
