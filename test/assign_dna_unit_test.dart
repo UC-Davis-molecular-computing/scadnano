@@ -877,8 +877,8 @@ main() {
       /*
         0        10
          012   345   678
-        -TTT> -GGG> -CCC>
-        <AAA---CCC---GGG-
+        -CCC> -GGG> -TTT>
+        <GGG---CCC---AAA-
          876   543   210
       */
 
