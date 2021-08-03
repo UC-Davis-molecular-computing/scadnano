@@ -173,6 +173,232 @@ main() {
       expect(state.design.strands[2].dna_sequence, "CGAAT");
     });
 
+    test('AssignDNA__to_strand_with_loopout', () {
+      //     0   4
+      //
+      //     [---\
+      // 0   <---]
+      //           )
+      //           )
+      //           )
+      //           )
+      //           )
+      //     [--->
+      // 1   <---/
+      //
+
+      var helices = [
+        Helix(idx: 0, max_offset: 5, grid: Grid.square),
+        Helix(idx: 1, max_offset: 5, grid: Grid.square)
+      ];
+      var design = Design(helices: helices, grid: Grid.square);
+
+      design = design.strand(0, 0).move(5).loopout(1, 5).move(-5).commit();
+      design = design.strand(0, 5).move(-5).commit();
+      design = design.strand(1, 0).move(5).commit();
+
+      AppState state = app_state_from_design(design);
+      Strand strand = design.strands[1];
+      String dna_sequence = 'GGTTT';
+
+      state = app_state_reducer(
+          state,
+          AssignDNA(
+            strand: strand,
+            assign_complements: true,
+            dna_sequence: dna_sequence,
+            warn_on_change: true,
+          ));
+
+      //     0   4
+      //     AAACC
+      //     [---\
+      // 0   <---]
+      //     TTTGG ) ?
+      //           ) ?
+      //           ) ?
+      //           ) ?
+      //           ) ?
+      //     [--->
+      // 1   <---/
+      //     ?????
+      expect(state.design.strands.length, 3);
+      expect(state.design.strands[0].dna_sequence, "AAACC??????????");
+      expect(state.design.strands[1].dna_sequence, "GGTTT");
+      expect(state.design.strands[2].dna_sequence, null);
+      strand = state.design.strands[2];
+      dna_sequence = 'CGAAT';
+
+      state = app_state_reducer(
+          state,
+          AssignDNA(
+            strand: strand,
+            assign_complements: true,
+            dna_sequence: dna_sequence,
+            warn_on_change: true,
+          ));
+      //     0   4
+      //     AAACC
+      //     [---\
+      // 0   <---]
+      //     TTTGG ) ?
+      //           ) ?
+      //           ) ?
+      //           ) ?
+      //     ATTCG ) ?
+      //     [--->
+      // 1   <---/
+      //     TAAGC
+
+      expect(state.design.strands.length, 3);
+      expect(state.design.strands[0].dna_sequence, "AAACC?????ATTCG");
+      expect(state.design.strands[1].dna_sequence, "GGTTT");
+      expect(state.design.strands[2].dna_sequence, "CGAAT");
+    });
+
+    test('AssignDNA__test_assign_dna__assign_from_strand_multi_other_single', () {
+      //     0       8
+      //
+      //     /-->[--\
+      // 0   <------]
+      //
+      //
+      // 1   \------/
+      //
+
+      var helices = [
+        Helix(idx: 0, max_offset: 8, grid: Grid.square),
+        Helix(idx: 1, max_offset: 8, grid: Grid.square)
+      ];
+      var design = Design(helices: helices, grid: Grid.square);
+
+      design = design.strand(0, 4).move(4).cross(1).move(-8).cross(0).move(4).commit();
+      design = design.strand(0, 8).move(-8).commit();
+
+      AppState state = app_state_from_design(design);
+      Strand strand = design.strands[0];
+      String dna_sequence = 'CTGTATGATTCGAAAC';
+
+      state = app_state_reducer(
+          state,
+          AssignDNA(
+            strand: strand,
+            assign_complements: true,
+            dna_sequence: dna_sequence,
+            warn_on_change: true,
+          ));
+
+      //     0       8
+      //     AAACCTGT
+      //     /-->[--\
+      // 0   <------]
+      //     TTTGGACA
+      //
+      // 1   \------/
+      //     GCTTAGTA
+
+      expect(state.design.strands.length, 2);
+      expect(state.design.strands[0].dna_sequence, "CTGTATGATTCGAAAC");
+      expect(state.design.strands[1].dna_sequence, "ACAGGTTT");
+    });
+
+    test('AssignDNA__test_assign_dna__assign_to_strand_multi_other_single', () {
+      //     0       8
+      //     AAACCTGT
+      //     /-->[--\
+      // 0   <------]
+      //     TTTGGACA
+      //
+      // 1   \------/
+      //     ????????
+
+      var helices = [
+        Helix(idx: 0, max_offset: 8, grid: Grid.square),
+        Helix(idx: 1, max_offset: 8, grid: Grid.square)
+      ];
+      var design = Design(helices: helices, grid: Grid.square);
+
+      design = design.strand(0, 4).move(4).cross(1).move(-8).cross(0).move(4).commit();
+      design = design.strand(0, 8).move(-8).commit();
+
+      AppState state = app_state_from_design(design);
+      Strand strand = design.strands[1];
+      String dna_sequence = 'ACAGGTTT';
+
+      state = app_state_reducer(
+          state,
+          AssignDNA(
+            strand: strand,
+            assign_complements: true,
+            dna_sequence: dna_sequence,
+            warn_on_change: true,
+          ));
+          
+      //     0       8
+      //     AAACCTGT
+      //     /-->[--\
+      // 0   <------]
+      //     TTTGGACA
+      //
+      // 1   \------/
+      //     GCTTAGTA
+
+      expect(state.design.strands.length, 2);
+      expect(state.design.strands[0].dna_sequence, "CTGT????????AAAC");
+      expect(state.design.strands[1].dna_sequence, "ACAGGTTT");
+    });
+
+    test('test_assign_dna__other_strand_fully_defined_already', () {
+      /*
+        0      7
+        [------>
+        
+          
+        <--]
+      */
+
+      var helices = [Helix(idx: 0, max_offset: 10, grid: Grid.square)];
+      var design = Design(helices: helices, grid: Grid.square);
+
+      design = design.strand(0, 0).move(8).commit();
+      design = design.strand(0, 4).move(-4).commit();
+
+      AppState state = app_state_from_design(design);
+      Strand strand1 = design.strands[0];
+      Strand strand2 = design.strands[1];
+      String dna_sequence1 = 'CAAAGTCG';
+      String dna_sequence2 = 'TTTG';
+
+      state = app_state_reducer(
+          state,
+          AssignDNA(
+            strand: strand1,
+            assign_complements: false,
+            dna_sequence: dna_sequence1,
+            warn_on_change: true,
+          ));
+      state = app_state_reducer(
+          state,
+          AssignDNA(
+            strand: strand2,
+            assign_complements: false,
+            dna_sequence: dna_sequence2,
+            warn_on_change: true,
+          ));
+      /*
+        0      7
+        CAAAGTCG
+        [------>
+        
+
+        <--]
+        GTTT
+      */
+      // should not have an error by this point
+      expect('CAAAGTCG', state.design.strands[0].dna_sequence);
+      expect('TTTG', state.design.strands[1].dna_sequence);
+    });
+
     test('AssignDNA__other_strand_fully_defined_already_and_self_extends_beyond', () {
       /*
         0      7
