@@ -220,7 +220,7 @@ Tuple3<OxdnaVector, OxdnaVector, OxdnaVector> oxdna_get_helix_vectors(Design des
   forward = forward.rotate(design.yaw_of_helix(helix), normal);
   forward = forward.rotate(-design.pitch_of_helix(helix), OxdnaVector(1, 0, 0));
   normal = normal.rotate(-design.pitch_of_helix(helix), OxdnaVector(1, 0, 0));
-  normal = normal.rotate(helix.roll, forward);
+  normal = normal.rotate(-helix.roll, forward);
 
   double x = 0.0;
   double y = 0.0;
