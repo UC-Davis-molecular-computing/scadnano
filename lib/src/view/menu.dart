@@ -217,7 +217,7 @@ really want to exit without saving.'''
         ..display = 'Import cadnano v2'
         ..key = 'import-cadnano')(),
       DropdownDivider({'key': 'divider-import-cadnano'}),
-      ...file_menu_save_design_local_storage_options(),
+      file_menu_save_design_local_storage_options(),
       DropdownDivider({'key': 'divide-clear-helix-selection-when-loading-new-design'}),
       (MenuBoolean()
         ..value = props.clear_helix_selection_when_loading_new_design
@@ -232,7 +232,13 @@ design will be selected (based on helix index) on the loaded design.'''
     ]);
   }
 
-  List<ReactElement> file_menu_save_design_local_storage_options() => [
+  ReactElement file_menu_save_design_local_storage_options() =>
+      (MenuDropdownRight()
+        ..title = 'Local storage design save options'
+        ..id = 'file_menu_local-storage-options'
+        ..key = 'file_menu_local-storage-options'
+        ..className = 'submenu_item'
+      )([
         (MenuBoolean()
           ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.on_edit
           ..display = 'Save design in localStorage on every edit'
@@ -257,7 +263,10 @@ all changes made will be lost, so it is not as safe as storing on every edit.'''
           ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.never
           ..display = 'Do not save design in localStorage'
           ..tooltip = '''\
-Never saves the design in localStorage.'''
+Never saves the design in localStorage.
+
+WARNING: you must save your design manually by pressing Ctrl+S or selecting 
+File-->Save, or your design will be lost when you close the browser tab.'''
           ..onChange = ((_) => props.dispatch(
               actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_never())))
           ..key = 'never-save-dna-design-in-local-storage')(),
@@ -268,7 +277,7 @@ Never saves the design in localStorage.'''
 Every <period> seconds, save current design in localStorage (in your web browser). 
 Also saves before exiting.
 This is safer than never saving, or saving only before exiting, but will not save edits
-that occurred between the last edit and a browser crash.'''
+that occurred between the last save and a browser crash.'''
           ..onChange = ((_) => props.dispatch(
               actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_periodic())))
           ..key = 'save-dna-design-in-local-storage-periodically')(),
@@ -281,7 +290,7 @@ that occurred between the last edit and a browser crash.'''
           ..on_new_value = ((num period) => props.dispatch(actions.LocalStorageDesignChoiceSet(
               choice: LocalStorageDesignChoice(LocalStorageDesignOption.periodic, period))))
           ..key = 'period-of-save-dna-design-in-local-storage-periodically')(),
-      ];
+      ]);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // edit menu
@@ -480,8 +489,7 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
       view_menu_show_dna(),
       view_menu_show_labels(),
       view_menu_mods(),
-      view_menu_display_major_tick_offsets(),
-      view_menu_display_major_tick_widths(),
+      view_menu_display_major_ticks_options(),
       DropdownDivider({'key': 'divider-major-tick-widths'}),
       ...view_menu_zoom_speed(),
       DropdownDivider({'key': 'divider-zoom_speed'}),
@@ -495,7 +503,7 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
 
   ReactElement view_menu_show_dna() {
     return (MenuDropdownRight()
-      ..title = 'Show DNA'
+      ..title = 'DNA sequences'
       ..id = 'view_menu_show_dna-dropdown'
       ..key = 'view_menu_show_dna-dropdown'
       ..className = 'submenu_item'
@@ -524,7 +532,7 @@ helix with the opposite orientation.'''
 
   ReactElement view_menu_show_labels() {
     return (MenuDropdownRight()
-      ..title = 'Show Names'
+      ..title = 'Strand/domain names'
       ..id = 'view_menu_show_labels-dropdown'
       ..key = 'view_menu_show_labels-dropdown'
       ..className = 'submenu_item'
@@ -572,7 +580,7 @@ helix with the opposite orientation.'''
 
   ReactElement view_menu_mods() {
     return (MenuDropdownRight()
-      ..title = 'Modification Settings'
+      ..title = 'Modifications'
       ..id = 'view_menu_mods-dropdown'
       ..key = 'view_menu_mods-dropdown'
       ..className = 'submenu_item'
@@ -587,7 +595,14 @@ helix with the opposite orientation.'''
         ..value = props.modification_display_connector
         ..hide = !props.show_modifications
         ..display = 'Display modification connector'
-        ..tooltip = 'Check to display DNA modification connectors.'
+        ..tooltip = """\
+Check to display DNA modification "connectors", short lines that connect 
+the 5'/3' end, or DNA base (for internal modifications), to the modification. 
+This is useful to keep the modification from visually obstructing the design.
+If this is unchecked, then the modification is displayed directly on top of 
+the 5'/3' end or the base. This is useful for visualizing the exact position
+of the modifications, e.g., to see where a pattern of biotins will appear on
+the surface of a DNA origami."""
         ..onChange = ((_) =>
             props.dispatch(actions.SetModificationDisplayConnector(!props.modification_display_connector)))
         ..key = 'display-mod-connector')(),
@@ -595,15 +610,15 @@ helix with the opposite orientation.'''
         ..display = 'Modification font size'
         ..default_value = props.modification_font_size
         ..hide = !props.show_modifications
-        ..tooltip = 'Adjust to change the font size of text display for modifications.'
+        ..tooltip = 'Adjust the font size of modification text representation.'
         ..on_new_value = ((num font_size) => props.dispatch(actions.ModificationFontSizeSet(font_size)))
         ..key = 'mod-font-size')(),
     ]);
   }
 
-  ReactElement view_menu_display_major_tick_offsets() {
+  ReactElement view_menu_display_major_ticks_options() {
     return (MenuDropdownRight()
-      ..title = 'Major Tick Offset Settings'
+      ..title = 'Major ticks'
       ..id = 'view_menu_display_major_tick_offsets-dropdown'
       ..key = 'view_menu_display_major_tick_offsets-dropdown'
       ..className = 'submenu_item'
@@ -630,23 +645,14 @@ helix with the opposite orientation.'''
         ..tooltip = 'Adjust to change the font size of major tick offsets.'
         ..on_new_value = ((num font_size) => props.dispatch(actions.MajorTickOffsetFontSizeSet(font_size)))
         ..key = 'major-tick-offset-font-size')(),
-    ]);
-  }
-
-  ReactElement view_menu_display_major_tick_widths() {
-    return (MenuDropdownRight()
-      ..title = 'Major Tick Width Settings'
-      ..id = 'view_menu_display_major_tick_widths-dropdown'
-      ..key = 'view_menu_display_major_tick_widths-dropdown'
-      ..className = 'submenu_item'
-    )([
+      DropdownDivider({'key': 'divider-major-tick-offset-from-width'}),
       (MenuBoolean()
         ..value = props.display_major_tick_widths
         ..display = 'Display major tick widths'
         ..tooltip =
             'Display the number of bases between each adjacent pair of major ticks, on the first helix.'
         ..onChange =
-            ((_) => props.dispatch(actions.SetDisplayMajorTickWidths(!props.display_major_tick_widths)))
+        ((_) => props.dispatch(actions.SetDisplayMajorTickWidths(!props.display_major_tick_widths)))
         ..key = 'display-major-tick-widths')(),
       (MenuBoolean()
         ..value = props.display_major_tick_widths_all_helices
@@ -790,26 +796,33 @@ In a large design, this can slow down the performance, so uncheck it when not in
       },
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.side)))
+        ..tooltip = "Export SVG figure of side view (cross-section of helices on the left side of screen)."
         ..display = 'SVG side view')(),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.main)))
+        ..tooltip = "Export SVG figure of main view (design shown in center of screen)."
         ..display = 'SVG main view')(),
       (MenuDropdownItem()
         ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna))
+        ..tooltip = "Export DNA sequences of strands to a file."
         ..display = 'DNA sequences')(),
       DropdownDivider({'key': 'divider-not-full-design'}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile()))
+        ..tooltip = "Export design to cadnano (version 2) .json file."
         ..display = 'cadnano v2'
         ..key = 'export-cadnano')(),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.OxdnaExport()))
+        ..tooltip = "Export design to oxDNA .dat and .top files, which can be loaded in oxDNA or oxView."
         ..display = 'oxDNA'
         ..key = 'export-oxdna')(),
-      (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.ExportCodenanoFile()))
-        ..display = 'codenano'
-        ..key = 'export-codenano')(),
+      //TODO: figure out if ENSnano is close to codenano format; if so this might work for exporting to it.
+      // (MenuDropdownItem()
+      //   ..on_click = ((_) => props.dispatch(actions.ExportCodenanoFile()))
+      //   ..tooltip = "Export design to codenano format."
+      //   ..display = 'codenano'
+      //   ..key = 'export-codenano')(),
     );
   }
 
@@ -844,21 +857,21 @@ In a large design, this can slow down the performance, so uncheck it when not in
           'href': 'https://github.com/UC-Davis-molecular-computing/scadnano#readme',
           'target': '_blank',
         },
-        'Web interface help',
+        'help (web interface)',
       ),
       DropdownItem(
         {
           'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/tutorial/tutorial.md',
           'target': '_blank',
         },
-        'Web interface tutorial',
+        'tutorial (web interface)',
       ),
       DropdownItem(
         {
           'href': 'https://github.com/UC-Davis-molecular-computing/scadnano-python-package#readme',
           'target': '_blank',
         },
-        'Python scripting help',
+        'help (Python scripting)',
       ),
       DropdownItem(
         {
@@ -866,7 +879,7 @@ In a large design, this can slow down the performance, so uncheck it when not in
               'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/tutorial/tutorial.md',
           'target': '_blank',
         },
-        'Python scripting tutorial',
+        'tutorial (Python scripting)',
       ),
       DropdownItem(
         {
@@ -910,16 +923,21 @@ exact description of the steps needed to help us reproduce the error.
 Note that you cannot upload a .sc file directly to GitHub, but if you put 
 the .sc file in a .zip file, then it can be uploaded.'''
         },
-        'Bug report/feature request (Python library)',
+        'Bug report/feature request (Python scripting)',
       ),
       DropdownItem(
         {
           'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/releases',
           'target': '_blank',
-          //TODO: figure out how to give a DropdownItem a tooltip
-//          'title': 'Only a valid link on the main site scadnano.org, not on scadnano.org/dev'
         },
-        'Release notes',
+        'Release notes (web interface)',
+      ),
+      DropdownItem(
+        {
+          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/releases',
+          'target': '_blank',
+        },
+        'Release notes (Python scripting)',
       ),
       // older_versions_link_dropdown,
       (MenuDropdownRight()
