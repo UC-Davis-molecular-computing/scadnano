@@ -336,7 +336,7 @@ main() {
           
       //     0       8
       //     AAACCTGT
-      //     /-->[--\ 
+      //     /-->[--\
       // 0   <------]
       //     TTTGGACA
       //
@@ -543,18 +543,12 @@ main() {
 
     test('AssignDNA__adapter_assigned_from_scaffold_and_tiles', () {
       /*
-          0    5    10    
-            TTTCCATT 
-      0     [------\
-                    |
-          GAAATGAAAATG   
-          <----\<---+]  
-                |   |
-                |   |
-          AATTTG|TGCCGG  
-      1   [----/[---+>    
-            GGCACAAA|
-            <------/
+          01 2345     6789  01
+           [-TTTC-----CATT-------+
+        <-GT-AAAG-+ <-GTAA--AA-] |
+                       |         |
+        [-AA-TTTG-+ [-TGCC--GG-> |
+           <-AAAC-----ACGG-------+
       */
 
       var helices = [
@@ -607,18 +601,14 @@ main() {
 
     test('AssignDNA__adapter_assigned_from_scaffold_and_tiles_with_deletions', () {
       /*
-          0    5    10    
-            T TCCA T 
-      0     [x----x\
-                    |
-          GA ATGAAA TG   
-          <-x--\<--x+]  
-                |   |
-                |   |
-          AATTTG|TG CGG  
-      1   [----/[--x+>    
-            G CACAAA|
-            <x-----/
+          01 2345     6789  01
+              X         X           deletions
+           [-T TC-----CA T-------+
+        <-GT-A AG-+ <-GT A--AA-] |
+                       |         |
+        [-AA-TTTG-+ [-TG C--GG-> |
+           <-AAAC-----AC G-------+
+                        X           deletions
       */
 
       var helices = [
@@ -677,19 +667,15 @@ main() {
     });
 
     test('AssignDNA__adapter_assigned_from_scaffold_and_tiles_with_insertions', () {
-      /*
-          0    5    10    
-            T TCCA T 
-      0     [x----x\
-                    |
-          GA ATGAAA TG   
-          <-x--\<--x+]  
-                |   |
-                |   |
-          AATTTG|TG CGG  
-      1   [----/[--x+>    
-            G CACAAA|
-            <x-----/
+     /*
+          01 2345     6789  01
+                         I          insertions
+           [-TTTC-----CATTT-------+
+        <-GT-AAAG-+ <-GTAA--AA-]  |
+                       |          |
+        [-AA-TTTG-+ [-TG C--GG->  |
+           <-AAAC-----ACGGG-------+
+                         I           insertions
       */
 
       var helices = [
