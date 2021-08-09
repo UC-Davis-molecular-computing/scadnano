@@ -132,7 +132,12 @@ Set<int> view_order_moving(StrandsMove strands_move) {
   Set<int> ret = {};
   for (var strand in strands_move.strands_moving) {
     for (var domain in strand.domains) {
-      ret.add(strands_move.original_helices_view_order_inverse[domain.helix]);
+      var view_order_of_helix = strands_move.original_helices_view_order_inverse[domain.helix];
+      if (view_order_of_helix == null) {
+        throw AssertionError(
+            "Helix: ${domain.helix}, has no inverse in strands_move.original_helices_view_order_inverse ${strands_move.original_helices_view_order_inverse}");
+      }
+      ret.add(view_order_of_helix);
     }
   }
   return ret;
