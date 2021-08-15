@@ -11,6 +11,12 @@ html, body {
 ** BEGIN layout
 ************************************************/
 
+input[type = checkbox] {
+    margin-right: 4px;
+}
+label + select {
+    margin-left: 4px;
+}
 .radio-left {
     text-align: left;
 }

@@ -12,6 +12,7 @@ import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
+import 'package:scadnano/src/state/idt_fields.dart';
 import 'package:scadnano/src/state/substrand.dart';
 
 import '../state/address.dart';
@@ -2664,6 +2665,24 @@ abstract class DeletionRemove
   DeletionRemove._();
 
   static Serializer<DeletionRemove> get serializer => _$deletionRemoveSerializer;
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// edit IDT fields of strands
+abstract class IDTFieldsEdit
+    with BuiltJsonSerializable, UndoableAction
+    implements SingleStrandAction, Built<IDTFieldsEdit, IDTFieldsEditBuilder> {
+  Strand get strand;
+
+  IDTFields get idt_fields;
+
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory IDTFieldsEdit({Strand strand, IDTFields idt_fields}) =
+      _$IDTFieldsEdit._;
+
+  IDTFieldsEdit._();
+
+  static Serializer<IDTFieldsEdit> get serializer => _$iDTFieldsEditSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

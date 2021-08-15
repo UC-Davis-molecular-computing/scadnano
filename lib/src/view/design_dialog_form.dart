@@ -271,7 +271,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
       for (var option in item.options) {
         // components.add((Dom.br()..key = 'br-$radio_idx')());
         components.add((Dom.option()
-          // ..type = 'radio'
+          // ..type = 'select'
           ..id = 'radio-${radio_idx}'
           ..disabled = disabled
           ..name = item.label
@@ -285,11 +285,23 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
             new_responses[dialog_item_idx] = response.rebuild((b) => b.selected_idx = selected_radio_idx);
             setState(newState()..responses = new_responses.build());
           }
-          ..key = '$radio_idx')());
+          ..key = '$radio_idx')(option));
         // components.add((Dom.label()..key = 'label-$radio_idx')(option));
         radio_idx++;
       }
-      return (Dom.select()..className = 'radio-left')('${item.label}: ', components);
+      return Dom.div()(
+          (Dom.label()('${item.label}:')),
+          (Dom.select()
+            ..className = 'radio-left'
+            ..disabled = disabled
+            ..onChange = (SyntheticFormEvent e) {
+              var selected_title = e.target.value;
+              int selected_radio_idx = item.options.indexOf(selected_title);
+              DialogRadio response = state.responses[dialog_item_idx];
+              var new_responses = state.responses.toBuilder();
+              new_responses[dialog_item_idx] = response.rebuild((b) => b.selected_idx = selected_radio_idx);
+              setState(newState()..responses = new_responses.build());
+            })('${item.label}: ', components));
     } else if (item is DialogLink) {
       return (Dom.a()
         ..href = item.link

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:html';
 
 import 'package:meta/meta.dart';
@@ -5,6 +6,7 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
+import 'package:scadnano/src/state/idt_fields.dart';
 
 import 'design_main_strand_and_domain_names.dart';
 import 'transform_by_helix_group.dart';
@@ -213,6 +215,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
   add_modification(Domain domain, Address address, bool is_5p) =>
       app.disable_keyboard_shortcuts_while(() => ask_for_add_modification(domain, address, is_5p));
 
+  edit_idt_fields() => app.disable_keyboard_shortcuts_while(ask_for_edit_idt_fields);
+
   set_strand_name() => app.disable_keyboard_shortcuts_while(ask_for_strand_name);
 
   set_domain_name(Domain domain) => app.disable_keyboard_shortcuts_while(() => ask_for_domain_name(domain));
@@ -313,34 +317,37 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           {@required Domain domain, @required Address address, @required bool is_5p}) =>
       [
         ContextMenuItem(
-          title: 'edit DNA',
-          nested: [
-            ContextMenuItem(
-              title: 'assign DNA',
-              tooltip: '''\
+            title: 'edit DNA',
+            nested: [
+              ContextMenuItem(
+                title: 'assign DNA',
+                tooltip: '''\
 Assign a specific DNA sequence to this strand (and optionally assign complementary
 sequence to strands bound to it).
 ''',
-              on_click: assign_dna,
-            ),
-            ContextMenuItem(
-              title: 'assign DNA complement from bound strands',
-              tooltip: '''\
+                on_click: assign_dna,
+              ),
+              ContextMenuItem(
+                title: 'assign DNA complement from bound strands',
+                tooltip: '''\
 If other strands bound to this strand (or the selected strands) have DNA already 
 assigned, assign the complementary DNA sequence to this strand.
 ''',
-              on_click: assign_dna_complement_from_bound_strands,
-            ),
-            if (strand.dna_sequence != null)
-              ContextMenuItem(
-                title: 'remove DNA',
-                on_click: remove_dna,
+                on_click: assign_dna_complement_from_bound_strands,
               ),
-          ].build()
-        ),
+              if (strand.dna_sequence != null)
+                ContextMenuItem(
+                  title: 'remove DNA',
+                  on_click: remove_dna,
+                ),
+            ].build()),
         ContextMenuItem(
           title: 'add modification',
           on_click: () => add_modification(domain, address, is_5p),
+        ),
+        ContextMenuItem(
+          title: 'edit idt fields',
+          on_click: edit_idt_fields,
         ),
         ContextMenuItem(
           title: strand.is_scaffold ? 'set as non-scaffold' : 'set as scaffold',
@@ -350,41 +357,40 @@ assigned, assign the complementary DNA sequence to this strand.
             title: 'set color',
             on_click: () => app.dispatch(actions.StrandColorPickerShow(strand: props.strand))),
         ContextMenuItem(
-          title: 'edit name',
-          nested: [
-            ContextMenuItem(
-              title: 'set strand name',
-              on_click: set_strand_name,
-            ),
-            if (props.strand.name != null)
+            title: 'edit name',
+            nested: [
               ContextMenuItem(
-                  title: 'remove strand name',
-                  on_click: () => app.dispatch(actions.StrandNameSet(name: null, strand: props.strand))),
-            ContextMenuItem(
-              title: 'set domain name',
-              on_click: () => set_domain_name(domain),
-            ),
-            ContextMenuItem(
-              title: 'assign domain name complement from bound strands',
-              tooltip: '''\
+                title: 'set strand name',
+                on_click: set_strand_name,
+              ),
+              if (props.strand.name != null)
+                ContextMenuItem(
+                    title: 'remove strand name',
+                    on_click: () => app.dispatch(actions.StrandNameSet(name: null, strand: props.strand))),
+              ContextMenuItem(
+                title: 'set domain name',
+                on_click: () => set_domain_name(domain),
+              ),
+              ContextMenuItem(
+                title: 'assign domain name complement from bound strands',
+                tooltip: '''\
 If other strands bound to this strand (or the selected strands) have domain names already 
 assigned, assign the complementary domain names sequence to this strand.
 ''',
-              on_click: assign_domain_name_complement_from_bound_strands,
-            ),
-            if (domain.name != null)
-              ContextMenuItem(
-                  title: 'remove domain name',
-                  on_click: () => app.dispatch(actions.SubstrandNameSet(name: null, substrand: domain))),
-          ].build()
-        ),
+                on_click: assign_domain_name_complement_from_bound_strands,
+              ),
+              if (domain.name != null)
+                ContextMenuItem(
+                    title: 'remove domain name',
+                    on_click: () => app.dispatch(actions.SubstrandNameSet(name: null, substrand: domain))),
+            ].build()),
         ContextMenuItem(
-          title: 'reflect',
-          nested: [
-          ContextMenuItem(
-            title: 'reflect horizontally',
-            on_click: () => reflect(true, false),
-            tooltip: '''\
+            title: 'reflect',
+            nested: [
+              ContextMenuItem(
+                title: 'reflect horizontally',
+                on_click: () => reflect(true, false),
+                tooltip: '''\
 replace strand(s) with horizontal mirror image, 
 without reversing polarity "vertically"
 
@@ -396,11 +402,11 @@ after:
   strand's 5' end on helix 0
   strand's 3' end on helix 1\
 ''',
-          ),
-          ContextMenuItem(
-            title: 'reflect horizontally (reverse vertical polarity)',
-            on_click: () => reflect(true, true),
-            tooltip: '''\
+              ),
+              ContextMenuItem(
+                title: 'reflect horizontally (reverse vertical polarity)',
+                on_click: () => reflect(true, true),
+                tooltip: '''\
 replace strand(s) with horizontal mirror image, 
 with polarity reversed "vertically" 
 
@@ -412,11 +418,11 @@ after:
   strand's 5' end on helix 1
   strand's 3' end on helix 0\
 ''',
-          ),
-          ContextMenuItem(
-            title: 'reflect vertically',
-            on_click: () => reflect(false, false),
-            tooltip: '''\
+              ),
+              ContextMenuItem(
+                title: 'reflect vertically',
+                on_click: () => reflect(false, false),
+                tooltip: '''\
 replace strand(s) with vertical mirror image, 
 without reversing polarity "vertically"
 
@@ -426,11 +432,11 @@ before:
 after:
   strand's 5' end is still on a helix below that of the strand's 3' end\
 ''',
-          ),
-          ContextMenuItem(
-            title: 'reflect vertically (reverse vertical polarity)',
-            on_click: () => reflect(false, true),
-            tooltip: '''\
+              ),
+              ContextMenuItem(
+                title: 'reflect vertically (reverse vertical polarity)',
+                on_click: () => reflect(false, true),
+                tooltip: '''\
 replace strand(s) with vertical mirror image, 
 with polarity reversed "vertically"
 
@@ -440,10 +446,81 @@ before:
 after:
   strand's 5' end is now on a helix above that of the strand's 3' end\
 ''',
-          ),
-          ].build()
-        ),
+              ),
+            ].build()),
       ];
+  Future<void> ask_for_edit_idt_fields() async {
+    int custom_scale_check_idx = 0;
+    int scale_options_idx = 1;
+    int scale_custom_idx = 2;
+    int custom_purification_check_idx = 3;
+    int purification_options_idx = 4;
+    int purification_custom_idx = 5;
+    int well_idx = 6;
+    int plate_idx = 7;
+    var items = List<DialogItem>.filled(8, null, growable: true);
+    items[custom_scale_check_idx] = DialogCheckbox(label: "use custom scale");
+    var options_scale = {
+      "25nm",
+      "100nm",
+      "250nm",
+      "1um",
+      "2um",
+      "5um",
+      "10um",
+      "4nmU",
+      "20nmU",
+      "PU",
+      "25nmS",
+      "other"
+    };
+    items[scale_options_idx] = DialogRadio(
+        label: "scale",
+        options: options_scale,
+        radio: false);
+    items[scale_custom_idx] = DialogText(label: "custom scale");
+
+    //items[1] = DialogCheckbox(label: "apply to all selected strands");
+    items[custom_purification_check_idx] = DialogCheckbox(label: "use custom purification");
+    var options_purification = {"STD", "PAGE", "HPLC", "IEHPLC", "RNASE", "DUALHPLC", "PAGEHPLC", "other"};
+    items[purification_options_idx] = DialogRadio(
+        label: "purification",
+        options: options_purification,
+        radio: false);
+    items[purification_custom_idx] = DialogText(label: "custom purification");
+
+    items[well_idx] = DialogText(label: "well", value: props.strand.idt != null ? props.strand.idt.well : "");
+    items[plate_idx] =
+        DialogText(label: "plate", value: props.strand.idt != null ? props.strand.idt.plate : "");
+
+    var dialog = Dialog(title: "edit idt fields", items: items, disable_when_any_checkboxes_off: {
+      scale_custom_idx: [custom_scale_check_idx],
+      purification_custom_idx: [custom_purification_check_idx]
+    }, disable_when_any_checkboxes_on: {
+      scale_options_idx: [custom_scale_check_idx],
+      purification_options_idx: [custom_purification_check_idx]
+    });
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+    String scale, purification, well, plate;
+    if ((results[custom_scale_check_idx] as DialogCheckbox).value) {
+      scale = (results[scale_custom_idx] as DialogText).value;
+    } else {
+      scale = (results[scale_options_idx] as DialogRadio).value;
+    }
+
+    if ((results[custom_purification_check_idx] as DialogCheckbox).value) {
+      purification = (results[purification_custom_idx] as DialogText).value;
+    } else {
+      purification = (results[purification_options_idx] as DialogRadio).value;
+    }
+
+    well = (results[well_idx] as DialogText).value;
+    plate = (results[plate_idx] as DialogText).value;
+    var idt_fields = IDTFields(scale: scale, purification: purification, plate: plate, well: well);
+    var action = actions.IDTFieldsEdit(idt_fields: idt_fields, strand: props.strand);
+    app.dispatch(action);
+  }
 
   Future<void> ask_for_add_modification(
       [Domain domain = null, Address address = null, bool is_5p = null]) async {
