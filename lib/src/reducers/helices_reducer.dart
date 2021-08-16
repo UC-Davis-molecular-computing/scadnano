@@ -397,17 +397,16 @@ Design helix_remove_all_selected_design_global_reducer(
   var new_helices = remove_helices_assuming_no_domains(design.helices, helix_idxs);
 
   // remove view order entries for helices that are being removed
-  var group = design.groups[state.ui_state.displayed_group_name];
-  Set<List<int>> old_view_orders = {
-    [for (var helix_idx in helix_idxs) group.helices_view_order_inverse[helix_idx]]
-  };
-  List<int> new_helices_view_order = group.helices_view_order.toList();
-  for (var old_view_order in old_view_orders) {
-    new_helices_view_order.removeWhere((order) => old_view_order.contains(order));
-  }
-  var new_group = group.rebuild((b) => b..helices_view_order.replace(new_helices_view_order));
   var new_groups = design.groups.toMap();
-  new_groups[state.ui_state.displayed_group_name] = new_group;
+  for (var group_name in design.groups.keys) {
+    var group = design.groups[group_name];
+    var new_helices_view_order = group.helices_view_order.toList();
+    for(var helix_idx in helix_idxs){
+      new_helices_view_order.remove(helix_idx); //automatically checks if it contains helix_idx
+    }
+    var new_group = group.rebuild((b) => b..helices_view_order.replace(new_helices_view_order));
+    new_groups[group_name] = new_group;
+  }
 
   var new_helices_list = util.helices_assign_svg(
       state.design.geometry, state.ui_state.invert_xy, new_helices.toMap(), new_groups.build());
