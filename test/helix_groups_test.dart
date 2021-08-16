@@ -112,7 +112,7 @@ main() {
 
     test('remove_helix__same_group__helix_idx_in_numerical_order', () {
       List<Helix> helices = [];
-      //Create 2 groups
+      //Create 2 groups 
       for (int i = 0; i < 10; i++) {
         helices.add(Helix(idx: i, grid: Grid.square, grid_position: GridPosition(0, i), group: "First"));
       }
