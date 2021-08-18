@@ -121,13 +121,21 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
   @override
   componentDidMount() {
     var elt = querySelector('#${group_id()}');
-    elt.addEventListener('contextmenu', on_context_menu);
+    if (elt != null) {
+      elt.addEventListener('contextmenu', on_context_menu);
+    } else {
+      print('WARNING: no element found on page with group ID = ${group_id()}');
+    }
   }
 
   @override
   componentWillUnmount() {
     var elt = querySelector('#${group_id()}');
-    elt.removeEventListener('contextmenu', on_context_menu);
+    if (elt != null) {
+      elt.removeEventListener('contextmenu', on_context_menu);
+    } else {
+      print('WARNING: no element found on page with group ID = ${group_id()}');
+    }
     super.componentWillUnmount();
   }
 
