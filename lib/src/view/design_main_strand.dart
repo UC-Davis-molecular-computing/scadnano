@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:html';
 
+import 'package:dialog/dialog.dart';
 import 'package:meta/meta.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
@@ -449,6 +450,40 @@ after:
               ),
             ].build()),
       ];
+
+  select_index_for_one_strand(String idt_option, Set<String> options) {
+    if (options.contains(idt_option)) {
+      return options.toList().indexOf(idt_option);
+    } else {
+      return 0;
+    }
+  }
+
+  select_scale_index_for_multiple_strands(List<Strand> all_strands, Set<String> options) {
+    bool all_same_scale = all_strands.every((element) => all_strands[0].idt?.scale == element.idt?.scale);
+    if (all_same_scale)
+      return select_index_for_one_strand(all_strands[0].idt?.scale, options);
+    else
+      return 0;
+  }
+
+  select_purification_index_for_multiple_strands(List<Strand> all_strands, Set<String> options) {
+    bool all_same_purification =
+        all_strands.every((element) => all_strands[0].idt?.purification == element.idt?.purification);
+    if (all_same_purification)
+      return select_index_for_one_strand(all_strands[0].idt?.purification, options);
+    else
+      return 0;
+  }
+
+  select_plate_number(List<Strand> all_strands) {
+    bool all_same_plate = all_strands.every((element) => all_strands[0].idt?.plate == element.idt?.plate);
+    if (all_same_plate) {
+      return all_strands[0].idt?.plate;
+    } else
+      return null;
+  }
+
   Future<void> ask_for_edit_idt_fields() async {
     int custom_scale_check_idx = 0;
     int scale_options_idx = 1;
@@ -458,9 +493,12 @@ after:
     int purification_custom_idx = 5;
     int well_idx = 6;
     int plate_idx = 7;
+    var all_strands = app.state.ui_state.selectables_store.selected_strands.toList();
+    if (all_strands.length == 0) all_strands.add(props.strand);
     var items = List<DialogItem>.filled(8, null, growable: true);
-    items[custom_scale_check_idx] = DialogCheckbox(label: "use custom scale");
+    var options_purification = {"", "STD", "PAGE", "HPLC", "IEHPLC", "RNASE", "DUALHPLC", "PAGEHPLC"};
     var options_scale = {
+      "",
       "25nm",
       "100nm",
       "250nm",
@@ -472,28 +510,67 @@ after:
       "20nmU",
       "PU",
       "25nmS",
-      "other"
     };
+
+    items[custom_scale_check_idx] = DialogCheckbox(label: "use custom scale");
     items[scale_options_idx] = DialogRadio(
         label: "scale",
         options: options_scale,
-        radio: false);
-    items[scale_custom_idx] = DialogText(label: "custom scale");
+        radio: false,
+        tooltip: """25nm : 25nmole
+100nm : 100 nmole
+250nm : 250 nmole
+1um : 1 µmole
+2um	: 2 umole
+5um	: 5 µmole
+10um : 10 µmole
+4nmU : 4 nmole Ultramer™
+20nmU : 20 nmole Ultramer™
+PU : PAGE Ultramer™
+25nmS : 5 nmole Sameday
+""",
+        selected_idx: all_strands.length > 1
+            ? select_scale_index_for_multiple_strands(all_strands, options_scale)
+            : select_index_for_one_strand(props.strand.idt?.scale, options_scale));
 
-    //items[1] = DialogCheckbox(label: "apply to all selected strands");
+    items[scale_custom_idx] = DialogText(
+        label: "custom scale",
+        value: props.strand.idt != null && !options_scale.toList().contains(props.strand.idt.scale)
+            ? props.strand.idt.scale
+            : "");
+
     items[custom_purification_check_idx] = DialogCheckbox(label: "use custom purification");
-    var options_purification = {"STD", "PAGE", "HPLC", "IEHPLC", "RNASE", "DUALHPLC", "PAGEHPLC", "other"};
     items[purification_options_idx] = DialogRadio(
         label: "purification",
         options: options_purification,
-        radio: false);
-    items[purification_custom_idx] = DialogText(label: "custom purification");
+        radio: false,
+        tooltip: """STD	: Standard Desalting
+PAGE : PAGE
+HPLC : HPLC 
+IEHPLC : IE HPLC
+RNASE : RNase Free HPLC
+DUALHPLC : Dual HPLC
+PAGEHPLC : Dual PAGE & HPLC
+""",
+        selected_idx: all_strands.length > 1
+            ? select_purification_index_for_multiple_strands(all_strands, options_purification)
+            : select_index_for_one_strand(props.strand.idt?.purification, options_purification));
 
-    items[well_idx] = DialogText(label: "well", value: props.strand.idt != null ? props.strand.idt.well : "");
-    items[plate_idx] =
-        DialogText(label: "plate", value: props.strand.idt != null ? props.strand.idt.plate : "");
+    items[purification_custom_idx] = DialogText(
+        label: "custom purification",
+        value: (props.strand.idt != null &&
+                !options_purification.toList().contains(props.strand.idt.purification)
+            ? props.strand.idt.purification
+            : ""));
 
-    var dialog = Dialog(title: "edit idt fields", items: items, disable_when_any_checkboxes_off: {
+    items[well_idx] = DialogText(
+        label: "well",
+        value: props.strand.idt != null ? props.strand.idt.well : "",
+        tooltip: all_strands.length > 1 ? "Only individual strands can have a well assigned." : "");
+    items[plate_idx] = DialogText(label: "plate", value: select_plate_number(all_strands) ?? "");
+    var dialog = Dialog(title: "edit idt fields", items: items, force_disable: {
+      if (all_strands.length > 1) well_idx
+    }, disable_when_any_checkboxes_off: {
       scale_custom_idx: [custom_scale_check_idx],
       purification_custom_idx: [custom_purification_check_idx]
     }, disable_when_any_checkboxes_on: {
@@ -503,6 +580,7 @@ after:
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
     String scale, purification, well, plate;
+
     if ((results[custom_scale_check_idx] as DialogCheckbox).value) {
       scale = (results[scale_custom_idx] as DialogText).value;
     } else {
@@ -514,12 +592,26 @@ after:
     } else {
       purification = (results[purification_options_idx] as DialogRadio).value;
     }
-
-    well = (results[well_idx] as DialogText).value;
     plate = (results[plate_idx] as DialogText).value;
-    var idt_fields = IDTFields(scale: scale, purification: purification, plate: plate, well: well);
-    var action = actions.IDTFieldsEdit(idt_fields: idt_fields, strand: props.strand);
-    app.dispatch(action);
+
+    if (all_strands.length > 1) {
+      for (var strand in all_strands) {
+        var idt_fields = IDTFields(
+            scale: (scale == "" && strand.idt?.scale != null) ? strand.idt.scale : scale,
+            purification: (purification == "" && strand.idt?.purification != null)
+                ? strand.idt.purification
+                : purification,
+            plate: (plate == "" && strand.idt?.plate != null) ? strand.idt.plate : plate,
+            well: (strand.idt?.well != null) ? strand.idt.well : "");
+        var action = actions.IDTFieldsEdit(idt_fields: idt_fields, strand: strand);
+        app.dispatch(action);
+      }
+    } else {
+      well = (results[well_idx] as DialogText).value;
+      var idt_fields = IDTFields(scale: scale, purification: purification, plate: plate, well: well);
+      var action = actions.IDTFieldsEdit(idt_fields: idt_fields, strand: props.strand);
+      app.dispatch(action);
+    }
   }
 
   Future<void> ask_for_add_modification(

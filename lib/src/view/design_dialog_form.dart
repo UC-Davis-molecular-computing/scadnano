@@ -98,6 +98,10 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         }
       }
 
+      if (props.dialog.force_disable.contains(component_idx)) {
+        disabled = true;
+      }
+
       var component = (Dom.div()
         ..className = 'dialog-form-item'
         ..key = item.label)(dialog_for(item, component_idx++, disabled));
@@ -147,6 +151,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
           ..type = 'checkbox'
           ..disabled = disabled
           ..checked = item.value
+          ..title = item.tooltip ?? ""
           ..onChange = (SyntheticFormEvent e) {
             var new_responses = state.responses.toBuilder();
             bool new_checked = e.target.checked;
@@ -177,6 +182,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
           ..type = 'text'
           ..disabled = disabled
           ..value = item.value
+          ..title = item.tooltip ?? ""
           ..size = item.size
 //          ..width = '${item.size}ch'
           ..onChange = (SyntheticFormEvent e) {
@@ -194,6 +200,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
           ..form = 'dialog-form-form'
           ..disabled = disabled
           ..value = item.value
+          ..title = item.tooltip ?? ""
           ..rows = item.rows
           ..cols = item.cols
           ..onChange = (SyntheticFormEvent e) {
@@ -210,6 +217,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         (Dom.input()
           ..type = 'number'
           ..disabled = disabled
+          ..title = item.tooltip ?? ""
           ..pattern = r'-?\d+' // allow to type integers
           ..value = item.value
           ..onChange = (SyntheticFormEvent e) {
@@ -227,6 +235,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         (Dom.input()
           ..type = 'number'
           ..disabled = disabled
+          ..title = item.tooltip ?? ""
           ..pattern = r'[+-]?(\d*[.])?\d+' // allow to type floating numbers
           ..value = item.value
           ..step = 'any'
@@ -249,6 +258,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
           ..type = 'radio'
           ..id = 'radio-${item.label}-${radio_idx}'
           ..disabled = disabled
+          ..title = item.tooltip ?? ""
           ..name = item.label
           ..checked = (item.selected_idx == radio_idx)
           ..value = option
@@ -275,7 +285,6 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
           ..id = 'radio-${radio_idx}'
           ..disabled = disabled
           ..name = item.label
-          ..checked = (item.selected_idx == radio_idx)
           ..value = option
           ..onChange = (SyntheticFormEvent e) {
             var selected_title = e.target.value;
@@ -294,6 +303,8 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
           (Dom.select()
             ..className = 'radio-left'
             ..disabled = disabled
+            ..title = item.tooltip ?? ""
+            ..value = item.options[item.selected_idx]
             ..onChange = (SyntheticFormEvent e) {
               var selected_title = e.target.value;
               int selected_radio_idx = item.options.indexOf(selected_title);
