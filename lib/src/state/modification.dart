@@ -65,7 +65,7 @@ abstract class Modification5Prime
     implements Built<Modification5Prime, Modification5PrimeBuilder>, Modification {
   factory Modification5Prime(
       {String display_text, String id, String idt_text, BuiltMap<String, Object> unused_fields}) {
-    String id_to_assign = id ?? ("5'-" + idt_text);
+    String id_to_assign = id ?? ("5'-" + (idt_text ?? display_text));
     var unused_fields_to_assign = unused_fields ?? BuiltMap<String, Object>();
     return Modification5Prime.from((b) => b
       ..display_text = display_text
@@ -92,6 +92,7 @@ abstract class Modification5Prime
   @nullable
   String get id;
 
+  @nullable
   String get idt_text;
 
   String html_id(Address address) => mod_html_id(this, address);
@@ -122,7 +123,7 @@ abstract class Modification3Prime
     implements Built<Modification3Prime, Modification3PrimeBuilder>, Modification {
   factory Modification3Prime(
       {String display_text, String id, String idt_text, BuiltMap<String, Object> unused_fields}) {
-    String id_to_assign = id ?? ("3'-" + idt_text);
+    String id_to_assign = id ?? ("3'-" + (idt_text ?? display_text));
     var unused_fields_to_assign = unused_fields ?? BuiltMap<String, Object>();
     return Modification3Prime.from((b) => b
       ..display_text = display_text
@@ -149,6 +150,7 @@ abstract class Modification3Prime
   @nullable
   String get id;
 
+  @nullable
   String get idt_text;
 
   String html_id(Address address) => mod_html_id(this, address);
@@ -183,7 +185,7 @@ abstract class ModificationInternal
       String idt_text,
       BuiltSet<String> allowed_bases,
       BuiltMap<String, Object> unused_fields}) {
-    String id_to_assign = id ?? ("internal-" + idt_text);
+    String id_to_assign = id ?? ("internal-" + (idt_text ?? display_text));
     var unused_fields_to_assign = unused_fields ?? BuiltMap<String, Object>();
     var allowed_bases_to_assign = allowed_bases ?? BuiltSet<String>(['A', 'C', 'G', 'T']);
     return ModificationInternal.from((b) => b
@@ -220,6 +222,7 @@ abstract class ModificationInternal
   @nullable
   String get id;
 
+  @nullable
   String get idt_text;
 
   @nullable
