@@ -84,11 +84,11 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
       DropdownDivider({'key': 'divider-add-remove'}),
       (MenuDropdownItem()
         ..display = 'adjust current group'
-        ..on_click = ((ev) => set_new_parameters_for_current_group())
+        ..on_click = ((ev) => ask_new_parameters_for_current_group())
         ..key = 'adjust-current-group')(),
       (MenuDropdownItem()
         ..display = 'new group'
-        ..on_click = ((ev) => add_new_group(props.groups.keys))
+        ..on_click = ((ev) => ask_about_new_group(props.groups.keys))
         ..key = 'new-group')(),
       (MenuDropdownItem()
         ..display = 'remove current group'
@@ -120,10 +120,6 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
       ],
     );
   }
-  
-  set_new_parameters_for_current_group() => app.disable_keyboard_shortcuts_while(ask_new_parameters_for_current_group);
-
-  add_new_group(Iterable<String> existing_names) => app.disable_keyboard_shortcuts_while(() => ask_about_new_group(existing_names));
 
   Future<void> ask_about_new_group(Iterable<String> existing_names) async {
     var dialog = Dialog(title: 'create new Helix group', items: [
@@ -150,7 +146,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
     app.dispatch(actions.GroupAdd(name: name, group: group));
   }
 
-  Future<void> ask_new_parameters_for_current_group() async {
+  ask_new_parameters_for_current_group() async {
     var group = props.groups[props.displayed_group_name];
     var existing_grid = group.grid;
 
