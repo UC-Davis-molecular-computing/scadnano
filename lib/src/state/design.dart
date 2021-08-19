@@ -674,9 +674,25 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   @memoized
   int get min_offset => helices.values.map((helix) => helix.min_offset).min;
 
-  Design add_strand(Strand strand) => rebuild((d) => d..strands.add(strand));
+  Design add_strand(Strand strand) {
+    for (var domain in strand.domains) {
+      if (!this.helix_idxs.contains(domain.helix)) {
+        throw IllegalDesignError("Strand includes a domain on non-existent helix: ${domain.helix}");
+      }
+    }
+    return rebuild((d) => d..strands.add(strand));
+  }
 
-  Design add_strands(Iterable<Strand> new_strands) => rebuild((d) => d..strands.addAll(new_strands));
+  Design add_strands(Iterable<Strand> new_strands) {
+    for (var strand in new_strands) {
+      for (var domain in strand.domains) {
+        if (!this.helix_idxs.contains(domain.helix)) {
+          throw IllegalDesignError("Strand includes a domain on non-existent helix: ${domain.helix}");
+        }
+      }
+    }
+    return rebuild((d) => d..strands.addAll(new_strands));
+  }
 
   Design remove_strand(Strand strand) => rebuild((d) => d..strands.remove(strand));
 

@@ -77,7 +77,7 @@ main() {
     <--x---]
 */
   test('duplicate_deletions_in_design_removed', () {
-    var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
+    var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square),Helix(idx: 1, max_offset: 100, grid: Grid.square) ];
     var design = Design(helices: helices, grid: Grid.square);
     design = design.strand(0, 0).move(8).commit();
     design = design.strand(1, 8).move(-8).add_deletion(1, 4).commit();
@@ -96,7 +96,7 @@ main() {
     <--X---]
 */
   test('duplicate_inseritons_in_design_removed', () {
-    var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
+    var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square),Helix(idx: 1, max_offset: 100, grid: Grid.square) ];
     var design = Design(helices: helices, grid: Grid.square);
     design = design.strand(0, 0).move(8).commit();
     design = design.strand(1, 8).move(-8).add_insertion(1, 4, 1).commit();

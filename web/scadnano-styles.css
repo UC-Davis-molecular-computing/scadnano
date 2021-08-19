@@ -81,6 +81,11 @@ html, body {
     /*background: #eee;*/
 }
 
+#side-pane .navbar {
+    z-index: 1 !important;
+    flex-wrap: wrap !important;
+}
+
 #main-pane {
     /*width: 90%;*/
 }
