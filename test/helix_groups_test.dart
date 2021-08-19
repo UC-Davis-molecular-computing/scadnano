@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/json_serializable.dart';
 import 'package:scadnano/src/reducers/helices_reducer.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/position3d.dart';
@@ -22,7 +23,7 @@ import 'utils.dart';
 
 main() {
   group('helices_view_order__after_removing_helices', () {
-    test('remove_2_helices', () {
+    test('remove_2_helices__same_group__helix_idx_in_numerical_order', () {
       var helices = [
         for (int i = 0; i < 6; i++) Helix(idx: i, grid: Grid.square, grid_position: GridPosition(0, i))
       ];
