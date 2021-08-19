@@ -203,13 +203,6 @@ abstract class ModificationInternal
 
   static Serializer<ModificationInternal> get serializer => _$modificationInternalSerializer;
 
-  // factory ModificationInternal(
-  //     {String display_text,
-  //     String id,
-  //     String idt_text,
-  //     BuiltSet<String> allowed_bases,
-  //     BuiltMap<String, Object> unused_fields}) = _$ModificationInternal._;
-
   @memoized
   int get hashCode;
 
