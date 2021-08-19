@@ -39,9 +39,9 @@ Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([
 ]);
 
 GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGlobalReducers([
-  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.AssignDomainNameComplementFromBoundStrands>( //
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.AssignDomainNameComplementFromBoundStrands>(//
       assign_domain_name_complement_from_bound_strands_reducer),
-  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.AssignDomainNameComplementFromBoundDomains>( //
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.AssignDomainNameComplementFromBoundDomains>(//
       assign_domain_name_complement_from_bound_domains_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.AssignDNAComplementFromBoundStrands>(
       assign_dna_reducer_complement_from_bound_strands),
@@ -153,8 +153,8 @@ Strand substrand_name_set_reducer(Strand strand, actions.SubstrandNameSet action
 
 BuiltList<Strand> strands_move_commit_reducer(
     BuiltList<Strand> strands, AppState state, actions.StrandsMoveCommit action) {
-  if (strands_move_reducer.in_bounds_and_allowable(state.design, action.strands_move)
-      && (action.strands_move.is_nontrivial || action.strands_move.copy)) {
+  if (strands_move_reducer.in_bounds_and_allowable(state.design, action.strands_move) &&
+      (action.strands_move.is_nontrivial || action.strands_move.copy)) {
     // if (action.strands_move.allowable && (action.strands_move.is_nontrivial || action.strands_move.copy)) {
     // even a trivial move can be wanted if we are copying, i.e., user copied strands, deleted them,
     // and wants to paste them back in same position
@@ -205,18 +205,18 @@ Strand one_strand_strands_move_copy_commit_reducer(Design design, Strand strand,
 
 Strand move_strand(
     {Strand strand,
-      BuiltMap<int, int> original_helices_view_order_inverse,
-      HelixGroup current_group,
-      int delta_view_order,
-      int delta_offset,
-      bool delta_forward}) {
+    BuiltMap<int, int> original_helices_view_order_inverse,
+    HelixGroup current_group,
+    int delta_view_order,
+    int delta_offset,
+    bool delta_forward}) {
   List<Substrand> substrands = strand.substrands.toList();
   var domains = List<Domain>.from(strand.domains);
   if (delta_forward) {
     substrands = substrands.reversed.toList();
     domains = domains.reversed.toList();
   }
-  
+
   int counter = 0;
 
   for (int i = 0; i < substrands.length; i++) {
@@ -229,7 +229,7 @@ Strand move_strand(
       int new_helix_idx = current_group.helices_view_order[new_view_order];
       assert(new_helix_idx != null);
       Domain domain_moved = substrand.rebuild(
-            (b) => b
+        (b) => b
           ..name = mirrored_domain.name
           ..is_first = i == 0
           ..is_last = i == substrands.length - 1
@@ -260,7 +260,7 @@ BuiltList<Strand> domains_move_commit_reducer(
       var domains = action.domains_move.domains_moving_from_strand[strand].toSet();
       int strand_idx = strands.indexOf(strand);
       Strand new_strand =
-      one_strand_domains_move_commit_reducer(state.design, strand, domains, action.domains_move);
+          one_strand_domains_move_commit_reducer(state.design, strand, domains, action.domains_move);
       new_strand = new_strand.initialize();
       strands_builder[strand_idx] = new_strand;
     }
@@ -492,7 +492,41 @@ Reducer<Strand> single_strand_reducer = combineReducers([
   TypedReducer<Strand, actions.ModificationEdit>(modification_edit_reducer),
   TypedReducer<Strand, actions.StrandNameSet>(strand_name_set_reducer),
   TypedReducer<Strand, actions.IDTFieldsEdit>(idt_fields_edit_reducer),
+  TypedReducer<Strand, actions.ScalePurificationIDTFieldsAssign>(
+      scale_purification_idt_fields_assign_reducer),
+  TypedReducer<Strand, actions.PlateWellIDTFieldsAssign>(plate_well_idt_fields_assign_reducer),
+  TypedReducer<Strand, actions.PlateWellIDTFieldsRemove>(plate_well_idt_fields_remove_reducer),
+  TypedReducer<Strand, actions.IDTFieldsRemove>(idt_fields_remove_reducer),
 ]);
+
+Strand idt_fields_remove_reducer(Strand strand, actions.IDTFieldsRemove action) {
+  Strand strand_with_new_idt_fields = strand.rebuild((m) => m.idt = null);
+  return strand_with_new_idt_fields;
+}
+Strand plate_well_idt_fields_remove_reducer(Strand strand, actions.PlateWellIDTFieldsRemove action) {
+  if (strand.idt != null) {
+    Strand strand_with_new_idt_fields;
+    strand_with_new_idt_fields = strand.rebuild((m) => m.idt
+      ..plate = null
+      ..well = null);
+    return strand_with_new_idt_fields;
+  }else{
+    return strand;
+  }
+}
+
+Strand plate_well_idt_fields_assign_reducer(Strand strand, actions.PlateWellIDTFieldsAssign action) {
+  Strand strand_with_new_idt_fields;
+  strand_with_new_idt_fields = strand.rebuild((m) => m.idt.replace(action.idt_fields));
+  return strand_with_new_idt_fields;
+}
+
+Strand scale_purification_idt_fields_assign_reducer(
+    Strand strand, actions.ScalePurificationIDTFieldsAssign action) {
+  Strand strand_with_new_idt_fields;
+  strand_with_new_idt_fields = strand.rebuild((m) => m.idt.replace(action.idt_fields));
+  return strand_with_new_idt_fields;
+}
 
 Strand idt_fields_edit_reducer(Strand strand, actions.IDTFieldsEdit action) {
   Strand strand_with_new_idt_fields;
