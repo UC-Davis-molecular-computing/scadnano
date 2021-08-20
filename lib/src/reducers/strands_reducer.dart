@@ -491,7 +491,6 @@ Reducer<Strand> single_strand_reducer = combineReducers([
   TypedReducer<Strand, actions.ModificationRemove>(modification_remove_reducer),
   TypedReducer<Strand, actions.ModificationEdit>(modification_edit_reducer),
   TypedReducer<Strand, actions.StrandNameSet>(strand_name_set_reducer),
-  TypedReducer<Strand, actions.IDTFieldsEdit>(idt_fields_edit_reducer),
   TypedReducer<Strand, actions.ScalePurificationIDTFieldsAssign>(
       scale_purification_idt_fields_assign_reducer),
   TypedReducer<Strand, actions.PlateWellIDTFieldsAssign>(plate_well_idt_fields_assign_reducer),
@@ -523,12 +522,6 @@ Strand plate_well_idt_fields_assign_reducer(Strand strand, actions.PlateWellIDTF
 
 Strand scale_purification_idt_fields_assign_reducer(
     Strand strand, actions.ScalePurificationIDTFieldsAssign action) {
-  Strand strand_with_new_idt_fields;
-  strand_with_new_idt_fields = strand.rebuild((m) => m.idt.replace(action.idt_fields));
-  return strand_with_new_idt_fields;
-}
-
-Strand idt_fields_edit_reducer(Strand strand, actions.IDTFieldsEdit action) {
   Strand strand_with_new_idt_fields;
   strand_with_new_idt_fields = strand.rebuild((m) => m.idt.replace(action.idt_fields));
   return strand_with_new_idt_fields;

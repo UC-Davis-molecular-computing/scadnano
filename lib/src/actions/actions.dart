@@ -2666,24 +2666,6 @@ abstract class DeletionRemove
 
   static Serializer<DeletionRemove> get serializer => _$deletionRemoveSerializer;
 }
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// edit IDT fields of strands
-abstract class IDTFieldsEdit
-    with BuiltJsonSerializable, UndoableAction
-    implements SingleStrandAction, Built<IDTFieldsEdit, IDTFieldsEditBuilder> {
-  Strand get strand;
-
-  IDTFields get idt_fields;
-
-
-  /************************ begin BuiltValue boilerplate ************************/
-  factory IDTFieldsEdit({Strand strand, IDTFields idt_fields}) =
-      _$IDTFieldsEdit._;
-
-  IDTFieldsEdit._();
-
-  static Serializer<IDTFieldsEdit> get serializer => _$iDTFieldsEditSerializer;
-}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // assign scale/purification IDT fields of strands

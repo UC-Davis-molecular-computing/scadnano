@@ -59,7 +59,6 @@ part 'serializers.g.dart';
   PlateWellIDTFieldsRemove,
   PlateWellIDTFieldsAssign,
   ScalePurificationIDTFieldsAssign,
-  IDTFieldsEdit,
   StrandNameSet,
   SubstrandNameSet,
   DomainNameMismatch,
