@@ -359,14 +359,22 @@ assigned, assign the complementary DNA sequence to this strand.
                 title: 'assign plate/well fields',
                 on_click: assign_plate_well_fields,
               ),
-              ContextMenuItem(
-                title: 'remove all IDT fields',
-                on_click: () => remove_idt_fields(),
-              ),
-              ContextMenuItem(
-                title: 'remove plate/well fields',
-                on_click: () => remove_plate_well_fields(),
-              ),
+              if (app.state.ui_state.selectables_store.selected_strands
+                      .toList()
+                      .any((element) => element.idt != null) ||
+                  props.strand.idt != null)
+                ContextMenuItem(
+                  title: 'remove all IDT fields',
+                  on_click: () => remove_idt_fields(),
+                ),
+              if (app.state.ui_state.selectables_store.selected_strands
+                      .toList()
+                      .any((element) => element.idt?.plate != null && element.idt?.well != null) ||
+                  props.strand.idt?.well != null && props.strand.idt?.purification != null)
+                ContextMenuItem(
+                  title: 'remove plate/well fields',
+                  on_click: () => remove_plate_well_fields(),
+                ),
             ].build()),
         ContextMenuItem(
           title: strand.is_scaffold ? 'set as non-scaffold' : 'set as scaffold',
@@ -469,9 +477,11 @@ after:
             ].build()),
       ];
 
-  select_index_for_one_strand(String idt_option, Set<String> options) {
+  select_index_for_one_strand(String idt_option, Set<String> options, bool default_index) {
     if (options.contains(idt_option)) {
       return options.toList().indexOf(idt_option);
+    } else if (default_index) {
+      return 1;
     } else {
       return 0;
     }
@@ -479,8 +489,10 @@ after:
 
   select_scale_index_for_multiple_strands(List<Strand> all_strands, Set<String> options) {
     bool all_same_scale = all_strands.every((element) => all_strands[0].idt?.scale == element.idt?.scale);
+    bool default_scale_option = all_strands.every((element) => element.idt == null);
+
     if (all_same_scale)
-      return select_index_for_one_strand(all_strands[0].idt?.scale, options);
+      return select_index_for_one_strand(all_strands[0].idt?.scale, options, default_scale_option);
     else
       return 0;
   }
@@ -505,8 +517,11 @@ after:
   select_purification_index_for_multiple_strands(List<Strand> all_strands, Set<String> options) {
     bool all_same_purification =
         all_strands.every((element) => all_strands[0].idt?.purification == element.idt?.purification);
+    bool default_purification_option = all_strands.every((element) => element.idt == null);
+
     if (all_same_purification)
-      return select_index_for_one_strand(all_strands[0].idt?.purification, options);
+      return select_index_for_one_strand(
+          all_strands[0].idt?.purification, options, default_purification_option);
     else
       return 0;
   }
@@ -520,11 +535,11 @@ after:
   }
 
   Future<void> ask_for_assign_scale_purification_fields() async {
-    int custom_scale_check_idx = 0;
-    int scale_options_idx = 1;
+    int scale_options_idx = 0;
+    int custom_scale_check_idx = 1;
     int scale_custom_idx = 2;
-    int custom_purification_check_idx = 3;
-    int purification_options_idx = 4;
+    int purification_options_idx = 3;
+    int custom_purification_check_idx = 4;
     int purification_custom_idx = 5;
     var all_strands = app.state.ui_state.selectables_store.selected_strands.toList();
     if (all_strands.length == 0) all_strands.add(props.strand);
@@ -564,9 +579,12 @@ PU : PAGE Ultramer™
 """,
         selected_idx: all_strands.length > 1
             ? select_scale_index_for_multiple_strands(all_strands, options_scale)
-            : select_index_for_one_strand(props.strand.idt?.scale, options_scale));
+            : select_index_for_one_strand(
+                props.strand.idt?.scale, options_scale, all_strands.every((element) => element.idt == null)));
 
-    items[scale_custom_idx] = DialogText(label: "custom scale", value: custom_scale_value(all_strands));
+    items[scale_custom_idx] = DialogText(
+        label: "custom scale",
+        value: items[scale_options_idx].value != "" ? "" : custom_scale_value(all_strands));
 
     items[custom_purification_check_idx] = DialogCheckbox(label: "use custom purification");
     items[purification_options_idx] = DialogRadio(
@@ -583,10 +601,12 @@ PAGEHPLC : Dual PAGE & HPLC
 """,
         selected_idx: all_strands.length > 1
             ? select_purification_index_for_multiple_strands(all_strands, options_purification)
-            : select_index_for_one_strand(props.strand.idt?.purification, options_purification));
+            : select_index_for_one_strand(props.strand.idt?.purification, options_purification,
+                all_strands.every((element) => element.idt == null)));
 
-    items[purification_custom_idx] =
-        DialogText(label: "custom purification", value: (custom_purification_value(all_strands)));
+    items[purification_custom_idx] = DialogText(
+        label: "custom purification",
+        value: (items[purification_options_idx].value != "" ? "" : custom_purification_value(all_strands)));
 
     var dialog =
         Dialog(title: "assign scale/purification IDT fields", items: items, disable_when_any_checkboxes_off: {
@@ -701,7 +721,7 @@ PAGEHPLC : Dual PAGE & HPLC
       app.dispatch(action);
     }
   }
-  
+
   Future<void> ask_for_add_modification(
       [Domain domain = null, Address address = null, bool is_5p = null]) async {
     assert((is_5p == null && domain != null && address != null) ||
