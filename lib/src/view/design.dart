@@ -784,6 +784,7 @@ class DesignViewComponent {
         ),
         this.footer_element,
       );
+      
 
       // context menu
       react_dom.render(
