@@ -97,6 +97,7 @@ html, body {
     left: 0;
     bottom: 0;
     max-width: 100%;
+    pointer-events: bounding-box;
 }
 
 .axis-arrows{

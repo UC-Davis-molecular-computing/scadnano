@@ -39,6 +39,7 @@ class DesignMainArrowsComponent extends UiComponent2<DesignSideArrowsProps> {
         'L 0 -${mag} ';
 //RGB XYZ
     return (Dom.g()..className = 'axis-arrows')(
+      Dom.svgTitle()("⦻ - Into the screen"),
       // horizontal arrow (X-axis)
       (Dom.path()
         ..key = "x_path"
@@ -66,7 +67,6 @@ class DesignMainArrowsComponent extends UiComponent2<DesignSideArrowsProps> {
         ..r = "10"
         ..stroke = 'blue'
         ..fill = "none"
-        ..title = props.invert_xy ? "⦻ - Into the screen" : "⊙ - Out of the screen"
         ..className = 'axis-arrow')(),
     );
   }
