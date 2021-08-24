@@ -99,6 +99,14 @@ html, body {
     max-width: 100%;
 }
 
+.axis-arrows{
+    transform: translate(50px, 50px);
+}
+.axis-arrow{
+    stroke-width: 3;
+    stroke-linecap: round;
+}
+
 #design-footer-mouse-over {
     height: 24px;
     text-align: left;

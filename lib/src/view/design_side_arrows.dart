@@ -12,22 +12,22 @@ import '../app.dart';
 import '../state/app_state.dart';
 import '../state/strand.dart';
 
-part 'design_main_arrows.over_react.g.dart';
+part 'design_side_arrows.over_react.g.dart';
 
 typedef ActionCreator = actions.UndoableAction Function(Strand strand);
 
-UiFactory<DesignMainArrowsProps> ConnectedDesignMainArrows =
-    connect<AppState, DesignMainArrowsProps>(mapStateToProps: (state) {
-  return DesignMainArrows()..invert_xy = state.ui_state.invert_xy;
-})(DesignMainArrows);
+UiFactory<DesignSideArrowsProps> ConnectedDesignSideArrows =
+    connect<AppState, DesignSideArrowsProps>(mapStateToProps: (state) {
+  return DesignSideArrows()..invert_xy = state.ui_state.invert_xy;
+})(DesignSideArrows);
 
-UiFactory<DesignMainArrowsProps> DesignMainArrows = _$DesignMainArrows;
+UiFactory<DesignSideArrowsProps> DesignSideArrows = _$DesignSideArrows;
 
-mixin DesignMainArrowsProps on UiProps {
+mixin DesignSideArrowsProps on UiProps {
   bool invert_xy;
 }
 
-class DesignMainArrowsComponent extends UiComponent2<DesignMainArrowsProps> {
+class DesignMainArrowsComponent extends UiComponent2<DesignSideArrowsProps> {
   @override
   render() {
     num mag = 50 * 0.93;
@@ -38,14 +38,14 @@ class DesignMainArrowsComponent extends UiComponent2<DesignMainArrowsProps> {
         'm -${mag / 6.0} ${mag / 4.0} '
         'L 0 -${mag} ';
 //RGB XYZ
-    return (Dom.g()..className = 'axis-arrows')([
-      //horizontal arrow (Z-axis)
+    return (Dom.g()..className = 'axis-arrows')(
+      // horizontal arrow (X-axis)
       (Dom.path()
-        ..key = "z_path"
-        ..transform = 'rotate(90)'
+        ..key = "x_path"
+        ..transform = props.invert_xy ? 'rotate(270)' : 'rotate(90)'
         ..d = path_description
         ..fill = "none"
-        ..stroke = 'blue'
+        ..stroke = 'red'
         ..className = 'axis-arrow')(),
       //downward arrow (Y-axis)
       (Dom.path()
@@ -55,29 +55,19 @@ class DesignMainArrowsComponent extends UiComponent2<DesignMainArrowsProps> {
         ..fill = "none"
         ..stroke = 'green'
         ..className = 'axis-arrow')(),
-      //outward arrow (X-axis)
-      if (!props.invert_xy)
-        (Dom.circle()
-          ..key = "dot"
-          ..r = "2"
-          ..stroke = 'red'
-          ..fill = "red"
-          ..className = 'axis-arrow')(),
-      if (props.invert_xy)
-        (Dom.path()
-          ..key = "x"
-          ..d = 'M -6.32 -6.32 L 6.32 6.32 M 6.32 -6.32 L -6.32 6.32'
-          ..fill = "none"
-          ..stroke = 'red'
-          ..className = 'axis-arrow')(),
+      //inward arrow (Z-axis)
+      (Dom.path()
+        ..key = "z_path"
+        ..d = 'M -6.32 -6.32 L 6.32 6.32 M 6.32 -6.32 L -6.32 6.32'
+        ..fill = "none"
+        ..stroke = 'blue'
+        ..className = 'axis-arrow')(),
       (Dom.circle()
-        ..key = "x_circle"
         ..r = "10"
-        ..stroke = 'red'
+        ..stroke = 'blue'
         ..fill = "none"
         ..title = props.invert_xy ? "⦻ - Into the screen" : "⊙ - Out of the screen"
         ..className = 'axis-arrow')(),
-  
-    ]);
+    );
   }
 }

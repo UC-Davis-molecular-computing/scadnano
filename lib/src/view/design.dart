@@ -31,6 +31,7 @@ import '../app.dart';
 import 'design_context_menu.dart';
 import 'design_dialog_form.dart';
 import 'design_main_error_boundary.dart';
+import 'design_side_arrows.dart';
 import 'menu_side.dart';
 import 'view.dart';
 import 'design_side.dart';
@@ -800,6 +801,15 @@ class DesignViewComponent {
           ),
         ),
         querySelector('#main-arrows'),
+      );
+      // side arrows
+      react_dom.render(
+        over_react_components.ErrorBoundary()(
+          (ReduxProvider()..store = app.store)(
+            ConnectedDesignSideArrows()(),
+          ),
+        ),
+        querySelector('#side-arrows'),
       );
 
       // footer
