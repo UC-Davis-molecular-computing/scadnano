@@ -79,6 +79,7 @@ html, body {
 #side-pane {
     /*width: 8%;*/
     /*background: #eee;*/
+    position: relative;
 }
 
 #side-pane .navbar {
@@ -88,6 +89,14 @@ html, body {
 
 #main-pane {
     /*width: 90%;*/
+    position: relative;
+}
+
+#side-arrows, #main-arrows {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    max-width: 100%;
 }
 
 #design-footer-mouse-over {

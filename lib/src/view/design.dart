@@ -16,6 +16,7 @@ import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:scadnano/src/state/selection_rope.dart';
+import 'package:scadnano/src/view/design_main_arrows.dart';
 import 'package:scadnano/src/view/strand_color_picker.dart';
 
 import '../state/address.dart';
@@ -112,6 +113,20 @@ class DesignViewComponent {
       };
     add_shadow_filter(main_view_svg);
 
+    var main_arrows = svg.SvgSvgElement()
+      ..attributes = {
+        'id': 'main-arrows',
+        'width': '100px',
+        'height': '100px',
+      };
+
+    var side_arrows = svg.SvgSvgElement()
+      ..attributes = {
+        'id': 'side-arrows',
+        'width': '100px',
+        'height': '100px',
+      };
+
     var side_view_svg_viewport = svg.GElement()
       ..attributes = {
         'id': SIDE_VIEW_SVG_VIEWPORT_GROUP,
@@ -131,6 +146,12 @@ class DesignViewComponent {
     side_view_svg_viewport.children.add(side_view_dummy_elt);
     main_view_svg_viewport.children.add(main_view_dummy_elt);
 
+    main_arrows.children.add(svg.CircleElement()
+      ..attributes = {'id': 'dummy-elt-main-view', 'r': '20', 'cx': '50', 'cy': '50', 'fill': 'red'});
+
+    side_arrows.children.add(svg.CircleElement()
+      ..attributes = {'id': 'dummy-elt-main-view', 'r': '20', 'cx': '50', 'cy': '50', 'fill': 'blue'});
+
     this.root_element.children.add(design_above_footer_pane);
     this.root_element.children.add(this.context_menu_container);
     this.root_element.children.add(this.dialog_form_container);
@@ -147,7 +168,9 @@ class DesignViewComponent {
 
     side_pane.children.add(side_view_menu);
     side_pane.children.add(side_view_svg);
+    side_pane.children.add(side_arrows);
     main_pane.children.add(main_view_svg);
+    main_pane.children.add(main_arrows);
 
     set_side_main_pane_widths();
     handle_keyboard_mouse_events();
@@ -767,6 +790,16 @@ class DesignViewComponent {
           ),
         ),
         querySelector('#$MAIN_VIEW_SVG_VIEWPORT_GROUP'),
+      );
+
+      // main arrows
+      react_dom.render(
+        over_react_components.ErrorBoundary()(
+          (ReduxProvider()..store = app.store)(
+            ConnectedDesignMainArrows()(),
+          ),
+        ),
+        querySelector('#main-arrows'),
       );
 
       // footer
