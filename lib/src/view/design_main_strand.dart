@@ -402,9 +402,10 @@ assigned, assign the complementary DNA sequence to this strand.
                 title: 'assign domain name complement from bound strands',
                 tooltip: '''\
 If other strands bound to this strand (or the selected strands) have domain names already 
-assigned, assign the complementary domain names sequence to this strand.
+assigned, assign the complementary domain names sequence to this strand. To use this
+feature for individual domains, set select mode to domain.
 ''',
-                on_click: assign_domain_name_complement_from_bound_strands,
+                on_click: () => assign_domain_name_complement_from_bound_strands(domain: domain),
               ),
               if (domain.name != null)
                 ContextMenuItem(

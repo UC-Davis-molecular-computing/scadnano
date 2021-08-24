@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/json_serializable.dart';
 import 'package:scadnano/src/reducers/helices_reducer.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/position3d.dart';
@@ -22,7 +23,7 @@ import 'utils.dart';
 
 main() {
   group('helices_view_order__after_removing_helices', () {
-    test('remove_2_helices', () {
+    test('remove_2_helices__same_group__helix_idx_in_numerical_order', () {
       var helices = [
         for (int i = 0; i < 6; i++) Helix(idx: i, grid: Grid.square, grid_position: GridPosition(0, i))
       ];
@@ -37,6 +38,95 @@ main() {
       design = helix_remove_all_selected_design_global_reducer(design, state, action);
 
       expect(design.default_group().helices_view_order.toList(), [0, 1, 2, 5]);
+    });
+
+    test('remove_2_helices__different_groups__helix_idx_in_numerical_order', () {
+      List<Helix> helices = [];
+      //Create 2 groups
+      for (int i = 0; i < 10; i++) {
+        if (i >= 5) {
+          helices.add(Helix(idx: i, grid: Grid.square, grid_position: GridPosition(1, i), group: "Second"));
+        } else {
+          helices.add(Helix(idx: i, grid: Grid.square, grid_position: GridPosition(0, i), group: "First"));
+        }
+      }
+      var design = Design(helices: helices, grid: Grid.square);
+      var state = app_state_from_design(design);
+
+      expect(design.groups["First"].helices_view_order.toList(), [0, 1, 2, 3, 4]);
+      expect(design.groups["Second"].helices_view_order.toList(), [5, 6, 7, 8, 9]);
+
+      // select helices 3 and 6
+      state = state.rebuild((b) => b..ui_state.storables.side_selected_helix_idxs.replace([3, 6]));
+      var action = actions.HelixRemoveAllSelected();
+      design = helix_remove_all_selected_design_global_reducer(design, state, action);
+
+      expect(design.groups["First"].helices_view_order.toList(), [0, 1, 2, 4]);
+      expect(design.groups["Second"].helices_view_order.toList(), [5, 7, 8, 9]);
+    });
+
+    test('remove_2_helices__different_groups__helix_idx_in_nonnumerical_order', () {
+      List<Helix> helices = [];
+      //Create 2 groups
+      for (int i = 9; i >= 0; i--) {
+        if (i < 5) {
+          helices.add(Helix(idx: i, grid: Grid.square, grid_position: GridPosition(1, i), group: "Second"));
+        } else {
+          helices.add(Helix(idx: i, grid: Grid.square, grid_position: GridPosition(0, i), group: "First"));
+        }
+      }
+      var design = Design(helices: helices, grid: Grid.square);
+      var state = app_state_from_design(design);
+
+      expect(design.groups["First"].helices_view_order.toList(), [9, 8, 7, 6, 5]);
+      expect(design.groups["Second"].helices_view_order.toList(), [4, 3, 2, 1, 0]);
+
+      // select helices 3 and 6
+      state = state.rebuild((b) => b..ui_state.storables.side_selected_helix_idxs.replace([3, 6]));
+      var action = actions.HelixRemoveAllSelected();
+      design = helix_remove_all_selected_design_global_reducer(design, state, action);
+
+      expect(design.groups["First"].helices_view_order.toList(), [9, 8, 7, 5]);
+      expect(design.groups["Second"].helices_view_order.toList(), [4, 2, 1, 0]);
+    });
+
+    test('remove_2_helices__same_group__helix_idx_in_nonnumerical_order', () {
+      List<Helix> helices = [];
+      //Create 2 groups
+      for (int i = 9; i >= 0; i--) {
+        helices.add(Helix(idx: i, grid: Grid.square, grid_position: GridPosition(0, i), group: "First"));
+      }
+      var design = Design(helices: helices, grid: Grid.square);
+      var state = app_state_from_design(design);
+
+      expect(design.groups["First"].helices_view_order.toList(), [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]);
+
+      // select helices 3 and 6
+      state = state.rebuild((b) => b..ui_state.storables.side_selected_helix_idxs.replace([3, 6]));
+      var action = actions.HelixRemoveAllSelected();
+      design = helix_remove_all_selected_design_global_reducer(design, state, action);
+
+      expect(design.groups["First"].helices_view_order.toList(), [9, 8, 7, 5, 4, 2, 1, 0]);
+    });
+
+
+    test('remove_helix__same_group__helix_idx_in_numerical_order', () {
+      List<Helix> helices = [];
+      //Create 2 groups  
+      for (int i = 0; i < 10; i++) {
+        helices.add(Helix(idx: i, grid: Grid.square, grid_position: GridPosition(0, i), group: "First"));
+      }
+      var design = Design(helices: helices, grid: Grid.square);
+      var state = app_state_from_design(design);
+
+      expect(design.groups["First"].helices_view_order.toList(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+
+      // select helices 6
+      state = state.rebuild((b) => b..ui_state.storables.side_selected_helix_idxs.replace([6]));
+      var action = actions.HelixRemoveAllSelected();
+      design = helix_remove_all_selected_design_global_reducer(design, state, action);
+
+      expect(design.groups["First"].helices_view_order.toList(), [0, 1, 2, 3, 4, 5, 7, 8, 9]);
     });
   });
 
