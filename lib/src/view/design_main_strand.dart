@@ -638,7 +638,9 @@ PAGEHPLC : Dual PAGE & HPLC
             scale: (scale == "" && strand.idt?.scale != null) ? strand.idt.scale : scale,
             purification: (purification == "" && strand.idt?.purification != null)
                 ? strand.idt.purification
-                : purification);
+                : purification,
+            plate: strand.idt?.plate,
+            well: strand.idt?.well);
         var action = actions.ScalePurificationIDTFieldsAssign(idt_fields: idt_fields, strand: strand);
         app.dispatch(action);
       }
