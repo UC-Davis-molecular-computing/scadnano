@@ -81,6 +81,17 @@ html, body {
     /*background: #eee;*/
     position: relative;
 }
+#side-pane::after{
+    position: absolute;
+    bottom: 0;
+    left: 100px;
+    content: "";
+    background-repeat: no-repeat;
+    width: 30px;
+    height: 30px;
+    background-image: url(images/side-view-eye.svg);
+    background-size: contain;
+}
 
 #side-pane .navbar {
     z-index: 1 !important;
@@ -90,6 +101,17 @@ html, body {
 #main-pane {
     /*width: 90%;*/
     position: relative;
+}
+#main-pane::after{
+    position: absolute;
+    bottom: 0;
+    left: 100px;
+    content: "";
+    background-repeat: no-repeat;
+    width: 40px;
+    height: 40px;
+    background-image: url(images/main-view-eye.png);
+    background-size: contain;
 }
 
 #side-arrows, #main-arrows {
