@@ -25,7 +25,7 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
       {String title,
       Iterable<DialogItem> items,
       Iterable<Iterable<int>> mutually_exclusive_checkbox_groups = const [],
-      Iterable<int> force_disable = const {},
+      Iterable<int> disable = const {},
       Map<int, Iterable<int>> disable_when_any_checkboxes_on = const {},
       Map<int, Map<int, Iterable<String>>> disable_when_any_radio_button_selected = const {},
       Map<int, Iterable<int>> disable_when_any_checkboxes_off = const {}}) {
@@ -59,7 +59,7 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
     return Dialog.from((b) => b
       ..title = title
       ..items.replace(items)
-      ..force_disable.replace(force_disable)      
+      ..disable.replace(disable)      
       ..mutually_exclusive_checkbox_groups.replace(mutually_exclusive_checkbox_groups_half_built)
       ..disable_when_any_radio_button_selected.replace(disable_when_any_radio_button_selected_half_built)
       ..disable_when_any_checkboxes_on.replace(disable_when_any_checkboxes_on_half_built)
@@ -91,7 +91,7 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
   // the DialogItem at index i should be disabled
   BuiltMap<int, BuiltList<int>> get disable_when_any_checkboxes_off;
 
-  BuiltList<int> get force_disable;
+  BuiltList<int> get disable;
 
   @nullable
   @BuiltValueField(serialize: false, compare: false)

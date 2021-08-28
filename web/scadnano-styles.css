@@ -234,6 +234,11 @@ label + select {
     position: relative;
 }
 
+.context_menu_item_disabled {
+    color: lightgray;
+    pointer-events: none;
+}
+
 .has-submenu > .context-menu-item::after {
     content: '';
     position: absolute;
@@ -246,7 +251,7 @@ label + select {
     border-left: .3em solid;
 }
 
-.context-menu-item:hover, 
+.context-menu-item:hover,
 .has-submenu:hover > .context-menu-item {
     color: white;
     background: #284570;

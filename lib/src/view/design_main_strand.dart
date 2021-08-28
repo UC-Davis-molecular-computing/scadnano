@@ -356,9 +356,12 @@ assigned, assign the complementary DNA sequence to this strand.
                 on_click: assign_scale_purification_fields,
               ),
               ContextMenuItem(
-                title: 'assign plate/well fields',
-                on_click: assign_plate_well_fields,
-              ),
+                  title: 'assign plate/well fields',
+                  on_click: assign_plate_well_fields,
+                  disabled: app.state.ui_state.selectables_store.selected_strands
+                          .toList()
+                          .any((element) => element.idt == null) ||
+                      props.strand.idt == null),
               if (app.state.ui_state.selectables_store.selected_strands
                       .toList()
                       .any((element) => element.idt != null) ||
@@ -667,7 +670,7 @@ PAGEHPLC : Dual PAGE & HPLC
     var dialog = Dialog(
         title: "assign plate/well IDT fields",
         items: items,
-        force_disable: {if (all_strands.length > 1) well_idx});
+        disable: {if (all_strands.length > 1) well_idx});
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;

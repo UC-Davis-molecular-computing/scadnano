@@ -1,2 +1,3 @@
 *.g.dart
+#*.g 2.dart
 /test_built_value.dart

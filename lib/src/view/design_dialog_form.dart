@@ -98,7 +98,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         }
       }
 
-      if (props.dialog.force_disable.contains(component_idx)) {
+      if (props.dialog.disable.contains(component_idx)) {
         disabled = true;
       }
 
