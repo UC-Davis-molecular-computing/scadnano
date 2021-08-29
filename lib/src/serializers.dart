@@ -55,6 +55,10 @@ import 'state/domain_name_mismatch.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  IDTFieldsRemove,
+  PlateWellIDTFieldsRemove,
+  PlateWellIDTFieldsAssign,
+  ScalePurificationIDTFieldsAssign,
   StrandNameSet,
   SubstrandNameSet,
   DomainNameMismatch,

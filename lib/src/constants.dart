@@ -393,6 +393,7 @@ const css_selector_insertion_group = 'insertion-group';
 const css_selector_deletion_group = 'deletion-group';
 const css_selector_selected = 'selected';
 
+const css_selector_context_menu_item_disabled = 'context_menu_item_disabled';
 
 const default_idt_scale = "25nm";
 const default_idt_purification = "STD";
