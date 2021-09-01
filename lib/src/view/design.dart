@@ -54,6 +54,8 @@ const SIDE_VIEW_SVG_VIEWPORT_GROUP = 'side-view-svg-viewport';
 const MAIN_VIEW_SVG_VIEWPORT_GROUP = 'main-view-svg-viewport';
 const SIDE_VIEW_SVG_ID = 'side-view-svg';
 const MAIN_VIEW_SVG_ID = 'main-view-svg';
+const SIDE_VIEW_ARROWS_SVG_ID = 'side-arrows';
+const MAIN_VIEW_ARROWS_SVG_ID = 'main-arrows';
 
 const PANZOOMABLE_CLASS = 'panzoomable';
 const DRAGGING_CLASS = 'dragging';
@@ -116,14 +118,14 @@ class DesignViewComponent {
 
     var main_arrows = svg.SvgSvgElement()
       ..attributes = {
-        'id': 'main-arrows',
+        'id': MAIN_VIEW_ARROWS_SVG_ID,
         'width': '100px',
         'height': '100px',
       };
 
     var side_arrows = svg.SvgSvgElement()
       ..attributes = {
-        'id': 'side-arrows',
+        'id': SIDE_VIEW_ARROWS_SVG_ID,
         'width': '100px',
         'height': '100px',
       };
@@ -146,12 +148,6 @@ class DesignViewComponent {
       ..attributes = {'id': 'dummy-elt-main-view', 'r': '200', 'cx': '100', 'cy': '100', 'fill': 'white'};
     side_view_svg_viewport.children.add(side_view_dummy_elt);
     main_view_svg_viewport.children.add(main_view_dummy_elt);
-
-    main_arrows.children.add(svg.CircleElement()
-      ..attributes = {'id': 'dummy-elt-main-view', 'r': '20', 'cx': '50', 'cy': '50', 'fill': 'red'});
-
-    side_arrows.children.add(svg.CircleElement()
-      ..attributes = {'id': 'dummy-elt-main-view', 'r': '20', 'cx': '50', 'cy': '50', 'fill': 'blue'});
 
     this.root_element.children.add(design_above_footer_pane);
     this.root_element.children.add(this.context_menu_container);
@@ -800,8 +796,9 @@ class DesignViewComponent {
             ConnectedDesignMainArrows()(),
           ),
         ),
-        querySelector('#main-arrows'),
+        querySelector('#$MAIN_VIEW_ARROWS_SVG_ID'),
       );
+      
       // side arrows
       react_dom.render(
         over_react_components.ErrorBoundary()(
@@ -809,7 +806,7 @@ class DesignViewComponent {
             ConnectedDesignSideArrows()(),
           ),
         ),
-        querySelector('#side-arrows'),
+        querySelector('#$SIDE_VIEW_ARROWS_SVG_ID'),
       );
 
       // footer

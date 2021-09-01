@@ -41,6 +41,20 @@ class DesignMainArrowsComponent extends UiComponent2<DesignMainArrowsProps> {
     return (Dom.g()..className = 'axis-arrows')([
       (Dom.svgTitle()..key = "title")(props.invert_xy ? "⦻ - Into the screen" : "⊙ - Out of the screen"),
       //horizontal arrow (Z-axis)
+      if (props.invert_xy) ...[
+        (Dom.path()
+          ..key = "x"
+          ..d = 'M -6.32 -6.32 L 6.32 6.32 M 6.32 -6.32 L -6.32 6.32'
+          ..fill = "none"
+          ..stroke = 'red'
+          ..className = 'axis-arrow')(),
+        (Dom.circle()
+          ..key = "x_circle"
+          ..r = "10"
+          ..stroke = 'red'
+          ..fill = "none"
+          ..className = 'axis-arrow')(),
+      ],
       (Dom.path()
         ..key = "z_path"
         ..transform = 'rotate(90)'
@@ -57,26 +71,20 @@ class DesignMainArrowsComponent extends UiComponent2<DesignMainArrowsProps> {
         ..stroke = 'green'
         ..className = 'axis-arrow')(),
       //outward arrow (X-axis)
-      if (!props.invert_xy)
+      if (!props.invert_xy) ...[
         (Dom.circle()
           ..key = "dot"
           ..r = "2"
           ..stroke = 'red'
           ..fill = "red"
           ..className = 'axis-arrow')(),
-      if (props.invert_xy)
-        (Dom.path()
-          ..key = "x"
-          ..d = 'M -6.32 -6.32 L 6.32 6.32 M 6.32 -6.32 L -6.32 6.32'
-          ..fill = "none"
+        (Dom.circle()
+          ..key = "x_circle"
+          ..r = "10"
           ..stroke = 'red'
+          ..fill = "none"
           ..className = 'axis-arrow')(),
-      (Dom.circle()
-        ..key = "x_circle"
-        ..r = "10"
-        ..stroke = 'red'
-        ..fill = "none"
-        ..className = 'axis-arrow')(),
+      ],
     ]);
   }
 }

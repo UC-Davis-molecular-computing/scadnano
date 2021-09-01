@@ -40,6 +40,18 @@ class DesignMainArrowsComponent extends UiComponent2<DesignSideArrowsProps> {
 //RGB XYZ
     return (Dom.g()..className = 'axis-arrows')(
       Dom.svgTitle()("⦻ - Into the screen"),
+      //inward arrow (Z-axis)
+      (Dom.path()
+        ..key = "z_path"
+        ..d = 'M -6.32 -6.32 L 6.32 6.32 M 6.32 -6.32 L -6.32 6.32'
+        ..fill = "none"
+        ..stroke = 'blue'
+        ..className = 'axis-arrow')(),
+      (Dom.circle()
+        ..r = "10"
+        ..stroke = 'blue'
+        ..fill = "none"
+        ..className = 'axis-arrow')(),
       // horizontal arrow (X-axis)
       (Dom.path()
         ..key = "x_path"
@@ -55,18 +67,6 @@ class DesignMainArrowsComponent extends UiComponent2<DesignSideArrowsProps> {
         ..d = path_description
         ..fill = "none"
         ..stroke = 'green'
-        ..className = 'axis-arrow')(),
-      //inward arrow (Z-axis)
-      (Dom.path()
-        ..key = "z_path"
-        ..d = 'M -6.32 -6.32 L 6.32 6.32 M 6.32 -6.32 L -6.32 6.32'
-        ..fill = "none"
-        ..stroke = 'blue'
-        ..className = 'axis-arrow')(),
-      (Dom.circle()
-        ..r = "10"
-        ..stroke = 'blue'
-        ..fill = "none"
         ..className = 'axis-arrow')(),
     );
   }
