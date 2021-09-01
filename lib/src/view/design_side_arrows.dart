@@ -30,25 +30,32 @@ mixin DesignSideArrowsProps on UiProps {
 class DesignMainArrowsComponent extends UiComponent2<DesignSideArrowsProps> {
   @override
   render() {
-    num mag = 50 * 0.93;
-    var path_description = 'M 0 0 '
+    num mag = 50 * 0.93, circle_rad = 10, x_end_offset = circle_rad * 0.632, arrow_padding = 10;
+
+    var arrow_path = 'M 0 0 '
         'v -$mag ' //vertical line to
         'm ${mag / 6.0} ${mag / 4.0} ' //move to
         'L 0 -${mag} ' //normal line to
         'm -${mag / 6.0} ${mag / 4.0} '
         'L 0 -${mag} ';
+    var x_path =
+        'M -$x_end_offset -$x_end_offset L $x_end_offset $x_end_offset M $x_end_offset -$x_end_offset L -$x_end_offset $x_end_offset';
+
+    num svg_center_x = props.invert_xy ? mag + circle_rad + arrow_padding : circle_rad + arrow_padding,
+        svg_center_y = props.invert_xy ? mag + circle_rad + arrow_padding : circle_rad + arrow_padding;
+
 //RGB XYZ
-    return (Dom.g()..className = 'axis-arrows')(
+    return (Dom.g()..transform = 'translate($svg_center_x, $svg_center_y)')(
       Dom.svgTitle()("⦻ - Into the screen"),
       //inward arrow (Z-axis)
       (Dom.path()
         ..key = "z_path"
-        ..d = 'M -6.32 -6.32 L 6.32 6.32 M 6.32 -6.32 L -6.32 6.32'
+        ..d = x_path
         ..fill = "none"
         ..stroke = 'blue'
         ..className = 'axis-arrow')(),
       (Dom.circle()
-        ..r = "10"
+        ..r = circle_rad
         ..stroke = 'blue'
         ..fill = "none"
         ..className = 'axis-arrow')(),
@@ -56,7 +63,7 @@ class DesignMainArrowsComponent extends UiComponent2<DesignSideArrowsProps> {
       (Dom.path()
         ..key = "x_path"
         ..transform = props.invert_xy ? 'rotate(270)' : 'rotate(90)'
-        ..d = path_description
+        ..d = arrow_path
         ..fill = "none"
         ..stroke = 'red'
         ..className = 'axis-arrow')(),
@@ -64,7 +71,7 @@ class DesignMainArrowsComponent extends UiComponent2<DesignSideArrowsProps> {
       (Dom.path()
         ..key = "y_path"
         ..transform = props.invert_xy ? 'rotate(0)' : 'rotate(180)'
-        ..d = path_description
+        ..d = arrow_path
         ..fill = "none"
         ..stroke = 'green'
         ..className = 'axis-arrow')(),

@@ -101,7 +101,6 @@ html, body {
 }
 
 .axis-arrows{
-    transform: translate(50px, 50px);
 }
 .axis-arrow{
     stroke-width: 3;

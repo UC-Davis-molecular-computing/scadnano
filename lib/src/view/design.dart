@@ -119,15 +119,15 @@ class DesignViewComponent {
     var main_arrows = svg.SvgSvgElement()
       ..attributes = {
         'id': MAIN_VIEW_ARROWS_SVG_ID,
-        'width': '100px',
-        'height': '100px',
+        'width': '85px',
+        'height': '85px',
       };
 
     var side_arrows = svg.SvgSvgElement()
       ..attributes = {
         'id': SIDE_VIEW_ARROWS_SVG_ID,
-        'width': '100px',
-        'height': '100px',
+        'width': '85px',
+        'height': '85px',
       };
 
     var side_view_svg_viewport = svg.GElement()
