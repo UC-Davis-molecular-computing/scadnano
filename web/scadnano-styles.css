@@ -97,11 +97,16 @@ html, body {
     left: 0;
     bottom: 0;
     max-width: 100%;
-    pointer-events: bounding-box;
+    pointer-events: none;
 }
 
 .axis-arrows{
 }
+
+.arrow-group{
+    pointer-events: bounding-box;
+}
+
 .axis-arrow{
     stroke-width: 3;
     stroke-linecap: round;

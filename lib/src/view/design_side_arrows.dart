@@ -18,13 +18,16 @@ typedef ActionCreator = actions.UndoableAction Function(Strand strand);
 
 UiFactory<DesignSideArrowsProps> ConnectedDesignSideArrows =
     connect<AppState, DesignSideArrowsProps>(mapStateToProps: (state) {
-  return DesignSideArrows()..invert_xy = state.ui_state.invert_xy;
+  return DesignSideArrows()
+    ..invert_xy = state.ui_state.invert_xy
+    ..show_helices_axis_arrows = state.ui_state.show_helices_axis_arrows;
 })(DesignSideArrows);
 
 UiFactory<DesignSideArrowsProps> DesignSideArrows = _$DesignSideArrows;
 
 mixin DesignSideArrowsProps on UiProps {
   bool invert_xy;
+  bool show_helices_axis_arrows;
 }
 
 class DesignMainArrowsComponent extends UiComponent2<DesignSideArrowsProps> {
@@ -45,36 +48,42 @@ class DesignMainArrowsComponent extends UiComponent2<DesignSideArrowsProps> {
         svg_center_y = props.invert_xy ? mag + circle_rad + arrow_padding : circle_rad + arrow_padding;
 
 //RGB XYZ
-    return (Dom.g()..transform = 'translate($svg_center_x, $svg_center_y)')(
-      Dom.svgTitle()("⦻ - Into the screen"),
-      //inward arrow (Z-axis)
-      (Dom.path()
-        ..key = "z_path"
-        ..d = x_path
-        ..fill = "none"
-        ..stroke = 'blue'
-        ..className = 'axis-arrow')(),
-      (Dom.circle()
-        ..r = circle_rad
-        ..stroke = 'blue'
-        ..fill = "none"
-        ..className = 'axis-arrow')(),
-      // horizontal arrow (X-axis)
-      (Dom.path()
-        ..key = "x_path"
-        ..transform = props.invert_xy ? 'rotate(270)' : 'rotate(90)'
-        ..d = arrow_path
-        ..fill = "none"
-        ..stroke = 'red'
-        ..className = 'axis-arrow')(),
-      //downward arrow (Y-axis)
-      (Dom.path()
-        ..key = "y_path"
-        ..transform = props.invert_xy ? 'rotate(0)' : 'rotate(180)'
-        ..d = arrow_path
-        ..fill = "none"
-        ..stroke = 'green'
-        ..className = 'axis-arrow')(),
-    );
+    if (props.show_helices_axis_arrows == true) {
+      return (Dom.g()
+      ..className = 'arrow-group'
+      ..transform = 'translate($svg_center_x, $svg_center_y)')(
+        Dom.svgTitle()("⦻ - Into the screen"),
+        //inward arrow (Z-axis)
+        (Dom.path()
+          ..key = "z_path"
+          ..d = x_path
+          ..fill = "none"
+          ..stroke = 'blue'
+          ..className = 'axis-arrow')(),
+        (Dom.circle()
+          ..r = circle_rad
+          ..stroke = 'blue'
+          ..fill = "none"
+          ..className = 'axis-arrow')(),
+        // horizontal arrow (X-axis)
+        (Dom.path()
+          ..key = "x_path"
+          ..transform = props.invert_xy ? 'rotate(270)' : 'rotate(90)'
+          ..d = arrow_path
+          ..fill = "none"
+          ..stroke = 'red'
+          ..className = 'axis-arrow')(),
+        //downward arrow (Y-axis)
+        (Dom.path()
+          ..key = "y_path"
+          ..transform = props.invert_xy ? 'rotate(0)' : 'rotate(180)'
+          ..d = arrow_path
+          ..fill = "none"
+          ..stroke = 'green'
+          ..className = 'axis-arrow')(),
+      );
+    } else {
+      return Dom.g()();
+    }
   }
 }

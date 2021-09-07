@@ -68,6 +68,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..show_helix_circles_main_view = state.ui_state.show_helix_circles_main_view
       ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
       ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
+      ..show_helices_axis_arrows = state.ui_state.show_helices_axis_arrows
       ..show_loopout_length = state.ui_state.show_loopout_length
       ..show_slice_bar = state.ui_state.show_slice_bar
       ..show_mouseover_data = state.ui_state.show_mouseover_data
@@ -117,6 +118,7 @@ mixin MenuPropsMixin on UiProps {
   bool warn_on_exit_if_unsaved;
   bool show_helix_circles_main_view;
   bool show_grid_coordinates_side_view;
+  bool show_helices_axis_arrows;
   bool show_loopout_length;
   bool show_slice_bar;
   bool show_mouseover_data;
@@ -232,13 +234,11 @@ design will be selected (based on helix index) on the loaded design.'''
     ]);
   }
 
-  ReactElement file_menu_save_design_local_storage_options() =>
-      (MenuDropdownRight()
+  ReactElement file_menu_save_design_local_storage_options() => (MenuDropdownRight()
         ..title = 'Local storage design save options'
         ..id = 'file_menu_local-storage-options'
         ..key = 'file_menu_local-storage-options'
-        ..className = 'submenu_item'
-      )([
+        ..className = 'submenu_item')([
         (MenuBoolean()
           ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.on_edit
           ..display = 'Save design in localStorage on every edit'
@@ -506,8 +506,7 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
       ..title = 'DNA sequences'
       ..id = 'view_menu_show_dna-dropdown'
       ..key = 'view_menu_show_dna-dropdown'
-      ..className = 'submenu_item'
-    )([
+      ..className = 'submenu_item')([
       (MenuBoolean()
         ..value = props.show_dna
         ..display = 'Show DNA sequences'
@@ -535,8 +534,7 @@ helix with the opposite orientation.'''
       ..title = 'Strand/domain names'
       ..id = 'view_menu_show_labels-dropdown'
       ..key = 'view_menu_show_labels-dropdown'
-      ..className = 'submenu_item'
-    )([
+      ..className = 'submenu_item')([
       (MenuBoolean()
         ..value = props.show_strand_names
         ..display = 'Show strand names'
@@ -583,8 +581,7 @@ helix with the opposite orientation.'''
       ..title = 'Modifications'
       ..id = 'view_menu_mods-dropdown'
       ..key = 'view_menu_mods-dropdown'
-      ..className = 'submenu_item'
-    )([
+      ..className = 'submenu_item')([
       (MenuBoolean()
         ..value = props.show_modifications
         ..display = 'Show modifications'
@@ -621,8 +618,7 @@ the surface of a DNA origami."""
       ..title = 'Major ticks'
       ..id = 'view_menu_display_major_tick_offsets-dropdown'
       ..key = 'view_menu_display_major_tick_offsets-dropdown'
-      ..className = 'submenu_item'
-    )([
+      ..className = 'submenu_item')([
       (MenuBoolean()
         ..value = props.display_of_major_ticks_offsets
         ..display = 'Display major tick offsets'
@@ -652,7 +648,7 @@ the surface of a DNA origami."""
         ..tooltip =
             'Display the number of bases between each adjacent pair of major ticks, on the first helix.'
         ..onChange =
-        ((_) => props.dispatch(actions.SetDisplayMajorTickWidths(!props.display_major_tick_widths)))
+            ((_) => props.dispatch(actions.SetDisplayMajorTickWidths(!props.display_major_tick_widths)))
         ..key = 'display-major-tick-widths')(),
       (MenuBoolean()
         ..value = props.display_major_tick_widths_all_helices
@@ -745,6 +741,18 @@ Shows grid coordinates in the side view under the helix index.'''
         ..onChange = ((_) => props.dispatch(actions.ShowGridCoordinatesSideViewSet(
             show_grid_coordinates_side_view: !props.show_grid_coordinates_side_view)))
         ..key = 'show-grid-coordinates-side-view')(),
+      (MenuBoolean()
+        ..value = props.show_helices_axis_arrows
+        ..display = 'Show axis arrows in side and main view'
+        ..tooltip = '''\
+Show axis arrows in side and main view
+Red : X-axis
+Green : Y-axis
+Blue : Z-axis'''
+        ..name = 'show-helices-axis-arrows'
+        ..onChange = ((_) => props.dispatch(actions.ShowHelicesAxisArrows(
+            show_helices_axis_arrows: !props.show_helices_axis_arrows)))
+        ..key = 'show-helices-axis-arrows')(),
       (MenuBoolean()
         ..value = props.show_loopout_length
         ..display = 'Show loopout lengths'
