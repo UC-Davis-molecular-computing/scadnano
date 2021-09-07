@@ -384,6 +384,42 @@ class DesignViewComponent {
       }
     });
 
+    end_select_mode() {
+      uninstall_draggable(true, DraggableComponent.main);
+      uninstall_draggable(false, DraggableComponent.side);
+
+      // restore panzoomable class to change CSS cursor
+      for (var svg_elt in [this.main_view_svg, this.side_view_svg]) {
+        svg_elt.classes.add(PANZOOMABLE_CLASS);
+        svg_elt.classes.remove(SELECTION_BOX_DRAWABLE_CLASS);
+      }
+
+      // if rope-selecting, send actions to select items and remove displayed rope
+      if (edit_mode_is_rope_select()) {
+        // print('key up: ${key}');
+        SelectionRope rope = app.store_selection_rope.state;
+        if (rope != null) {
+          bool toggle = rope.toggle;
+          var action_adjust = null;
+          // rope.is_main might be null;
+          // also if there's only 1 or 2 points, it's not a Jordan curve yet so don't bother selecting
+          if (rope.is_main == true && rope.points.length >= 3) {
+            action_adjust = actions.SelectionsAdjustMainView(toggle: toggle, box: false);
+          } else if (rope.is_main == false) {
+            // action_adjust = actions.HelixSelectionsAdjust(toggle, app.store_selection_box.state);
+          }
+          if (action_adjust != null) {
+            app.dispatch(action_adjust);
+          }
+
+          var action_remove = actions.SelectionRopeRemove();
+          app.dispatch(action_remove);
+        }
+      }
+    }
+
+    window.onBlur.listen((_) => end_select_mode());
+
     window.onKeyUp.listen((ev) {
       int key = ev.which;
 
@@ -392,37 +428,7 @@ class DesignViewComponent {
       if (key == constants.KEY_CODE_TOGGLE_SELECT ||
           key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
           key == constants.KEY_CODE_SELECT) {
-        uninstall_draggable(true, DraggableComponent.main);
-        uninstall_draggable(false, DraggableComponent.side);
-
-        // restore panzoomable class to change CSS cursor
-        for (var svg_elt in [this.main_view_svg, this.side_view_svg]) {
-          svg_elt.classes.add(PANZOOMABLE_CLASS);
-          svg_elt.classes.remove(SELECTION_BOX_DRAWABLE_CLASS);
-        }
-
-        // if rope-selecting, send actions to select items and remove displayed rope
-        if (edit_mode_is_rope_select()) {
-          // print('key up: ${key}');
-          SelectionRope rope = app.store_selection_rope.state;
-          if (rope != null) {
-            bool toggle = rope.toggle;
-            var action_adjust = null;
-            // rope.is_main might be null;
-            // also if there's only 1 or 2 points, it's not a Jordan curve yet so don't bother selecting
-            if (rope.is_main == true && rope.points.length >= 3) {
-              action_adjust = actions.SelectionsAdjustMainView(toggle: toggle, box: false);
-            } else if (rope.is_main == false) {
-              // action_adjust = actions.HelixSelectionsAdjust(toggle, app.store_selection_box.state);
-            }
-            if (action_adjust != null) {
-              app.dispatch(action_adjust);
-            }
-
-            var action_remove = actions.SelectionRopeRemove();
-            app.dispatch(action_remove);
-          }
-        }
+          end_select_mode();
       }
 
       if (key == constants.KEY_CODE_SHOW_POTENTIAL_HELIX) {
@@ -818,6 +824,7 @@ class DesignViewComponent {
         ),
         this.footer_element,
       );
+      
 
       // context menu
       react_dom.render(

@@ -56,6 +56,10 @@ part 'serializers.g.dart';
 
 @SerializersFor([
   ShowHelicesAxisArrows,
+  IDTFieldsRemove,
+  PlateWellIDTFieldsRemove,
+  PlateWellIDTFieldsAssign,
+  ScalePurificationIDTFieldsAssign,
   StrandNameSet,
   SubstrandNameSet,
   DomainNameMismatch,

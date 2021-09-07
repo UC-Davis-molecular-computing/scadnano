@@ -1,4 +1,3 @@
-
 import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
@@ -11,9 +10,7 @@ part 'context_menu.g.dart';
 
 typedef Callback = void Function();
 
-abstract class ContextMenu
-    with BuiltJsonSerializable
-    implements Built<ContextMenu, ContextMenuBuilder> {
+abstract class ContextMenu with BuiltJsonSerializable implements Built<ContextMenu, ContextMenuBuilder> {
   factory ContextMenu.from([void Function(ContextMenuBuilder) updates]) = _$ContextMenu;
 
   ContextMenu._();
@@ -41,7 +38,19 @@ abstract class ContextMenuItem
 
   static Serializer<ContextMenuItem> get serializer => _$contextMenuItemSerializer;
 
-  factory ContextMenuItem({String title, Callback on_click, String tooltip, BuiltList<ContextMenuItem> nested}) = _$ContextMenuItem._;
+  factory ContextMenuItem(
+      {String title,
+      Callback on_click,
+      String tooltip,
+      BuiltList<ContextMenuItem> nested,
+      bool disabled = false}) {
+    return ContextMenuItem.from((b) => b
+      ..title = title
+      ..on_click = on_click
+      ..tooltip = tooltip
+      ..nested = nested?.toBuilder()
+      ..disabled = disabled);
+  }
 
   @memoized
   int get hashCode;
@@ -59,4 +68,6 @@ abstract class ContextMenuItem
 
   @nullable
   BuiltList<ContextMenuItem> get nested;
+
+  bool get disabled;
 }

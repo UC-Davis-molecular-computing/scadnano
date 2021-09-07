@@ -44,13 +44,12 @@ with three main differences:
 
 1) scadnano runs entirely in the browser, with no installation required. 
 Currently only 
-[Chrome](https://www.google.com/chrome/) 
-and 
-[Firefox](https://www.mozilla.org/en-US/firefox/) 
-are supported, with support for 
-[Safari](https://www.apple.com/safari/) 
+[Chrome](https://www.google.com/chrome/),
+[Firefox](https://www.mozilla.org/en-US/firefox/),
 and 
 [Edge](https://www.microsoft.com/en-us/windows/microsoft-edge) 
+are supported, with support for 
+[Safari](https://www.apple.com/safari/) 
 planned in the future.
 
 2) scadnano designs, while they can be edited manually in scadnano, can also be created and edited by a well-documented Python scripting library 

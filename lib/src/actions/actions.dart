@@ -12,6 +12,7 @@ import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
+import 'package:scadnano/src/state/idt_fields.dart';
 import 'package:scadnano/src/state/substrand.dart';
 
 import '../state/address.dart';
@@ -2666,6 +2667,75 @@ abstract class DeletionRemove
   static Serializer<DeletionRemove> get serializer => _$deletionRemoveSerializer;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// assign scale/purification IDT fields of strands
+abstract class ScalePurificationIDTFieldsAssign
+    with BuiltJsonSerializable, UndoableAction
+    implements SingleStrandAction, Built<ScalePurificationIDTFieldsAssign, ScalePurificationIDTFieldsAssignBuilder> {
+  Strand get strand;
+
+  IDTFields get idt_fields;
+
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ScalePurificationIDTFieldsAssign({Strand strand, IDTFields idt_fields}) =
+      _$ScalePurificationIDTFieldsAssign._;
+
+  ScalePurificationIDTFieldsAssign._();
+
+  static Serializer<ScalePurificationIDTFieldsAssign> get serializer => _$scalePurificationIDTFieldsAssignSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// assign plate/well IDT fields of strands
+abstract class PlateWellIDTFieldsAssign
+    with BuiltJsonSerializable, UndoableAction
+    implements SingleStrandAction, Built<PlateWellIDTFieldsAssign, PlateWellIDTFieldsAssignBuilder> {
+  Strand get strand;
+
+  IDTFields get idt_fields;
+
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory PlateWellIDTFieldsAssign({Strand strand, IDTFields idt_fields}) =
+      _$PlateWellIDTFieldsAssign._;
+
+  PlateWellIDTFieldsAssign._();
+
+  static Serializer<PlateWellIDTFieldsAssign> get serializer => _$plateWellIDTFieldsAssignSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// remove plate/well IDT fields of strands
+abstract class PlateWellIDTFieldsRemove
+    with BuiltJsonSerializable, UndoableAction
+    implements SingleStrandAction, Built<PlateWellIDTFieldsRemove, PlateWellIDTFieldsRemoveBuilder> {
+  Strand get strand;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory PlateWellIDTFieldsRemove({Strand strand}) =
+      _$PlateWellIDTFieldsRemove._;
+
+  PlateWellIDTFieldsRemove._();
+
+  static Serializer<PlateWellIDTFieldsRemove> get serializer => _$plateWellIDTFieldsRemoveSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// remove plate/well IDT fields of strands
+abstract class IDTFieldsRemove
+    with BuiltJsonSerializable, UndoableAction
+    implements SingleStrandAction, Built<IDTFieldsRemove, IDTFieldsRemoveBuilder> {
+  Strand get strand;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory IDTFieldsRemove({Strand strand}) =
+      _$IDTFieldsRemove._;
+
+  IDTFieldsRemove._();
+
+  static Serializer<IDTFieldsRemove> get serializer => _$iDTFieldsRemoveSerializer;
+}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // modification add
 abstract class ModificationAdd
