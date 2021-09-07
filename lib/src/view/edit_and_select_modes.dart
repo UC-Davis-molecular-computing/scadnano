@@ -36,23 +36,40 @@ mixin EditAndSelectModesProps on UiProps {
   bool is_origami;
 }
 
-class EditAndSelectModesComponent extends UiComponent2<EditAndSelectModesProps> with RedrawCounterMixin {
+mixin EditAndSelectModesState on UiState {
+  bool edit_mode_menu_visible;
+}
+
+class EditAndSelectModesComponent
+    extends UiStatefulComponent2<EditAndSelectModesProps, EditAndSelectModesState> with RedrawCounterMixin {
+  
+  @override
+  Map get initialState => (newState()..edit_mode_menu_visible = true);
+
   @override
   render() {
-    bool select_mode = props.edit_modes.contains(EditModeChoice.select) || props.edit_modes.contains(EditModeChoice.rope_select);
+    bool select_mode = props.edit_modes.contains(EditModeChoice.select) ||
+        props.edit_modes.contains(EditModeChoice.rope_select);
     return [
-      if (select_mode)
+      if (select_mode && state.edit_mode_menu_visible)
         (SelectMode()
           ..select_mode_state = props.select_mode_state
           ..is_origami = props.is_origami
           ..key = 'select-modes')(),
-      if (select_mode)
+      if (select_mode && state.edit_mode_menu_visible)
         (Dom.div()
           ..className = FIXED_VERTICAL_SEPARATOR //FIXED_HORIZONTAL_SEPARATOR
           ..key = 'modes-separator')(),
-      (EditMode()
-        ..modes = props.edit_modes
-        ..key = 'edit-modes')(),
+      if (state.edit_mode_menu_visible)
+        {
+          (EditMode()
+            ..modes = props.edit_modes
+            ..key = 'edit-modes')(),
+        },
+      (Dom.button()
+      ..key = 'edit-mode-toggle-button'
+      ..title = state.edit_mode_menu_visible ? 'Hide edit mode menu' : 'Open edit mode menu'
+      ..onClick = (_)=>(setState(newState()..edit_mode_menu_visible = !(state.edit_mode_menu_visible))))(state.edit_mode_menu_visible ? '>>' : '<<')
     ];
   }
 }
