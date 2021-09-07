@@ -100,9 +100,6 @@ html, body {
     pointer-events: none;
 }
 
-.axis-arrows{
-}
-
 .arrow-group{
     pointer-events: bounding-box;
 }
