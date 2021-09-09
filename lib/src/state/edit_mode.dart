@@ -110,6 +110,30 @@ class EditModeChoice extends EnumClass {
   @override
   String toString() => display_name();
 
+  @memoized
+  String get image_file {
+    // edit this to display a different string than the identifier name above
+    switch (this) {
+      case select:
+        return 'image.svg';
+      case rope_select:
+        return 'image.svg';
+      case pencil:
+        return 'image.svg';
+      case nick:
+        return 'image.svg';
+      case ligate:
+        return 'image.svg';
+      case insertion:
+        return 'image.svg';
+      case deletion:
+        return 'image.svg';
+      case move_group:
+        return 'image.svg';
+    }
+    return '';
+  }
+
   static EditModeChoice from_json(String the_name) {
     for (var val in values) {
       if (val.name == the_name) {

@@ -49,6 +49,40 @@ class SelectModeChoice extends EnumClass {
   @override
   String toString() => display_name;
 
+  @memoized
+  String get image_file {
+    // edit this to display a different string than the identifier name above
+    switch (this) {
+      case end_5p_strand:
+        return 'image.svg';
+      case end_3p_strand:
+        return 'image.svg';
+      case end_5p_domain:
+        return 'image.svg';
+      case end_3p_domain:
+        return 'image.svg';
+      case domain:
+        return 'image.svg';
+      case crossover:
+        return 'image.svg';
+      case loopout:
+        return 'image.svg';
+      case deletion:
+        return 'image.svg';
+      case insertion:
+        return 'image.svg';
+      case modification:
+        return 'image.svg';
+      case strand:
+        return 'image.svg';
+      case scaffold:
+        return 'image.svg';
+      case staple:
+        return 'image.svg';
+    }
+    return '';
+  }
+
   String css_selector() {
     switch (this) {
       case end_5p_strand:
