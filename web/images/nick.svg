@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="65px" height="16px" viewBox="0 0 65 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
+    <title>Group 5@3x</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-5">
+            <rect id="Rectangle" fill="#F74208" x="0" y="0" width="65" height="3" rx="1.5"></rect>
+            <rect id="Rectangle-Copy" fill="#0066CC" x="0" y="11" width="25" height="3" rx="1.5"></rect>
+            <rect id="Rectangle-Copy-2" fill="#0066CC" x="40" y="11" width="25" height="3" rx="1.5"></rect>
+            <rect id="Rectangle" stroke="#000000" stroke-width="0.25" fill="#0066CC" x="37.125" y="10.125" width="4.75" height="4.75" rx="1"></rect>
+            <polygon id="Triangle" stroke="#000000" stroke-width="0.25" fill="#0066CC" transform="translate(26.500000, 12.500000) rotate(90.000000) translate(-26.500000, -12.500000) " points="26.5 10 29 15 24 15"></polygon>
+            <polygon id="Triangle" fill="#F74208" transform="translate(32.500000, 8.500000) rotate(180.000000) translate(-32.500000, -8.500000) " points="32.5 6 35 11 30 11"></polygon>
+            <rect id="Rectangle" fill="#F74208" x="32" y="4" width="1" height="2"></rect>
+        </g>
+    </g>
+</svg>

@@ -115,21 +115,21 @@ class EditModeChoice extends EnumClass {
     // edit this to display a different string than the identifier name above
     switch (this) {
       case select:
-        return 'image.svg';
+        return 'images/select.svg';
       case rope_select:
-        return 'image.svg';
+        return 'images/rope_select.svg';
       case pencil:
-        return 'image.svg';
+        return 'images/pencil.svg';
       case nick:
-        return 'image.svg';
+        return 'images/nick.svg';
       case ligate:
-        return 'image.svg';
+        return 'images/ligate.svg';
       case insertion:
-        return 'image.svg';
+        return 'images/insertion.svg';
       case deletion:
-        return 'image.svg';
+        return 'images/deletion.svg';
       case move_group:
-        return 'image.svg';
+        return 'images/move_group.svg';
     }
     return '';
   }

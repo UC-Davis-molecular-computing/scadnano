@@ -68,6 +68,7 @@ class EditAndSelectModesComponent
         },
       (Dom.button()
       ..key = 'edit-mode-toggle-button'
+      ..className = 'edit-mode-toggle-button'
       ..title = state.edit_mode_menu_visible ? 'Hide edit mode menu' : 'Open edit mode menu'
       ..onClick = (_)=>(setState(newState()..edit_mode_menu_visible = !(state.edit_mode_menu_visible))))(state.edit_mode_menu_visible ? '>>' : '<<')
     ];

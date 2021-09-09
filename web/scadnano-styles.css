@@ -357,6 +357,7 @@ label + select {
 
 #modes-buttons {
     display: flex;
+    position: relative;
 }
 
 #edit-mode {
@@ -365,6 +366,13 @@ label + select {
 
 #select-mode {
     width: 105px;
+    overflow: scroll;
+}
+
+.edit-mode-toggle-button{
+    position: absolute;
+    bottom: 24px;
+    right: calc(100% + 20px);
 }
 
 .mode-button {
@@ -374,6 +382,15 @@ label + select {
     /*font-weight: bold;*/
     color: black;
     text-align: left;
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    align-items: center;
+    padding: 5px;
+}
+.mode-button>img{
+    height: 35px;
+    max-width: 100%;
 }
 
 .edit-mode-button-selected {
