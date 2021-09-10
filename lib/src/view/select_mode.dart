@@ -46,7 +46,7 @@ class SelectModeComponent extends UiComponent2<SelectModeProps> with RedrawCount
               ? 'select-mode-button-selected'
               : 'select-mode-button-unselected')
       ..addTestId('scadnano.SelectModeComponent.button.all_ends')
-      ..key = 'all-ends')('all ends');
+      ..key = 'all-ends')((Dom.img()..src = SelectModeChoice.all_ends_image_file)(), 'all ends');
 
     var modes = props.is_origami ? SelectModeChoice.all_choices : SelectModeChoice.non_origami_choices;
     var elts_map = {

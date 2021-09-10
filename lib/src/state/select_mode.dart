@@ -83,6 +83,8 @@ class SelectModeChoice extends EnumClass {
     return '';
   }
 
+  static String get all_ends_image_file => 'image.svg';
+
   String css_selector() {
     switch (this) {
       case end_5p_strand:
