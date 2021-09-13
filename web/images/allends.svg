@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="66px" height="18px" viewBox="0 0 66 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
+    <title>Group 8 Copy 3@3x</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-8-Copy-3" transform="translate(0.000000, 1.000000)">
+            <rect id="Rectangle-Copy-6" fill="#CEEBBE" transform="translate(64.000000, 8.000000) rotate(90.000000) translate(-64.000000, -8.000000) " x="58" y="7" width="12" height="2" rx="1"></rect>
+            <rect id="Rectangle-Copy-4" fill="#57BB02" x="0" y="1" width="62" height="3" rx="1.5"></rect>
+            <rect id="Rectangle-Copy-5" fill="#57BB02" x="4" y="12" width="61" height="3" rx="1.5"></rect>
+            <polygon id="Triangle" stroke="#FF0000" stroke-width="0.25" fill="#FE69B4" transform="translate(2.500000, 13.500000) rotate(-90.000000) translate(-2.500000, -13.500000) " points="2.5 11 5 16 0 16"></polygon>
+            <polygon id="Triangle-Copy-3" stroke="#FF0000" stroke-width="0.25" fill="#FE69B4" transform="translate(63.500000, 2.500000) rotate(90.000000) translate(-63.500000, -2.500000) " points="63.5 0 66 5 61 5"></polygon>
+            <rect id="Rectangle" stroke="#FF0000" stroke-width="0.25" fill="#FE69B4" x="0.125" y="0.125" width="4.75" height="4.75" rx="1"></rect>
+            <rect id="Rectangle-Copy-10" stroke="#FF0000" stroke-width="0.25" fill="#FE69B4" x="61.125" y="11.125" width="4.75" height="4.75" rx="1"></rect>
+        </g>
+    </g>
+</svg>

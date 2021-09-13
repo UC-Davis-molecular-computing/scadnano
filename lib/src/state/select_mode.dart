@@ -54,36 +54,36 @@ class SelectModeChoice extends EnumClass {
     // edit this to display a different string than the identifier name above
     switch (this) {
       case end_5p_strand:
-        return 'image.svg';
+        return 'images/5pstrand.svg';
       case end_3p_strand:
-        return 'image.svg';
+        return 'images/3pstrand.svg';
       case end_5p_domain:
-        return 'image.svg';
+        return 'images/5pdomain.svg';
       case end_3p_domain:
-        return 'image.svg';
+        return 'images/3pdomain.svg';
       case domain:
-        return 'image.svg';
+        return 'images/domain.svg';
       case crossover:
-        return 'image.svg';
+        return 'images/crossover.svg';
       case loopout:
-        return 'image.svg';
+        return 'images/loopout.svg';
       case deletion:
-        return 'image.svg';
+        return 'images/deletion.svg';
       case insertion:
-        return 'image.svg';
+        return 'images/insertion.svg';
       case modification:
-        return 'image.svg';
+        return 'images/mod.svg';
       case strand:
-        return 'image.svg';
+        return 'images/strand.svg';
       case scaffold:
-        return 'image.svg';
+        return 'images/scaffold.svg';
       case staple:
-        return 'image.svg';
+        return 'images/staple.svg';
     }
     return '';
   }
 
-  static String get all_ends_image_file => 'image.svg';
+  static String get all_ends_image_file => 'images/allends.svg';
 
   String css_selector() {
     switch (this) {
