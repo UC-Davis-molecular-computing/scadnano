@@ -14,8 +14,6 @@ import '../state/strand.dart';
 
 part 'design_main_arrows.over_react.g.dart';
 
-typedef ActionCreator = actions.UndoableAction Function(Strand strand);
-
 UiFactory<DesignMainArrowsProps> ConnectedDesignMainArrows =
     connect<AppState, DesignMainArrowsProps>(mapStateToProps: (state) {
   return DesignMainArrows()

@@ -14,8 +14,6 @@ import '../state/strand.dart';
 
 part 'design_side_arrows.over_react.g.dart';
 
-typedef ActionCreator = actions.UndoableAction Function(Strand strand);
-
 UiFactory<DesignSideArrowsProps> ConnectedDesignSideArrows =
     connect<AppState, DesignSideArrowsProps>(mapStateToProps: (state) {
   return DesignSideArrows()

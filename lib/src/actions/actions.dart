@@ -3233,19 +3233,19 @@ abstract class ShowGridCoordinatesSideViewSet
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // show or hide helix axis arrows
 
-abstract class ShowHelicesAxisArrows
+abstract class ShowAxisArrowsSet
     with BuiltJsonSerializable
-    implements Action, Built<ShowHelicesAxisArrows, ShowHelicesAxisArrowsBuilder> {
+    implements Action, Built<ShowAxisArrowsSet, ShowAxisArrowsSetBuilder> {
   bool get show_helices_axis_arrows;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ShowHelicesAxisArrows({bool show_helices_axis_arrows}) =
-      _$ShowHelicesAxisArrows._;
+  factory ShowAxisArrowsSet({bool show_helices_axis_arrows}) =
+      _$ShowAxisArrowsSet._;
 
-  ShowHelicesAxisArrows._();
+  ShowAxisArrowsSet._();
 
-  static Serializer<ShowHelicesAxisArrows> get serializer =>
-      _$showHelicesAxisArrowsSerializer;
+  static Serializer<ShowAxisArrowsSet> get serializer =>
+      _$showAxisArrowsSetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

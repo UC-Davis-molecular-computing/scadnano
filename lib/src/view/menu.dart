@@ -743,14 +743,14 @@ Shows grid coordinates in the side view under the helix index.'''
         ..key = 'show-grid-coordinates-side-view')(),
       (MenuBoolean()
         ..value = props.show_helices_axis_arrows
-        ..display = 'Show axis arrows in side and main view'
+        ..display = 'Show axis arrows'
         ..tooltip = '''\
 Show axis arrows in side and main view
 Red : X-axis
 Green : Y-axis
 Blue : Z-axis'''
         ..name = 'show-helices-axis-arrows'
-        ..onChange = ((_) => props.dispatch(actions.ShowHelicesAxisArrows(
+        ..onChange = ((_) => props.dispatch(actions.ShowAxisArrowsSet(
             show_helices_axis_arrows: !props.show_helices_axis_arrows)))
         ..key = 'show-helices-axis-arrows')(),
       (MenuBoolean()
