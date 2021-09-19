@@ -668,9 +668,7 @@ PAGEHPLC : Dual PAGE & HPLC
         value: props.strand.idt?.well != null ? props.strand.idt.well : "",
         tooltip: all_strands.length > 1 ? "Only individual strands can have a well assigned." : "");
     var dialog = Dialog(
-        title: "assign plate/well IDT fields",
-        items: items,
-        disable: {if (all_strands.length > 1) well_idx});
+        title: "assign plate/well IDT fields", items: items, disable: {if (all_strands.length > 1) well_idx});
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
@@ -730,8 +728,16 @@ PAGEHPLC : Dual PAGE & HPLC
 
   Future<void> ask_for_add_modification(
       [Domain domain = null, Address address = null, bool is_5p = null]) async {
-    assert((is_5p == null && domain != null && address != null) ||
-        (is_5p != null && domain == null && address == null));
+    /*
+    domain: selected domain 
+    address: address of DNA base
+    is_5p: is DNAEnd a 5 prime
+    */
+
+    // code in issue #613 adds domain and address parameters to design_main_strand_dna_end
+    // assert statement not needed
+    // assert((is_5p == null && domain != null && address != null) || (is_5p != null && domain == null && address == null));
+
     bool is_end = is_5p != null;
     int strand_dna_idx = null;
     int selected_index = 2;
@@ -827,9 +833,9 @@ PAGEHPLC : Dual PAGE & HPLC
     } else {
       List<DNAEnd> ends_selected = app.state.ui_state.selectables_store.selected_dna_ends.toList();
 
-      if (is_5p && !ends_selected.contains(props.strand.dnaend_5p)) {
+      if (mod is Modification5Prime && !ends_selected.contains(props.strand.dnaend_5p)) {
         ends_selected.add(props.strand.dnaend_5p);
-      } else if (!is_5p && !ends_selected.contains(props.strand.dnaend_3p)) {
+      } else if (mod is Modification3Prime && !ends_selected.contains(props.strand.dnaend_3p)) {
         ends_selected.add(props.strand.dnaend_3p);
       }
 
