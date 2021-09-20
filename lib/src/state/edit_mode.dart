@@ -88,21 +88,21 @@ class EditModeChoice extends EnumClass {
     // edit this to display a different string than the identifier name above
     switch (this) {
       case select:
-        return '(s)elect';
+        return '(s)';
       case rope_select:
-        return '(r)ope select';
+        return '(r)';
       case pencil:
-        return '(p)encil';
+        return '(p)';
       case nick:
-        return '(n)ick';
+        return '(n)';
       case ligate:
-        return '(l)igate';
+        return '(l)';
       case insertion:
-        return '(i)nsertion';
+        return '(i)';
       case deletion:
-        return '(d)eletion';
+        return '(d)';
       case move_group:
-        return '(m)ove group';
+        return '(m)';
     }
     return super.toString();
   }

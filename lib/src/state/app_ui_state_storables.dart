@@ -80,6 +80,8 @@ abstract class AppUIStateStorables
 
   bool get show_helix_circles_main_view;
 
+  bool get show_edit_mode_menu;
+
   bool get show_grid_coordinates_side_view;
 
   bool get show_loopout_length;
@@ -129,6 +131,7 @@ abstract class AppUIStateStorables
     b.invert_yz = false;
     b.warn_on_exit_if_unsaved = true;
     b.show_helix_circles_main_view = true;
+    b.show_edit_mode_menu = true;
     b.show_grid_coordinates_side_view = false;
     b.show_loopout_length = false;
     b.default_crossover_type_scaffold_for_setting_helix_rolls = true;

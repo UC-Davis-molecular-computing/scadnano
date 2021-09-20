@@ -61,7 +61,6 @@ class SelectModeComponent extends UiComponent2<SelectModeProps> with RedrawCount
           ..key = mode.display_name)((Dom.img()..src = mode.image_file)(), mode.display_name)
     };
     var elts = [
-      (Dom.label()..key = 'label')('Selectable:'),
       elts_map[SelectModeChoice.strand],
       elts_map[SelectModeChoice.domain],
       all_ends_button,

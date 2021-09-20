@@ -55,6 +55,7 @@ import 'state/domain_name_mismatch.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  ShowEditMenuToggle,
   IDTFieldsRemove,
   PlateWellIDTFieldsRemove,
   PlateWellIDTFieldsAssign,

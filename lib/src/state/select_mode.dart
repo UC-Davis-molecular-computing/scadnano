@@ -68,9 +68,9 @@ class SelectModeChoice extends EnumClass {
       case loopout:
         return 'images/loopout.svg';
       case deletion:
-        return 'images/deletion.svg';
+        return 'images/del.svg';
       case insertion:
-        return 'images/insertion.svg';
+        return 'images/inser.svg';
       case modification:
         return 'images/mod.svg';
       case strand:

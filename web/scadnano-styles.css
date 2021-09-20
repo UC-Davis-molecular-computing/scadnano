@@ -393,12 +393,19 @@ label + select {
     font-size: 12px;
     align-items: center;
     padding: 5px;
-    width: 105px;
+    width: 80px;
 }
 .mode-button>img{
     height: 35px;
     max-width: 100%;
     pointer-events: none;
+}
+#edit-mode img{
+    height: 20px;
+}
+
+#edit-mode .mode-button {
+    width: 50px;
 }
 
 .edit-mode-button-selected {

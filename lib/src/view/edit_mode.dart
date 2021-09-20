@@ -28,10 +28,10 @@ class EditModeComponent extends UiComponent2<EditModeProps> with RedrawCounterMi
   @override
   render() {
     return (Dom.div()..id = 'edit-mode')([
-      (Dom.label()..key = 'label')('Edit mode:'),
       ...[for (var choice in EditModeChoice.values) this._button_for_choice(choice)],
     ]);
   }
+
   ReactElement _button_for_choice(EditModeChoice mode) {
     return (Dom.button()
       ..onClick = (_) {
