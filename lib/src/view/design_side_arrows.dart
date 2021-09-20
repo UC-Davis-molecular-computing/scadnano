@@ -45,6 +45,8 @@ class DesignMainArrowsComponent extends UiComponent2<DesignSideArrowsProps> {
     num svg_center_x = props.invert_xy ? mag + circle_rad + arrow_padding : circle_rad + arrow_padding,
         svg_center_y = props.invert_xy ? mag + circle_rad + arrow_padding : circle_rad + arrow_padding;
 
+    num font_width = 12, font_height = 17;    // arbitrary dimensions found through web inspector
+
 //RGB XYZ
     if (props.show_helices_axis_arrows == true) {
       return (Dom.g()
@@ -79,6 +81,19 @@ class DesignMainArrowsComponent extends UiComponent2<DesignSideArrowsProps> {
           ..fill = "none"
           ..stroke = 'green'
           ..className = 'axis-arrow')(),
+        // axis labels
+        (Dom.text()
+          ..x = props.invert_xy ? -mag - font_width - 2 : mag + 2
+          ..y = font_height / 2 - 2
+          ..style = {"fill": "red"})("X"),
+        (Dom.text()
+          ..x = -font_width / 2
+          ..y = props.invert_xy ? -mag - 2 : mag + font_height - 2
+          ..style = {"fill": "green"})("Y"),
+        (Dom.text()
+          ..x = props.invert_xy ? -circle_rad - font_width : circle_rad
+          ..y = props.invert_xy ? -circle_rad : circle_rad + font_height
+          ..style = {"fill": "blue"})("Z"),
       );
     } else {
       return Dom.g()();

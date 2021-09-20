@@ -45,13 +45,15 @@ class DesignMainArrowsComponent extends UiComponent2<DesignMainArrowsProps> {
     num svg_center_x = circle_rad + arrow_padding,
         svg_center_y = props.invert_xy ? mag + circle_rad + arrow_padding : circle_rad + arrow_padding;
 
+    num font_width = 12, font_height = 17;    // arbitrary dimensions found through web inspector
+
 //RGB XYZ
     if (props.show_helices_axis_arrows == true) {
       return (Dom.g()
       ..className = 'arrow-group'
       ..transform = 'translate($svg_center_x, $svg_center_y)')([
         (Dom.svgTitle()..key = "title")(props.invert_xy ? "⦻ - Into the screen" : "⊙ - Out of the screen"),
-        //horizontal arrow (Z-axis)
+        //outward arrow (X-axis) into the screen ⦻
         if (props.invert_xy) ...[
           (Dom.path()
             ..key = "x"
@@ -66,6 +68,7 @@ class DesignMainArrowsComponent extends UiComponent2<DesignMainArrowsProps> {
             ..fill = "none"
             ..className = 'axis-arrow')(),
         ],
+        //horizontal arrow (Z-axis)
         (Dom.path()
           ..key = "z_path"
           ..transform = 'rotate(90)'
@@ -81,7 +84,7 @@ class DesignMainArrowsComponent extends UiComponent2<DesignMainArrowsProps> {
           ..fill = "none"
           ..stroke = 'green'
           ..className = 'axis-arrow')(),
-        //outward arrow (X-axis)
+        //outward arrow (X-axis) out of the screen ⊙
         if (!props.invert_xy) ...[
           (Dom.circle()
             ..key = "dot"
@@ -96,6 +99,22 @@ class DesignMainArrowsComponent extends UiComponent2<DesignMainArrowsProps> {
             ..fill = "none"
             ..className = 'axis-arrow')(),
         ],
+        // axis labels
+        (Dom.text()
+          ..key = 'x-axis-label'
+          ..x = circle_rad
+          ..y = props.invert_xy ? -circle_rad : circle_rad + font_height
+          ..style = {"fill": "red"})("X"),
+        (Dom.text()
+          ..key = 'y-axis-label'
+          ..x = -font_width / 2
+          ..y = props.invert_xy ? -mag - 2 : mag + font_height - 2
+          ..style = {"fill": "green"})("Y"),
+        (Dom.text()
+          ..key = 'z-axis-label'
+          ..x = mag + 2
+          ..y = font_height / 2 - 2
+          ..style = {"fill": "blue"})("Z"),
       ]);
     } else {
       return Dom.g()();
