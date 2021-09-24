@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:math';
 
@@ -1804,6 +1805,15 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   num pitch_of_helix(Helix helix) {
     return groups[helix.group].pitch;
+  }
+
+  /// Converts the design to the cadnano v2 format.
+  /// Please see the spec [`misc/cadnano-format-specs/v2.txt`](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/main/misc/cadnano-format-specs/v2.txt)
+  /// for more info on that format.
+  Map<String, dynamic> to_cadnano_v2() {
+    Map<String, dynamic> dct = new LinkedHashMap();
+
+    return dct;
   }
 }
 

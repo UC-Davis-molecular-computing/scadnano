@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:html';
 import 'package:http/http.dart' as http;
@@ -25,19 +26,36 @@ export_cadnano_or_codenano_file_middleware(Store<AppState> store, dynamic action
 }
 
 _save_file_cadnano(AppState state) async {
-  var response = await http.post(
-    constants.export_url,
-    body: json_encode(state.design),
-    headers: {"Content-Type": "application/json"},
-  );
+  // var response = await http.post(
+  //   constants.export_url,
+  //   body: json_encode(state.design),
+  //   headers: {"Content-Type": "application/json"},
+  // );
 
-  if (response.statusCode == 200) {
+  // if (response.statusCode == 200) {
+  //   String default_filename = state.ui_state.loaded_filename;
+  //   default_filename = path.setExtension(default_filename, '.json');
+  //   util.save_file(default_filename, response.body);
+  // } else {
+  //   Map response_body_json = jsonDecode(response.body);
+  //   window.alert('Error exporting file: ${response_body_json['error']}');
+  // }
+
+  try {
     String default_filename = state.ui_state.loaded_filename;
     default_filename = path.setExtension(default_filename, '.json');
-    util.save_file(default_filename, response.body);
-  } else {
-    Map response_body_json = jsonDecode(response.body);
-    window.alert('Error exporting file: ${response_body_json['error']}');
+
+    Map<String, dynamic> content_serializable = new LinkedHashMap();
+    content_serializable['name'] = default_filename;
+
+    var encoder = SuppressableIndentEncoder(Replacer());
+    var content_serializable_final = state.design.to_cadnano_v2();
+    content_serializable.addAll(content_serializable_final);
+    var json_str = encoder.convert(content_serializable);
+
+    util.save_file(default_filename, json_str);
+  } on Exception catch (e) {
+    window.alert('Error exporting file: ${e}');
   }
 }
 
@@ -74,7 +92,7 @@ _save_file_codenano(AppState state) async {
     // add pitch, roll, and yaw defaults explicitly, and convert to radians
     for (var angle_key in [constants.pitch_key, constants.roll_key, constants.yaw_key]) {
       num degrees = helix_json[angle_key];
-      helix_json[angle_key] = degrees == null? 0.0: util.to_radians(degrees);
+      helix_json[angle_key] = degrees == null ? 0.0 : util.to_radians(degrees);
     }
     // change "position" to "origin"
     var pos = helix_json[constants.position_key];
