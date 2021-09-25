@@ -2006,7 +2006,16 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
   }
 
-  _cadnano_v2_color_of_stap(Color color, Domain domain) {}
+  List<int> _cadnano_v2_color_of_stap(Color color, Domain domain) {
+    int base_id = domain.forward ? domain.start : domain.end - 1;
+    int cadnano_color = to_cadnano_v2_int_hex(color);
+    return [base_id, cadnano_color];
+  }
+
+  int to_cadnano_v2_int_hex(Color color) {
+    RgbColor rgb = color.toRgbColor();
+    return 256 * 256 * rgb.r.toInt() + 256 * rgb.g.toInt() + rgb.b.toInt();
+  }
 
   void _cadnano_v2_place_strand_segment(
       Map<String, dynamic> which_helix, Domain domain, String strand_type) {}
