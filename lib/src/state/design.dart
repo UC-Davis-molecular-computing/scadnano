@@ -1902,8 +1902,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return y % x == 0 ? y : y + (x - y % x);
   }
 
+  /// Creates blank cadnanov2 helices in and initialized all their fields.
   Map<int, int> _cadnano_v2_fill_blank(Map<String, dynamic> dct, int num_bases, Grid design_grid) {
-    // Creates blank cadnanov2 helices in and initialized all their fields.
     Map<int, int> helices_ids_reverse = new HashMap();
     int i = 0;
     for (Helix helix in this.helices.values) {
@@ -1921,7 +1921,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       helix_dct['skip'] = [];
       helix_dct['stap'] = [];
 
-      for (i = 0; i < num_bases; i++) {
+      for (int _i = 0; _i < num_bases; _i++) {
         helix_dct['scaf'].addAll([-1, -1, -1, -1]);
         helix_dct['stap'].addAll([-1, -1, -1, -1]);
         helix_dct['loop'].add(0);
@@ -1939,7 +1939,80 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return helices_ids_reverse;
   }
 
-  void _cadnano_v2_place_strand(Strand strand, Map<String, dynamic> dct, Map<int, int> helices_ids_reverse) {}
+  /// Place a scadnano strand in cadnano v2.
+  void _cadnano_v2_place_strand(Strand strand, Map<String, dynamic> dct, Map<int, int> helices_ids_reverse) {
+    String strand_type = 'stap';
+    if (strand.is_scaffold) strand_type = 'scaf';
+
+    for (int i = 0; i < strand.domains.length; i++) {
+      Domain domain = strand.domains[i];
+      if (domain is Loopout) {
+        throw new IllegalCadnanoDesignError(
+            'cannot convert Strand ${strand} to cadnanov2 format, since it has Loopouts');
+      }
+
+      int which_helix_id = helices_ids_reverse[domain.helix];
+      Map<String, dynamic> which_helix = dct['vstrands'][which_helix_id];
+
+      if (strand_type == 'stap') {
+        Color color = strand.color != null ? strand.color : new RgbColor(0, 0, 0);
+        which_helix['stap_colors'].add(this._cadnano_v2_color_of_stap(color, domain));
+      }
+
+      this._cadnano_v2_place_strand_segment(which_helix, domain, strand_type);
+
+      if (i != strand.domains.length - 1) {
+        Domain next_domain = strand.domains[i + 1];
+        if (next_domain is Loopout) {
+          throw new IllegalCadnanoDesignError(
+              'cannot convert Strand ${strand} to cadnanov2 format, since it has Loopouts');
+        }
+
+        int next_helix_id = helices_ids_reverse[next_domain.helix];
+        Map<String, dynamic> next_helix = dct['vstrands'][next_helix_id];
+        this._cadnano_v2_place_crossover(which_helix, next_helix, domain, next_domain, strand_type);
+      }
+    }
+
+    // if the strand is circular, we need to close the loop
+    if (strand.circular) {
+      Domain first_domain = strand.first_domain;
+      Map<String, dynamic> first_helix = dct['vstrands'][first_domain.helix];
+      int first_start = first_domain.start, first_end = first_domain.end;
+      bool first_forward = first_domain.forward;
+
+      Domain last_domain = strand.last_domain;
+      Map<String, dynamic> last_helix = dct['vstrands'][last_domain.helix];
+      int last_start = last_domain.start, last_end = last_domain.end;
+      bool last_forward = last_domain.forward;
+
+      int the_base_from = last_end - 1;
+      int the_base_to = first_start;
+
+      if (!last_forward) the_base_from = last_start;
+
+      if (!first_forward) the_base_to = first_end - 1;
+
+      if ((first_helix[strand_type][the_base_to] as List).sublist(0, 2) == [-1, -1]) {
+        (first_helix[strand_type][the_base_to] as List).setRange(0, 2, [last_helix['num'], the_base_from]);
+      } else {
+        (first_helix[strand_type][the_base_to] as List).setRange(0, 2, [last_helix['num'], the_base_from]);
+      }
+
+      if (last_helix[strand_type][the_base_from].sublist(0, 2) == [-1, -1])
+        last_helix[strand_type][the_base_from].setRange(0, 2, [first_helix['num'], the_base_to]);
+      else
+        last_helix[strand_type][the_base_from].subRange(0, 2, [first_helix['num'], the_base_to]);
+    }
+  }
+
+  _cadnano_v2_color_of_stap(Color color, Domain domain) {}
+
+  void _cadnano_v2_place_strand_segment(
+      Map<String, dynamic> which_helix, Domain domain, String strand_type) {}
+
+  void _cadnano_v2_place_crossover(Map<String, dynamic> which_helix, Map<String, dynamic> next_helix,
+      Domain domain, Domain next_domain, String strand_type) {}
 }
 
 Map<String, HelixGroup> _calculate_groups_from_helices(Iterable<Helix> helices, Grid grid) {
