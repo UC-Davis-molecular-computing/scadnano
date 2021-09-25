@@ -6,8 +6,6 @@ import 'package:built_collection/built_collection.dart';
 
 part 'edit_mode.g.dart';
 
-
-
 class EditModeChoice extends EnumClass {
   const EditModeChoice._(String name) : super(name);
 
@@ -103,6 +101,71 @@ class EditModeChoice extends EnumClass {
         return '(d)';
       case move_group:
         return '(m)';
+    }
+    return super.toString();
+  }
+
+  @memoized
+  String get tooltip {
+    // tooltip descriptions
+    switch (this) {
+      case select:
+        return '''(s)elect: This is similar to the Select
+edit mode in cadnano. It allows one to
+select one or more items and delete,
+move, or copy/paste them. Which are
+allowed to be selected depends on the
+"Select Mode", shown when in select
+edit mode or rope select edit mode.
+Some of the select modes are mutually
+exclusive as well.''';
+      case rope_select:
+        return '''(r)ope select: This is similar to
+select mode, but when holding Shift or
+Ctrl, it allows one to draw a general
+polygon (a "rope"), rather than just a
+rectangle. This is useful, for example,
+for selecting many objects along a
+diagonal, where a rectangle containing
+all of them would also contain many
+objects off the diagonal that are not
+intended to be selected.''';
+      case pencil:
+        return '''(p)encil: Allows one to
+add new Strands (with a single domain)
+by clicking and dragging.''';
+      case nick:
+        return '''(n)ick: Clicking on a bound
+domain will split it into two at that
+position.''';
+      case ligate:
+        return '''(l)igate: If two bound domains point in
+the same direction and have abutting
+5'/3' ends, then clicking on either
+will join them into a single strand.''';
+      case insertion:
+        return '''(i)nsertion: Clicking on a bound domain
+adds an insertion at that offset.
+Clicking an existing insertion removes it.''';
+      case deletion:
+        return '''(d)eletion: Clicking on a bound domain
+adds a deletion at that offset.
+Clicking an existing deletion removes it.''';
+      case move_group:
+        return '''(m)ove group: This mode allows one to
+translate the currently selected helix
+group in the main view by clicking and
+dragging (i.e., to change its
+position.x and position.y coordinates,
+which can also be set manually under
+the menu Group → adjust current group).
+When in this mode, press either the
+Ctrl (Cmd on Mac) or Shift key and then
+click+drag with the cursor. (Without
+pressing Ctrl or Shift, the normal
+panning of the view will occur, without
+changing the position of any helix
+group.)''';
     }
     return super.toString();
   }

@@ -10,14 +10,14 @@
             <rect id="Rectangle-Copy-5" fill="#429000" x="1" y="24" width="30" height="6" rx="3"></rect>
             <polygon id="Triangle" stroke="#000000" stroke-width="0.25" fill="#429000" transform="translate(4.000000, 3.000000) rotate(-90.000000) translate(-4.000000, -3.000000) " points="4 0 7 6 1 6"></polygon>
             <rect id="Rectangle" stroke="#000000" stroke-width="0.25" fill="#429000" x="1.125" y="24.125" width="5.75" height="5.75" rx="1"></rect>
-            <text id="b" font-family="MicrosoftSansSerif, Microsoft Sans Serif" font-size="7" font-weight="normal" fill="#FE69B4">
-                <tspan x="4" y="17">b</tspan>
+            <text id="b" font-family="Arial-Black, Arial Black" font-size="12" font-weight="700" fill="#FE69B4">
+                <tspan x="4" y="21">b</tspan>
             </text>
-            <g id="Group-10-Copy" transform="translate(4.942964, 7.942964) rotate(-42.000000) translate(-4.942964, -7.942964) translate(1.442964, 4.442964)" fill="#000000">
-                <polygon id="Rectangle-Copy-14" transform="translate(4.026707, 2.205637) rotate(87.000000) translate(-4.026707, -2.205637) " points="2.31466916 1.83442346 5.73633615 1.84501795 5.73874398 2.57685145 2.31707699 2.56625697"></polygon>
-                <polygon id="Rectangle-Copy-15" transform="translate(5.306457, 0.700000) rotate(-6.000000) translate(-5.306457, -0.700000) " points="3.69798838 0.321899245 6.91971542 0.300826353 6.91492613 1.07810076 3.69319909 1.09917365"></polygon>
-                <polygon id="Rectangle-Copy-17" transform="translate(1.533653, 5.224789) rotate(87.000000) translate(-1.533653, -5.224789) " points="-0.178384204 4.85357454 3.24328278 4.86416902 3.24569062 5.59600253 -0.175976367 5.58540805"></polygon>
-                <polygon id="Rectangle-Copy-16" transform="translate(2.813404, 3.719151) rotate(-6.000000) translate(-2.813404, -3.719151) " points="1.20493502 3.34105032 4.42666206 3.31997743 4.42187277 4.09725183 1.20014572 4.11832472"></polygon>
+            <g id="Group-10-Copy" transform="translate(4.942964, 7.942964) rotate(-42.000000) translate(-4.942964, -7.942964) translate(1.442964, 4.442964)" fill="#000000" stroke="#000000" stroke-width="0.25">
+                <path d="M2.31505619,1.70942406 L5.73672318,1.72001855 L5.86133547,1.84460668 L5.86374331,2.57644019 L5.73835695,2.70185086 L2.31668996,2.69125637 L2.19207767,2.56666824 L2.18966983,1.83483473 L2.31505619,1.70942406 Z" id="Rectangle-Copy-14" transform="translate(4.026707, 2.205637) rotate(87.000000) translate(-4.026707, -2.205637) "></path>
+                <path d="M3.69717079,0.196901919 L6.91889783,0.175829026 L7.04471305,0.301596544 L7.03992376,1.07887095 L6.91574372,1.20309808 L3.69401668,1.22417097 L3.56820146,1.09840346 L3.57299075,0.321129053 L3.69717079,0.196901919 Z" id="Rectangle-Copy-15" transform="translate(5.306457, 0.700000) rotate(-6.000000) translate(-5.306457, -0.700000) "></path>
+                <path d="M-0.177997169,4.72857514 L3.24366982,4.73916962 L3.36828211,4.86375776 L3.37068995,5.59559126 L3.24530359,5.72100193 L-0.176363402,5.71040745 L-0.30097569,5.58581931 L-0.303383528,4.85398581 L-0.177997169,4.72857514 Z" id="Rectangle-Copy-17" transform="translate(1.533653, 5.224789) rotate(87.000000) translate(-1.533653, -5.224789) "></path>
+                <path d="M1.20411743,3.21605299 L4.42584447,3.1949801 L4.55165969,3.32074762 L4.5468704,4.09802202 L4.42269036,4.22224916 L1.20096331,4.24332205 L1.0751481,4.11755453 L1.07993739,3.34028013 L1.20411743,3.21605299 Z" id="Rectangle-Copy-16" transform="translate(2.813404, 3.719151) rotate(-6.000000) translate(-2.813404, -3.719151) "></path>
             </g>
         </g>
     </g>

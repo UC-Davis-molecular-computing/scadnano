@@ -383,7 +383,6 @@ label + select {
 
 .mode-button {
     border: none;
-    width: 108px;
     /*outline: #0b0080;*/
     /*font-weight: bold;*/
     color: black;
@@ -392,21 +391,14 @@ label + select {
     flex-direction: column;
     font-size: 12px;
     align-items: center;
-    padding: 5px;
-    width: 80px;
+    padding: 5px 10px;
+    border-top: 1px solid black;
 }
 .mode-button>img{
-    height: 35px;
-    max-width: 100%;
+    width: 25px;
     pointer-events: none;
 }
-#edit-mode img{
-    height: 20px;
-}
 
-#edit-mode .mode-button {
-    width: 50px;
-}
 
 .edit-mode-button-selected {
     background-color: mediumseagreen;
@@ -444,7 +436,7 @@ label + select {
 }
 
 .select-mode-button-selected {
-    background-color: lightcoral;
+    background-color: #abc0ef;
 }
 
 .select-mode-button-unselected {
