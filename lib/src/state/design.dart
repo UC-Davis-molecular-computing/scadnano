@@ -1812,9 +1812,99 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   /// for more info on that format.
   Map<String, dynamic> to_cadnano_v2() {
     Map<String, dynamic> dct = new LinkedHashMap();
+    dct['vstrand'] = [];
+
+    Grid design_grid;
+    // Check if helix group are used or if only one grid is used'''
+    if (this.has_default_groups()) {
+      design_grid = this.grid;
+    } else {
+      Map<Grid, dynamic> grid_used = new HashMap();
+      assert(this.groups.length > 0);
+      Grid grid_type = Grid.none;
+      for (String group_name in this.groups.keys) {
+        grid_used[this.groups[group_name].grid] = true;
+        grid_type = this.groups[group_name].grid;
+      }
+      if (grid_used.length > 1) {
+        throw new IllegalCadnanoDesignError(
+            'Designs using helix groups can be exported to cadnano v2 only if all groups share the same grid type.');
+      } else {
+        design_grid = grid_type;
+      }
+    }
+
+    // Figuring out the type of grid.
+    // In cadnano v2, all helices have the same max offset
+    // called `num_bases` and the type of grid is determined as follows:
+    //     if num_bases % 32 == 0: then we are on grid square
+    //     if num_bases % 21 == 0: then we are on grid honey
+    int num_bases = 0;
+    for (Helix helix in this.helices.values) {
+      if (helix.max_offset == null) {
+        throw new IllegalCadnanoDesignError('must have helix.max_offset set');
+      }
+      num_bases = max(num_bases, helix.max_offset);
+    }
+
+    if (design_grid == Grid.square) {
+      num_bases = this._get_multiple_of_x_sup_closest_to_y(32, num_bases);
+    } else if (design_grid == Grid.honeycomb) {
+      num_bases = this._get_multiple_of_x_sup_closest_to_y(21, num_bases);
+    } else {
+      throw new IllegalCadnanoDesignError('We can export to cadnano v2 `square` and `honeycomb` grids only.');
+    }
+
+    // Figuring out if helices numbers have good parity.
+    // In cadnano v2, only even helices have the scaffold go forward, only odd helices
+    // have the scaffold go backward.
+    for (Strand strand in this.strands) {
+      for (Domain domain in strand.domains) {
+        if (domain is Loopout) {
+          throw new IllegalCadnanoDesignError(
+              'We cannot handle designs with Loopouts as it is not a cadnano v2 concept');
+        }
+
+        bool right_direction;
+
+        if (strand.is_scaffold) {
+          if (domain.helix % 2 == 0) {
+            right_direction = domain.forward;
+          } else {
+            right_direction = !domain.forward;
+          }
+        } else {
+          if (domain.helix % 2 == 0) {
+            right_direction = !domain.forward;
+          } else {
+            right_direction = domain.forward;
+          }
+        }
+
+        if (!right_direction) {
+          throw new IllegalCadnanoDesignError(
+              'We can only convert designs where even helices have the scaffold going forward and odd helices have the scaffold going backward see the spec v2.txt Note 4. ${domain}');
+        }
+      }
+    }
+
+    // Filling the helices with blank.
+    Map<int, int> helices_ids_reverse = this._cadnano_v2_fill_blank(dct, num_bases, design_grid);
+    // Putting the scaffold in place.
+    for (Strand strand in this.strands) {
+      this._cadnano_v2_place_strand(strand, dct, helices_ids_reverse);
+    }
 
     return dct;
   }
+
+  int _get_multiple_of_x_sup_closest_to_y(int x, int y) {
+    return y % x == 0 ? y : y + (x - y % x);
+  }
+
+  Map<int, int> _cadnano_v2_fill_blank(Map<String, dynamic> dct, int num_bases, Grid design_grid) {}
+
+  void _cadnano_v2_place_strand(Strand strand, Map<String, dynamic> dct, Map<int, int> helices_ids_reverse) {}
 }
 
 Map<String, HelixGroup> _calculate_groups_from_helices(Iterable<Helix> helices, Grid grid) {
@@ -2048,6 +2138,12 @@ class IllegalDesignError implements Exception {
   String cause;
 
   IllegalDesignError(this.cause);
+}
+
+class IllegalCadnanoDesignError implements Exception {
+  String cause;
+
+  IllegalCadnanoDesignError(this.cause);
 }
 
 class StrandError extends IllegalDesignError {
