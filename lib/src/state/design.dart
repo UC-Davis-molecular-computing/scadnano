@@ -1812,7 +1812,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   /// for more info on that format.
   Map<String, dynamic> to_cadnano_v2() {
     Map<String, dynamic> dct = new LinkedHashMap();
-    dct['vstrand'] = [];
+    dct['vstrands'] = [];
 
     Grid design_grid;
     // Check if helix group are used or if only one grid is used'''
@@ -1902,7 +1902,42 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return y % x == 0 ? y : y + (x - y % x);
   }
 
-  Map<int, int> _cadnano_v2_fill_blank(Map<String, dynamic> dct, int num_bases, Grid design_grid) {}
+  Map<int, int> _cadnano_v2_fill_blank(Map<String, dynamic> dct, int num_bases, Grid design_grid) {
+    // Creates blank cadnanov2 helices in and initialized all their fields.
+    Map<int, int> helices_ids_reverse = new HashMap();
+    int i = 0;
+    for (Helix helix in this.helices.values) {
+      Map<String, dynamic> helix_dct = new LinkedHashMap();
+      helix_dct['num'] = helix.idx;
+
+      if (design_grid == Grid.square || design_grid == Grid.honeycomb) {
+        assert(helix.grid_position != null);
+        helix_dct['row'] = helix.grid_position.v;
+        helix_dct['col'] = helix.grid_position.h;
+      }
+
+      helix_dct['scaf'] = [];
+      helix_dct['loop'] = [];
+      helix_dct['skip'] = [];
+      helix_dct['stap'] = [];
+
+      for (i = 0; i < num_bases; i++) {
+        helix_dct['scaf'].addAll([-1, -1, -1, -1]);
+        helix_dct['stap'].addAll([-1, -1, -1, -1]);
+        helix_dct['loop'].add(0);
+        helix_dct['skip'].add(0);
+      }
+
+      helix_dct['stap_colors'] = [];
+      helix_dct['scafLoop'] = [];
+      helix_dct['stap_loop'] = [];
+
+      helices_ids_reverse[helix_dct['num']] = i;
+      dct['vstrands'].add(helix_dct);
+      i += 1;
+    }
+    return helices_ids_reverse;
+  }
 
   void _cadnano_v2_place_strand(Strand strand, Map<String, dynamic> dct, Map<int, int> helices_ids_reverse) {}
 }
