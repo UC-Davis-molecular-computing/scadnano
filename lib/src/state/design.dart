@@ -1922,8 +1922,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       helix_dct['stap'] = [];
 
       for (int _i = 0; _i < num_bases; _i++) {
-        helix_dct['scaf'].addAll([-1, -1, -1, -1]);
-        helix_dct['stap'].addAll([-1, -1, -1, -1]);
+        helix_dct['scaf'].add([-1, -1, -1, -1]);
+        helix_dct['stap'].add([-1, -1, -1, -1]);
         helix_dct['loop'].add(0);
         helix_dct['skip'].add(0);
       }
@@ -2017,8 +2017,51 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return 256 * 256 * rgb.r.toInt() + 256 * rgb.g.toInt() + rgb.b.toInt();
   }
 
-  void _cadnano_v2_place_strand_segment(
-      Map<String, dynamic> which_helix, Domain domain, String strand_type) {}
+  /// Converts a strand region with no crossover to cadnano v2.
+  void _cadnano_v2_place_strand_segment(Map<String, dynamic> helix_dct, Domain domain, String strand_type) {
+    // Insertions and deletions
+    for (int deletion in domain.deletions) {
+      helix_dct['skip'][deletion] = -1;
+    }
+    for (Insertion insertion in domain.insertions) {
+      helix_dct['loop'][insertion.offset] = insertion.length;
+    }
+
+    int start = domain.start, end = domain.end;
+    bool forward = domain.forward;
+    int strand_helix = helix_dct['num'];
+
+    for (int i_base = start; i_base < end; i_base++) {
+      int from_helix, from_base, to_helix, to_base;
+      if (forward) {
+        from_helix = strand_helix;
+        from_base = i_base - 1;
+        to_helix = strand_helix;
+        to_base = i_base + 1;
+      } else {
+        from_helix = strand_helix;
+        from_base = i_base + 1;
+        to_helix = strand_helix;
+        to_base = i_base - 1;
+      }
+
+      if (i_base == start) {
+        if (forward)
+          (helix_dct[strand_type][i_base] as List<int>)
+              .setRange(2, (helix_dct[strand_type][i_base] as List<int>).length, [to_helix, to_base]);
+        else
+          (helix_dct[strand_type][i_base] as List<int>).setRange(0, 2, [from_helix, from_base]);
+      } else if (i_base < end - 1) {
+        helix_dct[strand_type][i_base] = [from_helix, from_base, to_helix, to_base];
+      } else {
+        if (forward)
+          helix_dct[strand_type][i_base]
+              .setRange(2, (helix_dct[strand_type][i_base] as List<int>).length, [from_helix, from_base]);
+        else
+          helix_dct[strand_type][i_base].setRange(0, 2, [to_helix, to_base]);
+      }
+    }
+  }
 
   void _cadnano_v2_place_crossover(Map<String, dynamic> which_helix, Map<String, dynamic> next_helix,
       Domain domain, Domain next_domain, String strand_type) {}
