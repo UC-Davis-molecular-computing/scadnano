@@ -2102,73 +2102,73 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
   }
 
+  /// Creates a Design from a cadnano v2 file.
   static Design from_cadnano_v2(Map<String, dynamic> json_dict) {
-    // """
-    // Creates a Design from a cadnano v2 file.
-    // """
+    Map<String, dynamic> cadnano_v2_design = json_dict;
 
-    // if json_dict is None and filename is not None and directory is not None:
-    //     file_path = os.path.join(directory, filename)
-    //     f = open(file_path, 'r')
-    //     cadnano_v2_design = json.load(f)
-    //     f.close()
-    // elif json_dict is not None:
-    //     cadnano_v2_design = json_dict
-    // else:
-    //     raise ValueError('must have json_dict None and filename/directory not None, or vice versa')
+    int num_bases = cadnano_v2_design['vstrands'][0]['scaf'].length;
+    Grid grid_type = Grid.square;
+    if (num_bases % 21 == 0) grid_type = Grid.honeycomb;
 
-    // num_bases = len(cadnano_v2_design['vstrands'][0]['scaf'])
-    // grid_type = Grid.square
-    // if num_bases % 21 == 0:
-    //     grid_type = Grid.honeycomb
+    int min_row = null;
+    int min_col = null;
+    for (Map<String, dynamic> cadnano_helix in cadnano_v2_design['vstrands']) {
+      int col = cadnano_helix['col'], row = cadnano_helix['row'];
+      min_row = min_row == null ? row : min_row;
+      min_col = min_col == null ? col : min_col;
+      min_row = row < min_row ? row : min_row;
+      min_col = col < min_col ? col : min_col;
+    }
 
-    // min_row, min_col = None, None
-    // for cadnano_helix in cadnano_v2_design['vstrands']:
-    //     col, row = cadnano_helix['col'], cadnano_helix['row']
-    //     min_row = row if min_row is None else min_row
-    //     min_col = col if min_col is None else min_col
-    //     min_row = row if row < min_row else min_row
-    //     min_col = col if col < min_col else min_col
+    Map<int, dynamic> helices = new LinkedHashMap();
+    for (Map<String, dynamic> cadnano_helix in cadnano_v2_design['vstrands']) {
+      int col = cadnano_helix['col'], row = cadnano_helix['row'];
+      int n = cadnano_helix['num'];
+      Helix helix = new Helix(idx: n, max_offset: num_bases, grid_position: GridPosition(col, row));
+      helices[n] = helix;
+    }
 
-    // helices = OrderedDict({})
-    // for cadnano_helix in cadnano_v2_design['vstrands']:
-    //     col, row = cadnano_helix['col'], cadnano_helix['row']
-    //     num = cadnano_helix['num']
-    //     helix = Helix(idx=num, max_offset=num_bases, grid_position=(col, row))
-    //     helices[num] = helix
+    // We do a DFS on strands
+    Map<String, Map<Tuple2<int, int>, bool>> seen = new HashMap();
+    seen['scaf'] = new HashMap();
+    seen['stap'] = new HashMap();
+    List<Strand> strands = [];
+    Map<int, dynamic> cadnano_helices = new LinkedHashMap();
+    for (Map<String, dynamic> cadnano_helix in cadnano_v2_design['vstrands']) {
+      int helix_num = cadnano_helix['num'];
+      cadnano_helices[helix_num] = cadnano_helix;
+    }
 
-    // # We do a DFS on strands
-    // seen: Dict[str, dict] = {'scaf': {}, 'stap': {}}
-    // strands: List[Strand] = []
-    // cadnano_helices = OrderedDict({})
-    // for cadnano_helix in cadnano_v2_design['vstrands']:
-    //     helix_num = cadnano_helix['num']
-    //     cadnano_helices[helix_num] = cadnano_helix
+    for (Map<String, dynamic> cadnano_helix in cadnano_v2_design['vstrands']) {
+      int helix_num = cadnano_helix['num'];
+      for (String strand_type in ['scaf', 'stap']) {
+        for (int base_id = 0; base_id < num_bases; base_id++) {
+          if (seen[strand_type].containsKey(Tuple2(helix_num, base_id))) continue;
+          Strand strand = Design._cadnano_v2_import_explore_strand(
+              cadnano_helices, strand_type, seen[strand_type], helix_num, base_id);
+          if (strand != null) strands.add(strand);
+        }
+      }
+    }
 
-    // for cadnano_helix in cadnano_v2_design['vstrands']:
-    //     helix_num = cadnano_helix['num']
-    //     for strand_type in ['scaf', 'stap']:
-    //         for base_id in range(num_bases):
-    //             if (helix_num, base_id) in seen[strand_type]:
-    //                 continue
+    Design design = Design.from((b) => b
+      ..groups[constants.default_group_name] =
+          b.groups[constants.default_group_name].rebuild((g) => g..grid = grid_type)
+      ..helices.replace(helices)
+      ..strands.replace(strands));
 
-    //             strand = Design._cadnano_v2_import_explore_strand(cadnano_helices,
-    //                                                               strand_type,
-    //                                                               seen[strand_type], helix_num,
-    //                                                               base_id)
-    //             if strand is not None:
-    //                 strands.append(strand)
+    // DD: Tristan, I commented this out because I think it's unnecessary given the way the Design
+    // constructor works, and because I'm now implementing this feature:
+    // https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues/121
+    // which means we may not have a well-defined helices_view_order on the whole design if groups
+    // are used
+    // design.set_helices_view_order([num for num in helices])
 
-    // design: Design = Design(grid=grid_type, helices=helices, strands=strands)
-    // # DD: Tristan, I commented this out because I think it's unnecessary given the way the Design
-    // # constructor works, and because I'm now implementing this feature:
-    // # https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues/121
-    // # which means we may not have a well-defined helices_view_order on the whole design if groups
-    // # are used
-    // # design.set_helices_view_order([num for num in helices])
-
-    // return design
+    return design;
   }
+
+  static Strand _cadnano_v2_import_explore_strand(Map<int, dynamic> cadnano_helices, String strand_type,
+      Map<Tuple2<int, int>, bool> seen, int helix_num, int base_id) {}
 }
 
 Map<String, HelixGroup> _calculate_groups_from_helices(Iterable<Helix> helices, Grid grid) {
