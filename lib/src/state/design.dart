@@ -2133,7 +2133,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     seen['scaf'] = new HashMap();
     seen['stap'] = new HashMap();
     List<Strand> strands = [];
-    Map<int, dynamic> cadnano_helices = new LinkedHashMap();
+    Map<int, Map<String, dynamic>> cadnano_helices = new LinkedHashMap();
     for (Map<String, dynamic> cadnano_helix in cadnano_v2_design['vstrands']) {
       int helix_num = cadnano_helix['num'];
       cadnano_helices[helix_num] = cadnano_helix;
@@ -2167,8 +2167,54 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return design;
   }
 
-  static Strand _cadnano_v2_import_explore_strand(Map<int, dynamic> cadnano_helices, String strand_type,
-      Map<Tuple2<int, int>, bool> seen, int helix_num, int base_id) {}
+  /// Routine that will follow a cadnano v2 strand accross helices and create
+  /// cadnano domains and strand accordingly.
+  static Strand _cadnano_v2_import_explore_strand(Map<int, Map<String, dynamic>> vstrands, String strand_type,
+      Map<Tuple2<int, int>, bool> seen, int helix_num, int base_id) {
+    seen[Tuple2(helix_num, base_id)] = true;
+    int id_from = vstrands[helix_num][strand_type][base_id][0];
+    int base_from = vstrands[helix_num][strand_type][base_id][1];
+    int id_to = vstrands[helix_num][strand_type][base_id][2];
+    int base_to = vstrands[helix_num][strand_type][base_id][3];
+
+    if (id_from == -1 && base_from == -1 && id_to == -1 && base_to == -1) return null;
+
+    Tuple3<int, int, bool> tmp =
+        Design._cadnano_v2_import_find_5_end(vstrands, strand_type, helix_num, base_id, id_from, base_from);
+    int strand_5_end_helix = tmp.item1;
+    int strand_5_end_base = tmp.item2;
+    bool is_circular = tmp.item3;
+
+    Color strand_color = Design._cadnano_v2_import_find_strand_color(
+        vstrands, strand_type, strand_5_end_base, strand_5_end_helix);
+    List<Domain> domains = Design._cadnano_v2_import_explore_domains(
+        vstrands, seen, strand_type, strand_5_end_base, strand_5_end_helix);
+    // merge first and last domain if circular
+    if (is_circular) Design._cadnano_v2_import_circular_strands_merge_first_last_domains(domains);
+    List<Substrand> domains_loopouts = domains;
+
+    Strand strand = Strand(domains_loopouts,
+        is_scaffold: strand_type == 'scaf', color: strand_color, circular: is_circular);
+
+    return strand;
+  }
+
+  static Tuple3<int, int, bool> _cadnano_v2_import_find_5_end(Map<int, Map<String, dynamic>> vstrands,
+      String strand_type, int helix_num, int base_id, int id_from, int base_from) {
+    return Tuple3(0, 0, false);
+  }
+
+  static Color _cadnano_v2_import_find_strand_color(Map<int, Map<String, dynamic>> vstrands,
+      String strand_type, int strand_5_end_base, int strand_5_end_helix) {
+    return new RgbColor(0, 0, 0);
+  }
+
+  static List<Domain> _cadnano_v2_import_explore_domains(Map<int, Map<String, dynamic>> vstrands,
+      Map<Tuple2<int, int>, bool> seen, String strand_type, int strand_5_end_base, int strand_5_end_helix) {
+    return [new Domain(helix: 0)];
+  }
+
+  static void _cadnano_v2_import_circular_strands_merge_first_last_domains(List<Domain> domains) {}
 }
 
 Map<String, HelixGroup> _calculate_groups_from_helices(Iterable<Helix> helices, Grid grid) {
