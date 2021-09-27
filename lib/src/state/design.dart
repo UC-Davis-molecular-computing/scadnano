@@ -2063,8 +2063,43 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
   }
 
-  void _cadnano_v2_place_crossover(Map<String, dynamic> which_helix, Map<String, dynamic> next_helix,
-      Domain domain, Domain next_domain, String strand_type) {}
+  /// Converts a crossover to cadnano v2 format.
+  /// Returns a conversion table from ids in the structure self.helices to helices ids
+  /// as given by helix.idx.
+  void _cadnano_v2_place_crossover(Map<String, dynamic> helix_from_dct, Map<String, dynamic> helix_to_dct,
+      Domain domain_from, Domain domain_to, String strand_type) {
+    int helix_from = helix_from_dct['num'];
+    int start_from = domain_from.start;
+    int end_from = domain_from.end;
+    bool forward_from = domain_from.forward;
+
+    int helix_to = helix_to_dct['num'];
+    int start_to = domain_to.start;
+    int end_to = domain_to.end;
+    bool forward_to = domain_to.forward;
+
+    // Because of paranemic crossovers it is possible
+    // to crossover to a strand that goes in the same direction
+    // In total there are four cases corresponding to
+    // [forward_from, not forward_from] x [forward_to, not forward_to]
+    if (forward_from && !forward_to) {
+      (helix_from_dct[strand_type][end_from - 1] as List<int>).setRange(
+          2, (helix_from_dct[strand_type][end_from - 1] as List<int>).length, [helix_to, end_to - 1]);
+      (helix_to_dct[strand_type][end_to - 1] as List<int>).setRange(0, 2, [helix_from, end_from - 1]);
+    } else if (!forward_from && forward_to) {
+      (helix_from_dct[strand_type][start_from] as List<int>)
+          .setRange(2, (helix_from_dct[strand_type][start_from] as List<int>).length, [helix_to, start_to]);
+      (helix_to_dct[strand_type][start_to] as List<int>).setRange(0, 2, [helix_from, start_from]);
+    } else if (forward_from && forward_to) {
+      helix_from_dct[strand_type][end_from - 1]
+          .setRange(2, helix_from_dct[strand_type][end_from - 1].length, [helix_to, start_to]);
+      helix_to_dct[strand_type][end_to - 1].setRange(0, 2, [helix_from, start_from]);
+    } else if (!forward_from && !forward_to) {
+      helix_from_dct[strand_type][start_from]
+          .setRange(2, helix_from_dct[strand_type][start_from].length, [helix_to, end_to - 1]);
+      helix_to_dct[strand_type][start_to].setRange(0, 2, [helix_from, end_from - 1]);
+    }
+  }
 }
 
 Map<String, HelixGroup> _calculate_groups_from_helices(Iterable<Helix> helices, Grid grid) {
