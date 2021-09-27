@@ -1859,14 +1859,15 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     // In cadnano v2, only even helices have the scaffold go forward, only odd helices
     // have the scaffold go backward.
     for (Strand strand in this.strands) {
-      for (Domain domain in strand.domains) {
-        if (domain is Loopout) {
+      for (Substrand substrand in strand.substrands) {
+        if (substrand is Loopout) {
           throw new IllegalCadnanoDesignError(
               'We cannot handle designs with Loopouts as it is not a cadnano v2 concept');
         }
 
         bool right_direction;
 
+        Domain domain = substrand;
         if (strand.is_scaffold) {
           if (domain.helix % 2 == 0) {
             right_direction = domain.forward;

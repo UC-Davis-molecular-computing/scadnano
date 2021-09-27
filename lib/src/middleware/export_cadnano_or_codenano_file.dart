@@ -42,20 +42,18 @@ _save_file_cadnano(AppState state) async {
   // }
 
   try {
-    String default_filename = state.ui_state.loaded_filename;
-    default_filename = path.setExtension(default_filename, '.json');
-
     Map<String, dynamic> content_serializable = new LinkedHashMap();
-    content_serializable['name'] = default_filename;
 
     var encoder = SuppressableIndentEncoder(Replacer());
     var content_serializable_final = state.design.to_cadnano_v2();
     content_serializable.addAll(content_serializable_final);
     var json_str = encoder.convert(content_serializable);
 
+    String default_filename = state.ui_state.loaded_filename;
+    default_filename = path.setExtension(default_filename, '.json');
     util.save_file(default_filename, json_str);
-  } on Exception catch (e) {
-    window.alert('Error exporting file: ${e}');
+  } on IllegalCadnanoDesignError catch (e) {
+    window.alert('Error exporting file: ${e.cause}');
   }
 }
 
