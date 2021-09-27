@@ -2217,8 +2217,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       circular_seen[Tuple2(id_from, base_from)] = true;
       id_from_before = id_from;
       base_from_before = base_from;
-      id_from = vstrands[id_from][strand_type][base_from][0];
-      base_from = vstrands[id_from][strand_type][base_from][1];
+      id_from = vstrands[id_from_before][strand_type][base_from][0];
+      base_from = vstrands[id_from_before][strand_type][base_from][1];
     }
     return Tuple3(id_from_before, base_from_before, is_circular);
   }
@@ -2234,7 +2234,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       int base_id;
       int stap_color;
 
-      for (List<int> tmp in vstrands[strand_5_end_helix]['stap_colors']) {
+      for (List<dynamic> tmp in vstrands[strand_5_end_helix]['stap_colors']) {
         base_id = tmp[0];
         stap_color = tmp[1];
         if (base_id == strand_5_end_base) {
@@ -2274,12 +2274,12 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       int old_helix = curr_helix;
       int old_base = curr_base;
       seen[Tuple2(curr_helix, curr_base)] = true;
-      curr_helix = vstrands[curr_helix][strand_type][curr_base][2];
-      curr_base = vstrands[curr_helix][strand_type][curr_base][3];
+      curr_helix = vstrands[old_helix][strand_type][old_base][2];
+      curr_base = vstrands[old_helix][strand_type][old_base][3];
       // Add crossover
       // We have a crossover when we jump helix or when order is broken on same helix
       // Or circular strand
-      if (curr_helix != old_helix ||
+      if ((curr_helix != old_helix) ||
           (!direction_forward && curr_base > old_base) ||
           (direction_forward && curr_base < old_base) ||
           (curr_helix == strand_5_end_helix && curr_base == strand_5_end_base)) {
@@ -2287,24 +2287,26 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
           end = old_base;
         else
           start = old_base;
+
+        domains.add(Domain(
+            is_scaffold: strand_type == 'scaf',
+            helix: old_helix,
+            forward: direction_forward,
+            start: min(start, end),
+            end: max(start, end) + 1,
+            deletions: Design._cadnano_v2_import_extract_deletions(vstrands[old_helix]['skip'], start, end),
+            insertions:
+                Design._cadnano_v2_import_extract_insertions(vstrands[old_helix]['loop'], start, end)));
+
+        direction_forward = (strand_type == 'scaf' && curr_helix % 2 == 0) ||
+            ((strand_type == 'stap' && curr_helix % 2 == 1));
+        start = -1;
+        end = -1;
+        if (direction_forward)
+          start = curr_base;
+        else
+          end = curr_base;
       }
-
-      domains.add(Domain(
-          helix: old_helix,
-          forward: direction_forward,
-          start: min(start, end),
-          end: max(start, end) + 1,
-          deletions: Design._cadnano_v2_import_extract_deletions(vstrands[old_helix]['skip'], start, end),
-          insertions: Design._cadnano_v2_import_extract_insertions(vstrands[old_helix]['loop'], start, end)));
-
-      direction_forward =
-          (strand_type == 'scaf' && curr_helix % 2 == 0) || ((strand_type == 'stap' && curr_helix % 2 == 1));
-      start = -1;
-      end = -1;
-      if (direction_forward)
-        start = curr_base;
-      else
-        end = curr_base;
     }
 
     return domains;
@@ -2324,9 +2326,27 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     domains.removeLast();
   }
 
-  static _cadnano_v2_import_extract_deletions(vstrand, int start, int end) {}
+  /// Routines which converts cadnano skips to scadnano deletions
+  static List<int> _cadnano_v2_import_extract_deletions(List<dynamic> skip_table, int start, int end) {
+    List<int> to_return = [];
+    for (int base_id = start; base_id < end; base_id++) {
+      if (skip_table[base_id] == -1) {
+        to_return.add(base_id);
+      }
+    }
+    return to_return;
+  }
 
-  static _cadnano_v2_import_extract_insertions(vstrand, int start, int end) {}
+  /// Routines which converts cadnano skips to scadnano insertions
+  static List<Insertion> _cadnano_v2_import_extract_insertions(List<dynamic> loop_table, int start, int end) {
+    List<Insertion> to_return = [];
+    for (int base_id = start; base_id < end; base_id++) {
+      if (loop_table[base_id] != 0) {
+        to_return.add(Insertion(base_id, loop_table[base_id]));
+      }
+    }
+    return to_return;
+  }
 }
 
 Map<String, HelixGroup> _calculate_groups_from_helices(Iterable<Helix> helices, Grid grid) {
