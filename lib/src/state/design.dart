@@ -2223,9 +2223,31 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return Tuple3(id_from_before, base_from_before, is_circular);
   }
 
+  /// Routine that finds the color of a cadnano v2 strand."""
   static Color _cadnano_v2_import_find_strand_color(Map<int, Map<String, dynamic>> vstrands,
       String strand_type, int strand_5_end_base, int strand_5_end_helix) {
-    return new RgbColor(0, 0, 0);
+    Color color = constants.default_cadnano_strand_color;
+
+    if (strand_type == 'scaf') return constants.default_scaffold_color;
+
+    if (strand_type == 'stap') {
+      int base_id;
+      int stap_color;
+
+      for (List<int> tmp in vstrands[strand_5_end_helix]['stap_colors']) {
+        base_id = tmp[0];
+        stap_color = tmp[1];
+        if (base_id == strand_5_end_base) {
+          color = from_cadnano_v2_int_hex(stap_color);
+          break;
+        }
+      }
+    }
+    return color;
+  }
+
+  static Color from_cadnano_v2_int_hex(int hex) {
+    return Color.hex(hex.toRadixString(16));
   }
 
   static List<Domain> _cadnano_v2_import_explore_domains(Map<int, Map<String, dynamic>> vstrands,
