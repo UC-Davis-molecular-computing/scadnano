@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:scadnano/src/json_serializable.dart';
+import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
@@ -1148,19 +1150,28 @@ scadnano_file_loaded(FileReader file_reader, String filename) {
 }
 
 cadnano_file_loaded(FileReader file_reader, String filename) async {
-  var json_cadnano_text = file_reader.result;
-  var response = await http.post(
-    constants.import_url,
-    body: json_cadnano_text,
-    headers: {"Content-Type": "application/json"},
-  );
+  // var json_cadnano_text = file_reader.result;
+  // var response = await http.post(
+  //   constants.import_url,
+  //   body: json_cadnano_text,
+  //   headers: {"Content-Type": "application/json"},
+  // );
 
-  if (response.statusCode == 200) {
-    var json_model_text = response.body;
+  // if (response.statusCode == 200) {
+  //   var json_model_text = response.body;
+  //   filename = path.setExtension(filename, '.${constants.default_scadnano_file_extension}');
+  //   app.dispatch(actions.LoadDNAFile(content: json_model_text, filename: filename));
+  // } else {
+  //   Map response_body_json = jsonDecode(response.body);
+  //   window.alert('Error importing file: ${response_body_json['error']}');
+  // }
+
+  try {
+    var json_cadnano_text = file_reader.result;
+    var json_model_text = json_encode(Design.from_cadnano_v2(jsonDecode(json_cadnano_text)));
     filename = path.setExtension(filename, '.${constants.default_scadnano_file_extension}');
     app.dispatch(actions.LoadDNAFile(content: json_model_text, filename: filename));
-  } else {
-    Map response_body_json = jsonDecode(response.body);
-    window.alert('Error importing file: ${response_body_json['error']}');
+  } on Exception catch (e) {
+    window.alert('Error importing file: ${e}');
   }
 }

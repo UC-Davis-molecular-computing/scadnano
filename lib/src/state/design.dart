@@ -2101,6 +2101,74 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       helix_to_dct[strand_type][start_to].setRange(0, 2, [helix_from, end_from - 1]);
     }
   }
+
+  static Design from_cadnano_v2(Map<String, dynamic> json_dict) {
+    // """
+    // Creates a Design from a cadnano v2 file.
+    // """
+
+    // if json_dict is None and filename is not None and directory is not None:
+    //     file_path = os.path.join(directory, filename)
+    //     f = open(file_path, 'r')
+    //     cadnano_v2_design = json.load(f)
+    //     f.close()
+    // elif json_dict is not None:
+    //     cadnano_v2_design = json_dict
+    // else:
+    //     raise ValueError('must have json_dict None and filename/directory not None, or vice versa')
+
+    // num_bases = len(cadnano_v2_design['vstrands'][0]['scaf'])
+    // grid_type = Grid.square
+    // if num_bases % 21 == 0:
+    //     grid_type = Grid.honeycomb
+
+    // min_row, min_col = None, None
+    // for cadnano_helix in cadnano_v2_design['vstrands']:
+    //     col, row = cadnano_helix['col'], cadnano_helix['row']
+    //     min_row = row if min_row is None else min_row
+    //     min_col = col if min_col is None else min_col
+    //     min_row = row if row < min_row else min_row
+    //     min_col = col if col < min_col else min_col
+
+    // helices = OrderedDict({})
+    // for cadnano_helix in cadnano_v2_design['vstrands']:
+    //     col, row = cadnano_helix['col'], cadnano_helix['row']
+    //     num = cadnano_helix['num']
+    //     helix = Helix(idx=num, max_offset=num_bases, grid_position=(col, row))
+    //     helices[num] = helix
+
+    // # We do a DFS on strands
+    // seen: Dict[str, dict] = {'scaf': {}, 'stap': {}}
+    // strands: List[Strand] = []
+    // cadnano_helices = OrderedDict({})
+    // for cadnano_helix in cadnano_v2_design['vstrands']:
+    //     helix_num = cadnano_helix['num']
+    //     cadnano_helices[helix_num] = cadnano_helix
+
+    // for cadnano_helix in cadnano_v2_design['vstrands']:
+    //     helix_num = cadnano_helix['num']
+    //     for strand_type in ['scaf', 'stap']:
+    //         for base_id in range(num_bases):
+    //             if (helix_num, base_id) in seen[strand_type]:
+    //                 continue
+
+    //             strand = Design._cadnano_v2_import_explore_strand(cadnano_helices,
+    //                                                               strand_type,
+    //                                                               seen[strand_type], helix_num,
+    //                                                               base_id)
+    //             if strand is not None:
+    //                 strands.append(strand)
+
+    // design: Design = Design(grid=grid_type, helices=helices, strands=strands)
+    // # DD: Tristan, I commented this out because I think it's unnecessary given the way the Design
+    // # constructor works, and because I'm now implementing this feature:
+    // # https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues/121
+    // # which means we may not have a well-defined helices_view_order on the whole design if groups
+    // # are used
+    // # design.set_helices_view_order([num for num in helices])
+
+    // return design
+  }
 }
 
 Map<String, HelixGroup> _calculate_groups_from_helices(Iterable<Helix> helices, Grid grid) {
