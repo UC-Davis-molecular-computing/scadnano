@@ -2199,9 +2199,28 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return strand;
   }
 
+  // Routine which finds the 5' end of a strand in a cadnano v2 import. It returns the
+  // helix and the base of the 5' end.
   static Tuple3<int, int, bool> _cadnano_v2_import_find_5_end(Map<int, Map<String, dynamic>> vstrands,
       String strand_type, int helix_num, int base_id, int id_from, int base_from) {
-    return Tuple3(0, 0, false);
+    int id_from_before = helix_num; // 'id' stands for helix id
+    int base_from_before = base_id;
+
+    Map<Tuple2<int, int>, bool> circular_seen = {};
+    bool is_circular = false;
+
+    while (!(id_from == -1 && base_from == -1)) {
+      if (circular_seen.containsKey(Tuple2(id_from, base_from))) {
+        is_circular = true;
+        break;
+      }
+      circular_seen[Tuple2(id_from, base_from)] = true;
+      id_from_before = id_from;
+      base_from_before = base_from;
+      id_from = vstrands[id_from][strand_type][base_from][0];
+      base_from = vstrands[id_from][strand_type][base_from][1];
+    }
+    return Tuple3(id_from_before, base_from_before, is_circular);
   }
 
   static Color _cadnano_v2_import_find_strand_color(Map<int, Map<String, dynamic>> vstrands,
