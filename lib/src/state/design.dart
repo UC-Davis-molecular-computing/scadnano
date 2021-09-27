@@ -2310,7 +2310,19 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return domains;
   }
 
-  static void _cadnano_v2_import_circular_strands_merge_first_last_domains(List<Domain> domains) {}
+  /// When we create domains for circular strands in the cadnano import routine, we may end up
+  /// with a fake crossover if first and last domain are on same helix, we have to merge them
+  /// if it is the case.
+  static void _cadnano_v2_import_circular_strands_merge_first_last_domains(List<Domain> domains) {
+    if (domains[0].helix != domains.last.helix) return;
+
+    Domain new_domain_0 = domains[0].rebuild((b) => b
+      ..start = min(domains[0].start, domains[-1].start)
+      ..end = max(domains[0].end, domains[-1].end));
+    domains[0] = new_domain_0;
+
+    domains.removeLast();
+  }
 
   static _cadnano_v2_import_extract_deletions(vstrand, int start, int end) {}
 
