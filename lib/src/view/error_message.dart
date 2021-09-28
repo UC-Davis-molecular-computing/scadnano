@@ -13,7 +13,8 @@ If you find scadnano useful in a scientific project, please cite its associated 
 scadnano: A browser-based, scriptable tool for designing DNA nanostructures.
 David Doty, Benjamin L Lee, and Tristan Stérin.
 DNA 2020: Proceedings of the 26th International Conference on DNA Computing and Molecular Programming
-[ <a href="https://doi.org/10.4230/LIPIcs.DNA.2020.9">paper</a> | <a href="papers/scadnano.bib">BibTeX</a> ]
+[ <a href="https://doi.org/10.4230/LIPIcs.DNA.2020.9">paper</a> | 
+  <a href="https://web.cs.ucdavis.edu/~doty/papers/scadnano.bib">BibTeX</a> ]
 
 No design is loaded.
 Try loading an example by selecting <em>File&rarr;Load example</em>,
