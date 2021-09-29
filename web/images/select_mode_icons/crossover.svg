@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="14px" height="15px" viewBox="0 0 14 15" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="15px" height="15px" viewBox="0 0 15 15" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
     <title>Group 8 Copy 15@3x</title>
     <desc>Created with Sketch.</desc>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="Group-8-Copy-15" transform="translate(0.000000, 1.000000)">
-            <rect id="Rectangle-Copy-6" fill="#FFC2E0" transform="translate(12.500000, 7.000000) rotate(90.000000) translate(-12.500000, -7.000000) " x="6.5" y="5.5" width="12" height="3" rx="1.5"></rect>
+            <rect id="Rectangle-Copy-6" stroke="#F885BF" stroke-width="0.2" fill="#F885BF" transform="translate(12.500000, 7.000000) rotate(90.000000) translate(-12.500000, -7.000000) " x="6.4" y="5.4" width="12.2" height="3.2" rx="1.6"></rect>
             <rect id="Rectangle-Copy-4" fill="#429000" x="2" y="0" width="12" height="3" rx="1.5"></rect>
             <rect id="Rectangle-Copy-5" fill="#429000" x="0" y="11" width="14" height="3" rx="1.5"></rect>
             <polygon id="Triangle" stroke="#000000" stroke-width="0.25" fill="#429000" transform="translate(1.500000, 1.500000) rotate(-90.000000) translate(-1.500000, -1.500000) " points="1.5 0 3 3 0 3"></polygon>

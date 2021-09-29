@@ -178,21 +178,21 @@ group.)''';
     // edit this to display a different string than the identifier name above
     switch (this) {
       case select:
-        return 'images/select.svg';
+        return 'images/edit_mode_icons/select.svg';
       case rope_select:
-        return 'images/rope_select.svg';
+        return 'images/edit_mode_icons/rope_select.svg';
       case pencil:
-        return 'images/pencil.svg';
+        return 'images/edit_mode_icons/pencil.svg';
       case nick:
-        return 'images/nick.svg';
+        return 'images/edit_mode_icons/nick.svg';
       case ligate:
-        return 'images/ligate.svg';
+        return 'images/edit_mode_icons/ligate.svg';
       case insertion:
-        return 'images/insertion.svg';
+        return 'images/edit_mode_icons/insertion.svg';
       case deletion:
-        return 'images/deletion.svg';
+        return 'images/edit_mode_icons/deletion.svg';
       case move_group:
-        return 'images/move_group.svg';
+        return 'images/edit_mode_icons/move_group.svg';
     }
     return '';
   }

@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="30px" height="31px" viewBox="0 0 30 31" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="30px" height="23px" viewBox="0 0 30 23" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
     <title>Group 8 Copy 20@3x</title>
     <desc>Created with Sketch.</desc>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Group-8-Copy-20" transform="translate(-1.000000, 1.000000)">
-            <path d="M16,13 L42,13 C43.1045695,13 44,13.8954305 44,15 L44,15 C44,16.1045695 43.1045695,17 42,17 L16,17 C14.8954305,17 14,16.1045695 14,15 L14,15 C14,13.8954305 14.8954305,13 16,13 Z" id="Rectangle-Copy-6" fill="#CEEBBE" transform="translate(29.000000, 15.000000) rotate(90.000000) translate(-29.000000, -15.000000) "></path>
-            <rect id="Rectangle-Copy-4" fill="#429000" x="5" y="0" width="26" height="6" rx="3"></rect>
-            <rect id="Rectangle-Copy-5" fill="#429000" x="1" y="24" width="30" height="6" rx="3"></rect>
-            <polygon id="Triangle" stroke="#000000" stroke-width="0.25" fill="#429000" transform="translate(4.000000, 3.000000) rotate(-90.000000) translate(-4.000000, -3.000000) " points="4 0 7 6 1 6"></polygon>
-            <rect id="Rectangle" stroke="#000000" stroke-width="0.25" fill="#429000" x="1.125" y="24.125" width="5.75" height="5.75" rx="1"></rect>
+        <g id="Group-8-Copy-20" transform="translate(-2.000000, 1.000000)">
+            <rect id="Rectangle-Copy-4" fill="#429000" x="5" y="0" width="24" height="6" rx="3"></rect>
+            <polygon id="Triangle" stroke="#000000" stroke-width="0.25" fill="#429000" transform="translate(29.000000, 3.000000) rotate(90.000000) translate(-29.000000, -3.000000) " points="29 0 32 6 26 6"></polygon>
+            <rect id="Rectangle" stroke="#000000" stroke-width="0.25" fill="#429000" x="2.125" y="0.125" width="5.75" height="5.75" rx="1"></rect>
             <text id="b" font-family="Arial-Black, Arial Black" font-size="12" font-weight="700" fill="#FE69B4">
                 <tspan x="4" y="21">b</tspan>
             </text>

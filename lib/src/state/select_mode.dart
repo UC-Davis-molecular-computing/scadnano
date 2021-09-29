@@ -54,31 +54,31 @@ class SelectModeChoice extends EnumClass {
     // edit this to display a different string than the identifier name above
     switch (this) {
       case end_5p_strand:
-        return 'images/5pstrand.svg';
+        return 'images/select_mode_icons/5pstrand.svg';
       case end_3p_strand:
-        return 'images/3pstrand.svg';
+        return 'images/select_mode_icons/3pstrand.svg';
       case end_5p_domain:
-        return 'images/5pdomain.svg';
+        return 'images/select_mode_icons/5pdomain.svg';
       case end_3p_domain:
-        return 'images/3pdomain.svg';
+        return 'images/select_mode_icons/3pdomain.svg';
       case domain:
-        return 'images/domain.svg';
+        return 'images/select_mode_icons/domain.svg';
       case crossover:
-        return 'images/crossover.svg';
+        return 'images/select_mode_icons/crossover.svg';
       case loopout:
-        return 'images/loopout.svg';
+        return 'images/select_mode_icons/loopout.svg';
       case deletion:
-        return 'images/del.svg';
+        return 'images/select_mode_icons/del.svg';
       case insertion:
-        return 'images/inser.svg';
+        return 'images/select_mode_icons/inser.svg';
       case modification:
-        return 'images/mod.svg';
+        return 'images/select_mode_icons/mod.svg';
       case strand:
-        return 'images/strand.svg';
+        return 'images/select_mode_icons/strand.svg';
       case scaffold:
-        return 'images/scaffold.svg';
+        return 'images/select_mode_icons/scaffold.svg';
       case staple:
-        return 'images/staple.svg';
+        return 'images/select_mode_icons/staple.svg';
     }
     return '';
   }
@@ -232,7 +232,7 @@ shown in a non-origami design.''';
     return '';
   }
 
-  static String get all_ends_image_file => 'images/allends.svg';
+  static String get all_ends_image_file => 'images/select_mode_icons/allends.svg';
   static String get all_ends_tooltip => '''all ends: Selects all of 5' strand, 3'
 strand, 5' domain, 3' domain.''';
 
