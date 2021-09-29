@@ -397,8 +397,20 @@ label + select {
 
 .edit-mode-toggle-button{
     position: absolute;
+    width: 25px;
     bottom: 24px;
+    border: 1px solid black;
     right: calc(100% + 20px);
+}
+
+.edit-mode-toggle-button img.appear{
+    transform: rotate(180deg);
+}
+
+.edit-mode-toggle-button img{
+    pointer-events: none;
+    max-width: 100%;
+
 }
 
 .mode-button {

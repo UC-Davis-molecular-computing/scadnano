@@ -63,8 +63,9 @@ class EditAndSelectModesComponent extends UiComponent2<EditAndSelectModesProps> 
         ..key = 'edit-mode-toggle-button'
         ..className = 'edit-mode-toggle-button'
         ..title = props.edit_mode_menu_visible ? 'Hide edit mode menu' : 'Open edit mode menu'
-        ..onClick =
-            (_) => (app.dispatch(actions.ShowEditMenuToggle())))(props.edit_mode_menu_visible ? '>>' : '<<')
+        ..onClick = (_) => (app.dispatch(actions.ShowEditMenuToggle())))((Dom.img()
+        ..className = props.edit_mode_menu_visible ? '' : 'appear'
+        ..src = 'images/show_menu.png')())
     ];
   }
 }
