@@ -130,5 +130,16 @@ main() {
 
       design.to_cadnano_v2_json();
     });
+
+    test('test_circular_strand', () {
+      List<Helix> helices = [
+        Helix(idx: 0, max_offset: 24, grid: Grid.square),
+        Helix(idx: 1, max_offset: 24, grid: Grid.square),
+      ];
+      Design design = Design(helices: helices, grid: Grid.square);
+
+      design.strand(1,0).move(8).cross(0).move(-8).as_circular().commit();
+      design.to_cadnano_v2_json();
+    });
   });
 }
