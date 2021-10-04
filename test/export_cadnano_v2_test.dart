@@ -144,5 +144,25 @@ main() {
       design.strand(1,0).move(8).cross(0).move(-8).as_circular().commit();
       design.to_cadnano_v2_json();
     });
+
+    // We do not handle Loopouts and design where the parity of the helix
+    // does not correspond to the direction.
+    test('test_parity_issue', () {
+      // Bad case one: parity issue in design (see cadnano v2 format spec, v2.txt)
+      List<Helix> helices = [
+        Helix(idx: 0, max_offset: 32, grid: Grid.square),
+        Helix(idx: 1, max_offset: 32, grid: Grid.square),
+      ];
+      Design design = Design(helices: helices, grid: Grid.square);
+      design = design.strand(1, 0).move(32).as_scaffold().commit();
+
+      try {
+        design.to_cadnano_v2_json();
+      } on IllegalCadnanoDesignError catch(e) {
+        expect(e.cause.contains('forward'), true);
+        return;
+      }
+      throw new Exception("Expected IllegalCadnanoDesignError");
+    });
   });
 }
