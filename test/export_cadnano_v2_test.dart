@@ -69,7 +69,10 @@ main() {
         design.to_cadnano_v2_json();
       } on IllegalCadnanoDesignError catch(e) {
         expect(e.cause.contains('helix groups'), true);
+        return;
       }
+
+      throw new Exception("Expected IllegalCadnanoDesignError");
     });
 
     test('test_2_staple_2_helix_origami_extremely_simple', () {
