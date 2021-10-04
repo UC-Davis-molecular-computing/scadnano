@@ -1810,8 +1810,12 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   /// Converts the design to the cadnano v2 format.
   /// Please see the spec [`misc/cadnano-format-specs/v2.txt`](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/main/misc/cadnano-format-specs/v2.txt)
   /// for more info on that format.
-  Map<String, dynamic> to_cadnano_v2() {
+  Map<String, dynamic> to_cadnano_v2_serializable([String name = ""]) {
     Map<String, dynamic> dct = new LinkedHashMap();
+    if (name != "") {
+      dct['name'] = name;
+    }
+
     dct['vstrands'] = [];
 
     Grid design_grid;
@@ -1897,6 +1901,15 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
 
     return dct;
+  }
+
+  /// Converts the design to the cadnano v2 format.
+  /// Please see the spec [`misc/cadnano-format-specs/v2.txt`](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/main/misc/cadnano-format-specs/v2.txt)
+  /// for more info on that format.
+  String to_cadnano_v2_json([String name = ""]) {
+    var encoder = SuppressableIndentEncoder(Replacer());
+    var content_serializable = this.to_cadnano_v2_serializable(name);
+    return encoder.convert(content_serializable);
   }
 
   int _get_multiple_of_x_sup_closest_to_y(int x, int y) {
