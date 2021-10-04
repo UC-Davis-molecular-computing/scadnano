@@ -99,12 +99,7 @@ main() {
       Design design = Design(helices: helices, grid: Grid.square);
 
       // left staple
-      design = design
-        .strand(1, 0)
-        .move(16)
-        .cross(0)
-        .move(-16)
-        .commit();
+      design = design.strand(1, 0).move(16).cross(0).move(-16).commit();
 
       // right staple
       design = design.strand(0, 32).move(-16).cross(1).move(16).commit();
@@ -118,8 +113,8 @@ main() {
         .move(-16)
         .as_scaffold()
         // also assigns complement to strands other than scaf bound to it
-        // deletions and insertions added to design so they can be added to both strands on a helix
         .with_sequence('AACGT' * 18)
+        // deletions and insertions added to design so they can be added to both strands on a helix
         .add_deletion(0, 11)
         .add_deletion(0, 12)
         .add_deletion(0, 24)
@@ -160,6 +155,45 @@ main() {
         design.to_cadnano_v2_json();
       } on IllegalCadnanoDesignError catch(e) {
         expect(e.cause.contains('forward'), true);
+        return;
+      }
+      throw new Exception("Expected IllegalCadnanoDesignError");
+    });
+
+    test('test_loopout', () {
+      // Bad case one: loopout
+      List<Helix> helices = [
+        Helix(idx: 0, max_offset: 48, grid: Grid.square),
+        Helix(idx: 1, max_offset: 48, grid: Grid.square),
+      ];
+      Design design = Design(helices: helices, grid: Grid.square);
+
+      // left staple
+      design = design.strand(1, 8).move(16).cross(0).move(-16).commit();
+
+      // right staple
+      design = design.strand(0, 40).move(-16).cross(1).move(16).commit();
+
+      // scaffold
+      design = design.strand(1, 24)
+        .move(-16)
+        .cross(0)
+        .move(32)
+        .loopout(1, 3)
+        .move(-16)
+        .as_scaffold()
+        // also assigns complement to strands other than scaf bound to it
+        .with_sequence('AACGT' * 18)
+        // deletions and insertions added to design so they can be added to both strands on a helix
+        .add_deletion(1, 20)
+        .add_insertion(0, 14, 1)
+        .add_insertion(0, 26, 2)
+        .commit();
+
+      try {
+        design.to_cadnano_v2_json();
+      } on IllegalCadnanoDesignError catch(e) {
+        expect(e.cause.contains('Loopouts'), true);
         return;
       }
       throw new Exception("Expected IllegalCadnanoDesignError");
