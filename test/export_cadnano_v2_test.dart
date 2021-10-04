@@ -77,5 +77,13 @@ main() {
 
       design.to_cadnano_v2_json();
     });
+
+    test('test_2_staple_2_helix_origami_extremely_simple_2', () {
+      List<Helix> helices = [Helix(idx: 0, max_offset: 32, grid: Grid.square), Helix(idx: 1, max_offset: 32, grid: Grid.square)];
+      Design design = Design(helices:helices, grid:Grid.square);
+      design = design.strand(0, 0).move(32).cross(1).move(-32).as_scaffold().commit();
+
+      design.to_cadnano_v2_json();
+    });
   });
 }
