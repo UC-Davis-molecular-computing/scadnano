@@ -2070,9 +2070,9 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       } else {
         if (forward)
           helix_dct[strand_type][i_base]
-              .setRange(2, (helix_dct[strand_type][i_base] as List<int>).length, [from_helix, from_base]);
+              .setRange(0, 2, [from_helix, from_base]);
         else
-          helix_dct[strand_type][i_base].setRange(0, 2, [to_helix, to_base]);
+          helix_dct[strand_type][i_base].setRange(2, (helix_dct[strand_type][i_base] as List<int>).length,  [to_helix, to_base]);
       }
     }
   }
