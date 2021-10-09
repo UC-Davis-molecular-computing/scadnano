@@ -2116,6 +2116,11 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   /// Creates a Design from a cadnano v2 file.
+  static Design from_cadnano_v2_json_str(String str) {
+    return from_cadnano_v2(jsonDecode(str));
+  }
+
+  /// Creates a Design from a cadnano v2 file.
   static Design from_cadnano_v2(Map<String, dynamic> json_dict) {
     Map<String, dynamic> cadnano_v2_design = json_dict;
 
@@ -2260,7 +2265,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   static Color from_cadnano_v2_int_hex(int hex) {
-    return Color.hex(hex.toRadixString(16));
+    return Color.hex(hex.toRadixString(16).padLeft(6,'0'));
   }
 
   /// Finds all domains of a cadnano v2 strand.
