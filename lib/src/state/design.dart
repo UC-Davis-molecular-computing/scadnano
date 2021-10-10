@@ -2337,8 +2337,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     if (domains[0].helix != domains.last.helix) return;
 
     Domain new_domain_0 = domains[0].rebuild((b) => b
-      ..start = min(domains[0].start, domains[-1].start)
-      ..end = max(domains[0].end, domains[-1].end));
+      ..start = min(domains[0].start, domains.last.start)
+      ..end = max(domains[0].end, domains.last.end));
     domains[0] = new_domain_0;
 
     domains.removeLast();
