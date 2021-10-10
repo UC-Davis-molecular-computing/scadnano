@@ -36,7 +36,9 @@ main() {
       };
 
       Design design = Design(helices: helices, groups: groups);
-      design.to_cadnano_v2_json();
+      String output_json = design.to_cadnano_v2_json();
+      Design output_design = Design.from_cadnano_v2_json_str(output_json);
+      expect(output_design.helices.length, 4);
     });
 
     test('test_export_design_with_helix_group_not_same_grid', () {
@@ -80,15 +82,18 @@ main() {
       Design design = Design(helices:helices, grid:Grid.square);
       design = design.strand(0, 0).move(32).as_scaffold().commit();
 
-      design.to_cadnano_v2_json();
-    });
+      String output_json = design.to_cadnano_v2_json();
+      Design output_design = Design.from_cadnano_v2_json_str(output_json);
+      expect(output_design.helices.length, 2);    });
 
     test('test_2_staple_2_helix_origami_extremely_simple_2', () {
       List<Helix> helices = [Helix(idx: 0, max_offset: 32, grid: Grid.square), Helix(idx: 1, max_offset: 32, grid: Grid.square)];
       Design design = Design(helices:helices, grid:Grid.square);
       design = design.strand(0, 0).move(32).cross(1).move(-32).as_scaffold().commit();
 
-      design.to_cadnano_v2_json();
+      String output_json = design.to_cadnano_v2_json();
+      Design output_design = Design.from_cadnano_v2_json_str(output_json);
+      expect(output_design.helices.length, 2);
     });
 
     test('test_2_staple_2_helix_origami_deletions_insertions', () {
@@ -126,7 +131,9 @@ main() {
         .add_insertion(1, 18, 4)
         .commit();
 
-      design.to_cadnano_v2_json();
+      String output_json = design.to_cadnano_v2_json();
+      Design output_design = Design.from_cadnano_v2_json_str(output_json);
+      expect(output_design.helices.length, 2);
     });
 
     test('test_circular_strand', () {
@@ -137,7 +144,9 @@ main() {
       Design design = Design(helices: helices, grid: Grid.square);
 
       design.strand(1,0).move(8).cross(0).move(-8).as_circular().commit();
-      design.to_cadnano_v2_json();
+      String output_json = design.to_cadnano_v2_json();
+      Design output_design = Design.from_cadnano_v2_json_str(output_json);
+      expect(output_design.helices.length, 2);
     });
 
     // We do not handle Loopouts and design where the parity of the helix
