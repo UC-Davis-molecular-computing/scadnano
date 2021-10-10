@@ -1,6 +1,12 @@
 import 'package:scadnano/src/state/design.dart';
+import 'package:scadnano/src/state/domain.dart';
+import 'package:scadnano/src/state/grid.dart';
+import 'package:scadnano/src/state/grid_position.dart';
+import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/util.dart';
 import 'package:test/test.dart';
+
+import 'utils.dart';
 
 
 main() {
@@ -50,7 +56,34 @@ main() {
     test('test_2_stape_2_helix_origami_deletions_insertions', () async {
       String filename = 'cadnano_v2_import/test_2_stape_2_helix_origami_deletions_insertions.json';
       Design design = Design.from_cadnano_v2_json_str(await get_text_file_content('../test/tests_inputs/${filename}'));
+
+      // Reocolor for testing purposes
+      design = design.rebuild((b) => b..strands.replace(recolor_strands(design.strands)));
       expect(design.helices.length, 2);
+      expect(design.grid, Grid.square);
+      expect(design.helices[0].grid_position, GridPosition(0,0));
+      expect(design.helices[1].grid_position, GridPosition(0,1));
+      expect(design.strands.length, 3);
+
+
+      //left staple
+      Domain stap_left_ss1 = Domain(helix: 1, forward: true, start: 0, end: 16, deletions: [12], insertions: [Insertion(6, 3)], is_scaffold: false);
+      Domain stap_left_ss0 = Domain(helix: 0, forward: false, start: 0, end: 16, deletions: [11, 12], insertions: [Insertion(6, 1)], is_scaffold: false);
+      Strand stap_left = recolor_strand(Strand([stap_left_ss1, stap_left_ss0]));
+      expect(design.strands.contains(stap_left), true);
+
+      // # right staple
+      Domain stap_right_ss0 = Domain(helix: 0, forward: false, start: 16, end: 32, deletions: [24], insertions: [Insertion(18, 2)], is_scaffold: false);
+      Domain stap_right_ss1 = Domain(helix: 1, forward: true, start: 16, end: 32, deletions: [24], insertions: [Insertion(18, 4)], is_scaffold: false);
+      Strand stap_right = recolor_strand(Strand([stap_right_ss0, stap_right_ss1]));
+      expect(design.strands.contains(stap_right), true);
+
+      // # scaffold
+      Domain scaf_ss1_left = Domain(helix: 1, forward: false, start: 0, end: 16, deletions: [12], insertions: [Insertion(6, 3)], is_scaffold: true);
+      Domain scaf_ss0 = Domain(helix: 0, forward: true, start: 0, end: 32, deletions: [11, 12, 24], insertions: [Insertion(6, 1), Insertion(18,2)], is_scaffold: true);
+      Domain scaf_ss1_right = Domain(helix: 1, forward: false, start: 16, end: 32, deletions: [24], insertions: [Insertion(18, 4)], is_scaffold: true);
+      Strand scaf = recolor_strand(Strand([scaf_ss1_left, scaf_ss0, scaf_ss1_right], is_scaffold: true));
+      expect(design.strands.contains(scaf), true);
     });
   });
 }
