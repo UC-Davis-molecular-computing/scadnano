@@ -3,11 +3,14 @@ import 'package:scadnano/src/json_serializable.dart';
 import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/grid.dart';
+import 'package:scadnano/src/state/grid_position.dart';
 import 'package:scadnano/src/state/group.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/position3d.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:test/test.dart';
+
+import 'utils.dart';
 
 main() {
   group('ExportCadnanoV2', () {
@@ -133,7 +136,34 @@ main() {
 
       String output_json = design.to_cadnano_v2_json();
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
+      // Recolor for testing purposes
+      output_design = output_design.rebuild((b) => b.strands.replace(recolor_strands(output_design.strands)));
+
       expect(output_design.helices.length, 2);
+      expect(output_design.grid, Grid.square);
+      expect(output_design.helices[0].grid_position, GridPosition(0,0));
+      expect(output_design.helices[1].grid_position, GridPosition(0,1));
+      expect(output_design.strands.length, 3);
+
+
+      //left staple
+      Domain stap_left_ss1 = Domain(helix: 1, forward: true, start: 0, end: 16, deletions: [12], insertions: [Insertion(6, 3)], is_scaffold: false);
+      Domain stap_left_ss0 = Domain(helix: 0, forward: false, start: 0, end: 16, deletions: [11, 12], insertions: [Insertion(6, 1)], is_scaffold: false);
+      Strand stap_left = recolor_strand(Strand([stap_left_ss1, stap_left_ss0]));
+      expect(output_design.strands.contains(stap_left), true);
+
+      // # right staple
+      Domain stap_right_ss0 = Domain(helix: 0, forward: false, start: 16, end: 32, deletions: [24], insertions: [Insertion(18, 2)], is_scaffold: false);
+      Domain stap_right_ss1 = Domain(helix: 1, forward: true, start: 16, end: 32, deletions: [24], insertions: [Insertion(18, 4)], is_scaffold: false);
+      Strand stap_right = recolor_strand(Strand([stap_right_ss0, stap_right_ss1]));
+      expect(output_design.strands.contains(stap_right), true);
+
+      // # scaffold
+      Domain scaf_ss1_left = Domain(helix: 1, forward: false, start: 0, end: 16, deletions: [12], insertions: [Insertion(6, 3)], is_scaffold: true);
+      Domain scaf_ss0 = Domain(helix: 0, forward: true, start: 0, end: 32, deletions: [11, 12, 24], insertions: [Insertion(6, 1), Insertion(18,2)], is_scaffold: true);
+      Domain scaf_ss1_right = Domain(helix: 1, forward: false, start: 16, end: 32, deletions: [24], insertions: [Insertion(18, 4)], is_scaffold: true);
+      Strand scaf = recolor_strand(Strand([scaf_ss1_left, scaf_ss0, scaf_ss1_right], is_scaffold: true));
+      expect(output_design.strands.contains(scaf), true);
     });
 
     test('test_circular_strand', () {

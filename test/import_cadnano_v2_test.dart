@@ -57,7 +57,7 @@ main() {
       String filename = 'cadnano_v2_import/test_2_stape_2_helix_origami_deletions_insertions.json';
       Design design = Design.from_cadnano_v2_json_str(await get_text_file_content('../test/tests_inputs/${filename}'));
 
-      // Reocolor for testing purposes
+      // Recolor for testing purposes
       design = design.rebuild((b) => b..strands.replace(recolor_strands(design.strands)));
       expect(design.helices.length, 2);
       expect(design.grid, Grid.square);
