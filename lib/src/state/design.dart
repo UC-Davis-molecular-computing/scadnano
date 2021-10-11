@@ -2007,16 +2007,18 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
       if (!first_forward) the_base_to = first_end - 1;
 
+      Iterable<int> temp1 = [last_helix['num'], the_base_from];
       if ((first_helix[strand_type][the_base_to] as List).sublist(0, 2) == [-1, -1]) {
-        (first_helix[strand_type][the_base_to] as List).setRange(0, 2, [last_helix['num'], the_base_from]);
+        (first_helix[strand_type][the_base_to] as List).setRange(0, 2, temp1);
       } else {
-        (first_helix[strand_type][the_base_to] as List).setRange(0, 2, [last_helix['num'], the_base_from]);
+        (first_helix[strand_type][the_base_to] as List).setRange(2, 4, temp1);
       }
 
+      Iterable<int> temp2 =  [first_helix['num'], the_base_to];
       if (last_helix[strand_type][the_base_from].sublist(0, 2) == [-1, -1])
-        last_helix[strand_type][the_base_from].setRange(0, 2, [first_helix['num'], the_base_to]);
+        last_helix[strand_type][the_base_from].setRange(0, 2, temp2);
       else
-        last_helix[strand_type][the_base_from].subRange(0, 2, [first_helix['num'], the_base_to]);
+        last_helix[strand_type][the_base_from].setRange(2, 4, temp2);
     }
   }
 
@@ -2069,10 +2071,10 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         helix_dct[strand_type][i_base] = [from_helix, from_base, to_helix, to_base];
       } else {
         if (forward)
-          helix_dct[strand_type][i_base]
-              .setRange(0, 2, [from_helix, from_base]);
+          helix_dct[strand_type][i_base].setRange(0, 2, [from_helix, from_base]);
         else
-          helix_dct[strand_type][i_base].setRange(2, (helix_dct[strand_type][i_base] as List<int>).length,  [to_helix, to_base]);
+          helix_dct[strand_type][i_base]
+              .setRange(2, (helix_dct[strand_type][i_base] as List<int>).length, [to_helix, to_base]);
       }
     }
   }
@@ -2235,8 +2237,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       circular_seen[Tuple2(id_from, base_from)] = true;
       id_from_before = id_from;
       base_from_before = base_from;
-      id_from = vstrands[id_from_before][strand_type][base_from][0];
-      base_from = vstrands[id_from_before][strand_type][base_from][1];
+      id_from = vstrands[id_from_before][strand_type][base_from_before][0];
+      base_from = vstrands[id_from_before][strand_type][base_from_before][1];
     }
     return Tuple3(id_from_before, base_from_before, is_circular);
   }
@@ -2265,7 +2267,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   static Color from_cadnano_v2_int_hex(int hex) {
-    return Color.hex(hex.toRadixString(16).padLeft(6,'0'));
+    return Color.hex(hex.toRadixString(16).padLeft(6, '0'));
   }
 
   /// Finds all domains of a cadnano v2 strand.
@@ -2317,7 +2319,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
                 Design._cadnano_v2_import_extract_insertions(vstrands[old_helix]['loop'], start, end)));
 
         direction_forward = (strand_type == 'scaf' && curr_helix % 2 == 0) ||
-            ((strand_type == 'stap' && curr_helix % 2 == 1));
+            (strand_type == 'stap' && curr_helix % 2 == 1);
         start = -1;
         end = -1;
         if (direction_forward)
@@ -2334,7 +2336,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   /// with a fake crossover if first and last domain are on same helix, we have to merge them
   /// if it is the case.
   static void _cadnano_v2_import_circular_strands_merge_first_last_domains(List<Domain> domains) {
-    if (domains[0].helix != domains.last.helix) return;
+    if (domains.first.helix != domains.last.helix) return;
 
     Domain new_domain_0 = domains[0].rebuild((b) => b
       ..start = min(domains[0].start, domains.last.start)

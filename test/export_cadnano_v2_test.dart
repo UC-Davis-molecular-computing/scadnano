@@ -8,6 +8,7 @@ import 'package:scadnano/src/state/group.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/position3d.dart';
 import 'package:scadnano/src/state/strand.dart';
+import 'package:scadnano/src/util.dart';
 import 'package:test/test.dart';
 
 import 'utils.dart';
@@ -166,6 +167,25 @@ main() {
       expect(output_design.strands.contains(scaf), true);
     });
 
+    test('test_6_helix_bundle_honeycomb', () async {
+      String filename = 'test_6_helix_bundle_honeycomb.sc';
+      Design design = Design.from_json_str(await get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'));
+
+      String output_json = design.to_cadnano_v2_json();
+      Design output_design = Design.from_cadnano_v2_json_str(output_json);
+      expect(output_design.helices.length, 6);
+    });
+
+    test('test_16_helix_origami_rectangle_no_twist', () async {
+      String filename = 'test_16_helix_origami_rectangle_no_twist.sc';
+      Design design = Design.from_json_str(await get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'));
+
+      String output_json = design.to_cadnano_v2_json();
+      Design output_design = Design.from_cadnano_v2_json_str(output_json);
+      expect(output_design.helices.length, 16);
+    });
+
+
     test('test_circular_strand', () {
       List<Helix> helices = [
         Helix(idx: 0, max_offset: 24, grid: Grid.square),
@@ -177,6 +197,24 @@ main() {
       String output_json = design.to_cadnano_v2_json();
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
       expect(output_design.helices.length, 2);
+    });
+
+    test('test_big_circular_staples_hex', () async {
+      String filename = 'test_big_circular_staples_hex.sc';
+      Design design = Design.from_json_str(await get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'));
+
+      String output_json = design.to_cadnano_v2_json();
+      Design output_design = Design.from_cadnano_v2_json_str(output_json);
+      expect(output_design.helices.length, 6);
+    });
+
+    test('test_big_circular_staples', () async {
+      String filename = 'test_big_circular_staples.sc';
+      Design design = Design.from_json_str(await get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'));
+
+      String output_json = design.to_cadnano_v2_json();
+      Design output_design = Design.from_cadnano_v2_json_str(output_json);
+      expect(output_design.helices.length, 8);
     });
 
     // We do not handle Loopouts and design where the parity of the helix
