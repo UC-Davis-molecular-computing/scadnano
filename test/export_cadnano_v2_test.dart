@@ -167,6 +167,16 @@ main() {
       expect(output_design.strands.contains(scaf), true);
     });
 
+    test('test_6_helix_origami_rectangle', () async {
+      String filename = 'test_6_helix_origami_rectangle.sc';
+      Design design = Design.from_json_str(await get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'));
+
+      String output_json = design.to_cadnano_v2_json();
+      Design output_design = Design.from_cadnano_v2_json_str(output_json);
+      expect(output_design.helices.length, 6);
+    });
+
+
     test('test_6_helix_bundle_honeycomb', () async {
       String filename = 'test_6_helix_bundle_honeycomb.sc';
       Design design = Design.from_json_str(await get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'));
@@ -215,6 +225,15 @@ main() {
       String output_json = design.to_cadnano_v2_json();
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
       expect(output_design.helices.length, 8);
+    });
+
+    test('test_paranemic_crossover', () async {
+      String filename = 'test_paranemic_crossover.sc';
+      Design design = Design.from_json_str(await get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'));
+
+      String output_json = design.to_cadnano_v2_json();
+      Design output_design = Design.from_cadnano_v2_json_str(output_json);
+      expect(output_design.helices.length, 4);
     });
 
     // We do not handle Loopouts and design where the parity of the helix
