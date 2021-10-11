@@ -1150,22 +1150,6 @@ scadnano_file_loaded(FileReader file_reader, String filename) {
 }
 
 cadnano_file_loaded(FileReader file_reader, String filename) async {
-  // var json_cadnano_text = file_reader.result;
-  // var response = await http.post(
-  //   constants.import_url,
-  //   body: json_cadnano_text,
-  //   headers: {"Content-Type": "application/json"},
-  // );
-
-  // if (response.statusCode == 200) {
-  //   var json_model_text = response.body;
-  //   filename = path.setExtension(filename, '.${constants.default_scadnano_file_extension}');
-  //   app.dispatch(actions.LoadDNAFile(content: json_model_text, filename: filename));
-  // } else {
-  //   Map response_body_json = jsonDecode(response.body);
-  //   window.alert('Error importing file: ${response_body_json['error']}');
-  // }
-
   try {
     var json_cadnano_text = file_reader.result;
     var json_model_text = json_encode(Design.from_cadnano_v2_json_str(json_cadnano_text));

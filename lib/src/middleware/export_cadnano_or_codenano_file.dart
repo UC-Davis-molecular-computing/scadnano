@@ -26,21 +26,6 @@ export_cadnano_or_codenano_file_middleware(Store<AppState> store, dynamic action
 }
 
 _save_file_cadnano(AppState state) async {
-  // var response = await http.post(
-  //   constants.export_url,
-  //   body: json_encode(state.design),
-  //   headers: {"Content-Type": "application/json"},
-  // );
-
-  // if (response.statusCode == 200) {
-  //   String default_filename = state.ui_state.loaded_filename;
-  //   default_filename = path.setExtension(default_filename, '.json');
-  //   util.save_file(default_filename, response.body);
-  // } else {
-  //   Map response_body_json = jsonDecode(response.body);
-  //   window.alert('Error exporting file: ${response_body_json['error']}');
-  // }
-
   try {
     String default_filename = state.ui_state.loaded_filename;
     default_filename = path.setExtension(default_filename, '.json');
