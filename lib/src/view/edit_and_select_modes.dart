@@ -22,7 +22,8 @@ UiFactory<EditAndSelectModesProps> ConnectedEditAndSelectModes = connect<AppStat
     return EditAndSelectModes()
       ..edit_modes = state.ui_state.edit_modes
       ..select_mode_state = state.ui_state.select_mode_state
-      ..is_origami = is_origami;
+      ..is_origami = is_origami
+      ..edit_mode_menu_visible = state.ui_state.show_edit_mode_menu;
   },
   // Used for component test.
   forwardRef: true,
@@ -34,25 +35,37 @@ mixin EditAndSelectModesProps on UiProps {
   BuiltSet<EditModeChoice> edit_modes;
   SelectModeState select_mode_state;
   bool is_origami;
+  bool edit_mode_menu_visible;
 }
 
 class EditAndSelectModesComponent extends UiComponent2<EditAndSelectModesProps> with RedrawCounterMixin {
   @override
   render() {
-    bool select_mode = props.edit_modes.contains(EditModeChoice.select) || props.edit_modes.contains(EditModeChoice.rope_select);
+    bool select_mode = props.edit_modes.contains(EditModeChoice.select) ||
+        props.edit_modes.contains(EditModeChoice.rope_select);
     return [
-      if (select_mode)
+      if (select_mode && props.edit_mode_menu_visible)
         (SelectMode()
           ..select_mode_state = props.select_mode_state
           ..is_origami = props.is_origami
           ..key = 'select-modes')(),
-      if (select_mode)
+      if (select_mode && props.edit_mode_menu_visible)
         (Dom.div()
           ..className = FIXED_VERTICAL_SEPARATOR //FIXED_HORIZONTAL_SEPARATOR
           ..key = 'modes-separator')(),
-      (EditMode()
-        ..modes = props.edit_modes
-        ..key = 'edit-modes')(),
+      if (props.edit_mode_menu_visible)
+        {
+          (EditMode()
+            ..modes = props.edit_modes
+            ..key = 'edit-modes')(),
+        },
+      (Dom.button()
+        ..key = 'edit-mode-toggle-button'
+        ..className = 'edit-mode-toggle-button'
+        ..title = props.edit_mode_menu_visible ? 'Hide edit mode menu' : 'Open edit mode menu'
+        ..onClick = (_) => (app.dispatch(actions.ShowEditMenuToggle())))((Dom.img()
+        ..className = props.edit_mode_menu_visible ? '' : 'appear'
+        ..src = 'images/show_menu.png')())
     ];
   }
 }

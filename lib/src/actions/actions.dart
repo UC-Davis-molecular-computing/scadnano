@@ -3213,6 +3213,21 @@ abstract class ShowHelixCirclesMainViewSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// show or hide the edit menu
+
+abstract class ShowEditMenuToggle
+    with BuiltJsonSerializable
+    implements Action, Built<ShowEditMenuToggle, ShowEditMenuToggleBuilder> {
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowEditMenuToggle() = _$ShowEditMenuToggle._;
+
+  ShowEditMenuToggle._();
+
+  static Serializer<ShowEditMenuToggle> get serializer => _$showEditMenuToggleSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // show or hide grid coordinates in side view
 
 abstract class ShowGridCoordinatesSideViewSet

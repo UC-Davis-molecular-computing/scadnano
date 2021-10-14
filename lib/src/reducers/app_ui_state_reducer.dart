@@ -167,6 +167,9 @@ bool warn_on_exit_if_unsaved_reducer(bool _, actions.WarnOnExitIfUnsavedSet acti
 bool show_helix_circles_main_view_reducer(bool _, actions.ShowHelixCirclesMainViewSet action) =>
     action.show_helix_circles_main_view;
 
+bool show_edit_mode_menu_reducer(bool previous_show, actions.ShowEditMenuToggle action) =>
+    !previous_show;
+
 bool show_grid_coordinates_side_view_reducer(bool _, actions.ShowGridCoordinatesSideViewSet action) =>
     action.show_grid_coordinates_side_view;
 
@@ -402,6 +405,8 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..show_helix_circles_main_view =
     TypedReducer<bool, actions.ShowHelixCirclesMainViewSet>(show_helix_circles_main_view_reducer)(
         storables.show_helix_circles_main_view, action)
+     ..show_edit_mode_menu = TypedReducer<bool, actions.ShowEditMenuToggle>(show_edit_mode_menu_reducer)(
+        storables.show_edit_mode_menu, action)
     ..show_grid_coordinates_side_view = TypedReducer<bool, actions.ShowGridCoordinatesSideViewSet>(
         show_grid_coordinates_side_view_reducer)(storables.show_grid_coordinates_side_view, action)
     ..show_helices_axis_arrows = TypedReducer<bool, actions.ShowAxisArrowsSet>(

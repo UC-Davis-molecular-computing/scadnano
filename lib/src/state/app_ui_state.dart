@@ -185,6 +185,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get show_helix_circles_main_view => storables.show_helix_circles_main_view;
 
+  bool get show_edit_mode_menu => storables.show_edit_mode_menu;
+
   bool get show_grid_coordinates_side_view => storables.show_grid_coordinates_side_view;
 
   bool get show_helices_axis_arrows => storables.show_helices_axis_arrows;

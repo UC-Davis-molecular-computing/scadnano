@@ -41,34 +41,34 @@ class SelectModeComponent extends UiComponent2<SelectModeProps> with RedrawCount
   render() {
     var all_ends_button = (Dom.button()
       ..onClick = ((_) => app.dispatch(actions.SelectModesAdd(modes: SelectModeChoice.ends)))
+      ..title = SelectModeChoice.all_ends_tooltip
       ..className = 'mode-button ' +
           (props.select_mode_state.modes.containsAll(SelectModeChoice.ends)
               ? 'select-mode-button-selected'
               : 'select-mode-button-unselected')
       ..addTestId('scadnano.SelectModeComponent.button.all_ends')
-      ..key = 'all-ends')('all ends');
+      ..key = 'all-ends')((Dom.img()..src = SelectModeChoice.all_ends_image_file)());
 
     var modes = props.is_origami ? SelectModeChoice.all_choices : SelectModeChoice.non_origami_choices;
     var elts_map = {
       for (var mode in modes)
         mode: (Dom.button()
           ..onClick = ((_) => app.dispatch(actions.SelectModeToggle(mode)))
+          ..title = mode.tooltip
           ..className = 'mode-button ' +
               (props.select_mode_state.modes.contains(mode)
                   ? 'select-mode-button-selected'
                   : 'select-mode-button-unselected')
           ..addTestId('scadnano.SelectModeComponent.button.${mode.name}')
-          ..key = mode.display_name)(mode.display_name)
+          ..key = mode.display_name)((Dom.img()..src = mode.image_file)())
     };
     var elts = [
-      (Dom.label()..key = 'label')('Selectable:'),
       elts_map[SelectModeChoice.strand],
       elts_map[SelectModeChoice.domain],
       all_ends_button,
       ...[
         for (var mode in modes)
-          if (mode != SelectModeChoice.strand && mode != SelectModeChoice.domain)
-            elts_map[mode]
+          if (mode != SelectModeChoice.strand && mode != SelectModeChoice.domain) elts_map[mode]
       ],
     ];
 
