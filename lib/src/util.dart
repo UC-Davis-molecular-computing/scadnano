@@ -100,7 +100,7 @@ class ColorCycler {
     return next_color;
   }
 
-  static final Color scaffold_color = Color.rgb(0, 102, 204);
+  static final Color scaffold_color = constants.default_scaffold_color;
 }
 
 final scaffold_color = ColorCycler.scaffold_color;
