@@ -1,5 +1,6 @@
 import 'package:scadnano/src/actions/actions.dart';
 import 'package:scadnano/src/json_serializable.dart';
+import 'package:scadnano/src/middleware/export_cadnano_or_codenano_file.dart';
 import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/grid.dart';
@@ -40,7 +41,7 @@ main() {
       };
 
       Design design = Design(helices: helices, groups: groups);
-      String output_json = design.to_cadnano_v2_json();
+      String output_json = to_cadnano_v2_json(design);
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
       expect(output_design.helices.length, 4);
     });
@@ -72,7 +73,7 @@ main() {
       Design design = Design(helices: helices, groups: groups);
 
       try {
-        design.to_cadnano_v2_json();
+        to_cadnano_v2_json(design);
       } on IllegalCadnanoDesignError catch(e) {
         expect(e.cause.contains('helix groups'), true);
         return;
@@ -86,7 +87,7 @@ main() {
       Design design = Design(helices:helices, grid:Grid.square);
       design = design.strand(0, 0).move(32).as_scaffold().commit();
 
-      String output_json = design.to_cadnano_v2_json();
+      String output_json = to_cadnano_v2_json(design);
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
       expect(output_design.helices.length, 2);    });
 
@@ -95,7 +96,7 @@ main() {
       Design design = Design(helices:helices, grid:Grid.square);
       design = design.strand(0, 0).move(32).cross(1).move(-32).as_scaffold().commit();
 
-      String output_json = design.to_cadnano_v2_json();
+      String output_json = to_cadnano_v2_json(design);
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
       expect(output_design.helices.length, 2);
     });
@@ -135,7 +136,7 @@ main() {
         .add_insertion(1, 18, 4)
         .commit();
 
-      String output_json = design.to_cadnano_v2_json();
+      String output_json = to_cadnano_v2_json(design);
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
       // Recolor for testing purposes
       output_design = output_design.rebuild((b) => b.strands.replace(recolor_strands(output_design.strands)));
@@ -171,7 +172,7 @@ main() {
       String filename = 'test_6_helix_origami_rectangle.sc';
       Design design = Design.from_json_str(await get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'));
 
-      String output_json = design.to_cadnano_v2_json();
+      String output_json = to_cadnano_v2_json(design);
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
       expect(output_design.helices.length, 6);
     });
@@ -181,7 +182,7 @@ main() {
       String filename = 'test_6_helix_bundle_honeycomb.sc';
       Design design = Design.from_json_str(await get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'));
 
-      String output_json = design.to_cadnano_v2_json();
+      String output_json = to_cadnano_v2_json(design);
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
       expect(output_design.helices.length, 6);
     });
@@ -190,7 +191,7 @@ main() {
       String filename = 'test_16_helix_origami_rectangle_no_twist.sc';
       Design design = Design.from_json_str(await get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'));
 
-      String output_json = design.to_cadnano_v2_json();
+      String output_json = to_cadnano_v2_json(design);
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
       expect(output_design.helices.length, 16);
     });
@@ -204,7 +205,7 @@ main() {
       Design design = Design(helices: helices, grid: Grid.square);
 
       design.strand(1,0).move(8).cross(0).move(-8).as_circular().commit();
-      String output_json = design.to_cadnano_v2_json();
+      String output_json = to_cadnano_v2_json(design);
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
       expect(output_design.helices.length, 2);
     });
@@ -213,7 +214,7 @@ main() {
       String filename = 'test_big_circular_staples_hex.sc';
       Design design = Design.from_json_str(await get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'));
 
-      String output_json = design.to_cadnano_v2_json();
+      String output_json = to_cadnano_v2_json(design);
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
       expect(output_design.helices.length, 6);
     });
@@ -222,7 +223,7 @@ main() {
       String filename = 'test_big_circular_staples.sc';
       Design design = Design.from_json_str(await get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'));
 
-      String output_json = design.to_cadnano_v2_json();
+      String output_json = to_cadnano_v2_json(design);
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
       expect(output_design.helices.length, 8);
     });
@@ -231,7 +232,7 @@ main() {
       String filename = 'test_paranemic_crossover.sc';
       Design design = Design.from_json_str(await get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'));
 
-      String output_json = design.to_cadnano_v2_json();
+      String output_json = to_cadnano_v2_json(design);
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
       expect(output_design.helices.length, 4);
     });
@@ -248,7 +249,7 @@ main() {
       design = design.strand(1, 0).move(32).as_scaffold().commit();
 
       try {
-        design.to_cadnano_v2_json();
+        to_cadnano_v2_json(design);
       } on IllegalCadnanoDesignError catch(e) {
         expect(e.cause.contains('forward'), true);
         return;
@@ -287,7 +288,7 @@ main() {
         .commit();
 
       try {
-        design.to_cadnano_v2_json();
+        to_cadnano_v2_json(design);
       } on IllegalCadnanoDesignError catch(e) {
         expect(e.cause.contains('Loopouts'), true);
         return;
