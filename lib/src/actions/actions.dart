@@ -777,6 +777,36 @@ abstract class LoadDNAFile
   static Serializer<LoadDNAFile> get serializer => _$loadDNAFileSerializer;
 }
 
+abstract class LoadDesign
+    with BuiltJsonSerializable, DesignChangingAction
+    implements Action, Built<LoadDesign, LoadDesignBuilder> {
+  Design get design;
+
+  bool get write_local_storage;
+
+  bool get unit_testing;
+
+  // set to null when getting file from another source such as localStorage
+  @nullable
+  String get filename;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory LoadDesign(
+      {Design design, String filename, bool write_local_storage = true, bool unit_testing = false}) {
+    return LoadDesign.from((b) => b
+      ..design.replace(design)
+      ..filename = filename
+      ..write_local_storage = write_local_storage
+      ..unit_testing = unit_testing);
+  }
+
+  factory LoadDesign.from([void Function(LoadDesignBuilder) updates]) = _$LoadDesign;
+
+  LoadDesign._();
+
+  static Serializer<LoadDesign> get serializer => _$loadDesignSerializer;
+}
+
 abstract class NewDesignSet
     with BuiltJsonSerializable, UndoableAction
     implements Action, Built<NewDesignSet, NewDesignSetBuilder> {
