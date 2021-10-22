@@ -100,7 +100,6 @@ part 'serializers.g.dart';
   SetShowEditor,
   SaveDNAFile,
   LoadDNAFile,
-  LoadDesign,
   ExportCadnanoFile,
   ExportCodenanoFile,
   MouseoverDataClear,

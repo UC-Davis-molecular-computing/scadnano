@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/reducers/load_design_reducer.dart';
 import '../state/selectable.dart';
 
 import '../state/design.dart';
@@ -51,7 +50,39 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
       ..ui_state.changed_since_last_save = false
       ..error_message = error_message);
   } else if (design_new != null) {
-    new_state =  update_design_and_filename(state, design_new, action.filename);
+    BuiltSet<int> side_selected_helix_idxs = BuiltSet<int>();
+
+    // Select helices if "clear helix selection when loading new design" is disabled
+    if (!state.ui_state.clear_helix_selection_when_loading_new_design) {
+      side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs;
+
+      // remove selected helices from
+      if (state.design != null && design_new.helices.length < state.design.helices.length) {
+        side_selected_helix_idxs =
+            side_selected_helix_idxs.rebuild((s) => s.removeWhere((idx) => idx >= design_new.helices.length));
+      }
+    }
+
+    var new_selectables_store = SelectablesStore();
+    var new_filename = action.filename ?? state.ui_state.loaded_filename;
+
+    // if new design doesn't have same group names, need to pick a new one
+    var storables = state.ui_state.storables;
+    var displayed_group_name = storables.displayed_group_name;
+    if (!design_new.groups.containsKey(displayed_group_name)) {
+      storables = storables.rebuild((b) => b..displayed_group_name = design_new.groups.keys.first);
+    }
+
+    new_state = state.rebuild((m) => m
+      ..undo_redo.replace(UndoRedo())
+      ..design = design_new.toBuilder()
+      ..ui_state.update((u) => u
+        ..storables.replace(storables)
+        ..selectables_store.replace(new_selectables_store)
+        ..changed_since_last_save = false
+        ..storables.loaded_filename = new_filename
+        ..storables.side_selected_helix_idxs.replace(side_selected_helix_idxs))
+      ..error_message = "");
   } else {
     throw AssertionError("This line should be unreachable");
   }
