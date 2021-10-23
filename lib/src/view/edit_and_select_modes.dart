@@ -54,11 +54,9 @@ class EditAndSelectModesComponent extends UiComponent2<EditAndSelectModesProps> 
           ..className = FIXED_VERTICAL_SEPARATOR //FIXED_HORIZONTAL_SEPARATOR
           ..key = 'modes-separator')(),
       if (props.edit_mode_menu_visible)
-        {
-          (EditMode()
-            ..modes = props.edit_modes
-            ..key = 'edit-modes')(),
-        },
+        (EditMode()
+          ..modes = props.edit_modes
+          ..key = 'edit-modes')(),
       (Dom.button()
         ..key = 'edit-mode-toggle-button'
         ..className = 'edit-mode-toggle-button'
