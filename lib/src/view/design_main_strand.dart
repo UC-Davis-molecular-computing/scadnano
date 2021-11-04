@@ -10,6 +10,8 @@ import 'package:react/react.dart' as react;
 import 'package:scadnano/src/state/idt_fields.dart';
 
 import 'design_main_strand_and_domain_names.dart';
+import 'design_main_strand_dna_end.dart';
+import 'design_main_strand_dna_end.dart';
 import 'transform_by_helix_group.dart';
 import '../state/modification.dart';
 import '../state/address.dart';
@@ -213,8 +215,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     }
   }
 
-  add_modification(Domain domain, Address address, bool is_5p) =>
-      app.disable_keyboard_shortcuts_while(() => ask_for_add_modification(domain, address, is_5p));
+  add_modification(Domain domain, Address address, ModificationType type) =>
+      app.disable_keyboard_shortcuts_while(() => ask_for_add_modification(domain, address, type));
 
   assign_scale_purification_fields() =>
       app.disable_keyboard_shortcuts_while(ask_for_assign_scale_purification_fields);
@@ -317,7 +319,9 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
   }
 
   List<ContextMenuItem> context_menu_strand(Strand strand,
-          {@required Domain domain, @required Address address, @required bool is_5p}) =>
+          {@required Domain domain,
+          @required Address address,
+          ModificationType type = ModificationType.internal}) =>
       [
         ContextMenuItem(
             title: 'edit DNA',
@@ -346,7 +350,7 @@ assigned, assign the complementary DNA sequence to this strand.
             ].build()),
         ContextMenuItem(
           title: 'add modification',
-          on_click: () => add_modification(domain, address, is_5p),
+          on_click: () => add_modification(domain, address, type),
         ),
         ContextMenuItem(
             title: 'edit idt fields',
@@ -726,25 +730,21 @@ PAGEHPLC : Dual PAGE & HPLC
     }
   }
 
-  Future<void> ask_for_add_modification(
-      [Domain domain = null, Address address = null, bool is_5p = null]) async {
+  Future<void> ask_for_add_modification(Domain domain, Address address,
+      [ModificationType type = ModificationType.internal]) async {
     /*
-    domain: selected domain 
-    address: address of DNA base
-    is_5p: is DNAEnd a 5 prime
+    domain -  selected domain
+    address - address of DNA base
+    type - type of modification: five_prime, three_prime, internal (default)
     */
 
-    // code in issue #613 adds domain and address parameters to design_main_strand_dna_end
-    // assert statement not needed
-    // assert((is_5p == null && domain != null && address != null) || (is_5p != null && domain == null && address == null));
-
-    bool is_end = is_5p != null;
+    bool is_end = type != ModificationType.internal;
     int strand_dna_idx = null;
     int selected_index = 2;
     if (!is_end) {
       strand_dna_idx = clicked_strand_dna_idx(domain, address, props.strand);
     } else {
-      if (is_5p) {
+      if (type == ModificationType.five_prime) {
         selected_index = 1;
       } else {
         selected_index = 0;

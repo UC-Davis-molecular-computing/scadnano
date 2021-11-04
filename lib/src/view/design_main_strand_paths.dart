@@ -47,7 +47,7 @@ mixin DesignMainStrandPathsPropsMixin on UiProps {
   bool origami_type_is_selectable;
   String strand_tooltip;
   bool only_display_selected_helices;
-  List<ContextMenuItem> Function(Strand strand, {Domain domain, Address address, bool is_5p})
+  List<ContextMenuItem> Function(Strand strand, {Domain domain, Address address, ModificationType type})
       context_menu_strand;
 }
 
