@@ -11,6 +11,7 @@ import 'state/domains_move.dart';
 import 'state/helix_group_move.dart';
 import 'state/copy_info.dart';
 import 'state/address.dart';
+import 'state/modification_type.dart';
 import 'state/substrand.dart'; // analyzer says this is not used, but if deleted it breaks the code generation
 
 import 'state/group.dart';
@@ -55,6 +56,7 @@ import 'state/domain_name_mismatch.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  ModificationType,
   IDTFieldsRemove,
   PlateWellIDTFieldsRemove,
   PlateWellIDTFieldsAssign,

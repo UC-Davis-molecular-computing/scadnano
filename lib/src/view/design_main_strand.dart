@@ -8,6 +8,7 @@ import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
 import 'package:scadnano/src/state/idt_fields.dart';
+import 'package:scadnano/src/state/modification_type.dart';
 
 import 'design_main_strand_and_domain_names.dart';
 import 'design_main_strand_dna_end.dart';
@@ -739,17 +740,15 @@ PAGEHPLC : Dual PAGE & HPLC
     */
 
     bool is_end = type != ModificationType.internal;
-    int strand_dna_idx = null;
-    int selected_index = 2;
-    if (!is_end) {
-      strand_dna_idx = clicked_strand_dna_idx(domain, address, props.strand);
-    } else {
-      if (type == ModificationType.five_prime) {
-        selected_index = 1;
-      } else {
-        selected_index = 0;
-      }
+    int selected_index = 2; 
+
+    if (type == ModificationType.five_prime) {
+      selected_index = 1;
+    } else if (type == ModificationType.three_prime) {
+      selected_index = 0;
     }
+
+    int strand_dna_idx = clicked_strand_dna_idx(domain, address, props.strand);
 
     int modification_type_idx = 0;
     int display_text_idx = 1;
@@ -789,7 +788,7 @@ PAGEHPLC : Dual PAGE & HPLC
     // items[id_idx] = DialogText(label: 'id', value: initial_id);
 
     items[index_of_dna_base_idx] =
-        DialogInteger(label: 'index of DNA base', value: is_end ? 0 : strand_dna_idx);
+        DialogInteger(label: 'index of DNA base', value: strand_dna_idx);
 
     // don't allow to modify index of DNA base when 3' or 5' is selected
     var dialog = Dialog(title: 'add modification', items: items, disable_when_any_radio_button_selected: {

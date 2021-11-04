@@ -6,6 +6,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
+import 'package:scadnano/src/state/modification_type.dart';
 import 'package:scadnano/src/view/transform_by_helix_group.dart';
 
 import '../state/strand.dart';

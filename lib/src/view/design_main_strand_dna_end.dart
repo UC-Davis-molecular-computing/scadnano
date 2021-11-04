@@ -1,10 +1,13 @@
 import 'dart:html';
 
+import 'package:built_value/built_value.dart';
+import 'package:built_value/serializer.dart';
 import 'package:meta/meta.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/modification_type.dart';
 
 import '../state/address.dart';
 import '../state/context_menu.dart';
@@ -29,8 +32,6 @@ part 'design_main_strand_dna_end.over_react.g.dart';
 
 @Factory()
 UiFactory<DesignMainDNAEndProps> DesignMainDNAEnd = _$DesignMainDNAEnd;
-
-enum ModificationType { five_prime, three_prime, internal }
 
 @Props()
 mixin DesignMainDNAEndPropsMixin on UiProps {
