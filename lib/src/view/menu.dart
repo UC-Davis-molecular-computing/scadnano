@@ -825,6 +825,12 @@ In a large design, this can slow down the performance, so uncheck it when not in
         ..tooltip = "Export design to oxDNA .dat and .top files, which can be loaded in oxDNA or oxView."
         ..display = 'oxDNA'
         ..key = 'export-oxdna')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.OxdnaExport(selected_strands_only: true)))
+        ..tooltip = "Export design to oxDNA .dat and .top files, which can be loaded in oxDNA or oxView.\n"
+            "Only exports the currently selected strands."
+        ..display = 'oxDNA (selected strands)'
+        ..key = 'export-oxdna-selected-strands')(),
       //TODO: figure out if ENSnano is close to codenano format; if so this might work for exporting to it.
       // (MenuDropdownItem()
       //   ..on_click = ((_) => props.dispatch(actions.ExportCodenanoFile()))
