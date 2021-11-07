@@ -4,8 +4,10 @@ import 'package:path/path.dart' as path;
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/domain.dart';
+import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/loopout.dart';
+import 'package:scadnano/src/state/position3d.dart';
 import 'package:tuple/tuple.dart';
 import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
@@ -203,15 +205,16 @@ const NM_TO_OX_UNITS = 1.0 / 0.8518;
 // returns the origin, forward, and normal vectors of a helix
 Tuple3<OxdnaVector, OxdnaVector, OxdnaVector> oxdna_get_helix_vectors(Design design, Helix helix) {
   /*
-    TODO: document functions/methods with docstrings
-    :param helix:
-    :return: return tuple (origin, forward, normal)
-        origin  -- the starting point of the center of a helix, assumed to be at offset 0
-        forward -- the direction in which the helix propagates
-        normal  -- a direction perpendicular to forward which represents the angle to the backbone at offset 0
-            for the forward Domain on the Helix.
-    */
-  var grid = design.grid;
+  TODO: document functions/methods with docstrings
+  :param helix:
+  :return: return tuple (origin, forward, normal)
+      origin  -- the starting point of the center of a helix, assumed to be at offset 0
+      forward -- the direction in which the helix propagates
+      normal  -- a direction perpendicular to forward which represents the angle to the backbone at offset 0
+          for the forward Domain on the Helix.
+  */
+  var group = design.groups[helix.group];
+  var grid = group.grid;
   var geometry = design.geometry;
 
   var forward = OxdnaVector(0, 0, 1);
@@ -222,39 +225,20 @@ Tuple3<OxdnaVector, OxdnaVector, OxdnaVector> oxdna_get_helix_vectors(Design des
   normal = normal.rotate(-design.pitch_of_helix(helix), OxdnaVector(1, 0, 0));
   normal = normal.rotate(-helix.roll, forward);
 
-  double x = 0.0;
-  double y = 0.0;
-  double z = 0.0;
+  var position = Position3D();
   if (grid == Grid.none) {
+    // unnecessary since this check is done in the position getter, but this way the code exactly mirrors
+    // the Python package equivalent
     if (helix.position != null) {
-      x = helix.position.x;
-      y = helix.position.y;
-      z = helix.position.z;
+      position = helix.position;
     }
   } else {
-    // see here:
-    // https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/lib/src/util.dart#L799
-    // https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/lib/src/util.dart#L664
-    // https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/lib/src/util.dart#L706
-    int h = helix.grid_position.h;
-    int v = helix.grid_position.v;
-    if (grid == Grid.square) {
-      x = h * geometry.distance_between_helices;
-      y = v * geometry.distance_between_helices;
-    } else if (grid == Grid.hex) {
-      x = (h + (v % 2) / 2) * geometry.distance_between_helices;
-      y = v * sqrt(3) / 2 * geometry.distance_between_helices;
-    } else if (grid == Grid.honeycomb) {
-      x = h * sqrt(3) / 2 * geometry.distance_between_helices;
-      if (h % 2 == 0) {
-        y = (v * 3 + (v % 2)) / 2 * geometry.distance_between_helices;
-      } else {
-        y = (v * 3 - (v % 2) + 1) / 2 * geometry.distance_between_helices;
-      }
-    }
+    position = util.grid_position_to_position3d(helix.grid_position, grid, geometry);
   }
 
-  var origin = OxdnaVector(x, y, z) * NM_TO_OX_UNITS;
+  position = position + group.position;
+
+  var origin = OxdnaVector(position.x, position.y, position.z) * NM_TO_OX_UNITS;
   return Tuple3<OxdnaVector, OxdnaVector, OxdnaVector>(origin, forward, normal);
 }
 
@@ -294,6 +278,12 @@ OxdnaSystem convert_design_to_oxdna_system(Design design) {
     }
   }
 
+  // for efficiency just calculate each helix's vector once
+  var helix_vectors = {
+    for (var idx_helix in design.helices.entries)
+      idx_helix.key: oxdna_get_helix_vectors(design, idx_helix.value)
+  };
+
   for (var strand in design.strands) {
     List<Tuple2<OxdnaStrand, bool>> dom_strands = [];
     for (var domain in strand.substrands) {
@@ -306,7 +296,7 @@ OxdnaSystem convert_design_to_oxdna_system(Design design) {
       // handle normal domains
       if (domain is Domain) {
         var helix = design.helices[domain.helix];
-        var origin_forward_normal = oxdna_get_helix_vectors(design, helix);
+        var origin_forward_normal = helix_vectors[helix.idx];
         var origin = origin_forward_normal.item1;
         var forward = origin_forward_normal.item2;
         var normal = origin_forward_normal.item3;
