@@ -138,7 +138,6 @@ abstract class HelixGroup with BuiltJsonSerializable implements Built<HelixGroup
     return view_order_inverse.build();
   }
 
-
   String transform_str(Geometry geometry) {
     var translate_svg = position * geometry.nm_to_svg_pixels;
     return 'translate(${translate_svg.z}, ${translate_svg.y}) rotate(${pitch})';

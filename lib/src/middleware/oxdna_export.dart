@@ -1,3 +1,4 @@
+import 'dart:html';
 import 'dart:math';
 import 'package:path/path.dart' as path;
 
@@ -8,6 +9,7 @@ import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/position3d.dart';
+import 'package:scadnano/src/state/strand.dart';
 import 'package:tuple/tuple.dart';
 import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
@@ -18,7 +20,20 @@ oxdna_export_middleware(Store<AppState> store, dynamic action, NextDispatcher ne
   if (action is actions.OxdnaExport) {
     AppState state = store.state;
 
-    Tuple2<String, String> dat_top = to_oxdna_format(state.design);
+    List<Strand> strands_to_export;
+    if (action.selected_strands_only) {
+      strands_to_export = store.state.ui_state.selectables_store.selected_strands.toList();
+      if (strands_to_export.isEmpty) {
+        window.alert('''\
+No strands are selected, so nothing to export.
+First select some strands, or choose Export🡒oxDNA to export all strands in the design.''');
+        return;
+      }
+    } else {
+      strands_to_export = state.design.strands.toList();
+    }
+
+    Tuple2<String, String> dat_top = to_oxdna_format(state.design, strands_to_export);
     String dat = dat_top.item1;
     String top = dat_top.item2;
 
@@ -32,8 +47,8 @@ oxdna_export_middleware(Store<AppState> store, dynamic action, NextDispatcher ne
   next(action);
 }
 
-Tuple2<String, String> to_oxdna_format(Design design) {
-  OxdnaSystem system = convert_design_to_oxdna_system(design);
+Tuple2<String, String> to_oxdna_format(Design design, List<Strand> strands_to_export) {
+  OxdnaSystem system = convert_design_to_oxdna_system(design, strands_to_export);
   Tuple2<String, String> dat_top = system.oxdna_output();
   return dat_top;
 }
@@ -242,7 +257,7 @@ Tuple3<OxdnaVector, OxdnaVector, OxdnaVector> oxdna_get_helix_vectors(Design des
   return Tuple3<OxdnaVector, OxdnaVector, OxdnaVector>(origin, forward, normal);
 }
 
-OxdnaSystem convert_design_to_oxdna_system(Design design) {
+OxdnaSystem convert_design_to_oxdna_system(Design design, List<Strand> strands_to_export) {
   var system = OxdnaSystem();
   var geometry = design.geometry;
   var step_rot = -360 / geometry.bases_per_turn;
@@ -256,7 +271,7 @@ OxdnaSystem convert_design_to_oxdna_system(Design design) {
 
   // insert each insertion / deletion as a postive / negative number
   // TODO: report error if there is an insertion/deletion on one Domain and not the other
-  for (var strand in design.strands) {
+  for (var strand in strands_to_export) {
     for (var domain in strand.domains) {
       if (domain is Domain) {
         var helix = design.helices[domain.helix];
@@ -284,7 +299,7 @@ OxdnaSystem convert_design_to_oxdna_system(Design design) {
       idx_helix.key: oxdna_get_helix_vectors(design, idx_helix.value)
   };
 
-  for (var strand in design.strands) {
+  for (var strand in strands_to_export) {
     List<Tuple2<OxdnaStrand, bool>> dom_strands = [];
     for (var domain in strand.substrands) {
       var dom_strand = OxdnaStrand();
