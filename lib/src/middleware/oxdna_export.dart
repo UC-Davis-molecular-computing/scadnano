@@ -47,7 +47,7 @@ First select some strands, or choose Export🡒oxDNA to export all strands in th
   next(action);
 }
 
-Tuple2<String, String> to_oxdna_format(Design design, List<Strand> strands_to_export) {
+Tuple2<String, String> to_oxdna_format(Design design, [List<Strand> strands_to_export = null]) {
   OxdnaSystem system = convert_design_to_oxdna_system(design, strands_to_export);
   Tuple2<String, String> dat_top = system.oxdna_output();
   return dat_top;
@@ -257,7 +257,11 @@ Tuple3<OxdnaVector, OxdnaVector, OxdnaVector> oxdna_get_helix_vectors(Design des
   return Tuple3<OxdnaVector, OxdnaVector, OxdnaVector>(origin, forward, normal);
 }
 
-OxdnaSystem convert_design_to_oxdna_system(Design design, List<Strand> strands_to_export) {
+OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand> strands_to_export = null]) {
+  if (strands_to_export == null) {
+    strands_to_export = design.strands.toList();
+  }
+
   var system = OxdnaSystem();
   var geometry = design.geometry;
   var step_rot = -360 / geometry.bases_per_turn;
