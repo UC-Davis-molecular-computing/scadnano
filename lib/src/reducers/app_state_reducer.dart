@@ -1,5 +1,4 @@
 import 'package:redux/redux.dart';
-
 import 'app_ui_state_reducer.dart';
 import 'design_reducer.dart';
 import 'undo_redo_reducer.dart';

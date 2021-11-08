@@ -1152,9 +1152,8 @@ scadnano_file_loaded(FileReader file_reader, String filename) {
 cadnano_file_loaded(FileReader file_reader, String filename) async {
   try {
     var json_cadnano_text = file_reader.result;
-    var json_model_text = json_encode(Design.from_cadnano_v2_json_str(json_cadnano_text));
     filename = path.setExtension(filename, '.${constants.default_scadnano_file_extension}');
-    app.dispatch(actions.LoadDNAFile(content: json_model_text, filename: filename));
+    app.dispatch(actions.LoadDNAFile(content: json_cadnano_text, filename: filename, dna_file_type: util.DNAFileType.cadnano_file));
   } on Exception catch (e) {
     window.alert('Error importing file: ${e}');
   }

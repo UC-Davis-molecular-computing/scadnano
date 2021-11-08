@@ -1808,12 +1808,12 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   /// Creates a Design from a cadnano v2 file.
-  static Design from_cadnano_v2_json_str(String str) {
-    return from_cadnano_v2(jsonDecode(str));
+  static Design from_cadnano_v2_json_str(String str, [bool invert_xy = false]) {
+    return from_cadnano_v2(jsonDecode(str), invert_xy);
   }
 
   /// Creates a Design from a cadnano v2 file.
-  static Design from_cadnano_v2(Map<String, dynamic> json_dict) {
+  static Design from_cadnano_v2(Map<String, dynamic> json_dict, [bool invert_xy = false]) {
     Map<String, dynamic> cadnano_v2_design = json_dict;
 
     int num_bases = cadnano_v2_design['vstrands'][0]['scaf'].length;
@@ -1874,7 +1874,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     // are used
     // design.set_helices_view_order([num for num in helices])
 
-    return design;
+    return Design.from_json(design.to_json_serializable());
   }
 
   /// Routine that will follow a cadnano v2 strand accross helices and create
@@ -2292,7 +2292,7 @@ class IllegalDesignError implements Exception {
   IllegalDesignError(this.cause);
 }
 
-class IllegalCadnanoDesignError implements Exception {
+class IllegalCadnanoDesignError implements IllegalDesignError {
   String cause;
 
   IllegalCadnanoDesignError(this.cause);

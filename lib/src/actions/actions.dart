@@ -14,6 +14,7 @@ import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
 import 'package:scadnano/src/state/idt_fields.dart';
 import 'package:scadnano/src/state/substrand.dart';
+import 'package:scadnano/src/util.dart';
 
 import '../state/address.dart';
 import '../state/app_ui_state_storables.dart';
@@ -756,18 +757,21 @@ abstract class LoadDNAFile
 
   bool get unit_testing;
 
+  DNAFileType get dna_file_type;
+
   // set to null when getting file from another source such as localStorage
   @nullable
   String get filename;
 
   /************************ begin BuiltValue boilerplate ************************/
   factory LoadDNAFile(
-      {String content, String filename, bool write_local_storage = true, bool unit_testing = false}) {
+      {String content, String filename, bool write_local_storage = true, bool unit_testing = false, DNAFileType dna_file_type = DNAFileType.scadnano_file}) {
     return LoadDNAFile.from((b) => b
       ..content = content
       ..filename = filename
       ..write_local_storage = write_local_storage
-      ..unit_testing = unit_testing);
+      ..unit_testing = unit_testing
+      ..dna_file_type = dna_file_type);
   }
 
   factory LoadDNAFile.from([void Function(LoadDNAFileBuilder) updates]) = _$LoadDNAFile;
