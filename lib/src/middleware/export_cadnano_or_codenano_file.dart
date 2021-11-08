@@ -312,17 +312,19 @@ _save_file_codenano(AppState state) async {
       if (!first_forward) the_base_to = first_end - 1;
 
       Iterable<int> temp1 = [last_helix['num'], the_base_from];
-      if ((first_helix[strand_type][the_base_to] as List).sublist(0, 2) == [-1, -1]) {
-        (first_helix[strand_type][the_base_to] as List).setRange(0, 2, temp1);
+      List temp3 = first_helix[strand_type][the_base_to] as List;
+      if (temp3[0] == -1 && temp3[1] == -1) {
+        temp3.setRange(0, 2, temp1);
       } else {
-        (first_helix[strand_type][the_base_to] as List).setRange(2, 4, temp1);
+        temp3.setRange(2, 4, temp1);
       }
 
       Iterable<int> temp2 =  [first_helix['num'], the_base_to];
-      if (last_helix[strand_type][the_base_from].sublist(0, 2) == [-1, -1])
-        last_helix[strand_type][the_base_from].setRange(0, 2, temp2);
+      List temp4 = last_helix[strand_type][the_base_from];
+      if (temp4[0] == -1 && temp4[1] == -1)
+        temp4.setRange(0, 2, temp2);
       else
-        last_helix[strand_type][the_base_from].setRange(2, 4, temp2);
+        temp4.setRange(2, 4, temp2);
     }
   }
 
