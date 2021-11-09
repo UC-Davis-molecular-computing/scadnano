@@ -274,8 +274,8 @@ class DesignViewComponent {
         if (moves_store != null) {
           var group_names = group_names_of_ends(moves_store);
           if (group_names.length != 1) {
-            var msg = 'Cannot move or copy strands unless they are all on the same helix group.\n'
-                '1 These strands occupy the following helix groups: ${group_names?.join(", ")}';
+            var msg = 'Cannot move or copy DNA ends unless they are all on the same helix group.\n'
+                'The selected ends occupy the following helix groups: ${group_names?.join(", ")}';
             window.alert(msg);
           } else {
             Helix helix = moves_store.helix;
