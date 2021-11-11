@@ -211,20 +211,22 @@ Strand move_strand(
     int delta_offset,
     bool delta_forward}) {
   List<Substrand> substrands = strand.substrands.toList();
-  var domains = List<Domain>.from(strand.domains);
 
   //Don't reverse domains, this is to preserve the original order of domain names
   if (delta_forward) {
     substrands = substrands.reversed.toList();
   }
 
-  int counter = 0; //Additional counter that only increments when substrand is a domain
+  int counter = 0; // Additional counter that only increments when substrand is a domain
 
   for (int i = 0; i < substrands.length; i++) {
     Substrand substrand = substrands[i];
     Substrand new_substrand = substrand;
-    if (substrand is Domain) { //Substrands includes domains and insertions, so we filter to only domains
-      Domain sticky_domain = domains[counter]; //Want domain name to stick to its relative position from the 5' and 3' end
+    // Substrands includes Domains and Loopouts,
+    // but only Domains need to be processed since only they have helix idx and start/end offsets
+    if (substrand is Domain) {
+      // Want Domain name to stick to its relative position from the 5' and 3' end
+      Domain sticky_domain = strand.domains[counter];
       num original_view_order = original_helices_view_order_inverse[substrand.helix];
       num new_view_order = original_view_order + delta_view_order;
       int new_helix_idx = current_group.helices_view_order[new_view_order];
