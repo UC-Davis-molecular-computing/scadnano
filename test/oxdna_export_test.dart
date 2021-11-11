@@ -3,6 +3,8 @@
 import 'dart:math';
 
 import 'package:scadnano/src/state/grid_position.dart';
+import 'package:scadnano/src/state/group.dart';
+import 'package:scadnano/src/state/position3d.dart';
 import 'package:test/test.dart';
 import 'package:tuple/tuple.dart';
 
@@ -55,6 +57,159 @@ main() {
       design = design.strand(0, 0).to(7).cross(1).move(-7).commit();
       design = design.strand(0, 7).move(-7).cross(1).move(7).commit();
 
+      // expected values for verification
+      int expected_num_nucleotides = 7 * 4;
+      int expected_strand_length = 7 * 2;
+
+      Tuple2<String, String> oxdna_dat_top = to_oxdna_format(design);
+      List<String> dat_lines = oxdna_dat_top.item1.trim().split('\n');
+      List<String> top_lines = oxdna_dat_top.item2.trim().split('\n');
+
+      // check length of output files are as expected (matches # of nucleotides plus header size)
+      expect(dat_lines.length, expected_num_nucleotides + 3);
+      expect(top_lines.length, expected_num_nucleotides + 1);
+
+      // find relevant values for nucleotides
+      List<List<double>> cm_poss = []; // center of mass position
+      List<int> nbrs_3p = [];
+      List<int> nbrs_5p = [];
+
+      for (var line in dat_lines.sublist(3)) {
+        List<String> data = split_ws(line);
+        // make sure there are 15 values per line (3 values per vector * 5 vectors per line)
+        // order of vectors: center of mass position, backbone base versor, normal versor, velocity, angular velocity (more info on versors: https://eater.net/quaternions)
+        expect(data.length, 15);
+
+        cm_poss.add([for (var x in data.sublist(0, 3)) double.parse(x)]);
+
+        List<double> bb_vec = [for (var x in data.sublist(3, 6)) double.parse(x)]; // backbone base vector
+        List<double> nm_vec = [for (var x in data.sublist(6, 9)) double.parse(x)]; // normal vector
+
+        // make sure normal vectors and backbone vectors are unit length
+        num sqr_bb_vec = sum([for (var x in bb_vec) x * x]);
+        num sqr_nm_vec = sum([for (var x in nm_vec) x * x]);
+        expect(sqr_bb_vec, closeTo(1.0, eps));
+        expect(sqr_nm_vec, closeTo(1.0, eps));
+
+        for (var val_str in data.sublist(9)) {
+          // values for velocity and angular velocity vectors are 0
+          double value = double.parse(val_str);
+          expect(value, closeTo(0, eps));
+        }
+      }
+
+      List<int> strand1_idxs = [];
+      List<int> strand2_idxs = [];
+      int nuc_idx = 0;
+      int strand1_start = null;
+      int strand2_start = null;
+      for (var line in top_lines.sublist(1)) {
+        var data = split_ws(line);
+        // make sure there are 4 values per line: strand, base, 3' neighbor, 5' neighbor
+        expect(data.length, 4);
+
+        // make sure there are only 2 strands
+        int strand_num = int.parse(data[0]);
+        expect(strand_num, anyOf([equals(1), equals(2)]));
+        //expect([1,2], contains(strand_num));
+        // make sure base is valid
+        String base = data[1];
+        expect(base, anyOf([equals('A'), equals('C'), equals('G'), equals('T')]));
+
+        nbrs_3p.add(int.parse(data[2]));
+        nbrs_5p.add(int.parse(data[3]));
+
+        // append start of strand (no 5' neighbor) to list of indexes for strand
+        int neighbor_5 = int.parse(data[3]);
+        if (neighbor_5 == -1) {
+          if (strand_num == 1) {
+            strand1_start = nuc_idx;
+            strand1_idxs.add(strand1_start);
+          } else {
+            strand2_start = nuc_idx;
+            strand2_idxs.add(strand2_start);
+          }
+        }
+        nuc_idx++;
+      }
+
+      expect(strand1_start, isNotNull);
+      expect(strand2_start, isNotNull);
+
+      // reconstruct strands using indices from oxDNA files
+      int next_idx = nbrs_3p[strand1_start];
+      while (next_idx >= 0) {
+        strand1_idxs.add(next_idx);
+        next_idx = nbrs_3p[strand1_idxs.last];
+      }
+
+      next_idx = nbrs_3p[strand2_start];
+      while (next_idx >= 0) {
+        strand2_idxs.add(next_idx);
+        next_idx = nbrs_3p[strand2_idxs.last];
+      }
+
+      // assert that strands are the correct length
+      expect(strand1_idxs.length, expected_strand_length);
+      expect(strand2_idxs.length, expected_strand_length);
+
+      for (int i = 0; i < expected_strand_length - 1; i++) {
+        // ignore nucleotide distance between domains (on crossover)
+        if (i == 6) continue;
+
+        int strand1_nuc_idx1 = strand1_idxs[i];
+        int strand1_nuc_idx2 = strand1_idxs[i + 1];
+        int strand2_nuc_idx1 = strand2_idxs[i];
+        int strand2_nuc_idx2 = strand2_idxs[i + 1];
+
+        // find the center of mass for adjacent nucleotides
+        List<double> s1_cmp1 = cm_poss[strand1_nuc_idx1];
+        List<double> s1_cmp2 = cm_poss[strand1_nuc_idx2];
+        List<double> s2_cmp1 = cm_poss[strand2_nuc_idx1];
+        List<double> s2_cmp2 = cm_poss[strand2_nuc_idx2];
+
+        // calculate and verify squared distance between adjacent nucleotides in a domain
+        List<num> diff1 = [for (int j = 0; j < 3; j++) s1_cmp1[j] - s1_cmp2[j]];
+        List<num> diff2 = [for (int j = 0; j < 3; j++) s2_cmp1[j] - s2_cmp2[j]];
+        num sqr_dist1 = sum([for (var x in diff1) x * x]);
+        num sqr_dist2 = sum([for (var x in diff2) x * x]);
+
+        expect(sqr_dist1, closeTo(EXPECTED_ADJ_NUC_CM_DIST2, eps));
+        expect(sqr_dist2, closeTo(EXPECTED_ADJ_NUC_CM_DIST2, eps));
+      }
+    });
+
+    test('oxdna_export_helix_groups', () {
+      /*
+      2 double strands of length 7 connected across helices.
+
+        honeycomb                       square
+        group a                         group b
+
+                  01234567             01234567
+        helix 0   [------+    helix 2
+                         |             +------]
+                         |             |
+        helix 1          |    helix 3  +------>
+                  <------+
+
+
+      Other than placing second strand on new helices in new helix group, same design as basic design,
+      so testing the same things essentially.
+      */
+      var helices = [
+        for (int i = 0; i < 4; i++)
+          Helix(idx: i, max_offset: 7, grid: i < 2 ? Grid.honeycomb : Grid.square, group: i < 2 ? 'a' : 'b')
+      ];
+      var groups = {
+        'a': HelixGroup(
+            grid: Grid.honeycomb, position: Position3D(x: 0, y: 0, z: 0), helices_view_order: [0, 1]),
+        'b': HelixGroup(
+            grid: Grid.square, position: Position3D(x: 100, y: 0, z: 0), helices_view_order: [2, 3]),
+      };
+      var design = Design(helices: helices, grid: Grid.square, groups: groups);
+      design = design.strand(0, 0).to(7).cross(1).move(-7).commit();
+      design = design.strand(2, 7).move(-7).cross(3).move(7).commit();
 
       // expected values for verification
       int expected_num_nucleotides = 7 * 4;

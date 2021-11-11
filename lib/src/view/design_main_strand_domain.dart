@@ -6,6 +6,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
+import 'package:scadnano/src/state/modification_type.dart';
 import 'package:scadnano/src/view/transform_by_helix_group.dart';
 
 import '../state/strand.dart';
@@ -17,6 +18,7 @@ import '../state/helix.dart';
 import '../state/domain.dart';
 import '../util.dart' as util;
 import '../state/selectable.dart';
+import 'design_main_strand_dna_end.dart';
 import 'pure_component.dart';
 import '../state/context_menu.dart';
 import '../actions/actions.dart' as actions;
@@ -39,7 +41,7 @@ mixin DesignMainDomainPropsMixin on UiProps {
   String transform;
 
   List<ContextMenuItem> Function(Strand strand,
-      {@required Domain domain, @required Address address, @required bool is_5p}) context_menu_strand;
+      {@required Domain domain, @required Address address, @required ModificationType type}) context_menu_strand;
 
   bool selected;
 
