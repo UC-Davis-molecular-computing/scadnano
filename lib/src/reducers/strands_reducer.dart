@@ -217,16 +217,12 @@ Strand move_strand(
     substrands = substrands.reversed.toList();
   }
 
-  int counter = 0; // Additional counter that only increments when substrand is a domain
-
   for (int i = 0; i < substrands.length; i++) {
     Substrand substrand = substrands[i];
     Substrand new_substrand = substrand;
     // Substrands includes Domains and Loopouts,
     // but only Domains need to be processed since only they have helix idx and start/end offsets
     if (substrand is Domain) {
-      // Want Domain name to stick to its relative position from the 5' and 3' end
-      Domain sticky_domain = strand.domains[counter];
       if (!original_helices_view_order_inverse.containsKey(substrand.helix)) {
         throw AssertionError('original_helices_view_order_inverse = $original_helices_view_order_inverse '
             'does not contain key (helix idx) = ${substrand.helix}');
@@ -237,7 +233,6 @@ Strand move_strand(
       assert(new_helix_idx != null);
       Domain domain_moved = substrand.rebuild(
         (b) => b
-          ..name = sticky_domain.name
           ..is_first = i == 0
           ..is_last = i == substrands.length - 1
           ..helix = new_helix_idx
@@ -249,7 +244,6 @@ Strand move_strand(
               substrand.insertions.map((i) => i.rebuild((ib) => ib..offset = i.offset + delta_offset))),
       );
       new_substrand = domain_moved;
-      counter++;
     }
     substrands[i] = new_substrand;
   }
