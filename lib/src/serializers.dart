@@ -57,6 +57,8 @@ part 'serializers.g.dart';
 
 @SerializersFor([
   ModificationType,
+  ShowEditMenuToggle,
+  ShowAxisArrowsSet,
   IDTFieldsRemove,
   PlateWellIDTFieldsRemove,
   PlateWellIDTFieldsAssign,

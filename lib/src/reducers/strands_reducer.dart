@@ -224,6 +224,10 @@ Strand move_strand(
     Substrand new_substrand = substrand;
     if (substrand is Domain) {
       Domain mirrored_domain = domains[domains.length - counter - 1];
+      if (!original_helices_view_order_inverse.containsKey(substrand.helix)) {
+        throw AssertionError('original_helices_view_order_inverse = $original_helices_view_order_inverse '
+            'does not contain key (helix idx) = ${substrand.helix}');
+      }
       num original_view_order = original_helices_view_order_inverse[substrand.helix];
       num new_view_order = original_view_order + delta_view_order;
       int new_helix_idx = current_group.helices_view_order[new_view_order];
