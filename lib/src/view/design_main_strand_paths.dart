@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/modification_type.dart';
 import 'package:scadnano/src/view/transform_by_helix_group.dart';
 
 import '../state/group.dart';
@@ -47,7 +48,7 @@ mixin DesignMainStrandPathsPropsMixin on UiProps {
   bool origami_type_is_selectable;
   String strand_tooltip;
   bool only_display_selected_helices;
-  List<ContextMenuItem> Function(Strand strand, {Domain domain, Address address, bool is_5p})
+  List<ContextMenuItem> Function(Strand strand, {Domain domain, Address address, ModificationType type})
       context_menu_strand;
 }
 
