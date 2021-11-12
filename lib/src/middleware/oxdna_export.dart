@@ -232,13 +232,39 @@ Tuple3<OxdnaVector, OxdnaVector, OxdnaVector> oxdna_get_helix_vectors(Design des
   var grid = group.grid;
   var geometry = design.geometry;
 
-  var forward = OxdnaVector(0, 0, 1);
-  var normal = OxdnaVector(0, -1, 0);
+  // var forward = OxdnaVector(0, 0, 1);
+  // var normal = OxdnaVector(0, -1, 0);
+  //
+  // forward = forward.rotate(design.yaw_of_helix(helix), normal);
+  // forward = forward.rotate(-design.pitch_of_helix(helix), OxdnaVector(1, 0, 0));
+  // normal = normal.rotate(-design.pitch_of_helix(helix), OxdnaVector(1, 0, 0));
+  //
+  // normal = normal.rotate(-helix.roll, forward);
 
-  forward = forward.rotate(design.yaw_of_helix(helix), normal);
-  forward = forward.rotate(-design.pitch_of_helix(helix), OxdnaVector(1, 0, 0));
-  normal = normal.rotate(-design.pitch_of_helix(helix), OxdnaVector(1, 0, 0));
-  normal = normal.rotate(-helix.roll, forward);
+  // principal axes for computing rotation
+  // see https://en.wikipedia.org/wiki/Aircraft_principal_axes
+  var yaw_axis = OxdnaVector(0, 1, 0);
+  var pitch_axis = OxdnaVector(1, 0, 0);
+  var roll_axis = OxdnaVector(0, 0, 1);
+
+  // we apply rotations in the order yaw, pitch, and then roll
+  // the _OxdnaVector.rotate function applies ccw rotation so angle needs to be negated
+
+  // first the yaw rotation
+  pitch_axis = pitch_axis.rotate(-design.yaw_of_helix(helix), yaw_axis);
+  roll_axis = roll_axis.rotate(-design.yaw_of_helix(helix), yaw_axis);
+
+  // then the pitch rotation
+  yaw_axis = yaw_axis.rotate(design.pitch_of_helix(helix), pitch_axis);
+  roll_axis = roll_axis.rotate(design.pitch_of_helix(helix), pitch_axis);
+
+  // then the roll rotation
+  yaw_axis = yaw_axis.rotate(-design.roll_of_helix(helix), roll_axis);
+
+  // by chosen convention, forward is the same as the roll axis
+  // and normal is the negated yaw axis
+  var forward = roll_axis;
+  var normal = -yaw_axis;
 
   var position = Position3D();
   if (grid == Grid.none) {

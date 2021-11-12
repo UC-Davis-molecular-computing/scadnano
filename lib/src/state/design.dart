@@ -1805,6 +1805,11 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   num pitch_of_helix(Helix helix) {
     return groups[helix.group].pitch;
   }
+
+  ///Roll of helix's :any:`HelixGroup` plus :py:data:`Helix.roll`
+  num roll_of_helix(Helix helix) {
+    return this.groups[helix.group].roll + helix.roll;
+  }
 }
 
 Map<String, HelixGroup> _calculate_groups_from_helices(Iterable<Helix> helices, Grid grid) {
