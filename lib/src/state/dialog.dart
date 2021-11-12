@@ -79,7 +79,7 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
   // if disable_when_any_radio_button_selected[i][j] == ['abc', 'def'], then
   // when DialogRadio at index j (starting at 0 in items) have either 'abc' or 'def' selected,
   // the DialogItem at index i should be disabled
-  BuiltMap<int, BuiltMap<int, Iterable<String>>> get disable_when_any_radio_button_selected;
+  BuiltMap<int, BuiltMap<int, BuiltList<String>>> get disable_when_any_radio_button_selected;
 
   // if disable_when_any_checkboxes_on[i] == [j_1,j_2,...j_k], then
   // when DialogCheckbox at any of indices j_1,j_2,...,j_k (starting at 0 in items) are CHECKED,
