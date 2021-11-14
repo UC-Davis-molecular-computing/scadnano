@@ -56,6 +56,7 @@ import 'state/domain_name_mismatch.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  MoveHelicesToGroup,
   ModificationType,
   ShowEditMenuToggle,
   ShowAxisArrowsSet,

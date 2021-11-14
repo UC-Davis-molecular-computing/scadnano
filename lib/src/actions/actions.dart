@@ -2930,6 +2930,8 @@ abstract class GroupRemove
 }
 
 //FIXME: warning: should not change the grid through this action; dispatch GridChange instead
+// used to change properties of an existing HelixGroup (except grid); new properties are stored as
+// a whole new HelixGroup called new_group
 abstract class GroupChange
     with BuiltJsonSerializable, UndoableAction
     implements Built<GroupChange, GroupChangeBuilder> {
@@ -2945,6 +2947,25 @@ abstract class GroupChange
   GroupChange._();
 
   static Serializer<GroupChange> get serializer => _$groupChangeSerializer;
+}
+
+// moves existing helices to another existing group
+abstract class MoveHelicesToGroup
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<MoveHelicesToGroup, MoveHelicesToGroupBuilder> {
+  BuiltList<int> get helix_idxs;
+
+  String get group_name;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory MoveHelicesToGroup({BuiltList<int> helix_idxs, String group_name}) = _$MoveHelicesToGroup._;
+
+  MoveHelicesToGroup._();
+
+  static Serializer<MoveHelicesToGroup> get serializer => _$moveHelicesToGroupSerializer;
+
+  @memoized
+  int get hashCode;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
