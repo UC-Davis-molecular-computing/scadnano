@@ -65,7 +65,7 @@ label + select {
 #design-and-modes-buttons-container {
     display: flex;
     height: 100%;
-    width: 100%;
+    width: 100%; 
     overflow: hidden;
 }
 
@@ -74,6 +74,7 @@ label + select {
     width: 100%;
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
 #design {
