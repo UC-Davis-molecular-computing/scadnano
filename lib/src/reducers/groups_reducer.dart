@@ -57,6 +57,7 @@ BuiltMap<String, HelixGroup> move_helices_to_group_groups_reducer(BuiltMap<Strin
     AppState state, actions.MoveHelicesToGroup action) {
   var to_group_name = action.group_name;
 
+  //TODO: this should not have duplicates
   List<String> from_group_names = [
     for (int idx in action.helix_idxs)
       state.design.helices[idx].group
@@ -66,7 +67,11 @@ BuiltMap<String, HelixGroup> move_helices_to_group_groups_reducer(BuiltMap<Strin
   // ensure that relative order of helix idxs in new helices_view_order is the same.
   // if there are helices already in the new group, start with those, and append new helix idxs to
   // the end based on their relative order in their old HelixGroup.
+  // The order in which multiple HelixGroups are processed can be arbitrary.
   // Also track which helix idx's were removed from original groups, so we can update those groups.
+  // One exception: if helices_view_order is the default (in order and contiguous)
+  // in all cases, then keep that default behavior,
+  // i.e., new helices_view_order should just be sorted by helix.idx.
   var groups = state.design.groups.toMap();
   var to_group = groups[to_group_name];
   List<int> new_helices_view_order = to_group.helices_view_order.toList();
