@@ -431,6 +431,7 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
       on_click: helix_set_roll,
     ),
     context_menu_item_set_position,
+    if(app.state.design.groups.length > 1)
     ContextMenuItem(
       title: 'set group',
       on_click: helix_set_group,
