@@ -1823,6 +1823,11 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return groups[helix.group].pitch;
   }
 
+  ///Roll of helix's :any:`HelixGroup` plus :py:data:`Helix.roll`
+  num roll_of_helix(Helix helix) {
+    return this.groups[helix.group].roll + helix.roll;
+  }
+
   /// Creates a Design from a cadnano v2 file.
   static Design from_cadnano_v2_json_str(String str, [bool invert_xy = false]) {
     return from_cadnano_v2(jsonDecode(str), invert_xy);

@@ -65,7 +65,7 @@ label + select {
 #design-and-modes-buttons-container {
     display: flex;
     height: 100%;
-    width: 100%;
+    width: 100%; 
     overflow: hidden;
 }
 
@@ -74,6 +74,7 @@ label + select {
     width: 100%;
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
 #design {
@@ -85,6 +86,7 @@ label + select {
 #side-pane {
     /*width: 8%;*/
     /*background: #eee;*/
+    position: relative;
 }
 
 #side-pane .navbar {
@@ -94,6 +96,25 @@ label + select {
 
 #main-pane {
     /*width: 90%;*/
+    position: relative;
+}
+
+#side-arrows, #main-arrows {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    max-width: 100%;
+    pointer-events: none;
+    filter: drop-shadow(0px 0px 5px rgb(255 255 255));
+}
+
+.arrow-group{
+    pointer-events: bounding-box;
+}
+
+.axis-arrow{
+    stroke-width: 3;
+    stroke-linecap: round;
 }
 
 #design-footer-mouse-over {
@@ -357,24 +378,60 @@ label + select {
 
 #modes-buttons {
     display: flex;
+    position: relative;
 }
 
+#select-mode,
 #edit-mode {
-    width: 105px;
+    overflow-y: auto;
 }
 
-#select-mode {
-    width: 105px;
+#select-mode label,
+#edit-mode label {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    margin-bottom: 0;
+    padding-bottom: 0.5rem;
+    width: 100%;
+}
+
+.edit-mode-toggle-button{
+    position: absolute;
+    width: 25px;
+    bottom: 24px;
+    border: 1px solid black;
+    right: calc(100% + 20px);
+}
+
+.edit-mode-toggle-button img.appear{
+    transform: rotate(180deg);
+}
+
+.edit-mode-toggle-button img{
+    pointer-events: none;
+    max-width: 100%;
+
 }
 
 .mode-button {
     border: none;
-    width: 108px;
     /*outline: #0b0080;*/
     /*font-weight: bold;*/
     color: black;
-    text-align: left;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    align-items: center;
+    padding: 5px 10px;
+    border-top: 1px solid black;
 }
+.mode-button>img{
+    width: 25px;
+    pointer-events: none;
+}
+
 
 .edit-mode-button-selected {
     background-color: mediumseagreen;
@@ -412,12 +469,13 @@ label + select {
 }
 
 .select-mode-button-selected {
-    background-color: lightcoral;
+    background-color: #abc0ef;
 }
 
 .select-mode-button-unselected {
     background-color: lightgray;
 }
+
 
 /************************************************
 ** END mode layout

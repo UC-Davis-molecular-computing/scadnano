@@ -8,8 +8,11 @@ import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
 import 'package:scadnano/src/state/idt_fields.dart';
+import 'package:scadnano/src/state/modification_type.dart';
 
 import 'design_main_strand_and_domain_names.dart';
+import 'design_main_strand_dna_end.dart';
+import 'design_main_strand_dna_end.dart';
 import 'transform_by_helix_group.dart';
 import '../state/modification.dart';
 import '../state/address.dart';
@@ -213,8 +216,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     }
   }
 
-  add_modification(Domain domain, Address address, bool is_5p) =>
-      app.disable_keyboard_shortcuts_while(() => ask_for_add_modification(domain, address, is_5p));
+  add_modification(Domain domain, Address address, ModificationType type) =>
+      app.disable_keyboard_shortcuts_while(() => ask_for_add_modification(domain, address, type));
 
   assign_scale_purification_fields() =>
       app.disable_keyboard_shortcuts_while(ask_for_assign_scale_purification_fields);
@@ -317,7 +320,9 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
   }
 
   List<ContextMenuItem> context_menu_strand(Strand strand,
-          {@required Domain domain, @required Address address, @required bool is_5p}) =>
+          {@required Domain domain,
+          @required Address address,
+          ModificationType type = ModificationType.internal}) =>
       [
         ContextMenuItem(
             title: 'edit DNA',
@@ -346,7 +351,7 @@ assigned, assign the complementary DNA sequence to this strand.
             ].build()),
         ContextMenuItem(
           title: 'add modification',
-          on_click: () => add_modification(domain, address, is_5p),
+          on_click: () => add_modification(domain, address, type),
         ),
         ContextMenuItem(
             title: 'edit idt fields',
@@ -668,9 +673,7 @@ PAGEHPLC : Dual PAGE & HPLC
         value: props.strand.idt?.well != null ? props.strand.idt.well : "",
         tooltip: all_strands.length > 1 ? "Only individual strands can have a well assigned." : "");
     var dialog = Dialog(
-        title: "assign plate/well IDT fields",
-        items: items,
-        disable: {if (all_strands.length > 1) well_idx});
+        title: "assign plate/well IDT fields", items: items, disable: {if (all_strands.length > 1) well_idx});
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
@@ -728,22 +731,24 @@ PAGEHPLC : Dual PAGE & HPLC
     }
   }
 
-  Future<void> ask_for_add_modification(
-      [Domain domain = null, Address address = null, bool is_5p = null]) async {
-    assert((is_5p == null && domain != null && address != null) ||
-        (is_5p != null && domain == null && address == null));
-    bool is_end = is_5p != null;
-    int strand_dna_idx = null;
-    int selected_index = 2;
-    if (!is_end) {
-      strand_dna_idx = clicked_strand_dna_idx(domain, address, props.strand);
-    } else {
-      if (is_5p) {
-        selected_index = 1;
-      } else {
-        selected_index = 0;
-      }
+  Future<void> ask_for_add_modification(Domain domain, Address address,
+      [ModificationType type = ModificationType.internal]) async {
+    /*
+    domain -  selected domain
+    address - address of DNA base
+    type - type of modification: five_prime, three_prime, internal (default)
+    */
+
+    bool is_end = type != ModificationType.internal;
+    int selected_index = 2; 
+
+    if (type == ModificationType.five_prime) {
+      selected_index = 1;
+    } else if (type == ModificationType.three_prime) {
+      selected_index = 0;
     }
+
+    int strand_dna_idx = clicked_strand_dna_idx(domain, address, props.strand);
 
     int modification_type_idx = 0;
     int display_text_idx = 1;
@@ -783,7 +788,7 @@ PAGEHPLC : Dual PAGE & HPLC
     // items[id_idx] = DialogText(label: 'id', value: initial_id);
 
     items[index_of_dna_base_idx] =
-        DialogInteger(label: 'index of DNA base', value: is_end ? 0 : strand_dna_idx);
+        DialogInteger(label: 'index of DNA base', value: strand_dna_idx);
 
     // don't allow to modify index of DNA base when 3' or 5' is selected
     var dialog = Dialog(title: 'add modification', items: items, disable_when_any_radio_button_selected: {
@@ -827,9 +832,9 @@ PAGEHPLC : Dual PAGE & HPLC
     } else {
       List<DNAEnd> ends_selected = app.state.ui_state.selectables_store.selected_dna_ends.toList();
 
-      if (is_5p && !ends_selected.contains(props.strand.dnaend_5p)) {
+      if (mod is Modification5Prime && !ends_selected.contains(props.strand.dnaend_5p)) {
         ends_selected.add(props.strand.dnaend_5p);
-      } else if (!is_5p && !ends_selected.contains(props.strand.dnaend_3p)) {
+      } else if (mod is Modification3Prime && !ends_selected.contains(props.strand.dnaend_3p)) {
         ends_selected.add(props.strand.dnaend_3p);
       }
 

@@ -213,15 +213,11 @@ Helices in a grid have a two-integer *grid position* depicted in the side view.
 See the [Python scripting documentation](https://scadnano-python-package.readthedocs.io/#scadnano.scadnano.Helix.grid_position) for more detail about the meaning of these positions.
 Helices without a grid have a *position*, a 3D real vector describing their *x*, *y*, *z* coordinates in units of nanometers.
 
-A Helix may also define angles *pitch*, *roll*, and *yaw* in units of degrees, but this feature is currently 
-[not well-supported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/39). 
-Helix.yaw will likely never be supported visually in the main or side views, 
-but it is retained as a field for compatibility with other software for 3D visualization.
-Helix.roll is currently supported, and the interpretation is that roll 0 means the phosphate backbone of the strand that is forward=true on the helix is pointing straight *up* in the side and main views.
-Rotation is clockwise, at a rate of 10.5 base pairs per 360 degrees.
-
-Helix.pitch, which refers to rotation of the helix in the plane of the main view, is currently ignored.
-However, it is possible to rotate helices in the main view, using *groups*, described below.
+A Helix may also define the angle *roll* in units of degrees,
+which defines the backbone rotation angle around the axis of the Helix (the Z-axis in scadnano).
+The interpretation is that roll 0 means the phosphate backbone of the strand that is forward=true on the helix is pointing straight *up* in the side and main views.
+Rotation is clockwise, at a default rate of 10.5 base pairs per 360 degrees. (Configurable through the geometry parameters.)
+It is possible to display helices in the main view, using *groups*, described below.
 
 The position of helices in the main view depends on the grid position if a grid is used, and on the position otherwise. 
 (Each grid position is interpreted as a position from a constrained set of possible positions.)
@@ -276,7 +272,11 @@ Each group has fields `grid`, `position` (itself a map with `x`, `y`, `z` fields
 If not specified, `"default_group"` is the name, with `grid="none"`, `helices_view_order` assumed to be the indices of helices in this group in increasing order, and all other values are numbers equal to 0.
 Each helix is associated to a group via field `group` in the helix description, giving the name of the group.
 All helices in a group are translated by the group's `position` and rotated in the main view by the group's `pitch` angle.
-(Although one can specify `pitch` for an individual helix, this is for the sake of compatibility with other tools, but that field of the helix is ignored by the scadnano interface.)
+The `yaw` and `roll` parameters are not directly visualized in scadnano, but those fields can be edited and are used, for example,
+when exporting to oxDNA for 3D visualization.
+Their interpretation is explained in more detail in the Python package [API documentation for HelixGroup](https://scadnano-python-package.readthedocs.io/en/latest/#scadnano.HelixGroup).
+
+
 
 
 

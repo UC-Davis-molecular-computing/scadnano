@@ -383,8 +383,11 @@
 
     function set_zoom_speed(speed) {
         zoom_speed = speed;
+
         for (let svg of [side_view_svg_pan_zoom, main_view_svg_pan_zoom]) {
-            svg.setZoomScaleSensitivity(speed);
+            if(svg != undefined){
+                svg.setZoomScaleSensitivity(speed);
+            }
         }
     }
 

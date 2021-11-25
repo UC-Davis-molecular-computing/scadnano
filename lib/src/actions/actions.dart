@@ -2421,7 +2421,8 @@ abstract class AssignDNAComplementFromBoundStrands
 
 abstract class AssignDomainNameComplementFromBoundStrands
     with BuiltJsonSerializable, UndoableAction
-    implements Built<AssignDomainNameComplementFromBoundStrands, AssignDomainNameComplementFromBoundStrandsBuilder> {
+    implements
+        Built<AssignDomainNameComplementFromBoundStrands, AssignDomainNameComplementFromBoundStrandsBuilder> {
   BuiltList<Strand> get strands;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -2444,7 +2445,8 @@ abstract class AssignDomainNameComplementFromBoundStrands
 
 abstract class AssignDomainNameComplementFromBoundDomains
     with BuiltJsonSerializable, UndoableAction
-    implements Built<AssignDomainNameComplementFromBoundDomains, AssignDomainNameComplementFromBoundDomainsBuilder> {
+    implements
+        Built<AssignDomainNameComplementFromBoundDomains, AssignDomainNameComplementFromBoundDomainsBuilder> {
   BuiltList<Domain> get domains;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -2675,11 +2677,12 @@ abstract class DeletionRemove
 // assign scale/purification IDT fields of strands
 abstract class ScalePurificationIDTFieldsAssign
     with BuiltJsonSerializable, UndoableAction
-    implements SingleStrandAction, Built<ScalePurificationIDTFieldsAssign, ScalePurificationIDTFieldsAssignBuilder> {
+    implements
+        SingleStrandAction,
+        Built<ScalePurificationIDTFieldsAssign, ScalePurificationIDTFieldsAssignBuilder> {
   Strand get strand;
 
   IDTFields get idt_fields;
-
 
   /************************ begin BuiltValue boilerplate ************************/
   factory ScalePurificationIDTFieldsAssign({Strand strand, IDTFields idt_fields}) =
@@ -2687,7 +2690,8 @@ abstract class ScalePurificationIDTFieldsAssign
 
   ScalePurificationIDTFieldsAssign._();
 
-  static Serializer<ScalePurificationIDTFieldsAssign> get serializer => _$scalePurificationIDTFieldsAssignSerializer;
+  static Serializer<ScalePurificationIDTFieldsAssign> get serializer =>
+      _$scalePurificationIDTFieldsAssignSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2699,10 +2703,8 @@ abstract class PlateWellIDTFieldsAssign
 
   IDTFields get idt_fields;
 
-
   /************************ begin BuiltValue boilerplate ************************/
-  factory PlateWellIDTFieldsAssign({Strand strand, IDTFields idt_fields}) =
-      _$PlateWellIDTFieldsAssign._;
+  factory PlateWellIDTFieldsAssign({Strand strand, IDTFields idt_fields}) = _$PlateWellIDTFieldsAssign._;
 
   PlateWellIDTFieldsAssign._();
 
@@ -2717,8 +2719,7 @@ abstract class PlateWellIDTFieldsRemove
   Strand get strand;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory PlateWellIDTFieldsRemove({Strand strand}) =
-      _$PlateWellIDTFieldsRemove._;
+  factory PlateWellIDTFieldsRemove({Strand strand}) = _$PlateWellIDTFieldsRemove._;
 
   PlateWellIDTFieldsRemove._();
 
@@ -2733,13 +2734,13 @@ abstract class IDTFieldsRemove
   Strand get strand;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory IDTFieldsRemove({Strand strand}) =
-      _$IDTFieldsRemove._;
+  factory IDTFieldsRemove({Strand strand}) = _$IDTFieldsRemove._;
 
   IDTFieldsRemove._();
 
   static Serializer<IDTFieldsRemove> get serializer => _$iDTFieldsRemoveSerializer;
 }
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // modification add
 abstract class ModificationAdd
@@ -3217,6 +3218,20 @@ abstract class ShowHelixCirclesMainViewSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// show or hide the edit menu
+
+abstract class ShowEditMenuToggle
+    with BuiltJsonSerializable
+    implements Action, Built<ShowEditMenuToggle, ShowEditMenuToggleBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowEditMenuToggle() = _$ShowEditMenuToggle._;
+
+  ShowEditMenuToggle._();
+
+  static Serializer<ShowEditMenuToggle> get serializer => _$showEditMenuToggleSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // show or hide grid coordinates in side view
 
 abstract class ShowGridCoordinatesSideViewSet
@@ -3232,6 +3247,22 @@ abstract class ShowGridCoordinatesSideViewSet
 
   static Serializer<ShowGridCoordinatesSideViewSet> get serializer =>
       _$showGridCoordinatesSideViewSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// show or hide helix axis arrows
+
+abstract class ShowAxisArrowsSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowAxisArrowsSet, ShowAxisArrowsSetBuilder> {
+  bool get show_helices_axis_arrows;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowAxisArrowsSet({bool show_helices_axis_arrows}) = _$ShowAxisArrowsSet._;
+
+  ShowAxisArrowsSet._();
+
+  static Serializer<ShowAxisArrowsSet> get serializer => _$showAxisArrowsSetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3428,10 +3459,16 @@ abstract class ZoomSpeedSet
 abstract class OxdnaExport
     with BuiltJsonSerializable
     implements Action, Built<OxdnaExport, OxdnaExportBuilder> {
+  bool get selected_strands_only;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory OxdnaExport() = _$OxdnaExport;
+  factory OxdnaExport({bool selected_strands_only = false}) {
+    return OxdnaExport.from((b) => b..selected_strands_only = selected_strands_only);
+  }
 
   OxdnaExport._();
+
+  factory OxdnaExport.from([void Function(OxdnaExportBuilder) updates]) = _$OxdnaExport;
 
   static Serializer<OxdnaExport> get serializer => _$oxdnaExportSerializer;
 

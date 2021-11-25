@@ -167,8 +167,14 @@ bool warn_on_exit_if_unsaved_reducer(bool _, actions.WarnOnExitIfUnsavedSet acti
 bool show_helix_circles_main_view_reducer(bool _, actions.ShowHelixCirclesMainViewSet action) =>
     action.show_helix_circles_main_view;
 
+bool show_edit_mode_menu_reducer(bool previous_show, actions.ShowEditMenuToggle action) =>
+    !previous_show;
+
 bool show_grid_coordinates_side_view_reducer(bool _, actions.ShowGridCoordinatesSideViewSet action) =>
     action.show_grid_coordinates_side_view;
+
+bool show_helices_axis_arrows_reducer(bool _, actions.ShowAxisArrowsSet action) =>
+    action.show_helices_axis_arrows;
 
 bool show_loopout_length_reducer(bool _, actions.ShowLoopoutLengthSet action) => action.show_loopout_length;
 
@@ -399,8 +405,12 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..show_helix_circles_main_view =
     TypedReducer<bool, actions.ShowHelixCirclesMainViewSet>(show_helix_circles_main_view_reducer)(
         storables.show_helix_circles_main_view, action)
+     ..show_edit_mode_menu = TypedReducer<bool, actions.ShowEditMenuToggle>(show_edit_mode_menu_reducer)(
+        storables.show_edit_mode_menu, action)
     ..show_grid_coordinates_side_view = TypedReducer<bool, actions.ShowGridCoordinatesSideViewSet>(
         show_grid_coordinates_side_view_reducer)(storables.show_grid_coordinates_side_view, action)
+    ..show_helices_axis_arrows = TypedReducer<bool, actions.ShowAxisArrowsSet>(
+        show_helices_axis_arrows_reducer)(storables.show_helices_axis_arrows, action)
     ..show_loopout_length = TypedReducer<bool, actions.ShowLoopoutLengthSet>(show_loopout_length_reducer)(
         storables.show_loopout_length, action)
     ..show_slice_bar = TypedReducer<bool, actions.ShowSliceBarSet>(show_slice_bar_reducer)(

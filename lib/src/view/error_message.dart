@@ -8,6 +8,13 @@ scadnano is a standalone project developed and maintained by the UC Davis Molecu
 Though similar in design, it is distinct from cadnano (<a target="_blank" href="https://cadnano.org/">https://cadnano.org/</a>), 
 which is developed and maintained by the <a target="_blank" href="https://bionano.ucsf.edu/">Douglas lab</a> at UCSF.
 
+If you find scadnano useful in a scientific project, please cite its associated paper:
+
+scadnano: A browser-based, scriptable tool for designing DNA nanostructures.
+David Doty, Benjamin L Lee, and Tristan Stérin.
+DNA 2020: Proceedings of the 26th International Conference on DNA Computing and Molecular Programming
+[ <a href="https://doi.org/10.4230/LIPIcs.DNA.2020.9">paper</a> | <a href="https://web.cs.ucdavis.edu/~doty/papers/scadnano.bib">BibTeX</a> ]
+
 No design is loaded.
 Try loading an example by selecting <em>File&rarr;Load example</em>,
 or select <em>File&rarr;Open</em> to load a .sc file from your local drive.
