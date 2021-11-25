@@ -1,3 +1,4 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/actions/actions.dart';
 import 'package:scadnano/src/json_serializable.dart';
 import 'package:scadnano/src/middleware/export_cadnano_or_codenano_file.dart';
@@ -30,10 +31,12 @@ main() {
 
       HelixGroup group_south = HelixGroup.from((b) => b
         ..position.replace(Position3D(x: 0, y: 10, z: 0))
-        ..grid = Grid.square);
+        ..grid = Grid.square
+        ..helices_view_order=ListBuilder([0,1]));
       HelixGroup group_east = HelixGroup.from((b) => b
         ..position.replace(Position3D(x: 10, y: 0, z: 0))
-        ..grid = Grid.square);
+        ..grid = Grid.square
+        ..helices_view_order=ListBuilder([2,3]));
 
       Map<String, HelixGroup> groups = {
         e: group_east,
@@ -60,10 +63,12 @@ main() {
 
       HelixGroup group_south = HelixGroup.from((b) => b
         ..position.replace(Position3D(x: 0, y: 10, z: 0))
-        ..grid = Grid.square);
+        ..grid = Grid.square
+        ..helices_view_order=ListBuilder([0,1]));
       HelixGroup group_east = HelixGroup.from((b) => b
         ..position.replace(Position3D(x: 10, y: 0, z: 0))
-        ..grid = Grid.honeycomb);
+        ..grid = Grid.honeycomb
+        ..helices_view_order=ListBuilder([2,3]));
 
       Map<String, HelixGroup> groups = {
         e: group_east,

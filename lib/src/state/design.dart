@@ -46,50 +46,73 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   /// on the grid.
   factory Design(
       {Iterable<Helix> helices,
+      Iterable<HelixBuilder> helix_builders,
       Grid grid = Grid.none,
       int num_helices,
       Geometry geometry,
-      Map<String, HelixGroup> groups = null}) {
-    if (helices != null && num_helices != null) {
-      throw IllegalDesignError('cannot specify both helices and num_helices:\n'
+      Map<String, HelixGroup> groups = null,
+      Iterable<Strand> strands = const [],
+      Map<String, Object> unused_fields = const {},
+      bool invert_xy = false}) {
+    // At most one of helices or helix_builders can be set, not both.
+    int num_not_null = 0;
+    if (helices != null) num_not_null++;
+    if (helix_builders != null) num_not_null++;
+    if (num_helices != null) num_not_null++;
+
+    if (num_not_null > 1) {
+      throw IllegalDesignError('Should specify at most one of helices, helix_builders, num_helices\n'
           'num_helices = ${num_helices}\n'
+          'helix_builders = ${helix_builders}\n'
           'helices = ${helices}');
     }
     geometry ??= constants.default_geometry;
-    if (helices == null) {
-      if (num_helices == null) {
-        helices = List<Helix>.empty();
-      } else {
-        helices = [
+
+    // No matter how helices are specify, represent them as a list of helix_builders.
+    if (helices != null) {
+      helix_builders = helices.map((e) => e.toBuilder());
+    } else if (num_helices != null) {
+
+      helix_builders = [
           for (int idx in Iterable<int>.generate(num_helices))
-            Helix(
-              idx: idx,
-              grid: grid,
-              geometry: geometry,
-              grid_position: grid == Grid.none ? null : default_grid_position(idx),
-              position: grid != Grid.none ? null : default_position(geometry, idx),
-            )
+            HelixBuilder()
+              ..idx = idx
+              ..grid = grid
+              ..geometry = geometry.toBuilder()
+              ..grid_position = (grid == Grid.none ? null : default_grid_position(idx).toBuilder())
+              ..position_ = grid != Grid.none ? null : default_position(geometry, idx).toBuilder()
         ];
-      }
-    }
-    var helices_map = {for (var helix in helices) helix.idx: helix};
-    if (_uses_default_group(helices)) {
-      if (groups != null) {
-        throw ArgumentError('groups must be null if all helices use default group');
-      }
-      return Design.from((b) => b
-        ..geometry.replace(geometry)
-        ..groups[constants.default_group_name] = b.groups[constants.default_group_name].rebuild((g) => g
-          ..grid = grid
-          ..helices_view_order.replace(helices_map.keys))
-        ..helices.replace(helices_map));
+    } else if (helix_builders != null) {
+      // We will use the parameter directly
     } else {
-      if (groups == null) {
-        groups = _calculate_groups_from_helices(helices, grid);
-      }
-      return Design.from(
-          (b) => b..geometry.replace(geometry)..groups.replace(groups)..helices.replace(helices_map));
+      // All three are all null
+      assert(helices == null && helix_builders == null && num_helices == null);
+      helix_builders = [];
     }
+
+    for (var helix_builder in helix_builders) helix_builder.geometry = geometry.toBuilder();
+    var helix_builders_map = {for (var helix_builder in helix_builders) helix_builder.idx: helix_builder};
+
+    set_helices_min_max_offsets(helix_builders_map, strands);
+
+
+    if (groups == null) {
+      groups = _calculate_groups_from_helix_builder(helix_builders, grid);
+    }
+    assign_grids_to_helix_builders_from_groups(groups, helix_builders_map);
+
+    helices = helix_builders_map.values.map((b) => b.build());
+
+    var helices_map = {for (var helix in helices) helix.idx: helix};
+
+    helices_map = util.helices_assign_svg(geometry, invert_xy, helices_map, groups.build());
+
+    return Design.from((b) => b
+      ..geometry.replace(geometry)
+      ..groups.replace(groups)
+      ..helices.replace(helices_map)
+      ..strands.replace(strands)
+      ..unused_fields.replace(unused_fields));
   }
 
   factory Design.from([void Function(DesignBuilder) updates]) = _$Design;
@@ -1136,19 +1159,16 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
     _check_mutually_exclusive_fields(json_map);
 
-    var design_builder = DesignBuilder();
-
-    design_builder.version = util.optional_field(json_map, constants.version_key, constants.CURRENT_VERSION);
+    var version = util.optional_field(json_map, constants.version_key, constants.CURRENT_VERSION);
 
     // prior to version 0.13.0, x and z had the opposite role
-    bool position_x_z_should_swap = util.version_precedes(design_builder.version, '0.13.0');
+    bool position_x_z_should_swap = util.version_precedes(version, '0.13.0');
 
-    design_builder.unused_fields = util.unused_fields_map(json_map, constants.design_keys);
+    var unused_fields = util.unused_fields_map(json_map, constants.design_keys).build();
 
     Geometry geometry = util.optional_field(json_map, constants.geometry_key, Geometry(),
         transformer: (geometry_map) => Geometry.from_json(geometry_map),
         legacy_keys: constants.legacy_geometry_keys);
-    design_builder.geometry.replace(geometry);
 
     var t = Design._helices_and_groups_from_json(json_map, invert_xy, position_x_z_should_swap, geometry);
     var helix_builders_map = t.item1;
@@ -1161,23 +1181,11 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       Strand strand = Strand.from_json(strand_json);
       strands.add(strand);
     }
-    design_builder.strands.replace(strands);
 
-    set_helices_min_max_offsets(helix_builders_map, design_builder.strands.build());
 
     // build groups
     Map<String, HelixGroup> groups_map =
         group_builders_map.map((key, value) => MapEntry<String, HelixGroup>(key, value.build()));
-    design_builder.groups.replace(groups_map);
-
-    assign_grids_to_helix_builders_from_groups(groups_map, helix_builders_map);
-
-    // build Helices
-    Map<int, Helix> helices = {
-      for (var helix_builder in helix_builders_map.values) helix_builder.idx: helix_builder.build()
-    };
-    helices = util.helices_assign_svg(geometry, invert_xy, helices, groups_map.build());
-    design_builder.helices.replace(helices);
 
     // modifications in whole design
     if (json_map.containsKey(constants.design_modifications_key)) {
@@ -1190,10 +1198,18 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         all_mods[mod_key] = mod;
       }
       Design.assign_modifications_to_strands(strands, strand_jsons, all_mods);
-      design_builder.strands.replace(strands);
+      // design_builder.strands.replace(strands);
     }
 
-    var design = design_builder.build();
+    var design = Design(
+        helix_builders: helix_builders_map.values,
+        strands: strands,
+        groups: groups_map,
+        geometry: geometry,
+        unused_fields: unused_fields.toMap(),
+        invert_xy: invert_xy);
+
+    // TODO: move to end of Design constructor and then see if anything breaks
     design._check_legal_design();
 
     return design;
@@ -1830,12 +1846,16 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       min_col = col < min_col ? col : min_col;
     }
 
-    Map<int, dynamic> helices = new LinkedHashMap();
+    Map<int, HelixBuilder> helix_builders = new LinkedHashMap();
     for (Map<String, dynamic> cadnano_helix in cadnano_v2_design['vstrands']) {
       int col = cadnano_helix['col'], row = cadnano_helix['row'];
       int n = cadnano_helix['num'];
-      Helix helix = new Helix(idx: n, max_offset: num_bases, grid_position: GridPosition(col, row));
-      helices[n] = helix;
+      HelixBuilder helix = HelixBuilder()
+        ..idx = n
+        ..max_offset = num_bases
+        ..grid_position = GridPosition(col, row).toBuilder()
+        ..group = constants.default_group_name;
+      helix_builders[n] = helix;
     }
 
     // We do a DFS on strands
@@ -1861,20 +1881,10 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       }
     }
 
-    Design design = Design.from((b) => b
-      ..groups[constants.default_group_name] =
-          b.groups[constants.default_group_name].rebuild((g) => g..grid = grid_type)
-      ..helices.replace(helices)
-      ..strands.replace(strands));
+    var design =
+        Design(helix_builders: helix_builders.values, strands: strands, grid: grid_type, invert_xy: invert_xy);
 
-    // DD: Tristan, I commented this out because I think it's unnecessary given the way the Design
-    // constructor works, and because I'm now implementing this feature:
-    // https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues/121
-    // which means we may not have a well-defined helices_view_order on the whole design if groups
-    // are used
-    // design.set_helices_view_order([num for num in helices])
-
-    return Design.from_json(design.to_json_serializable());
+    return design;
   }
 
   /// Routine that will follow a cadnano v2 strand accross helices and create
@@ -2008,8 +2018,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
             insertions:
                 Design._cadnano_v2_import_extract_insertions(vstrands[old_helix]['loop'], start, end)));
 
-        direction_forward = (strand_type == 'scaf' && curr_helix % 2 == 0) ||
-            (strand_type == 'stap' && curr_helix % 2 == 1);
+        direction_forward =
+            (strand_type == 'scaf' && curr_helix % 2 == 0) || (strand_type == 'stap' && curr_helix % 2 == 1);
         start = -1;
         end = -1;
         if (direction_forward)
@@ -2059,10 +2069,13 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 }
 
-Map<String, HelixGroup> _calculate_groups_from_helices(Iterable<Helix> helices, Grid grid) {
+Map<String, HelixGroup> _calculate_groups_from_helix_builder(Iterable<HelixBuilder> helix_builders, Grid grid) {
+  if (helix_builders.isEmpty) {
+    return {constants.default_group_name: HelixGroup(grid: grid, helices_view_order: [])};
+  }
   // gather up helix-idxs in each group
   Map<String, List<int>> group_to_helix_idxs = {};
-  for (var helix in helices) {
+  for (var helix in helix_builders) {
     var name = helix.group;
     if (!group_to_helix_idxs.containsKey(name)) {
       group_to_helix_idxs[name] = [];
