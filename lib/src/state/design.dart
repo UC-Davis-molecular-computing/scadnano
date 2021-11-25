@@ -107,12 +107,15 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
     helices_map = util.helices_assign_svg(geometry, invert_xy, helices_map, groups.build());
 
-    return Design.from((b) => b
+    var design = Design.from((b) => b
       ..geometry.replace(geometry)
       ..groups.replace(groups)
       ..helices.replace(helices_map)
       ..strands.replace(strands)
       ..unused_fields.replace(unused_fields));
+
+    design._check_legal_design();
+    return design;
   }
 
   factory Design.from([void Function(DesignBuilder) updates]) = _$Design;
@@ -1201,18 +1204,13 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       // design_builder.strands.replace(strands);
     }
 
-    var design = Design(
+    return Design(
         helix_builders: helix_builders_map.values,
         strands: strands,
         groups: groups_map,
         geometry: geometry,
         unused_fields: unused_fields.toMap(),
         invert_xy: invert_xy);
-
-    // TODO: move to end of Design constructor and then see if anything breaks
-    design._check_legal_design();
-
-    return design;
   }
 
   static List<int> set_helices_view_order_default_group(
@@ -1886,10 +1884,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       }
     }
 
-    var design =
-        Design(helix_builders: helix_builders.values, strands: strands, grid: grid_type, invert_xy: invert_xy);
-
-    return design;
+    return Design(helix_builders: helix_builders.values, strands: strands, grid: grid_type, invert_xy: invert_xy);
   }
 
   /// Routine that will follow a cadnano v2 strand accross helices and create
