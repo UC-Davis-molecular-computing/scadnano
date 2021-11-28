@@ -211,19 +211,18 @@ Strand move_strand(
     int delta_offset,
     bool delta_forward}) {
   List<Substrand> substrands = strand.substrands.toList();
-  var domains = List<Domain>.from(strand.domains);
+
+  //Don't reverse domains, this is to preserve the original order of domain names
   if (delta_forward) {
     substrands = substrands.reversed.toList();
-    domains = domains.reversed.toList();
   }
-
-  int counter = 0;
 
   for (int i = 0; i < substrands.length; i++) {
     Substrand substrand = substrands[i];
     Substrand new_substrand = substrand;
+    // Substrands includes Domains and Loopouts,
+    // but only Domains need to be processed since only they have helix idx and start/end offsets
     if (substrand is Domain) {
-      Domain mirrored_domain = domains[domains.length - counter - 1];
       if (!original_helices_view_order_inverse.containsKey(substrand.helix)) {
         throw AssertionError('original_helices_view_order_inverse = $original_helices_view_order_inverse '
             'does not contain key (helix idx) = ${substrand.helix}');
@@ -234,7 +233,6 @@ Strand move_strand(
       assert(new_helix_idx != null);
       Domain domain_moved = substrand.rebuild(
         (b) => b
-          ..name = mirrored_domain.name
           ..is_first = i == 0
           ..is_last = i == substrands.length - 1
           ..helix = new_helix_idx
@@ -246,7 +244,6 @@ Strand move_strand(
               substrand.insertions.map((i) => i.rebuild((ib) => ib..offset = i.offset + delta_offset))),
       );
       new_substrand = domain_moved;
-      counter++;
     }
     substrands[i] = new_substrand;
   }

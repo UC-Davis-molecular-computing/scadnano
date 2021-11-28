@@ -424,7 +424,6 @@ abstract class Strand
     throw AssertionError("should be unreachable");
   }
 
-
   @memoized
   BuiltMap<int, BuiltList<Domain>> get domains_on_helix {
     var domains_map = Map<int, List<Domain>>();
@@ -470,29 +469,25 @@ abstract class Strand
   static String id_from_data(int helix, int offset, bool forward) =>
       'strand-H${helix}-${offset}-${forward ? 'forward' : 'reverse'}';
 
-//  String toString() {
-//    var first_ss = this.first_domain;
-//    return 'Strand(helix=${first_ss.helix}, start=${first_ss.offset_5p}, ${first_ss.forward ? 'forward' : 'reverse'})';
-//  }
-
   @memoized
-  List<Domain> get domains => [
+  BuiltList<Domain> get domains => List<Domain>.from([
         for (var ss in this.substrands)
           if (ss.is_domain()) ss as Domain
-      ];
+      ]).build();
 
   @memoized
-  List<Loopout> get loopouts => [
+  BuiltList<Loopout> get loopouts => List<Loopout>.from([
         for (var ss in this.substrands)
           if (ss.is_loopout()) ss
-      ];
+      ]).build();
 
   @memoized
-  List<DNAEnd> get ends_5p_not_first => [for (var ss in domains.sublist(1)) ss.dnaend_5p];
+  BuiltList<DNAEnd> get ends_5p_not_first =>
+      List<DNAEnd>.from([for (var ss in domains.sublist(1)) ss.dnaend_5p]).build();
 
   @memoized
-  List<DNAEnd> get ends_3p_not_last =>
-      [for (var ss in domains.sublist(0, domains.length - 1)) ss.dnaend_3p];
+  BuiltList<DNAEnd> get ends_3p_not_last =>
+      List<DNAEnd>.from([for (var ss in domains.sublist(0, domains.length - 1)) ss.dnaend_3p]).build();
 
   @memoized
   int get dna_length {
@@ -669,8 +664,6 @@ abstract class Strand
         : DEFAULT_STRAND_COLOR;
 
     String name = util.optional_field_with_null_default(json_map, constants.name_key);
-
-
 
     Object label = util.optional_field_with_null_default(json_map, constants.label_key);
 
