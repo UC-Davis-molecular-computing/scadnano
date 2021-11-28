@@ -35,7 +35,11 @@ main() {
        |-------|
          ABC        
     0  [------\
-    1  <------/
+              |
+              |
+              |
+    1         |
+       <------/
          XYZ      
     */
       var helices = [
@@ -84,16 +88,20 @@ main() {
       //Commit the Move
       state = app_state_reducer(state, StrandsMoveCommit(strands_move: strandsMove, autopaste: false));
       /* 0       8
-       |-------|        
-    0    XYZ
+       |-------| 
+       
+    0
        <------\
+         ABC  |
+         XYZ  |
     1  [------/
-         ABC      
+
+ 
     */
-      expect(state.design.all_domains[0].name, "ABC");
+      expect(state.design.all_domains[0].name, "XYZ");
       expect(state.design.all_domains[0].helix, 1);
 
-      expect(state.design.all_domains[1].name, "XYZ");
+      expect(state.design.all_domains[1].name, "ABC");
       expect(state.design.all_domains[1].helix, 0);
     });
 
@@ -103,8 +111,10 @@ main() {
          ABC        
     0  [------\
                 )
-                )
-    1  <------/
+                 )
+                 )
+    1           )
+       <------/
          XYZ      
     */
       var helices = [
@@ -154,17 +164,19 @@ main() {
       state = app_state_reducer(state, StrandsMoveCommit(strands_move: strandsMove, autopaste: false));
       /* 0       8
        |-------|
-         ABC        
-    0  <------\
-                )
-                )
+       
+    0  
+       <------\
+          ABC   )
+          XYZ   )
     1  [------/
-         XYZ      
+
+ 
     */
-      expect(state.design.all_domains[0].name, "ABC");
+      expect(state.design.all_domains[0].name, "XYZ");
       expect(state.design.all_domains[0].helix, 1);
 
-      expect(state.design.all_domains[1].name, "XYZ");
+      expect(state.design.all_domains[1].name, "ABC");
       expect(state.design.all_domains[1].helix, 0);
     });
     test('circular_strand__no_loopouts', () {
@@ -172,7 +184,11 @@ main() {
        |-------|
          ABC        
     0  /------\
-    1  \------/
+       |      |
+       |      |
+       |      |
+    1  |      |
+       \------/
          XYZ      
     */
       var helices = [
@@ -222,15 +238,19 @@ main() {
       state = app_state_reducer(state, StrandsMoveCommit(strands_move: strandsMove, autopaste: false));
       /* 0       8
        |-------|
-         XYZ        
-    0  /------\
+
+    0   
+       /------\
+       | ABC  |
+       | XYZ  |
     1  \------/
-         ABC      
+    
+    
     */
-      expect(state.design.all_domains[0].name, "ABC");
+      expect(state.design.all_domains[0].name, "XYZ");
       expect(state.design.all_domains[0].helix, 1);
 
-      expect(state.design.all_domains[1].name, "XYZ");
+      expect(state.design.all_domains[1].name, "ABC");
       expect(state.design.all_domains[1].helix, 0);
     });
 
@@ -239,9 +259,11 @@ main() {
        |-------|
          ABC        
     0  /------\
-                )
-                )
-    1  \------/
+       |        )
+       |         )
+       |         )
+    1  |        )
+       \------/
          XYZ      
     */
       var helices = [
@@ -291,17 +313,19 @@ main() {
       state = app_state_reducer(state, StrandsMoveCommit(strands_move: strandsMove, autopaste: false));
       /* 0       8
        |-------|
-         XYZ        
-    0  /------\
-                )
-                )
-    1  \------/
-         ABC      
+
+    0     
+       /------\
+       | ABC    )
+       | XYZ    )
+       \------/
+    1
+
     */
-      expect(state.design.all_domains[0].name, "ABC");
+      expect(state.design.all_domains[0].name, "XYZ");
       expect(state.design.all_domains[0].helix, 1);
 
-      expect(state.design.all_domains[1].name, "XYZ");
+      expect(state.design.all_domains[1].name, "ABC");
       expect(state.design.all_domains[1].helix, 0);
     });
 
