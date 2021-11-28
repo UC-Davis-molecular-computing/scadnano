@@ -343,12 +343,12 @@ main() {
                   |
         helix 2   +------->
       */
-      var helices = [
-        Helix(idx: 0, grid_position: GridPosition(1, 1), max_offset: 8),
-        Helix(idx: 1, grid_position: GridPosition(0, 1), max_offset: 8),
-        Helix(idx: 2, grid_position: GridPosition(0, 2), max_offset: 8)
+      var helix_builders = [
+        HelixBuilder()..idx= 0..grid_position=GridPosition(1, 1).toBuilder()..max_offset=8,
+        HelixBuilder()..idx= 1..grid_position=GridPosition(0, 1).toBuilder()..max_offset=8,
+        HelixBuilder()..idx= 2..grid_position=GridPosition(0, 2).toBuilder()..max_offset=8,
       ];
-      var design = Design(helices: helices, grid: Grid.honeycomb);
+      var design = Design(helix_builders: helix_builders, grid: Grid.honeycomb);
       design = design.strand(0, 0).to(8).cross(1).move(-8).cross(2).to(8).commit();
 
       // expected values for verification

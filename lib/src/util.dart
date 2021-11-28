@@ -100,7 +100,7 @@ class ColorCycler {
     return next_color;
   }
 
-  static final Color scaffold_color = Color.rgb(0, 102, 204);
+  static final Color scaffold_color = constants.default_scaffold_color;
 }
 
 final scaffold_color = ColorCycler.scaffold_color;
@@ -1621,3 +1621,5 @@ Map<int, int> invert_helices_view_order(Iterable<int> helices_view_order) {
   }
   return view_order_inverse;
 }
+
+enum DNAFileType { scadnano_file, cadnano_file }

@@ -138,7 +138,7 @@ main() {
         Helix(idx: 1, grid: Grid.square, geometry: geometry, grid_position: GridPosition(1, 0)),
         Helix(idx: 2, grid: Grid.square, geometry: geometry, grid_position: GridPosition(2, 0)),
       ];
-      var pre_design_horz = Design(grid: Grid.none, helices: helices);
+      var pre_design_horz = Design(grid: Grid.square, helices: helices);
       design_horz = pre_design_horz.strand(0, 5).to(0).cross(1).to(5).cross(2).to(0).commit();
       state_horz = app_state_from_design(design_horz);
     });

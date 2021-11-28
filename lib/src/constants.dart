@@ -142,6 +142,14 @@ const compile_button_id = 'compile';
 final color_forward_rotation_arrow_no_strand = Color.rgb(0, 0, 0);
 final color_reverse_rotation_arrow_no_strand = Color.rgb(0, 0, 0);
 
+// Default color for scaffold strand(s)
+final default_scaffold_color = Color.rgb(0, 102, 204);
+
+// Default color for non-scaffold strand(s).
+final default_strand_color = Color.rgb(0, 0, 0);
+
+final default_cadnano_strand_color = Color.hex('#BFBFBF');
+
 // NOTE: this is assuming a coordinate system where 0 degrees is straight up (negative y) in the main view,
 // and rotation is clockwise
 const default_roll = 0.0;
