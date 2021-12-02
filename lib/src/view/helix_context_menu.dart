@@ -13,7 +13,7 @@ import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 
 List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to_all) {
-  Future<void> dialog_helix_adjust_min_offset() async {
+  Future<void> dialog_helix_set_min_offset() async {
     int min_idx = 0;
     int min_set_by_domain_idx = 1;
     int apply_to_all_idx = 2;
@@ -23,7 +23,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     items[min_set_by_domain_idx] = DialogCheckbox(label: 'set minimum by existing domains', value: false);
     items[apply_to_all_idx] = DialogCheckbox(label: 'apply to all helices', value: helix_change_apply_to_all);
 
-    var dialog = Dialog(title: 'adjust helix minimum offset', items: items, disable_when_any_checkboxes_on: {
+    var dialog = Dialog(title: 'set helix minimum offset', items: items, disable_when_any_checkboxes_on: {
       min_idx: [min_set_by_domain_idx],
     });
     List<DialogItem> results = await util.dialog(dialog);
@@ -53,7 +53,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     }
   }
 
-  Future<void> dialog_helix_adjust_max_offset() async {
+  Future<void> dialog_helix_set_max_offset() async {
     int max_idx = 0;
     int max_set_by_domain_idx = 1;
     int apply_to_all_idx = 2;
@@ -63,7 +63,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     items[max_set_by_domain_idx] = DialogCheckbox(label: 'set maximum by existing domains', value: false);
     items[apply_to_all_idx] = DialogCheckbox(label: 'apply to all helices', value: helix_change_apply_to_all);
 
-    var dialog = Dialog(title: 'adjust helix maximum offset', items: items, disable_when_any_checkboxes_on: {
+    var dialog = Dialog(title: 'set helix maximum offset', items: items, disable_when_any_checkboxes_on: {
       max_idx: [max_set_by_domain_idx],
     });
     List<DialogItem> results = await util.dialog(dialog);
@@ -93,8 +93,8 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     }
   }
 
-  Future<void> dialog_helix_adjust_idx() async {
-    var dialog = Dialog(title: 'adjust helix index', items: [
+  Future<void> dialog_helix_set_idx() async {
+    var dialog = Dialog(title: 'set helix index', items: [
       DialogInteger(label: 'new index', value: helix.idx),
     ]);
     List<DialogItem> results = await util.dialog(dialog);
@@ -105,10 +105,10 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     app.dispatch(actions.HelixIdxsChange(idx_replacements: {helix.idx: new_idx}));
   }
 
-  Future<void> dialog_helix_adjust_roll() async {
+  Future<void> dialog_helix_set_roll() async {
     int helix_idx = helix.idx;
 
-    var dialog = Dialog(title: 'adjust helix roll (degrees)', items: [
+    var dialog = Dialog(title: 'set helix roll (degrees)', items: [
       DialogFloat(label: 'roll', value: helix.roll),
     ]);
     List<DialogItem> results = await util.dialog(dialog);
@@ -120,7 +120,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     app.dispatch(actions.HelixRollSet(helix_idx: helix_idx, roll: roll));
   }
 
-  Future<void> dialog_helix_adjust_major_tick_marks() async {
+  Future<void> dialog_helix_set_major_tick_marks() async {
     int helix_idx = helix.idx;
     Grid grid = helix.grid;
 
@@ -168,7 +168,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     items[apply_to_some_helices_idx] = DialogText(label: 'helices (space-separated)', value: "");
 
     var dialog = Dialog(
-      title: 'adjust helix tick marks',
+      title: 'set helix tick marks',
       items: items,
       disable_when_any_checkboxes_off: {
         regular_spacing_distance_idx: [regular_spacing_checkbox_idx],
@@ -299,10 +299,10 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
     app.dispatch(action);
   }
 
-  Future<void> dialog_helix_adjust_grid_position() async {
+  Future<void> dialog_helix_set_grid_position() async {
     var grid_position = helix.grid_position ?? GridPosition(0, 0);
 
-    var dialog = Dialog(title: 'adjust helix grid position', items: [
+    var dialog = Dialog(title: 'set helix grid position', items: [
       DialogInteger(label: 'h', value: grid_position.h),
       DialogInteger(label: 'v', value: grid_position.v),
     ]);
@@ -316,10 +316,10 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
     app.dispatch(actions.HelixGridPositionSet(helix: helix, grid_position: GridPosition(h, v)));
   }
 
-  Future<void> dialog_helix_adjust_position() async {
+  Future<void> dialog_helix_set_position() async {
     var position = helix.position ?? Position3D();
 
-    var dialog = Dialog(title: 'adjust helix position', items: [
+    var dialog = Dialog(title: 'set helix position', items: [
       DialogFloat(label: 'x', value: position.x),
       DialogFloat(label: 'y', value: position.y),
       DialogFloat(label: 'z', value: position.z),
@@ -342,66 +342,100 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
         )));
   }
 
-  helix_adjust_min_offset() {
-    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_min_offset);
+  Future<void> dialog_helix_set_group() async {
+    // should be okay to access global variable here since it's responding to user click
+    var group_names = app.state.design.groups.keys;
+
+    List<int> selected_helix_idxs = [helix.idx];
+    selected_helix_idxs.addAll(app.state.ui_state.side_selected_helix_idxs);
+
+    var other_group_names = group_names.toList();
+    var existing_group_name = helix.group ?? Position3D();
+    other_group_names.remove(existing_group_name);
+
+    var dialog = Dialog(title: 'move selected helices to group', items: [
+      DialogRadio(options: other_group_names, radio: false, label: 'new group'),
+    ]);
+
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+
+    String existing_other_group_name = (results[0] as DialogRadio).value;
+
+    var move_action = actions.MoveHelicesToGroup(
+        helix_idxs: selected_helix_idxs.build(), group_name: existing_other_group_name);
+    app.dispatch(move_action);
   }
 
-  helix_adjust_max_offset() {
-    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_max_offset);
+  helix_set_min_offset() {
+    app.disable_keyboard_shortcuts_while(dialog_helix_set_min_offset);
   }
 
-  helix_adjust_idx() {
-    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_idx);
+  helix_set_max_offset() {
+    app.disable_keyboard_shortcuts_while(dialog_helix_set_max_offset);
   }
 
-  helix_adjust_major_tick_marks() {
-    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_major_tick_marks);
+  helix_set_idx() {
+    app.disable_keyboard_shortcuts_while(dialog_helix_set_idx);
   }
 
-  helix_adjust_roll() {
-    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_roll);
+  helix_set_major_tick_marks() {
+    app.disable_keyboard_shortcuts_while(dialog_helix_set_major_tick_marks);
   }
 
-  helix_adjust_position() {
-    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_position);
+  helix_set_roll() {
+    app.disable_keyboard_shortcuts_while(dialog_helix_set_roll);
   }
 
-  helix_adjust_grid_position() {
-    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_grid_position);
+  helix_set_position() {
+    app.disable_keyboard_shortcuts_while(dialog_helix_set_position);
   }
 
-  ContextMenuItem context_menu_item_adjust_position = (helix.grid == Grid.none)
+  helix_set_grid_position() {
+    app.disable_keyboard_shortcuts_while(dialog_helix_set_grid_position);
+  }
+
+  helix_set_group() {
+    app.disable_keyboard_shortcuts_while(dialog_helix_set_group);
+  }
+
+  ContextMenuItem context_menu_item_set_position = (helix.grid == Grid.none)
       ? ContextMenuItem(
-          title: 'adjust position',
-          on_click: helix_adjust_position,
+          title: 'set position',
+          on_click: helix_set_position,
         )
       : ContextMenuItem(
-          title: 'adjust grid position',
-          on_click: helix_adjust_grid_position,
+          title: 'set grid position',
+          on_click: helix_set_grid_position,
         );
 
   return [
     ContextMenuItem(
-      title: 'adjust min offset',
-      on_click: helix_adjust_min_offset,
+      title: 'set min offset',
+      on_click: helix_set_min_offset,
     ),
     ContextMenuItem(
-      title: 'adjust max offset',
-      on_click: helix_adjust_max_offset,
+      title: 'set max offset',
+      on_click: helix_set_max_offset,
     ),
     ContextMenuItem(
-      title: 'adjust index',
-      on_click: helix_adjust_idx,
+      title: 'set index',
+      on_click: helix_set_idx,
     ),
     ContextMenuItem(
-      title: 'adjust tick marks',
-      on_click: helix_adjust_major_tick_marks,
+      title: 'set tick marks',
+      on_click: helix_set_major_tick_marks,
     ),
     ContextMenuItem(
-      title: 'adjust roll',
-      on_click: helix_adjust_roll,
+      title: 'set roll',
+      on_click: helix_set_roll,
     ),
-    context_menu_item_adjust_position,
+    context_menu_item_set_position,
+    if(app.state.design.groups.length > 1)
+    ContextMenuItem(
+      title: 'set group',
+      on_click: helix_set_group,
+    ),
   ];
 }
 

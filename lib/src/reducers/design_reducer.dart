@@ -41,6 +41,7 @@ Design design_composed_local_reducer(Design design, action) => design?.rebuild((
 // composed: operate on slices of the DNADesign
 // global: need the whole AppState
 Design design_composed_global_reducer(Design design, AppState state, action) => design?.rebuild((d) => d
+  ..groups.replace(groups_global_reducer(design.groups, state, action))
   ..helices.replace(helices_global_reducer(design.helices, state, action))
   ..strands.replace(strands_global_reducer(design.strands, state, action)));
 
