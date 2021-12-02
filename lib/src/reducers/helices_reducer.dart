@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/reducers/groups_reducer.dart';
 import 'package:scadnano/src/state/group.dart';
 import '../reducers/util_reducer.dart';
 import '../state/app_state.dart';
@@ -18,7 +19,6 @@ import 'selection_reducer.dart';
 import '../extension_methods.dart';
 
 Reducer<BuiltMap<int, Helix>> helices_local_reducer = combineReducers([
-  TypedReducer<BuiltMap<int, Helix>, actions.GroupChange>(helix_group_name_change_reducer),
   TypedReducer<BuiltMap<int, Helix>, actions.HelixMajorTickDistanceChangeAll>(
       helix_major_tick_distance_change_all_reducer),
   TypedReducer<BuiltMap<int, Helix>, actions.HelixMajorTicksChangeAll>(helix_major_ticks_change_all_reducer),
@@ -29,6 +29,7 @@ Reducer<BuiltMap<int, Helix>> helices_local_reducer = combineReducers([
 ]);
 
 GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGlobalReducers([
+  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.GroupChange>(helix_group_change_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.GridChange>(helix_grid_change_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.SetAppUIStateStorable>(
       set_app_ui_state_storables_set_helices_reducer),
@@ -547,7 +548,7 @@ BuiltMap<int, Helix> helix_position_set_reducer(
 /// are changing in the action, then state will not yet have been updated to the new value; in that case
 /// assign them explicitly in the parameter list; e.g., see [invert_xy_set_helices_reducer]
 BuiltMap<int, Helix> reassign_svg_positions(AppState state, BuiltMap<int, Helix> helices,
-    {BuiltSet<int> selected_helix_idxs = null, Geometry geometry = null, bool invert_xy = null}) {
+    {BuiltSet<int> selected_helix_idxs = null, Geometry geometry = null, bool invert_xy = null, BuiltMap<String, HelixGroup> groups = null}) {
   if (helices.length == 0) {
     return helices;
   }
@@ -556,7 +557,7 @@ BuiltMap<int, Helix> reassign_svg_positions(AppState state, BuiltMap<int, Helix>
   }
   invert_xy ??= state.ui_state.invert_xy;
   geometry ??= state.design.geometry;
-  BuiltMap<String, HelixGroup> groups = state.design.groups;
+  groups ??= state.design.groups;
   Map<int, Helix> helices_map = helices.toMap();
   helices_map = util.helices_assign_svg(geometry, invert_xy, helices_map, groups,
       selected_helix_idxs: selected_helix_idxs);
@@ -603,7 +604,14 @@ BuiltMap<int, Helix> set_only_display_selected_helices_reducer(
   }
 }
 
-BuiltMap<int, Helix> helix_group_name_change_reducer(
-        BuiltMap<int, Helix> helices, actions.GroupChange action) =>
-    helices.map_values((idx, helix) =>
-        helix.group == action.old_name ? helix.rebuild((b) => b..group = action.new_name) : helix);
+BuiltMap<int, Helix> helix_group_change_reducer(
+        BuiltMap<int, Helix> helices, AppState state, actions.GroupChange action) {
+  var new_helices = helices.map_values((idx, helix) => helix.group == action.old_name ? helix.rebuild((b) => b..group = action.new_name) : helix);
+  var old_view_order = state.design.groups[action.old_name].helices_view_order;
+  if (old_view_order != action.new_group.helices_view_order) {
+    // This is necessary because state contains the old groups, but we need to give the new ones to reassign svg positions.
+    var new_groups = group_change_reducer(state.design.groups, action);
+    new_helices = reassign_svg_positions(state, new_helices, groups: new_groups);
+  }
+  return new_helices;
+}
