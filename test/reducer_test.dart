@@ -7535,13 +7535,15 @@ main() {
     HelixGroup group = HelixGroup(helices_view_order: [0,1], grid: Grid.square);
     Design design = Design(helices: [helix0, helix1], groups: {"foo": group});
     AppState state = app_state_from_design(design);
-    Point<num> original_svg_position = state.design.helices[0].svg_position;
+    Point<num> original_helix0_svg_position = state.design.helices[0].svg_position;
+    Point<num> original_helix1_svg_position = state.design.helices[1].svg_position;
 
     HelixGroup new_group = HelixGroup(helices_view_order: [1,0], grid: Grid.square);
     AppState new_state = app_state_reducer(state, GroupChange(old_name: "foo", new_name: "foo", new_group: new_group));
 
     // New svg position should have changed
-    expect(new_state.design.helices[0].svg_position == original_svg_position, false);
+    expect(new_state.design.helices[0].svg_position, original_helix1_svg_position);
+    expect(new_state.design.helices[1].svg_position, original_helix0_svg_position);
   });
 }
 
