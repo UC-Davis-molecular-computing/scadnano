@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/json_serializable.dart';
+import 'package:scadnano/src/reducers/app_state_reducer.dart';
 import 'package:scadnano/src/reducers/helices_reducer.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/position3d.dart';
@@ -39,7 +40,37 @@ main() {
 
       expect(design.default_group().helices_view_order.toList(), [0, 1, 2, 5]);
     });
+    test('move_3_helices__different_groups', () {
+      List<Helix> helices = [];
+      //Create 2 groups
+      for (int i = 0; i < 10; i++) {
+        if (i >= 5) {
+          helices.add(Helix(idx: i, grid: Grid.square, grid_position: GridPosition(1, i), group: "Second"));
+        } else {
+          helices.add(Helix(idx: i, grid: Grid.square, grid_position: GridPosition(0, i), group: "First"));
+        }
+      }
+      var design = Design(helices: helices, grid: Grid.square);
+      var state = app_state_from_design(design);
+      state =
+          app_state_reducer(state, MoveHelicesToGroup(helix_idxs: [0, 1, 2].build(), group_name: "Second"));
+      design = state.design;
 
+      expect(design.groups["First"].helices_view_order.toList(), [3, 4]);
+      expect(design.groups["Second"].helices_view_order.toList(), [5, 6, 7, 8, 9, 0, 1, 2]);
+
+      expect(design.helices[0].group, "Second");
+      expect(design.helices[1].group, "Second");
+      expect(design.helices[2].group, "Second");
+      expect(design.helices[5].group, "Second");
+      expect(design.helices[6].group, "Second");
+      expect(design.helices[7].group, "Second");
+      expect(design.helices[8].group, "Second");
+      expect(design.helices[9].group, "Second");
+
+      expect(design.helices[3].group, "First");
+      expect(design.helices[4].group, "First");
+    });
     test('remove_2_helices__different_groups__helix_idx_in_numerical_order', () {
       List<Helix> helices = [];
       //Create 2 groups
@@ -109,10 +140,9 @@ main() {
       expect(design.groups["First"].helices_view_order.toList(), [9, 8, 7, 5, 4, 2, 1, 0]);
     });
 
-
     test('remove_helix__same_group__helix_idx_in_numerical_order', () {
       List<Helix> helices = [];
-      //Create 2 groups  
+      //Create 2 groups
       for (int i = 0; i < 10; i++) {
         helices.add(Helix(idx: i, grid: Grid.square, grid_position: GridPosition(0, i), group: "First"));
       }

@@ -19,6 +19,7 @@ import 'selection_reducer.dart';
 import '../extension_methods.dart';
 
 Reducer<BuiltMap<int, Helix>> helices_local_reducer = combineReducers([
+  TypedReducer<BuiltMap<int, Helix>, actions.MoveHelicesToGroup>(move_helices_to_group_helices_reducer),
   TypedReducer<BuiltMap<int, Helix>, actions.HelixMajorTickDistanceChangeAll>(
       helix_major_tick_distance_change_all_reducer),
   TypedReducer<BuiltMap<int, Helix>, actions.HelixMajorTicksChangeAll>(helix_major_ticks_change_all_reducer),
@@ -614,4 +615,18 @@ BuiltMap<int, Helix> helix_group_change_reducer(
     new_helices = reassign_svg_positions(state, new_helices, groups: new_groups);
   }
   return new_helices;
+}
+
+// The suffix "_helices_reducer" helps distinguish from the "_groups_reducer" in the
+// groups_reducer.dart file, which processes this same Action on the groups map.
+BuiltMap<int, Helix> move_helices_to_group_helices_reducer(
+    BuiltMap<int, Helix> helices, actions.MoveHelicesToGroup action) {
+  var helices_map = helices.toMap();
+  for (int idx in action.helix_idxs) {
+    assert(helices_map.keys.contains(idx));
+    var helix = helices_map[idx];
+    var new_helix = helix.rebuild((b) => b..group = action.group_name);
+    helices_map[idx] = new_helix;
+  }
+  return helices_map.build();
 }
