@@ -7527,6 +7527,27 @@ main() {
       expect(() => Design.from_json_str(json_str), throwsA(TypeMatcher<IllegalDesignError>()));
     });
   });
+
+  // Github Issue: https://github.com/UC-Davis-molecular-computing/scadnano/issues/677
+  test('adjusting_helices_view_order_should_update_svg_position', () {
+    Helix helix0 = Helix(idx: 0, grid_position: GridPosition(0, 0), group: "foo");
+    Helix helix1 = Helix(idx: 1, grid_position: GridPosition(0, 1), group: "foo");
+    HelixGroup group = HelixGroup(helices_view_order: [0,1], grid: Grid.square);
+    Design design = Design(helices: [helix0, helix1], groups: {"foo": group});
+    helix0 = design.helices[0];
+    helix1 = design.helices[1];
+    AppState state = app_state_from_design(design);
+    // Point<num> original_helix0_svg_position = state.design.helices[0].svg_position;
+    Point<num> original_helix1_svg_position = state.design.helices[1].svg_position;
+
+    HelixGroup new_group = HelixGroup(helices_view_order: [1,0], grid: Grid.square);
+    AppState new_state = app_state_reducer(state, GroupChange(old_name: "foo", new_name: "bar", new_group: new_group));
+
+    // New svg position y coordinate should have changed
+    expect(new_state.design.helices[1].svg_position.y, closeTo(original_helix1_svg_position.y, 0.001));
+    var offset = (helix1.position3d.y - helix0.position3d.y) * design.geometry.nm_to_svg_pixels;
+    expect(new_state.design.helices[0].svg_position.y, closeTo(original_helix1_svg_position.y + offset, 0.001));
+  });
 }
 
 AppState make_ends_selectable(AppState actual_state) {
