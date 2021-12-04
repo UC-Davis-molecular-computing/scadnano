@@ -126,7 +126,10 @@ main() {
 
       expect(design.groups["First"].helices_view_order.toList(), [3, 4]);
       expect(design.groups["Second"].helices_view_order.toList(), [7, 8, 9]);
-      expect(design.groups["Third"].helices_view_order.toList(), anyOf([[10, 11, 12, 13, 14, 0, 1, 2, 5, 6], [10, 11, 12, 13, 14, 5, 6, 0, 1, 2]]));
+      expect(design.groups["Third"].helices_view_order.toList(), anyOf([
+        [10, 11, 12, 13, 14,  0, 1, 2,  5, 6], 
+        [10, 11, 12, 13, 14,  5, 6,     0, 1, 2],
+      ]));
 
       expect(design.helices[0].group, "Third");
       expect(design.helices[1].group, "Third");

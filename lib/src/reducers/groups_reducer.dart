@@ -82,8 +82,9 @@ BuiltMap<String, HelixGroup> move_helices_to_group_groups_reducer(BuiltMap<Strin
     for (int idx in from_group.helices_view_order) {
       if (action.helix_idxs.contains(idx)) {
         // prevent indices from duplicating when moving to its own group
-        if (!new_helices_view_order.contains(idx))
+        if (!new_helices_view_order.contains(idx)) {
           new_helices_view_order.add(idx);
+        }
         new_from_helices_group_order.remove(idx);
       }
     }
