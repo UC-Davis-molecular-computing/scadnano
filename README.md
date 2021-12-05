@@ -85,7 +85,7 @@ If you find an existing issue that you would like to see handled, please "vote" 
 
 ## Tutorial
 
-A [tutorial](https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/tutorial/tutorial.md) shows how to create a "standard" 24-helix DNA origami rectangle using the scadnano web interface.
+A [tutorial](https://github.com/UC-Davis-molecular-computing/scadnano/blob/main/tutorial/tutorial.md) shows how to create a "standard" 24-helix DNA origami rectangle using the scadnano web interface.
 
 
 ## **WARNING: Save your work**
@@ -116,12 +116,12 @@ To disable this so that it uses the same filename every time you save, you can i
 - stable: https://scadnano.org
 - dev: https://scadnano.org/dev
 
-The scadnano stable version matches what is on the [master branch of the web interface code repository](https://github.com/UC-Davis-molecular-computing/scadnano).
+The scadnano stable version matches what is on the [main branch of the web interface code repository](https://github.com/UC-Davis-molecular-computing/scadnano).
 The scadnano dev version matches what is on the [dev branch of the web interface code repository](https://github.com/UC-Davis-molecular-computing/scadnano/tree/dev).
 
 
 Releases of the stable version are explained on the [releases page](https://github.com/UC-Davis-molecular-computing/scadnano/releases).
-When [issues](https://github.com/UC-Davis-molecular-computing/scadnano/issues) are handled in a release, they are closed at the time the changes make their way to the master branch.
+When [issues](https://github.com/UC-Davis-molecular-computing/scadnano/issues) are handled in a release, they are closed at the time the changes make their way to the main branch.
 If an issue is handled in the dev branch, the issue remains open, but you will see a comment that looks something like this: 
 "*dave-doty added a commit that referenced this issue 17 hours ago @dave-doty make width of File menu just enough to fit all entries on one line; fixes #339*". These comments can help you decide if you want to use the latest version of scadnano (https://scadnano.org/dev), which has fixed an issue, before it makes its way to the stable version (https://scadnano.org).
 
@@ -760,4 +760,4 @@ There are some [performance issues](https://github.com/UC-Davis-molecular-comput
 
 
 ## Contributing
-If you wish to contribute to scadnano, please see the [CONTRIBUTING document](CONTRIBUTING.md) to contribute to the scadnano web interface. There is also a [CONTRIBUTING document](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/CONTRIBUTING.md) for the scadnano Python package.
+If you wish to contribute to scadnano, please see the [CONTRIBUTING document](CONTRIBUTING.md) to contribute to the scadnano web interface. There is also a [CONTRIBUTING document](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/main/CONTRIBUTING.md) for the scadnano Python package.
