@@ -16,6 +16,7 @@ import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/reducers/helices_reducer.dart';
 
 import 'state/design_side_rotation_data.dart';
 import 'state/modification.dart';
@@ -311,6 +312,8 @@ bool lists_contain_same_elts<T extends Comparable>(Iterable<T> elts1, Iterable<T
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // assign SVG coordinates to helices
 
+/// This function has a long parameter list. If these parameters can be found in an instance of
+/// [AppState], then call [reassign_svg_positions] instead.
 Map<int, Helix> helices_assign_svg(
     Geometry geometry, bool invert_xy, Map<int, Helix> helices, BuiltMap<String, HelixGroup> groups,
     {BuiltSet<int> selected_helix_idxs = null}) {

@@ -545,9 +545,11 @@ BuiltMap<int, Helix> helix_position_set_reducer(
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // select/unselect Helices (so SVG positions need to be recalculated)
 
-///XXX: this uses state to get [geometry] and [invert_xy] values, but be careful because if those values
-/// are changing in the action, then state will not yet have been updated to the new value; in that case
-/// assign them explicitly in the parameter list; e.g., see [invert_xy_set_helices_reducer]
+/// This function is a wrapper for [util.helices_assign_svg], which allows one to avoid listing that function's
+/// parameters ([selected_helix_idxs], [geometry], [invert_xy], and [groups]) if they can simply be found in a single instance of [AppState].
+/// However, be careful because if one or more of the parameters are changing due to an action, the state will not
+/// have the updated values. In this case, pass in the appropriate optional parameter(s)
+/// ([selected_helix_idxs], [geometry], [invert_xy], or [groups]) explicitly. ( e.g., see [invert_xy_set_helices_reducer])
 BuiltMap<int, Helix> reassign_svg_positions(AppState state, BuiltMap<int, Helix> helices,
     {BuiltSet<int> selected_helix_idxs = null, Geometry geometry = null, bool invert_xy = null, BuiltMap<String, HelixGroup> groups = null}) {
   if (helices.length == 0) {
