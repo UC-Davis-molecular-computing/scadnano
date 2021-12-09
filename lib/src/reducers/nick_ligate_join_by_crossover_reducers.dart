@@ -459,23 +459,23 @@ BuiltList<Strand> _join_strands_with_crossover(
 
   Strand strand_first_clicked = first_clicked_is_3p ? strand_3p : strand_5p;
   Strand strand_second_clicked = first_clicked_is_3p ? strand_5p : strand_3p;
-  List<Substrand> substrands_from = strand_3p.substrands.toList();
-  List<Substrand> substrands_to = strand_5p.substrands.toList();
+  List<Substrand> substrands_3p = strand_3p.substrands.toList();
+  List<Substrand> substrands_5p = strand_5p.substrands.toList();
 
   // change substrand data
-  int last_idx_from = substrands_from.length - 1;
-  Domain last_domain_from = substrands_from[last_idx_from];
-  Domain first_domain_to = substrands_to[0];
-  last_domain_from = last_domain_from.rebuild((b) => b..is_last = false);
-  first_domain_to = first_domain_to.rebuild((b) => b
+  int last_idx_3p = substrands_3p.length - 1;
+  Domain last_domain_3p = substrands_3p[last_idx_3p];
+  Domain first_domain_5p = substrands_5p[0];
+  last_domain_3p = last_domain_3p.rebuild((b) => b..is_last = false);
+  first_domain_5p = first_domain_5p.rebuild((b) => b
     ..is_first = false
     ..strand_id = strand_5p.id);
 
   // put back into Substrand lists
-  substrands_from[last_idx_from] = last_domain_from;
-  substrands_to[0] = first_domain_to;
+  substrands_3p[last_idx_3p] = last_domain_3p;
+  substrands_5p[0] = first_domain_5p;
 
-  List<Substrand> substrands_new = substrands_from + substrands_to;
+  List<Substrand> substrands_new = substrands_3p + substrands_5p;
 
   // create new Strand
   Strand new_strand = join_two_strands_with_substrands(
