@@ -433,22 +433,22 @@ BuiltList<Strand> join_strands_by_crossover_reducer(
 
   // "from" strand is the one with the 3' end adjacent to the new crossover
   // (in 5' to 3' direction, this crossover goes from one strand to another)
-  bool first_clicked_is_from = end_first_click.is_3p;
-  DNAEnd end_from = first_clicked_is_from ? end_first_click : end_second_click;
-  DNAEnd end_to = first_clicked_is_from ? end_second_click : end_first_click;
-  Strand strand_from = state.design.end_to_strand(end_from);
-  Strand strand_to = state.design.end_to_strand(end_to);
+  bool first_clicked_is_3p = end_first_click.is_3p;
+  DNAEnd end_3p = first_clicked_is_3p ? end_first_click : end_second_click;
+  DNAEnd end_5p = first_clicked_is_3p ? end_second_click : end_first_click;
+  Strand strand_3p = state.design.end_to_strand(end_3p);
+  Strand strand_5p = state.design.end_to_strand(end_5p);
 
   // if joining strand to itself by crossover, just make it circular
-  return _join_strands_with_crossover(strand_from, strand_to, strands, first_clicked_is_from);
+  return _join_strands_with_crossover(strand_3p, strand_5p, strands, first_clicked_is_3p);
 }
 
 // This is a common function used by actions JoinStrandsByCrossover and JoinStrandsByMultipleCrossovers
 BuiltList<Strand> _join_strands_with_crossover(
-    Strand strand_from, Strand strand_to, BuiltList<Strand> strands, bool first_clicked_is_from) {
+    Strand strand_3p, Strand strand_5p, BuiltList<Strand> strands, bool first_clicked_is_3p) {
   // if joining strand to itself by crossover, just make it circular
-  if (strand_from == strand_to) {
-    var strand = strand_from;
+  if (strand_3p == strand_5p) {
+    var strand = strand_3p;
     int strand_idx = strands.indexOf(strand);
     var strands_mutable = strands.toList();
     var new_strand = strand.rebuild((b) => b..circular = true);
@@ -457,10 +457,10 @@ BuiltList<Strand> _join_strands_with_crossover(
     return strands_mutable.toBuiltList();
   }
 
-  Strand strand_first_clicked = first_clicked_is_from ? strand_from : strand_to;
-  Strand strand_second_clicked = first_clicked_is_from ? strand_to : strand_from;
-  List<Substrand> substrands_from = strand_from.substrands.toList();
-  List<Substrand> substrands_to = strand_to.substrands.toList();
+  Strand strand_first_clicked = first_clicked_is_3p ? strand_3p : strand_5p;
+  Strand strand_second_clicked = first_clicked_is_3p ? strand_5p : strand_3p;
+  List<Substrand> substrands_from = strand_3p.substrands.toList();
+  List<Substrand> substrands_to = strand_5p.substrands.toList();
 
   // change substrand data
   int last_idx_from = substrands_from.length - 1;
@@ -469,7 +469,7 @@ BuiltList<Strand> _join_strands_with_crossover(
   last_domain_from = last_domain_from.rebuild((b) => b..is_last = false);
   first_domain_to = first_domain_to.rebuild((b) => b
     ..is_first = false
-    ..strand_id = strand_to.id);
+    ..strand_id = strand_5p.id);
 
   // put back into Substrand lists
   substrands_from[last_idx_from] = last_domain_from;
@@ -480,9 +480,9 @@ BuiltList<Strand> _join_strands_with_crossover(
   // create new Strand
   Strand new_strand = join_two_strands_with_substrands(
       strand_first_clicked, strand_second_clicked, substrands_new,
-      dna_in_order_1_2: first_clicked_is_from);
+      dna_in_order_1_2: first_clicked_is_3p);
 
-  return swap_old_strands_for_new(strands, [strand_from, strand_to], [new_strand]);
+  return swap_old_strands_for_new(strands, [strand_3p, strand_5p], [new_strand]);
 }
 
 /// Joins two Strands using specified list of Substrands. Used to merge properties in a consistent way.
