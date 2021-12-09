@@ -25,6 +25,7 @@ UiFactory<DesignMainHelixProps> DesignMainHelix = _$DesignMainHelix;
 
 mixin DesignMainHelixProps on UiProps {
   Helix helix;
+  bool selected;
   int view_order;
   bool strand_create_enabled;
   num major_tick_offset_font_size;
@@ -61,7 +62,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       ..className = 'helix-main-view')([
       if (props.show_helix_circles)
         (Dom.circle()
-          ..className = 'main-view-helix-circle'
+          ..className = 'main-view-helix-circle ' + (props.selected ? "selected" : "")
+          ..onClick = ((e) => this._handle_click(e, props.helix))
           ..id = helix_circle_id()
           ..cx = '$cx'
           ..cy = '$cy'
@@ -70,6 +72,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       if (props.show_helix_circles)
         (Dom.text()
           ..className = 'main-view-helix-text'
+          ..onClick = ((e) => this._handle_click(e, props.helix))
           ..id = helix_text_id()
           ..x = '$cx'
           ..y = '$cy'
@@ -276,6 +279,14 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     }
 
     return {'minor': path_cmds_vert_minor.join(' '), 'major': path_cmds_vert_major.join(' ')};
+  }
+
+  _handle_click(SyntheticMouseEvent event, Helix helix) {
+    if (event.shiftKey) {
+      app.dispatch(actions.HelixSelect(helix.idx, false));
+    } else if (event.ctrlKey || event.metaKey) {
+      app.dispatch(actions.HelixSelect(helix.idx, true));
+    }
   }
 }
 
