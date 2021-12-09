@@ -282,9 +282,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   }
 
   _handle_click(SyntheticMouseEvent event, Helix helix) {
-    /* if (props.edit_modes.contains(EditModeChoice.pencil)) {
-      app.dispatch(actions.HelixRemove(helix.idx));
-    } else  */if (event.shiftKey) {
+    if (event.shiftKey) {
       app.dispatch(actions.HelixSelect(helix.idx, false));
     } else if (event.ctrlKey || event.metaKey) {
       app.dispatch(actions.HelixSelect(helix.idx, true));
