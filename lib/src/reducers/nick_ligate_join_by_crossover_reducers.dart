@@ -527,7 +527,20 @@ Strand join_two_strands_with_substrands(Strand strand1, Strand strand2, List<Sub
     mods_int[new_idx] = mod_3p;
   }
 
+  String strand_name;
+
+  if(strand1.name != null && strand2.name == null){
+    strand_name = strand1.name;
+  }
+  else if(strand1.name == null && strand2.name != null){
+    strand_name = strand2.name;
+  }
+  else if(strand1.name != null && strand2.name != null){
+    strand_name = strand1.name+"-"+strand2.name;
+  }
+
   Strand new_strand = Strand(substrands_new,
+      name: strand_name,
       color: color,
       dna_sequence: dna,
       idt: idt,
