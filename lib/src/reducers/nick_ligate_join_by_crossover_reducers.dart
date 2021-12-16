@@ -99,6 +99,7 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
     return strands_mutable.build();
   } else {
     Strand strand_5p = Strand(substrands_before,
+        name: strand.name,
         color: strand.color,
         dna_sequence: dna_before,
         idt: strand.idt,
@@ -120,6 +121,7 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
     }
 
     Strand strand_3p = Strand(substrands_after,
+        name: strand.name,
         color: strand.is_scaffold == true ? strand.color : null,
         dna_sequence: dna_after,
         is_scaffold: strand.is_scaffold,
@@ -261,8 +263,8 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
     // take properties from existing strands
     var substrands_new = substrands_3p_new + [dom_new] + substrands_5p_new;
 
-    //TODO: figure out if strand_3p was the one clicke
-    bool first_clicked_is_3p = true;
+    //TODO: figure out if strand_3p was the one clicked
+    bool first_clicked_is_3p = dna_end_clicked.is_3p;
     Strand new_strand =
         join_two_strands_with_substrands(strand_3p, strand_5p, substrands_new, first_clicked_is_3p);
 
@@ -501,8 +503,8 @@ Strand join_two_strands_with_substrands(
   }
 
   //TODO: use properties_from_strand_3p to determine where to get properties
-  var color = strand_3p.color;
-  var idt = strand_3p.idt;
+  var color = properties_from_strand_3p ? strand_3p.color : strand_5p.color;
+  var idt = properties_from_strand_3p ?  strand_3p.idt : strand_5p.idt;
 
   // strand_3p is strand whose 3' end is being joined to the other strand's 5' end
   var dna = null;
@@ -535,7 +537,7 @@ Strand join_two_strands_with_substrands(
   } else if (strand_3p.name == null && strand_5p.name != null) {
     strand_name = strand_5p.name;
   } else if (strand_3p.name != null && strand_5p.name != null) {
-    strand_name = strand_3p.name + "-" + strand_5p.name;
+    strand_name = properties_from_strand_3p ? strand_3p.name : strand_5p.name;
   }
 
   Strand new_strand = Strand(substrands_new,
