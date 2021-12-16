@@ -15,7 +15,7 @@ jobs:
       - name: "Build & test"
         run: |
           echo "done!"
-      - uses: "marvinpinto/action-automatic-releases@v1.1.0"
+      - uses: "marvinpinto/action-automatic-releases@v1.2.1"
         env:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
         with:
