@@ -25,6 +25,7 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
       {String title,
       Iterable<DialogItem> items,
       Iterable<Iterable<int>> mutually_exclusive_checkbox_groups = const [],
+      Iterable<int> disable = const {},
       Map<int, Iterable<int>> disable_when_any_checkboxes_on = const {},
       Map<int, Map<int, Iterable<String>>> disable_when_any_radio_button_selected = const {},
       Map<int, Iterable<int>> disable_when_any_checkboxes_off = const {}}) {
@@ -58,6 +59,7 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
     return Dialog.from((b) => b
       ..title = title
       ..items.replace(items)
+      ..disable.replace(disable)      
       ..mutually_exclusive_checkbox_groups.replace(mutually_exclusive_checkbox_groups_half_built)
       ..disable_when_any_radio_button_selected.replace(disable_when_any_radio_button_selected_half_built)
       ..disable_when_any_checkboxes_on.replace(disable_when_any_checkboxes_on_half_built)
@@ -77,7 +79,7 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
   // if disable_when_any_radio_button_selected[i][j] == ['abc', 'def'], then
   // when DialogRadio at index j (starting at 0 in items) have either 'abc' or 'def' selected,
   // the DialogItem at index i should be disabled
-  BuiltMap<int, BuiltMap<int, Iterable<String>>> get disable_when_any_radio_button_selected;
+  BuiltMap<int, BuiltMap<int, BuiltList<String>>> get disable_when_any_radio_button_selected;
 
   // if disable_when_any_checkboxes_on[i] == [j_1,j_2,...j_k], then
   // when DialogCheckbox at any of indices j_1,j_2,...,j_k (starting at 0 in items) are CHECKED,
@@ -89,6 +91,8 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
   // the DialogItem at index i should be disabled
   BuiltMap<int, BuiltList<int>> get disable_when_any_checkboxes_off;
 
+  BuiltList<int> get disable;
+
   @nullable
   @BuiltValueField(serialize: false, compare: false)
   OnSubmit get on_submit;
@@ -98,6 +102,9 @@ abstract class DialogItem {
   String get label;
 
   dynamic get value;
+
+  @nullable
+  String get tooltip;
 }
 
 abstract class DialogInteger
@@ -109,10 +116,11 @@ abstract class DialogInteger
 
   static Serializer<DialogInteger> get serializer => _$dialogIntegerSerializer;
 
-  factory DialogInteger({String label, num value}) {
+  factory DialogInteger({String label, num value, String tooltip}) {
     return DialogInteger.from((b) => b
       ..label = label
-      ..value = value);
+      ..value = value
+      ..tooltip = tooltip);
   }
 
   @memoized
@@ -134,10 +142,11 @@ abstract class DialogFloat
 
   static Serializer<DialogFloat> get serializer => _$dialogFloatSerializer;
 
-  factory DialogFloat({String label, num value}) {
+  factory DialogFloat({String label, num value, String tooltip}) {
     return DialogFloat.from((b) => b
       ..label = label
-      ..value = value);
+      ..value = value
+      ..tooltip = tooltip);
   }
 
   /************************ end BuiltValue boilerplate ************************/
@@ -156,14 +165,15 @@ abstract class DialogText
 
   static Serializer<DialogText> get serializer => _$dialogTextSerializer;
 
-  factory DialogText({String label, int size = null, String value = ''}) {
+  factory DialogText({String label, int size = null, String value = '', String tooltip}) {
     if (size == null) {
       size = size_from_text(value);
     }
     return DialogText.from((b) => b
       ..label = label
       ..size = size
-      ..value = value);
+      ..value = value
+      ..tooltip = tooltip);
   }
 
   @memoized
@@ -190,12 +200,13 @@ abstract class DialogTextArea
 
   static Serializer<DialogTextArea> get serializer => _$dialogTextAreaSerializer;
 
-  factory DialogTextArea({String label, int cols, int rows, String value = ''}) {
+  factory DialogTextArea({String label, int cols, int rows, String value = '', String tooltip}) {
     return DialogTextArea.from((b) => b
       ..label = label
       ..cols = cols
       ..rows = rows
-      ..value = value);
+      ..value = value
+      ..tooltip = tooltip);
   }
 
   @memoized
@@ -221,10 +232,11 @@ abstract class DialogCheckbox
 
   static Serializer<DialogCheckbox> get serializer => _$dialogCheckboxSerializer;
 
-  factory DialogCheckbox({String label, bool value = false}) {
+  factory DialogCheckbox({String label, bool value = false, String tooltip}) {
     return DialogCheckbox.from((b) => b
       ..label = label
-      ..value = value);
+      ..value = value
+      ..tooltip = tooltip);
   }
 
   @memoized
@@ -251,12 +263,13 @@ abstract class DialogRadio
 
   /************************ end BuiltValue boilerplate ************************/
 
-  factory DialogRadio({String label, Iterable<String> options, int selected_idx = 0, bool radio = true}) {
+  factory DialogRadio({String label, Iterable<String> options, int selected_idx = 0, bool radio = true, String tooltip}) {
     return DialogRadio.from((b) => b
       ..options.replace(options)
       ..selected_idx = selected_idx
       ..radio = radio
-      ..label = label);
+      ..label = label
+      ..tooltip = tooltip);
   }
 
   BuiltList<String> get options;
@@ -283,11 +296,12 @@ abstract class DialogLink
   @memoized
   int get hashCode;
 
-  factory DialogLink({String label, String link}) {
+  factory DialogLink({String label, String link, String tooltip}) {
     return DialogLink.from((b) => b
       ..label = label
       ..link = link
-      ..value = "");
+      ..value = ""
+      ..tooltip = tooltip);
   }
 
   /************************ end BuiltValue boilerplate ************************/

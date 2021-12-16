@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:quiver/collection.dart';
 
 import '../state/position3d.dart';
 import '../state/grid.dart';
@@ -84,11 +85,11 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
       DropdownDivider({'key': 'divider-add-remove'}),
       (MenuDropdownItem()
         ..display = 'adjust current group'
-        ..on_click = ((ev) => ask_new_parameters_for_current_group())
+        ..on_click = ((ev) => set_new_parameters_for_current_group())
         ..key = 'adjust-current-group')(),
       (MenuDropdownItem()
         ..display = 'new group'
-        ..on_click = ((ev) => ask_about_new_group(props.groups.keys))
+        ..on_click = ((ev) => add_new_group(props.groups.keys))
         ..key = 'new-group')(),
       (MenuDropdownItem()
         ..display = 'remove current group'
@@ -121,6 +122,12 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
     );
   }
 
+  set_new_parameters_for_current_group() =>
+      app.disable_keyboard_shortcuts_while(ask_new_parameters_for_current_group);
+
+  add_new_group(Iterable<String> existing_names) =>
+      app.disable_keyboard_shortcuts_while(() => ask_about_new_group(existing_names));
+
   Future<void> ask_about_new_group(Iterable<String> existing_names) async {
     var dialog = Dialog(title: 'create new Helix group', items: [
       DialogText(label: 'name'),
@@ -146,7 +153,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
     app.dispatch(actions.GroupAdd(name: name, group: group));
   }
 
-  ask_new_parameters_for_current_group() async {
+  Future<void> ask_new_parameters_for_current_group() async {
     var group = props.groups[props.displayed_group_name];
     var existing_grid = group.grid;
 
@@ -208,9 +215,29 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
       helices_view_order_chosen_sorted.sort();
       var eq = ListEquality().equals;
       if (!eq(helices_view_order_old_sorted, helices_view_order_chosen_sorted)) {
-        window.alert('The helix indices must each appear exactly once.\n'
-            'helix indices: ${helices_view_order_old_sorted}\n'
-            'you entered:   ${helices_view_order_chosen_sorted}');
+        Set old_sorted = helices_view_order_old_sorted.toSet();
+        Set chosen_sorted = helices_view_order_chosen_sorted.toSet();
+        Set old_difference = old_sorted.difference(chosen_sorted);
+        String error_message = "";
+        if (old_difference.length != 0) {
+          error_message += 'Missing the following helix indices: ${old_difference.toList()}\n';
+        }
+
+        if (!eq(chosen_sorted.toList(), helices_view_order_chosen_sorted)) {
+          // finding duplicate values in helices_view_order_chosen_sorted
+          List unique_vals = List();
+          List duplicates = List();
+          for (int i in helices_view_order_chosen_sorted) {
+            if (unique_vals.contains(i))
+              duplicates.add(i);
+            else {
+              unique_vals.add(i);
+            }
+          }
+          error_message += 'The following helix indices are duplicated: ${duplicates.toSet().toList()}\n';
+        }
+
+        window.alert(error_message);
         return;
       }
     }

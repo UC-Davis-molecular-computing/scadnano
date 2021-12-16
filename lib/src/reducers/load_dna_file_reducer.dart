@@ -18,7 +18,15 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
   Design design_new;
 
   try {
-    design_new = Design.from_json_str(action.content, state.ui_state.invert_xy);
+    switch (action.dna_file_type) {
+      case util.DNAFileType.scadnano_file:
+        design_new = Design.from_json_str(action.content, state.ui_state.invert_xy);
+        break;
+      case util.DNAFileType.cadnano_file:
+        design_new = Design.from_cadnano_v2_json_str(action.content, state.ui_state.invert_xy);
+        break;
+    }
+
   } on IllegalDesignError catch (error, stack_trace) {
     error_message = ''
         '******************'

@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:math';
 
@@ -45,50 +46,76 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   /// on the grid.
   factory Design(
       {Iterable<Helix> helices,
+      Iterable<HelixBuilder> helix_builders,
       Grid grid = Grid.none,
       int num_helices,
       Geometry geometry,
-      Map<String, HelixGroup> groups = null}) {
-    if (helices != null && num_helices != null) {
-      throw IllegalDesignError('cannot specify both helices and num_helices:\n'
+      Map<String, HelixGroup> groups = null,
+      Iterable<Strand> strands = const [],
+      Map<String, Object> unused_fields = const {},
+      bool invert_xy = false}) {
+    // At most one of helices or helix_builders can be set, not both.
+    int num_not_null = 0;
+    if (helices != null) num_not_null++;
+    if (helix_builders != null) num_not_null++;
+    if (num_helices != null) num_not_null++;
+
+    if (num_not_null > 1) {
+      throw IllegalDesignError('Should specify at most one of helices, helix_builders, num_helices\n'
           'num_helices = ${num_helices}\n'
+          'helix_builders = ${helix_builders}\n'
           'helices = ${helices}');
     }
     geometry ??= constants.default_geometry;
-    if (helices == null) {
-      if (num_helices == null) {
-        helices = List<Helix>.empty();
-      } else {
-        helices = [
+
+    // No matter how helices are specify, represent them as a list of helix_builders.
+    if (helices != null) {
+      helix_builders = helices.map((e) => e.toBuilder());
+    } else if (num_helices != null) {
+
+      helix_builders = [
           for (int idx in Iterable<int>.generate(num_helices))
-            Helix(
-              idx: idx,
-              grid: grid,
-              geometry: geometry,
-              grid_position: grid == Grid.none ? null : default_grid_position(idx),
-              position: grid != Grid.none ? null : default_position(geometry, idx),
-            )
+            HelixBuilder()
+              ..idx = idx
+              ..grid = grid
+              ..geometry = geometry.toBuilder()
+              ..grid_position = (grid == Grid.none ? null : default_grid_position(idx).toBuilder())
+              ..position_ = grid != Grid.none ? null : default_position(geometry, idx).toBuilder()
         ];
-      }
-    }
-    var helices_map = {for (var helix in helices) helix.idx: helix};
-    if (_uses_default_group(helices)) {
-      if (groups != null) {
-        throw ArgumentError('groups must be null if all helices use default group');
-      }
-      return Design.from((b) => b
-        ..geometry.replace(geometry)
-        ..groups[constants.default_group_name] = b.groups[constants.default_group_name].rebuild((g) => g
-          ..grid = grid
-          ..helices_view_order.replace(helices_map.keys))
-        ..helices.replace(helices_map));
+    } else if (helix_builders != null) {
+      // We will use the parameter directly
     } else {
-      if (groups == null) {
-        groups = _calculate_groups_from_helices(helices, grid);
-      }
-      return Design.from(
-          (b) => b..geometry.replace(geometry)..groups.replace(groups)..helices.replace(helices_map));
+      // All three are all null
+      assert(helices == null && helix_builders == null && num_helices == null);
+      helix_builders = [];
     }
+
+    for (var helix_builder in helix_builders) helix_builder.geometry = geometry.toBuilder();
+    var helix_builders_map = {for (var helix_builder in helix_builders) helix_builder.idx: helix_builder};
+
+    set_helices_min_max_offsets(helix_builders_map, strands);
+
+
+    if (groups == null) {
+      groups = _calculate_groups_from_helix_builder(helix_builders, grid);
+    }
+    assign_grids_to_helix_builders_from_groups(groups, helix_builders_map);
+
+    helices = helix_builders_map.values.map((b) => b.build());
+
+    var helices_map = {for (var helix in helices) helix.idx: helix};
+
+    helices_map = util.helices_assign_svg(geometry, invert_xy, helices_map, groups.build());
+
+    var design = Design.from((b) => b
+      ..geometry.replace(geometry)
+      ..groups.replace(groups)
+      ..helices.replace(helices_map)
+      ..strands.replace(strands)
+      ..unused_fields.replace(unused_fields));
+
+    design._check_legal_design();
+    return design;
   }
 
   factory Design.from([void Function(DesignBuilder) updates]) = _$Design;
@@ -674,9 +701,25 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   @memoized
   int get min_offset => helices.values.map((helix) => helix.min_offset).min;
 
-  Design add_strand(Strand strand) => rebuild((d) => d..strands.add(strand));
+  Design add_strand(Strand strand) {
+    for (var domain in strand.domains) {
+      if (!this.helix_idxs.contains(domain.helix)) {
+        throw IllegalDesignError("Strand includes a domain on non-existent helix: ${domain.helix}");
+      }
+    }
+    return rebuild((d) => d..strands.add(strand));
+  }
 
-  Design add_strands(Iterable<Strand> new_strands) => rebuild((d) => d..strands.addAll(new_strands));
+  Design add_strands(Iterable<Strand> new_strands) {
+    for (var strand in new_strands) {
+      for (var domain in strand.domains) {
+        if (!this.helix_idxs.contains(domain.helix)) {
+          throw IllegalDesignError("Strand includes a domain on non-existent helix: ${domain.helix}");
+        }
+      }
+    }
+    return rebuild((d) => d..strands.addAll(new_strands));
+  }
 
   Design remove_strand(Strand strand) => rebuild((d) => d..strands.remove(strand));
 
@@ -1119,19 +1162,16 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
     _check_mutually_exclusive_fields(json_map);
 
-    var design_builder = DesignBuilder();
-
-    design_builder.version = util.optional_field(json_map, constants.version_key, constants.CURRENT_VERSION);
+    var version = util.optional_field(json_map, constants.version_key, constants.CURRENT_VERSION);
 
     // prior to version 0.13.0, x and z had the opposite role
-    bool position_x_z_should_swap = util.version_precedes(design_builder.version, '0.13.0');
+    bool position_x_z_should_swap = util.version_precedes(version, '0.13.0');
 
-    design_builder.unused_fields = util.unused_fields_map(json_map, constants.design_keys);
+    var unused_fields = util.unused_fields_map(json_map, constants.design_keys).build();
 
     Geometry geometry = util.optional_field(json_map, constants.geometry_key, Geometry(),
         transformer: (geometry_map) => Geometry.from_json(geometry_map),
         legacy_keys: constants.legacy_geometry_keys);
-    design_builder.geometry.replace(geometry);
 
     var t = Design._helices_and_groups_from_json(json_map, invert_xy, position_x_z_should_swap, geometry);
     var helix_builders_map = t.item1;
@@ -1144,23 +1184,11 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       Strand strand = Strand.from_json(strand_json);
       strands.add(strand);
     }
-    design_builder.strands.replace(strands);
 
-    set_helices_min_max_offsets(helix_builders_map, design_builder.strands.build());
 
     // build groups
     Map<String, HelixGroup> groups_map =
         group_builders_map.map((key, value) => MapEntry<String, HelixGroup>(key, value.build()));
-    design_builder.groups.replace(groups_map);
-
-    assign_grids_to_helix_builders_from_groups(groups_map, helix_builders_map);
-
-    // build Helices
-    Map<int, Helix> helices = {
-      for (var helix_builder in helix_builders_map.values) helix_builder.idx: helix_builder.build()
-    };
-    helices = util.helices_assign_svg(geometry, invert_xy, helices, groups_map.build());
-    design_builder.helices.replace(helices);
 
     // modifications in whole design
     if (json_map.containsKey(constants.design_modifications_key)) {
@@ -1173,13 +1201,16 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         all_mods[mod_key] = mod;
       }
       Design.assign_modifications_to_strands(strands, strand_jsons, all_mods);
-      design_builder.strands.replace(strands);
+      // design_builder.strands.replace(strands);
     }
 
-    var design = design_builder.build();
-    design._check_legal_design();
-
-    return design;
+    return Design(
+        helix_builders: helix_builders_map.values,
+        strands: strands,
+        groups: groups_map,
+        geometry: geometry,
+        unused_fields: unused_fields.toMap(),
+        invert_xy: invert_xy);
   }
 
   static List<int> set_helices_view_order_default_group(
@@ -1789,12 +1820,262 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   num pitch_of_helix(Helix helix) {
     return groups[helix.group].pitch;
   }
+
+  ///Roll of helix's :any:`HelixGroup` plus :py:data:`Helix.roll`
+  num roll_of_helix(Helix helix) {
+    return this.groups[helix.group].roll + helix.roll;
+  }
+
+  /// Creates a Design from a cadnano v2 file.
+  static Design from_cadnano_v2_json_str(String str, [bool invert_xy = false]) {
+    return from_cadnano_v2(jsonDecode(str), invert_xy);
+  }
+
+  /// Creates a Design from a cadnano v2 file.
+  static Design from_cadnano_v2(Map<String, dynamic> json_dict, [bool invert_xy = false]) {
+    Map<String, dynamic> cadnano_v2_design = json_dict;
+
+    int num_bases = cadnano_v2_design['vstrands'][0]['scaf'].length;
+    Grid grid_type = Grid.square;
+    if (num_bases % 21 == 0) grid_type = Grid.honeycomb;
+
+    int min_row = null;
+    int min_col = null;
+    for (Map<String, dynamic> cadnano_helix in cadnano_v2_design['vstrands']) {
+      int col = cadnano_helix['col'], row = cadnano_helix['row'];
+      min_row = min_row == null ? row : min_row;
+      min_col = min_col == null ? col : min_col;
+      min_row = row < min_row ? row : min_row;
+      min_col = col < min_col ? col : min_col;
+    }
+
+    Map<int, HelixBuilder> helix_builders = new LinkedHashMap();
+    for (Map<String, dynamic> cadnano_helix in cadnano_v2_design['vstrands']) {
+      int col = cadnano_helix['col'], row = cadnano_helix['row'];
+      int n = cadnano_helix['num'];
+      HelixBuilder helix = HelixBuilder()
+        ..idx = n
+        ..max_offset = num_bases
+        ..grid_position = GridPosition(col, row).toBuilder()
+        ..group = constants.default_group_name;
+      helix_builders[n] = helix;
+    }
+
+    // We do a DFS on strands
+    Map<String, Map<Tuple2<int, int>, bool>> seen = new HashMap();
+    seen['scaf'] = new HashMap();
+    seen['stap'] = new HashMap();
+    List<Strand> strands = [];
+    Map<int, Map<String, dynamic>> cadnano_helices = new LinkedHashMap();
+    for (Map<String, dynamic> cadnano_helix in cadnano_v2_design['vstrands']) {
+      int helix_num = cadnano_helix['num'];
+      cadnano_helices[helix_num] = cadnano_helix;
+    }
+
+    for (Map<String, dynamic> cadnano_helix in cadnano_v2_design['vstrands']) {
+      int helix_num = cadnano_helix['num'];
+      for (String strand_type in ['scaf', 'stap']) {
+        for (int base_id = 0; base_id < num_bases; base_id++) {
+          if (seen[strand_type].containsKey(Tuple2(helix_num, base_id))) continue;
+          Strand strand = Design._cadnano_v2_import_explore_strand(
+              cadnano_helices, strand_type, seen[strand_type], helix_num, base_id);
+          if (strand != null) strands.add(strand);
+        }
+      }
+    }
+
+    return Design(helix_builders: helix_builders.values, strands: strands, grid: grid_type, invert_xy: invert_xy);
+  }
+
+  /// Routine that will follow a cadnano v2 strand accross helices and create
+  /// cadnano domains and strand accordingly.
+  static Strand _cadnano_v2_import_explore_strand(Map<int, Map<String, dynamic>> vstrands, String strand_type,
+      Map<Tuple2<int, int>, bool> seen, int helix_num, int base_id) {
+    seen[Tuple2(helix_num, base_id)] = true;
+    int id_from = vstrands[helix_num][strand_type][base_id][0];
+    int base_from = vstrands[helix_num][strand_type][base_id][1];
+    int id_to = vstrands[helix_num][strand_type][base_id][2];
+    int base_to = vstrands[helix_num][strand_type][base_id][3];
+
+    if (id_from == -1 && base_from == -1 && id_to == -1 && base_to == -1) return null;
+
+    Tuple3<int, int, bool> tmp =
+        Design._cadnano_v2_import_find_5_end(vstrands, strand_type, helix_num, base_id, id_from, base_from);
+    int strand_5_end_helix = tmp.item1;
+    int strand_5_end_base = tmp.item2;
+    bool is_circular = tmp.item3;
+
+    Color strand_color = Design._cadnano_v2_import_find_strand_color(
+        vstrands, strand_type, strand_5_end_base, strand_5_end_helix);
+    List<Domain> domains = Design._cadnano_v2_import_explore_domains(
+        vstrands, seen, strand_type, strand_5_end_base, strand_5_end_helix);
+    // merge first and last domain if circular
+    if (is_circular) Design._cadnano_v2_import_circular_strands_merge_first_last_domains(domains);
+    List<Substrand> domains_loopouts = domains;
+
+    Strand strand = Strand(domains_loopouts,
+        is_scaffold: strand_type == 'scaf', color: strand_color, circular: is_circular);
+
+    return strand;
+  }
+
+  // Routine which finds the 5' end of a strand in a cadnano v2 import. It returns the
+  // helix and the base of the 5' end.
+  static Tuple3<int, int, bool> _cadnano_v2_import_find_5_end(Map<int, Map<String, dynamic>> vstrands,
+      String strand_type, int helix_num, int base_id, int id_from, int base_from) {
+    int id_from_before = helix_num; // 'id' stands for helix id
+    int base_from_before = base_id;
+
+    Map<Tuple2<int, int>, bool> circular_seen = {};
+    bool is_circular = false;
+
+    while (!(id_from == -1 && base_from == -1)) {
+      if (circular_seen.containsKey(Tuple2(id_from, base_from))) {
+        is_circular = true;
+        break;
+      }
+      circular_seen[Tuple2(id_from, base_from)] = true;
+      id_from_before = id_from;
+      base_from_before = base_from;
+      id_from = vstrands[id_from_before][strand_type][base_from_before][0];
+      base_from = vstrands[id_from_before][strand_type][base_from_before][1];
+    }
+    return Tuple3(id_from_before, base_from_before, is_circular);
+  }
+
+  /// Routine that finds the color of a cadnano v2 strand."""
+  static Color _cadnano_v2_import_find_strand_color(Map<int, Map<String, dynamic>> vstrands,
+      String strand_type, int strand_5_end_base, int strand_5_end_helix) {
+    Color color = constants.default_cadnano_strand_color;
+
+    if (strand_type == 'scaf') return constants.default_scaffold_color;
+
+    if (strand_type == 'stap') {
+      int base_id;
+      int stap_color;
+
+      for (List<dynamic> tmp in vstrands[strand_5_end_helix]['stap_colors']) {
+        base_id = tmp[0];
+        stap_color = tmp[1];
+        if (base_id == strand_5_end_base) {
+          color = from_cadnano_v2_int_hex(stap_color);
+          break;
+        }
+      }
+    }
+    return color;
+  }
+
+  static Color from_cadnano_v2_int_hex(int hex) {
+    return Color.hex(hex.toRadixString(16).padLeft(6, '0'));
+  }
+
+  /// Finds all domains of a cadnano v2 strand.
+  static List<Domain> _cadnano_v2_import_explore_domains(Map<int, Map<String, dynamic>> vstrands,
+      Map<Tuple2<int, int>, bool> seen, String strand_type, int strand_5_end_base, int strand_5_end_helix) {
+    int curr_helix = strand_5_end_helix;
+    int curr_base = strand_5_end_base;
+    List<Domain> domains = [];
+
+    bool direction_forward =
+        (strand_type == 'scaf' && curr_helix % 2 == 0) || ((strand_type == 'stap' && curr_helix % 2 == 1));
+    int start = -1;
+    int end = -1;
+    if (direction_forward)
+      start = curr_base;
+    else
+      end = curr_base;
+
+    Map<Tuple2<int, int>, bool> circular_seen = {};
+    while (!(curr_helix == -1 && curr_base == -1)) {
+      if (circular_seen.containsKey(Tuple2(curr_helix, curr_base))) break;
+      circular_seen[Tuple2(curr_helix, curr_base)] = true;
+
+      int old_helix = curr_helix;
+      int old_base = curr_base;
+      seen[Tuple2(curr_helix, curr_base)] = true;
+      curr_helix = vstrands[old_helix][strand_type][old_base][2];
+      curr_base = vstrands[old_helix][strand_type][old_base][3];
+      // Add crossover
+      // We have a crossover when we jump helix or when order is broken on same helix
+      // Or circular strand
+      if ((curr_helix != old_helix) ||
+          (!direction_forward && curr_base > old_base) ||
+          (direction_forward && curr_base < old_base) ||
+          (curr_helix == strand_5_end_helix && curr_base == strand_5_end_base)) {
+        if (direction_forward)
+          end = old_base;
+        else
+          start = old_base;
+
+        domains.add(Domain(
+            is_scaffold: strand_type == 'scaf',
+            helix: old_helix,
+            forward: direction_forward,
+            start: min(start, end),
+            end: max(start, end) + 1,
+            deletions: Design._cadnano_v2_import_extract_deletions(vstrands[old_helix]['skip'], start, end),
+            insertions:
+                Design._cadnano_v2_import_extract_insertions(vstrands[old_helix]['loop'], start, end)));
+
+        direction_forward =
+            (strand_type == 'scaf' && curr_helix % 2 == 0) || (strand_type == 'stap' && curr_helix % 2 == 1);
+        start = -1;
+        end = -1;
+        if (direction_forward)
+          start = curr_base;
+        else
+          end = curr_base;
+      }
+    }
+
+    return domains;
+  }
+
+  /// When we create domains for circular strands in the cadnano import routine, we may end up
+  /// with a fake crossover if first and last domain are on same helix, we have to merge them
+  /// if it is the case.
+  static void _cadnano_v2_import_circular_strands_merge_first_last_domains(List<Domain> domains) {
+    if (domains.first.helix != domains.last.helix) return;
+
+    Domain new_domain_0 = domains[0].rebuild((b) => b
+      ..start = min(domains[0].start, domains.last.start)
+      ..end = max(domains[0].end, domains.last.end));
+    domains[0] = new_domain_0;
+
+    domains.removeLast();
+  }
+
+  /// Routines which converts cadnano skips to scadnano deletions
+  static List<int> _cadnano_v2_import_extract_deletions(List<dynamic> skip_table, int start, int end) {
+    List<int> to_return = [];
+    for (int base_id = start; base_id < end; base_id++) {
+      if (skip_table[base_id] == -1) {
+        to_return.add(base_id);
+      }
+    }
+    return to_return;
+  }
+
+  /// Routines which converts cadnano skips to scadnano insertions
+  static List<Insertion> _cadnano_v2_import_extract_insertions(List<dynamic> loop_table, int start, int end) {
+    List<Insertion> to_return = [];
+    for (int base_id = start; base_id < end; base_id++) {
+      if (loop_table[base_id] != 0) {
+        to_return.add(Insertion(base_id, loop_table[base_id]));
+      }
+    }
+    return to_return;
+  }
 }
 
-Map<String, HelixGroup> _calculate_groups_from_helices(Iterable<Helix> helices, Grid grid) {
+Map<String, HelixGroup> _calculate_groups_from_helix_builder(Iterable<HelixBuilder> helix_builders, Grid grid) {
+  if (helix_builders.isEmpty) {
+    return {constants.default_group_name: HelixGroup(grid: grid, helices_view_order: [])};
+  }
   // gather up helix-idxs in each group
   Map<String, List<int>> group_to_helix_idxs = {};
-  for (var helix in helices) {
+  for (var helix in helix_builders) {
     var name = helix.group;
     if (!group_to_helix_idxs.containsKey(name)) {
       group_to_helix_idxs[name] = [];
@@ -2022,6 +2303,12 @@ class IllegalDesignError implements Exception {
   String cause;
 
   IllegalDesignError(this.cause);
+}
+
+class IllegalCadnanoDesignError implements IllegalDesignError {
+  String cause;
+
+  IllegalCadnanoDesignError(this.cause);
 }
 
 class StrandError extends IllegalDesignError {

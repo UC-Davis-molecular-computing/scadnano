@@ -338,6 +338,7 @@ abstract class Domain
       throw ArgumentError('right = ${right} should be at most end - 1 = ${end - 1}');
     }
     int num_deletions = deletions.where((d) => left <= d && d <= right).length;
+
     var list_of_insertions = insertions.where((i) => left <= i.offset && i.offset <= right);
     int num_insertions = num_insertions_in_list(list_of_insertions);
     return (right - left + 1) - num_deletions + num_insertions;

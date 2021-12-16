@@ -44,13 +44,12 @@ with three main differences:
 
 1) scadnano runs entirely in the browser, with no installation required. 
 Currently only 
-[Chrome](https://www.google.com/chrome/) 
-and 
-[Firefox](https://www.mozilla.org/en-US/firefox/) 
-are supported, with support for 
-[Safari](https://www.apple.com/safari/) 
+[Chrome](https://www.google.com/chrome/),
+[Firefox](https://www.mozilla.org/en-US/firefox/),
 and 
 [Edge](https://www.microsoft.com/en-us/windows/microsoft-edge) 
+are supported, with support for 
+[Safari](https://www.apple.com/safari/) 
 planned in the future.
 
 2) scadnano designs, while they can be edited manually in scadnano, can also be created and edited by a well-documented Python scripting library 
@@ -86,7 +85,7 @@ If you find an existing issue that you would like to see handled, please "vote" 
 
 ## Tutorial
 
-A [tutorial](https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/tutorial/tutorial.md) shows how to create a "standard" 24-helix DNA origami rectangle using the scadnano web interface.
+A [tutorial](https://github.com/UC-Davis-molecular-computing/scadnano/blob/main/tutorial/tutorial.md) shows how to create a "standard" 24-helix DNA origami rectangle using the scadnano web interface.
 
 
 ## **WARNING: Save your work**
@@ -117,12 +116,12 @@ To disable this so that it uses the same filename every time you save, you can i
 - stable: https://scadnano.org
 - dev: https://scadnano.org/dev
 
-The scadnano stable version matches what is on the [master branch of the web interface code repository](https://github.com/UC-Davis-molecular-computing/scadnano).
+The scadnano stable version matches what is on the [main branch of the web interface code repository](https://github.com/UC-Davis-molecular-computing/scadnano).
 The scadnano dev version matches what is on the [dev branch of the web interface code repository](https://github.com/UC-Davis-molecular-computing/scadnano/tree/dev).
 
 
 Releases of the stable version are explained on the [releases page](https://github.com/UC-Davis-molecular-computing/scadnano/releases).
-When [issues](https://github.com/UC-Davis-molecular-computing/scadnano/issues) are handled in a release, they are closed at the time the changes make their way to the master branch.
+When [issues](https://github.com/UC-Davis-molecular-computing/scadnano/issues) are handled in a release, they are closed at the time the changes make their way to the main branch.
 If an issue is handled in the dev branch, the issue remains open, but you will see a comment that looks something like this: 
 "*dave-doty added a commit that referenced this issue 17 hours ago @dave-doty make width of File menu just enough to fit all entries on one line; fixes #339*". These comments can help you decide if you want to use the latest version of scadnano (https://scadnano.org/dev), which has fixed an issue, before it makes its way to the stable version (https://scadnano.org).
 
@@ -214,15 +213,11 @@ Helices in a grid have a two-integer *grid position* depicted in the side view.
 See the [Python scripting documentation](https://scadnano-python-package.readthedocs.io/#scadnano.scadnano.Helix.grid_position) for more detail about the meaning of these positions.
 Helices without a grid have a *position*, a 3D real vector describing their *x*, *y*, *z* coordinates in units of nanometers.
 
-A Helix may also define angles *pitch*, *roll*, and *yaw* in units of degrees, but this feature is currently 
-[not well-supported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/39). 
-Helix.yaw will likely never be supported visually in the main or side views, 
-but it is retained as a field for compatibility with other software for 3D visualization.
-Helix.roll is currently supported, and the interpretation is that roll 0 means the phosphate backbone of the strand that is forward=true on the helix is pointing straight *up* in the side and main views.
-Rotation is clockwise, at a rate of 10.5 base pairs per 360 degrees.
-
-Helix.pitch, which refers to rotation of the helix in the plane of the main view, is currently ignored.
-However, it is possible to rotate helices in the main view, using *groups*, described below.
+A Helix may also define the angle *roll* in units of degrees,
+which defines the backbone rotation angle around the axis of the Helix (the Z-axis in scadnano).
+The interpretation is that roll 0 means the phosphate backbone of the strand that is forward=true on the helix is pointing straight *up* in the side and main views.
+Rotation is clockwise, at a default rate of 10.5 base pairs per 360 degrees. (Configurable through the geometry parameters.)
+It is possible to display helices in the main view, using *groups*, described below.
 
 The position of helices in the main view depends on the grid position if a grid is used, and on the position otherwise. 
 (Each grid position is interpreted as a position from a constrained set of possible positions.)
@@ -277,7 +272,11 @@ Each group has fields `grid`, `position` (itself a map with `x`, `y`, `z` fields
 If not specified, `"default_group"` is the name, with `grid="none"`, `helices_view_order` assumed to be the indices of helices in this group in increasing order, and all other values are numbers equal to 0.
 Each helix is associated to a group via field `group` in the helix description, giving the name of the group.
 All helices in a group are translated by the group's `position` and rotated in the main view by the group's `pitch` angle.
-(Although one can specify `pitch` for an individual helix, this is for the sake of compatibility with other tools, but that field of the helix is ignored by the scadnano interface.)
+The `yaw` and `roll` parameters are not directly visualized in scadnano, but those fields can be edited and are used, for example,
+when exporting to oxDNA for 3D visualization.
+Their interpretation is explained in more detail in the Python package [API documentation for HelixGroup](https://scadnano-python-package.readthedocs.io/en/latest/#scadnano.HelixGroup).
+
+
 
 
 
@@ -761,4 +760,4 @@ There are some [performance issues](https://github.com/UC-Davis-molecular-comput
 
 
 ## Contributing
-If you wish to contribute to scadnano, please see the [CONTRIBUTING document](CONTRIBUTING.md) to contribute to the scadnano web interface. There is also a [CONTRIBUTING document](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/CONTRIBUTING.md) for the scadnano Python package.
+If you wish to contribute to scadnano, please see the [CONTRIBUTING document](CONTRIBUTING.md) to contribute to the scadnano web interface. There is also a [CONTRIBUTING document](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/main/CONTRIBUTING.md) for the scadnano Python package.

@@ -8,11 +8,12 @@ import 'state/grid.dart';
 
 // WARNING: Do not modify line below, except for the version string
 //          (and also add new version string to scadnano_versions_to_link).
-const String CURRENT_VERSION = "0.16.3";
+const String CURRENT_VERSION = "0.17.0";
 const String INITIAL_VERSION = "0.1.0";
 
 // scadnano versions that we deploy so that older versions can be used.
 final scadnano_older_versions_to_link =[
+  "0.16.3",
   "0.16.2",
   "0.16.1",
   "0.16.0",
@@ -32,14 +33,22 @@ final scadnano_older_versions_to_link =[
 final scadnano_versions_to_link = [CURRENT_VERSION] + scadnano_older_versions_to_link;
 
 const BUG_REPORT_URL = 'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
-const NO_DESIGN_MESSAGE = 'scadnano is a program for designing synthetic DNA structures such as DNA origami.\n'
-    'scadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group.\n'
-    'It is similar to cadnano (<a href="https://cadnano.org/">cadnano</a>), developed and maintained by the Douglas lab at UCSF.\n'
-    '\n'
-    'No design is loaded.\n'
-    'Try loading an example by selecting File --> Load example,\n'
-    'or select File --> Open... to load a .sc file from your local drive.\n'
-    'You can also drag and drop a .sc file from your file system to the browser.';
+const NO_DESIGN_MESSAGE = '''\
+scadnano is a program for designing synthetic DNA structures such as DNA origami.
+scadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group.
+It is similar to cadnano (<a href="https://cadnano.org/">cadnano</a>), developed and maintained by 
+the Douglas lab at UCSF.
+
+If you find scadnano useful in a scientific project, please cite its associated paper:
+
+scadnano: A browser-based, scriptable tool for designing DNA nanostructures.
+David Doty, Benjamin L Lee, and Tristan Stérin.
+DNA 2020: Proceedings of the 26th International Conference on DNA Computing and Molecular Programming
+
+No design is loaded.
+Try loading an example by selecting File --> Load example,
+or select File --> Open... to load a .sc file from your local drive.
+You can also drag and drop a .sc file from your file system to the browser.''';
 
 // https://www.w3schools.com/jsref/event_button.asp
 const LEFT_CLICK_BUTTON = 0;
@@ -132,6 +141,14 @@ const compile_button_id = 'compile';
 
 final color_forward_rotation_arrow_no_strand = Color.rgb(0, 0, 0);
 final color_reverse_rotation_arrow_no_strand = Color.rgb(0, 0, 0);
+
+// Default color for scaffold strand(s)
+final default_scaffold_color = Color.rgb(0, 102, 204);
+
+// Default color for non-scaffold strand(s).
+final default_strand_color = Color.rgb(0, 0, 0);
+
+final default_cadnano_strand_color = Color.hex('#BFBFBF');
 
 // NOTE: this is assuming a coordinate system where 0 degrees is straight up (negative y) in the main view,
 // and rotation is clockwise
@@ -392,6 +409,7 @@ const css_selector_insertion_group = 'insertion-group';
 const css_selector_deletion_group = 'deletion-group';
 const css_selector_selected = 'selected';
 
+const css_selector_context_menu_item_disabled = 'context_menu_item_disabled';
 
 const default_idt_scale = "25nm";
 const default_idt_purification = "STD";

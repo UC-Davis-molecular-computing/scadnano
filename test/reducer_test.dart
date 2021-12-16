@@ -5094,110 +5094,7 @@ main() {
       expect(state.ui_state.strands_move, expected_strands_move);
     });
   });
-
-  String simple_helix_json = r'''
-      {
-        "version": "''' +
-      constants.CURRENT_VERSION +
-      r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
-        "strands": [
-          {
-            "sequence": "AACGTACGATGCATCC",
-            "domains": [
-              {"helix": 0, "forward": true , "start": 0, "end": 16}
-            ]
-          },
-          {
-            "sequence": "GGATGCATCGTACGTT",
-            "domains": [
-              {"helix": 0, "forward": false , "start": 0, "end": 16}
-            ]
-          }
-        ]
-      }
-      ''';
-  Design simple_helix_design = Design.from_json(jsonDecode(simple_helix_json));
-  group('Assign/remove dna test: ', () {
-    test('AssignDNA', () {
-      // simple_helix_no_seq_design
-      //     0               16
-      // 0   [--------------->
-      //     <---------------]
-      AppState state = app_state_from_design(simple_helix_no_seq_design);
-
-      Strand strand = simple_helix_no_seq_design.strands.first;
-
-      String dna_sequence = 'AACGTACGATGCATCC';
-      state = app_state_reducer(
-          state,
-          AssignDNA(
-            strand: strand,
-            assign_complements: true,
-            dna_sequence: dna_sequence,
-            warn_on_change: true,
-          ));
-      //     0               16
-      //     AACGTACGATGCATCC
-      // 0   [-------------->
-      //     <--------------]
-      //     TTGCATGCTACGTAGG
-      expect_design_equal(state.design, simple_helix_design);
-
-      // Assigning on strands that already have dna sequence (not sure if this is allowed yet)
-      Strand strand_last = simple_helix_design.strands.last;
-      dna_sequence = 'ATCCAACAGCCCCTCG';
-      state = app_state_reducer(
-        state,
-        AssignDNA(
-          strand: strand_last,
-          assign_complements: false,
-          dna_sequence: dna_sequence,
-          warn_on_change: false,
-        ),
-      );
-
-      //     0               16
-      //     AACGTACGATGCATCC
-      // 0   [-------------->
-      //     <--------------]
-      //     GCTCCCCGACAACCTA
-      String expected_json = r'''
-      {
-        "version": "''' +
-          constants.CURRENT_VERSION +
-          r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
-        "strands": [
-          {
-            "sequence": "AACGTACGATGCATCC",
-            "domains": [
-              {"helix": 0, "forward": true , "start": 0, "end": 16}
-            ]
-          },
-          {
-            "sequence": "ATCCAACAGCCCCTCG",
-            "domains": [
-              {"helix": 0, "forward": false , "start": 0, "end": 16}
-            ]
-          }
-        ]
-      }
-      ''';
-      Design expected_design = Design.from_json(jsonDecode(expected_json));
-      expect(state.design, expected_design);
-    });
-
-    test('RemoveDNA (see issue #109)', () {
-      AppState state = app_state_from_design(simple_helix_design);
-
-      Strand strand = simple_helix_design.strands.last;
-
-      state =
-          app_state_reducer(state, RemoveDNA(strand: strand, remove_all: false, remove_complements: true));
-
-      expect_design_equal(state.design, simple_helix_no_seq_design);
-    });
-  });
-
+  
   group('insertion/deletion', () {
     //TODO: add some unit tests that test this when DNA sequences are on the domains, and both domains
     // having the deletion/insertion added are part of the same strand (e.g., a hairpin);
@@ -7629,6 +7526,27 @@ main() {
       // should fail because multiple helices in same helix group are non-parallel
       expect(() => Design.from_json_str(json_str), throwsA(TypeMatcher<IllegalDesignError>()));
     });
+  });
+
+  // Github Issue: https://github.com/UC-Davis-molecular-computing/scadnano/issues/677
+  test('adjusting_helices_view_order_should_update_svg_position', () {
+    Helix helix0 = Helix(idx: 0, grid_position: GridPosition(0, 0), group: "foo");
+    Helix helix1 = Helix(idx: 1, grid_position: GridPosition(0, 1), group: "foo");
+    HelixGroup group = HelixGroup(helices_view_order: [0,1], grid: Grid.square);
+    Design design = Design(helices: [helix0, helix1], groups: {"foo": group});
+    helix0 = design.helices[0];
+    helix1 = design.helices[1];
+    AppState state = app_state_from_design(design);
+    // Point<num> original_helix0_svg_position = state.design.helices[0].svg_position;
+    Point<num> original_helix1_svg_position = state.design.helices[1].svg_position;
+
+    HelixGroup new_group = HelixGroup(helices_view_order: [1,0], grid: Grid.square);
+    AppState new_state = app_state_reducer(state, GroupChange(old_name: "foo", new_name: "bar", new_group: new_group));
+
+    // New svg position y coordinate should have changed
+    expect(new_state.design.helices[1].svg_position.y, closeTo(original_helix1_svg_position.y, 0.001));
+    var offset = (helix1.position3d.y - helix0.position3d.y) * design.geometry.nm_to_svg_pixels;
+    expect(new_state.design.helices[0].svg_position.y, closeTo(original_helix1_svg_position.y + offset, 0.001));
   });
 }
 

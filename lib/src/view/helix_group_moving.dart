@@ -54,6 +54,7 @@ class HelixGroupMovingComponent extends UiComponent2<HelixGroupMovingProps> with
           !only_display_selected_helices) {
         children.add((DesignMainHelix()
           ..helix = helix
+          ..selected = side_selected_helix_idxs.contains(helix.idx)
           ..show_dna = false
           ..show_helix_circles = props.show_helix_circles
           ..helix_change_apply_to_all = false

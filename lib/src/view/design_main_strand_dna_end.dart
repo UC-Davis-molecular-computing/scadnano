@@ -1,10 +1,13 @@
 import 'dart:html';
 
+import 'package:built_value/built_value.dart';
+import 'package:built_value/serializer.dart';
 import 'package:meta/meta.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/modification_type.dart';
 
 import '../state/address.dart';
 import '../state/context_menu.dart';
@@ -45,7 +48,9 @@ mixin DesignMainDNAEndPropsMixin on UiProps {
   bool selected;
 
   List<ContextMenuItem> Function(Strand strand,
-      {@required Domain domain, @required Address address, @required bool is_5p}) context_menu_strand;
+      {@required Domain domain,
+      @required Address address,
+      @required ModificationType type}) context_menu_strand;
 
   bool drawing_potential_crossover;
   bool moving_this_dna_end;
@@ -160,7 +165,9 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
           context_menu: ContextMenu(
               items: props
                   .context_menu_strand(props.strand,
-                      domain: props.domain, address: address, is_5p: props.is_5p)
+                      domain: props.domain,
+                      address: address,
+                      type: (props.is_5p ? ModificationType.five_prime : ModificationType.three_prime))
                   .build(),
               position: event.page)));
     }

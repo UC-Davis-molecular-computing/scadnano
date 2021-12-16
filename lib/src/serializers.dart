@@ -11,6 +11,7 @@ import 'state/domains_move.dart';
 import 'state/helix_group_move.dart';
 import 'state/copy_info.dart';
 import 'state/address.dart';
+import 'state/modification_type.dart';
 import 'state/substrand.dart'; // analyzer says this is not used, but if deleted it breaks the code generation
 
 import 'state/group.dart';
@@ -55,6 +56,14 @@ import 'state/domain_name_mismatch.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  MoveHelicesToGroup,
+  ModificationType,
+  ShowEditMenuToggle,
+  ShowAxisArrowsSet,
+  IDTFieldsRemove,
+  PlateWellIDTFieldsRemove,
+  PlateWellIDTFieldsAssign,
+  ScalePurificationIDTFieldsAssign,
   StrandNameSet,
   SubstrandNameSet,
   DomainNameMismatch,
@@ -316,7 +325,17 @@ Serializers serializers = _$serializers;
 Serializers standard_serializers = (serializers.toBuilder()
       ..add(PointSerializer<num>())
       ..add(ColorSerializer())
-      ..addPlugin(new StandardJsonPlugin()))
+      ..addPlugin(new StandardJsonPlugin())
+      // https://github.com/google/built_value.dart/issues/1018#issue-849937552
+      // BuiltValue does not automatically create serializer for nested BuiltMap (see dialog.dart, disable_when_any_radio_button_selected)
+      // so add serializer manually here
+      ..addBuilderFactory(
+          const FullType(BuiltMap, const [
+            const FullType(int),
+            const FullType(BuiltList, const [const FullType(String)])
+          ]),
+          () => new MapBuilder<int, BuiltList<String>>())
+      )
     .build();
 
 //Serializers standard_serializers2 = (serializers.toBuilder()..addPlugin(new StandardJsonPlugin())).build();

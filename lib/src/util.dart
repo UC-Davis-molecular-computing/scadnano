@@ -16,6 +16,7 @@ import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/reducers/helices_reducer.dart';
 
 import 'state/design_side_rotation_data.dart';
 import 'state/modification.dart';
@@ -100,7 +101,7 @@ class ColorCycler {
     return next_color;
   }
 
-  static final Color scaffold_color = Color.rgb(0, 102, 204);
+  static final Color scaffold_color = constants.default_scaffold_color;
 }
 
 final scaffold_color = ColorCycler.scaffold_color;
@@ -311,6 +312,8 @@ bool lists_contain_same_elts<T extends Comparable>(Iterable<T> elts1, Iterable<T
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // assign SVG coordinates to helices
 
+/// This function has a long parameter list. If these parameters can be found in an instance of
+/// [AppState], then call [reassign_svg_positions] instead.
 Map<int, Helix> helices_assign_svg(
     Geometry geometry, bool invert_xy, Map<int, Helix> helices, BuiltMap<String, HelixGroup> groups,
     {BuiltSet<int> selected_helix_idxs = null}) {
@@ -1621,3 +1624,5 @@ Map<int, int> invert_helices_view_order(Iterable<int> helices_view_order) {
   }
   return view_order_inverse;
 }
+
+enum DNAFileType { scadnano_file, cadnano_file }

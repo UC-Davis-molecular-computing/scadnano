@@ -11,6 +11,12 @@ html, body {
 ** BEGIN layout
 ************************************************/
 
+input[type = checkbox] {
+    margin-right: 4px;
+}
+label + select {
+    margin-left: 4px;
+}
 .radio-left {
     text-align: left;
 }
@@ -59,7 +65,7 @@ html, body {
 #design-and-modes-buttons-container {
     display: flex;
     height: 100%;
-    width: 100%;
+    width: 100%; 
     overflow: hidden;
 }
 
@@ -68,6 +74,7 @@ html, body {
     width: 100%;
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
 #design {
@@ -79,10 +86,35 @@ html, body {
 #side-pane {
     /*width: 8%;*/
     /*background: #eee;*/
+    position: relative;
+}
+
+#side-pane .navbar {
+    z-index: 1 !important;
+    flex-wrap: wrap !important;
 }
 
 #main-pane {
     /*width: 90%;*/
+    position: relative;
+}
+
+#side-arrows, #main-arrows {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    max-width: 100%;
+    pointer-events: none;
+    filter: drop-shadow(0px 0px 5px rgb(255 255 255));
+}
+
+.arrow-group{
+    pointer-events: bounding-box;
+}
+
+.axis-arrow{
+    stroke-width: 3;
+    stroke-linecap: round;
 }
 
 #design-footer-mouse-over {
@@ -223,6 +255,11 @@ html, body {
     position: relative;
 }
 
+.context_menu_item_disabled {
+    color: lightgray;
+    pointer-events: none;
+}
+
 .has-submenu > .context-menu-item::after {
     content: '';
     position: absolute;
@@ -235,7 +272,7 @@ html, body {
     border-left: .3em solid;
 }
 
-.context-menu-item:hover, 
+.context-menu-item:hover,
 .has-submenu:hover > .context-menu-item {
     color: white;
     background: #284570;
@@ -341,24 +378,60 @@ html, body {
 
 #modes-buttons {
     display: flex;
+    position: relative;
 }
 
+#select-mode,
 #edit-mode {
-    width: 105px;
+    overflow-y: auto;
 }
 
-#select-mode {
-    width: 105px;
+#select-mode label,
+#edit-mode label {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    margin-bottom: 0;
+    padding-bottom: 0.5rem;
+    width: 100%;
+}
+
+.edit-mode-toggle-button{
+    position: absolute;
+    width: 25px;
+    bottom: 24px;
+    border: 1px solid black;
+    right: calc(100% + 20px);
+}
+
+.edit-mode-toggle-button img.appear{
+    transform: rotate(180deg);
+}
+
+.edit-mode-toggle-button img{
+    pointer-events: none;
+    max-width: 100%;
+
 }
 
 .mode-button {
     border: none;
-    width: 108px;
     /*outline: #0b0080;*/
     /*font-weight: bold;*/
     color: black;
-    text-align: left;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    align-items: center;
+    padding: 5px 10px;
+    border-top: 1px solid black;
 }
+.mode-button>img{
+    width: 25px;
+    pointer-events: none;
+}
+
 
 .edit-mode-button-selected {
     background-color: mediumseagreen;
@@ -396,12 +469,13 @@ html, body {
 }
 
 .select-mode-button-selected {
-    background-color: lightcoral;
+    background-color: #abc0ef;
 }
 
 .select-mode-button-unselected {
     background-color: lightgray;
 }
+
 
 /************************************************
 ** END mode layout
@@ -534,7 +608,8 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
     filter: url("#shadow");
 }
 
-.selected.side-view-helix-circle {
+.selected.side-view-helix-circle,
+.selected.main-view-helix-circle {
     stroke: red;
     fill: hotpink;
 }

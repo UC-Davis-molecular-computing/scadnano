@@ -16,6 +16,7 @@ import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:scadnano/src/state/selection_rope.dart';
+import 'package:scadnano/src/view/design_main_arrows.dart';
 import 'package:scadnano/src/view/strand_color_picker.dart';
 
 import '../state/address.dart';
@@ -30,6 +31,7 @@ import '../app.dart';
 import 'design_context_menu.dart';
 import 'design_dialog_form.dart';
 import 'design_main_error_boundary.dart';
+import 'design_side_arrows.dart';
 import 'menu_side.dart';
 import 'view.dart';
 import 'design_side.dart';
@@ -52,6 +54,8 @@ const SIDE_VIEW_SVG_VIEWPORT_GROUP = 'side-view-svg-viewport';
 const MAIN_VIEW_SVG_VIEWPORT_GROUP = 'main-view-svg-viewport';
 const SIDE_VIEW_SVG_ID = 'side-view-svg';
 const MAIN_VIEW_SVG_ID = 'main-view-svg';
+const SIDE_VIEW_ARROWS_SVG_ID = 'side-arrows';
+const MAIN_VIEW_ARROWS_SVG_ID = 'main-arrows';
 
 const PANZOOMABLE_CLASS = 'panzoomable';
 const DRAGGING_CLASS = 'dragging';
@@ -112,6 +116,20 @@ class DesignViewComponent {
       };
     add_shadow_filter(main_view_svg);
 
+    var main_arrows = svg.SvgSvgElement()
+      ..attributes = {
+        'id': MAIN_VIEW_ARROWS_SVG_ID,
+        'width': '85px',
+        'height': '85px',
+      };
+
+    var side_arrows = svg.SvgSvgElement()
+      ..attributes = {
+        'id': SIDE_VIEW_ARROWS_SVG_ID,
+        'width': '85px',
+        'height': '85px',
+      };
+
     var side_view_svg_viewport = svg.GElement()
       ..attributes = {
         'id': SIDE_VIEW_SVG_VIEWPORT_GROUP,
@@ -147,7 +165,9 @@ class DesignViewComponent {
 
     side_pane.children.add(side_view_menu);
     side_pane.children.add(side_view_svg);
+    side_pane.children.add(side_arrows);
     main_pane.children.add(main_view_svg);
+    main_pane.children.add(main_arrows);
 
     set_side_main_pane_widths();
     handle_keyboard_mouse_events();
@@ -254,8 +274,8 @@ class DesignViewComponent {
         if (moves_store != null) {
           var group_names = group_names_of_ends(moves_store);
           if (group_names.length != 1) {
-            var msg = 'Cannot move or copy strands unless they are all on the same helix group.\n'
-                '1 These strands occupy the following helix groups: ${group_names?.join(", ")}';
+            var msg = 'Cannot move or copy DNA ends unless they are all on the same helix group.\n'
+                'The selected ends occupy the following helix groups: ${group_names?.join(", ")}';
             window.alert(msg);
           } else {
             Helix helix = moves_store.helix;
@@ -364,6 +384,42 @@ class DesignViewComponent {
       }
     });
 
+    end_select_mode() {
+      uninstall_draggable(true, DraggableComponent.main);
+      uninstall_draggable(false, DraggableComponent.side);
+
+      // restore panzoomable class to change CSS cursor
+      for (var svg_elt in [this.main_view_svg, this.side_view_svg]) {
+        svg_elt.classes.add(PANZOOMABLE_CLASS);
+        svg_elt.classes.remove(SELECTION_BOX_DRAWABLE_CLASS);
+      }
+
+      // if rope-selecting, send actions to select items and remove displayed rope
+      if (edit_mode_is_rope_select()) {
+        // print('key up: ${key}');
+        SelectionRope rope = app.store_selection_rope.state;
+        if (rope != null) {
+          bool toggle = rope.toggle;
+          var action_adjust = null;
+          // rope.is_main might be null;
+          // also if there's only 1 or 2 points, it's not a Jordan curve yet so don't bother selecting
+          if (rope.is_main == true && rope.points.length >= 3) {
+            action_adjust = actions.SelectionsAdjustMainView(toggle: toggle, box: false);
+          } else if (rope.is_main == false) {
+            // action_adjust = actions.HelixSelectionsAdjust(toggle, app.store_selection_box.state);
+          }
+          if (action_adjust != null) {
+            app.dispatch(action_adjust);
+          }
+
+          var action_remove = actions.SelectionRopeRemove();
+          app.dispatch(action_remove);
+        }
+      }
+    }
+
+    window.onBlur.listen((_) => end_select_mode());
+
     window.onKeyUp.listen((ev) {
       int key = ev.which;
 
@@ -372,37 +428,7 @@ class DesignViewComponent {
       if (key == constants.KEY_CODE_TOGGLE_SELECT ||
           key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
           key == constants.KEY_CODE_SELECT) {
-        uninstall_draggable(true, DraggableComponent.main);
-        uninstall_draggable(false, DraggableComponent.side);
-
-        // restore panzoomable class to change CSS cursor
-        for (var svg_elt in [this.main_view_svg, this.side_view_svg]) {
-          svg_elt.classes.add(PANZOOMABLE_CLASS);
-          svg_elt.classes.remove(SELECTION_BOX_DRAWABLE_CLASS);
-        }
-
-        // if rope-selecting, send actions to select items and remove displayed rope
-        if (edit_mode_is_rope_select()) {
-          // print('key up: ${key}');
-          SelectionRope rope = app.store_selection_rope.state;
-          if (rope != null) {
-            bool toggle = rope.toggle;
-            var action_adjust = null;
-            // rope.is_main might be null;
-            // also if there's only 1 or 2 points, it's not a Jordan curve yet so don't bother selecting
-            if (rope.is_main == true && rope.points.length >= 3) {
-              action_adjust = actions.SelectionsAdjustMainView(toggle: toggle, box: false);
-            } else if (rope.is_main == false) {
-              // action_adjust = actions.HelixSelectionsAdjust(toggle, app.store_selection_box.state);
-            }
-            if (action_adjust != null) {
-              app.dispatch(action_adjust);
-            }
-
-            var action_remove = actions.SelectionRopeRemove();
-            app.dispatch(action_remove);
-          }
-        }
+          end_select_mode();
       }
 
       if (key == constants.KEY_CODE_SHOW_POTENTIAL_HELIX) {
@@ -769,6 +795,26 @@ class DesignViewComponent {
         querySelector('#$MAIN_VIEW_SVG_VIEWPORT_GROUP'),
       );
 
+      // main arrows
+      react_dom.render(
+        over_react_components.ErrorBoundary()(
+          (ReduxProvider()..store = app.store)(
+            ConnectedDesignMainArrows()(),
+          ),
+        ),
+        querySelector('#$MAIN_VIEW_ARROWS_SVG_ID'),
+      );
+      
+      // side arrows
+      react_dom.render(
+        over_react_components.ErrorBoundary()(
+          (ReduxProvider()..store = app.store)(
+            ConnectedDesignSideArrows()(),
+          ),
+        ),
+        querySelector('#$SIDE_VIEW_ARROWS_SVG_ID'),
+      );
+
       // footer
       react_dom.render(
         over_react_components.ErrorBoundary()(
@@ -778,6 +824,7 @@ class DesignViewComponent {
         ),
         this.footer_element,
       );
+      
 
       // context menu
       react_dom.render(
