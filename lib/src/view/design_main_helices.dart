@@ -78,7 +78,9 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
                     view_order == first_helix_view_order)
             ..display_major_tick_widths = props.display_major_tick_widths &&
                 (props.display_major_tick_widths_all_helices || view_order == first_helix_view_order)
-            ..key = helix.idx.toString())());
+            ..key = helix.idx.toString()
+            // TODO(benlee12): Replace helix.svg_position with newly computed svg_position
+            ..svg_position = helix.svg_position)());
         }
       }
 

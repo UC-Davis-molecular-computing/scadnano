@@ -36,6 +36,7 @@ mixin DesignMainHelixProps on UiProps {
   bool display_base_offsets_of_major_ticks;
   bool display_major_tick_widths;
   bool show_helix_circles;
+  Point<num> svg_position;
 }
 
 class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with PureComponent {
@@ -47,7 +48,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 
     // for helix circles
     var cx = -(2 * geometry.base_width_svg + geometry.distance_between_helices_svg / 2);
-    var cy = props.helix.svg_position.y + props.helix.svg_height / 2.0;
+    var cy = props.svg_position.y + props.helix.svg_height / 2.0;
 
     // for helix horizontal lines
     num width = props.helix.svg_width;
@@ -113,8 +114,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         // otherwise the callback is not updated until render executes again
         ..onMouseEnter = ((event) => util.update_mouseover(event, props.helix))
         ..onMouseMove = ((event) => util.update_mouseover(event, props.helix))
-        ..x = props.helix.svg_position.x
-        ..y = props.helix.svg_position.y
+        ..x = props.svg_position.x
+        ..y = props.svg_position.y
         ..width = '$width'
         ..height = '$height'
         ..className = 'helix-invisible-rect'
@@ -169,7 +170,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     if (props.show_domain_labels) {
       offset += 1.2 * props.helix.geometry.base_height_svg;
     }
-    num y = props.helix.svg_position.y - (DISTANCE_OFFSET_DISPLAY_FROM_HELIX + offset);
+    num y = props.svg_position.y - (DISTANCE_OFFSET_DISPLAY_FROM_HELIX + offset);
 
     var offset_texts_elements = [];
     for (int offset in major_ticks) {
@@ -203,7 +204,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       offset += props.helix.geometry.base_height_svg;
     }
     num y =
-        props.helix.svg_position.y + props.helix.svg_height + DISTANCE_OFFSET_DISPLAY_FROM_HELIX + offset;
+        props.svg_position.y + props.helix.svg_height + DISTANCE_OFFSET_DISPLAY_FROM_HELIX + offset;
 
     var offset_texts_elements = [];
     Map<num, int> map_offset_to_distance = {};
@@ -220,7 +221,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       var base = entry.key;
       var distance = entry.value;
 
-      var x = props.helix.svg_position.x + base * props.helix.geometry.base_width_svg;
+      var x = props.svg_position.x + base * props.helix.geometry.base_width_svg;
       var text_element = (Dom.text()
         ..className = 'main-view-helix-major-tick-distance-text'
         ..x = '$x'
