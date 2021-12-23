@@ -221,9 +221,7 @@ main() {
     var geometry = state.design.geometry;
     final correct_helix =
         new Helix(grid_position: grid_position, idx: 0, grid: Grid.square, geometry: geometry);
-    var correct_helices =
-        util.helices_assign_svg(geometry, false, {correct_helix.idx: correct_helix}, state.design.groups);
-    expect(state.design.helices, BuiltMap<int, Helix>(correct_helices));
+    expect(state.design.helices, BuiltMap<int, Helix>({correct_helix.idx: correct_helix}));
   });
 
   test('should_remove_helix_in_response_to_HelixRemove', () {
@@ -5421,17 +5419,15 @@ main() {
       Helix new_helix0 = no_grid_two_helices_design.helices.values.first.rebuild((b) => b
         ..grid = grid
         ..position_ = null
-        ..grid_position.replace(expected_grid_position0));
+        ..grid_position.replace(expected_grid_position0)
+        ..geometry.replace(no_grid_two_helices_design.geometry));
       Helix new_helix1 = no_grid_two_helices_design.helices.values.last.rebuild((b) => b
         ..grid = grid
         ..position_ = null
-        ..grid_position.replace(expected_grid_position1));
+        ..grid_position.replace(expected_grid_position1)
+        ..geometry.replace(no_grid_two_helices_design.geometry));
 
       Map<int, Helix> new_helices = {0: new_helix0, 1: new_helix1};
-      // need to reassign SVG here since original design had positive x Position3D, which means
-      // positive svi_position.x
-      new_helices = util.helices_assign_svg(
-          no_grid_two_helices_design.geometry, false, new_helices, state.design.groups);
 
       Design expected_design = no_grid_two_helices_design.rebuild((b) => b..helices.replace(new_helices));
       expected_design = expected_design.set_grid(grid);

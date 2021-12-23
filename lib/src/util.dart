@@ -312,16 +312,15 @@ bool lists_contain_same_elts<T extends Comparable>(Iterable<T> elts1, Iterable<T
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // assign SVG coordinates to helices
 
-/// This function has a long parameter list. If these parameters can be found in an instance of
-/// [AppState], then call [reassign_svg_positions] instead.
-Map<int, Helix> helices_assign_svg(
+/// Returns SVG position for helices
+Map<int, Point<num>> helices_assign_svg(
     Geometry geometry, bool invert_xy, Map<int, Helix> helices, BuiltMap<String, HelixGroup> groups,
     {BuiltSet<int> selected_helix_idxs = null}) {
   if (selected_helix_idxs == null || selected_helix_idxs.isEmpty) {
     selected_helix_idxs = [for (var helix in helices.values) helix.idx].toBuiltSet();
   }
 
-  Map<int, Helix> new_helices = Map<int, Helix>.of(helices);
+  Map<int, Point<num>> svg_positions = {};
 
   Set<String> group_names = {for (var helix in helices.values) helix.group};
   Map<String, Map<int, Helix>> selected_helices_by_group = {for (var name in group_names) name: {}};
@@ -360,17 +359,21 @@ Map<int, Helix> helices_assign_svg(
         y = prev_y + delta_y;
       }
       prev_y = y;
+      // TODO(benlee12): The modifications to the geometry and invert_xy is made
+      // to a temporary helix and is deleted at the end of the function call.
+      // It seems like these modifications were useful in an earlier use case, but
+      // now is not needed. However, need to double check if any other parts of the
+      // code was relying on this update.
       helix = helix.rebuild((b) => b
         ..geometry.replace(geometry)
-        ..svg_position_ = Point<num>(x, y)
         ..invert_xy = invert_xy);
       prev_helix = helix;
 
-      new_helices[helix.idx] = helix;
+      svg_positions[helix.idx] = Point<num>(x, y);
     }
   }
 
-  return new_helices;
+  return svg_positions;
 }
 
 num main_view_svg_x_of_helix(Geometry geometry, Helix helix) {
