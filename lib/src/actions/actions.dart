@@ -8,6 +8,7 @@ import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/dna_file_type.dart';
 import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
