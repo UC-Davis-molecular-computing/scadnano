@@ -27,6 +27,7 @@ mixin DesignMainStrandCreatingPropsMixin on UiProps {
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
   Geometry geometry;
+  num svg_position_y;
 }
 
 class DesignMainStrandCreatingProps = UiProps
@@ -36,8 +37,8 @@ class DesignMainStrandCreatingComponent extends UiComponent2<DesignMainStrandCre
     with PureComponent, TransformByHelixGroup<DesignMainStrandCreatingProps> {
   @override
   render() {
-    Point<num> start_svg = props.helix.svg_base_pos(props.start, props.forward);
-    Point<num> end_svg = props.helix.svg_base_pos(props.end - 1, props.forward);
+    Point<num> start_svg = props.helix.svg_base_pos(props.start, props.forward, props.svg_position_y);
+    Point<num> end_svg = props.helix.svg_base_pos(props.end - 1, props.forward, props.svg_position_y);
 
     String classname_5p = constants.css_selector_end_5p_strand;
     String classname_3p = constants.css_selector_end_3p_strand;

@@ -1759,11 +1759,12 @@ main() {
   Design two_helices_join_inner_strands = Design.from_json(jsonDecode(two_helices_join_inner_strands_json));
   test('pencil should connect a 3p end to a 5p end', () {
     AppState state = app_state_from_design(two_helices_design);
+    Map<int, Point<num>> svg_position_map = util.helices_assign_svg(two_helices_design.geometry, state.ui_state.invert_xy, two_helices_design.helices.toMap(), two_helices_design.groups);
 
     Strand h0_reverse_strand = two_helices_design.strands[1];
     Strand h1_forward_strand = two_helices_design.strands[2];
     Helix h0 = two_helices_design.helices[0];
-    Point<num> start_point = h0.svg_base_pos(0, false); // 3p end is 0 offset and forward is false.
+    Point<num> start_point = h0.svg_base_pos(0, false, svg_position_map[0].y); // 3p end is 0 offset and forward is false.
     PotentialCrossover helix_0_3p_end_potential_crossover = PotentialCrossover(
       helix_idx: 0,
       forward: false,
@@ -1786,11 +1787,12 @@ main() {
   });
   test('pencil should connect a 5p end to a 3p end', () {
     AppState state = app_state_from_design(two_helices_design);
+    Map<int, Point<num>> svg_position_map = util.helices_assign_svg(two_helices_design.geometry, state.ui_state.invert_xy, two_helices_design.helices.toMap(), two_helices_design.groups);
 
     Strand h0_reverse_strand = two_helices_design.strands[1];
     Strand h1_forward_strand = two_helices_design.strands[2];
     Helix h1 = two_helices_design.helices[1];
-    Point<num> start_point = h1.svg_base_pos(0, true); // 5p end is 0 offset and forward is true.
+    Point<num> start_point = h1.svg_base_pos(0, true, svg_position_map[1].y); // 5p end is 0 offset and forward is true.
     PotentialCrossover helix_1_5p_end_potential_crossover = PotentialCrossover(
       helix_idx: 1,
       forward: true,
@@ -4438,10 +4440,11 @@ main() {
     //
     // 1 [------------------->
     //   <-------------------]
+    Map<int, Point<num>> svg_position_map = util.helices_assign_svg(two_helices_design.geometry, false, two_helices_design.helices.toMap(), two_helices_design.groups);
 
     DNAEnd dnaEnd = two_helices_design.strands.first.dnaend_5p;
     Helix helix0 = two_helices_design.helices.values.first;
-    Point<num> start_point = helix0.svg_base_pos(0, true);
+    Point<num> start_point = helix0.svg_base_pos(0, true, svg_position_map[helix0.idx].y);
 
     // The two states of the two store's reducers we want to test:
     AppState state = app_state_from_design(two_helices_design);

@@ -48,6 +48,7 @@ mixin DesignMainDomainPropsMixin on UiProps {
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
   Geometry geometry;
+  num svg_position_y;
 }
 
 class DesignMainDomainProps = UiProps with DesignMainDomainPropsMixin, TransformByHelixGroupPropsMixin;
@@ -60,8 +61,8 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
     Domain domain = props.domain;
     String id = domain.id;
 
-    Point<num> start_svg = props.helix.svg_base_pos(domain.offset_5p, domain.forward);
-    Point<num> end_svg = props.helix.svg_base_pos(domain.offset_3p, domain.forward);
+    Point<num> start_svg = props.helix.svg_base_pos(domain.offset_5p, domain.forward, props.svg_position_y);
+    Point<num> end_svg = props.helix.svg_base_pos(domain.offset_3p, domain.forward, props.svg_position_y);
 
     var classname = constants.css_selector_domain;
     if (props.selected) {

@@ -195,16 +195,16 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
 // transform svg_base_pos according to helix groups, and return absolute SVG path that can be
 // drawn untransformed to go between helix groups
 String crossover_path_description_between_groups(Domain prev_domain, Domain next_domain,
-    BuiltMap<int, Helix> helices, Geometry geometry, BuiltMap<String, HelixGroup> groups) {
+    BuiltMap<int, Helix> helices, Geometry geometry, BuiltMap<String, HelixGroup> groups, num prev_helix_svg_position_y, num next_helix_svg_position_y) {
   var prev_helix = helices[prev_domain.helix];
   var next_helix = helices[next_domain.helix];
   var prev_group = groups[prev_helix.group];
   var next_group = groups[next_helix.group];
 
-  var start_svg = prev_helix.svg_base_pos(prev_domain.offset_3p, prev_domain.forward);
+  var start_svg = prev_helix.svg_base_pos(prev_domain.offset_3p, prev_domain.forward, prev_helix_svg_position_y);
   start_svg = prev_group.transform_point_main_view(start_svg, geometry);
 
-  var end_svg = next_helix.svg_base_pos(next_domain.offset_5p, next_domain.forward);
+  var end_svg = next_helix.svg_base_pos(next_domain.offset_5p, next_domain.forward, next_helix_svg_position_y);
   end_svg = next_group.transform_point_main_view(end_svg, geometry);
 
   var vector_start_to_end = end_svg - start_svg;
@@ -223,13 +223,13 @@ String crossover_path_description_between_groups(Domain prev_domain, Domain next
 // treat svg_base_pos as though helix group has position = origin; let component calling this function
 // do the transform based on its access to the group position
 String crossover_path_description_within_group(
-    Domain prev_domain, Domain next_domain, BuiltMap<int, Helix> helices, Geometry geometry) {
+    Domain prev_domain, Domain next_domain, BuiltMap<int, Helix> helices, Geometry geometry, num prev_helix_svg_position_y, num next_helix_svg_position_y) {
   var prev_helix = helices[prev_domain.helix];
   var next_helix = helices[next_domain.helix];
-  var start_svg = prev_helix.svg_base_pos(prev_domain.offset_3p, prev_domain.forward);
+  var start_svg = prev_helix.svg_base_pos(prev_domain.offset_3p, prev_domain.forward, prev_helix_svg_position_y);
   var control =
-      control_point_for_crossover_bezier_curve(prev_domain, next_domain, helices, geometry: geometry);
-  var end_svg = next_helix.svg_base_pos(next_domain.offset_5p, next_domain.forward);
+      control_point_for_crossover_bezier_curve(prev_domain, next_domain, helices, prev_helix_svg_position_y, next_helix_svg_position_y, geometry: geometry);
+  var end_svg = next_helix.svg_base_pos(next_domain.offset_5p, next_domain.forward, next_helix_svg_position_y);
 
   var path = 'M ${start_svg.x} ${start_svg.y} Q ${control.x} ${control.y} ${end_svg.x} ${end_svg.y}';
 
@@ -237,7 +237,7 @@ String crossover_path_description_within_group(
 }
 
 Point<num> control_point_for_crossover_bezier_curve(
-    Domain from_ss, Domain to_ss, BuiltMap<int, Helix> helices,
+    Domain from_ss, Domain to_ss, BuiltMap<int, Helix> helices, num from_helix_svg_position_y, num to_helix_svg_position_y,
     {int delta = 0, Geometry geometry}) {
   var from_helix = helices[from_ss.helix];
   var to_helix = helices[to_ss.helix];
@@ -246,8 +246,8 @@ Point<num> control_point_for_crossover_bezier_curve(
   var helix_distance_normalized =
       ((from_helix.svg_position.y - to_helix.svg_position.y) / geometry.distance_between_helices_svg).abs();
 
-  var start_pos = from_helix.svg_base_pos(from_ss.offset_3p + delta, from_ss.forward);
-  var end_pos = to_helix.svg_base_pos(to_ss.offset_5p + delta, to_ss.forward);
+  var start_pos = from_helix.svg_base_pos(from_ss.offset_3p + delta, from_ss.forward, from_helix_svg_position_y);
+  var end_pos = to_helix.svg_base_pos(to_ss.offset_5p + delta, to_ss.forward, to_helix_svg_position_y);
   bool from_strand_below = from_helix.svg_position.y > to_helix.svg_position.y;
   num midX = (start_pos.x + end_pos.x) / 2;
   num midY = (start_pos.y + end_pos.y) / 2;

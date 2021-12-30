@@ -275,27 +275,29 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   /// Gets main view SVG position of "center of base" (middle of square representing base)
   /// given helix idx and offset,  depending on whether strand is going forward or not.
+  /// This function also requires svg_position_y, the y coordinate of the helix
+  /// svg position.
   /// This is relative to the starting point of the Helix.
-  Point<num> svg_base_pos(int offset, bool forward) {
+  Point<num> svg_base_pos(int offset, bool forward, num svg_position_y) {
     num x = geometry.base_width_svg / 2.0 + offset * geometry.base_width_svg;
 
     // svg_height is height of whole helix, including both forward and reverse strand
     // must divide by 2 to get height of one strand, then divide by 2 again to go halfway into square
-    num y = svg_height / 4.0 + this.svg_position.y;
+    num y = svg_height / 4.0 + svg_position_y;
     if (!forward) {
       y += geometry.base_height_svg;
     }
     return Point<num>(x, y);
   }
 
-  int svg_x_to_offset(num x) {
-    var offset = ((x - svg_position.x) / geometry.base_width_svg).floor() + min_offset;
+  int svg_x_to_offset(num x, num svg_position_x) {
+    var offset = ((x - svg_position_x) / geometry.base_width_svg).floor() + min_offset;
     return offset;
   }
 
   // Don't know why but Firefox knows about the SVG translation already so no need to correct for it.
-  bool svg_y_is_forward(num y) {
-    var relative_y = (y - svg_position.y).abs();
+  bool svg_y_is_forward(num y, num svg_position_y) {
+    var relative_y = (y - svg_position_y).abs();
     return relative_y < 10;
   }
 

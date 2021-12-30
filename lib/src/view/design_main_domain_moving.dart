@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
@@ -29,6 +31,7 @@ mixin DesignMainDomainMovingPropsMixin on UiProps {
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
   Geometry geometry;
+  num helix_svg_position_y;
 }
 
 class DesignMainDomainMovingProps = UiProps
@@ -49,8 +52,8 @@ class DesignMainDomainMovingComponent extends UiComponent2<DesignMainDomainMovin
     );
 
     Helix helix = props.helices[domain_moved.helix];
-    var start_svg = helix.svg_base_pos(domain_moved.offset_5p, domain_moved.forward);
-    var end_svg = helix.svg_base_pos(domain_moved.offset_3p, domain_moved.forward);
+    var start_svg = helix.svg_base_pos(domain_moved.offset_5p, domain_moved.forward, props.helix_svg_position_y);
+    var end_svg = helix.svg_base_pos(domain_moved.offset_3p, domain_moved.forward, props.helix_svg_position_y);
 
     var classname = constants.css_selector_domain_moving;
     if (!props.allowable) {

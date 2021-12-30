@@ -531,7 +531,7 @@ Point<int> find_helix_group_min_max(Iterable<Helix> helices_in_group) {
 
 /// Return closest offset in a helix group where click event occured.
 int find_closest_offset(
-    MouseEvent event, Iterable<Helix> helices_in_group, HelixGroup group, Geometry geometry) {
+    MouseEvent event, Iterable<Helix> helices_in_group, HelixGroup group, Geometry geometry, num helices_in_group_first_svg_position_x) {
   var svg_clicked_point = svg_position_of_mouse_click(event);
   var svg_clicked_point_untransformed =
       group.transform_point_main_view(svg_clicked_point, geometry, inverse: true);
@@ -540,7 +540,7 @@ int find_closest_offset(
   var min_offset = range.x;
   var max_offset = range.y;
 
-  int closest_offset_unbounded = helices_in_group.first.svg_x_to_offset(svg_clicked_point_untransformed.x);
+  int closest_offset_unbounded = helices_in_group.first.svg_x_to_offset(svg_clicked_point_untransformed.x, helices_in_group_first_svg_position_x);
 
   // max_offset in helix is non-inclusive, so highest offset value is max_offset - 1
   return min(max_offset - 1, max(closest_offset_unbounded, min_offset));
@@ -564,10 +564,11 @@ BuiltList<DesignSideRotationData> rotation_datas_at_offset_in_group(
 
 /// Return (closest) helix, offset and direction where click event occurred.
 Address find_closest_address(
-    MouseEvent event, Iterable<Helix> helices, BuiltMap<String, HelixGroup> groups, Geometry geometry) {
+    MouseEvent event, Iterable<Helix> helices, BuiltMap<String, HelixGroup> groups, Geometry geometry, Map<num, Point<num>> helix_idx_to_svg_position_map) {
   var svg_clicked_point = svg_position_of_mouse_click(event);
 
   Helix helix = find_closest_helix(event, helices, groups, geometry);
+  var helix_svg_position = helix_idx_to_svg_position_map[helix.idx];
 
   var group = groups[helix.group];
   var helix_upper_left_corner = group.transform_point_main_view(helix.svg_position, geometry);
@@ -577,8 +578,8 @@ Address find_closest_address(
   var closest_point_in_helix_untransformed =
       group.transform_point_main_view(closest_point_in_helix, geometry, inverse: true);
 
-  int offset = helix.svg_x_to_offset(closest_point_in_helix_untransformed.x);
-  bool forward = helix.svg_y_is_forward(closest_point_in_helix_untransformed.y);
+  int offset = helix.svg_x_to_offset(closest_point_in_helix_untransformed.x, helix_svg_position.x);
+  bool forward = helix.svg_y_is_forward(closest_point_in_helix_untransformed.y, helix_svg_position.y);
 
 //  print('* get_closest_address *');
 //  print('  closest helix: ${helix.idx}');
@@ -1233,8 +1234,8 @@ bool helices_view_order_is_default(BuiltList<int> helix_idxs, HelixGroup group) 
 List<int> identity_permutation(int length) => [for (int i = 0; i < length; i++) i];
 
 /// Return offset and direction on helix where click event occurred.
-Address get_address_on_helix(MouseEvent event, Helix helix, HelixGroup group, Geometry geometry) {
-  var closest_address = find_closest_address(event, [helix], {helix.group: group}.build(), geometry);
+Address get_address_on_helix(MouseEvent event, Helix helix, HelixGroup group, Geometry geometry, Point<num> helix_svg_position) {
+  var closest_address = find_closest_address(event, [helix], {helix.group: group}.build(), geometry, {helix.idx: helix_svg_position});
   return closest_address;
 }
 
@@ -1551,12 +1552,12 @@ mouse_leave_update_mouseover() {
   }
 }
 
-update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
+update_mouseover(SyntheticMouseEvent event_syn, Helix helix, Point<num> helix_svg_position) {
   if (show_mouseover_data()) {
     MouseEvent event = event_syn.nativeEvent;
     var group = app.state.design.groups[helix.group];
     var geometry = app.state.design.geometry;
-    var address = get_address_on_helix(event, helix, group, geometry);
+    var address = get_address_on_helix(event, helix, group, geometry, helix_svg_position);
     int offset = address.offset;
     bool forward = address.forward;
 

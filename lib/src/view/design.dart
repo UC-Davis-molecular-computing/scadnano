@@ -4,6 +4,7 @@ library view_design;
 import 'dart:html';
 import 'dart:svg' as svg;
 
+import 'package:built_collection/built_collection.dart';
 import 'package:dnd/dnd.dart';
 import 'package:js/js.dart';
 import 'package:over_react/over_react_redux.dart';
@@ -260,7 +261,8 @@ class DesignViewComponent {
         var group = app.state.design.groups[displayed_group_name];
         var helices_in_group = app.state.design.helices_in_group(displayed_group_name).values;
         int old_offset = app.state.ui_state.storables.slice_bar_offset;
-        var new_offset = util.find_closest_offset(event, helices_in_group, group, app.state.design.geometry);
+        var svg_position_map = util.helices_assign_svg(app.state.design.geometry, app.state.ui_state.invert_xy, Map.fromIterable(helices_in_group, key: (e) => e.idx, value: (e) => e), BuiltMap({displayed_group_name: group}));
+        var new_offset = util.find_closest_offset(event, helices_in_group, group, app.state.design.geometry, svg_position_map[helices_in_group.first.idx].x);
 
         if (old_offset != new_offset) {
           app.dispatch(actions.SliceBarOffsetSet(new_offset));
@@ -281,6 +283,7 @@ class DesignViewComponent {
             Helix helix = moves_store.helix;
             var group = app.state.design.groups[helix.group];
             var geometry = app.state.design.geometry;
+            var svg_position_map = util.helices_assign_svg(app.state.design.geometry, app.state.ui_state.invert_xy, Map.fromIterable(helices_in_group, key: (e) => e.idx, value: (e) => e), BuiltMap({displayed_group_name: group}));
             int offset = util.get_address_on_helix(event, helix, group, geometry).offset;
             int old_offset = moves_store.current_offset;
             if (offset != old_offset) {

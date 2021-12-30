@@ -37,12 +37,14 @@ mixin DesignMainStrandModificationProps on UiProps {
   Address get address => selectable_modification.address;
 
   bool selected;
+
+  num helix_svg_position_y;
 }
 
 class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStrandModificationProps> {
   @override
   render() {
-    Point<num> pos = props.helix.svg_base_pos(props.address.offset, props.address.forward);
+    Point<num> pos = props.helix.svg_base_pos(props.address.offset, props.address.forward, props.helix_svg_position_y);
     bool display_connector = props.display_connector;
 
     String classname = constants.css_selector_modification;

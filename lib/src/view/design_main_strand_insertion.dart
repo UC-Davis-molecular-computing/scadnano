@@ -33,6 +33,7 @@ mixin DesignMainStrandInsertionPropsMixin on UiProps {
   String transform;
   Color color;
   bool selected;
+  num svg_position_y;
 
   Insertion get insertion => selectable_insertion.insertion;
 
@@ -54,7 +55,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       classname += ' ' + constants.css_selector_scaffold;
     }
 
-    Point<num> pos = props.helix.svg_base_pos(props.insertion.offset, props.domain.forward);
+    Point<num> pos = props.helix.svg_base_pos(props.insertion.offset, props.domain.forward, props.svg_position_y);
     ReactElement insertion_background = _insertion_background(pos);
     ReactElement insertion_path = _insertion_path();
     ReactElement text_num_insertions = _text_number_of_insertions(pos);
@@ -83,7 +84,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
     int offset = props.insertion.offset;
     Color color = props.color;
 
-    Point<num> pos = props.helix.svg_base_pos(offset, props.domain.forward);
+    Point<num> pos = props.helix.svg_base_pos(offset, props.domain.forward, props.svg_position_y);
 
     num dx1 = geometry.base_width_svg;
     num dx2 = 0.5 * geometry.base_width_svg;
