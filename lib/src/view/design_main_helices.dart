@@ -32,6 +32,7 @@ mixin DesignMainHelicesProps on UiProps {
   bool display_major_tick_widths_all_helices;
   Geometry geometry;
   bool show_helix_circles;
+  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
 }
 
 class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> with PureComponent {
@@ -79,8 +80,7 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
             ..display_major_tick_widths = props.display_major_tick_widths &&
                 (props.display_major_tick_widths_all_helices || view_order == first_helix_view_order)
             ..key = helix.idx.toString()
-            // TODO(benlee12): Replace helix.svg_position with newly computed svg_position
-            ..svg_position = helix.svg_position)());
+            ..helix_svg_position = props.helix_idx_to_svg_position_map[helix.idx])());
         }
       }
 

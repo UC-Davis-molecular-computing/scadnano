@@ -50,6 +50,7 @@ mixin DesignMainStrandPathsPropsMixin on UiProps {
   bool only_display_selected_helices;
   List<ContextMenuItem> Function(Strand strand, {Domain domain, Address address, ModificationType type})
       context_menu_strand;
+  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
 }
 
 class DesignMainStrandPathsProps = UiProps
@@ -106,6 +107,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..groups = {helix.group: props.groups[helix.group]}.build()
             ..geometry = props.geometry
             ..strand_tooltip = props.strand_tooltip
+            ..helix_svg_position = props.helix_idx_to_svg_position_map[helix.idx]
             ..key = "domain-$i")());
 
           // don't draw 5' or 3' end of a circular strand
@@ -184,6 +186,8 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
           ..prev_domain = prev_ss
           ..next_domain = next_ss
           ..geometry = props.geometry
+          ..prev_domain_helix_svg_position_y = props.helix_idx_to_svg_position_map[prev_ss.helix].y
+          ..next_domain_helix_svg_position_y = props.helix_idx_to_svg_position_map[next_ss.helix].y
           ..key = 'crossover-paths-${idx_crossover - 1}')());
       }
     }
@@ -244,11 +248,11 @@ Point<num> control_point_for_crossover_bezier_curve(
 
   // normalized so that adjacent helices are distance 1
   var helix_distance_normalized =
-      ((from_helix.svg_position.y - to_helix.svg_position.y) / geometry.distance_between_helices_svg).abs();
+      ((from_helix_svg_position_y - to_helix_svg_position_y) / geometry.distance_between_helices_svg).abs();
 
   var start_pos = from_helix.svg_base_pos(from_ss.offset_3p + delta, from_ss.forward, from_helix_svg_position_y);
   var end_pos = to_helix.svg_base_pos(to_ss.offset_5p + delta, to_ss.forward, to_helix_svg_position_y);
-  bool from_strand_below = from_helix.svg_position.y > to_helix.svg_position.y;
+  bool from_strand_below = from_helix_svg_position_y > to_helix_svg_position_y;
   num midX = (start_pos.x + end_pos.x) / 2;
   num midY = (start_pos.y + end_pos.y) / 2;
   Point<num> mid = Point<num>(midX, midY);

@@ -76,6 +76,7 @@ mixin DesignMainStrandPropsMixin on UiProps {
   num strand_name_font_size;
   num modification_font_size;
   bool invert_y;
+  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
 }
 
 class DesignMainStrandProps = UiProps with DesignMainStrandPropsMixin, TransformByHelixGroupPropsMixin;
@@ -119,6 +120,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..drawing_potential_crossover = props.drawing_potential_crossover
         ..moving_dna_ends = props.moving_dna_ends
         ..geometry = props.geometry
+        ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
         ..only_display_selected_helices = props.only_display_selected_helices)(),
       _insertions(),
       _deletions(),
@@ -158,7 +160,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         // select/deselect
         props.strand.handle_selection_mouse_down(event);
         // set up drag detection for moving DNA ends
-        var address = util.find_closest_address(event, props.helices.values, props.groups, props.geometry);
+        var address = util.find_closest_address(event, props.helices.values, props.groups, props.geometry, props.helix_idx_to_svg_position_map);
         HelixGroup group = app.state.design.group_of_strand(props.strand);
         var helices_view_order_inverse = group.helices_view_order_inverse;
         app.dispatch(actions.StrandsMoveStartSelectedStrands(

@@ -1844,15 +1844,11 @@ main() {
     AppState final_state = app_state_reducer(original_state, HelixRemove(0));
     Design final_design = final_state.design;
 
-    Geometry geometry = two_helices_design.geometry;
-
     Helix helix1 = two_helices_design.helices[1];
-    num svg_y_helix_1 = helix1.grid_position.v * geometry.distance_between_helices_svg;
 
-    Helix new_helix1 = helix1.rebuild((b) => b..svg_position_ = Point(0, svg_y_helix_1));
     BuiltList<Strand> new_strands = two_helices_design.strands.rebuild((b) => b..removeRange(0, 2));
     Design expected_design =
-        two_helices_design.rebuild((b) => b..helices.replace({1: new_helix1})..strands.replace(new_strands));
+        two_helices_design.rebuild((b) => b..helices.replace({1: helix1})..strands.replace(new_strands));
 
     expect_design_equal(final_design, expected_design);
   });
@@ -5461,43 +5457,18 @@ main() {
     expect_design_equal(state.design, expected_design);
   });
 
-  test('helix_svg_position_from_position', () {
-    AppState state = app_state_from_design(no_grid_two_helices_design);
-    // helix 0 old position: Position3D(x: 10, y: 60, z: 30);
-    // helix 1 old position: Position3D(x: 20, y: 80, z: 50);
-    Geometry geometry = no_grid_two_helices_design.geometry;
-    Helix helix0 = no_grid_two_helices_design.helices[0];
-    Helix helix1 = no_grid_two_helices_design.helices[1];
-    Point<num> svg_position0 = Point<num>(30, 60) * geometry.nm_to_svg_pixels;
-    Point<num> svg_position1 = Point<num>(50 * geometry.nm_to_svg_pixels,
-        svg_position0.y + util.norm_l2(20 - 10, 80 - 60) * geometry.nm_to_svg_pixels);
-
-    Helix expected_helix0 = helix0.rebuild((b) => b..svg_position_ = svg_position0);
-    Helix expected_helix1 = helix1.rebuild((b) => b..svg_position_ = svg_position1);
-    var expected_helices = {0: expected_helix0, 1: expected_helix1};
-
-    Design expected_design = no_grid_two_helices_design.rebuild((b) => b.helices.replace(expected_helices));
-    expect(state.design, expected_design);
-  });
-
   test('HelixPositionSet', () {
     AppState state = app_state_from_design(no_grid_two_helices_design);
     // helix 0 old position: Position3D(x: 10, y: 60, z: 30);
     // helix 0 new position: Position3D(x: 40, y: 30, z: 130);
     // helix 1 old position: Position3D(x: 20, y: 80, z: 50);
-    Geometry geometry = no_grid_two_helices_design.geometry;
     Helix helix0 = no_grid_two_helices_design.helices[0];
     Helix helix1 = no_grid_two_helices_design.helices[1];
     Position3D new_position0 = Position3D(x: 40, y: 30, z: 130);
-    Point<num> svg_position0 = Point<num>(130, 30) * geometry.nm_to_svg_pixels;
-    Point<num> svg_position1 = Point<num>(50 * geometry.nm_to_svg_pixels,
-        svg_position0.y + util.norm_l2(20 - 40, 80 - 30) * geometry.nm_to_svg_pixels);
 
     Helix expected_helix0 = helix0.rebuild((b) => b
-      ..position_.replace(new_position0)
-      ..svg_position_ = svg_position0);
-    Helix expected_helix1 = helix1.rebuild((b) => b..svg_position_ = svg_position1);
-    var expected_helices = {0: expected_helix0, 1: expected_helix1};
+      ..position_.replace(new_position0));
+    var expected_helices = {0: expected_helix0, 1: helix1};
 
     state = app_state_reducer(state, HelixPositionSet(helix_idx: helix0.idx, position: new_position0));
     Design expected_design = no_grid_two_helices_design.rebuild((b) => b.helices.replace(expected_helices));
@@ -5510,21 +5481,15 @@ main() {
     // helix 1 old position: Position3D(x: 20, y: 80, z: 50);
     // helix 0 new position: Position3D(x: 200, y: 160, z: 10);
     // helix 1 new position: Position3D(x: 300, y: 280, z: 500);
-    Geometry geometry = no_grid_two_helices_design.geometry;
     Helix helix0 = no_grid_two_helices_design.helices[0];
     Helix helix1 = no_grid_two_helices_design.helices[1];
     Position3D position0 = Position3D(x: 200, y: 160, z: 10);
     Position3D position1 = Position3D(x: 300, y: 280, z: 500);
-    Point<num> svg_position0 = Point<num>(10, 160) * geometry.nm_to_svg_pixels;
-    Point<num> svg_position1 = Point<num>(500 * geometry.nm_to_svg_pixels,
-        svg_position0.y + util.norm_l2(300 - 200, 280 - 160) * geometry.nm_to_svg_pixels);
 
     Helix expected_helix0 = helix0.rebuild((b) => b
-      ..position_.replace(position0)
-      ..svg_position_ = svg_position0);
+      ..position_.replace(position0));
     Helix expected_helix1 = helix1.rebuild((b) => b
-      ..position_.replace(position1)
-      ..svg_position_ = svg_position1);
+      ..position_.replace(position1));
 
     var batch_action = BatchAction([
       HelixPositionSet(helix_idx: helix0.idx, position: position0),
@@ -7537,15 +7502,15 @@ main() {
     helix1 = design.helices[1];
     AppState state = app_state_from_design(design);
     // Point<num> original_helix0_svg_position = state.design.helices[0].svg_position;
-    Point<num> original_helix1_svg_position = state.design.helices[1].svg_position;
+    Point<num> original_helix1_svg_position = state.helix_idx_to_svg_position_map[1];
 
     HelixGroup new_group = HelixGroup(helices_view_order: [1,0], grid: Grid.square);
     AppState new_state = app_state_reducer(state, GroupChange(old_name: "foo", new_name: "bar", new_group: new_group));
 
     // New svg position y coordinate should have changed
-    expect(new_state.design.helices[1].svg_position.y, closeTo(original_helix1_svg_position.y, 0.001));
+    expect(new_state.helix_idx_to_svg_position_map[1].y, closeTo(original_helix1_svg_position.y, 0.001));
     var offset = (helix1.position3d.y - helix0.position3d.y) * design.geometry.nm_to_svg_pixels;
-    expect(new_state.design.helices[0].svg_position.y, closeTo(original_helix1_svg_position.y + offset, 0.001));
+    expect(new_state.helix_idx_to_svg_position_map[0].y, closeTo(original_helix1_svg_position.y + offset, 0.001));
   });
 }
 

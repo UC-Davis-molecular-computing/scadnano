@@ -54,7 +54,7 @@ mixin DesignMainDNAEndPropsMixin on UiProps {
 
   bool drawing_potential_crossover;
   bool moving_this_dna_end;
-  num svg_position_y;
+  Point<num> helix_svg_position;
 }
 
 class DesignMainDNAEndProps = UiProps with DesignMainDNAEndPropsMixin;
@@ -98,7 +98,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     DNAEnd dna_end = props.is_5p ? substrand.dnaend_5p : substrand.dnaend_3p;
     var helix = app.state.design.helices[substrand.helix];
     var offset = props.is_5p ? substrand.offset_5p : substrand.offset_3p;
-    var pos = helix.svg_base_pos(offset, substrand.forward, props.svg_position_y);
+    var pos = helix.svg_base_pos(offset, substrand.forward, props.helix_svg_position.y);
 
     EndEitherPrimeProps end_props = (props.is_5p ? End5Prime() : End3Prime());
     end_props = end_props
@@ -207,7 +207,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
 
     if (edit_mode_is_pencil() && !props.drawing_potential_crossover && (is_first || is_last)) {
       int offset = props.is_5p ? props.domain.offset_5p : props.domain.offset_3p;
-      var start_point_untransformed = props.helix.svg_base_pos(offset, props.domain.forward, props.svg_position_y);
+      var start_point_untransformed = props.helix.svg_base_pos(offset, props.domain.forward, props.helix_svg_position.y);
       var start_point = props.group.transform_point_main_view(start_point_untransformed, props.geometry);
       var potential_crossover = PotentialCrossover(
         helix_idx: props.helix.idx,
@@ -242,10 +242,10 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
   }
 
   handle_on_mouse_enter(SyntheticMouseEvent event) {
-    util.update_mouseover(event, props.helix);
+    util.update_mouseover(event, props.helix, props.helix_svg_position);
   }
 
   handle_on_mouse_move(SyntheticMouseEvent event) {
-    util.update_mouseover(event, props.helix);
+    util.update_mouseover(event, props.helix, props.helix_svg_position);
   }
 }

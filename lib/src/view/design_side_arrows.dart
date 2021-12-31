@@ -1,6 +1,3 @@
-@JS()
-library scadnano;
-
 import 'package:js/js.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';

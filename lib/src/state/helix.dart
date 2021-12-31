@@ -77,7 +77,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
       ..grid = grid
       ..grid_position = grid_position?.toBuilder()
       ..position_ = position?.toBuilder()
-      ..svg_position_ = svg_position
       ..roll = roll
       ..invert_xy = invert_xy
       ..min_offset = min_offset
@@ -107,16 +106,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   /// position within square/hex/honeycomb integer grid (side view)
   @nullable
   GridPosition get grid_position;
-
-  /// SVG position of upper-left corner (main view). This is only 2D.
-  /// There is a position object that can be stored in the JSON, but this is used only for 3D visualization,
-  /// which is currently unsupported in scadnano. If we want to support it in the future, we can store that
-  /// position in Helix as well, but svg_position will always be 2D.
-  @nullable
-  Point<num> get svg_position_;
-
-  Point<num> get svg_position =>
-      invert_xy ? (Point<num>(svg_position_.x, -svg_position_.y)) : svg_position_;
 
   @nullable
   Position3D get position_;

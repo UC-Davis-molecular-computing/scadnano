@@ -470,10 +470,10 @@ main() {
         max_offset: 8,
         geometry: Geometry(rise_per_base_pair: rise_per_base_pair));
 
-    expect(helix.svg_x_to_offset(1), -5);
-    expect(helix.svg_x_to_offset(3), -5); // base interior
-    expect(helix.svg_x_to_offset(11), -4);
-    expect(helix.svg_x_to_offset(15), -4); // base interior
-    expect(helix.svg_x_to_offset(21), -3);
+    expect(helix.svg_x_to_offset(1, 0), -5);
+    expect(helix.svg_x_to_offset(3, 0), -5); // base interior
+    expect(helix.svg_x_to_offset(11, 0), -4);
+    expect(helix.svg_x_to_offset(15, 0), -4); // base interior
+    expect(helix.svg_x_to_offset(21, 0), -3);
   });
 }

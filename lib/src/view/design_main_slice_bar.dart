@@ -44,7 +44,7 @@ class DesignMainSliceBarComponent extends UiComponent2<DesignMainSliceBarProps> 
       bool only_display_selected_helices = props.only_display_selected_helices;
       if (only_display_selected_helices && side_selected_helix_idxs.contains(helix.idx) ||
           !only_display_selected_helices) {
-        var y = helix.svg_position.y;
+        var y = props.helix_idx_to_svg_position_map[helix_idx].y;
         displayed_helices_max_y = Math.max(displayed_helices_max_y, y);
         displayed_helices_min_y = Math.min(displayed_helices_min_y, y);
       }

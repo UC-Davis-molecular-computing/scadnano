@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
@@ -34,6 +36,7 @@ UiFactory<DesignMainStrandsMovingProps> ConnectedDesignMainStrandsMoving =
     ..current_group = current_group
     ..helices = state.design.helices
     ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
+    ..helix_idx_to_svg_position_map = state.helix_idx_to_svg_position_map
     ..geometry = state.design.geometry;
 })(DesignMainStrandsMoving);
 
@@ -47,6 +50,7 @@ mixin DesignMainStrandsMovingProps on UiProps {
   BuiltMap<String, HelixGroup> groups;
   BuiltSet<int> side_selected_helix_idxs;
   Geometry geometry;
+  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
 }
 
 class DesignMainStrandsMovingComponent extends UiComponent2<DesignMainStrandsMovingProps> {
@@ -70,6 +74,7 @@ class DesignMainStrandsMovingComponent extends UiComponent2<DesignMainStrandsMov
           ..groups = props.groups
           ..allowable = props.strands_move.allowable
           ..geometry = props.geometry
+          ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
           ..key = strand.toString())()
     ]);
   }

@@ -1,3 +1,6 @@
+import 'package:built_collection/src/map.dart';
+import 'dart:math';
+
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
@@ -5,6 +8,7 @@ import 'design.dart';
 import 'app_ui_state.dart';
 import 'undo_redo.dart';
 import '../constants.dart' as constants;
+import '../util.dart' as util;
 
 part 'app_state.g.dart';
 
@@ -22,6 +26,16 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
   String get error_message;
 
   String get editor_content;
+
+  /// Maps helix indices to helix svg position.
+  ///
+  /// The helix svg position is the SVG position of the upper-left corner
+  /// of the helix in the (main view). This is only 2D.
+  /// There is a position object that can be stored in the JSON, but this is used only for 3D visualization,
+  /// which is currently unsupported in scadnano. If we want to support it in the future, we can store that
+  /// position as well, but svg_position will always be 2D.
+  @memoized
+  BuiltMap<int, Point<num>> get helix_idx_to_svg_position_map => util.helices_assign_svg(design.geometry, ui_state.invert_xy, design.helices.toMap(), design.groups).build();
 
   static void _initializeBuilder(AppStateBuilder b) {
     b.design = null;

@@ -1,5 +1,7 @@
 library view_main;
 
+import 'dart:html';
+
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
@@ -75,6 +77,7 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..display_major_tick_widths = state.ui_state.display_major_tick_widths
         ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices
         ..helix_group_is_moving = state.ui_state.helix_group_is_moving
+        ..helix_idx_to_svg_position_map = state.helix_idx_to_svg_position_map
         ..selection_rope = state.ui_state.selection_rope);
     }
   },
@@ -119,6 +122,7 @@ mixin DesignMainPropsMixin on UiProps {
   int slice_bar_offset;
   String displayed_group_name;
   SelectionRope selection_rope;
+  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
 }
 
 @Props()
@@ -156,18 +160,21 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..display_major_tick_widths_all_helices = props.display_major_tick_widths_all_helices
         // ..slice_bar_offset = props.slice_bar_offset
         // ..displayed_group_name = props.displayed_group_name
+        ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
         ..key = 'helices')(),
       if (props.show_mismatches)
         (DesignMainDNAMismatches()
           ..design = props.design
           ..only_display_selected_helices = props.only_display_selected_helices
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
+          ..helix_idx_to_svg_position_y_map = props.helix_idx_to_svg_position_map.map((helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y))
           ..key = 'mismatches')(),
       if (props.show_domain_name_mismatches)
         (DesignMainDomainNameMismatches()
           ..design = props.design
           ..only_display_selected_helices = props.only_display_selected_helices
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
+          ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
           ..key = 'domain-name-mismatches')(),
       (ConnectedDesignMainStrands()..key = 'strands')(),
       // after strands so can click when crossover overlaps potential crossover
@@ -179,6 +186,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..groups = props.design.groups
           ..geometry = props.design.geometry
+          ..helix_idx_to_svg_position_y_map = props.helix_idx_to_svg_position_map.map((helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y))
           ..key = 'potential-vertical-crossovers')(),
       if (props.strand_creation != null)
         (DesignMainStrandCreating()
@@ -192,6 +200,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
             props.strand_creation.helix.group: props.design.groups[props.strand_creation.helix.group]
           }.build()
           ..geometry = props.design.geometry
+          ..svg_position_y = props.helix_idx_to_svg_position_map[props.strand_creation.helix.idx].y
           ..key = 'strand-creating')(),
       if (props.show_dna)
         (DesignMainDNASequences()
@@ -206,6 +215,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..is_zoom_above_threshold = props.is_zoom_above_threshold
           ..disable_png_cache_until_action_completes = props.disable_png_cache_until_action_completes
           ..only_display_selected_helices = props.only_display_selected_helices
+          ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
           ..key = 'dna-sequences')(),
       if (props.show_loopout_length)
         (DesignMainLoopoutLengths()
@@ -224,6 +234,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..only_display_selected_helices = props.only_display_selected_helices
           ..slice_bar_offset = props.slice_bar_offset
           ..displayed_group_name = props.displayed_group_name
+          ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
           ..key = 'slice-bar'
         )(),
       (ConnectedPotentialCrossoverView()
@@ -246,6 +257,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..only_display_selected_helices = props.only_display_selected_helices
           ..show_helix_circles = props.show_helix_circles
+          ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
           ..key = 'helix-group-moving')(),
       (ConnectedDesignMainStrandsMoving()..key = 'strands-moving')(),
       (ConnectedDesignMainDomainsMoving()..key = 'domains-moving')(),

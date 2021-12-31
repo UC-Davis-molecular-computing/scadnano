@@ -21,6 +21,7 @@ mixin DesignMainPotentialVerticalCrossoversProps on UiProps {
 
   bool only_display_selected_helices;
   BuiltSet<int> side_selected_helix_idxs;
+  BuiltMap<int, num> helix_idx_to_svg_position_y_map;
 }
 
 class DesignMainPotentialVerticalCrossoversComponent
@@ -51,6 +52,7 @@ class DesignMainPotentialVerticalCrossoversComponent
           ..helices = helices_of_crossover
           ..groups = groups_of_crossover
           ..geometry = props.geometry
+          ..helix_idx_to_svg_position_y_map = props.helix_idx_to_svg_position_y_map
           ..key = potential_vertical_crossover.dna_end_top.id)());
       }
     }
