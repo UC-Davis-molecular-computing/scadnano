@@ -30,6 +30,7 @@ Reducer<BuiltMap<int, Helix>> helices_local_reducer = combineReducers([
 ]);
 
 GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGlobalReducers([
+  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.GroupChange>(helix_group_change_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.GridChange>(helix_grid_change_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.SetAppUIStateStorable>(
       set_app_ui_state_storables_set_helices_reducer),
@@ -451,6 +452,11 @@ BuiltMap<int, Helix> helix_grid_change_reducer(
   }
 
   return new_helices.build();
+}
+
+BuiltMap<int, Helix> helix_group_change_reducer(
+        BuiltMap<int, Helix> helices, AppState state, actions.GroupChange action) {
+  return helices.map_values((idx, helix) => helix.group == action.old_name ? helix.rebuild((b) => b..group = action.new_name) : helix);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
