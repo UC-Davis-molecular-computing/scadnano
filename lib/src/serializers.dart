@@ -5,6 +5,7 @@ import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/standard_json_plugin.dart';
 import 'package:color/color.dart';
+import 'package:scadnano/src/dna_file_type.dart';
 import 'package:tuple/tuple.dart';
 
 import 'state/domains_move.dart';
@@ -105,6 +106,7 @@ part 'serializers.g.dart';
   SetShowEditor,
   SaveDNAFile,
   LoadDNAFile,
+  DNAFileType,
   ExportCadnanoFile,
   ExportCodenanoFile,
   MouseoverDataClear,

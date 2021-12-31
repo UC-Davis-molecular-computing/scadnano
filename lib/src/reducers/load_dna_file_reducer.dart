@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/dna_file_type.dart';
 import '../state/selectable.dart';
 
 import '../state/design.dart';
@@ -19,10 +20,10 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
 
   try {
     switch (action.dna_file_type) {
-      case util.DNAFileType.scadnano_file:
+      case DNAFileType.scadnano_file:
         design_new = Design.from_json_str(action.content, state.ui_state.invert_xy);
         break;
-      case util.DNAFileType.cadnano_file:
+      case DNAFileType.cadnano_file:
         design_new = Design.from_cadnano_v2_json_str(action.content, state.ui_state.invert_xy);
         break;
     }
