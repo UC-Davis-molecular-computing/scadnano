@@ -274,6 +274,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
             ..helix = helix
             ..selected = props.selected_deletions_in_strand.contains(selectable_deletion)
             ..transform = transform_of_helix(domain.helix)
+            ..svg_position_y = props.helix_idx_to_svg_position_map[domain.helix].y
             ..key = id)());
         }
       }

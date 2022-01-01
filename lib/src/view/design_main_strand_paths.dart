@@ -132,6 +132,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
                 ..context_menu_strand = props.context_menu_strand
                 ..moving_this_dna_end = props.moving_dna_ends && end_selected
                 ..drawing_potential_crossover = props.drawing_potential_crossover
+                ..helix_svg_position = props.helix_idx_to_svg_position_map[helix.idx]
                 ..key = key)());
               is_5p = false;
             }
