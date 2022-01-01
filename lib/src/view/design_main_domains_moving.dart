@@ -39,6 +39,7 @@ UiFactory<DesignMainDomainsMovingProps> ConnectedDesignMainDomainsMoving =
     ..current_group = current_group
     ..helices = state.design.helices
     ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
+    ..helix_idx_to_svg_position_y_map = state.helix_idx_to_svg_position_map.map((i, p) => MapEntry(i, p.y))
     ..geometry = state.design.geometry;
 })(DesignMainDomainsMoving);
 
@@ -53,6 +54,7 @@ mixin DesignMainDomainsMovingProps on UiProps {
   BuiltMap<String, HelixGroup> groups;
   BuiltSet<int> side_selected_helix_idxs;
   Geometry geometry;
+  BuiltMap<int, num> helix_idx_to_svg_position_y_map;
 }
 
 class DesignMainDomainsMovingComponent extends UiComponent2<DesignMainDomainsMovingProps> with PureComponent {
@@ -77,6 +79,7 @@ class DesignMainDomainsMovingComponent extends UiComponent2<DesignMainDomainsMov
           ..groups = props.groups
           ..allowable = props.domains_move.allowable
           ..geometry = props.geometry
+          ..domain_helix_svg_position_y = props.helix_idx_to_svg_position_y_map[domain.helix]
           ..key = domain.toString())()
     ]);
   }

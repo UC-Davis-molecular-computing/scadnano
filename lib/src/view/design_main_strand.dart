@@ -149,6 +149,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..selected_modifications_in_strand = props.selected_modifications_in_strand
           ..font_size = props.modification_font_size
           ..display_connector = props.modification_display_connector
+          ..helix_idx_to_svg_position_y_map = props.helix_idx_to_svg_position_map.map((i, p) => MapEntry(i, p.y))
           ..key = 'modifications')(),
     ]);
   }
@@ -241,6 +242,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
             ..helix = helix
             ..color = props.strand.color
             ..transform = transform_of_helix(domain.helix)
+            ..svg_position_y = props.helix_idx_to_svg_position_map[helix.idx].y
             ..key = util.id_insertion(domain, selectable_insertion.insertion.offset))());
         }
       }

@@ -31,7 +31,7 @@ mixin DesignMainDomainMovingPropsMixin on UiProps {
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
   Geometry geometry;
-  num helix_svg_position_y;
+  num domain_helix_svg_position_y;
 }
 
 class DesignMainDomainMovingProps = UiProps
@@ -52,8 +52,8 @@ class DesignMainDomainMovingComponent extends UiComponent2<DesignMainDomainMovin
     );
 
     Helix helix = props.helices[domain_moved.helix];
-    var start_svg = helix.svg_base_pos(domain_moved.offset_5p, domain_moved.forward, props.helix_svg_position_y);
-    var end_svg = helix.svg_base_pos(domain_moved.offset_3p, domain_moved.forward, props.helix_svg_position_y);
+    var start_svg = helix.svg_base_pos(domain_moved.offset_5p, domain_moved.forward, props.domain_helix_svg_position_y);
+    var end_svg = helix.svg_base_pos(domain_moved.offset_3p, domain_moved.forward, props.domain_helix_svg_position_y);
 
     var classname = constants.css_selector_domain_moving;
     if (!props.allowable) {

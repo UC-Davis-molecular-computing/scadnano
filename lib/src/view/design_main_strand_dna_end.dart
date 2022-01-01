@@ -123,6 +123,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       ..color = props.color
       ..forward = substrand.forward
       ..is_5p = props.is_5p
+      ..svg_position_y = props.helix_svg_position.y
       ..key = 'moving-end';
 
     return (Dom.g()

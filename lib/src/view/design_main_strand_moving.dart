@@ -78,6 +78,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
           ..is_5p = true //true != props.delta_forward
           ..allowable = props.allowable
           ..current_offset = end_5p_moved.offset_inclusive // + props.delta_offset
+          ..svg_position_y = props.helix_idx_to_svg_position_map[first_helix_moved.idx].y
           ..key = 'end-5p')(),
       if (!strand_moved.circular)
         (EndMoving()
@@ -88,6 +89,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
           ..is_5p = false //false != props.delta_forward
           ..allowable = props.allowable
           ..current_offset = end_3p_moved.offset_inclusive // + props.delta_offset
+          ..svg_position_y = props.helix_idx_to_svg_position_map[last_helix_moved.idx].y
           ..key = 'end-3p')(),
     ]);
   }
@@ -96,7 +98,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
     Domain domain_first = strand_moved.domains.first;
 
     var helix = props.helices[domain_first.helix];
-    var helix_svg_position_y =  props.helix_idx_to_svg_position_map[domain_first.helix].y;
+    var helix_svg_position_y = props.helix_idx_to_svg_position_map[domain_first.helix].y;
     var start_svg = helix.svg_base_pos(domain_first.offset_5p, domain_first.forward, helix_svg_position_y);
     var path_cmds = ['M ${start_svg.x} ${start_svg.y}'];
 
@@ -115,6 +117,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
           var old_domain = domain;
           domain = substrands[idx_next];
           helix = props.helices[domain.helix];
+          helix_svg_position_y = props.helix_idx_to_svg_position_map[helix.idx].y;
           start_svg = helix.svg_base_pos(domain.offset_5p, domain.forward, helix_svg_position_y);
           var control = control_point_for_crossover_bezier_curve(old_domain, domain, props.helices,
               props.helix_idx_to_svg_position_map[old_domain.helix].y, props.helix_idx_to_svg_position_map[domain.helix].y,

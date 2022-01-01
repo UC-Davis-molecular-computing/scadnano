@@ -162,6 +162,8 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..next_domain = next_dom
             ..prev_helix = prev_helix
             ..next_helix = next_helix
+            ..prev_helix_svg_position_y = props.helix_idx_to_svg_position_map[prev_helix.idx].y
+            ..next_helix_svg_position_y = props.helix_idx_to_svg_position_map[next_helix.idx].y
             ..key = "loopout-$i")());
         }
       }
