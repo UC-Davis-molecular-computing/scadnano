@@ -342,6 +342,9 @@ Map<int, Point<num>> helices_assign_svg(
 
     Helix prev_helix = null;
     for (var helix in selected_helices_sorted_by_view_order) {
+      // Assertion: Helices should already be updated by reducers
+      assert(helix.geometry == geometry);
+      assert(helix.invert_xy == invert_xy);
       num x = main_view_svg_x_of_helix(geometry, helix);
       num y = main_view_svg_y_of_helix(geometry, helix);
       if (prev_helix != null) {
@@ -359,14 +362,6 @@ Map<int, Point<num>> helices_assign_svg(
         y = prev_y + delta_y;
       }
       prev_y = y;
-      // TODO(benlee12): The modifications to the geometry and invert_xy is made
-      // to a temporary helix and is deleted at the end of the function call.
-      // It seems like these modifications were useful in an earlier use case, but
-      // now is not needed. However, need to double check if any other parts of the
-      // code was relying on this update.
-      helix = helix.rebuild((b) => b
-        ..geometry.replace(geometry)
-        ..invert_xy = invert_xy);
       prev_helix = helix;
 
       svg_positions[helix.idx] = Point<num>(x, invert_xy ? -y : y);
