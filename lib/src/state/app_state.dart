@@ -15,7 +15,6 @@ part 'app_state.g.dart';
 final DEFAULT_AppState = AppStateBuilder().build();
 
 abstract class AppState implements Built<AppState, AppStateBuilder> {
-
   @nullable
   Design get design;
 
@@ -35,7 +34,15 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
   /// which is currently unsupported in scadnano. If we want to support it in the future, we can store that
   /// position as well, but svg_position will always be 2D.
   @memoized
-  BuiltMap<int, Point<num>> get helix_idx_to_svg_position_map => util.helices_assign_svg(design.geometry, ui_state.invert_xy, design.helices.toMap(), design.groups).build();
+  BuiltMap<int, Point<num>> get helix_idx_to_svg_position_map {
+    var sw = Stopwatch();
+    sw.start();
+    BuiltMap<int, Point<num>> ret = util
+        .helices_assign_svg(design.geometry, ui_state.invert_xy, design.helices, design.groups)
+        .build();
+    print('${sw.elapsedMicroseconds} microseconds to calculate helix_idx_to_svg_position_map');
+    return ret;
+  }
 
   static void _initializeBuilder(AppStateBuilder b) {
     b.design = null;
@@ -68,5 +75,4 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
 
   @memoized
   int get hashCode;
-
 }

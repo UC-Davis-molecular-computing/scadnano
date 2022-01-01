@@ -314,7 +314,7 @@ bool lists_contain_same_elts<T extends Comparable>(Iterable<T> elts1, Iterable<T
 
 /// Returns SVG position for helices
 Map<int, Point<num>> helices_assign_svg(
-    Geometry geometry, bool invert_xy, Map<int, Helix> helices, BuiltMap<String, HelixGroup> groups,
+    Geometry geometry, bool invert_xy, BuiltMap<int, Helix> helices, BuiltMap<String, HelixGroup> groups,
     {BuiltSet<int> selected_helix_idxs = null}) {
   if (selected_helix_idxs == null || selected_helix_idxs.isEmpty) {
     selected_helix_idxs = [for (var helix in helices.values) helix.idx].toBuiltSet();

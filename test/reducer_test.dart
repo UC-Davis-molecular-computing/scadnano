@@ -1759,12 +1759,14 @@ main() {
   Design two_helices_join_inner_strands = Design.from_json(jsonDecode(two_helices_join_inner_strands_json));
   test('pencil should connect a 3p end to a 5p end', () {
     AppState state = app_state_from_design(two_helices_design);
-    Map<int, Point<num>> svg_position_map = util.helices_assign_svg(two_helices_design.geometry, state.ui_state.invert_xy, two_helices_design.helices.toMap(), two_helices_design.groups);
+    Map<int, Point<num>> svg_position_map = util.helices_assign_svg(two_helices_design.geometry,
+        state.ui_state.invert_xy, two_helices_design.helices, two_helices_design.groups);
 
     Strand h0_reverse_strand = two_helices_design.strands[1];
     Strand h1_forward_strand = two_helices_design.strands[2];
     Helix h0 = two_helices_design.helices[0];
-    Point<num> start_point = h0.svg_base_pos(0, false, svg_position_map[0].y); // 3p end is 0 offset and forward is false.
+    Point<num> start_point =
+        h0.svg_base_pos(0, false, svg_position_map[0].y); // 3p end is 0 offset and forward is false.
     PotentialCrossover helix_0_3p_end_potential_crossover = PotentialCrossover(
       helix_idx: 0,
       forward: false,
@@ -1787,12 +1789,14 @@ main() {
   });
   test('pencil should connect a 5p end to a 3p end', () {
     AppState state = app_state_from_design(two_helices_design);
-    Map<int, Point<num>> svg_position_map = util.helices_assign_svg(two_helices_design.geometry, state.ui_state.invert_xy, two_helices_design.helices.toMap(), two_helices_design.groups);
+    Map<int, Point<num>> svg_position_map = util.helices_assign_svg(two_helices_design.geometry,
+        state.ui_state.invert_xy, two_helices_design.helices, two_helices_design.groups);
 
     Strand h0_reverse_strand = two_helices_design.strands[1];
     Strand h1_forward_strand = two_helices_design.strands[2];
     Helix h1 = two_helices_design.helices[1];
-    Point<num> start_point = h1.svg_base_pos(0, true, svg_position_map[1].y); // 5p end is 0 offset and forward is true.
+    Point<num> start_point =
+        h1.svg_base_pos(0, true, svg_position_map[1].y); // 5p end is 0 offset and forward is true.
     PotentialCrossover helix_1_5p_end_potential_crossover = PotentialCrossover(
       helix_idx: 1,
       forward: true,
@@ -4436,7 +4440,8 @@ main() {
     //
     // 1 [------------------->
     //   <-------------------]
-    Map<int, Point<num>> svg_position_map = util.helices_assign_svg(two_helices_design.geometry, false, two_helices_design.helices.toMap(), two_helices_design.groups);
+    Map<int, Point<num>> svg_position_map = util.helices_assign_svg(
+        two_helices_design.geometry, false, two_helices_design.helices, two_helices_design.groups);
 
     DNAEnd dnaEnd = two_helices_design.strands.first.dnaend_5p;
     Helix helix0 = two_helices_design.helices.values.first;
@@ -5091,7 +5096,7 @@ main() {
       expect(state.ui_state.strands_move, expected_strands_move);
     });
   });
-  
+
   group('insertion/deletion', () {
     //TODO: add some unit tests that test this when DNA sequences are on the domains, and both domains
     // having the deletion/insertion added are part of the same strand (e.g., a hairpin);
@@ -5466,8 +5471,7 @@ main() {
     Helix helix1 = no_grid_two_helices_design.helices[1];
     Position3D new_position0 = Position3D(x: 40, y: 30, z: 130);
 
-    Helix expected_helix0 = helix0.rebuild((b) => b
-      ..position_.replace(new_position0));
+    Helix expected_helix0 = helix0.rebuild((b) => b..position_.replace(new_position0));
     var expected_helices = {0: expected_helix0, 1: helix1};
 
     state = app_state_reducer(state, HelixPositionSet(helix_idx: helix0.idx, position: new_position0));
@@ -5486,10 +5490,8 @@ main() {
     Position3D position0 = Position3D(x: 200, y: 160, z: 10);
     Position3D position1 = Position3D(x: 300, y: 280, z: 500);
 
-    Helix expected_helix0 = helix0.rebuild((b) => b
-      ..position_.replace(position0));
-    Helix expected_helix1 = helix1.rebuild((b) => b
-      ..position_.replace(position1));
+    Helix expected_helix0 = helix0.rebuild((b) => b..position_.replace(position0));
+    Helix expected_helix1 = helix1.rebuild((b) => b..position_.replace(position1));
 
     var batch_action = BatchAction([
       HelixPositionSet(helix_idx: helix0.idx, position: position0),
@@ -7496,7 +7498,7 @@ main() {
   test('adjusting_helices_view_order_should_update_svg_position', () {
     Helix helix0 = Helix(idx: 0, grid_position: GridPosition(0, 0), group: "foo");
     Helix helix1 = Helix(idx: 1, grid_position: GridPosition(0, 1), group: "foo");
-    HelixGroup group = HelixGroup(helices_view_order: [0,1], grid: Grid.square);
+    HelixGroup group = HelixGroup(helices_view_order: [0, 1], grid: Grid.square);
     Design design = Design(helices: [helix0, helix1], groups: {"foo": group});
     helix0 = design.helices[0];
     helix1 = design.helices[1];
@@ -7504,13 +7506,15 @@ main() {
     // Point<num> original_helix0_svg_position = state.design.helices[0].svg_position;
     Point<num> original_helix1_svg_position = state.helix_idx_to_svg_position_map[1];
 
-    HelixGroup new_group = HelixGroup(helices_view_order: [1,0], grid: Grid.square);
-    AppState new_state = app_state_reducer(state, GroupChange(old_name: "foo", new_name: "bar", new_group: new_group));
+    HelixGroup new_group = HelixGroup(helices_view_order: [1, 0], grid: Grid.square);
+    AppState new_state =
+        app_state_reducer(state, GroupChange(old_name: "foo", new_name: "bar", new_group: new_group));
 
     // New svg position y coordinate should have changed
     expect(new_state.helix_idx_to_svg_position_map[1].y, closeTo(original_helix1_svg_position.y, 0.001));
     var offset = (helix1.position3d.y - helix0.position3d.y) * design.geometry.nm_to_svg_pixels;
-    expect(new_state.helix_idx_to_svg_position_map[0].y, closeTo(original_helix1_svg_position.y + offset, 0.001));
+    expect(new_state.helix_idx_to_svg_position_map[0].y,
+        closeTo(original_helix1_svg_position.y + offset, 0.001));
   });
 }
 
