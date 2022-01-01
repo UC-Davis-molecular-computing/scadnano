@@ -369,7 +369,7 @@ Map<int, Point<num>> helices_assign_svg(
         ..invert_xy = invert_xy);
       prev_helix = helix;
 
-      svg_positions[helix.idx] = Point<num>(x, y);
+      svg_positions[helix.idx] = Point<num>(x, invert_xy ? -y : y);
     }
   }
 
