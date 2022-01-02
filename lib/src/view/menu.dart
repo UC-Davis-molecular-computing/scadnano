@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:scadnano/src/dna_file_type.dart';
 import 'package:scadnano/src/json_serializable.dart';
 import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/dna_end.dart';
@@ -1167,7 +1168,7 @@ cadnano_file_loaded(FileReader file_reader, String filename) async {
   try {
     var json_cadnano_text = file_reader.result;
     filename = path.setExtension(filename, '.${constants.default_scadnano_file_extension}');
-    app.dispatch(actions.LoadDNAFile(content: json_cadnano_text, filename: filename, dna_file_type: util.DNAFileType.cadnano_file));
+    app.dispatch(actions.LoadDNAFile(content: json_cadnano_text, filename: filename, dna_file_type: DNAFileType.cadnano_file));
   } on Exception catch (e) {
     window.alert('Error importing file: ${e}');
   }

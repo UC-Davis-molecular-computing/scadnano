@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/dna_file_type.dart';
 import '../state/selectable.dart';
 
 import '../state/design.dart';

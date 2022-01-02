@@ -1628,5 +1628,3 @@ Map<int, int> invert_helices_view_order(Iterable<int> helices_view_order) {
   }
   return view_order_inverse;
 }
-
-enum DNAFileType { scadnano_file, cadnano_file }
