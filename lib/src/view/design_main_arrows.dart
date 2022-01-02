@@ -17,14 +17,14 @@ part 'design_main_arrows.over_react.g.dart';
 UiFactory<DesignMainArrowsProps> ConnectedDesignMainArrows =
     connect<AppState, DesignMainArrowsProps>(mapStateToProps: (state) {
   return DesignMainArrows()
-    ..invert_xy = state.ui_state.invert_xy
+    ..invert_y = state.ui_state.invert_y
     ..show_helices_axis_arrows = state.ui_state.show_helices_axis_arrows;
 })(DesignMainArrows);
 
 UiFactory<DesignMainArrowsProps> DesignMainArrows = _$DesignMainArrows;
 
 mixin DesignMainArrowsProps on UiProps {
-  bool invert_xy;
+  bool invert_y;
   bool show_helices_axis_arrows;
 }
 
@@ -43,7 +43,7 @@ class DesignMainArrowsComponent extends UiComponent2<DesignMainArrowsProps> {
         'M -$x_end_offset -$x_end_offset L $x_end_offset $x_end_offset M $x_end_offset -$x_end_offset L -$x_end_offset $x_end_offset';
 
     num svg_center_x = circle_rad + arrow_padding,
-        svg_center_y = props.invert_xy ? mag + circle_rad + arrow_padding : circle_rad + arrow_padding;
+        svg_center_y = props.invert_y ? mag + circle_rad + arrow_padding : circle_rad + arrow_padding;
 
     num font_width = 12, font_height = 17;    // arbitrary dimensions found through web inspector
 
@@ -52,9 +52,9 @@ class DesignMainArrowsComponent extends UiComponent2<DesignMainArrowsProps> {
       return (Dom.g()
       ..className = 'arrow-group'
       ..transform = 'translate($svg_center_x, $svg_center_y)')([
-        (Dom.svgTitle()..key = "title")(props.invert_xy ? "⦻ - Into the screen" : "⊙ - Out of the screen"),
+        (Dom.svgTitle()..key = "title")(props.invert_y ? "⦻ - Into the screen" : "⊙ - Out of the screen"),
         //outward arrow (X-axis) into the screen ⦻
-        if (props.invert_xy) ...[
+        if (props.invert_y) ...[
           (Dom.path()
             ..key = "x"
             ..d = x_path
@@ -79,13 +79,13 @@ class DesignMainArrowsComponent extends UiComponent2<DesignMainArrowsProps> {
         //downward arrow (Y-axis)
         (Dom.path()
           ..key = "y_path"
-          ..transform = props.invert_xy ? 'rotate(0)' : 'rotate(180)'
+          ..transform = props.invert_y ? 'rotate(0)' : 'rotate(180)'
           ..d = arrow_path
           ..fill = "none"
           ..stroke = 'green'
           ..className = 'axis-arrow')(),
         //outward arrow (X-axis) out of the screen ⊙
-        if (!props.invert_xy) ...[
+        if (!props.invert_y) ...[
           (Dom.circle()
             ..key = "dot"
             ..r = "2"
@@ -103,12 +103,12 @@ class DesignMainArrowsComponent extends UiComponent2<DesignMainArrowsProps> {
         (Dom.text()
           ..key = 'x-axis-label'
           ..x = circle_rad
-          ..y = props.invert_xy ? -circle_rad : circle_rad + font_height
+          ..y = props.invert_y ? -circle_rad : circle_rad + font_height
           ..style = {"fill": "red"})("X"),
         (Dom.text()
           ..key = 'y-axis-label'
           ..x = -font_width / 2
-          ..y = props.invert_xy ? -mag - 2 : mag + font_height - 2
+          ..y = props.invert_y ? -mag - 2 : mag + font_height - 2
           ..style = {"fill": "green"})("Y"),
         (Dom.text()
           ..key = 'z-axis-label'

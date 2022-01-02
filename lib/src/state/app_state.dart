@@ -38,7 +38,7 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
     var sw = Stopwatch();
     sw.start();
     BuiltMap<int, Point<num>> ret = util
-        .helices_assign_svg(design.geometry, ui_state.invert_xy, design.helices, design.groups)
+        .helices_assign_svg(design.geometry, ui_state.invert_y, design.helices, design.groups)
         .build();
     print('${sw.elapsedMicroseconds} microseconds to calculate helix_idx_to_svg_position_map');
     return ret;

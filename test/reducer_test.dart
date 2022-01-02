@@ -1760,7 +1760,7 @@ main() {
   test('pencil should connect a 3p end to a 5p end', () {
     AppState state = app_state_from_design(two_helices_design);
     Map<int, Point<num>> svg_position_map = util.helices_assign_svg(two_helices_design.geometry,
-        state.ui_state.invert_xy, two_helices_design.helices, two_helices_design.groups);
+        state.ui_state.invert_y, two_helices_design.helices, two_helices_design.groups);
 
     Strand h0_reverse_strand = two_helices_design.strands[1];
     Strand h1_forward_strand = two_helices_design.strands[2];
@@ -1790,7 +1790,7 @@ main() {
   test('pencil should connect a 5p end to a 3p end', () {
     AppState state = app_state_from_design(two_helices_design);
     Map<int, Point<num>> svg_position_map = util.helices_assign_svg(two_helices_design.geometry,
-        state.ui_state.invert_xy, two_helices_design.helices, two_helices_design.groups);
+        state.ui_state.invert_y, two_helices_design.helices, two_helices_design.groups);
 
     Strand h0_reverse_strand = two_helices_design.strands[1];
     Strand h1_forward_strand = two_helices_design.strands[2];

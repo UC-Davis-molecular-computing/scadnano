@@ -34,7 +34,7 @@ GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGl
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.GridChange>(helix_grid_change_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.SetAppUIStateStorable>(
       set_app_ui_state_storables_set_helices_reducer),
-  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.InvertXYSet>(invert_xy_set_helices_reducer),
+  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.InvertYSet>(invert_y_set_helices_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixGridPositionSet>(
       helix_grid_position_set_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixPositionSet>(helix_position_set_reducer),
@@ -336,7 +336,7 @@ Design helix_add_design_reducer(Design design, AppState state, actions.HelixAdd 
     position: action.position,
     min_offset: min_offset,
     max_offset: max_offset,
-    invert_xy: state.ui_state.invert_xy,
+    invert_y: state.ui_state.invert_y,
   );
   Map<int, Helix> new_helices = design.helices.toMap();
   new_helices[helix.idx] = helix;
@@ -461,24 +461,24 @@ BuiltMap<int, Helix> helix_group_change_reducer(
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // invert y axis
-BuiltMap<int, Helix> invert_xy_set_helices_reducer(
-    BuiltMap<int, Helix> helices, AppState state, actions.InvertXYSet action) {
+BuiltMap<int, Helix> invert_y_set_helices_reducer(
+    BuiltMap<int, Helix> helices, AppState state, actions.InvertYSet action) {
   var new_helices = helices.toMap();
   for (var key in new_helices.keys) {
     new_helices[key] = new_helices[key].rebuild((b) => b
-      ..invert_xy = action.invert_xy
+      ..invert_y = action.invert_y
     );
   }
   return new_helices.build();
 }
 
-// This is needed when the whole AppUIStateStorables is set, since it also changes invert_yz
+// This is needed when the whole AppUIStateStorables is set, since it also changes invert_y
 BuiltMap<int, Helix> set_app_ui_state_storables_set_helices_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.SetAppUIStateStorable action) {
   var new_helices = helices.toMap();
   for (var key in new_helices.keys) {
     new_helices[key] = new_helices[key].rebuild((b) => b
-      ..invert_xy = action.storables.invert_yz
+      ..invert_y = action.storables.invert_y
     );
   }
   return new_helices.build();

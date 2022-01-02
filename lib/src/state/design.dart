@@ -53,7 +53,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       Map<String, HelixGroup> groups = null,
       Iterable<Strand> strands = const [],
       Map<String, Object> unused_fields = const {},
-      bool invert_xy = false}) {
+      bool invert_y = false}) {
     // At most one of helices or helix_builders can be set, not both.
     int num_not_null = 0;
     if (helices != null) num_not_null++;
@@ -108,7 +108,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     for (var key in helices_map.keys) {
       helices_map[key] = helices_map[key].rebuild((b) => b
         ..geometry.replace(geometry)
-        ..invert_xy = invert_xy
+        ..invert_y = invert_y
       );
     }
 
@@ -915,7 +915,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   ///
   /// Pass these two maps into _groups_from_json so that groups can be assigned appropriate pitch, yaw values.
   static Tuple3<Map<int, HelixBuilder>, Map<String, HelixPitchYaw>, Map<HelixPitchYaw, List<HelixBuilder>>>
-      _helices_from_json(Map<String, dynamic> json_map, bool invert_xy, Geometry geometry) {
+      _helices_from_json(Map<String, dynamic> json_map, bool invert_y, Geometry geometry) {
     // Initialize containers
     List<HelixBuilder> helix_builders_list = [];
     Map<String, HelixPitchYaw> group_to_pitch_yaw = {};
@@ -989,7 +989,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       /// END Backward Compatibility Code for Helix With Individual Pitch/Yaw ///
       ///////////////////////////////////////////////////////////////////////////
 
-      helix_builder.invert_xy = invert_xy;
+      helix_builder.invert_y = invert_y;
       helix_builder.geometry = geometry.toBuilder();
       if (grid_is_none && !using_groups && helix_json.containsKey(constants.grid_position_key)) {
         throw IllegalDesignError(
@@ -1116,13 +1116,13 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   static Tuple2<Map<int, HelixBuilder>, Map<String, HelixGroupBuilder>> _helices_and_groups_from_json(
-      Map<String, dynamic> json_map, bool invert_xy, bool position_x_z_should_swap, Geometry geometry) {
+      Map<String, dynamic> json_map, bool invert_y, bool position_x_z_should_swap, Geometry geometry) {
     var grid =
         util.optional_field(json_map, constants.grid_key, constants.default_grid, transformer: Grid.valueOf);
     bool grid_is_none = grid == Grid.none;
     bool using_groups = json_map.containsKey(constants.groups_key);
 
-    var r = _helices_from_json(json_map, invert_xy, geometry);
+    var r = _helices_from_json(json_map, invert_y, geometry);
     Map<int, HelixBuilder> helix_builders_map = r.item1;
     Map<String, HelixPitchYaw> group_to_pitch_yaw = r.item2;
     Map<HelixPitchYaw, List<HelixBuilder>> pitch_yaw_to_helices = r.item3;
@@ -1157,12 +1157,12 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return Tuple2(helix_builders_map, group_builders_map);
   }
 
-  static Design from_json_str(String json_str, [bool invert_xy = false]) {
+  static Design from_json_str(String json_str, [bool invert_y = false]) {
     var json_map = jsonDecode(json_str);
-    return Design.from_json(json_map, invert_xy);
+    return Design.from_json(json_map, invert_y);
   }
 
-  static Design from_json(Map<String, dynamic> json_map, [bool invert_xy = false]) {
+  static Design from_json(Map<String, dynamic> json_map, [bool invert_y = false]) {
     if (json_map == null) return null;
 
     _check_mutually_exclusive_fields(json_map);
@@ -1178,7 +1178,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         transformer: (geometry_map) => Geometry.from_json(geometry_map),
         legacy_keys: constants.legacy_geometry_keys);
 
-    var t = Design._helices_and_groups_from_json(json_map, invert_xy, position_x_z_should_swap, geometry);
+    var t = Design._helices_and_groups_from_json(json_map, invert_y, position_x_z_should_swap, geometry);
     var helix_builders_map = t.item1;
     var group_builders_map = t.item2;
 
@@ -1215,7 +1215,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         groups: groups_map,
         geometry: geometry,
         unused_fields: unused_fields.toMap(),
-        invert_xy: invert_xy);
+        invert_y: invert_y);
   }
 
   static List<int> set_helices_view_order_default_group(
@@ -1832,12 +1832,12 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   /// Creates a Design from a cadnano v2 file.
-  static Design from_cadnano_v2_json_str(String str, [bool invert_xy = false]) {
-    return from_cadnano_v2(jsonDecode(str), invert_xy);
+  static Design from_cadnano_v2_json_str(String str, [bool invert_y = false]) {
+    return from_cadnano_v2(jsonDecode(str), invert_y);
   }
 
   /// Creates a Design from a cadnano v2 file.
-  static Design from_cadnano_v2(Map<String, dynamic> json_dict, [bool invert_xy = false]) {
+  static Design from_cadnano_v2(Map<String, dynamic> json_dict, [bool invert_y = false]) {
     Map<String, dynamic> cadnano_v2_design = json_dict;
 
     int num_bases = cadnano_v2_design['vstrands'][0]['scaf'].length;
@@ -1889,7 +1889,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       }
     }
 
-    return Design(helix_builders: helix_builders.values, strands: strands, grid: grid_type, invert_xy: invert_xy);
+    return Design(helix_builders: helix_builders.values, strands: strands, grid: grid_type, invert_y: invert_y);
   }
 
   /// Routine that will follow a cadnano v2 strand accross helices and create

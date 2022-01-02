@@ -179,7 +179,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   BuiltSet<EditModeChoice> get edit_modes => storables.edit_modes;
 
-  bool get invert_xy => storables.invert_yz;
+  bool get invert_y => storables.invert_y;
 
   bool get warn_on_exit_if_unsaved => storables.warn_on_exit_if_unsaved;
 

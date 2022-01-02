@@ -53,7 +53,7 @@ _autobreak(Store<AppState> store, actions.Autobreak action) async {
 void _handle_response(Store<AppState> store, http.Response response) {
   if (response.statusCode == 200) {
     var json_model_text = response.body;
-    var design_new = Design.from_json_str(json_model_text, store.state.ui_state.invert_xy);
+    var design_new = Design.from_json_str(json_model_text, store.state.ui_state.invert_y);
     store.dispatch(actions.NewDesignSet(design: design_new));
   } else {
     Map response_body_json = jsonDecode(response.body);

@@ -314,7 +314,7 @@ bool lists_contain_same_elts<T extends Comparable>(Iterable<T> elts1, Iterable<T
 
 /// Returns SVG position for helices
 Map<int, Point<num>> helices_assign_svg(
-    Geometry geometry, bool invert_xy, BuiltMap<int, Helix> helices, BuiltMap<String, HelixGroup> groups,
+    Geometry geometry, bool invert_y, BuiltMap<int, Helix> helices, BuiltMap<String, HelixGroup> groups,
     {BuiltSet<int> selected_helix_idxs = null}) {
   if (selected_helix_idxs == null || selected_helix_idxs.isEmpty) {
     selected_helix_idxs = [for (var helix in helices.values) helix.idx].toBuiltSet();
@@ -344,7 +344,7 @@ Map<int, Point<num>> helices_assign_svg(
     for (var helix in selected_helices_sorted_by_view_order) {
       // Assertion: Helices should already be updated by reducers
       assert(helix.geometry == geometry);
-      assert(helix.invert_xy == invert_xy);
+      assert(helix.invert_y == invert_y);
       num x = main_view_svg_x_of_helix(geometry, helix);
       num y = main_view_svg_y_of_helix(geometry, helix);
       if (prev_helix != null) {
@@ -364,7 +364,7 @@ Map<int, Point<num>> helices_assign_svg(
       prev_y = y;
       prev_helix = helix;
 
-      svg_positions[helix.idx] = Point<num>(x, invert_xy ? -y : y);
+      svg_positions[helix.idx] = Point<num>(x, invert_y ? -y : y);
     }
   }
 
@@ -719,7 +719,7 @@ transform_rect_svg_to_mouse_coord_main_view(Rect rect) {
   transform_rect_svg_to_mouse_coord(rect, current_pan(true), current_zoom(true));
 }
 
-Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid, bool invert_yz, Geometry geometry) {
+Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid, bool invert_y, Geometry geometry) {
   Point<num> point;
   if (grid == Grid.square) {
     point = Point<num>(gp.h, gp.v);
@@ -731,10 +731,10 @@ Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid, bool invert_yz, Geo
     throw ArgumentError(
         'cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
   }
-  if (invert_yz) {
-    num z = point.x; // note Point.x is its name in the math library, but in the side view it means z
+  if (invert_y) {
+    num x = point.x;
     num y = point.y;
-    point = Point<num>(-z, -y);
+    point = Point<num>(-x, -y);
   }
   return point * geometry.distance_between_helices_svg;
 }

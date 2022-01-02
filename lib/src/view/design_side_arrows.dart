@@ -14,14 +14,14 @@ part 'design_side_arrows.over_react.g.dart';
 UiFactory<DesignSideArrowsProps> ConnectedDesignSideArrows =
     connect<AppState, DesignSideArrowsProps>(mapStateToProps: (state) {
   return DesignSideArrows()
-    ..invert_xy = state.ui_state.invert_xy
+    ..invert_y = state.ui_state.invert_y
     ..show_helices_axis_arrows = state.ui_state.show_helices_axis_arrows;
 })(DesignSideArrows);
 
 UiFactory<DesignSideArrowsProps> DesignSideArrows = _$DesignSideArrows;
 
 mixin DesignSideArrowsProps on UiProps {
-  bool invert_xy;
+  bool invert_y;
   bool show_helices_axis_arrows;
 }
 
@@ -39,8 +39,8 @@ class DesignMainArrowsComponent extends UiComponent2<DesignSideArrowsProps> {
     var x_path =
         'M -$x_end_offset -$x_end_offset L $x_end_offset $x_end_offset M $x_end_offset -$x_end_offset L -$x_end_offset $x_end_offset';
 
-    num svg_center_x = props.invert_xy ? mag + circle_rad + arrow_padding : circle_rad + arrow_padding,
-        svg_center_y = props.invert_xy ? mag + circle_rad + arrow_padding : circle_rad + arrow_padding;
+    num svg_center_x = props.invert_y ? mag + circle_rad + arrow_padding : circle_rad + arrow_padding,
+        svg_center_y = props.invert_y ? mag + circle_rad + arrow_padding : circle_rad + arrow_padding;
 
     num font_width = 12, font_height = 17;    // arbitrary dimensions found through web inspector
 
@@ -65,7 +65,7 @@ class DesignMainArrowsComponent extends UiComponent2<DesignSideArrowsProps> {
         // horizontal arrow (X-axis)
         (Dom.path()
           ..key = "x_path"
-          ..transform = props.invert_xy ? 'rotate(270)' : 'rotate(90)'
+          ..transform = props.invert_y ? 'rotate(270)' : 'rotate(90)'
           ..d = arrow_path
           ..fill = "none"
           ..stroke = 'red'
@@ -73,23 +73,23 @@ class DesignMainArrowsComponent extends UiComponent2<DesignSideArrowsProps> {
         //downward arrow (Y-axis)
         (Dom.path()
           ..key = "y_path"
-          ..transform = props.invert_xy ? 'rotate(0)' : 'rotate(180)'
+          ..transform = props.invert_y ? 'rotate(0)' : 'rotate(180)'
           ..d = arrow_path
           ..fill = "none"
           ..stroke = 'green'
           ..className = 'axis-arrow')(),
         // axis labels
         (Dom.text()
-          ..x = props.invert_xy ? -mag - font_width - 2 : mag + 2
+          ..x = props.invert_y ? -mag - font_width - 2 : mag + 2
           ..y = font_height / 2 - 2
           ..style = {"fill": "red"})("X"),
         (Dom.text()
           ..x = -font_width / 2
-          ..y = props.invert_xy ? -mag - 2 : mag + font_height - 2
+          ..y = props.invert_y ? -mag - 2 : mag + font_height - 2
           ..style = {"fill": "green"})("Y"),
         (Dom.text()
-          ..x = props.invert_xy ? -circle_rad - font_width : circle_rad
-          ..y = props.invert_xy ? -circle_rad : circle_rad + font_height
+          ..x = props.invert_y ? -circle_rad - font_width : circle_rad
+          ..y = props.invert_y ? -circle_rad : circle_rad + font_height
           ..style = {"fill": "blue"})("Z"),
       );
     } else {
