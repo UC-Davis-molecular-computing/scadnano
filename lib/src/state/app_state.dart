@@ -1,3 +1,4 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:built_collection/src/map.dart';
 import 'dart:math';
 
@@ -37,8 +38,15 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
   BuiltMap<int, Point<num>> get helix_idx_to_svg_position_map {
     var sw = Stopwatch();
     sw.start();
+
+    BuiltSet<int> helix_idxs_to_calculate = ui_state.side_selected_helix_idxs;
+    if (!ui_state.only_display_selected_helices) {
+      helix_idxs_to_calculate = null; // let helices_assign_svg automatically set this to all helices
+    }
+
     BuiltMap<int, Point<num>> ret = util
-        .helices_assign_svg(design.geometry, ui_state.invert_y, design.helices, design.groups)
+        .helices_assign_svg(design.geometry, ui_state.invert_y, design.helices, design.groups,
+            helix_idxs_to_calculate: helix_idxs_to_calculate)
         .build();
     print('${sw.elapsedMicroseconds} microseconds to calculate helix_idx_to_svg_position_map');
     return ret;
