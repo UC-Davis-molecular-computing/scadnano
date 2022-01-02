@@ -381,7 +381,7 @@ num main_view_svg_y_of_helix(Geometry geometry, Helix helix) {
   return y;
 }
 
-num norm_l2(num x, num y) => sqrt(pow(x, 2) + pow(y, 2));
+num norm_l2(num x, num y) => sqrt(x * x + y * y);
 
 Map<int, Helix> helices_list_to_map(List<Helix> helices) => {for (var helix in helices) helix.idx: helix};
 
