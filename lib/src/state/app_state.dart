@@ -34,10 +34,24 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
   /// There is a position object that can be stored in the JSON, but this is used only for 3D visualization,
   /// which is currently unsupported in scadnano. If we want to support it in the future, we can store that
   /// position as well, but svg_position will always be 2D.
+  ///
+  /// This is tricky to work into the design properly. The original implementation stored the SVG
+  /// position as a field in each Helix. This allowed more targeted updates; the current implementation
+  /// recomputes the Helix SVG positions every time the AppState updates, which is on almost every
+  /// Action not going through an optimized Store. This is because the Helix SVG positions depend on data
+  /// all throughout the AppState tree: helices themselves, and UI state such as invert_y and
+  /// the set of selected helices (in case we are displaying only selected helices).
+  /// But in a Design with 100 helices, it never seems to take more than 1 millisecond to calculate,
+  /// so hopefully the waste is not really costing us performance noticably.
+  ///
+  /// However, this implementation, though wasteful, is less buggy. We previously had many bugs
+  /// (e.g., https://github.com/UC-Davis-molecular-computing/scadnano/issues/677)
+  /// that resulted from forgetting to update the Helix SVG positions when some aspect of the AppState
+  /// changed that required them to be recomputed (e.g., moving helices to a new group). It was also more
+  /// code to maintain; several reducers had to call util.helices_assign_svg.
   @memoized
   BuiltMap<int, Point<num>> get helix_idx_to_svg_position_map {
-    var sw = Stopwatch();
-    sw.start();
+    var sw = Stopwatch()..start();
 
     BuiltSet<int> helix_idxs_to_calculate = ui_state.side_selected_helix_idxs;
     if (!ui_state.only_display_selected_helices) {
@@ -48,7 +62,9 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
         .helices_assign_svg(design.geometry, ui_state.invert_y, design.helices, design.groups,
             helix_idxs_to_calculate: helix_idxs_to_calculate)
         .build();
+
     print('${sw.elapsedMicroseconds} microseconds to calculate helix_idx_to_svg_position_map');
+
     return ret;
   }
 
