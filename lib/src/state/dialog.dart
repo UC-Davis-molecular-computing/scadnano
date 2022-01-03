@@ -21,6 +21,7 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
   @memoized
   int get hashCode;
 
+  /// See comments on fields below for explanation of their meaning.
   factory Dialog(
       {String title,
       Iterable<DialogItem> items,

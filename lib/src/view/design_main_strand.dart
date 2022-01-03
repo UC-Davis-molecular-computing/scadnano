@@ -223,6 +223,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       app.disable_keyboard_shortcuts_while(ask_for_assign_scale_purification_fields);
 
   assign_plate_well_fields() => app.disable_keyboard_shortcuts_while(ask_for_assign_plate_well_fields);
+
   set_strand_name() => app.disable_keyboard_shortcuts_while(ask_for_strand_name);
 
   set_domain_name(Domain domain) => app.disable_keyboard_shortcuts_while(() => ask_for_domain_name(domain));
@@ -740,7 +741,7 @@ PAGEHPLC : Dual PAGE & HPLC
     */
 
     bool is_end = type != ModificationType.internal;
-    int selected_index = 2; 
+    int selected_index = 2;
 
     if (type == ModificationType.five_prime) {
       selected_index = 1;
@@ -787,8 +788,7 @@ PAGEHPLC : Dual PAGE & HPLC
     items[idt_text_idx] = DialogText(label: 'idt text', value: initial_idt_text);
     // items[id_idx] = DialogText(label: 'id', value: initial_id);
 
-    items[index_of_dna_base_idx] =
-        DialogInteger(label: 'index of DNA base', value: strand_dna_idx);
+    items[index_of_dna_base_idx] = DialogInteger(label: 'index of DNA base', value: strand_dna_idx);
 
     // don't allow to modify index of DNA base when 3' or 5' is selected
     var dialog = Dialog(title: 'add modification', items: items, disable_when_any_radio_button_selected: {
@@ -966,7 +966,7 @@ Future<void> ask_for_assign_dna_sequence(
   int idx_predefined_sequence_name = 3;
   int idx_rotation = 4;
   int idx_assign_complements = 5;
-  int idx_warn_on_change = 6;
+  int idx_disable_change_sequence_bound_strand = 6;
 
   List<DialogItem> items = [null, null, null, null, null, null, null];
 
@@ -978,8 +978,9 @@ Future<void> ask_for_assign_dna_sequence(
   items[idx_rotation] = DialogInteger(label: 'rotation of predefined DNA sequence', value: 5587);
   items[idx_assign_complements] = DialogCheckbox(
       label: 'assign complement to bound strands', value: assign_complement_to_bound_strands_default);
-  items[idx_warn_on_change] = DialogCheckbox(
-      label: 'warn if assigning different sequence to bound strand', value: warn_on_change_default);
+  items[idx_disable_change_sequence_bound_strand] = DialogCheckbox(
+      label: 'disallow assigning different sequence to bound strand with existing sequence',
+      value: warn_on_change_default);
   items[idx_predefine_sequence_link] = DialogLink(
       label: 'Information about sequence variants',
       link: 'https://scadnano-python-package.readthedocs.io/en/latest/#scadnano.M13Variant');
@@ -989,6 +990,7 @@ Future<void> ask_for_assign_dna_sequence(
   }, disable_when_any_checkboxes_off: {
     idx_predefined_sequence_name: [idx_use_predefined_dna_sequence],
     idx_rotation: [idx_use_predefined_dna_sequence],
+    idx_disable_change_sequence_bound_strand: [idx_assign_complements],
   });
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
@@ -1006,7 +1008,7 @@ Future<void> ask_for_assign_dna_sequence(
   }
 
   bool assign_complements = (results[idx_assign_complements] as DialogCheckbox).value;
-  bool warn_on_change = (results[idx_warn_on_change] as DialogCheckbox).value;
+  bool warn_on_change = (results[idx_disable_change_sequence_bound_strand] as DialogCheckbox).value;
 
   try {
     util.check_dna_sequence(dna_sequence);
