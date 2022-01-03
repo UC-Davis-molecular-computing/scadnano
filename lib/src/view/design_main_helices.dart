@@ -33,6 +33,7 @@ mixin DesignMainHelicesProps on UiProps {
   Geometry geometry;
   bool show_helix_circles;
   BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
+  bool invert_y;
 }
 
 class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> with PureComponent {
@@ -53,9 +54,7 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
         continue;
       }
 
-      int min_helix_idx = helix_idxs_in_group.min;
-      bool invert_y = props.helices[min_helix_idx].invert_y;
-      int first_helix_view_order = invert_y ? helix_idxs_in_group.length - 1 : 0;
+      int first_helix_view_order = props.invert_y ? helix_idxs_in_group.length - 1 : 0;
 
       var children = [];
       for (int helix_idx in helix_idxs_in_group) {

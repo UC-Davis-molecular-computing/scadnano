@@ -344,7 +344,6 @@ Map<int, Point<num>> helices_assign_svg(
     for (var helix in selected_helices_sorted_by_view_order) {
       // Assertion: Helices should already be updated by reducers
       assert(helix.geometry == geometry);
-      assert(helix.invert_y == invert_y);
       num x = main_view_svg_x_of_helix(geometry, helix);
       num y = main_view_svg_y_of_helix(geometry, helix);
       if (prev_helix != null) {

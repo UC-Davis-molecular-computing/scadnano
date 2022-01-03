@@ -78,7 +78,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
       ..grid_position = grid_position?.toBuilder()
       ..position_ = position?.toBuilder()
       ..roll = roll
-      ..invert_y = invert_y
       ..min_offset = min_offset
       ..max_offset = max_offset
       ..major_tick_start = major_tick_start
@@ -89,7 +88,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     b.group = constants.default_group_name;
     b.min_offset = 0;
     b.roll = constants.default_roll;
-    b.invert_y = false;
   }
 
   /// unique identifier of used helix; also index indicating order to show
@@ -120,8 +118,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   /// Minimum allowed offset of Substrand that can be drawn on this Helix.
   int get min_offset;
-
-  bool get invert_y;
 
   // If regular or periodic distances are used, this is the starting offset
   int get major_tick_start;

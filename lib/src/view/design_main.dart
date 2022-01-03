@@ -78,6 +78,7 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices
         ..helix_group_is_moving = state.ui_state.helix_group_is_moving
         ..helix_idx_to_svg_position_map = state.helix_idx_to_svg_position_map
+        ..invert_y = state.ui_state.invert_y
         ..selection_rope = state.ui_state.selection_rope);
     }
   },
@@ -123,6 +124,7 @@ mixin DesignMainPropsMixin on UiProps {
   String displayed_group_name;
   SelectionRope selection_rope;
   BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
+  bool invert_y;
 }
 
 @Props()
@@ -161,6 +163,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         // ..slice_bar_offset = props.slice_bar_offset
         // ..displayed_group_name = props.displayed_group_name
         ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
+        ..invert_y = props.invert_y
         ..key = 'helices')(),
       if (props.show_mismatches)
         (DesignMainDNAMismatches()

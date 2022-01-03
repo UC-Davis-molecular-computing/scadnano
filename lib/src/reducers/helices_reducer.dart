@@ -32,9 +32,6 @@ Reducer<BuiltMap<int, Helix>> helices_local_reducer = combineReducers([
 GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.GroupChange>(helix_group_change_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.GridChange>(helix_grid_change_reducer),
-  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.SetAppUIStateStorable>(
-      set_app_ui_state_storables_set_helices_reducer),
-  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.InvertYSet>(invert_y_set_helices_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixGridPositionSet>(
       helix_grid_position_set_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixPositionSet>(helix_position_set_reducer),
@@ -457,31 +454,6 @@ BuiltMap<int, Helix> helix_grid_change_reducer(
 BuiltMap<int, Helix> helix_group_change_reducer(
         BuiltMap<int, Helix> helices, AppState state, actions.GroupChange action) {
   return helices.map_values((idx, helix) => helix.group == action.old_name ? helix.rebuild((b) => b..group = action.new_name) : helix);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// invert y axis
-BuiltMap<int, Helix> invert_y_set_helices_reducer(
-    BuiltMap<int, Helix> helices, AppState state, actions.InvertYSet action) {
-  var new_helices = helices.toMap();
-  for (var key in new_helices.keys) {
-    new_helices[key] = new_helices[key].rebuild((b) => b
-      ..invert_y = action.invert_y
-    );
-  }
-  return new_helices.build();
-}
-
-// This is needed when the whole AppUIStateStorables is set, since it also changes invert_y
-BuiltMap<int, Helix> set_app_ui_state_storables_set_helices_reducer(
-    BuiltMap<int, Helix> helices, AppState state, actions.SetAppUIStateStorable action) {
-  var new_helices = helices.toMap();
-  for (var key in new_helices.keys) {
-    new_helices[key] = new_helices[key].rebuild((b) => b
-      ..invert_y = action.storables.invert_y
-    );
-  }
-  return new_helices.build();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

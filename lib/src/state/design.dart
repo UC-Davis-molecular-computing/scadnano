@@ -108,7 +108,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     for (var key in helices_map.keys) {
       helices_map[key] = helices_map[key].rebuild((b) => b
         ..geometry.replace(geometry)
-        ..invert_y = invert_y
       );
     }
 
@@ -989,7 +988,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       /// END Backward Compatibility Code for Helix With Individual Pitch/Yaw ///
       ///////////////////////////////////////////////////////////////////////////
 
-      helix_builder.invert_y = invert_y;
       helix_builder.geometry = geometry.toBuilder();
       if (grid_is_none && !using_groups && helix_json.containsKey(constants.grid_position_key)) {
         throw IllegalDesignError(
