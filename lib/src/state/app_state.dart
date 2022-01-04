@@ -51,7 +51,7 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
   /// code to maintain; several reducers had to call util.helices_assign_svg.
   @memoized
   BuiltMap<int, Point<num>> get helix_idx_to_svg_position_map {
-    var sw = Stopwatch()..start();
+    // var sw = Stopwatch()..start();
 
     BuiltSet<int> helix_idxs_to_calculate = ui_state.side_selected_helix_idxs;
     if (!ui_state.only_display_selected_helices) {
@@ -63,7 +63,7 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
             helix_idxs_to_calculate: helix_idxs_to_calculate)
         .build();
 
-    print('${sw.elapsedMicroseconds} microseconds to calculate helix_idx_to_svg_position_map');
+    // print('${sw.elapsedMicroseconds} microseconds to calculate helix_idx_to_svg_position_map');
 
     return ret;
   }
