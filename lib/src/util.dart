@@ -322,48 +322,41 @@ Map<int, Point<num>> helices_assign_svg(
 
   Map<int, Point<num>> svg_positions = {};
 
-  Set<String> group_names = {for (var helix in helices.values) helix.group};
-  Map<String, Map<int, Helix>> selected_helices_by_group = {for (var name in group_names) name: {}};
-  for (int idx in helix_idxs_to_calculate) {
-    var helix = helices[idx];
-    selected_helices_by_group[helix.group][idx] = helix;
-  }
-
   // process by groups because view order only makes sense within a group, and we need
   // to go in view order
-  for (var group_name in selected_helices_by_group.keys) {
+  for (var group_name in groups.keys) {
     HelixGroup group = groups[group_name];
-    var selected_helices_sorted_by_view_order =
-        List<Helix>.from(selected_helices_by_group[group_name].values);
-    selected_helices_sorted_by_view_order.sort(
-        (h1, h2) => group.helices_view_order_inverse[h1.idx] - group.helices_view_order_inverse[h2.idx]);
 
     num prev_y = null;
 
     Helix prev_helix = null;
-    for (var helix in selected_helices_sorted_by_view_order) {
-      // Assertion: Helices should already be updated by reducers
-      assert(helix.geometry == geometry);
-      num x = main_view_svg_x_of_helix(geometry, helix);
-      num y = main_view_svg_y_of_helix(geometry, helix);
-      if (prev_helix != null) {
-        num delta_y;
-        if (helix.grid.is_none) {
-          var prev_pos = prev_helix.position_;
-          var pos = helix.position_;
-          delta_y = pos.distance_xy(prev_pos) * geometry.nm_to_svg_pixels;
-        } else {
-          var prev_grid_position = prev_helix.grid_position;
-          var grid_position = helix.grid_position;
-          delta_y = prev_grid_position.distance_lattice(grid_position, helix.grid) *
-              geometry.distance_between_helices_svg;
-        }
-        y = prev_y + delta_y;
-      }
-      prev_y = y;
-      prev_helix = helix;
+    for (var helix_idx in group.helices_view_order) {
+      if (helix_idxs_to_calculate.contains(helix_idx)) {
+        Helix helix = helices[helix_idx];
 
-      svg_positions[helix.idx] = Point<num>(x, invert_y ? -y : y);
+        // Assertion: Helices should already be updated by reducers
+        assert(helix.geometry == geometry);
+        num x = main_view_svg_x_of_helix(geometry, helix);
+        num y = main_view_svg_y_of_helix(geometry, helix);
+        if (prev_helix != null) {
+          num delta_y;
+          if (helix.grid.is_none) {
+            var prev_pos = prev_helix.position_;
+            var pos = helix.position_;
+            delta_y = pos.distance_xy(prev_pos) * geometry.nm_to_svg_pixels;
+          } else {
+            var prev_grid_position = prev_helix.grid_position;
+            var grid_position = helix.grid_position;
+            delta_y = prev_grid_position.distance_lattice(grid_position, helix.grid) *
+                geometry.distance_between_helices_svg;
+          }
+          y = prev_y + delta_y;
+        }
+        prev_y = y;
+        prev_helix = helix;
+
+        svg_positions[helix.idx] = Point<num>(x, invert_y ? -y : y);
+      }
     }
   }
 
