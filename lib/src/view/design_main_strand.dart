@@ -12,7 +12,6 @@ import 'package:scadnano/src/state/modification_type.dart';
 
 import 'design_main_strand_and_domain_names.dart';
 import 'design_main_strand_dna_end.dart';
-import 'design_main_strand_dna_end.dart';
 import 'transform_by_helix_group.dart';
 import '../state/modification.dart';
 import '../state/address.dart';
@@ -29,6 +28,7 @@ import '../state/loopout.dart';
 import '../app.dart';
 import '../state/strand.dart';
 import '../state/domain.dart';
+import '../state/dna_assign_options.dart';
 import 'design_main_strand_deletion.dart';
 import 'design_main_strand_insertion.dart';
 import 'design_main_strand_modifications.dart';
@@ -65,8 +65,7 @@ mixin DesignMainStrandPropsMixin on UiProps {
   bool selected;
   bool drawing_potential_crossover;
   bool moving_dna_ends;
-  bool assign_complement_to_bound_strands_default;
-  bool warn_on_change_strand_dna_assign_default;
+  DNAAssignOptions dna_assign_options;
   bool modification_display_connector;
   bool show_dna;
   bool show_modifications;
@@ -182,8 +181,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     }
   }
 
-  assign_dna() => app.disable_keyboard_shortcuts_while(() => ask_for_assign_dna_sequence(props.strand,
-      props.assign_complement_to_bound_strands_default, props.warn_on_change_strand_dna_assign_default));
+  assign_dna() => app.disable_keyboard_shortcuts_while(
+      () => ask_for_assign_dna_sequence(props.strand, props.dna_assign_options));
 
   assign_dna_complement_from_bound_strands() {
     List<Strand> strands_selected = app.state.ui_state.selectables_store.selected_strands.toList();
@@ -933,13 +932,6 @@ bool should_draw_domain(
         Domain ss, BuiltSet<int> side_selected_helix_idxs, bool only_display_selected_helices) =>
     !only_display_selected_helices || side_selected_helix_idxs.contains(ss.helix);
 
-class DNAAssignOptions {
-  String dna_sequence; // sequence to assign to this strand
-  bool assign_complements; // assign complementary sequences to strands bound to this one
-
-  DNAAssignOptions({this.dna_sequence = null, this.assign_complements = true});
-}
-
 class DNARemoveOptions {
   bool remove_complements; // remove from this strand and all strands bound to it
   bool remove_all; // remove from all strands in design
@@ -958,8 +950,7 @@ int clicked_strand_dna_idx(Domain domain, Address address, Strand strand) {
   return strand_dna_idx;
 }
 
-Future<void> ask_for_assign_dna_sequence(
-    Strand strand, bool assign_complement_to_bound_strands_default, bool warn_on_change_default) async {
+Future<void> ask_for_assign_dna_sequence(Strand strand, DNAAssignOptions options) async {
   int idx_sequence = 0;
   int idx_use_predefined_dna_sequence = 1;
   int idx_predefine_sequence_link = 2;
@@ -971,16 +962,18 @@ Future<void> ask_for_assign_dna_sequence(
   List<DialogItem> items = [null, null, null, null, null, null, null];
 
   items[idx_sequence] =
-      DialogTextArea(label: 'sequence', value: strand.dna_sequence ?? '', rows: 10, cols: 80);
-  items[idx_use_predefined_dna_sequence] = DialogCheckbox(label: 'use predefined DNA sequence');
+      DialogTextArea(label: 'sequence', value: strand.dna_sequence ?? '', rows: 4, cols: 80);
+  items[idx_use_predefined_dna_sequence] =
+      DialogCheckbox(label: 'use predefined DNA sequence', value: options.use_predefined_dna_sequence);
   items[idx_predefined_sequence_name] =
       DialogRadio(label: 'predefined DNA sequence', options: DNASequencePredefined.display_names);
-  items[idx_rotation] = DialogInteger(label: 'rotation of predefined DNA sequence', value: 5587);
-  items[idx_assign_complements] = DialogCheckbox(
-      label: 'assign complement to bound strands', value: assign_complement_to_bound_strands_default);
+  items[idx_rotation] =
+      DialogInteger(label: 'rotation of predefined DNA sequence', value: options.m13_rotation);
+  items[idx_assign_complements] =
+      DialogCheckbox(label: 'assign complement to bound strands', value: options.assign_complements);
   items[idx_disable_change_sequence_bound_strand] = DialogCheckbox(
       label: 'disallow assigning different sequence to bound strand with existing sequence',
-      value: warn_on_change_default);
+      value: options.disable_change_sequence_bound_strand);
   items[idx_predefine_sequence_link] = DialogLink(
       label: 'Information about sequence variants',
       link: 'https://scadnano-python-package.readthedocs.io/en/latest/#scadnano.M13Variant');
@@ -997,18 +990,20 @@ Future<void> ask_for_assign_dna_sequence(
 
   String dna_sequence;
 
+  int m13_rotation = options.m13_rotation;
   bool use_predefined_dna_sequence = (results[idx_use_predefined_dna_sequence] as DialogCheckbox).value;
   if (use_predefined_dna_sequence) {
     String predefined_sequence_display_name = (results[idx_predefined_sequence_name] as DialogRadio).value;
-    int rotation = (results[idx_rotation] as DialogInteger).value;
+    m13_rotation = (results[idx_rotation] as DialogInteger).value;
     dna_sequence =
-        DNASequencePredefined.dna_sequence_by_name(predefined_sequence_display_name, true, rotation);
+        DNASequencePredefined.dna_sequence_by_name(predefined_sequence_display_name, true, m13_rotation);
   } else {
     dna_sequence = (results[idx_sequence] as DialogTextArea).value;
   }
 
   bool assign_complements = (results[idx_assign_complements] as DialogCheckbox).value;
-  bool warn_on_change = (results[idx_disable_change_sequence_bound_strand] as DialogCheckbox).value;
+  bool disable_change_sequence_bound_strand =
+      (results[idx_disable_change_sequence_bound_strand] as DialogCheckbox).value;
 
   try {
     util.check_dna_sequence(dna_sequence);
@@ -1017,11 +1012,14 @@ Future<void> ask_for_assign_dna_sequence(
     return;
   }
 
-  app.dispatch(actions.AssignDNA(
-      strand: strand,
-      dna_sequence: dna_sequence,
-      assign_complements: assign_complements,
-      warn_on_change: warn_on_change));
+  var new_options = DNAAssignOptions(
+    dna_sequence: dna_sequence,
+    use_predefined_dna_sequence: use_predefined_dna_sequence,
+    assign_complements: assign_complements,
+    disable_change_sequence_bound_strand: disable_change_sequence_bound_strand,
+    m13_rotation: m13_rotation,
+  );
+  app.dispatch(actions.AssignDNA(strand: strand, dna_assign_options: new_options));
 }
 
 Future<void> ask_for_remove_dna_sequence(Strand strand, BuiltSet<Strand> selected_strands) async {

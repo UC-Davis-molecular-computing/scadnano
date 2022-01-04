@@ -8,6 +8,7 @@ import 'package:color/color.dart';
 import 'package:scadnano/src/dna_file_type.dart';
 import 'package:tuple/tuple.dart';
 
+import 'state/dna_assign_options.dart';
 import 'state/domains_move.dart';
 import 'state/helix_group_move.dart';
 import 'state/copy_info.dart';
@@ -57,6 +58,7 @@ import 'state/domain_name_mismatch.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  DNAAssignOptions,
   MoveHelicesToGroup,
   ModificationType,
   ShowEditMenuToggle,

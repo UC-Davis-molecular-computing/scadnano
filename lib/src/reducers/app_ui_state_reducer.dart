@@ -4,6 +4,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/reducers/design_reducer.dart';
 import 'package:scadnano/src/reducers/strands_copy_info_reducer.dart';
+import 'package:scadnano/src/state/dna_assign_options.dart';
 import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/copy_info.dart';
@@ -65,12 +66,9 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) =>
       ..example_designs.replace(
           TypedReducer<ExampleDesigns, actions.ExampleDesignsLoad>(example_designs_idx_set_reducer)(
               ui_state.example_designs, action))
-      ..assign_complement_to_bound_strands_default =
-      TypedReducer<bool, actions.AssignDNA>(assign_complement_to_bound_strands_default_reducer)(
-          ui_state.assign_complement_to_bound_strands_default, action)
-      ..warn_on_change_strand_dna_assign_default =
-      TypedReducer<bool, actions.AssignDNA>(warn_on_change_strand_dna_assign_default_reducer)(
-          ui_state.warn_on_change_strand_dna_assign_default, action)
+      ..dna_assign_options.replace(
+          TypedReducer<DNAAssignOptions, actions.AssignDNA>(dna_assign_options_reducer)(
+              ui_state.dna_assign_options, action))
       ..mouseover_datas.replace(mouseover_data_reducer(ui_state.mouseover_datas, action))
       ..dna_sequence_png_uri = dna_sequence_png_uri_reducer(ui_state.dna_sequence_png_uri, action)
       ..dna_sequence_png_horizontal_offset =
@@ -214,11 +212,9 @@ bool default_crossover_type_staple_for_setting_helix_rolls_reducer(bool _,
     actions.DefaultCrossoverTypeForSettingHelixRollsSet action) =>
     action.staple;
 
-bool assign_complement_to_bound_strands_default_reducer(bool _, actions.AssignDNA action) =>
-    action.assign_complements;
-
-bool warn_on_change_strand_dna_assign_default_reducer(bool _, actions.AssignDNA action) =>
-    action.warn_on_change;
+DNAAssignOptions dna_assign_options_reducer(DNAAssignOptions _,
+    actions.AssignDNA action) =>
+    action.dna_assign_options;
 
 Reducer<bool> show_mousever_rect_reducer = combineReducers([
   TypedReducer<bool, actions.ShowMouseoverRectSet>(show_mouseover_rect_set_reducer),
@@ -405,7 +401,7 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..show_helix_circles_main_view =
     TypedReducer<bool, actions.ShowHelixCirclesMainViewSet>(show_helix_circles_main_view_reducer)(
         storables.show_helix_circles_main_view, action)
-     ..show_edit_mode_menu = TypedReducer<bool, actions.ShowEditMenuToggle>(show_edit_mode_menu_reducer)(
+    ..show_edit_mode_menu = TypedReducer<bool, actions.ShowEditMenuToggle>(show_edit_mode_menu_reducer)(
         storables.show_edit_mode_menu, action)
     ..show_grid_coordinates_side_view = TypedReducer<bool, actions.ShowGridCoordinatesSideViewSet>(
         show_grid_coordinates_side_view_reducer)(storables.show_grid_coordinates_side_view, action)

@@ -15,6 +15,7 @@ import '../serializers.dart';
 import 'context_menu.dart';
 import 'dialog.dart';
 import 'design.dart';
+import 'dna_assign_options.dart';
 import 'domains_move.dart';
 import 'example_designs.dart';
 import 'grid_position.dart';
@@ -56,9 +57,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get selection_box_displayed_side;
 
-  bool get assign_complement_to_bound_strands_default;
-
-  bool get warn_on_change_strand_dna_assign_default;
+  DNAAssignOptions get dna_assign_options;
 
   bool get helix_change_apply_to_all;
 
@@ -235,8 +234,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
     b.strand_creation = null;
     b.helix_change_apply_to_all = false;
     b.example_designs = DEFAULT_example_designs_builder;
-    b.assign_complement_to_bound_strands_default = true;
-    b.warn_on_change_strand_dna_assign_default = true;
+    b.dna_assign_options = DEFAULT_dna_assign_options_builder;
     b.dna_sequence_png_uri = null;
     b.dna_sequence_png_horizontal_offset = 0;
     b.dna_sequence_png_vertical_offset = 0;
