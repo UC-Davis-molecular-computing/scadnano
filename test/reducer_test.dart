@@ -7516,6 +7516,49 @@ main() {
     expect(new_state.helix_idx_to_svg_position_map[0].y,
         closeTo(original_helix1_svg_position.y + offset, 0.001));
   });
+
+  // See https://github.com/UC-Davis-molecular-computing/scadnano/pull/703#issuecomment-1003738517
+  // Test Description:
+  //
+  // Setup:
+  //     Helix positions:
+  //             0     1
+  //        0 helix0 helix2
+  //        1 helix1
+  //
+  //     - helix0 and helix2 are selected, helix1 is not selected
+  //     - only_display_selected_helices is false, so all three helices
+  //       appears in the main view
+  //
+  // Action: SetOnlyDisplaySelectedHelices
+  //
+  // Expected Result:
+  //     - helix0 stays in same svg position, helix2 now should have same svg
+  //       position that helix1 initially had, since helix1 and helix2 are both
+  //       the same distance from helix0
+  test('display_only_selected_helices_should_reassign_svg', () {
+    // Setup:
+    Helix helix0 = Helix(idx: 0, grid_position: GridPosition(0, 0));
+    Helix helix1 = Helix(idx: 1, grid_position: GridPosition(0, 1));
+    Helix helix2 = Helix(idx: 2, grid_position: GridPosition(1, 0));
+    Design design = Design(helices: [helix0, helix1, helix2], grid: Grid.square);
+    AppState state = app_state_from_design(design).rebuild((b) => b
+      ..ui_state.storables.side_selected_helix_idxs.replace([0,2])
+      ..ui_state.storables.only_display_selected_helices = false
+    );
+
+    // Action
+    AppState new_state = app_state_reducer(state, SetOnlyDisplaySelectedHelices(true));
+
+    // Verify Expected Result:
+    Point<num> helix0_svg = state.helix_idx_to_svg_position_map[0];
+    Point<num> helix1_svg = state.helix_idx_to_svg_position_map[1];
+    Point<num> new_helix0_svg = new_state.helix_idx_to_svg_position_map[0];
+    Point<num> new_helix2_svg = new_state.helix_idx_to_svg_position_map[2];
+
+    expect(new_helix0_svg.y, closeTo(helix0_svg.y, 0.001));
+    expect(new_helix2_svg.y, closeTo(helix1_svg.y, 0.001));
+  });
 }
 
 AppState make_ends_selectable(AppState actual_state) {
