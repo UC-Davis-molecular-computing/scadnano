@@ -17,6 +17,7 @@ part 'design_main_arrows.over_react.g.dart';
 UiFactory<DesignMainArrowsProps> ConnectedDesignMainArrows =
     connect<AppState, DesignMainArrowsProps>(mapStateToProps: (state) {
   return DesignMainArrows()
+    ..invert_y = state.ui_state.invert_y
     ..show_helices_axis_arrows = state.ui_state.show_helices_axis_arrows;
 })(DesignMainArrows);
 
