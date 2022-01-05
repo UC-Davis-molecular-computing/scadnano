@@ -9,6 +9,7 @@ import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/dna_file_type.dart';
+import 'package:scadnano/src/state/dna_assign_options.dart';
 import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
@@ -766,7 +767,11 @@ abstract class LoadDNAFile
 
   /************************ begin BuiltValue boilerplate ************************/
   factory LoadDNAFile(
-      {String content, String filename, bool write_local_storage = true, bool unit_testing = false, DNAFileType dna_file_type = DNAFileType.scadnano_file}) {
+      {String content,
+      String filename,
+      bool write_local_storage = true,
+      bool unit_testing = false,
+      DNAFileType dna_file_type = DNAFileType.scadnano_file}) {
     return LoadDNAFile.from((b) => b
       ..content = content
       ..filename = filename
@@ -2380,15 +2385,22 @@ abstract class AssignDNA
     implements Built<AssignDNA, AssignDNABuilder> {
   Strand get strand;
 
-  String get dna_sequence;
+  DNAAssignOptions get dna_assign_options;
 
-  bool get assign_complements;
+  // convenience getters since we already have a lot of code referencing some of these from the old
+  // design of this Action
+  String get dna_sequence => dna_assign_options.dna_sequence;
 
-  bool get warn_on_change;
+  bool get use_predefined_dna_sequence => dna_assign_options.use_predefined_dna_sequence;
+
+  bool get assign_complements => dna_assign_options.assign_complements;
+
+  bool get disable_change_sequence_bound_strand => dna_assign_options.disable_change_sequence_bound_strand;
+
+  int get m13_rotation => dna_assign_options.m13_rotation;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory AssignDNA({Strand strand, String dna_sequence, bool assign_complements, bool warn_on_change}) =
-      _$AssignDNA._;
+  factory AssignDNA({Strand strand, DNAAssignOptions dna_assign_options}) = _$AssignDNA._;
 
   AssignDNA._();
 

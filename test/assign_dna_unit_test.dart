@@ -17,6 +17,7 @@ import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/select_mode.dart';
 import 'package:scadnano/src/state/strand.dart';
+import 'package:scadnano/src/state/dna_assign_options.dart';
 import 'package:test/test.dart';
 
 import 'package:scadnano/src/state/design.dart';
@@ -43,9 +44,11 @@ main() {
           state,
           AssignDNA(
             strand: strand,
-            assign_complements: true,
-            dna_sequence: dna_sequence,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       //     0               16
       //     AACGTACGATGCATCC
@@ -62,9 +65,11 @@ main() {
         state,
         AssignDNA(
           strand: strand_last,
-          assign_complements: false,
-          dna_sequence: dna_sequence,
-          warn_on_change: false,
+          dna_assign_options: DNAAssignOptions(
+            assign_complements: false,
+            dna_sequence: dna_sequence,
+            disable_change_sequence_bound_strand: false,
+          ),
         ),
       );
       //     0               16
@@ -99,9 +104,11 @@ main() {
           state,
           AssignDNA(
             strand: strand,
-            assign_complements: true,
-            dna_sequence: dna_sequence,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
 
       //     0   4
@@ -149,9 +156,11 @@ main() {
           state,
           AssignDNA(
             strand: strand,
-            assign_complements: true,
-            dna_sequence: dna_sequence,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
 
       //     0   4
@@ -205,9 +214,11 @@ main() {
           state,
           AssignDNA(
             strand: strand,
-            assign_complements: true,
-            dna_sequence: dna_sequence,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
 
       //     0   4
@@ -233,9 +244,11 @@ main() {
           state,
           AssignDNA(
             strand: strand,
-            assign_complements: true,
-            dna_sequence: dna_sequence,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       //     0   4
       //     AAACC
@@ -283,9 +296,11 @@ main() {
           state,
           AssignDNA(
             strand: strand,
-            assign_complements: true,
-            dna_sequence: dna_sequence,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
 
       //     0       8
@@ -329,11 +344,13 @@ main() {
           state,
           AssignDNA(
             strand: strand,
-            assign_complements: true,
-            dna_sequence: dna_sequence,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
-          
+
       //     0       8
       //     AAACCTGT
       //     /-->[--\
@@ -352,8 +369,8 @@ main() {
       /*
         0      7
         [------>
-        
-          
+
+
         <--]
       */
 
@@ -373,23 +390,27 @@ main() {
           state,
           AssignDNA(
             strand: strand1,
-            assign_complements: false,
-            dna_sequence: dna_sequence1,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: false,
+              dna_sequence: dna_sequence1,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       state = app_state_reducer(
           state,
           AssignDNA(
             strand: strand2,
-            assign_complements: false,
-            dna_sequence: dna_sequence2,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: false,
+              dna_sequence: dna_sequence2,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       /*
         0      7
         CAAAGTCG
         [------>
-        
+
 
         <--]
         GTTT
@@ -424,17 +445,21 @@ main() {
           state,
           AssignDNA(
             strand: strand2,
-            assign_complements: false,
-            dna_sequence: dna_sequence2,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: false,
+              dna_sequence: dna_sequence2,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       state = app_state_reducer(
           state,
           AssignDNA(
             strand: strand1,
-            assign_complements: false,
-            dna_sequence: dna_sequence1,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: false,
+              dna_sequence: dna_sequence1,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       // should not have an error by this point
     });
@@ -462,9 +487,11 @@ main() {
           state,
           AssignDNA(
             strand: strand,
-            assign_complements: true,
-            dna_sequence: dna_sequence,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands[0].dna_sequence, 'GTTTT');
     });
@@ -492,9 +519,11 @@ main() {
           state,
           AssignDNA(
             strand: strand,
-            assign_complements: true,
-            dna_sequence: dna_sequence,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands[0].dna_sequence, 'G??TT');
     });
@@ -525,18 +554,22 @@ main() {
           state,
           AssignDNA(
             strand: strand1,
-            assign_complements: true,
-            dna_sequence: dna_sequence1,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence1,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands[0].dna_sequence, 'TTTG????');
       state = app_state_reducer(
           state,
           AssignDNA(
             strand: strand2,
-            assign_complements: true,
-            dna_sequence: dna_sequence2,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence2,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands[0].dna_sequence, 'TTTGCCCT');
     });
@@ -574,27 +607,33 @@ main() {
           state,
           AssignDNA(
             strand: strand1,
-            assign_complements: true,
-            dna_sequence: dna_sequence1,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence1,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands[1].dna_sequence, '????CATT????????');
       state = app_state_reducer(
           state,
           AssignDNA(
             strand: strand2,
-            assign_complements: true,
-            dna_sequence: dna_sequence2,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence2,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands[1].dna_sequence, '????CATTGGCA????');
       state = app_state_reducer(
           state,
           AssignDNA(
             strand: strand3,
-            assign_complements: true,
-            dna_sequence: dna_sequence3,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence3,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands[1].dna_sequence, 'TTTCCATTGGCACAAA');
     });
@@ -641,33 +680,39 @@ main() {
           state,
           AssignDNA(
             strand: strand1,
-            assign_complements: true,
-            dna_sequence: dna_sequence1,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence1,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands[1].dna_sequence, '???CAT???????');
       state = app_state_reducer(
           state,
           AssignDNA(
             strand: strand2,
-            assign_complements: true,
-            dna_sequence: dna_sequence2,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence2,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands[1].dna_sequence, '???CATGCA????');
       state = app_state_reducer(
           state,
           AssignDNA(
             strand: strand3,
-            assign_complements: true,
-            dna_sequence: dna_sequence3,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence3,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands[1].dna_sequence, 'TTCCATGCACAAA');
     });
 
     test('AssignDNA__adapter_assigned_from_scaffold_and_tiles_with_insertions', () {
-     /*
+      /*
           01 2345     6789  01
                          I          insertions
            [-TTTC-----CATTT-------+
@@ -707,27 +752,33 @@ main() {
           state,
           AssignDNA(
             strand: strand1,
-            assign_complements: true,
-            dna_sequence: dna_sequence1,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence1,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands[1].dna_sequence, '????CATTT?????????');
       state = app_state_reducer(
           state,
           AssignDNA(
             strand: strand2,
-            assign_complements: true,
-            dna_sequence: dna_sequence2,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence2,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands[1].dna_sequence, '????CATTTGGGCA????');
       state = app_state_reducer(
           state,
           AssignDNA(
             strand: strand3,
-            assign_complements: true,
-            dna_sequence: dna_sequence3,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence3,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands[1].dna_sequence, 'TTTCCATTTGGGCACAAA');
     });
@@ -755,9 +806,11 @@ main() {
           state,
           AssignDNA(
             strand: strand,
-            assign_complements: true,
-            dna_sequence: dna_sequence,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands.first.dna_sequence, 'GTTTT?????');
     });
@@ -785,9 +838,11 @@ main() {
           state,
           AssignDNA(
             strand: strand,
-            assign_complements: true,
-            dna_sequence: dna_sequence,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands.last.dna_sequence, '?????GTTTT');
     });
@@ -818,9 +873,11 @@ main() {
           state,
           AssignDNA(
             strand: strand,
-            assign_complements: true,
-            dna_sequence: dna_sequence,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands.last.dna_sequence, 'GTTTT????????');
     });
@@ -837,8 +894,10 @@ main() {
                ???
       */
 
-      var helices = [Helix(idx: 0, max_offset: 10, grid: Grid.square), 
-                      Helix(idx: 1, max_offset: 10, grid: Grid.square)];
+      var helices = [
+        Helix(idx: 0, max_offset: 10, grid: Grid.square),
+        Helix(idx: 1, max_offset: 10, grid: Grid.square)
+      ];
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design.strand(0, 10).move(-5).commit();
@@ -852,9 +911,11 @@ main() {
           state,
           AssignDNA(
             strand: strand,
-            assign_complements: true,
-            dna_sequence: dna_sequence,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands.last.dna_sequence, '?????GTTTT???');
     });
@@ -884,9 +945,11 @@ main() {
           state,
           AssignDNA(
             strand: strand,
-            assign_complements: true,
-            dna_sequence: dna_sequence,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands[1].dna_sequence, 'CCC');
       expect(state.design.strands[2].dna_sequence, 'GGG');
@@ -903,8 +966,10 @@ main() {
               <-CTA----AAG---TAC----TCA---+
       */
 
-      var helices = [Helix(idx: 0, max_offset: 12, grid: Grid.square),
-                      Helix(idx: 1, max_offset: 12, grid: Grid.square)];
+      var helices = [
+        Helix(idx: 0, max_offset: 12, grid: Grid.square),
+        Helix(idx: 1, max_offset: 12, grid: Grid.square)
+      ];
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design.strand(0, 0).move(12).cross(1).move(-12).commit();
@@ -919,9 +984,11 @@ main() {
           state,
           AssignDNA(
             strand: strand,
-            assign_complements: true,
-            dna_sequence: dna_sequence,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands[1].dna_sequence, 'GGT GAT TTC TTA'.replaceAll(' ', ''));
       expect(state.design.strands[2].dna_sequence, 'AGT GTT TTC ATG'.replaceAll(' ', ''));
@@ -936,8 +1003,10 @@ main() {
                -CTAAAACACTCATCTT--+
       */
 
-      var helices = [Helix(idx: 0, max_offset: 16, grid: Grid.square),
-                      Helix(idx: 1, max_offset: 16, grid: Grid.square)];
+      var helices = [
+        Helix(idx: 0, max_offset: 16, grid: Grid.square),
+        Helix(idx: 1, max_offset: 16, grid: Grid.square)
+      ];
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design.strand(1, 16).move(-16).cross(0).move(16).commit();
@@ -951,9 +1020,11 @@ main() {
           state,
           AssignDNA(
             strand: strand,
-            assign_complements: true,
-            dna_sequence: dna_sequence,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands.last.dna_sequence, 'CTAAAACACTCATCTTGAGGCAAAAGAATACA');
     });
@@ -975,11 +1046,24 @@ main() {
         scaf index: 1     0  7     6
       */
 
-      var helices = [Helix(idx: 0, max_offset: 6, grid: Grid.square),
-                      Helix(idx: 1, max_offset: 6, grid: Grid.square)];
+      var helices = [
+        Helix(idx: 0, max_offset: 6, grid: Grid.square),
+        Helix(idx: 1, max_offset: 6, grid: Grid.square)
+      ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(1, 3).move(-3).add_deletion(1, 1).cross(0).move(6).add_deletion(0, 1).add_deletion(0, 4).cross(1).move(-3).add_deletion(1, 4).commit();
+      design = design
+          .strand(1, 3)
+          .move(-3)
+          .add_deletion(1, 1)
+          .cross(0)
+          .move(6)
+          .add_deletion(0, 1)
+          .add_deletion(0, 4)
+          .cross(1)
+          .move(-3)
+          .add_deletion(1, 4)
+          .commit();
       design = design.strand(1, 0).move(3).add_deletion(1, 1).cross(0).move(-3).add_deletion(0, 1).commit();
       design = design.strand(0, 6).move(-3).add_deletion(0, 4).cross(1).move(3).add_deletion(1, 4).commit();
 
@@ -991,9 +1075,11 @@ main() {
           state,
           AssignDNA(
             strand: strand,
-            assign_complements: true,
-            dna_sequence: dna_sequence,
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: dna_sequence,
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands[0].dna_sequence, 'AACATCGT');
       expect(state.design.strands[1].dna_sequence, 'TTTG');
@@ -1022,27 +1108,33 @@ main() {
           state,
           AssignDNA(
             strand: design.strands[0],
-            assign_complements: true,
-            dna_sequence: 'TTC',
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: 'TTC',
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands.last.dna_sequence, '??????GAA');
       state = app_state_reducer(
           state,
           AssignDNA(
             strand: design.strands[2],
-            assign_complements: true,
-            dna_sequence: 'CCT',
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: 'CCT',
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands.last.dna_sequence, 'AGG???GAA');
       state = app_state_reducer(
           state,
           AssignDNA(
             strand: design.strands[1],
-            assign_complements: true,
-            dna_sequence: 'GGA',
-            warn_on_change: true,
+            dna_assign_options: DNAAssignOptions(
+              assign_complements: true,
+              dna_sequence: 'GGA',
+              disable_change_sequence_bound_strand: true,
+            ),
           ));
       expect(state.design.strands.last.dna_sequence, 'AGGTCCGAA');
     });

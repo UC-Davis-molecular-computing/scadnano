@@ -2,6 +2,7 @@ import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:react/react_client/react_interop.dart';
+import 'package:scadnano/src/state/dna_assign_options.dart';
 
 import '../state/group.dart';
 import '../state/geometry.dart';
@@ -24,8 +25,7 @@ UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands =
     ..selectables_store = state.ui_state.selectables_store
     ..drawing_potential_crossover = state.ui_state.potential_crossover_is_drawing
     ..moving_dna_ends = state.ui_state.dna_ends_are_moving
-    ..assign_complement_to_bound_strands_default = state.ui_state.assign_complement_to_bound_strands_default
-    ..warn_on_change_strand_dna_assign_default = state.ui_state.warn_on_change_strand_dna_assign_default
+    ..dna_assign_options = state.ui_state.dna_assign_options
     ..only_display_selected_helices = state.ui_state.only_display_selected_helices
     ..show_dna = state.ui_state.show_dna
     ..show_modifications = state.ui_state.show_modifications
@@ -55,8 +55,7 @@ mixin DesignMainStrandsProps on UiProps {
   num modification_font_size;
   bool drawing_potential_crossover;
   bool moving_dna_ends;
-  bool assign_complement_to_bound_strands_default;
-  bool warn_on_change_strand_dna_assign_default;
+  DNAAssignOptions dna_assign_options;
   bool only_display_selected_helices;
   bool modification_display_connector;
   Geometry geometry;
@@ -99,8 +98,7 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> wi
         ..selected_modifications_in_strand = selected_modifications_in_strand
         ..drawing_potential_crossover = props.drawing_potential_crossover
         ..moving_dna_ends = props.moving_dna_ends
-        ..assign_complement_to_bound_strands_default = props.assign_complement_to_bound_strands_default
-        ..warn_on_change_strand_dna_assign_default = props.warn_on_change_strand_dna_assign_default
+        ..dna_assign_options = props.dna_assign_options
         ..only_display_selected_helices = props.only_display_selected_helices
         ..show_dna = props.show_dna
         ..show_modifications = props.show_modifications
