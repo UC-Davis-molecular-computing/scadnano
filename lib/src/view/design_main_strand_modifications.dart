@@ -32,6 +32,7 @@ mixin DesignMainStrandModificationsPropsMixin on UiProps {
   int font_size;
 
   BuiltSet<SelectableModification> selected_modifications_in_strand;
+  BuiltMap<int, num> helix_idx_to_svg_position_y_map;
 }
 
 class DesignMainStrandModificationsProps = UiProps
@@ -55,6 +56,7 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
           ..font_size = props.font_size
           ..display_connector = props.display_connector
           ..selected = selected
+          ..helix_svg_position_y = props.helix_idx_to_svg_position_y_map[helix_5p.idx]
           ..key = "5'")());
       }
     }
@@ -70,6 +72,7 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
           ..font_size = props.font_size
           ..display_connector = props.display_connector
           ..selected = props.selected_modifications_in_strand.contains(props.strand.selectable_modification_3p)
+          ..helix_svg_position_y = props.helix_idx_to_svg_position_y_map[helix_3p.idx]
           ..key = "3'")());
       }
     }
@@ -104,6 +107,7 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
             ..display_connector = props.display_connector
             ..selected = props.selected_modifications_in_strand.contains(selectable_mod_int)
             ..dna_idx_mod = dna_idx_mod
+            ..helix_svg_position_y = props.helix_idx_to_svg_position_y_map[helix.idx]
             ..key = "internal-${dna_idx_mod}")());
         }
       } else if (ss_with_mod is Loopout) {

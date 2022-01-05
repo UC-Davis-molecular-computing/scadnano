@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
@@ -35,6 +37,7 @@ UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands =
     ..show_strand_names = state.ui_state.show_strand_names
     ..domain_name_font_size = state.ui_state.domain_name_font_size
     ..strand_name_font_size = state.ui_state.strand_name_font_size
+    ..helix_idx_to_svg_position_map = state.helix_idx_to_svg_position_map
     ..geometry = state.design.geometry;
 })(DesignMainStrands);
 
@@ -59,6 +62,7 @@ mixin DesignMainStrandsProps on UiProps {
   bool only_display_selected_helices;
   bool modification_display_connector;
   Geometry geometry;
+  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
 }
 
 class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> with PureComponent {
@@ -109,6 +113,7 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> wi
         ..modification_font_size = props.modification_font_size
         ..modification_display_connector = props.modification_display_connector
         ..geometry = props.geometry
+        ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
         ..key = strand.toString())());
     }
 

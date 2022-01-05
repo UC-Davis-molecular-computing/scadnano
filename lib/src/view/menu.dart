@@ -67,7 +67,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
           state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
       ..display_major_tick_widths = state.ui_state.display_major_tick_widths
       ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices
-      ..invert_xy = state.ui_state.invert_xy
+      ..invert_y = state.ui_state.invert_y
       ..show_helix_circles_main_view = state.ui_state.show_helix_circles_main_view
       ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
       ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
@@ -117,7 +117,7 @@ mixin MenuPropsMixin on UiProps {
   bool display_base_offsets_of_major_ticks_only_first_helix;
   bool display_major_tick_widths;
   bool display_major_tick_widths_all_helices;
-  bool invert_xy;
+  bool invert_y;
   bool warn_on_exit_if_unsaved;
   bool show_helix_circles_main_view;
   bool show_grid_coordinates_side_view;
@@ -711,8 +711,8 @@ of the design you were looking at before changing the script.'''
             props.dispatch(actions.SetOnlyDisplaySelectedHelices(!props.only_display_selected_helices)))
         ..key = 'display-only-selected-helices')(),
       (MenuBoolean()
-        ..value = props.invert_xy
-        ..display = 'Invert y- and x-axes'
+        ..value = props.invert_y
+        ..display = 'Invert y-axis'
         ..tooltip = '''\
 In the main view, invert the y-axis, and in the side view, invert both the 
 y-axis and the x-axis. 
@@ -722,9 +722,9 @@ If unchecked, then use "screen coordinates", where increasing y moves down.
 If checked, then use Cartesian coordinates where increasing y moves up. 
 Also invert the x-axis to maintain chirality, so this has the net effect of 
 rotating the side view by 180 degrees.'''
-        ..name = 'invert-xy-axes'
-        ..onChange = ((_) => props.dispatch(actions.InvertXYSet(invert_xy: !props.invert_xy)))
-        ..key = 'invert-xy-axes')(),
+        ..name = 'invert-y-axis'
+        ..onChange = ((_) => props.dispatch(actions.InvertYSet(invert_y: !props.invert_y)))
+        ..key = 'invert-y-axis')(),
       (MenuBoolean()
         ..value = props.show_helix_circles_main_view
         ..display = 'Show main view helix circles/idx'

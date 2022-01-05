@@ -133,7 +133,7 @@ CopyInfo strands_copy_info_from_strand_list(
   Map<int, int> helices_view_order_inverse = util.invert_helices_view_order(helices_view_order);
 
   // find minimum helix of any selected strand, then minimum starting offset of that strand,
-  int extreme_helix_view_order; // max if invert_yz; min if not
+  int extreme_helix_view_order; // max if invert_y; min if not
   int extreme_helix_idx;
   int min_offset;
   bool min_forward;
@@ -143,7 +143,7 @@ CopyInfo strands_copy_info_from_strand_list(
       // int helix_view_order = group.helices_view_order_inverse[domain.helix];
       int helix_view_order = helices_view_order_inverse[domain.helix];
       bool helix_is_more_extreme = extreme_helix_view_order == null ||
-          (state.ui_state.invert_xy
+          (state.ui_state.invert_y
               ? extreme_helix_view_order < helix_view_order
               : extreme_helix_view_order > helix_view_order);
       if (helix_is_more_extreme) {

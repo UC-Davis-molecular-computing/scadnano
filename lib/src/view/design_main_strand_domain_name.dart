@@ -20,6 +20,7 @@ mixin DesignMainStrandDomainNamePropsMixin on UiProps {
   int font_size;
   bool show_dna;
   String transform;
+  num svg_position_y;
 }
 
 class DesignMainStrandDomainNameProps = UiProps with DesignMainStrandDomainNamePropsMixin;
@@ -29,8 +30,8 @@ class DesignMainStrandDomainNameComponent extends UiComponent2<DesignMainStrandD
   @override
   render() {
 
-    Point<num> start_svg = props.helix.svg_base_pos(props.domain.start, props.domain.forward);
-    Point<num> end_svg = props.helix.svg_base_pos(props.domain.end - 1, props.domain.forward);
+    Point<num> start_svg = props.helix.svg_base_pos(props.domain.start, props.domain.forward, props.svg_position_y);
+    Point<num> end_svg = props.helix.svg_base_pos(props.domain.end - 1, props.domain.forward, props.svg_position_y);
     Point<num> mid_svg = (start_svg + end_svg) * 0.5;
 
     String baseline = props.domain.forward ? 'baseline' : 'hanging';

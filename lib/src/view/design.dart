@@ -4,6 +4,7 @@ library view_design;
 import 'dart:html';
 import 'dart:svg' as svg;
 
+import 'package:built_collection/built_collection.dart';
 import 'package:dnd/dnd.dart';
 import 'package:js/js.dart';
 import 'package:over_react/over_react_redux.dart';
@@ -260,7 +261,7 @@ class DesignViewComponent {
         var group = app.state.design.groups[displayed_group_name];
         var helices_in_group = app.state.design.helices_in_group(displayed_group_name).values;
         int old_offset = app.state.ui_state.storables.slice_bar_offset;
-        var new_offset = util.find_closest_offset(event, helices_in_group, group, app.state.design.geometry);
+        var new_offset = util.find_closest_offset(event, helices_in_group, group, app.state.design.geometry, app.state.helix_idx_to_svg_position_map[helices_in_group.first.idx].x);
 
         if (old_offset != new_offset) {
           app.dispatch(actions.SliceBarOffsetSet(new_offset));
@@ -281,7 +282,7 @@ class DesignViewComponent {
             Helix helix = moves_store.helix;
             var group = app.state.design.groups[helix.group];
             var geometry = app.state.design.geometry;
-            int offset = util.get_address_on_helix(event, helix, group, geometry).offset;
+            int offset = util.get_address_on_helix(event, helix, group, geometry, app.state.helix_idx_to_svg_position_map[helix.idx]).offset;
             int old_offset = moves_store.current_offset;
             if (offset != old_offset) {
               app.dispatch(actions.DNAEndsMoveAdjustOffset(offset: offset));
@@ -314,7 +315,7 @@ class DesignViewComponent {
                   ]
                 : app.state.design.helices.values;
             var address = util.find_closest_address(
-                event, visible_helices, app.state.design.groups, app.state.design.geometry);
+                event, visible_helices, app.state.design.groups, app.state.design.geometry, app.state.helix_idx_to_svg_position_map);
             if (address != old_address) {
               app.dispatch(actions.StrandsMoveAdjustAddress(address: address));
             }
@@ -340,7 +341,7 @@ class DesignViewComponent {
                   ]
                 : app.state.design.helices.values;
             var address = util.find_closest_address(
-                event, visible_helices, app.state.design.groups, app.state.design.geometry);
+                event, visible_helices, app.state.design.groups, app.state.design.geometry, app.state.helix_idx_to_svg_position_map);
             if (address != old_address) {
               app.dispatch(actions.DomainsMoveAdjustAddress(address: address));
             }
@@ -354,7 +355,7 @@ class DesignViewComponent {
         int old_offset = strand_creation.current_offset;
         var group = app.state.design.groups[strand_creation.helix.group];
         var geometry = app.state.design.geometry;
-        int new_offset = util.get_address_on_helix(event, strand_creation.helix, group, geometry).offset;
+        int new_offset = util.get_address_on_helix(event, strand_creation.helix, group, geometry, app.state.helix_idx_to_svg_position_map[strand_creation.helix.idx]).offset;
         var new_address = Address(
             helix_idx: strand_creation.helix.idx, offset: new_offset, forward: strand_creation.forward);
         if (old_offset != new_offset &&
@@ -911,7 +912,7 @@ class DesignViewComponent {
       var displayed_group_name = app.state.ui_state.displayed_group_name;
       var displayed_grid = app.state.design.groups[displayed_group_name].grid;
       if (!displayed_grid.is_none) {
-        bool invert_y = app.state.ui_state.invert_xy;
+        bool invert_y = app.state.ui_state.invert_y;
         Geometry geometry = app.state.design.geometry;
         var new_grid_pos = util.grid_position_of_mouse_in_side_view(displayed_grid, invert_y, geometry,
             mouse_pos: mouse_pos, event: event);

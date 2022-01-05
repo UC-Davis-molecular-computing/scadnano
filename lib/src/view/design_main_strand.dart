@@ -75,6 +75,7 @@ mixin DesignMainStrandPropsMixin on UiProps {
   num strand_name_font_size;
   num modification_font_size;
   bool invert_y;
+  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
 }
 
 class DesignMainStrandProps = UiProps with DesignMainStrandPropsMixin, TransformByHelixGroupPropsMixin;
@@ -118,6 +119,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..drawing_potential_crossover = props.drawing_potential_crossover
         ..moving_dna_ends = props.moving_dna_ends
         ..geometry = props.geometry
+        ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
         ..only_display_selected_helices = props.only_display_selected_helices)(),
       _insertions(),
       _deletions(),
@@ -146,6 +148,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..selected_modifications_in_strand = props.selected_modifications_in_strand
           ..font_size = props.modification_font_size
           ..display_connector = props.modification_display_connector
+          ..helix_idx_to_svg_position_y_map = props.helix_idx_to_svg_position_map.map((i, p) => MapEntry(i, p.y))
           ..key = 'modifications')(),
     ]);
   }
@@ -157,7 +160,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         // select/deselect
         props.strand.handle_selection_mouse_down(event);
         // set up drag detection for moving DNA ends
-        var address = util.find_closest_address(event, props.helices.values, props.groups, props.geometry);
+        var address = util.find_closest_address(event, props.helices.values, props.groups, props.geometry, props.helix_idx_to_svg_position_map);
         HelixGroup group = app.state.design.group_of_strand(props.strand);
         var helices_view_order_inverse = group.helices_view_order_inverse;
         app.dispatch(actions.StrandsMoveStartSelectedStrands(
@@ -239,6 +242,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
             ..helix = helix
             ..color = props.strand.color
             ..transform = transform_of_helix(domain.helix)
+            ..svg_position_y = props.helix_idx_to_svg_position_map[helix.idx].y
             ..key = util.id_insertion(domain, selectable_insertion.insertion.offset))());
         }
       }
@@ -272,6 +276,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
             ..helix = helix
             ..selected = props.selected_deletions_in_strand.contains(selectable_deletion)
             ..transform = transform_of_helix(domain.helix)
+            ..svg_position_y = props.helix_idx_to_svg_position_map[domain.helix].y
             ..key = id)());
         }
       }
