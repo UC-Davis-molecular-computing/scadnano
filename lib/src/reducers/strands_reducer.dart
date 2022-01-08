@@ -217,19 +217,24 @@ Strand move_strand(
     substrands = substrands.reversed.toList();
   }
 
+  bool is_moving = delta_view_order > 0 || delta_offset > 0 || delta_forward;
+
   for (int i = 0; i < substrands.length; i++) {
     Substrand substrand = substrands[i];
     Substrand new_substrand = substrand;
     // Substrands includes Domains and Loopouts,
     // but only Domains need to be processed since only they have helix idx and start/end offsets
     if (substrand is Domain) {
-      if (!original_helices_view_order_inverse.containsKey(substrand.helix)) {
+      if (!original_helices_view_order_inverse.containsKey(substrand.helix) && is_moving) {
         throw AssertionError('original_helices_view_order_inverse = $original_helices_view_order_inverse '
             'does not contain key (helix idx) = ${substrand.helix}');
       }
-      num original_view_order = original_helices_view_order_inverse[substrand.helix];
-      num new_view_order = original_view_order + delta_view_order;
-      int new_helix_idx = current_group.helices_view_order[new_view_order];
+      int new_helix_idx = substrand.helix;
+      if (is_moving) {
+        num original_view_order = original_helices_view_order_inverse[substrand.helix];
+        num new_view_order = original_view_order + delta_view_order;
+        new_helix_idx = current_group.helices_view_order[new_view_order];
+      }
       assert(new_helix_idx != null);
       Domain domain_moved = substrand.rebuild(
         (b) => b
