@@ -714,14 +714,13 @@ of the design you were looking at before changing the script.'''
         ..value = props.invert_y
         ..display = 'Invert y-axis'
         ..tooltip = '''\
-In the main view, invert the y-axis, and in the side view, invert both the 
-y-axis and the x-axis. 
+Invert the y-axis by rotating 180 degrees about the z-axis (within the x/y plane).
 
 If unchecked, then use "screen coordinates", where increasing y moves down. 
 
-If checked, then use Cartesian coordinates where increasing y moves up. 
-Also invert the x-axis to maintain chirality, so this has the net effect of 
-rotating the side view by 180 degrees.'''
+If checked, then use Cartesian coordinates where increasing y moves up.
+
+To inspect how all axes change, check View --> Show axis arrows.'''
         ..name = 'invert-y-axis'
         ..onChange = ((_) => props.dispatch(actions.InvertYSet(invert_y: !props.invert_y)))
         ..key = 'invert-y-axis')(),
