@@ -217,7 +217,7 @@ Strand move_strand(
     substrands = substrands.reversed.toList();
   }
 
-  bool is_moving = delta_view_order > 0 || delta_offset > 0 || delta_forward;
+  bool is_moving = delta_view_order != 0 || delta_offset != 0 || delta_forward;
 
   for (int i = 0; i < substrands.length; i++) {
     Substrand substrand = substrands[i];
