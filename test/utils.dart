@@ -102,6 +102,9 @@ void expect_strands_equal(BuiltList<Strand> actual_strands, BuiltList<Strand> ex
   if (actual_recolored_strands.hashCode != expected_recolored_strands.hashCode) {
     expect(actual_recolored_strands.length, expected_recolored_strands.length);
     for (Strand strand in expected_recolored_strands) {
+      if (!actual_recolored_strands.contains(strand)) {
+        print("strand ${strand} not found in actual_recolored_strands: ${actual_recolored_strands}");
+      }
       expect(actual_recolored_strands.contains(strand), true);
     }
   }
