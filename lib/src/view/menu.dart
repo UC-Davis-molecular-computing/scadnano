@@ -383,7 +383,7 @@ to the first end e2 after it in this order, if
         ..display = 'Set helix coordinates based on crossovers'
         ..disabled = props.no_grid_is_none
         ..tooltip = '''\
-The grid must be set to none to enable this.
+The grid must be set to none to enable this.${props.no_grid_is_none ? " (Currently disabled since the grid is not none.)" : ""}
 
 Select some crossovers and some helices. If no helices are selected, then all
 helices are processed. At most one crossover between pairs of adjacent (in
@@ -752,8 +752,8 @@ Red : X-axis
 Green : Y-axis
 Blue : Z-axis'''
         ..name = 'show-helices-axis-arrows'
-        ..onChange = ((_) => props.dispatch(actions.ShowAxisArrowsSet(
-            show_helices_axis_arrows: !props.show_helices_axis_arrows)))
+        ..onChange = ((_) => props
+            .dispatch(actions.ShowAxisArrowsSet(show_helices_axis_arrows: !props.show_helices_axis_arrows)))
         ..key = 'show-helices-axis-arrows')(),
       (MenuBoolean()
         ..value = props.show_loopout_length
@@ -1167,7 +1167,8 @@ cadnano_file_loaded(FileReader file_reader, String filename) async {
   try {
     var json_cadnano_text = file_reader.result;
     filename = path.setExtension(filename, '.${constants.default_scadnano_file_extension}');
-    app.dispatch(actions.LoadDNAFile(content: json_cadnano_text, filename: filename, dna_file_type: DNAFileType.cadnano_file));
+    app.dispatch(actions.LoadDNAFile(
+        content: json_cadnano_text, filename: filename, dna_file_type: DNAFileType.cadnano_file));
   } on Exception catch (e) {
     window.alert('Error importing file: ${e}');
   }
