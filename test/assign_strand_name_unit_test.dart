@@ -21,16 +21,53 @@ import 'utils.dart';
 
 
 //TODO: Add Unit Tests for different cases of strand names
-// main() {
-//   group('StrandName', () {
-//     /* 0       8
-//        |-------|
-//          ABC        
-//     0  [------\
-//        <------/
-//          XYZ      
-//     */
-//     test('insert_name', () {
+main() {
+  group('StrandName', () {
+    /* 0       8   12
+       |-------|---|
+         ABC        
+    0  [------>[--->
 
-//   }
-// }
+    */
+    test('ligate__one_scaffold__both_named', () {
+      var helices = [Helix(idx: 0, max_offset: 16, grid: Grid.square)];
+      var design = Design(helices: helices, grid: Grid.square);
+
+      design = design.strand(0,0).move(8).with_name("Scaf").as_scaffold().commit();
+      design = design.strand(0,8).move(4).with_name("NotScaf").commit();
+
+            
+      expect(design.strands[0].name, "Scaf");
+      expect(design.strands[1].name, "NotScaf");
+      expect(design.strands.length, 2);
+
+      var action = actions.Ligate(dna_end: design.strands[1].dnaend_5p);
+      var state = app_state_from_design(design);
+      var all_strands = ligate_reducer(design.strands, state, action);
+      
+      expect(all_strands[0].name, "Scaf");
+      expect(all_strands.length, 1);
+    });
+    test('ligate__one_scaffold__one_named', () {
+      var helices = [Helix(idx: 0, max_offset: 16, grid: Grid.square)];
+      var design = Design(helices: helices, grid: Grid.square);
+
+      design = design.strand(0,0).move(8).with_name("Scaf").as_scaffold().commit();
+      design = design.strand(0,8).move(4).commit();
+
+            
+      expect(design.strands[0].name, "Scaf");
+      expect(design.strands[1].name, null);
+      expect(design.strands.length, 2);
+
+      var action = actions.Ligate(dna_end: design.strands[1].dnaend_5p);
+      var state = app_state_from_design(design);
+      var all_strands = ligate_reducer(design.strands, state, action);
+      
+      expect(all_strands[0].name, "Scaf");
+      expect(all_strands.length, 1);
+    });
+
+
+  });
+}
