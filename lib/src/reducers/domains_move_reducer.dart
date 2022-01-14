@@ -43,6 +43,10 @@ DomainsMove domains_move_start_selected_domains_reducer(
 
 DomainsMove domains_move_stop_reducer(DomainsMove domains_move, actions.DomainsMoveStop action) => null;
 
+// - in_bounds checks whether the domain is in a legal address given the helices, but allows it to overlap
+// other domains
+// - is_allowable checks whether the domain overlaps other domains
+
 DomainsMove domains_adjust_address_reducer(
     DomainsMove domains_move, AppState state, actions.DomainsMoveAdjustAddress action) {
   DomainsMove new_domains_move = domains_move.rebuild((b) => b..current_address.replace(action.address));
