@@ -47,7 +47,7 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
   }
 
   if (error_message == null && design_new == null) {
-    error_message = constants.NO_DESIGN_MESSAGE;
+    error_message = constants.NO_DESIGN_MESSAGE_HTML;
   }
 
   AppState new_state;
