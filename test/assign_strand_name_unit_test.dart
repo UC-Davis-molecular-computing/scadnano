@@ -185,5 +185,46 @@ main() {
       expect(all_strands[0].name, "XYZ");
       expect(all_strands.length, 1);
     });
+
+    test('ligate__two_strands__one_named', () {
+      var helices = [Helix(idx: 0, max_offset: 16, grid: Grid.square)];
+      var design = Design(helices: helices, grid: Grid.square);
+
+      design = design.strand(0,0).move(8).with_name("ABC").commit();
+      design = design.strand(0,8).move(4).commit();
+
+            
+      expect(design.strands[0].name, "ABC");
+      expect(design.strands[1].name, null);
+      expect(design.strands.length, 2);
+
+      var action = actions.Ligate(dna_end: design.strands[1].dnaend_5p);
+      var state = app_state_from_design(design);
+      var all_strands = ligate_reducer(design.strands, state, action);
+      
+      expect(all_strands[0].name, "ABC");
+      expect(all_strands.length, 1);
+    });
+
+     test('crossover__two_strands__one_named', () {
+      var helices = [Helix(idx: 0, max_offset: 16, grid: Grid.square)];
+      var design = Design(helices: helices, grid: Grid.square);
+
+      design = design.strand(0,0).move(8).with_name("XYZ").commit();
+      design = design.strand(0,8).move(-8).commit();
+
+      expect(design.strands[0].name, "XYZ");
+      expect(design.strands[1].name, null);
+      expect(design.strands.length, 2);
+
+      var action = 
+          actions.JoinStrandsByCrossover(dna_end_first_click: design.strands[1].dnaend_3p, dna_end_second_click: design.strands[0].dnaend_5p);
+      var state = app_state_from_design(design);
+      var all_strands = join_strands_by_crossover_reducer(design.strands, state, action);
+      
+      expect(all_strands[0].name, "XYZ");
+      expect(all_strands.length, 1);
+    });
+
   });
 }
