@@ -60,8 +60,11 @@ class DesignMainDomainMovingComponent extends UiComponent2<DesignMainDomainMovin
       classname += ' ' + constants.css_selector_disallowed;
     }
 
+    var hex_color = props.color.toHexColor();
+    var hex_color_css = hex_color.toCssString();
+
     return (Dom.line()
-      ..stroke = props.color.toHexColor().toCssString()
+      ..stroke = hex_color_css
       ..transform = transform_of_helix(helix.idx)
       ..x1 = '${start_svg.x}'
       ..y1 = '${start_svg.y}'
