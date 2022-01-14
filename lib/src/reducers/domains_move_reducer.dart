@@ -13,6 +13,7 @@ import '../state/app_state.dart';
 import '../state/helix.dart';
 import '../actions/actions.dart' as actions;
 import '../extension_methods.dart';
+import 'strands_move_reducer.dart';
 
 GlobalReducer<DomainsMove, AppState> domains_move_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<DomainsMove, AppState, actions.DomainsMoveStartSelectedDomains>(
@@ -29,8 +30,7 @@ DomainsMove domains_move_start_selected_domains_reducer(
   Set<Domain> selected_domains =
       Set<Domain>.from(state.ui_state.selectables_store.selected_items.where((s) => s is Domain));
   Set<Strand> strands_of_selected_domains = {
-    for (var domain in selected_domains)
-      state.design.substrand_to_strand[domain]
+    for (var domain in selected_domains) state.design.substrand_to_strand[domain]
   };
   return DomainsMove(
       domains_moving: selected_domains.toBuiltList(),
@@ -114,7 +114,6 @@ bool is_allowable(Design design, DomainsMove domains_move) {
   int delta_offset = domains_move.delta_offset;
   bool delta_forward = domains_move.delta_forward;
 
-
   // look for moving domains overlapping fixed domains
   for (int original_helix_idx in design.helices.keys) {
     var domains_moving = domains_move.domains_moving_on_helix[original_helix_idx];
@@ -139,6 +138,7 @@ bool is_allowable(Design design, DomainsMove domains_move) {
           .where((dom) => delta_forward != (dom.forward == forward))
           .map((dom) => Point<int>(dom.start + delta_offset, dom.end - 1 + delta_offset))
           .toList();
+      sort_intervals_by_start(intervals_moving);
       if (intervals_moving.isNotEmpty) {
         if (intervals_moving[0].x < new_helix.min_offset) return false;
         if (intervals_moving[intervals_moving.length - 1].y >= new_helix.max_offset) return false;
@@ -146,45 +146,13 @@ bool is_allowable(Design design, DomainsMove domains_move) {
             .where((dom) => dom.forward == forward)
             .map((dom) => Point<int>(dom.start, dom.end - 1))
             .toList();
+        sort_intervals_by_start(intervals_fixed);
         if (intersection(intervals_moving, intervals_fixed)) return false;
       }
     }
   }
 
   return true;
-}
-
-/// Indicate if any of the intervals in ints1 intersect any of the intervals in ints2. Assume each
-/// is disjoint within itself (i.e., no two intervals in ints1 intersection, and no two intervals
-/// within ints2 intersect). and that each is sorted by start point
-/// (thus also by end point by disjointness.)
-/// These intervals are INCLUSIVE on both sides.
-bool intersection(List<Point<int>> ints1, List<Point<int>> ints2) {
-  int idx1 = 0;
-  int idx2 = 0;
-  while (idx1 < ints1.length && idx2 < ints2.length) {
-    // step through interavls in ints2 until one is found that might intersect int1
-    while (idx2 < ints2.length && ints2[idx2].y < ints1[idx1].x) {
-      idx2++;
-    }
-    if (idx2 == ints2.length) {
-      return false; // if we ran out of intervals in ints2, we're done
-    } else if (ints2[idx2].x <= ints1[idx1].y) {
-      return true; // o/w check for intersection
-    }
-
-    // step through interavls in ints1 until one is found that might intersect int2
-    while (idx1 < ints1.length && ints1[idx1].y < ints2[idx2].x) {
-      idx1++;
-    }
-    if (idx1 == ints1.length) {
-      return false; // if we ran out of intervals in ints2, we're done
-    } else if (ints1[idx1].x <= ints2[idx2].y) {
-      return true; // o/w check for intersection
-    }
-  }
-
-  return false;
 }
 
 Domain move_domain(
@@ -201,8 +169,8 @@ Domain move_domain(
   assert(new_helix_idx != null);
   Domain domain_moved = domain.rebuild(
     (b) => b
-      ..is_first = set_first_last_false? false: b.is_first
-      ..is_last = set_first_last_false? false: b.is_last
+      ..is_first = set_first_last_false ? false : b.is_first
+      ..is_last = set_first_last_false ? false : b.is_last
       ..helix = new_helix_idx
       ..forward = (delta_forward != domain.forward)
       ..start = domain.start + delta_offset

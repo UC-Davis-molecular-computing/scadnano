@@ -192,6 +192,7 @@ bool is_allowable(Design design, StrandsMove strands_move, {Set<int> original_he
           .where((dom) => delta_forward != (dom.forward == forward))
           .map((dom) => Point<int>(dom.start + delta_offset, dom.end - 1 + delta_offset))
           .toList();
+      sort_intervals_by_start(intervals_moving);
       if (intervals_moving.isNotEmpty) {
         if (intervals_moving[0].x < new_helix.min_offset) return false;
         if (intervals_moving[intervals_moving.length - 1].y >= new_helix.max_offset) return false;
@@ -199,6 +200,7 @@ bool is_allowable(Design design, StrandsMove strands_move, {Set<int> original_he
             .where((dom) => dom.forward == forward)
             .map((dom) => Point<int>(dom.start, dom.end - 1))
             .toList();
+        sort_intervals_by_start(intervals_fixed);
         if (intersection(intervals_moving, intervals_fixed)) return false;
       }
     }
@@ -206,8 +208,15 @@ bool is_allowable(Design design, StrandsMove strands_move, {Set<int> original_he
   return true;
 }
 
+int interval_comparator(Point interval1, Point interval2) => interval1.x - interval2.x;
+
+/// Sort intervals in ints by start point (in place).
+void sort_intervals_by_start(List<Point<int>> intervals) {
+  intervals.sort(interval_comparator);
+}
+
 /// Indicate if any of the intervals in ints1 intersect any of the intervals in ints2. Assume each
-/// is disjoint within itself (i.e., no two intervals in ints1 intersection, and no two intervals
+/// is disjoint within itself (i.e., no two intervals in ints1 intersect, and no two intervals
 /// within ints2 intersect) and that each is sorted by start point
 /// (thus also by end point by disjointness.)
 /// These intervals are INCLUSIVE on both sides.
