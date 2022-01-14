@@ -8,6 +8,7 @@ import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:scadnano/src/dna_file_type.dart';
 import 'package:scadnano/src/json_serializable.dart';
+import 'package:scadnano/src/middleware/local_storage.dart';
 import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
@@ -222,6 +223,16 @@ really want to exit without saving.'''
         ..display = 'Import cadnano v2'
         ..key = 'import-cadnano')(),
       DropdownDivider({'key': 'divider-import-cadnano'}),
+      (MenuDropdownItem()
+        ..on_click = ((_) {
+          window.localStorage.remove(Storable.design.key_name);
+          window.localStorage.remove(Storable.app_ui_state_storables.key_name);
+          window.location.reload();
+        })
+        ..display = 'Reset Local Storage'
+        ..tooltip = '''\
+If clicked, the design and local setting are reset and the webpage is reloaded.'''
+        ..key = 'reset-local-storage')(),
       file_menu_save_design_local_storage_options(),
       DropdownDivider({'key': 'divide-clear-helix-selection-when-loading-new-design'}),
       (MenuBoolean()
