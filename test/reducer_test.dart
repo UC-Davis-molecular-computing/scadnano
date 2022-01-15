@@ -1768,9 +1768,11 @@ main() {
     Point<num> start_point =
         h0.svg_base_pos(0, false, svg_position_map[0].y); // 3p end is 0 offset and forward is false.
     PotentialCrossover helix_0_3p_end_potential_crossover = PotentialCrossover(
-      helix_idx: 0,
-      forward: false,
-      offset: 0,
+      address: Address(
+        helix_idx: 0,
+        forward: false,
+        offset: 0,
+      ),
       color: h0_reverse_strand.color.toHexColor().toCssString(),
       dna_end_first_click: h0_reverse_strand.dnaend_3p,
       start_point: start_point,
@@ -1798,9 +1800,11 @@ main() {
     Point<num> start_point =
         h1.svg_base_pos(0, true, svg_position_map[1].y); // 5p end is 0 offset and forward is true.
     PotentialCrossover helix_1_5p_end_potential_crossover = PotentialCrossover(
-      helix_idx: 1,
-      forward: true,
-      offset: 0,
+      address: Address(
+        helix_idx: 1,
+        forward: true,
+        offset: 0,
+      ),
       color: h1_forward_strand.color.toHexColor().toCssString(),
       dna_end_first_click: h1_forward_strand.dnaend_5p,
       start_point: start_point,
@@ -4461,9 +4465,11 @@ main() {
     // 1 [------------------->
     //   <-------------------]
     PotentialCrossover potentialCrossover = PotentialCrossover(
-      helix_idx: 0,
-      offset: 0,
-      forward: true,
+      address: Address(
+        helix_idx: 0,
+        offset: 0,
+        forward: true,
+      ),
       color: '#000',
       dna_end_first_click: dnaEnd,
       start_point: start_point,
@@ -7543,9 +7549,8 @@ main() {
     Helix helix2 = Helix(idx: 2, grid_position: GridPosition(1, 0));
     Design design = Design(helices: [helix0, helix1, helix2], grid: Grid.square);
     AppState state = app_state_from_design(design).rebuild((b) => b
-      ..ui_state.storables.side_selected_helix_idxs.replace([0,2])
-      ..ui_state.storables.only_display_selected_helices = false
-    );
+      ..ui_state.storables.side_selected_helix_idxs.replace([0, 2])
+      ..ui_state.storables.only_display_selected_helices = false);
 
     // Action
     AppState new_state = app_state_reducer(state, SetOnlyDisplaySelectedHelices(true));

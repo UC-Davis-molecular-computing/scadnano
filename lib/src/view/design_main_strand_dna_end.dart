@@ -210,10 +210,9 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       int offset = props.is_5p ? props.domain.offset_5p : props.domain.offset_3p;
       var start_point_untransformed = props.helix.svg_base_pos(offset, props.domain.forward, props.helix_svg_position.y);
       var start_point = props.group.transform_point_main_view(start_point_untransformed, props.geometry);
+      var address = Address(helix_idx: props.helix.idx, offset: offset, forward: props.domain.forward);
       var potential_crossover = PotentialCrossover(
-        helix_idx: props.helix.idx,
-        forward: props.domain.forward,
-        offset: offset,
+        address: address,
         color: props.color.toHexColor().toCssString(),
         dna_end_first_click: dna_end,
         start_point: start_point,
