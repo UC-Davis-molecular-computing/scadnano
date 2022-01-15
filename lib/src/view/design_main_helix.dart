@@ -100,11 +100,14 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       (Dom.rect()
 //          ..onClick = start_strand_create
         ..onPointerDown = (react.SyntheticPointerEvent event_syn) {
-          if (app.state.ui_state.edit_modes.contains(EditModeChoice.pencil)) {
+          // start creating a strand, but only if we are not currently creating a crossover
+          if (app.state.ui_state.edit_modes.contains(EditModeChoice.pencil) &&
+              !app.state.ui_state.potential_crossover_is_drawing) {
             MouseEvent event = event_syn.nativeEvent;
             if (event.button != constants.LEFT_CLICK_BUTTON) return;
             var group = app.state.design.groups[props.helix.group];
-            var address = util.get_address_on_helix(event, props.helix, group, geometry, app.state.helix_idx_to_svg_position_map[props.helix.idx]);
+            var address = util.get_address_on_helix(event, props.helix, group, geometry,
+                app.state.helix_idx_to_svg_position_map[props.helix.idx]);
             app.dispatch(actions.StrandCreateStart(address: address, color: util.color_cycler.next()));
           }
         }
@@ -112,8 +115,10 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         //XXX: it matters that we reference props.mouseover_datas, not a local variable
         // this ensures that when subsequent mouse events happen, the most recent mouseover_datas is examined,
         // otherwise the callback is not updated until render executes again
-        ..onMouseEnter = ((event) => util.update_mouseover(event, props.helix, app.state.helix_idx_to_svg_position_map[props.helix.idx]))
-        ..onMouseMove = ((event) => util.update_mouseover(event, props.helix, app.state.helix_idx_to_svg_position_map[props.helix.idx]))
+        ..onMouseEnter = ((event) => util.update_mouseover(
+            event, props.helix, app.state.helix_idx_to_svg_position_map[props.helix.idx]))
+        ..onMouseMove = ((event) => util.update_mouseover(
+            event, props.helix, app.state.helix_idx_to_svg_position_map[props.helix.idx]))
         ..x = props.helix_svg_position.x
         ..y = props.helix_svg_position.y
         ..width = '$width'
@@ -203,8 +208,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     if (props.show_domain_labels) {
       offset += props.helix.geometry.base_height_svg;
     }
-    num y =
-        props.helix_svg_position.y + props.helix.svg_height + DISTANCE_OFFSET_DISPLAY_FROM_HELIX + offset;
+    num y = props.helix_svg_position.y + props.helix.svg_height + DISTANCE_OFFSET_DISPLAY_FROM_HELIX + offset;
 
     var offset_texts_elements = [];
     Map<num, int> map_offset_to_distance = {};
@@ -241,7 +245,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   String _horz_line_paths(Helix helix, num helix_svg_position_y) {
     num width = helix.svg_width;
     num height = helix.svg_height;
-    num x_start = helix.min_offset *  props.helix.geometry.base_width_svg;
+    num x_start = helix.min_offset * props.helix.geometry.base_width_svg;
     num x_end = x_start + width;
     num y_start = helix_svg_position_y;
     num y_mid = y_start + height / 2.0;
