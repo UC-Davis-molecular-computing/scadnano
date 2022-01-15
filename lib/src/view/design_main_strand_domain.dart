@@ -42,7 +42,9 @@ mixin DesignMainDomainPropsMixin on UiProps {
   Point<num> helix_svg_position;
 
   List<ContextMenuItem> Function(Strand strand,
-      {@required Domain domain, @required Address address, @required ModificationType type}) context_menu_strand;
+      {@required Domain domain,
+      @required Address address,
+      @required ModificationType type}) context_menu_strand;
 
   bool selected;
 
@@ -61,8 +63,10 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
     Domain domain = props.domain;
     String id = domain.id;
 
-    Point<num> start_svg = props.helix.svg_base_pos(domain.offset_5p, domain.forward, props.helix_svg_position.y);
-    Point<num> end_svg = props.helix.svg_base_pos(domain.offset_3p, domain.forward, props.helix_svg_position.y);
+    Point<num> start_svg =
+        props.helix.svg_base_pos(domain.offset_5p, domain.forward, props.helix_svg_position.y);
+    Point<num> end_svg =
+        props.helix.svg_base_pos(domain.offset_3p, domain.forward, props.helix_svg_position.y);
 
     var classname = constants.css_selector_domain;
     if (props.selected) {
@@ -131,9 +135,13 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
       if (domain_selectable(props.domain)) {
         // select/deselect
         props.domain.handle_selection_mouse_down(event);
-        // set up drag detection for moving DNA ends
-        var address = util.find_closest_address(event, [props.helix], props.groups, props.geometry, {props.helix.idx: props.helix_svg_position}.build());
-        app.dispatch(actions.DomainsMoveStartSelectedDomains(address: address));
+        // set up drag detection for moving domains
+        var address = util.find_closest_address(event, [props.helix], props.groups, props.geometry,
+            {props.helix.idx: props.helix_svg_position}.build());
+        HelixGroup group = app.state.design.group_of_domain(props.domain);
+        var view_order_inverse = group.helices_view_order_inverse;
+        app.dispatch(actions.DomainsMoveStartSelectedDomains(
+            address: address, original_helices_view_order_inverse: view_order_inverse));
       }
     }
   }
@@ -173,8 +181,8 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
     if (!event.shiftKey) {
       event.preventDefault();
       event.stopPropagation();
-      Address address =
-          util.get_address_on_helix(event, props.helix, props.groups[props.helix.group], props.geometry, props.helix_svg_position);
+      Address address = util.get_address_on_helix(
+          event, props.helix, props.groups[props.helix.group], props.geometry, props.helix_svg_position);
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
               items: props.context_menu_strand(props.strand, domain: props.domain, address: address).build(),

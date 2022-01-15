@@ -2172,8 +2172,12 @@ abstract class DomainsMoveStartSelectedDomains
     implements Action, Built<DomainsMoveStartSelectedDomains, DomainsMoveStartSelectedDomainsBuilder> {
   Address get address;
 
+  BuiltMap<int, int> get original_helices_view_order_inverse;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory DomainsMoveStartSelectedDomains({Address address}) = _$DomainsMoveStartSelectedDomains._;
+  factory DomainsMoveStartSelectedDomains(
+      {Address address,
+      BuiltMap<int, int> original_helices_view_order_inverse}) = _$DomainsMoveStartSelectedDomains._;
 
   DomainsMoveStartSelectedDomains._();
 
