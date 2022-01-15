@@ -23,6 +23,7 @@ import 'oxdna_export.dart';
 import 'periodic_save_design_local_storage.dart';
 import 'reselect_moved_dna_ends.dart';
 import 'reselect_moved_copied_strands.dart';
+import 'reselect_moved_domains.dart';
 import 'save_file.dart';
 import 'export_svg.dart';
 import 'local_storage.dart';
@@ -60,6 +61,7 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   export_dna_sequences_middleware,
   reselect_moved_dna_ends_middleware,
   reselect_moved_copied_strands_middleware,
+  reselect_moved_domains_middleware,
   selections_intersect_box_compute_middleware,
   insertion_deletion_batching_middleware,
   adjust_grid_position_middleware,

@@ -36,6 +36,7 @@ DomainsMove domains_move_start_selected_domains_reducer(
       domains_moving: selected_domains.toBuiltList(),
       all_domains: state.design.all_domains,
       strands_with_domains_moving: strands_of_selected_domains.toBuiltList(),
+      original_helices_view_order_inverse: action.original_helices_view_order_inverse,
       helices: state.design.helices,
       groups: state.design.groups,
       original_address: action.address);
@@ -46,6 +47,9 @@ DomainsMove domains_move_stop_reducer(DomainsMove domains_move, actions.DomainsM
 // - in_bounds checks whether the domain is in a legal address given the helices, but allows it to overlap
 // other domains
 // - is_allowable checks whether the domain overlaps other domains
+
+bool in_bounds_and_allowable(Design design, DomainsMove domains_move) =>
+    in_bounds(design, domains_move) && is_allowable(design, domains_move);
 
 DomainsMove domains_adjust_address_reducer(
     DomainsMove domains_move, AppState state, actions.DomainsMoveAdjustAddress action) {
