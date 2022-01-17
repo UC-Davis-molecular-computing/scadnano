@@ -1776,13 +1776,17 @@ abstract class ConvertCrossoverToLoopout
 
   int get length;
 
+  @nullable
+  String get dna_sequence;
+
   StrandPart get strand_part => crossover;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ConvertCrossoverToLoopout(Crossover crossover, int length) =>
+  factory ConvertCrossoverToLoopout(Crossover crossover, int length, [String dna_sequence = null]) =>
       ConvertCrossoverToLoopout.from((b) => b
         ..crossover.replace(crossover)
-        ..length = length);
+        ..length = length
+        ..dna_sequence = dna_sequence);
 
   factory ConvertCrossoverToLoopout.from([void Function(ConvertCrossoverToLoopoutBuilder) updates]) =
       _$ConvertCrossoverToLoopout;
@@ -1854,6 +1858,29 @@ abstract class JoinStrandsByCrossover
   JoinStrandsByCrossover._();
 
   static Serializer<JoinStrandsByCrossover> get serializer => _$joinStrandsByCrossoverSerializer;
+}
+
+// used to move a linker (crossover or loopout, stored as potential_crossover.linker)
+// so that one end stays fixed (stored in potential_crossover.dna_end_first_clicked)
+// while the other end moves to dna_end_second_click, editing two strands
+abstract class MoveLinker
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<MoveLinker, MoveLinkerBuilder> {
+  PotentialCrossover get potential_crossover;
+
+  DNAEnd get dna_end_second_click;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  @memoized
+  int get hashCode;
+
+  factory MoveLinker({PotentialCrossover potential_crossover, DNAEnd dna_end_second_click}) = _$MoveLinker._;
+
+  factory MoveLinker.from([void Function(MoveLinkerBuilder) updates]) = _$MoveLinker;
+
+  MoveLinker._();
+
+  static Serializer<MoveLinker> get serializer => _$moveLinkerSerializer;
 }
 
 // JoinStrandsByCrossover cannot be in a BatchAction since the reducer for it looks up strands

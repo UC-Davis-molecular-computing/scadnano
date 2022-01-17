@@ -34,6 +34,7 @@ abstract class Loopout
     int prev_domain_idx,
     int next_domain_idx,
     bool is_scaffold,
+    String dna_sequence = null,
     String name,
     Object label,
   }) =>
@@ -42,6 +43,7 @@ abstract class Loopout
         ..prev_domain_idx = prev_domain_idx
         ..next_domain_idx = next_domain_idx
         ..is_scaffold = is_scaffold
+        ..dna_sequence = dna_sequence
         ..name = name
         ..label = label
         ..unused_fields = MapBuilder<String, Object>({}));
@@ -55,6 +57,7 @@ abstract class Loopout
   @BuiltValueField(serialize: false)
   Object get label;
 
+  // idx's within Strand.substrands (not Strand.domains)
   int get prev_domain_idx;
 
   int get next_domain_idx;
