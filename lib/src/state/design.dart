@@ -19,6 +19,7 @@ import 'dna_end.dart';
 import 'grid_position.dart';
 import '../json_serializable.dart';
 import 'group.dart';
+import 'linker.dart';
 import 'modification.dart';
 import 'strand.dart';
 import 'domain.dart';
@@ -540,13 +541,24 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   @memoized
   BuiltMap<Crossover, Strand> get crossover_to_strand {
-    var crossover_to_strand_builder = MapBuilder<Crossover, Strand>();
+    var crossover_to_strand_builder = Map<Crossover, Strand>();
     for (var strand in strands) {
       for (var crossover in strand.crossovers) {
         crossover_to_strand_builder[crossover] = strand;
       }
     }
     return crossover_to_strand_builder.build();
+  }
+
+  @memoized
+  BuiltMap<Linker, Strand> get linker_to_strand {
+    var linker_to_strand_builder = Map<Linker, Strand>();
+    for (var strand in strands) {
+      for (var linker in strand.linkers) {
+        linker_to_strand_builder[linker] = strand;
+      }
+    }
+    return linker_to_strand_builder.build();
   }
 
   Strand loopout_to_strand(Loopout loopout) => substrand_to_strand[loopout];

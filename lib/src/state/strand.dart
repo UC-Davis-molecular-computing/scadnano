@@ -2,9 +2,11 @@ import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:react/react.dart';
 import 'package:tuple/tuple.dart';
 
 import 'address.dart';
+import 'linker.dart';
 import 'modification.dart';
 import '../serializers.dart';
 import 'dna_end.dart';
@@ -442,20 +444,58 @@ abstract class Strand
   }
 
   @memoized
-  BuiltList<Crossover> get crossovers {
-    List<Crossover> xovers = [];
+  BuiltList<Linker> get linkers {
+    List<Linker> linkers = [];
     for (int i = 0; i < substrands.length - 1; i++) {
-      if (substrands[i] is Domain && substrands[i + 1] is Domain) {
-        xovers.add(Crossover(i, i + 1, id, is_scaffold));
+      if (substrands[i] is Domain) {
+        if (substrands[i + 1] is Domain) {
+          linkers.add(Crossover(i, i + 1, id, is_scaffold));
+        } else {
+          var loopout = substrands[i + 1];
+          assert(loopout is Loopout);
+          if (loopout is Loopout) {
+            linkers.add(loopout);
+          }
+        }
       }
     }
 
     if (circular) {
-      xovers.add(Crossover(substrands.length - 1, 0, id, is_scaffold));
+      linkers.add(Crossover(substrands.length - 1, 0, id, is_scaffold));
     }
 
-    return BuiltList<Crossover>(xovers);
+    return linkers.build();
   }
+
+  @memoized
+  BuiltList<Crossover> get crossovers => [
+        for (var linker in linkers)
+          if (linker is Crossover) linker
+      ].build();
+
+  // List<Crossover> xovers = [];
+  // for (int i = 0; i < substrands.length - 1; i++) {
+  //   if (substrands[i] is Domain && substrands[i + 1] is Domain) {
+  //     xovers.add(Crossover(i, i + 1, id, is_scaffold));
+  //   }
+  // }
+  //
+  // if (circular) {
+  //   xovers.add(Crossover(substrands.length - 1, 0, id, is_scaffold));
+  // }
+  //
+  // return BuiltList<Crossover>(xovers);
+
+  @memoized
+  BuiltList<Loopout> get loopouts => [
+        for (var linker in linkers)
+          if (linker is Loopout) linker
+      ].build();
+
+  // List<Loopout>.from([
+  //   for (var ss in this.substrands)
+  //     if (ss.is_loopout()) ss
+  // ]).build();
 
   @memoized
   SelectModeChoice get select_mode => SelectModeChoice.strand;
@@ -473,12 +513,6 @@ abstract class Strand
   BuiltList<Domain> get domains => List<Domain>.from([
         for (var ss in this.substrands)
           if (ss.is_domain()) ss as Domain
-      ]).build();
-
-  @memoized
-  BuiltList<Loopout> get loopouts => List<Loopout>.from([
-        for (var ss in this.substrands)
-          if (ss.is_loopout()) ss
       ]).build();
 
   @memoized

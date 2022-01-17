@@ -199,6 +199,7 @@ part 'serializers.g.dart';
   Ligate,
   JoinStrandsByCrossover,
   JoinStrandsByMultipleCrossovers,
+  MoveLinker,
   PotentialVerticalCrossover,
   PotentialCrossover,
   PotentialCrossoverCreate,
