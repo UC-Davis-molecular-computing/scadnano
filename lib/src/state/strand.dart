@@ -487,10 +487,10 @@ abstract class Strand
   // return BuiltList<Crossover>(xovers);
 
   @memoized
-  BuiltList<Loopout> get loopouts => [
+  BuiltList<Loopout> get loopouts => BuiltList<Loopout>.from([
         for (var linker in linkers)
           if (linker is Loopout) linker
-      ].build();
+      ]);
 
   // List<Loopout>.from([
   //   for (var ss in this.substrands)
