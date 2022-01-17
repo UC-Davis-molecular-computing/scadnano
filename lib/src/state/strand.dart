@@ -468,34 +468,16 @@ abstract class Strand
   }
 
   @memoized
-  BuiltList<Crossover> get crossovers => [
+  BuiltList<Crossover> get crossovers => BuiltList<Crossover>.from([
         for (var linker in linkers)
           if (linker is Crossover) linker
-      ].build();
-
-  // List<Crossover> xovers = [];
-  // for (int i = 0; i < substrands.length - 1; i++) {
-  //   if (substrands[i] is Domain && substrands[i + 1] is Domain) {
-  //     xovers.add(Crossover(i, i + 1, id, is_scaffold));
-  //   }
-  // }
-  //
-  // if (circular) {
-  //   xovers.add(Crossover(substrands.length - 1, 0, id, is_scaffold));
-  // }
-  //
-  // return BuiltList<Crossover>(xovers);
+      ]);
 
   @memoized
   BuiltList<Loopout> get loopouts => BuiltList<Loopout>.from([
         for (var linker in linkers)
           if (linker is Loopout) linker
       ]);
-
-  // List<Loopout>.from([
-  //   for (var ss in this.substrands)
-  //     if (ss.is_loopout()) ss
-  // ]).build();
 
   @memoized
   SelectModeChoice get select_mode => SelectModeChoice.strand;
