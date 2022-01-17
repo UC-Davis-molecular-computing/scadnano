@@ -18,7 +18,7 @@ part 'design_main_domain_moving.over_react.g.dart';
 UiFactory<DesignMainDomainMovingProps> DesignMainDomainMoving = _$DesignMainDomainMoving;
 
 mixin DesignMainDomainMovingPropsMixin on UiProps {
-  Domain domain;
+  Domain domain_moved;
   Color color;
   HelixGroup original_group;
   HelixGroup current_group;
@@ -41,19 +41,11 @@ class DesignMainDomainMovingComponent extends UiComponent2<DesignMainDomainMovin
     with PureComponent, TransformByHelixGroup<DesignMainDomainMovingProps> {
   @override
   render() {
-    Domain domain_moved = move_domain(
-      domain: props.domain,
-      original_group: props.original_group,
-      current_group: props.current_group,
-      delta_view_order: props.delta_view_order,
-      delta_offset: props.delta_offset,
-      delta_forward: props.delta_forward,
-      set_first_last_false: true, // don't want to display 5'/3' ends while moving
-    );
-
-    Helix helix = props.helices[domain_moved.helix];
-    var start_svg = helix.svg_base_pos(domain_moved.offset_5p, domain_moved.forward, props.domain_helix_svg_position_y);
-    var end_svg = helix.svg_base_pos(domain_moved.offset_3p, domain_moved.forward, props.domain_helix_svg_position_y);
+    Helix helix = props.helices[props.domain_moved.helix];
+    var start_svg = helix.svg_base_pos(
+        props.domain_moved.offset_5p, props.domain_moved.forward, props.domain_helix_svg_position_y);
+    var end_svg = helix.svg_base_pos(
+        props.domain_moved.offset_3p, props.domain_moved.forward, props.domain_helix_svg_position_y);
 
     var classname = constants.css_selector_domain_moving;
     if (!props.allowable) {
