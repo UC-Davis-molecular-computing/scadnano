@@ -97,6 +97,15 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       classname += ' ' + constants.css_selector_scaffold;
     }
 
+    // only store enough of helix svg positions for helices this strand has
+    Map<int, Point<num>> helix_idx_to_svg_position_y_map_on_strand_unbuilt = {};
+    for (var domain in props.strand.domains) {
+      helix_idx_to_svg_position_y_map_on_strand_unbuilt[domain.helix] =
+          props.helix_idx_to_svg_position_map[domain.helix];
+    }
+    BuiltMap<int, Point<num>> helix_idx_to_svg_position_y_map_on_strand =
+        helix_idx_to_svg_position_y_map_on_strand_unbuilt.build();
+
     return (Dom.g()
       ..id = props.strand.id
       ..onPointerDown = handle_click_down
@@ -119,7 +128,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..drawing_potential_crossover = props.drawing_potential_crossover
         ..moving_dna_ends = props.moving_dna_ends
         ..geometry = props.geometry
-        ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
+        ..helix_idx_to_svg_position_map = helix_idx_to_svg_position_y_map_on_strand
         ..only_display_selected_helices = props.only_display_selected_helices)(),
       _insertions(),
       _deletions(),
@@ -134,6 +143,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..only_display_selected_helices = props.only_display_selected_helices
           ..show_domain_names = props.show_domain_names
           ..show_strand_names = props.show_strand_names
+          ..helix_idx_to_svg_position_y_map = helix_idx_to_svg_position_y_map_on_strand
           ..domain_name_font_size = props.domain_name_font_size
           ..strand_name_font_size = props.strand_name_font_size
           ..key = 'domain-names')(),
@@ -148,7 +158,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..selected_modifications_in_strand = props.selected_modifications_in_strand
           ..font_size = props.modification_font_size
           ..display_connector = props.modification_display_connector
-          ..helix_idx_to_svg_position_y_map = props.helix_idx_to_svg_position_map.map((i, p) => MapEntry(i, p.y))
+          ..helix_idx_to_svg_position_y_map =
+              props.helix_idx_to_svg_position_map.map((i, p) => MapEntry(i, p.y))
           ..key = 'modifications')(),
     ]);
   }
@@ -160,7 +171,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         // select/deselect
         props.strand.handle_selection_mouse_down(event);
         // set up drag detection for moving DNA ends
-        var address = util.find_closest_address(event, props.helices.values, props.groups, props.geometry, props.helix_idx_to_svg_position_map);
+        var address = util.find_closest_address(
+            event, props.helices.values, props.groups, props.geometry, props.helix_idx_to_svg_position_map);
         HelixGroup group = app.state.design.group_of_strand(props.strand);
         var helices_view_order_inverse = group.helices_view_order_inverse;
         app.dispatch(actions.StrandsMoveStartSelectedStrands(

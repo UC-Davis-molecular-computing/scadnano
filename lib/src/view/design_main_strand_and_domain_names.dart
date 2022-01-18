@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 
@@ -36,6 +38,8 @@ mixin DesignMainStrandAndDomainNamesPropsMixin on UiProps {
   bool show_strand_names;
   int domain_name_font_size;
   int strand_name_font_size;
+
+  BuiltMap<int, Point<num>> helix_idx_to_svg_position_y_map;
 }
 
 class DesignMainStrandAndDomainNamesProps = UiProps
@@ -85,6 +89,8 @@ class DesignMainStrandAndDomainNamesComponent extends UiComponent2<DesignMainStr
     bool draw_domain = should_draw_domain(
         domain_5p.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
 
+    var helix_svg_position = props.helix_idx_to_svg_position_y_map[domain_5p.helix];
+
     // don't bother if 5' domain is not visible; if we give more sophisticated options for where to place
     // the strand name later, this should be changed
     if (draw_domain && props.strand.name != null) {
@@ -96,6 +102,7 @@ class DesignMainStrandAndDomainNamesComponent extends UiComponent2<DesignMainStr
         ..geometry = props.geometry
         ..font_size = props.strand_name_font_size
         ..transform = transform_of_helix(domain_5p.helix)
+        ..helix_svg_position_y = helix_svg_position.y
         ..show_dna = props.show_dna
         ..show_domain_names = props.show_domain_names
         ..className = constants.css_selector_strand_name
@@ -114,12 +121,14 @@ class DesignMainStrandAndDomainNamesComponent extends UiComponent2<DesignMainStr
             domain.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
         if (draw_domain && domain.name != null) {
           Helix helix = props.helices[substrand.helix];
+          var helix_svg_position = props.helix_idx_to_svg_position_y_map[substrand.helix];
           names.add((DesignMainStrandDomainName()
             ..domain = substrand
             ..helix = helix
             ..geometry = props.geometry
             ..font_size = props.domain_name_font_size
             ..transform = transform_of_helix(domain.helix)
+            ..svg_position_y = helix_svg_position.y
             ..show_dna = props.show_dna
             ..className = constants.css_selector_domain_name
             ..key = "domain-name-$i")());
