@@ -143,7 +143,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..only_display_selected_helices = props.only_display_selected_helices
           ..show_domain_names = props.show_domain_names
           ..show_strand_names = props.show_strand_names
-          ..helix_idx_to_svg_position_y_map = helix_idx_to_svg_position_y_map_on_strand
+          ..context_menu_strand = context_menu_strand
+          ..helix_idx_to_svg_position = helix_idx_to_svg_position_y_map_on_strand
           ..domain_name_font_size = props.domain_name_font_size
           ..strand_name_font_size = props.strand_name_font_size
           ..key = 'domain-names')(),
