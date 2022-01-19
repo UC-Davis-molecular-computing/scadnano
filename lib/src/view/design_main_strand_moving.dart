@@ -58,6 +58,10 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
         delta_offset: props.delta_offset,
         delta_forward: props.delta_forward);
 
+    if (strand_moved == null) {
+      return null;
+    }
+
     Domain first_domain_moved = strand_moved.first_domain;
     Domain last_domain_moved = strand_moved.last_domain;
     DNAEnd end_5p_moved = first_domain_moved.dnaend_5p;
