@@ -41,4 +41,34 @@
   MT("bracesInFString", "[string f']{[variable x] [operator +] {}}[string !']")
 
   MT("nestedFString", "[string f']{[variable b][[ [string f\"c\"] ]]}[string f'] [comment # oops]")
+
+  MT("dontIndentTypeDecl",
+     "[variable i]: [builtin int] [operator =] [number 32]",
+     "[builtin print]([variable i])")
+
+  MT("dedentElse",
+     "[keyword if] [variable x]:",
+     "    [variable foo]()",
+     "[keyword elif] [variable y]:",
+     "    [variable bar]()",
+     "[keyword else]:",
+     "    [variable baz]()")
+
+  MT("dedentElsePass",
+     "[keyword if] [variable x]:",
+     "    [keyword pass]",
+     "[keyword elif] [variable y]:",
+     "    [keyword pass]",
+     "[keyword else]:",
+     "    [keyword pass]")
+
+  MT("dedentElseInFunction",
+     "[keyword def] [def foo]():",
+     "    [keyword if] [variable x]:",
+     "        [variable foo]()",
+     "    [keyword elif] [variable y]:",
+     "        [variable bar]()",
+     "        [keyword pass]",
+     "    [keyword else]:",
+     "        [variable baz]()")
 })();

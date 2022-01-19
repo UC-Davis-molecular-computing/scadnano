@@ -22,6 +22,7 @@ charcode:packages/charcode/
 checked_yaml:packages/checked_yaml/
 cli_repl:packages/cli_repl/
 cli_util:packages/cli_util/
+clock:packages/clock/
 code_builder:packages/code_builder/
 codemirror:packages/codemirror/
 collection:packages/collection/
