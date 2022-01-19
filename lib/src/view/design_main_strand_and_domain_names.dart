@@ -2,6 +2,9 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
+import 'package:scadnano/src/state/address.dart';
+import 'package:scadnano/src/state/context_menu.dart';
+import 'package:scadnano/src/state/modification_type.dart';
 
 import 'transform_by_helix_group.dart';
 import '../state/geometry.dart';
@@ -39,7 +42,10 @@ mixin DesignMainStrandAndDomainNamesPropsMixin on UiProps {
   int domain_name_font_size;
   int strand_name_font_size;
 
-  BuiltMap<int, Point<num>> helix_idx_to_svg_position_y_map;
+  BuiltMap<int, Point<num>> helix_idx_to_svg_position;
+
+  List<ContextMenuItem> Function(Strand strand, {Domain domain, Address address, ModificationType type})
+      context_menu_strand;
 }
 
 class DesignMainStrandAndDomainNamesProps = UiProps
@@ -89,21 +95,23 @@ class DesignMainStrandAndDomainNamesComponent extends UiComponent2<DesignMainStr
     bool draw_domain = should_draw_domain(
         domain_5p.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
 
-    var helix_svg_position = props.helix_idx_to_svg_position_y_map[domain_5p.helix];
+    var helix_svg_position = props.helix_idx_to_svg_position[domain_5p.helix];
 
     // don't bother if 5' domain is not visible; if we give more sophisticated options for where to place
     // the strand name later, this should be changed
     if (draw_domain && props.strand.name != null) {
       Helix helix = props.helices[domain_5p.helix];
       strand_name_component = (DesignMainStrandStrandName()
-        ..strand_name = props.strand.name
+        ..strand = props.strand
         ..domain = domain_5p
         ..helix = helix
+        ..helix_groups = props.groups
         ..geometry = props.geometry
         ..font_size = props.strand_name_font_size
         ..transform = transform_of_helix(domain_5p.helix)
-        ..helix_svg_position_y = helix_svg_position.y
+        ..helix_svg_position = helix_svg_position
         ..show_dna = props.show_dna
+        ..context_menu_strand = props.context_menu_strand
         ..show_domain_names = props.show_domain_names
         ..className = constants.css_selector_strand_name
         ..key = "strand-name")();
@@ -121,15 +129,18 @@ class DesignMainStrandAndDomainNamesComponent extends UiComponent2<DesignMainStr
             domain.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
         if (draw_domain && domain.name != null) {
           Helix helix = props.helices[substrand.helix];
-          var helix_svg_position = props.helix_idx_to_svg_position_y_map[substrand.helix];
+          var helix_svg_position = props.helix_idx_to_svg_position[substrand.helix];
           names.add((DesignMainStrandDomainName()
+            ..strand = props.strand
             ..domain = substrand
             ..helix = helix
+            ..helix_groups = props.groups
             ..geometry = props.geometry
             ..font_size = props.domain_name_font_size
             ..transform = transform_of_helix(domain.helix)
-            ..svg_position_y = helix_svg_position.y
+            ..helix_svg_position = helix_svg_position
             ..show_dna = props.show_dna
+            ..context_menu_strand = props.context_menu_strand
             ..className = constants.css_selector_domain_name
             ..key = "domain-name-$i")());
         }
