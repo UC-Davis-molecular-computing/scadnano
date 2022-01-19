@@ -9,11 +9,13 @@ jobs:
   deploy:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout dev branch
+        uses: actions/checkout@v2
         with:
           ref: dev
 
-      - uses: actions/checkout@v2
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v2
         with:
           ref: gh-pages
           path: gh-pages-repo
