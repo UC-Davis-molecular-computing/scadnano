@@ -64,6 +64,14 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
     DNAEnd end_3p_moved = last_domain_moved.dnaend_3p;
     Helix first_helix_moved = props.helices[first_domain_moved.helix];
     Helix last_helix_moved = props.helices[last_domain_moved.helix];
+    if (first_helix_moved == null || last_helix_moved == null) {
+      return null;
+    }
+    var strand_lines_single_path =_draw_strand_lines_single_path(strand_moved);
+    if (strand_lines_single_path == null) {
+      return null;
+    }
+
     //XXX: need to switch 3' and 5' if delta_forward is true
     return (Dom.g()
       ..className = 'strand-moving'
@@ -117,6 +125,9 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
           var old_domain = domain;
           domain = substrands[idx_next];
           helix = props.helices[domain.helix];
+          if (helix == null) {
+            return null;
+          }
           helix_svg_position_y = props.helix_idx_to_svg_position_map[helix.idx].y;
           start_svg = helix.svg_base_pos(domain.offset_5p, domain.forward, helix_svg_position_y);
           var control = control_point_for_crossover_bezier_curve(old_domain, domain, props.helices,
