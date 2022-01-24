@@ -57,11 +57,13 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     int max_idx = 0;
     int max_set_by_domain_idx = 1;
     int apply_to_all_idx = 2;
+    int take_max_of_all_idx = 3;
 
-    var items = List<DialogItem>.filled(3, null);
+    var items = List<DialogItem>.filled(4, null);
     items[max_idx] = DialogInteger(label: 'maximum', value: helix.max_offset);
     items[max_set_by_domain_idx] = DialogCheckbox(label: 'set maximum by existing domains', value: false);
     items[apply_to_all_idx] = DialogCheckbox(label: 'apply to all helices', value: helix_change_apply_to_all);
+    items[take_max_of_all_idx] = DialogCheckbox(label: 'give all same max', value: false);
 
     var dialog = Dialog(title: 'set helix maximum offset', items: items, disable_when_any_checkboxes_on: {
       max_idx: [max_set_by_domain_idx],
@@ -71,10 +73,15 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
 
     bool apply_to_all = (results[apply_to_all_idx] as DialogCheckbox).value;
     bool max_set_by_domain = (results[max_set_by_domain_idx] as DialogCheckbox).value;
+    bool take_max_of_all = (results[take_max_of_all_idx] as DialogCheckbox).value;
 
     if (max_set_by_domain) {
       if (apply_to_all) {
-        app.dispatch(actions.HelixMaxOffsetSetByDomainsAll());
+        if (take_max_of_all) {
+          app.dispatch(actions.HelixMaxOffsetSetByDomainsAllSameMax());
+        } else {
+          app.dispatch(actions.HelixMaxOffsetSetByDomainsAll());
+        }
       } else {
         app.dispatch(actions.HelixMaxOffsetSetByDomains(helix_idx: helix.idx));
       }

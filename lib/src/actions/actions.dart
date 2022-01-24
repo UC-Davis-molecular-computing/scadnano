@@ -1597,6 +1597,7 @@ abstract class HelixMinOffsetSetByDomainsAll
       _$helixMinOffsetSetByDomainsAllSerializer;
 }
 
+// when we want each helix to have its own max based on its domains
 abstract class HelixMaxOffsetSetByDomainsAll
     with BuiltJsonSerializable, UndoableAction
     implements Action, Built<HelixMaxOffsetSetByDomainsAll, HelixMaxOffsetSetByDomainsAllBuilder> {
@@ -1607,6 +1608,19 @@ abstract class HelixMaxOffsetSetByDomainsAll
 
   static Serializer<HelixMaxOffsetSetByDomainsAll> get serializer =>
       _$helixMaxOffsetSetByDomainsAllSerializer;
+}
+
+// when we want the same max to be applied to all helices
+abstract class HelixMaxOffsetSetByDomainsAllSameMax
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<HelixMaxOffsetSetByDomainsAllSameMax, HelixMaxOffsetSetByDomainsAllSameMaxBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixMaxOffsetSetByDomainsAllSameMax() = _$HelixMaxOffsetSetByDomainsAllSameMax;
+
+  HelixMaxOffsetSetByDomainsAllSameMax._();
+
+  static Serializer<HelixMaxOffsetSetByDomainsAllSameMax> get serializer =>
+      _$helixMaxOffsetSetByDomainsAllSameMaxSerializer;
 }
 
 abstract class HelixOffsetChangeAll
