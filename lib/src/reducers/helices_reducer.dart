@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
@@ -44,6 +46,9 @@ GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGl
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixIndividualAction>(helix_individual_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixRollSetAtOther>(
     helix_roll_set_at_other_reducer,
+  ),
+  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixMaxOffsetSetByDomainsAllSameMax>(
+    helix_max_offset_set_by_domains_all_same_max_reducer,
   ),
 ]);
 
@@ -201,7 +206,8 @@ Helix _min_offset_set_by_domains_one_helix(Helix helix, Design design) {
 
 Helix _max_offset_set_by_domains_one_helix(Helix helix, Design design) {
   var domains = design.domains_on_helix(helix.idx);
-  int max_offset = [for (var dom in domains) dom.end].max;
+  var end_offsets = [for (var dom in domains) dom.end];
+  int max_offset = end_offsets.isNotEmpty ? end_offsets.max : 10;
   return helix.rebuild((b) => b..max_offset = max_offset);
 }
 
@@ -215,6 +221,26 @@ BuiltMap<int, Helix> helix_max_offset_set_by_domains_all_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.HelixMaxOffsetSetByDomainsAll action) {
   Helix map_func(_, Helix helix) => _max_offset_set_by_domains_one_helix(helix, state.design);
   return helices.map_values(map_func);
+}
+
+BuiltMap<int, Helix> helix_max_offset_set_by_domains_all_same_max_reducer(
+    BuiltMap<int, Helix> helices, AppState state, actions.HelixMaxOffsetSetByDomainsAllSameMax action) {
+  Design design = state.design;
+  int max_offset = null;
+  for (int idx in helices.keys) {
+    var domains = design.domains_on_helix(idx);
+    var end_offsets = [for (var dom in domains) dom.end];
+    int this_max_offset = end_offsets.isNotEmpty ? end_offsets.max : 10;
+    if (max_offset == null) {
+      max_offset = this_max_offset;
+    } else {
+      max_offset = max(max_offset, this_max_offset);
+    }
+  }
+  if (max_offset == null) {
+    max_offset = 10;
+  }
+  return helices.map_values((_, helix) => helix.rebuild((b) => b..max_offset = max_offset));
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -452,8 +478,9 @@ BuiltMap<int, Helix> helix_grid_change_reducer(
 }
 
 BuiltMap<int, Helix> helix_group_change_reducer(
-        BuiltMap<int, Helix> helices, AppState state, actions.GroupChange action) {
-  return helices.map_values((idx, helix) => helix.group == action.old_name ? helix.rebuild((b) => b..group = action.new_name) : helix);
+    BuiltMap<int, Helix> helices, AppState state, actions.GroupChange action) {
+  return helices.map_values((idx, helix) =>
+      helix.group == action.old_name ? helix.rebuild((b) => b..group = action.new_name) : helix);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

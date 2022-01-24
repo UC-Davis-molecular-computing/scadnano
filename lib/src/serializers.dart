@@ -181,6 +181,7 @@ part 'serializers.g.dart';
   HelixMaxOffsetSetByDomains,
   HelixMinOffsetSetByDomainsAll,
   HelixMaxOffsetSetByDomainsAll,
+  HelixMaxOffsetSetByDomainsAllSameMax,
   HelixOffsetChange,
   HelixOffsetChangeAll,
   HelixIdxsChange,
