@@ -1,9 +1,12 @@
 name: Dart CI
 
-on: [pull_request]
+on:  
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
-  build:
+  run_unit_tests:
+    if: github.event.pull_request.draft == false
 
     runs-on: ubuntu-18.04
 
@@ -25,3 +28,10 @@ jobs:
       run: PATH="$PATH:/usr/lib/dart/bin" pub get
     - name: Run tests
       run: PATH="$PATH:/usr/lib/dart/bin" pub run build_runner test
+
+  fail_if_pull_request_is_draft:
+    if: github.event.pull_request.draft == true
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Fails in order to indicate that pull request needs to be marked as ready to review and unit tests workflow needs to pass.
+      run: exit 1
