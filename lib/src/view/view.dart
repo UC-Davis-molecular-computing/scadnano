@@ -155,7 +155,8 @@ setup_file_drag_and_drop_listener(Element drop_zone) {
     var file = files.first;
     var filename = file.name;
     var ext = path.extension(filename);
-    if (dot_exts.contains(ext)) {
+    var ext_lower = ext.toLowerCase();
+    if (dot_exts.contains(ext_lower)) {
       var confirm =
           app.state.has_error || window.confirm('Are you sure you want to replace the current design?');
 
