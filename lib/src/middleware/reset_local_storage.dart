@@ -15,8 +15,6 @@ import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 import 'local_storage.dart';
 
-part 'reset_local_storage.g.dart';
-
 reset_local_storage_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   next(action);
   if (action is actions.ResetLocalStorage) {
