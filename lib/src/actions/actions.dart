@@ -737,6 +737,21 @@ abstract class WarnOnExitIfUnsavedSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// loading DNA files
+
+abstract class LoadingCompleteSet
+    with BuiltJsonSerializable
+    implements Action, Built<LoadingCompleteSet, LoadingCompleteSetBuilder> {
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory LoadingCompleteSet() = _$LoadingCompleteSet._;
+
+  LoadingCompleteSet._();
+
+  static Serializer<LoadingCompleteSet> get serializer => _$loadingCompleteSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Save/load files
 
 abstract class SaveDNAFile

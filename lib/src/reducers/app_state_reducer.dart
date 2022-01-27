@@ -16,9 +16,13 @@ AppState app_state_reducer(AppState state, action) {
     action = action.undoable_action;
   }
 
-  // This is a bit of a special case.
+  // These are a bit of special cases.
   if (action is actions.LoadDNAFile) {
     return load_dna_file_reducer(state, action);
+  }
+
+  if(action is actions.LoadingCompleteSet){
+    return loading_dialog_reducer(state, action);
   }
 
   //XXX: I had a lot of bugs when I introduced local variables to track all the updates to the state below.

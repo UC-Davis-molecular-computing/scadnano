@@ -27,6 +27,8 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
 
   String get editor_content;
 
+  bool get loading;
+
   /// Maps helix indices to helix svg position.
   ///
   /// The helix svg position is the SVG position of the upper-left corner
@@ -74,6 +76,7 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
     b.error_message = constants.NO_DESIGN_MESSAGE_HTML;
     b.editor_content = "";
     b.undo_redo = DEFAULT_UndoRedoBuilder;
+    b.loading = false;
   }
 
   Map<String, dynamic> toJson() {

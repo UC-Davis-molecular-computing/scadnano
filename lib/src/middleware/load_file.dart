@@ -21,5 +21,6 @@ load_file_middleware(Store<AppState> store, action, NextDispatcher next) {
     if (store.state.ui_state.autofit && store.state.design != null) {
       util.fit_and_center();
     }
+    store.dispatch(actions.LoadingCompleteSet());
   }
 }
