@@ -23,6 +23,7 @@ import 'oxdna_export.dart';
 import 'periodic_save_design_local_storage.dart';
 import 'reselect_moved_dna_ends.dart';
 import 'reselect_moved_copied_strands.dart';
+import 'reset_local_storage.dart';
 import 'save_file.dart';
 import 'export_svg.dart';
 import 'local_storage.dart';
@@ -37,6 +38,7 @@ import 'autostaple_and_autobreak.dart';
 import 'zoom_speed.dart';
 
 final all_middleware = List<Middleware<AppState>>.unmodifiable([
+  reset_local_storage_middleware,
   local_storage_middleware,
   move_ensure_all_in_same_helix_group_middleware,
   forbid_create_circular_strand_no_crossovers_middleware,

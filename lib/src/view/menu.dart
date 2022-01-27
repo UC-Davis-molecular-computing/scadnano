@@ -224,11 +224,8 @@ really want to exit without saving.'''
         ..key = 'import-cadnano')(),
       DropdownDivider({'key': 'divider-import-cadnano'}),
       (MenuDropdownItem()
-        ..on_click = ((_) {
-          window.localStorage.remove(Storable.design.key_name);
-          window.localStorage.remove(Storable.app_ui_state_storables.key_name);
-          window.location.reload();
-        })
+        ..on_click = ((_) => props.dispatch(
+              actions.ResetLocalStorage()))
         ..display = 'Reset Local Storage'
         ..tooltip = '''\
 If clicked, the design and local setting are reset and the webpage is reloaded.'''
