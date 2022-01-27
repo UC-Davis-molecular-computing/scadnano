@@ -2,6 +2,7 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:scadnano/src/reducers/domains_move_reducer.dart';
 import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/view/pure_component.dart';
@@ -39,6 +40,7 @@ UiFactory<DesignMainDomainsMovingProps> ConnectedDesignMainDomainsMoving =
     ..current_group = current_group
     ..helices = state.design.helices
     ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
+    ..helix_idx_to_svg_position_y_map = state.helix_idx_to_svg_position_map.map((i, p) => MapEntry(i, p.y))
     ..geometry = state.design.geometry;
 })(DesignMainDomainsMoving);
 
@@ -53,6 +55,7 @@ mixin DesignMainDomainsMovingProps on UiProps {
   BuiltMap<String, HelixGroup> groups;
   BuiltSet<int> side_selected_helix_idxs;
   Geometry geometry;
+  BuiltMap<int, num> helix_idx_to_svg_position_y_map;
 }
 
 class DesignMainDomainsMovingComponent extends UiComponent2<DesignMainDomainsMovingProps> with PureComponent {
@@ -61,23 +64,40 @@ class DesignMainDomainsMovingComponent extends UiComponent2<DesignMainDomainsMov
     if (props.domains_move == null) {
       return null;
     }
+
+    List<ReactElement> domains_moving = [];
+
+    for (var domain in props.domains_move.domains_moving) {
+      Domain domain_moved = move_domain(
+        domain: domain,
+        original_group: props.original_group,
+        current_group: props.current_group,
+        delta_view_order: props.domains_move.delta_view_order,
+        delta_offset: props.domains_move.delta_offset,
+        delta_forward: props.domains_move.delta_forward,
+        set_first_last_false: true, // don't want to display 5'/3' ends while moving
+      );
+      int moved_helix_idx = domain_moved.helix;
+      var domain_helix_svg_position_y = props.helix_idx_to_svg_position_y_map[moved_helix_idx];
+      domains_moving.add((DesignMainDomainMoving()
+        ..domain_moved = domain_moved
+        ..color = props.color_of_domain[domain]
+        ..delta_view_order = props.domains_move.delta_view_order
+        ..original_group = props.original_group
+        ..current_group = props.current_group
+        ..delta_offset = props.domains_move.delta_offset
+        ..delta_forward = props.domains_move.delta_forward
+        ..side_selected_helix_idxs = props.side_selected_helix_idxs
+        ..helices = props.helices
+        ..groups = props.groups
+        ..allowable = props.domains_move.allowable
+        ..geometry = props.geometry
+        ..domain_helix_svg_position_y = domain_helix_svg_position_y
+        ..key = domain.toString())());
+    }
+
     return (Dom.g()
-      ..className = 'strands-moving-main-view' + (props.domains_move.allowable ? '' : ' disallowed'))([
-      for (var domain in props.domains_move.domains_moving)
-        (DesignMainDomainMoving()
-          ..domain = domain
-          ..color = props.color_of_domain[domain]
-          ..delta_view_order = props.domains_move.delta_view_order
-          ..original_group = props.original_group
-          ..current_group = props.current_group
-          ..delta_offset = props.domains_move.delta_offset
-          ..delta_forward = props.domains_move.delta_forward
-          ..side_selected_helix_idxs = props.side_selected_helix_idxs
-          ..helices = props.helices
-          ..groups = props.groups
-          ..allowable = props.domains_move.allowable
-          ..geometry = props.geometry
-          ..key = domain.toString())()
-    ]);
+      ..className =
+          'domains-moving-main-view' + (props.domains_move.allowable ? '' : ' disallowed'))(domains_moving);
   }
 }

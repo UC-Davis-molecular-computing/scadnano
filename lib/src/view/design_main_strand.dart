@@ -12,7 +12,6 @@ import 'package:scadnano/src/state/modification_type.dart';
 
 import 'design_main_strand_and_domain_names.dart';
 import 'design_main_strand_dna_end.dart';
-import 'design_main_strand_dna_end.dart';
 import 'transform_by_helix_group.dart';
 import '../state/modification.dart';
 import '../state/address.dart';
@@ -29,6 +28,7 @@ import '../state/loopout.dart';
 import '../app.dart';
 import '../state/strand.dart';
 import '../state/domain.dart';
+import '../state/dna_assign_options.dart';
 import 'design_main_strand_deletion.dart';
 import 'design_main_strand_insertion.dart';
 import 'design_main_strand_modifications.dart';
@@ -65,8 +65,7 @@ mixin DesignMainStrandPropsMixin on UiProps {
   bool selected;
   bool drawing_potential_crossover;
   bool moving_dna_ends;
-  bool assign_complement_to_bound_strands_default;
-  bool warn_on_change_strand_dna_assign_default;
+  DNAAssignOptions dna_assign_options;
   bool modification_display_connector;
   bool show_dna;
   bool show_modifications;
@@ -76,6 +75,7 @@ mixin DesignMainStrandPropsMixin on UiProps {
   num strand_name_font_size;
   num modification_font_size;
   bool invert_y;
+  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
 }
 
 class DesignMainStrandProps = UiProps with DesignMainStrandPropsMixin, TransformByHelixGroupPropsMixin;
@@ -96,6 +96,15 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     if (props.strand.is_scaffold) {
       classname += ' ' + constants.css_selector_scaffold;
     }
+
+    // only store enough of helix svg positions for helices this strand has
+    Map<int, Point<num>> helix_idx_to_svg_position_y_map_on_strand_unbuilt = {};
+    for (var domain in props.strand.domains) {
+      helix_idx_to_svg_position_y_map_on_strand_unbuilt[domain.helix] =
+          props.helix_idx_to_svg_position_map[domain.helix];
+    }
+    BuiltMap<int, Point<num>> helix_idx_to_svg_position_y_map_on_strand =
+        helix_idx_to_svg_position_y_map_on_strand_unbuilt.build();
 
     return (Dom.g()
       ..id = props.strand.id
@@ -119,6 +128,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..drawing_potential_crossover = props.drawing_potential_crossover
         ..moving_dna_ends = props.moving_dna_ends
         ..geometry = props.geometry
+        ..helix_idx_to_svg_position_map = helix_idx_to_svg_position_y_map_on_strand
         ..only_display_selected_helices = props.only_display_selected_helices)(),
       _insertions(),
       _deletions(),
@@ -133,6 +143,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..only_display_selected_helices = props.only_display_selected_helices
           ..show_domain_names = props.show_domain_names
           ..show_strand_names = props.show_strand_names
+          ..context_menu_strand = context_menu_strand
+          ..helix_idx_to_svg_position = helix_idx_to_svg_position_y_map_on_strand
           ..domain_name_font_size = props.domain_name_font_size
           ..strand_name_font_size = props.strand_name_font_size
           ..key = 'domain-names')(),
@@ -147,6 +159,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..selected_modifications_in_strand = props.selected_modifications_in_strand
           ..font_size = props.modification_font_size
           ..display_connector = props.modification_display_connector
+          ..helix_idx_to_svg_position_y_map =
+              props.helix_idx_to_svg_position_map.map((i, p) => MapEntry(i, p.y))
           ..key = 'modifications')(),
     ]);
   }
@@ -158,7 +172,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         // select/deselect
         props.strand.handle_selection_mouse_down(event);
         // set up drag detection for moving DNA ends
-        var address = util.find_closest_address(event, props.helices.values, props.groups, props.geometry);
+        var address = util.find_closest_address(
+            event, props.helices.values, props.groups, props.geometry, props.helix_idx_to_svg_position_map);
         HelixGroup group = app.state.design.group_of_strand(props.strand);
         var helices_view_order_inverse = group.helices_view_order_inverse;
         app.dispatch(actions.StrandsMoveStartSelectedStrands(
@@ -182,8 +197,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     }
   }
 
-  assign_dna() => app.disable_keyboard_shortcuts_while(() => ask_for_assign_dna_sequence(props.strand,
-      props.assign_complement_to_bound_strands_default, props.warn_on_change_strand_dna_assign_default));
+  assign_dna() => app.disable_keyboard_shortcuts_while(
+      () => ask_for_assign_dna_sequence(props.strand, props.dna_assign_options));
 
   assign_dna_complement_from_bound_strands() {
     List<Strand> strands_selected = app.state.ui_state.selectables_store.selected_strands.toList();
@@ -223,6 +238,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       app.disable_keyboard_shortcuts_while(ask_for_assign_scale_purification_fields);
 
   assign_plate_well_fields() => app.disable_keyboard_shortcuts_while(ask_for_assign_plate_well_fields);
+
   set_strand_name() => app.disable_keyboard_shortcuts_while(ask_for_strand_name);
 
   set_domain_name(Domain domain) => app.disable_keyboard_shortcuts_while(() => ask_for_domain_name(domain));
@@ -239,6 +255,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
             ..helix = helix
             ..color = props.strand.color
             ..transform = transform_of_helix(domain.helix)
+            ..svg_position_y = props.helix_idx_to_svg_position_map[helix.idx].y
             ..key = util.id_insertion(domain, selectable_insertion.insertion.offset))());
         }
       }
@@ -272,6 +289,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
             ..helix = helix
             ..selected = props.selected_deletions_in_strand.contains(selectable_deletion)
             ..transform = transform_of_helix(domain.helix)
+            ..svg_position_y = props.helix_idx_to_svg_position_map[domain.helix].y
             ..key = id)());
         }
       }
@@ -740,7 +758,7 @@ PAGEHPLC : Dual PAGE & HPLC
     */
 
     bool is_end = type != ModificationType.internal;
-    int selected_index = 2; 
+    int selected_index = 2;
 
     if (type == ModificationType.five_prime) {
       selected_index = 1;
@@ -787,8 +805,7 @@ PAGEHPLC : Dual PAGE & HPLC
     items[idt_text_idx] = DialogText(label: 'idt text', value: initial_idt_text);
     // items[id_idx] = DialogText(label: 'id', value: initial_id);
 
-    items[index_of_dna_base_idx] =
-        DialogInteger(label: 'index of DNA base', value: strand_dna_idx);
+    items[index_of_dna_base_idx] = DialogInteger(label: 'index of DNA base', value: strand_dna_idx);
 
     // don't allow to modify index of DNA base when 3' or 5' is selected
     var dialog = Dialog(title: 'add modification', items: items, disable_when_any_radio_button_selected: {
@@ -933,13 +950,6 @@ bool should_draw_domain(
         Domain ss, BuiltSet<int> side_selected_helix_idxs, bool only_display_selected_helices) =>
     !only_display_selected_helices || side_selected_helix_idxs.contains(ss.helix);
 
-class DNAAssignOptions {
-  String dna_sequence; // sequence to assign to this strand
-  bool assign_complements; // assign complementary sequences to strands bound to this one
-
-  DNAAssignOptions({this.dna_sequence = null, this.assign_complements = true});
-}
-
 class DNARemoveOptions {
   bool remove_complements; // remove from this strand and all strands bound to it
   bool remove_all; // remove from all strands in design
@@ -958,28 +968,30 @@ int clicked_strand_dna_idx(Domain domain, Address address, Strand strand) {
   return strand_dna_idx;
 }
 
-Future<void> ask_for_assign_dna_sequence(
-    Strand strand, bool assign_complement_to_bound_strands_default, bool warn_on_change_default) async {
+Future<void> ask_for_assign_dna_sequence(Strand strand, DNAAssignOptions options) async {
   int idx_sequence = 0;
   int idx_use_predefined_dna_sequence = 1;
   int idx_predefine_sequence_link = 2;
   int idx_predefined_sequence_name = 3;
   int idx_rotation = 4;
   int idx_assign_complements = 5;
-  int idx_warn_on_change = 6;
+  int idx_disable_change_sequence_bound_strand = 6;
 
   List<DialogItem> items = [null, null, null, null, null, null, null];
 
   items[idx_sequence] =
-      DialogTextArea(label: 'sequence', value: strand.dna_sequence ?? '', rows: 10, cols: 80);
-  items[idx_use_predefined_dna_sequence] = DialogCheckbox(label: 'use predefined DNA sequence');
+      DialogTextArea(label: 'sequence', value: strand.dna_sequence ?? '', rows: 4, cols: 80);
+  items[idx_use_predefined_dna_sequence] =
+      DialogCheckbox(label: 'use predefined DNA sequence', value: options.use_predefined_dna_sequence);
   items[idx_predefined_sequence_name] =
       DialogRadio(label: 'predefined DNA sequence', options: DNASequencePredefined.display_names);
-  items[idx_rotation] = DialogInteger(label: 'rotation of predefined DNA sequence', value: 5587);
-  items[idx_assign_complements] = DialogCheckbox(
-      label: 'assign complement to bound strands', value: assign_complement_to_bound_strands_default);
-  items[idx_warn_on_change] = DialogCheckbox(
-      label: 'warn if assigning different sequence to bound strand', value: warn_on_change_default);
+  items[idx_rotation] =
+      DialogInteger(label: 'rotation of predefined DNA sequence', value: options.m13_rotation);
+  items[idx_assign_complements] =
+      DialogCheckbox(label: 'assign complement to bound strands', value: options.assign_complements);
+  items[idx_disable_change_sequence_bound_strand] = DialogCheckbox(
+      label: 'disallow assigning different sequence to bound strand with existing sequence',
+      value: options.disable_change_sequence_bound_strand);
   items[idx_predefine_sequence_link] = DialogLink(
       label: 'Information about sequence variants',
       link: 'https://scadnano-python-package.readthedocs.io/en/latest/#scadnano.M13Variant');
@@ -989,24 +1001,27 @@ Future<void> ask_for_assign_dna_sequence(
   }, disable_when_any_checkboxes_off: {
     idx_predefined_sequence_name: [idx_use_predefined_dna_sequence],
     idx_rotation: [idx_use_predefined_dna_sequence],
+    idx_disable_change_sequence_bound_strand: [idx_assign_complements],
   });
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 
   String dna_sequence;
 
+  int m13_rotation = options.m13_rotation;
   bool use_predefined_dna_sequence = (results[idx_use_predefined_dna_sequence] as DialogCheckbox).value;
   if (use_predefined_dna_sequence) {
     String predefined_sequence_display_name = (results[idx_predefined_sequence_name] as DialogRadio).value;
-    int rotation = (results[idx_rotation] as DialogInteger).value;
+    m13_rotation = (results[idx_rotation] as DialogInteger).value;
     dna_sequence =
-        DNASequencePredefined.dna_sequence_by_name(predefined_sequence_display_name, true, rotation);
+        DNASequencePredefined.dna_sequence_by_name(predefined_sequence_display_name, true, m13_rotation);
   } else {
     dna_sequence = (results[idx_sequence] as DialogTextArea).value;
   }
 
   bool assign_complements = (results[idx_assign_complements] as DialogCheckbox).value;
-  bool warn_on_change = (results[idx_warn_on_change] as DialogCheckbox).value;
+  bool disable_change_sequence_bound_strand =
+      (results[idx_disable_change_sequence_bound_strand] as DialogCheckbox).value;
 
   try {
     util.check_dna_sequence(dna_sequence);
@@ -1015,11 +1030,14 @@ Future<void> ask_for_assign_dna_sequence(
     return;
   }
 
-  app.dispatch(actions.AssignDNA(
-      strand: strand,
-      dna_sequence: dna_sequence,
-      assign_complements: assign_complements,
-      warn_on_change: warn_on_change));
+  var new_options = DNAAssignOptions(
+    dna_sequence: dna_sequence,
+    use_predefined_dna_sequence: use_predefined_dna_sequence,
+    assign_complements: assign_complements,
+    disable_change_sequence_bound_strand: disable_change_sequence_bound_strand,
+    m13_rotation: m13_rotation,
+  );
+  app.dispatch(actions.AssignDNA(strand: strand, dna_assign_options: new_options));
 }
 
 Future<void> ask_for_remove_dna_sequence(Strand strand, BuiltSet<Strand> selected_strands) async {

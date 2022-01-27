@@ -31,6 +31,7 @@ mixin HelixGroupMovingProps on UiProps {
   BuiltSet<int> side_selected_helix_idxs;
   bool only_display_selected_helices;
   bool show_helix_circles;
+  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
 }
 
 class HelixGroupMovingComponent extends UiComponent2<HelixGroupMovingProps> with PureComponent {
@@ -54,11 +55,13 @@ class HelixGroupMovingComponent extends UiComponent2<HelixGroupMovingProps> with
           !only_display_selected_helices) {
         children.add((DesignMainHelix()
           ..helix = helix
+          ..selected = side_selected_helix_idxs.contains(helix.idx)
           ..show_dna = false
           ..show_helix_circles = props.show_helix_circles
           ..helix_change_apply_to_all = false
           ..display_base_offsets_of_major_ticks = false
           ..display_major_tick_widths = false
+          ..helix_svg_position = props.helix_idx_to_svg_position_map[helix.idx]
           ..key = helix.idx.toString())());
       }
     }

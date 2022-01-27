@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:scadnano/src/dna_file_type.dart';
 import 'package:scadnano/src/json_serializable.dart';
 import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/dna_end.dart';
@@ -66,7 +67,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
           state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
       ..display_major_tick_widths = state.ui_state.display_major_tick_widths
       ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices
-      ..invert_xy = state.ui_state.invert_xy
+      ..invert_y = state.ui_state.invert_y
       ..show_helix_circles_main_view = state.ui_state.show_helix_circles_main_view
       ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
       ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
@@ -116,7 +117,7 @@ mixin MenuPropsMixin on UiProps {
   bool display_base_offsets_of_major_ticks_only_first_helix;
   bool display_major_tick_widths;
   bool display_major_tick_widths_all_helices;
-  bool invert_xy;
+  bool invert_y;
   bool warn_on_exit_if_unsaved;
   bool show_helix_circles_main_view;
   bool show_grid_coordinates_side_view;
@@ -382,7 +383,7 @@ to the first end e2 after it in this order, if
         ..display = 'Set helix coordinates based on crossovers'
         ..disabled = props.no_grid_is_none
         ..tooltip = '''\
-The grid must be set to none to enable this.
+The grid must be set to none to enable this.${props.no_grid_is_none ? " (Currently disabled since the grid is not none.)" : ""}
 
 Select some crossovers and some helices. If no helices are selected, then all
 helices are processed. At most one crossover between pairs of adjacent (in
@@ -710,20 +711,19 @@ of the design you were looking at before changing the script.'''
             props.dispatch(actions.SetOnlyDisplaySelectedHelices(!props.only_display_selected_helices)))
         ..key = 'display-only-selected-helices')(),
       (MenuBoolean()
-        ..value = props.invert_xy
-        ..display = 'Invert y- and x-axes'
+        ..value = props.invert_y
+        ..display = 'Invert y-axis'
         ..tooltip = '''\
-In the main view, invert the y-axis, and in the side view, invert both the 
-y-axis and the x-axis. 
+Invert the y-axis by rotating 180 degrees about the z-axis (within the x/y plane).
 
 If unchecked, then use "screen coordinates", where increasing y moves down. 
 
-If checked, then use Cartesian coordinates where increasing y moves up. 
-Also invert the x-axis to maintain chirality, so this has the net effect of 
-rotating the side view by 180 degrees.'''
-        ..name = 'invert-xy-axes'
-        ..onChange = ((_) => props.dispatch(actions.InvertXYSet(invert_xy: !props.invert_xy)))
-        ..key = 'invert-xy-axes')(),
+If checked, then use Cartesian coordinates where increasing y moves up.
+
+To inspect how all axes change, check View --> Show axis arrows.'''
+        ..name = 'invert-y-axis'
+        ..onChange = ((_) => props.dispatch(actions.InvertYSet(invert_y: !props.invert_y)))
+        ..key = 'invert-y-axis')(),
       (MenuBoolean()
         ..value = props.show_helix_circles_main_view
         ..display = 'Show main view helix circles/idx'
@@ -752,8 +752,8 @@ Red : X-axis
 Green : Y-axis
 Blue : Z-axis'''
         ..name = 'show-helices-axis-arrows'
-        ..onChange = ((_) => props.dispatch(actions.ShowAxisArrowsSet(
-            show_helices_axis_arrows: !props.show_helices_axis_arrows)))
+        ..onChange = ((_) => props
+            .dispatch(actions.ShowAxisArrowsSet(show_helices_axis_arrows: !props.show_helices_axis_arrows)))
         ..key = 'show-helices-axis-arrows')(),
       (MenuBoolean()
         ..value = props.show_loopout_length
@@ -1167,7 +1167,8 @@ cadnano_file_loaded(FileReader file_reader, String filename) async {
   try {
     var json_cadnano_text = file_reader.result;
     filename = path.setExtension(filename, '.${constants.default_scadnano_file_extension}');
-    app.dispatch(actions.LoadDNAFile(content: json_cadnano_text, filename: filename, dna_file_type: util.DNAFileType.cadnano_file));
+    app.dispatch(actions.LoadDNAFile(
+        content: json_cadnano_text, filename: filename, dna_file_type: DNAFileType.cadnano_file));
   } on Exception catch (e) {
     window.alert('Error importing file: ${e}');
   }

@@ -608,7 +608,8 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
     filter: url("#shadow");
 }
 
-.selected.side-view-helix-circle {
+.selected.side-view-helix-circle,
+.selected.main-view-helix-circle {
     stroke: red;
     fill: hotpink;
 }

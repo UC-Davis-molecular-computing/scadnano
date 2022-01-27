@@ -4,6 +4,7 @@ library view_design;
 import 'dart:html';
 import 'dart:svg' as svg;
 
+import 'package:built_collection/built_collection.dart';
 import 'package:dnd/dnd.dart';
 import 'package:js/js.dart';
 import 'package:over_react/over_react_redux.dart';
@@ -260,7 +261,8 @@ class DesignViewComponent {
         var group = app.state.design.groups[displayed_group_name];
         var helices_in_group = app.state.design.helices_in_group(displayed_group_name).values;
         int old_offset = app.state.ui_state.storables.slice_bar_offset;
-        var new_offset = util.find_closest_offset(event, helices_in_group, group, app.state.design.geometry);
+        var new_offset = util.find_closest_offset(event, helices_in_group, group, app.state.design.geometry,
+            app.state.helix_idx_to_svg_position_map[helices_in_group.first.idx].x);
 
         if (old_offset != new_offset) {
           app.dispatch(actions.SliceBarOffsetSet(new_offset));
@@ -281,7 +283,10 @@ class DesignViewComponent {
             Helix helix = moves_store.helix;
             var group = app.state.design.groups[helix.group];
             var geometry = app.state.design.geometry;
-            int offset = util.get_address_on_helix(event, helix, group, geometry).offset;
+            int offset = util
+                .get_address_on_helix(
+                    event, helix, group, geometry, app.state.helix_idx_to_svg_position_map[helix.idx])
+                .offset;
             int old_offset = moves_store.current_offset;
             if (offset != old_offset) {
               app.dispatch(actions.DNAEndsMoveAdjustOffset(offset: offset));
@@ -293,19 +298,30 @@ class DesignViewComponent {
       // move selected Strands
       StrandsMove strands_move = app.state.ui_state.strands_move;
       if (strands_move != null) {
-        // ugg... when copy/pasting, the left click doesn't have to be depressed
-        // when moving, it does
-        // paste is stopped from ever getting here (and the user was warned in strands_move_middleware)
-        // if strands were on many groups, so it's safe to execute this, IF copy is true.
-        // If moving, then we rely on the error-checking code next to warn the user
-        // about strands being in multiple groups.
         if (strands_move.copy || left_mouse_button_is_down) {
-          var group_names = group_names_of_strands(strands_move);
-          if (group_names != null && group_names.length != 1) {
-            var msg = 'Cannot move or copy strands unless they are all on the same helix group.\n'
-                '2 These strands occupy the following helix groups: ${group_names?.join(", ")}';
-            window.alert(msg);
-          } else {
+          // ugg... when copy/pasting, the left click doesn't have to be depressed.
+          // when moving, it does.
+          // paste is stopped from ever getting here (and the user was warned in strands_move_middleware)
+          // if strands were on many groups, so it's safe to execute this, IF copy is true.
+          // If moving, then we rely on the error-checking code next to warn the user
+          // about strands being in multiple groups.
+          // In particular, if we are pasting strands copied from a different design,
+          // then the helices from the source design may be all on the same group, but the same helix
+          // idx's in this design are on different groups. So we don't want to do the check for copying;
+          // instead we rely on middleware
+          // (which checked StrandsMoveStart.original_helices_view_order_inverse, which is set to null
+          // on copying with Ctrl+C if the original helices were from different groups).
+          bool can_paste = true;
+          if (!strands_move.copy) {
+            var group_names = group_names_of_strands(strands_move);
+            if (group_names != null && group_names.length != 1) {
+              var msg = 'Cannot move or copy strands unless they are all on the same helix group.\n'
+                  'These strands occupy the following helix groups: ${group_names?.join(", ")}';
+              window.alert(msg);
+              can_paste = false;
+            }
+          }
+          if (can_paste) {
             var old_address = strands_move.current_address;
             var visible_helices = app.state.ui_state.only_display_selected_helices
                 ? [
@@ -313,8 +329,8 @@ class DesignViewComponent {
                       if (app.state.ui_state.side_selected_helix_idxs.contains(helix.idx)) helix
                   ]
                 : app.state.design.helices.values;
-            var address = util.find_closest_address(
-                event, visible_helices, app.state.design.groups, app.state.design.geometry);
+            var address = util.find_closest_address(event, visible_helices, app.state.design.groups,
+                app.state.design.geometry, app.state.helix_idx_to_svg_position_map);
             if (address != old_address) {
               app.dispatch(actions.StrandsMoveAdjustAddress(address: address));
             }
@@ -339,8 +355,8 @@ class DesignViewComponent {
                       if (app.state.ui_state.side_selected_helix_idxs.contains(helix.idx)) helix
                   ]
                 : app.state.design.helices.values;
-            var address = util.find_closest_address(
-                event, visible_helices, app.state.design.groups, app.state.design.geometry);
+            var address = util.find_closest_address(event, visible_helices, app.state.design.groups,
+                app.state.design.geometry, app.state.helix_idx_to_svg_position_map);
             if (address != old_address) {
               app.dispatch(actions.DomainsMoveAdjustAddress(address: address));
             }
@@ -354,7 +370,10 @@ class DesignViewComponent {
         int old_offset = strand_creation.current_offset;
         var group = app.state.design.groups[strand_creation.helix.group];
         var geometry = app.state.design.geometry;
-        int new_offset = util.get_address_on_helix(event, strand_creation.helix, group, geometry).offset;
+        int new_offset = util
+            .get_address_on_helix(event, strand_creation.helix, group, geometry,
+                app.state.helix_idx_to_svg_position_map[strand_creation.helix.idx])
+            .offset;
         var new_address = Address(
             helix_idx: strand_creation.helix.idx, offset: new_offset, forward: strand_creation.forward);
         if (old_offset != new_offset &&
@@ -428,7 +447,7 @@ class DesignViewComponent {
       if (key == constants.KEY_CODE_TOGGLE_SELECT ||
           key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
           key == constants.KEY_CODE_SELECT) {
-          end_select_mode();
+        end_select_mode();
       }
 
       if (key == constants.KEY_CODE_SHOW_POTENTIAL_HELIX) {
@@ -449,7 +468,8 @@ class DesignViewComponent {
         bool left_click = util.left_mouse_button_caused_mouse_event(event);
         bool selection_rope_exists = app.state.ui_state.selection_rope != null;
         if (selection_rope_exists && left_click && edit_mode_is_rope_select()) {
-          Point<num> point = util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, svg_elt);
+          Point<num> point =
+              util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, svg_elt);
           app.dispatch(actions.SelectionRopeAddPoint(point: point, is_main_view: is_main_view));
         }
 
@@ -804,7 +824,7 @@ class DesignViewComponent {
         ),
         querySelector('#$MAIN_VIEW_ARROWS_SVG_ID'),
       );
-      
+
       // side arrows
       react_dom.render(
         over_react_components.ErrorBoundary()(
@@ -824,7 +844,6 @@ class DesignViewComponent {
         ),
         this.footer_element,
       );
-      
 
       // context menu
       react_dom.render(
@@ -883,7 +902,9 @@ class DesignViewComponent {
     // here than to handle it in middleware;
     // unit testing especially seemed to be very difficult with all the asynchronous calls
     clipboard.read().then((String content) {
-      app.dispatch(actions.ManualPasteInitiate(clipboard_content: content));
+      if (content != null && content.isNotEmpty) {
+        app.dispatch(actions.ManualPasteInitiate(clipboard_content: content));
+      }
     });
   }
 
@@ -892,7 +913,9 @@ class DesignViewComponent {
     // here than to handle it in middleware;
     // unit testing especially seemed to be very difficult with all the asynchronous calls
     clipboard.read().then((String content) {
-      app.dispatch(actions.AutoPasteInitiate(clipboard_content: content));
+      if (content != null && content.isNotEmpty) {
+        app.dispatch(actions.AutoPasteInitiate(clipboard_content: content));
+      }
     });
   }
 
@@ -911,7 +934,7 @@ class DesignViewComponent {
       var displayed_group_name = app.state.ui_state.displayed_group_name;
       var displayed_grid = app.state.design.groups[displayed_group_name].grid;
       if (!displayed_grid.is_none) {
-        bool invert_y = app.state.ui_state.invert_xy;
+        bool invert_y = app.state.ui_state.invert_y;
         Geometry geometry = app.state.design.geometry;
         var new_grid_pos = util.grid_position_of_mouse_in_side_view(displayed_grid, invert_y, geometry,
             mouse_pos: mouse_pos, event: event);

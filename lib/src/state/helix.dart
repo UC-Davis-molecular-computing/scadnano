@@ -53,7 +53,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     int min_offset = 0,
     int major_tick_start = null,
     int max_offset = constants.default_max_offset,
-    bool invert_xy = false,
+    bool invert_y = false,
     Position3D position = null,
     Point<num> svg_position = null,
     String group = constants.default_group_name,
@@ -77,9 +77,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
       ..grid = grid
       ..grid_position = grid_position?.toBuilder()
       ..position_ = position?.toBuilder()
-      ..svg_position_ = svg_position
       ..roll = roll
-      ..invert_xy = invert_xy
       ..min_offset = min_offset
       ..max_offset = max_offset
       ..major_tick_start = major_tick_start
@@ -90,7 +88,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     b.group = constants.default_group_name;
     b.min_offset = 0;
     b.roll = constants.default_roll;
-    b.invert_xy = false;
   }
 
   /// unique identifier of used helix; also index indicating order to show
@@ -108,16 +105,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   @nullable
   GridPosition get grid_position;
 
-  /// SVG position of upper-left corner (main view). This is only 2D.
-  /// There is a position object that can be stored in the JSON, but this is used only for 3D visualization,
-  /// which is currently unsupported in scadnano. If we want to support it in the future, we can store that
-  /// position in Helix as well, but svg_position will always be 2D.
-  @nullable
-  Point<num> get svg_position_;
-
-  Point<num> get svg_position =>
-      invert_xy ? (Point<num>(svg_position_.x, -svg_position_.y)) : svg_position_;
-
   @nullable
   Position3D get position_;
 
@@ -131,8 +118,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   /// Minimum allowed offset of Substrand that can be drawn on this Helix.
   int get min_offset;
-
-  bool get invert_xy;
 
   // If regular or periodic distances are used, this is the starting offset
   int get major_tick_start;
@@ -275,27 +260,29 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   /// Gets main view SVG position of "center of base" (middle of square representing base)
   /// given helix idx and offset,  depending on whether strand is going forward or not.
+  /// This function also requires svg_position_y, the y coordinate of the helix
+  /// svg position.
   /// This is relative to the starting point of the Helix.
-  Point<num> svg_base_pos(int offset, bool forward) {
+  Point<num> svg_base_pos(int offset, bool forward, num svg_position_y) {
     num x = geometry.base_width_svg / 2.0 + offset * geometry.base_width_svg;
 
     // svg_height is height of whole helix, including both forward and reverse strand
     // must divide by 2 to get height of one strand, then divide by 2 again to go halfway into square
-    num y = svg_height / 4.0 + this.svg_position.y;
+    num y = svg_height / 4.0 + svg_position_y;
     if (!forward) {
       y += geometry.base_height_svg;
     }
     return Point<num>(x, y);
   }
 
-  int svg_x_to_offset(num x) {
-    var offset = ((x - svg_position.x) / geometry.base_width_svg).floor() + min_offset;
+  int svg_x_to_offset(num x, num svg_position_x) {
+    var offset = ((x - svg_position_x) / geometry.base_width_svg).floor() + min_offset;
     return offset;
   }
 
   // Don't know why but Firefox knows about the SVG translation already so no need to correct for it.
-  bool svg_y_is_forward(num y) {
-    var relative_y = (y - svg_position.y).abs();
+  bool svg_y_is_forward(num y, num svg_position_y) {
+    var relative_y = (y - svg_position_y).abs();
     return relative_y < 10;
   }
 

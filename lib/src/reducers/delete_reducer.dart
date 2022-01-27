@@ -29,7 +29,7 @@ BuiltList<Strand> delete_all_reducer(
     // crossovers/loopouts
     var crossovers = Set<Crossover>.from(items.where((item) => item is Crossover));
     var loopouts = Set<Loopout>.from(items.where((item) => item is Loopout));
-    strands = _remove_crossovers_and_loopouts(strands, state, crossovers, loopouts);
+    strands = remove_crossovers_and_loopouts(strands, state, crossovers, loopouts);
   } else if (select_mode_state.ends_selectable) {
     // DNA ends
     var ends = items.where((item) => item is DNAEnd);
@@ -61,7 +61,7 @@ BuiltList<Strand> delete_all_reducer(
 BuiltList<Strand> _remove_strands(BuiltList<Strand> strands, Iterable<Strand> strands_to_remove) =>
     strands.rebuild((b) => b..removeWhere((strand) => strands_to_remove.contains(strand)));
 
-BuiltList<Strand> _remove_crossovers_and_loopouts(
+BuiltList<Strand> remove_crossovers_and_loopouts(
     BuiltList<Strand> strands, AppState state, Iterable<Crossover> crossovers, Iterable<Loopout> loopouts) {
   // maps each strand with >= 1 domains being removed to list of strands to replace it
   Map<Strand, List<Strand>> strands_to_replace = {};
@@ -85,7 +85,7 @@ BuiltList<Strand> _remove_crossovers_and_loopouts(
 
   // remove linkers one strand at a time
   for (var strand in strand_to_linkers.keys) {
-    List<Strand> split_strands = _remove_linkers_from_strand(strand, strand_to_linkers[strand]);
+    List<Strand> split_strands = remove_linkers_from_strand(strand, strand_to_linkers[strand]);
     strands_to_replace[strand] = split_strands;
   }
 
@@ -104,7 +104,8 @@ BuiltList<Strand> _remove_crossovers_and_loopouts(
 
 // Splits one strand into many by removing crossovers and loopouts
 // If the strand is circular and we only remove one linker, it stays one strand but becomes linear.
-List<Strand> _remove_linkers_from_strand(Strand strand, List<Linker> linkers) {
+// order of returned strands is 5' to 3' in original strand
+List<Strand> remove_linkers_from_strand(Strand strand, List<Linker> linkers) {
   // partition substrands of Strand that are separated by a linker
   // This logic is a bit complex because Loopouts are themselves Substrands, but Crossovers are not.
   linkers.sort((l1, l2) => l1.prev_domain_idx.compareTo(l2.prev_domain_idx));

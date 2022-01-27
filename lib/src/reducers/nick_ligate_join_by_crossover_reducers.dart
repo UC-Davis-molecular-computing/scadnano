@@ -1,4 +1,9 @@
+import 'dart:html';
+
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/reducers/change_loopout_length.dart';
+import 'package:scadnano/src/state/linker.dart';
+import 'package:scadnano/src/state/potential_crossover.dart';
 import 'package:tuple/tuple.dart';
 
 import '../state/design.dart';
@@ -12,6 +17,146 @@ import '../state/substrand.dart';
 import '../state/loopout.dart';
 import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
+import 'delete_reducer.dart' as delete_reducer;
+
+// moves a linker (crossover or loopout, stored as action.potential_crossover.linker)
+// so that one end stays fixed (stored in action.potential_crossover.dna_end_first_clicked)
+// while the other end moves to action.dna_end_second_click, editing two strands
+BuiltList<Strand> move_linker_reducer(BuiltList<Strand> strands, AppState state, actions.MoveLinker action) {
+  /*
+    # If end_fixed is 5'
+    before:
+
+     strand_from                      strand_to
+
+     domain_fixed
+    <------------+  <-- end_fixed
+                 |
+                 |
+                 |
+    [------------+  <-- end_from    [------------->  <-- end_to
+     domain_from                       domain_to
+
+    after:
+     domain_fixed
+    <------------+
+                  \
+                   ------------------------------
+                                                 \
+    [------------>                  [-------------+
+     domain_from                       domain_to
+
+     new_strand_disconnected         new_strand_connected
+
+    # If end_fixed is 3'
+    before:
+
+     strand_from                     strand_to
+
+     domain_fixed
+    [------------+  <-- end_fixed
+                 |
+                 |
+                 |
+    <------------+  <-- end_from    <-------------] <-- end_to
+     domain_from                       domain_to
+
+    after:
+     domain_fixed
+    [------------+
+                  \
+                   ------------------------------
+                                                 \
+    <------------]                  <-------------+
+     domain_from                       domain_to
+
+     new_strand_disconnected         new_strand_connected
+     */
+  Design design = state.design;
+  PotentialCrossover potential_crossover = action.potential_crossover;
+  Linker linker = potential_crossover.linker;
+  assert(linker != null); // since MoveLinker action was dispatched
+  DNAEnd end_fixed = potential_crossover.dna_end_first_click;
+  DNAEnd end_to = action.dna_end_second_click;
+  Strand strand_from = design.linker_to_strand[linker];
+  Strand strand_to = design.end_to_strand(end_to);
+
+  //TODO: support moving crossover from a strand to itself to make it circular
+  if (strand_from == strand_to) {
+    window.alert('creating circular strand by moving existing crossover/loopout not supported yet');
+    return strands;
+  }
+
+  // list of all strands to mutate and return
+  List<Strand> new_all_strands = strands.toList();
+  // two strands we get by splitting strand_from
+  List<Strand> new_strands = delete_reducer.remove_linkers_from_strand(strand_from, [linker]);
+  if (new_strands.length == 2) {
+    // strand_from was not circular
+    Strand new_strand_disconnected = end_fixed.is_5p ? new_strands[0] : new_strands[1];
+    Strand new_strand_connected_intermediate = end_fixed.is_5p ? new_strands[1] : new_strands[0];
+    List<Strand> strands_to_join = [new_strand_connected_intermediate, strand_to];
+    if (end_fixed.is_5p) {
+      strands_to_join = strands_to_join.reversed.toList();
+    }
+
+    // join_strands_by_crossover_reducer is awkward to use since it looks up strands by ends
+    // but we've modified the design already, so we bypass it and call _join_strands_with_crossover directly
+    bool first_clicked_is_3p = end_fixed.is_3p;
+    BuiltList<Strand> new_strands_connected;
+    if (first_clicked_is_3p) {
+      new_strands_connected = _join_strands_with_crossover(new_strand_connected_intermediate, strand_to,
+          [new_strand_connected_intermediate, strand_to].build(), first_clicked_is_3p);
+    } else {
+      new_strands_connected = _join_strands_with_crossover(strand_to, new_strand_connected_intermediate,
+          [strand_to, new_strand_connected_intermediate].build(), first_clicked_is_3p);
+    }
+    assert(new_strands_connected.length == 1);
+    Strand new_strand_connected = new_strands_connected.first;
+
+    // if linker is a Loopout, we need to convert the Crossover we just made in
+    // _join_strands_with_crossover to a Loopout
+    if (linker is Loopout) {
+      int crossover_idx = end_fixed.is_5p
+          ? strand_to.domains.length - 1
+          : new_strand_connected_intermediate.domains.length - 1;
+      var crossover = new_strand_connected.linkers[crossover_idx];
+      var convert_crossover_to_loopout_action =
+          actions.ConvertCrossoverToLoopout(crossover, linker.loopout_length, linker.dna_sequence);
+      new_strand_connected =
+          convert_crossover_to_loopout_reducer(new_strand_connected, convert_crossover_to_loopout_action);
+    }
+
+    // assign DNA
+    String linker_seq = linker is Loopout ? linker.dna_sequence : '';
+    String new_strand_connected_seq;
+    if (end_fixed.is_5p) {
+      new_strand_connected_seq =
+          strand_to.dna_sequence + linker_seq + new_strand_connected_intermediate.dna_sequence;
+    } else {
+      new_strand_connected_seq =
+          new_strand_connected_intermediate.dna_sequence + linker_seq + strand_to.dna_sequence;
+    }
+    new_strand_connected = new_strand_connected.set_dna_sequence(new_strand_connected_seq);
+    // not necessary to assign DNA to new_strand_disconnected since that strand was created by
+    // delete_reducer.remove_linkers_from_strand, which already handles the DNA sequence
+
+    // assign new strands into new list of all strands
+    int strand_from_orig_idx = strands.indexOf(strand_from);
+    int strand_to_orig_idx = strands.indexOf(strand_to);
+    new_all_strands[strand_from_orig_idx] = new_strand_connected;
+    new_all_strands[strand_to_orig_idx] = new_strand_disconnected;
+  } else if (new_strands.length == 1) {
+    // strand_from was circular
+    //TODO: implement this
+    window.alert('moving crossover/loopout from a circular strand not yet supported');
+    return strands;
+  } else {
+    throw AssertionError('should be unreachable');
+  }
+
+  return new_all_strands.build();
+}
 
 BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, actions.Nick action) {
   // remove Domain where nick will be, and remember where it was attached

@@ -25,6 +25,7 @@ UiFactory<DesignMainHelixProps> DesignMainHelix = _$DesignMainHelix;
 
 mixin DesignMainHelixProps on UiProps {
   Helix helix;
+  bool selected;
   int view_order;
   bool strand_create_enabled;
   num major_tick_offset_font_size;
@@ -35,6 +36,7 @@ mixin DesignMainHelixProps on UiProps {
   bool display_base_offsets_of_major_ticks;
   bool display_major_tick_widths;
   bool show_helix_circles;
+  Point<num> helix_svg_position;
 }
 
 class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with PureComponent {
@@ -46,14 +48,14 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 
     // for helix circles
     var cx = -(2 * geometry.base_width_svg + geometry.distance_between_helices_svg / 2);
-    var cy = props.helix.svg_position.y + props.helix.svg_height / 2.0;
+    var cy = props.helix_svg_position.y + props.helix.svg_height / 2.0;
 
     // for helix horizontal lines
     num width = props.helix.svg_width;
     num height = props.helix.svg_height;
 
-    var horz_line_paths = _horz_line_paths(props.helix);
-    var vert_line_paths = _vert_line_paths(props.helix);
+    var horz_line_paths = _horz_line_paths(props.helix, props.helix_svg_position.y);
+    var vert_line_paths = _vert_line_paths(props.helix, props.helix_svg_position.y);
     int idx = props.helix.idx;
 
     return (Dom.g()
@@ -61,7 +63,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       ..className = 'helix-main-view')([
       if (props.show_helix_circles)
         (Dom.circle()
-          ..className = 'main-view-helix-circle'
+          ..className = 'main-view-helix-circle ' + (props.selected ? "selected" : "")
+          ..onClick = ((e) => this._handle_click(e, props.helix))
           ..id = helix_circle_id()
           ..cx = '$cx'
           ..cy = '$cy'
@@ -70,6 +73,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       if (props.show_helix_circles)
         (Dom.text()
           ..className = 'main-view-helix-text'
+          ..onClick = ((e) => this._handle_click(e, props.helix))
           ..id = helix_text_id()
           ..x = '$cx'
           ..y = '$cy'
@@ -96,11 +100,14 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       (Dom.rect()
 //          ..onClick = start_strand_create
         ..onPointerDown = (react.SyntheticPointerEvent event_syn) {
-          if (app.state.ui_state.edit_modes.contains(EditModeChoice.pencil)) {
+          // start creating a strand, but only if we are not currently creating a crossover
+          if (app.state.ui_state.edit_modes.contains(EditModeChoice.pencil) &&
+              !app.state.ui_state.potential_crossover_is_drawing) {
             MouseEvent event = event_syn.nativeEvent;
             if (event.button != constants.LEFT_CLICK_BUTTON) return;
             var group = app.state.design.groups[props.helix.group];
-            var address = util.get_address_on_helix(event, props.helix, group, geometry);
+            var address = util.get_address_on_helix(event, props.helix, group, geometry,
+                app.state.helix_idx_to_svg_position_map[props.helix.idx]);
             app.dispatch(actions.StrandCreateStart(address: address, color: util.color_cycler.next()));
           }
         }
@@ -108,10 +115,12 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         //XXX: it matters that we reference props.mouseover_datas, not a local variable
         // this ensures that when subsequent mouse events happen, the most recent mouseover_datas is examined,
         // otherwise the callback is not updated until render executes again
-        ..onMouseEnter = ((event) => util.update_mouseover(event, props.helix))
-        ..onMouseMove = ((event) => util.update_mouseover(event, props.helix))
-        ..x = props.helix.svg_position.x
-        ..y = props.helix.svg_position.y
+        ..onMouseEnter = ((event) => util.update_mouseover(
+            event, props.helix, app.state.helix_idx_to_svg_position_map[props.helix.idx]))
+        ..onMouseMove = ((event) => util.update_mouseover(
+            event, props.helix, app.state.helix_idx_to_svg_position_map[props.helix.idx]))
+        ..x = props.helix_svg_position.x
+        ..y = props.helix_svg_position.y
         ..width = '$width'
         ..height = '$height'
         ..className = 'helix-invisible-rect'
@@ -166,7 +175,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     if (props.show_domain_labels) {
       offset += 1.2 * props.helix.geometry.base_height_svg;
     }
-    num y = props.helix.svg_position.y - (DISTANCE_OFFSET_DISPLAY_FROM_HELIX + offset);
+    num y = props.helix_svg_position.y - (DISTANCE_OFFSET_DISPLAY_FROM_HELIX + offset);
 
     var offset_texts_elements = [];
     for (int offset in major_ticks) {
@@ -199,8 +208,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     if (props.show_domain_labels) {
       offset += props.helix.geometry.base_height_svg;
     }
-    num y =
-        props.helix.svg_position.y + props.helix.svg_height + DISTANCE_OFFSET_DISPLAY_FROM_HELIX + offset;
+    num y = props.helix_svg_position.y + props.helix.svg_height + DISTANCE_OFFSET_DISPLAY_FROM_HELIX + offset;
 
     var offset_texts_elements = [];
     Map<num, int> map_offset_to_distance = {};
@@ -217,7 +225,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       var base = entry.key;
       var distance = entry.value;
 
-      var x = props.helix.svg_position.x + base * props.helix.geometry.base_width_svg;
+      var x = props.helix_svg_position.x + base * props.helix.geometry.base_width_svg;
       var text_element = (Dom.text()
         ..className = 'main-view-helix-major-tick-distance-text'
         ..x = '$x'
@@ -234,12 +242,12 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       ..key = 'major-tick-widths-group')(offset_texts_elements);
   }
 
-  String _horz_line_paths(Helix helix) {
+  String _horz_line_paths(Helix helix, num helix_svg_position_y) {
     num width = helix.svg_width;
     num height = helix.svg_height;
-    num x_start = helix.min_offset *  props.helix.geometry.base_width_svg;
+    num x_start = helix.min_offset * props.helix.geometry.base_width_svg;
     num x_end = x_start + width;
-    num y_start = helix.svg_position.y;
+    num y_start = helix_svg_position_y;
     num y_mid = y_start + height / 2.0;
     num y_end = y_start + height;
 
@@ -252,7 +260,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   }
 
   /// Return Map {'minor': thin_lines, 'major': thick_lines} to paths describing minor and major vertical lines.
-  Map<String, String> _vert_line_paths(Helix helix) {
+  Map<String, String> _vert_line_paths(Helix helix, num helix_svg_position_y) {
     List<int> major_ticks = helix.calculate_major_ticks;
 //  var major_tick_distance =
 //      helix.has_major_tick_distance() ? helix.major_tick_distance : design_major_tick_distance;
@@ -264,7 +272,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     List<String> path_cmds_vert_minor = [];
     List<String> path_cmds_vert_major = [];
 
-    num y = helix.svg_position.y;
+    num y = helix_svg_position_y;
 
     for (int base = helix.min_offset; base <= helix.max_offset; base++) {
       var base_minus_min_offset = base; // - helix.min_offset;
@@ -277,10 +285,14 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 
     return {'minor': path_cmds_vert_minor.join(' '), 'major': path_cmds_vert_major.join(' ')};
   }
-}
 
-Point<num> helix_main_view_translation(Helix helix) {
-  return helix.svg_position;
+  _handle_click(SyntheticMouseEvent event, Helix helix) {
+    if (event.shiftKey) {
+      app.dispatch(actions.HelixSelect(helix.idx, false));
+    } else if (event.ctrlKey || event.metaKey) {
+      app.dispatch(actions.HelixSelect(helix.idx, true));
+    }
+  }
 }
 
 List<int> regularly_spaced_ticks(int distance, int start, int end) {

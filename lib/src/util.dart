@@ -312,65 +312,55 @@ bool lists_contain_same_elts<T extends Comparable>(Iterable<T> elts1, Iterable<T
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // assign SVG coordinates to helices
 
-/// This function has a long parameter list. If these parameters can be found in an instance of
-/// [AppState], then call [reassign_svg_positions] instead.
-Map<int, Helix> helices_assign_svg(
-    Geometry geometry, bool invert_xy, Map<int, Helix> helices, BuiltMap<String, HelixGroup> groups,
-    {BuiltSet<int> selected_helix_idxs = null}) {
-  if (selected_helix_idxs == null || selected_helix_idxs.isEmpty) {
-    selected_helix_idxs = [for (var helix in helices.values) helix.idx].toBuiltSet();
+/// Returns SVG position for helices
+Map<int, Point<num>> helices_assign_svg(
+    Geometry geometry, bool invert_y, BuiltMap<int, Helix> helices, BuiltMap<String, HelixGroup> groups,
+    {BuiltSet<int> helix_idxs_to_calculate = null}) {
+  if (helix_idxs_to_calculate == null || helix_idxs_to_calculate.isEmpty) {
+    helix_idxs_to_calculate = [for (var helix in helices.values) helix.idx].toBuiltSet();
   }
 
-  Map<int, Helix> new_helices = Map<int, Helix>.of(helices);
-
-  Set<String> group_names = {for (var helix in helices.values) helix.group};
-  Map<String, Map<int, Helix>> selected_helices_by_group = {for (var name in group_names) name: {}};
-  for (int idx in selected_helix_idxs) {
-    var helix = helices[idx];
-    selected_helices_by_group[helix.group][idx] = helix;
-  }
+  Map<int, Point<num>> svg_positions = {};
 
   // process by groups because view order only makes sense within a group, and we need
   // to go in view order
-  for (var group_name in selected_helices_by_group.keys) {
+  for (var group_name in groups.keys) {
     HelixGroup group = groups[group_name];
-    var selected_helices_in_group = selected_helices_by_group[group_name].values.toList();
-    var selected_helices_sorted_by_view_order = List<Helix>.from(selected_helices_in_group);
-    selected_helices_sorted_by_view_order.sort(
-        (h1, h2) => group.helices_view_order_inverse[h1.idx] - group.helices_view_order_inverse[h2.idx]);
 
     num prev_y = null;
 
     Helix prev_helix = null;
-    for (var helix in selected_helices_sorted_by_view_order) {
-      num x = main_view_svg_x_of_helix(geometry, helix);
-      num y = main_view_svg_y_of_helix(geometry, helix);
-      if (prev_helix != null) {
-        num delta_y;
-        if (helix.grid.is_none) {
-          var prev_pos = prev_helix.position_;
-          var pos = helix.position_;
-          delta_y = pos.distance_xy(prev_pos) * geometry.nm_to_svg_pixels;
-        } else {
-          var prev_grid_position = prev_helix.grid_position;
-          var grid_position = helix.grid_position;
-          delta_y = prev_grid_position.distance_lattice(grid_position, helix.grid) *
-              geometry.distance_between_helices_svg;
-        }
-        y = prev_y + delta_y;
-      }
-      prev_y = y;
-      helix = helix.rebuild((b) => b
-        ..geometry.replace(geometry)
-        ..svg_position_ = Point<num>(x, y)
-        ..invert_xy = invert_xy);
-      prev_helix = helix;
+    for (var helix_idx in group.helices_view_order) {
+      if (helix_idxs_to_calculate.contains(helix_idx)) {
+        Helix helix = helices[helix_idx];
 
-      new_helices[helix.idx] = helix;
+        // Assertion: Helices should already be updated by reducers
+        assert(helix.geometry == geometry);
+        num x = main_view_svg_x_of_helix(geometry, helix);
+        num y = main_view_svg_y_of_helix(geometry, helix);
+        if (prev_helix != null) {
+          num delta_y;
+          if (helix.grid.is_none) {
+            var prev_pos = prev_helix.position_;
+            var pos = helix.position_;
+            delta_y = pos.distance_xy(prev_pos) * geometry.nm_to_svg_pixels;
+          } else {
+            var prev_grid_position = prev_helix.grid_position;
+            var grid_position = helix.grid_position;
+            delta_y = prev_grid_position.distance_lattice(grid_position, helix.grid) *
+                geometry.distance_between_helices_svg;
+          }
+          y = prev_y + delta_y;
+        }
+        prev_y = y;
+        prev_helix = helix;
+
+        svg_positions[helix.idx] = Point<num>(x, invert_y ? -y : y);
+      }
     }
   }
 
-  return new_helices;
+  return svg_positions;
 }
 
 num main_view_svg_x_of_helix(Geometry geometry, Helix helix) {
@@ -383,7 +373,7 @@ num main_view_svg_y_of_helix(Geometry geometry, Helix helix) {
   return y;
 }
 
-num norm_l2(num x, num y) => sqrt(pow(x, 2) + pow(y, 2));
+num norm_l2(num x, num y) => sqrt(x * x + y * y);
 
 Map<int, Helix> helices_list_to_map(List<Helix> helices) => {for (var helix in helices) helix.idx: helix};
 
@@ -471,15 +461,16 @@ Point<num> closest_point_in_rectangle(
 }
 
 /// Return helix where click event occurred, or the closest (e.g. if click was on a crossover).
-Helix find_closest_helix(
-    MouseEvent event, Iterable<Helix> helices, BuiltMap<String, HelixGroup> groups, Geometry geometry) {
+Helix find_closest_helix(MouseEvent event, Iterable<Helix> helices, BuiltMap<String, HelixGroup> groups,
+    Geometry geometry, BuiltMap<int, Point<num>> helix_idx_to_svg_position_map) {
   var svg_clicked_point = svg_position_of_mouse_click(event);
 
   num min_dist = null;
   Helix closest_helix = null;
   for (var helix in helices) {
     var group = groups[helix.group];
-    var helix_upper_left_corner = group.transform_point_main_view(helix.svg_position, geometry);
+    var helix_upper_left_corner =
+        group.transform_point_main_view(helix_idx_to_svg_position_map[helix.idx], geometry);
     var dist = distance_to_rectangle(
         svg_clicked_point, helix_upper_left_corner, helix.svg_width, helix.svg_height, group.pitch);
     if (min_dist == null || min_dist > dist) {
@@ -527,8 +518,8 @@ Point<int> find_helix_group_min_max(Iterable<Helix> helices_in_group) {
 }
 
 /// Return closest offset in a helix group where click event occured.
-int find_closest_offset(
-    MouseEvent event, Iterable<Helix> helices_in_group, HelixGroup group, Geometry geometry) {
+int find_closest_offset(MouseEvent event, Iterable<Helix> helices_in_group, HelixGroup group,
+    Geometry geometry, num helices_in_group_first_svg_position_x) {
   var svg_clicked_point = svg_position_of_mouse_click(event);
   var svg_clicked_point_untransformed =
       group.transform_point_main_view(svg_clicked_point, geometry, inverse: true);
@@ -537,7 +528,8 @@ int find_closest_offset(
   var min_offset = range.x;
   var max_offset = range.y;
 
-  int closest_offset_unbounded = helices_in_group.first.svg_x_to_offset(svg_clicked_point_untransformed.x);
+  int closest_offset_unbounded = helices_in_group.first
+      .svg_x_to_offset(svg_clicked_point_untransformed.x, helices_in_group_first_svg_position_x);
 
   // max_offset in helix is non-inclusive, so highest offset value is max_offset - 1
   return min(max_offset - 1, max(closest_offset_unbounded, min_offset));
@@ -560,22 +552,24 @@ BuiltList<DesignSideRotationData> rotation_datas_at_offset_in_group(
 }
 
 /// Return (closest) helix, offset and direction where click event occurred.
-Address find_closest_address(
-    MouseEvent event, Iterable<Helix> helices, BuiltMap<String, HelixGroup> groups, Geometry geometry) {
+Address find_closest_address(MouseEvent event, Iterable<Helix> helices, BuiltMap<String, HelixGroup> groups,
+    Geometry geometry, BuiltMap<num, Point<num>> helix_idx_to_svg_position_map) {
   var svg_clicked_point = svg_position_of_mouse_click(event);
 
-  Helix helix = find_closest_helix(event, helices, groups, geometry);
+  Helix helix = find_closest_helix(event, helices, groups, geometry, helix_idx_to_svg_position_map);
+  var helix_svg_position = helix_idx_to_svg_position_map[helix.idx];
 
   var group = groups[helix.group];
-  var helix_upper_left_corner = group.transform_point_main_view(helix.svg_position, geometry);
+  var helix_upper_left_corner =
+      group.transform_point_main_view(helix_idx_to_svg_position_map[helix.idx], geometry);
   var closest_point_in_helix = closest_point_in_rectangle(
       svg_clicked_point, helix_upper_left_corner, helix.svg_width, helix.svg_height, group.pitch);
 
   var closest_point_in_helix_untransformed =
       group.transform_point_main_view(closest_point_in_helix, geometry, inverse: true);
 
-  int offset = helix.svg_x_to_offset(closest_point_in_helix_untransformed.x);
-  bool forward = helix.svg_y_is_forward(closest_point_in_helix_untransformed.y);
+  int offset = helix.svg_x_to_offset(closest_point_in_helix_untransformed.x, helix_svg_position.x);
+  bool forward = helix.svg_y_is_forward(closest_point_in_helix_untransformed.y, helix_svg_position.y);
 
 //  print('* get_closest_address *');
 //  print('  closest helix: ${helix.idx}');
@@ -717,7 +711,7 @@ transform_rect_svg_to_mouse_coord_main_view(Rect rect) {
   transform_rect_svg_to_mouse_coord(rect, current_pan(true), current_zoom(true));
 }
 
-Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid, bool invert_yz, Geometry geometry) {
+Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid, bool invert_y, Geometry geometry) {
   Point<num> point;
   if (grid == Grid.square) {
     point = Point<num>(gp.h, gp.v);
@@ -729,10 +723,10 @@ Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid, bool invert_yz, Geo
     throw ArgumentError(
         'cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
   }
-  if (invert_yz) {
-    num z = point.x; // note Point.x is its name in the math library, but in the side view it means z
+  if (invert_y) {
+    num x = point.x;
     num y = point.y;
-    point = Point<num>(-z, -y);
+    point = Point<num>(-x, -y);
   }
   return point * geometry.distance_between_helices_svg;
 }
@@ -1230,8 +1224,10 @@ bool helices_view_order_is_default(BuiltList<int> helix_idxs, HelixGroup group) 
 List<int> identity_permutation(int length) => [for (int i = 0; i < length; i++) i];
 
 /// Return offset and direction on helix where click event occurred.
-Address get_address_on_helix(MouseEvent event, Helix helix, HelixGroup group, Geometry geometry) {
-  var closest_address = find_closest_address(event, [helix], {helix.group: group}.build(), geometry);
+Address get_address_on_helix(
+    MouseEvent event, Helix helix, HelixGroup group, Geometry geometry, Point<num> helix_svg_position) {
+  var closest_address = find_closest_address(
+      event, [helix], {helix.group: group}.build(), geometry, {helix.idx: helix_svg_position}.build());
   return closest_address;
 }
 
@@ -1548,12 +1544,12 @@ mouse_leave_update_mouseover() {
   }
 }
 
-update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
+update_mouseover(SyntheticMouseEvent event_syn, Helix helix, Point<num> helix_svg_position) {
   if (show_mouseover_data()) {
     MouseEvent event = event_syn.nativeEvent;
     var group = app.state.design.groups[helix.group];
     var geometry = app.state.design.geometry;
-    var address = get_address_on_helix(event, helix, group, geometry);
+    var address = get_address_on_helix(event, helix, group, geometry, helix_svg_position);
     int offset = address.offset;
     bool forward = address.forward;
 
@@ -1624,5 +1620,3 @@ Map<int, int> invert_helices_view_order(Iterable<int> helices_view_order) {
   }
   return view_order_inverse;
 }
-
-enum DNAFileType { scadnano_file, cadnano_file }

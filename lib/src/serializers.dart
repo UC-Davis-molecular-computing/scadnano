@@ -5,8 +5,10 @@ import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/standard_json_plugin.dart';
 import 'package:color/color.dart';
+import 'package:scadnano/src/dna_file_type.dart';
 import 'package:tuple/tuple.dart';
 
+import 'state/dna_assign_options.dart';
 import 'state/domains_move.dart';
 import 'state/helix_group_move.dart';
 import 'state/copy_info.dart';
@@ -56,6 +58,7 @@ import 'state/domain_name_mismatch.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  DNAAssignOptions,
   MoveHelicesToGroup,
   ModificationType,
   ShowEditMenuToggle,
@@ -105,6 +108,7 @@ part 'serializers.g.dart';
   SetShowEditor,
   SaveDNAFile,
   LoadDNAFile,
+  DNAFileType,
   ExportCadnanoFile,
   ExportCodenanoFile,
   MouseoverDataClear,
@@ -177,6 +181,7 @@ part 'serializers.g.dart';
   HelixMaxOffsetSetByDomains,
   HelixMinOffsetSetByDomainsAll,
   HelixMaxOffsetSetByDomainsAll,
+  HelixMaxOffsetSetByDomainsAllSameMax,
   HelixOffsetChange,
   HelixOffsetChangeAll,
   HelixIdxsChange,
@@ -195,6 +200,7 @@ part 'serializers.g.dart';
   Ligate,
   JoinStrandsByCrossover,
   JoinStrandsByMultipleCrossovers,
+  MoveLinker,
   PotentialVerticalCrossover,
   PotentialCrossover,
   PotentialCrossoverCreate,
@@ -291,7 +297,7 @@ part 'serializers.g.dart';
   SetIsZoomAboveThreshold,
   DNASequencePredefined,
   SetOnlyDisplaySelectedHelices,
-  InvertXYSet,
+  InvertYSet,
   SetModificationDisplayConnector,
   ModificationFontSizeSet,
   DomainNameFontSizeSet,

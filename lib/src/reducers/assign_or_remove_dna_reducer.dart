@@ -86,8 +86,8 @@ BuiltList<Strand> assign_dna_reducer(BuiltList<Strand> strands, actions.AssignDN
         continue;
       }
       if (other_strand.overlaps(strand)) {
-        String new_dna =
-            compute_dna_complement_from(other_strand, strand_with_new_sequence, action.warn_on_change);
+        String new_dna = compute_dna_complement_from(
+            other_strand, strand_with_new_sequence, action.disable_change_sequence_bound_strand);
         if (new_dna != other_strand.dna_sequence) {
           strands_builder[i] = other_strand.set_dna_sequence(new_dna);
         }

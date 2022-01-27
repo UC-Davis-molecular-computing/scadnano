@@ -33,22 +33,23 @@ final scadnano_older_versions_to_link =[
 final scadnano_versions_to_link = [CURRENT_VERSION] + scadnano_older_versions_to_link;
 
 const BUG_REPORT_URL = 'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
-const NO_DESIGN_MESSAGE = '''\
-scadnano is a program for designing synthetic DNA structures such as DNA origami.
+const NO_DESIGN_MESSAGE_HTML = r'''\
+<p>scadnano is a program for designing synthetic DNA structures such as DNA origami.
 scadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group.
-It is similar to cadnano (<a href="https://cadnano.org/">cadnano</a>), developed and maintained by 
-the Douglas lab at UCSF.
+Though similar in design, it is distinct from cadnano (<a target="_blank" href="https://cadnano.org/">https://cadnano.org/</a>), 
+which is developed and maintained by the <a target="_blank" href="https://bionano.ucsf.edu/">Douglas lab</a> at UCSF.
 
 If you find scadnano useful in a scientific project, please cite its associated paper:
 
 scadnano: A browser-based, scriptable tool for designing DNA nanostructures.
 David Doty, Benjamin L Lee, and Tristan Stérin.
 DNA 2020: Proceedings of the 26th International Conference on DNA Computing and Molecular Programming
+[ <a target="_blank" href="https://doi.org/10.4230/LIPIcs.DNA.2020.9">paper</a> | <a target="_blank" href="https://web.cs.ucdavis.edu/~doty/papers/scadnano.bib">BibTeX</a> ]
 
 No design is loaded.
-Try loading an example by selecting File --> Load example,
-or select File --> Open... to load a .sc file from your local drive.
-You can also drag and drop a .sc file from your file system to the browser.''';
+Try loading an example by selecting <em>File&rarr;Load example</em>,
+or select <em>File&rarr;Open</em> to load a .sc file from your local drive.
+You can also drag and drop a .sc file from your file system to the browser.</p>''';
 
 // https://www.w3schools.com/jsref/event_button.asp
 const LEFT_CLICK_BUTTON = 0;

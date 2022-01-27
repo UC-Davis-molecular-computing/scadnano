@@ -32,6 +32,8 @@ mixin DesignMainHelicesProps on UiProps {
   bool display_major_tick_widths_all_helices;
   Geometry geometry;
   bool show_helix_circles;
+  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
+  bool invert_y;
 }
 
 class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> with PureComponent {
@@ -52,9 +54,7 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
         continue;
       }
 
-      int min_helix_idx = helix_idxs_in_group.min;
-      bool invert_xy = props.helices[min_helix_idx].invert_xy;
-      int first_helix_view_order = invert_xy ? helix_idxs_in_group.length - 1 : 0;
+      int first_helix_view_order = props.invert_y ? helix_idxs_in_group.length - 1 : 0;
 
       var children = [];
       for (int helix_idx in helix_idxs_in_group) {
@@ -66,6 +66,7 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
             !only_display_selected_helices) {
           children.add((DesignMainHelix()
             ..helix = helix
+            ..selected = side_selected_helix_idxs.contains(helix.idx)
             ..major_tick_offset_font_size = props.major_tick_offset_font_size
             ..major_tick_width_font_size = props.major_tick_width_font_size
             ..helix_change_apply_to_all = props.helix_change_apply_to_all
@@ -77,7 +78,8 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
                     view_order == first_helix_view_order)
             ..display_major_tick_widths = props.display_major_tick_widths &&
                 (props.display_major_tick_widths_all_helices || view_order == first_helix_view_order)
-            ..key = helix.idx.toString())());
+            ..key = helix.idx.toString()
+            ..helix_svg_position = props.helix_idx_to_svg_position_map[helix.idx])());
         }
       }
 
