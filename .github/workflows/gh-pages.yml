@@ -40,13 +40,13 @@ jobs:
 
 
       - name: Build into gh-pages repo
-        run: PATH="$PATH:/usr/lib/dart/bin" pub global run webdev build -o web:/tmp/scadnano ; cp -r /tmp/scadnano/* gh-pages-repo
+        run: PATH="$PATH:/usr/lib/dart/bin" pub global run webdev build -o web:/tmp/scadnano -- '--define=build_web_compilers:ddc=environment={"SCADNANO_PROD":true}' ; cp -r /tmp/scadnano/* gh-pages-repo
       - name: Retrieve version
         run: echo "VERSION=$(cat lib/src/constants.dart | grep  'const String CURRENT_VERSION = .*' | grep -oP '\d+\.\d+\.\d+')"  >> $GITHUB_ENV
-      - name: Build into gh-pages-repo/VERSION
+      - name: Copy build into gh-pages-repo/VERSION
         run: |
          if [ "$VERSION" != "" ]; then
-            PATH="$PATH:/usr/lib/dart/bin" pub global run webdev build -o web:gh-pages-repo/v$VERSION
+            cp -r /tmp/scadnano/* gh-pages-repo/v$VERSION
          else
             echo "::warning deploying VERSION skipped because VERSION number could not be found"
          fi

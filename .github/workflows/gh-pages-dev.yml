@@ -43,7 +43,7 @@ jobs:
       
 
       - name: Build into gh-pages repo
-        run: PATH="$PATH:/usr/lib/dart/bin" pub global run webdev build -o web:gh-pages-repo/dev
+        run: PATH="$PATH:/usr/lib/dart/bin" pub global run webdev build -o web:gh-pages-repo/dev -- '--define=build_web_compilers:ddc=environment={"SCADNANO_PROD":true}'
       
 
       - name: Deploy
