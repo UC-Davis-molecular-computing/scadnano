@@ -1613,7 +1613,9 @@ abstract class HelixMaxOffsetSetByDomainsAll
 // when we want the same max to be applied to all helices
 abstract class HelixMaxOffsetSetByDomainsAllSameMax
     with BuiltJsonSerializable, UndoableAction
-    implements Action, Built<HelixMaxOffsetSetByDomainsAllSameMax, HelixMaxOffsetSetByDomainsAllSameMaxBuilder> {
+    implements
+        Action,
+        Built<HelixMaxOffsetSetByDomainsAllSameMax, HelixMaxOffsetSetByDomainsAllSameMaxBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory HelixMaxOffsetSetByDomainsAllSameMax() = _$HelixMaxOffsetSetByDomainsAllSameMax;
 
@@ -2839,6 +2841,31 @@ abstract class ModificationRemove
   ModificationRemove._();
 
   static Serializer<ModificationRemove> get serializer => _$modificationRemoveSerializer;
+}
+
+abstract class ModificationConnectorLengthSet
+    with BuiltJsonSerializable
+    implements Action, Built<ModificationConnectorLengthSet, ModificationConnectorLengthSetBuilder> {
+  Strand get strand;
+
+  Modification get modification;
+
+  int get connector_length;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  @memoized
+  int get hashCode;
+
+  factory ModificationConnectorLengthSet({Strand strand, Modification modification, int connector_length}) =
+      _$ModificationConnectorLengthSet._;
+
+  factory ModificationConnectorLengthSet.from(
+      [void Function(ModificationConnectorLengthSetBuilder) updates]) = _$ModificationConnectorLengthSet;
+
+  ModificationConnectorLengthSet._();
+
+  static Serializer<ModificationConnectorLengthSet> get serializer =>
+      _$modificationConnectorLengthSetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

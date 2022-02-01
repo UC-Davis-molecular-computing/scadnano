@@ -757,7 +757,6 @@ PAGEHPLC : Dual PAGE & HPLC
     type - type of modification: five_prime, three_prime, internal (default)
     */
 
-    bool is_end = type != ModificationType.internal;
     int selected_index = 2;
 
     if (type == ModificationType.five_prime) {
@@ -771,14 +770,15 @@ PAGEHPLC : Dual PAGE & HPLC
     int modification_type_idx = 0;
     int display_text_idx = 1;
     int idt_text_idx = 2;
-    int index_of_dna_base_idx = 3;
-    // int id_idx = 4;
-    var items = List<DialogItem>.filled(4, null);
+    int connector_length_idx = 3;
+    int index_of_dna_base_idx = 4;
+    var items = List<DialogItem>.filled(5, null);
     items[modification_type_idx] = DialogRadio(
         label: 'modification type', options: {"3'", "5'", "internal"}, selected_idx: selected_index);
 
     String initial_display_text = "";
     String initial_idt_text = "";
+    int initial_connector_length = constants.default_modification_connector_length;
     // String initial_id = "";
 
     // if there is a last mod of this type, it auto-populates the dialog inputs
@@ -803,6 +803,7 @@ PAGEHPLC : Dual PAGE & HPLC
 
     items[display_text_idx] = DialogText(label: 'display text', value: initial_display_text);
     items[idt_text_idx] = DialogText(label: 'idt text', value: initial_idt_text);
+    items[connector_length_idx] = DialogInteger(label: 'connector length', value: initial_connector_length);
     // items[id_idx] = DialogText(label: 'id', value: initial_id);
 
     items[index_of_dna_base_idx] = DialogInteger(label: 'index of DNA base', value: strand_dna_idx);
@@ -820,24 +821,30 @@ PAGEHPLC : Dual PAGE & HPLC
     String display_text = (results[display_text_idx] as DialogText).value;
     // String id = (results[id_idx] as DialogText).value;
     String idt_text = (results[idt_text_idx] as DialogText).value;
+    int connector_length = (results[connector_length_idx] as DialogInteger).value;
     int index_of_dna_base = (results[index_of_dna_base_idx] as DialogInteger).value;
 
     Modification mod;
     if (modification_type == "3'") {
       mod = Modification3Prime(
-          //id: id,
-          display_text: display_text,
-          idt_text: idt_text);
+        //id: id,
+        display_text: display_text,
+        idt_text: idt_text,
+        connector_length: connector_length,
+      );
     } else if (modification_type == "5'") {
       mod = Modification5Prime(
-          //id: id,
-          display_text: display_text,
-          idt_text: idt_text);
+        //id: id,
+        display_text: display_text,
+        idt_text: idt_text,
+        connector_length: connector_length,
+      );
     } else {
       mod = ModificationInternal(
         // id: id,
         display_text: display_text,
         idt_text: idt_text,
+        connector_length: connector_length,
       );
     }
 

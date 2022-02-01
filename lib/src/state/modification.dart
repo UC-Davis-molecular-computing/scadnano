@@ -19,6 +19,8 @@ abstract class Modification {
 
   String get idt_text;
 
+  int get connector_length;
+
   BuiltMap<String, Object> get unused_fields;
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false});
@@ -29,6 +31,8 @@ abstract class Modification {
     Map<String, dynamic> map = {
       constants.mod_display_text_key: mod.display_text,
       if (mod.idt_text != null) constants.mod_idt_text_key: mod.idt_text,
+      if (mod.connector_length != constants.default_modification_connector_length)
+        constants.mod_connector_length_key: mod.connector_length,
     };
     map.addAll(mod.unused_fields.toMap());
     return map;
@@ -64,13 +68,18 @@ abstract class Modification5Prime
     with BuiltJsonSerializable, UnusedFields
     implements Built<Modification5Prime, Modification5PrimeBuilder>, Modification {
   factory Modification5Prime(
-      {String display_text, String id, String idt_text, BuiltMap<String, Object> unused_fields}) {
+      {String display_text,
+      String id,
+      String idt_text,
+      int connector_length = constants.default_modification_connector_length,
+      BuiltMap<String, Object> unused_fields}) {
     String id_to_assign = id ?? ("5'-" + (idt_text ?? display_text));
     var unused_fields_to_assign = unused_fields ?? BuiltMap<String, Object>();
     return Modification5Prime.from((b) => b
       ..display_text = display_text
       ..idt_text = idt_text
       ..id = id_to_assign
+      ..connector_length = connector_length
       ..unused_fields.replace(unused_fields_to_assign));
   }
 
@@ -95,6 +104,8 @@ abstract class Modification5Prime
   @nullable
   String get idt_text;
 
+  int get connector_length;
+
   String html_id(Address address) => mod_html_id(this, address);
 
   Modification set_id(String id) => rebuild((b) => b..id = id);
@@ -111,10 +122,16 @@ abstract class Modification5Prime
     String location = json_map[constants.mod_location_key];
     assert(location == "5'");
     String idt_text = json_map[constants.mod_idt_text_key];
+    int connector_length = util.optional_field(
+        json_map, constants.mod_connector_length_key, constants.default_modification_connector_length);
     var unused_fields = util.unused_fields_map(json_map, constants.modification_keys).build();
 
     return Modification5Prime(
-        display_text: display_text, id: id, idt_text: idt_text, unused_fields: unused_fields);
+        display_text: display_text,
+        id: id,
+        idt_text: idt_text,
+        unused_fields: unused_fields,
+        connector_length: connector_length);
   }
 }
 
@@ -122,13 +139,18 @@ abstract class Modification3Prime
     with BuiltJsonSerializable, UnusedFields
     implements Built<Modification3Prime, Modification3PrimeBuilder>, Modification {
   factory Modification3Prime(
-      {String display_text, String id, String idt_text, BuiltMap<String, Object> unused_fields}) {
+      {String display_text,
+      String id,
+      String idt_text,
+      int connector_length = constants.default_modification_connector_length,
+      BuiltMap<String, Object> unused_fields}) {
     String id_to_assign = id ?? ("3'-" + (idt_text ?? display_text));
     var unused_fields_to_assign = unused_fields ?? BuiltMap<String, Object>();
     return Modification3Prime.from((b) => b
       ..display_text = display_text
       ..idt_text = idt_text
       ..id = id_to_assign
+      ..connector_length = connector_length
       ..unused_fields.replace(unused_fields_to_assign));
   }
 
@@ -153,6 +175,8 @@ abstract class Modification3Prime
   @nullable
   String get idt_text;
 
+  int get connector_length;
+
   String html_id(Address address) => mod_html_id(this, address);
 
   Modification set_id(String id) => rebuild((b) => b..id = id);
@@ -169,10 +193,16 @@ abstract class Modification3Prime
     String location = json_map[constants.mod_location_key];
     assert(location == "3'");
     String idt_text = json_map[constants.mod_idt_text_key];
+    int connector_length = util.optional_field(
+        json_map, constants.mod_connector_length_key, constants.default_modification_connector_length);
     var unused_fields = util.unused_fields_map(json_map, constants.modification_keys).build();
 
     return Modification3Prime(
-        display_text: display_text, id: id, idt_text: idt_text, unused_fields: unused_fields);
+        display_text: display_text,
+        id: id,
+        idt_text: idt_text,
+        unused_fields: unused_fields,
+        connector_length: connector_length);
   }
 }
 
@@ -183,6 +213,7 @@ abstract class ModificationInternal
       {String display_text,
       String id,
       String idt_text,
+      int connector_length = constants.default_modification_connector_length,
       BuiltSet<String> allowed_bases,
       BuiltMap<String, Object> unused_fields}) {
     String id_to_assign = id ?? ("internal-" + (idt_text ?? display_text));
@@ -192,6 +223,7 @@ abstract class ModificationInternal
       ..display_text = display_text
       ..idt_text = idt_text
       ..id = id_to_assign
+      ..connector_length = connector_length
       ..allowed_bases.replace(allowed_bases_to_assign)
       ..unused_fields.replace(unused_fields_to_assign));
   }
@@ -218,6 +250,8 @@ abstract class ModificationInternal
   @nullable
   String get idt_text;
 
+  int get connector_length;
+
   @nullable
   BuiltSet<String> get allowed_bases;
 
@@ -241,6 +275,8 @@ abstract class ModificationInternal
     String location = json_map[constants.mod_location_key];
     assert(location == "internal");
     String idt_text = json_map[constants.mod_idt_text_key];
+    int connector_length = util.optional_field(
+        json_map, constants.mod_connector_length_key, constants.default_modification_connector_length);
     var allowed_bases_json = json_map[constants.mod_allowed_bases_key];
     var allowed_bases = allowed_bases_json == null ? null : BuiltSet<String>(allowed_bases_json);
     var unused_fields = util.unused_fields_map(json_map, constants.modification_keys).build();
@@ -249,6 +285,7 @@ abstract class ModificationInternal
         display_text: display_text,
         id: id,
         idt_text: idt_text,
+        connector_length: connector_length,
         allowed_bases: allowed_bases,
         unused_fields: unused_fields);
   }
