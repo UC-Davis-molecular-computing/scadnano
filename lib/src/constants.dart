@@ -109,6 +109,8 @@ const default_strand_name_font_size = 16;
 const default_major_tick_offset_font_size = 12;
 const default_major_tick_width_font_size = 8;
 
+const default_modification_connector_length = 4;
+
 const default_scadnano_file_extension = 'sc';
 const legacy_scadnano_file_extensions = ['dna', 'json'];
 final all_scadnano_file_extensions = [default_scadnano_file_extension] + legacy_scadnano_file_extensions;
@@ -293,12 +295,14 @@ const mod_display_text_key = 'display_text';
 const mod_id_key = 'id';
 const mod_idt_text_key = 'idt_text';
 const mod_allowed_bases_key = 'allowed_bases';
+const mod_connector_length_key = 'connector_length';
 const modification_keys = [
   mod_location_key,
   mod_display_text_key,
   mod_id_key,
   mod_idt_text_key,
   mod_allowed_bases_key,
+  mod_connector_length_key,
 ];
 
 // IDTFields keys

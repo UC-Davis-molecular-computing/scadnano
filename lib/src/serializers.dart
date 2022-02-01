@@ -72,6 +72,7 @@ part 'serializers.g.dart';
   DomainNameMismatch,
   ShowDomainNameMismatchesSet,
   ModificationEdit,
+  ModificationConnectorLengthSet,
   Modifications5PrimeEdit,
   Modifications3PrimeEdit,
   ModificationsInternalEdit,

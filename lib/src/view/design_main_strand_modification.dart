@@ -44,7 +44,8 @@ mixin DesignMainStrandModificationProps on UiProps {
 class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStrandModificationProps> {
   @override
   render() {
-    Point<num> pos = props.helix.svg_base_pos(props.address.offset, props.address.forward, props.helix_svg_position_y);
+    Point<num> pos =
+        props.helix.svg_base_pos(props.address.offset, props.address.forward, props.helix_svg_position_y);
     bool display_connector = props.display_connector;
 
     String classname = constants.css_selector_modification;
@@ -64,8 +65,8 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
     }
 
     var elements = [
-      if (display_connector) _end_connector(pos, props.address.forward),
-      _modification_svg(pos, props.address.forward, display_connector),
+      if (display_connector) _end_connector(pos, props.address.forward, props.modification.connector_length),
+      _modification_svg(pos, props.address.forward, display_connector, props.modification.connector_length),
     ];
 
     // String id = props.modification.html_id(props.address);
@@ -117,7 +118,7 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
 
   remove_modification() {
     List<SelectableModification> selectable_mods =
-    app.state.ui_state.selectables_store.selected_modifications.toList();
+        app.state.ui_state.selectables_store.selected_modifications.toList();
     if (!selectable_mods.contains(props.selectable_modification)) {
       selectable_mods.add(props.selectable_modification);
     }
@@ -139,10 +140,13 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
   edit_modification() async {
     int display_text_idx = 0;
     int idt_text_idx = 1;
+    int connector_length_idx = 2;
     // int id_idx = 2;
-    var items = List<DialogItem>.filled(2, null);
+    var items = List<DialogItem>.filled(3, null);
     items[display_text_idx] = DialogText(label: 'display text', value: props.modification.display_text);
     items[idt_text_idx] = DialogText(label: 'idt text', value: props.modification.idt_text);
+    items[connector_length_idx] =
+        DialogInteger(label: 'connector length', value: props.modification.connector_length);
     // items[id_idx] = DialogText(label: 'id', value: props.modification.id);
 
     var dialog = Dialog(title: 'edit modification', items: items);
@@ -151,24 +155,31 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
 
     String display_text = (results[display_text_idx] as DialogText).value;
     String idt_text = (results[idt_text_idx] as DialogText).value;
+    int connector_length = (results[connector_length_idx] as DialogInteger).value;
     // String id = (results[id_idx] as DialogText).value;
 
     Modification new_mod;
     if (props.modification is Modification3Prime) {
       new_mod = Modification3Prime(
-          //id: id,
-          display_text: display_text,
-          idt_text: idt_text);
+        //id: id,
+        display_text: display_text,
+        idt_text: idt_text,
+        connector_length: connector_length,
+      );
     } else if (props.modification is Modification5Prime) {
       new_mod = Modification5Prime(
-          //id: id,
-          display_text: display_text,
-          idt_text: idt_text);
+        //id: id,
+        display_text: display_text,
+        idt_text: idt_text,
+        connector_length: connector_length,
+      );
     } else {
       new_mod = ModificationInternal(
-          // id: props.modification.id,
-          display_text: display_text,
-          idt_text: props.modification.idt_text);
+        // id: props.modification.id,
+        display_text: display_text,
+        idt_text: props.modification.idt_text,
+        connector_length: connector_length,
+      );
     }
 
     List<SelectableModification> selectable_mods =
@@ -195,8 +206,8 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
       } else if (new_mod is ModificationInternal) {
         var selectable_mods_int = List<SelectableModificationInternal>.from(
             selectable_mods.where((mod) => mod is SelectableModificationInternal));
-        action = actions.ModificationsInternalEdit(
-            modifications: selectable_mods_int, new_modification: new_mod);
+        action =
+            actions.ModificationsInternalEdit(modifications: selectable_mods_int, new_modification: new_mod);
       }
     } else {
       print('WARNING: selectable_mods should have at least one element in it by this line');
@@ -206,54 +217,47 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
     app.dispatch(action);
   }
 
-  ReactElement _end_connector(Point<num> pos, bool forward) {
+  ReactElement _end_connector(Point<num> pos, bool forward, int connector_length) {
     num y_delta = y_delta_mod();
-    double y_del_small = (forward ? -y_delta : y_delta) / 4.0;
+    double y_del_small = (forward ? -y_delta : y_delta);
     double x = -x_delta_mod();
+
+    List<String> points = [];
+    for (int i = 0; i < connector_length + 1; i++) {
+      num x_pos = pos.x + (i % 2 == 1 ? x : 0);
+      points.add('${x_pos},${pos.y + i * y_del_small} ');
+    }
+    var points_str = points.join('');
+
     return (Dom.polyline()
       ..fill = 'none'
       ..stroke = 'black'
       ..strokeWidth = 2
-      ..points = ''
-          '${pos.x},${pos.y} '
-          '${pos.x + x},${pos.y + y_del_small} '
-          '${pos.x},${pos.y + 2 * y_del_small} '
-          '${pos.x + x},${pos.y + 3 * y_del_small} '
-          '${pos.x},${pos.y + 4 * y_del_small}'
+      ..points = points_str
       ..key = 'connector')();
   }
 
-  // ReactElement _internal_connector(Point<num> pos, bool forward) {
-  //   num y_delta = y_delta_mod();
-  //   double y_del_small = (forward ? -y_delta : y_delta).toDouble();
-  //   return (Dom.line()
-  //     ..stroke = 'black'
-  //     ..strokeWidth = 2
-  //     ..x1 = pos.x
-  //     ..y1 = pos.y
-  //     ..x2 = pos.x
-  //     ..y2 = pos.y + y_del_small
-  //     ..key = 'connector')();
-  // }
-
-  ReactElement _modification_svg(Point<num> pos, bool forward, bool display_connector) {
+  ReactElement _modification_svg(Point<num> pos, bool forward, bool display_connector, int connector_length) {
     num y_delta = y_delta_mod();
-    double y_del_small = (forward ? -1.1 * y_delta : y_delta).toDouble();
+    double y_del_small = (forward ? -y_delta : y_delta).toDouble();
     int font_size = props.font_size;
     String baseline = forward ? 'baseline' : 'hanging';
     if (!display_connector) {
       baseline = 'middle';
     }
+
+    double translation = y_del_small * connector_length;
+
     return (Dom.text()
       ..className = 'modification-text'
       ..fontSize = font_size
       ..x = pos.x
-      ..y = display_connector ? pos.y + y_del_small : pos.y
+      ..y = display_connector ? pos.y + translation : pos.y
       ..dominantBaseline = baseline
       ..key = 'mod')(props.modification.display_text);
   }
 
-  num y_delta_mod() => props.helix.geometry.base_height_svg * 1.8;
+  num y_delta_mod() => props.helix.geometry.base_height_svg * 0.45;
 
   num x_delta_mod() => props.helix.geometry.base_width_svg / 3.0;
 }
