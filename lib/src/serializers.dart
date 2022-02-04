@@ -97,6 +97,7 @@ part 'serializers.g.dart';
   ReplaceStrands,
   ShowGridCoordinatesSideViewSet,
   ShowHelixCirclesMainViewSet,
+  ShowHelixComponentsMainViewSet,
   SelectModeToggle,
   SelectModesSet,
   SelectModesAdd,

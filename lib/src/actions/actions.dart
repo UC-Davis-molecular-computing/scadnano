@@ -3308,7 +3308,7 @@ abstract class AutofitSet with BuiltJsonSerializable implements Action, Built<Au
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// show or hide helix circles/text in main view
+// show or hide helix circles/text, or entire helix (including offset lines) in main view
 
 abstract class ShowHelixCirclesMainViewSet
     with BuiltJsonSerializable
@@ -3321,6 +3321,26 @@ abstract class ShowHelixCirclesMainViewSet
   ShowHelixCirclesMainViewSet._();
 
   static Serializer<ShowHelixCirclesMainViewSet> get serializer => _$showHelixCirclesMainViewSetSerializer;
+}
+
+abstract class ShowHelixComponentsMainViewSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowHelixComponentsMainViewSet, ShowHelixComponentsMainViewSetBuilder> {
+  bool get show_helix_components;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  @memoized
+  int get hashCode;
+
+  factory ShowHelixComponentsMainViewSet({bool show_helix_components}) = _$ShowHelixComponentsMainViewSet._;
+
+  factory ShowHelixComponentsMainViewSet.from(
+      [void Function(ShowHelixComponentsMainViewSetBuilder) updates]) = _$ShowHelixComponentsMainViewSet;
+
+  ShowHelixComponentsMainViewSet._();
+
+  static Serializer<ShowHelixComponentsMainViewSet> get serializer =>
+      _$showHelixComponentsMainViewSetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
