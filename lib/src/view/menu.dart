@@ -69,6 +69,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices
       ..invert_y = state.ui_state.invert_y
       ..show_helix_circles_main_view = state.ui_state.show_helix_circles_main_view
+      ..show_helix_components_main_view = state.ui_state.show_helix_components_main_view
       ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
       ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
       ..show_helices_axis_arrows = state.ui_state.show_helices_axis_arrows
@@ -120,6 +121,7 @@ mixin MenuPropsMixin on UiProps {
   bool invert_y;
   bool warn_on_exit_if_unsaved;
   bool show_helix_circles_main_view;
+  bool show_helix_components_main_view;
   bool show_grid_coordinates_side_view;
   bool show_helices_axis_arrows;
   bool show_loopout_length;
@@ -725,11 +727,25 @@ To inspect how all axes change, check View --> Show axis arrows.'''
         ..onChange = ((_) => props.dispatch(actions.InvertYSet(invert_y: !props.invert_y)))
         ..key = 'invert-y-axis')(),
       (MenuBoolean()
+        ..value = props.show_helix_components_main_view
+        ..display = 'Show main view helices'
+        ..tooltip = '''\
+Shows helix representation in main view. Hiding them hides all view elements 
+associated with a helix: grid lines depicting offsets, circles with helix index,
+major tick offsets.'''
+        ..name = 'show-helix-components-main-view'
+        ..onChange = ((_) => props.dispatch(actions.ShowHelixComponentsMainViewSet(
+            show_helix_components: !props.show_helix_components_main_view)))
+        ..key = 'show-helix-components-main-view')(),
+      (MenuBoolean()
         ..value = props.show_helix_circles_main_view
         ..display = 'Show main view helix circles/idx'
         ..tooltip = '''\
 Shows helix circles and idx's in main view. You may want to hide them for
-designs that have overlapping non-parallel helices.'''
+designs that have overlapping non-parallel helices.
+
+To hide all view elements associated with helices (e.g., major ticks),
+toggle "Show main view helices".'''
         ..name = 'show-helix-circles-main-view'
         ..onChange = ((_) => props.dispatch(actions.ShowHelixCirclesMainViewSet(
             show_helix_circles_main_view: !props.show_helix_circles_main_view)))
