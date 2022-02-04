@@ -99,9 +99,19 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
     // only store enough of helix svg positions for helices this strand has
     Map<int, Point<num>> helix_idx_to_svg_position_y_map_on_strand_unbuilt = {};
+    var helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map;
     for (var domain in props.strand.domains) {
-      helix_idx_to_svg_position_y_map_on_strand_unbuilt[domain.helix] =
-          props.helix_idx_to_svg_position_map[domain.helix];
+      int helix_idx = domain.helix;
+      if (props.side_selected_helix_idxs == null || props.side_selected_helix_idxs.contains(helix_idx)) {
+        // If props.side_selected_helix_idxs == null, then we are displaying all helices and need to
+        // include this helix. Otherwise we are not displaying unselected helices.
+        // In that case if props.side_selected_helix_idxs.contains(helix_idx) is false,
+        // then helix_idx will not even be in helix_idx_to_svg_position_map.
+        // since the memoized getter for AppState.helix_idx_to_svg_position_map skips it.
+        // But we won't need it anyway in that case.
+        var svg_pos = helix_idx_to_svg_position_map[helix_idx];
+        helix_idx_to_svg_position_y_map_on_strand_unbuilt[domain.helix] = svg_pos;
+      }
     }
     BuiltMap<int, Point<num>> helix_idx_to_svg_position_y_map_on_strand =
         helix_idx_to_svg_position_y_map_on_strand_unbuilt.build();
