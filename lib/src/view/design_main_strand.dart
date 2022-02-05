@@ -97,6 +97,25 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       classname += ' ' + constants.css_selector_scaffold;
     }
 
+    // only store enough of helix svg positions for helices this strand has
+    Map<int, Point<num>> helix_idx_to_svg_position_y_map_on_strand_unbuilt = {};
+    var helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map;
+    for (var domain in props.strand.domains) {
+      int helix_idx = domain.helix;
+      if (props.side_selected_helix_idxs == null || props.side_selected_helix_idxs.contains(helix_idx)) {
+        // If props.side_selected_helix_idxs == null, then we are displaying all helices and need to
+        // include this helix. Otherwise we are not displaying unselected helices.
+        // In that case if props.side_selected_helix_idxs.contains(helix_idx) is false,
+        // then helix_idx will not even be in helix_idx_to_svg_position_map.
+        // since the memoized getter for AppState.helix_idx_to_svg_position_map skips it.
+        // But we won't need it anyway in that case.
+        var svg_pos = helix_idx_to_svg_position_map[helix_idx];
+        helix_idx_to_svg_position_y_map_on_strand_unbuilt[domain.helix] = svg_pos;
+      }
+    }
+    BuiltMap<int, Point<num>> helix_idx_to_svg_position_y_map_on_strand =
+        helix_idx_to_svg_position_y_map_on_strand_unbuilt.build();
+
     return (Dom.g()
       ..id = props.strand.id
       ..onPointerDown = handle_click_down
@@ -119,7 +138,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..drawing_potential_crossover = props.drawing_potential_crossover
         ..moving_dna_ends = props.moving_dna_ends
         ..geometry = props.geometry
-        ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
+        ..helix_idx_to_svg_position_map = helix_idx_to_svg_position_y_map_on_strand
         ..only_display_selected_helices = props.only_display_selected_helices)(),
       _insertions(),
       _deletions(),
@@ -134,6 +153,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..only_display_selected_helices = props.only_display_selected_helices
           ..show_domain_names = props.show_domain_names
           ..show_strand_names = props.show_strand_names
+          ..context_menu_strand = context_menu_strand
+          ..helix_idx_to_svg_position = helix_idx_to_svg_position_y_map_on_strand
           ..domain_name_font_size = props.domain_name_font_size
           ..strand_name_font_size = props.strand_name_font_size
           ..key = 'domain-names')(),
@@ -148,7 +169,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..selected_modifications_in_strand = props.selected_modifications_in_strand
           ..font_size = props.modification_font_size
           ..display_connector = props.modification_display_connector
-          ..helix_idx_to_svg_position_y_map = props.helix_idx_to_svg_position_map.map((i, p) => MapEntry(i, p.y))
+          ..helix_idx_to_svg_position_y_map =
+              props.helix_idx_to_svg_position_map.map((i, p) => MapEntry(i, p.y))
           ..key = 'modifications')(),
     ]);
   }
@@ -160,7 +182,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         // select/deselect
         props.strand.handle_selection_mouse_down(event);
         // set up drag detection for moving DNA ends
-        var address = util.find_closest_address(event, props.helices.values, props.groups, props.geometry, props.helix_idx_to_svg_position_map);
+        var address = util.find_closest_address(
+            event, props.helices.values, props.groups, props.geometry, props.helix_idx_to_svg_position_map);
         HelixGroup group = app.state.design.group_of_strand(props.strand);
         var helices_view_order_inverse = group.helices_view_order_inverse;
         app.dispatch(actions.StrandsMoveStartSelectedStrands(
@@ -744,7 +767,6 @@ PAGEHPLC : Dual PAGE & HPLC
     type - type of modification: five_prime, three_prime, internal (default)
     */
 
-    bool is_end = type != ModificationType.internal;
     int selected_index = 2;
 
     if (type == ModificationType.five_prime) {
@@ -758,14 +780,15 @@ PAGEHPLC : Dual PAGE & HPLC
     int modification_type_idx = 0;
     int display_text_idx = 1;
     int idt_text_idx = 2;
-    int index_of_dna_base_idx = 3;
-    // int id_idx = 4;
-    var items = List<DialogItem>.filled(4, null);
+    int connector_length_idx = 3;
+    int index_of_dna_base_idx = 4;
+    var items = List<DialogItem>.filled(5, null);
     items[modification_type_idx] = DialogRadio(
         label: 'modification type', options: {"3'", "5'", "internal"}, selected_idx: selected_index);
 
     String initial_display_text = "";
     String initial_idt_text = "";
+    int initial_connector_length = constants.default_modification_connector_length;
     // String initial_id = "";
 
     // if there is a last mod of this type, it auto-populates the dialog inputs
@@ -790,6 +813,7 @@ PAGEHPLC : Dual PAGE & HPLC
 
     items[display_text_idx] = DialogText(label: 'display text', value: initial_display_text);
     items[idt_text_idx] = DialogText(label: 'idt text', value: initial_idt_text);
+    items[connector_length_idx] = DialogInteger(label: 'connector length', value: initial_connector_length);
     // items[id_idx] = DialogText(label: 'id', value: initial_id);
 
     items[index_of_dna_base_idx] = DialogInteger(label: 'index of DNA base', value: strand_dna_idx);
@@ -807,24 +831,30 @@ PAGEHPLC : Dual PAGE & HPLC
     String display_text = (results[display_text_idx] as DialogText).value;
     // String id = (results[id_idx] as DialogText).value;
     String idt_text = (results[idt_text_idx] as DialogText).value;
+    int connector_length = (results[connector_length_idx] as DialogInteger).value;
     int index_of_dna_base = (results[index_of_dna_base_idx] as DialogInteger).value;
 
     Modification mod;
     if (modification_type == "3'") {
       mod = Modification3Prime(
-          //id: id,
-          display_text: display_text,
-          idt_text: idt_text);
+        //id: id,
+        display_text: display_text,
+        idt_text: idt_text,
+        connector_length: connector_length,
+      );
     } else if (modification_type == "5'") {
       mod = Modification5Prime(
-          //id: id,
-          display_text: display_text,
-          idt_text: idt_text);
+        //id: id,
+        display_text: display_text,
+        idt_text: idt_text,
+        connector_length: connector_length,
+      );
     } else {
       mod = ModificationInternal(
         // id: id,
         display_text: display_text,
         idt_text: idt_text,
+        connector_length: connector_length,
       );
     }
 

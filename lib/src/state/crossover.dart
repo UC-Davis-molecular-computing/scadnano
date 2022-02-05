@@ -30,6 +30,7 @@ abstract class Crossover
   int get hashCode;
   /************************ end BuiltValue boilerplate ************************/
 
+  // idx's within Strand.substrands (not Strand.domains)
   int get prev_domain_idx;
 
   int get next_domain_idx;

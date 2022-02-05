@@ -7,6 +7,8 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/linker.dart';
+import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/modification_type.dart';
 
 import '../state/address.dart';
@@ -207,31 +209,92 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     }
 
     if (edit_mode_is_pencil() && !props.drawing_potential_crossover && (is_first || is_last)) {
+      // If clicking on end of a strand, start drawing a new crossover
       int offset = props.is_5p ? props.domain.offset_5p : props.domain.offset_3p;
-      var start_point_untransformed = props.helix.svg_base_pos(offset, props.domain.forward, props.helix_svg_position.y);
+      var start_point_untransformed =
+          props.helix.svg_base_pos(offset, props.domain.forward, props.helix_svg_position.y);
       var start_point = props.group.transform_point_main_view(start_point_untransformed, props.geometry);
+      var address = Address(helix_idx: props.helix.idx, offset: offset, forward: props.domain.forward);
       var potential_crossover = PotentialCrossover(
-        helix_idx: props.helix.idx,
-        forward: props.domain.forward,
-        offset: offset,
+        address: address,
         color: props.color.toHexColor().toCssString(),
         dna_end_first_click: dna_end,
         start_point: start_point,
         current_point: start_point,
       );
       app.dispatch(actions.PotentialCrossoverCreate(potential_crossover: potential_crossover));
+    } else if (edit_mode_is_pencil() && !props.drawing_potential_crossover && !(is_first || is_last)) {
+      // If clicking on end of a domain within a strand (i.e., end of a crossover or loopout),
+      // start moving the existing crossover/loopout
+      int domain_idx = props.strand.domains.indexOf(props.domain); // XXX: idx in domains, not substrands
+      // unlike above, need to find the OPPOSITE end of the crossover/loopout from DNAEnd that was clicked
+      Linker linker;
+      DNAEnd other_end;
+      Domain other_domain;
+      if (props.is_5p) {
+        /*
+        5'   a    3'
+        [---------+
+                  | <-- linker
+        <---------+ <-- clicked here, so need to find PREVIOUS domain before b, which is a
+        3'   b    5'
+        */
+        assert(domain_idx > 0); // since !is_first
+        linker = props.strand.linkers[domain_idx - 1];
+        int other_domain_idx_in_substrands = linker.prev_domain_idx;
+        other_domain = props.strand.substrands[other_domain_idx_in_substrands];
+        other_end = other_domain.dnaend_3p; // since clicked end was 5'
+      } else {
+        /*
+        5'   a    3'
+        [---------+ <-- clicked here, so need to find NEXT domain after a, which is b
+                  | <-- linker
+        <---------+
+        3'   b    5'
+        */
+        assert(domain_idx < props.strand.domains.length - 1); // since !is_last
+        assert(domain_idx < props.strand.linkers.length); // since one fewer linker than Domain
+        linker = props.strand.linkers[domain_idx];
+        int other_domain_idx_in_substrands = linker.next_domain_idx;
+        other_domain = props.strand.substrands[other_domain_idx_in_substrands];
+        other_end = other_domain.dnaend_5p; // since clicked end was 3'
+      }
+      int other_offset = other_end.offset_inclusive;
+      int other_helix_idx = other_domain.helix;
+      Point<num> other_helix_svg = app.state.helix_idx_to_svg_position_map[other_helix_idx];
+      var start_point_untransformed =
+          props.helix.svg_base_pos(other_offset, other_domain.forward, other_helix_svg.y);
+      var start_point = props.group.transform_point_main_view(start_point_untransformed, props.geometry);
+      var address = Address(helix_idx: other_helix_idx, offset: other_offset, forward: other_domain.forward);
+      var potential_crossover = PotentialCrossover(
+        address: address,
+        color: props.color.toHexColor().toCssString(),
+        dna_end_first_click: other_end,
+        start_point: start_point,
+        current_point: start_point,
+        linker: linker,
+      );
+      app.dispatch(actions.PotentialCrossoverCreate(potential_crossover: potential_crossover));
     } else if (edit_mode_is_pencil() && props.drawing_potential_crossover && (is_first || is_last)) {
+      // if clicking while drawing new potential crossover, make it into an actual crossover
       PotentialCrossover potential_crossover = app.store_potential_crossover.state;
       if (props.is_5p == potential_crossover.dna_end_first_click.is_5p) {
         // can only connect opposite type ends with crossover
         return;
       }
 
+      // remove view of potential crossover
       app.dispatch(actions.PotentialCrossoverRemove());
+
+      // edit design
       if ((is_first && potential_crossover.dna_end_first_click.substrand_is_last) ||
           (is_last && potential_crossover.dna_end_first_click.substrand_is_first)) {
+        assert(potential_crossover.linker == null);
         app.dispatch(actions.JoinStrandsByCrossover(
             dna_end_first_click: potential_crossover.dna_end_first_click, dna_end_second_click: dna_end));
+      } else if (potential_crossover.linker != null) {
+        app.dispatch(
+            actions.MoveLinker(potential_crossover: potential_crossover, dna_end_second_click: dna_end));
       }
     } else if (edit_mode_is_ligate() && (is_first || is_last)) {
       app.dispatch(actions.Ligate(dna_end: dna_end));

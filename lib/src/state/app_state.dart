@@ -71,7 +71,7 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
   static void _initializeBuilder(AppStateBuilder b) {
     b.design = null;
     b.ui_state.replace(DEFAULT_AppUIState);
-    b.error_message = constants.NO_DESIGN_MESSAGE;
+    b.error_message = constants.NO_DESIGN_MESSAGE_HTML;
     b.editor_content = "";
     b.undo_redo = DEFAULT_UndoRedoBuilder;
   }

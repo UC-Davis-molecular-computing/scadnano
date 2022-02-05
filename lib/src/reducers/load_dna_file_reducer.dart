@@ -28,13 +28,15 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
         break;
     }
   } on IllegalDesignError catch (error, stack_trace) {
-    error_message = ''
-        '******************'
-        '\n* illegal design *'
-        '\n******************'
-        '\n\nThe design has the following problem:'
-        '\n\n${error.cause}'
-        '${util.stack_trace_message_bug_report(stack_trace)}';
+    error_message = '''
+******************
+* illegal design *
+******************
+
+The design has the following problem:
+
+${error.cause}
+${util.stack_trace_message_bug_report(stack_trace)}''';
   } catch (error, stack_trace) {
     error_message = "I encountered an error while reading the file ${action.filename}:"
         '\n\n$hline'
@@ -47,7 +49,7 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
   }
 
   if (error_message == null && design_new == null) {
-    error_message = constants.NO_DESIGN_MESSAGE;
+    error_message = constants.NO_DESIGN_MESSAGE_HTML;
   }
 
   AppState new_state;

@@ -22,7 +22,6 @@ import 'package:scadnano/src/middleware/all_middleware.dart';
 import 'package:scadnano/src/actions/actions.dart' as actions;
 
 void initializeComponentTests() {
-  setClientConfiguration();
   enableTestMode();
 }
 

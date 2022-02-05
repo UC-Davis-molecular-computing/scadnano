@@ -53,6 +53,7 @@ GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGloba
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandPartAction>(strands_part_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandCreateCommit>(strand_create),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.DeleteAllSelected>(delete_all_reducer),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.MoveLinker>(move_linker_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.Nick>(nick_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.Ligate>(ligate_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.JoinStrandsByCrossover>(
@@ -188,19 +189,25 @@ Strand one_strand_strands_move_copy_commit_reducer(Design design, Strand strand,
   var original_helices_view_order_inverse = strands_move.original_helices_view_order_inverse;
   var current_group = util.current_group_from_strands_move(design, strands_move);
 
-  strand = move_strand(
+  var moved_strand = move_strand(
       strand: strand,
       original_helices_view_order_inverse: original_helices_view_order_inverse,
       current_group: current_group,
       delta_view_order: delta_view_order,
       delta_offset: delta_offset,
       delta_forward: delta_forward);
+
+  if (moved_strand == null) {
+    print("WARNING: didn't expect move_strand to return null in one_strand_strands_move_copy_commit_reducer");
+    return strand;
+  }
+
   if (strands_move.copy && !strands_move.keep_color && !strand.is_scaffold) {
     //FIXME: reducer not pure; put color_cycler in design instead; and make this a Design-level reducer
     // so we can stored the update to the color_cycler state
-    strand = strand.rebuild((b) => b..color = util.color_cycler.next());
+    moved_strand = moved_strand.rebuild((b) => b..color = util.color_cycler.next());
   }
-  return strand;
+  return moved_strand;
 }
 
 Strand move_strand(
@@ -233,6 +240,10 @@ Strand move_strand(
       if (is_moving) {
         num original_view_order = original_helices_view_order_inverse[substrand.helix];
         num new_view_order = original_view_order + delta_view_order;
+        if (new_view_order >= current_group.helices_view_order.length) {
+          // avoid the crash
+          return null;
+        }
         new_helix_idx = current_group.helices_view_order[new_view_order];
       }
       assert(new_helix_idx != null);

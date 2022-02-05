@@ -22,12 +22,14 @@ UiFactory<DesignMainStrandsMovingProps> ConnectedDesignMainStrandsMoving =
   if (state.ui_state.strands_move != null) {
     original_helices_view_order_inverse = state.ui_state.strands_move.original_helices_view_order_inverse;
     current_group = util.current_group_from_strands_move(state.design, state.ui_state.strands_move);
-  // Need to check this here, because we need to allow the middleware to let through the strands_move
-  // object so that view/design.dart can issue a warning to the user on a mousemove event when the
-  // left-click is depressed. But if we allow the strands_move to propagate to the view it throws
-  // an exception since it assumes they are in the same group.
-    var group_names = state.design.group_names_of_strands(state.ui_state.strands_move.strands_moving);
-    selected_strands_on_multiple_groups = group_names != null && group_names.length > 1;
+    // Need to check this here, because we need to allow the middleware to let through the strands_move
+    // object so that view/design.dart can issue a warning to the user on a mousemove event when the
+    // left-click is depressed. But if we allow the strands_move to propagate to the view it throws
+    // an exception since it assumes they are in the same group.
+    if (!state.ui_state.strands_move.copy) {
+      var group_names = state.design.group_names_of_strands(state.ui_state.strands_move.strands_moving);
+      selected_strands_on_multiple_groups = group_names != null && group_names.length > 1;
+    }
   }
   return DesignMainStrandsMoving()
     ..strands_move = selected_strands_on_multiple_groups ? null : state.ui_state.strands_move
@@ -44,7 +46,7 @@ UiFactory<DesignMainStrandsMovingProps> DesignMainStrandsMoving = _$DesignMainSt
 
 mixin DesignMainStrandsMovingProps on UiProps {
   StrandsMove strands_move;
-  BuiltMap<int,int> original_helices_view_order_inverse;
+  BuiltMap<int, int> original_helices_view_order_inverse;
   HelixGroup current_group;
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
