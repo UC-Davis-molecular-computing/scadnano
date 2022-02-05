@@ -24,8 +24,12 @@ targets:
     builders:
       build_web_compilers|entrypoint:
         # These are globs for the entrypoints you want to compile.
-        release_options:
+        options:
           compiler: dartdevc
+        release_options:
+          compiler: dart2js
+          dart2js_args:
+            - -DSCADNANO_PROD=true
 #        generate_for:
 #          - test/multiplatform/**_test.dart
 #          - test/web/**_test.dart
