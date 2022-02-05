@@ -702,7 +702,16 @@ class DesignViewComponent {
       app.dispatch(actions.HelixGroupMoveStop());
     }
   }
-
+  render_loading_dialog(){
+      react_dom.render(
+        over_react_components.ErrorBoundary()(
+          (ReduxProvider()..store = app.store)(
+            ConnectedLoadingDialog()(),
+          ),
+        ),
+        this.dialog_loading_container,
+      );
+  }
   render(AppState state) {
     if (state.has_error) {
       if (!root_element.children.contains(this.error_message_pane)) {

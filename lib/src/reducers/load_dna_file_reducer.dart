@@ -90,16 +90,10 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
         ..changed_since_last_save = false
         ..storables.loaded_filename = new_filename
         ..storables.side_selected_helix_idxs.replace(side_selected_helix_idxs))
-      ..error_message = ""
-      ..loading = true);
+      ..error_message = "");
   } else {
     throw AssertionError("This line should be unreachable");
   }
 
   return new_state;
-}
-
-AppState loading_dialog_reducer(AppState state, actions.LoadingCompleteSet action) {
-   return state.rebuild((m) => m
-      ..loading = false);
 }

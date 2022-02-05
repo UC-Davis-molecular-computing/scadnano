@@ -11,7 +11,7 @@ part 'design_loading_dialog.over_react.g.dart';
 
 UiFactory<DesignLoadingDialogProps> ConnectedLoadingDialog = connect<AppState, DesignLoadingDialogProps>(
   mapStateToProps: (state) {
-    return DesignLoadingDialog()..show = state.loading;
+    return DesignLoadingDialog()..show = state.ui_state.load_dialog;
   },
 )(DesignLoadingDialog);
 
@@ -25,7 +25,10 @@ class DesignLoadingDialogComponent extends UiComponent2<DesignLoadingDialogProps
   @override
   render() {
     if (props.show == false) {
-      return null;
+      print("show is false");
+      return ((Dom.div()
+      ..className = 'dialog-form')(("Not Loading..."),
+    ));
     }
     print("in component");
     return ((Dom.div()

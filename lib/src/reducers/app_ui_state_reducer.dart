@@ -51,6 +51,7 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) =>
       ..dna_ends_are_moving = moving_dna_ends_reducer(ui_state.dna_ends_are_moving, action)
       ..slice_bar_is_moving = slice_bar_is_moving_reducer(ui_state.slice_bar_is_moving, action)
       ..helix_group_is_moving = helix_group_is_moving_reducer(ui_state.helix_group_is_moving, action)
+      ..load_dialog = load_dialog_reducer(ui_state.load_dialog, action)
       ..strands_move = strands_move_local_reducer(ui_state.strands_move, action)?.toBuilder()
       ..domains_move = domains_move_local_reducer(ui_state.domains_move, action)?.toBuilder()
       ..side_view_grid_position_mouse_cursor =
@@ -113,6 +114,11 @@ Reducer<bool> helix_group_is_moving_reducer = combineReducers([
   TypedReducer<bool, actions.HelixGroupMoveStop>(helix_group_move_stop_app_ui_state_reducer),
 ]);
 
+Reducer<bool> load_dialog_reducer = combineReducers([
+  TypedReducer<bool, actions.LoadingDialogShow>(load_dialog_show_app_ui_state_reducer),
+  TypedReducer<bool, actions.LoadingDialogHide>(load_dialog_hide_app_ui_state_reducer),
+]);
+
 bool potential_crossover_create_app_ui_state_reducer(bool _, actions.PotentialCrossoverCreate action) => true;
 
 bool potential_crossover_remove_app_ui_state_reducer(bool _, actions.PotentialCrossoverRemove action) =>
@@ -131,6 +137,10 @@ bool helix_group_move_start_app_ui_state_reducer(bool _, actions.HelixGroupMoveS
 bool helix_group_move_stop_app_ui_state_reducer(bool _, actions.HelixGroupMoveStop action) => false;
 
 bool show_dna_reducer(bool _, actions.ShowDNASet action) => action.show;
+
+bool load_dialog_show_app_ui_state_reducer(bool _, actions.LoadingDialogShow action) => true;
+
+bool load_dialog_hide_app_ui_state_reducer(bool _, actions.LoadingDialogHide action) => false;
 
 bool show_domain_names_reducer(bool _, actions.ShowDomainNamesSet action) => action.show;
 

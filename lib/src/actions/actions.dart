@@ -739,16 +739,28 @@ abstract class WarnOnExitIfUnsavedSet
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // loading DNA files
 
-abstract class LoadingCompleteSet
+abstract class LoadingDialogShow
     with BuiltJsonSerializable
-    implements Action, Built<LoadingCompleteSet, LoadingCompleteSetBuilder> {
+    implements Action, Built<LoadingDialogShow, LoadingDialogShowBuilder> {
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory LoadingCompleteSet() = _$LoadingCompleteSet._;
+  factory LoadingDialogShow() = _$LoadingDialogShow._;
 
-  LoadingCompleteSet._();
+  LoadingDialogShow._();
 
-  static Serializer<LoadingCompleteSet> get serializer => _$loadingCompleteSetSerializer;
+  static Serializer<LoadingDialogShow> get serializer => _$loadingDialogShowSerializer;
+}
+
+abstract class LoadingDialogHide
+    with BuiltJsonSerializable
+    implements Action, Built<LoadingDialogHide, LoadingDialogHideBuilder> {
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory LoadingDialogHide() = _$LoadingDialogHide._;
+
+  LoadingDialogHide._();
+
+  static Serializer<LoadingDialogHide> get serializer => _$loadingDialogHideSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

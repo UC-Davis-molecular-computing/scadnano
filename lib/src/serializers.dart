@@ -58,7 +58,8 @@ import 'state/domain_name_mismatch.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
-  LoadingCompleteSet,
+  LoadingDialogHide,
+  LoadingDialogShow,
   DNAAssignOptions,
   MoveHelicesToGroup,
   ModificationType,
