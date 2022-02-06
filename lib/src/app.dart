@@ -32,20 +32,14 @@ import 'middleware/local_storage.dart';
 import 'util.dart' as util;
 import 'actions/actions.dart' as actions;
 
-//import 'test.dart';
-//import 'constants.dart' as constants;
-
 // global variable for whole program
 App app;
 
-const SCADNANO_PROD = String.fromEnvironment('SCADNANO_PROD');
-// const USE_REDUX_DEV_TOOLS = SCADNANO_PROD != 'true';
-const USE_REDUX_DEV_TOOLS = false;
+const SCADNANO_PROD = bool.fromEnvironment('SCADNANO_PROD');
+const USE_REDUX_DEV_TOOLS = !SCADNANO_PROD;
 
 const RUN_TEST_CODE_INSTEAD_OF_APP = false;
-//const RUN_TEST_CODE_INSTEAD_OF_APP = true;
 
-//const DEBUG_SELECT = true;
 const DEBUG_SELECT = false;
 
 test_stuff() async {
