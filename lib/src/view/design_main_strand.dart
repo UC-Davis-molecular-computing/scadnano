@@ -884,7 +884,7 @@ PAGEHPLC : Dual PAGE & HPLC
               strand: strand_of_end_selected, modification: mod, strand_dna_idx: null);
           all_actions.add(new_action);
         }
-        action = actions.BatchAction(all_actions);
+        action = actions.BatchAction(all_actions, "add modifications");
       } else {
         print('WARNING: selectable_mods should have at least one element in it by this line');
         return;

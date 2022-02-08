@@ -7151,13 +7151,15 @@ main() {
   group('DesignNewSet', () {
     test('DesignNewSet should set new design', () {
       AppState initial_state = app_state_from_design(two_helices_design);
-      AppState final_state = app_state_reducer(initial_state, NewDesignSet(design: small_design_h0));
+      AppState final_state =
+          app_state_reducer(initial_state, NewDesignSet(small_design_h0, "some description"));
       expect(final_state.design, small_design_h0);
     });
 
     test('DesignNewSet should be undoable', () {
       AppState initial_state = app_state_from_design(two_helices_design);
-      AppState final_state = app_state_reducer(initial_state, NewDesignSet(design: small_design_h0));
+      AppState final_state =
+          app_state_reducer(initial_state, NewDesignSet(small_design_h0, "some description"));
       expect(final_state.undo_redo, UndoRedo().rebuild((b) => b..undo_stack.replace([two_helices_design])));
     });
   });

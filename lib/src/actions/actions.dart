@@ -69,6 +69,8 @@ abstract class DesignChangingAction implements StorableAction, SvgPngCacheInvali
 /// currently used to detect whether to affect the undo stack.
 abstract class UndoableAction implements DesignChangingAction {
   Iterable<Storable> storables() => [Storable.design];
+
+  String short_description();
 }
 
 /// Fast actions are not dispatched to normal store for optimization
@@ -152,9 +154,10 @@ abstract class BatchAction
     with BuiltJsonSerializable, UndoableAction
     implements Built<BatchAction, BatchActionBuilder> {
   BuiltList<UndoableAction> get actions;
+  String get short_description_value;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory BatchAction(Iterable<UndoableAction> actions) =>
+  factory BatchAction(Iterable<UndoableAction> actions, String short_description_value) =>
       BatchAction.from((b) => b..actions.replace(actions));
 
   factory BatchAction.from([void Function(BatchActionBuilder) updates]) = _$BatchAction;
@@ -165,6 +168,9 @@ abstract class BatchAction
 
   @override
   dynamic toJson() => {'actions': actions.toList()};
+
+  @override
+  String short_description() => short_description_value;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -798,9 +804,13 @@ abstract class NewDesignSet
     implements Action, Built<NewDesignSet, NewDesignSetBuilder> {
   Design get design;
 
+  String get short_description_value;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory NewDesignSet({Design design}) {
-    return NewDesignSet.from((b) => b..design.replace(design));
+  factory NewDesignSet(Design design, String short_description_value) {
+    return NewDesignSet.from((b) => b
+      ..design.replace(design)
+      ..short_description_value = short_description_value);
   }
 
   factory NewDesignSet.from([void Function(NewDesignSetBuilder) updates]) = _$NewDesignSet;
@@ -808,6 +818,9 @@ abstract class NewDesignSet
   NewDesignSet._();
 
   static Serializer<NewDesignSet> get serializer => _$newDesignSetSerializer;
+
+  @override
+  String short_description() => short_description_value;
 }
 
 abstract class ExportCadnanoFile
@@ -1569,8 +1582,7 @@ abstract class HelixMajorTickPeriodicDistancesChangeAll
       _$helixMajorTickPeriodicDistancesChangeAllSerializer;
 
   @override
-  String short_description() =>
-      "change all helix major tick periodic distances";
+  String short_description() => "change all helix major tick periodic distances";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2627,8 +2639,7 @@ abstract class AssignDomainNameComplementFromBoundStrands
   int get hashCode;
 
   @override
-  String short_description() =>
-      "assign domain name complement from bound strands";
+  String short_description() => "assign domain name complement from bound strands";
 }
 
 abstract class AssignDomainNameComplementFromBoundDomains
@@ -2655,8 +2666,7 @@ abstract class AssignDomainNameComplementFromBoundDomains
   int get hashCode;
 
   @override
-  String short_description() =>
-      "assign domain name complement from bound domains";
+  String short_description() => "assign domain name complement from bound domains";
 }
 
 abstract class RemoveDNA
