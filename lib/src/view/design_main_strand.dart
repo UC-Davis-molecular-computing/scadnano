@@ -343,7 +343,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     Strand strand = props.strand;
     var selected_strands = app.state.ui_state.selectables_store.selected_strands;
     actions.Action action = batch_if_multiple_selected(
-        scaffold_set_strand_action_creator(!strand.is_scaffold), strand, selected_strands);
+        scaffold_set_strand_action_creator(!strand.is_scaffold), strand, selected_strands, "set scaffold");
     app.dispatch(action);
   }
 
@@ -923,8 +923,8 @@ PAGEHPLC : Dual PAGE & HPLC
   }
 }
 
-actions.UndoableAction batch_if_multiple_selected(
-    ActionCreator action_creator, Strand strand, BuiltSet<Strand> selected_strands) {
+actions.UndoableAction batch_if_multiple_selected(ActionCreator action_creator, Strand strand,
+    BuiltSet<Strand> selected_strands, String short_description) {
   actions.Action action;
   if (selected_strands.isEmpty || selected_strands.length == 1 && selected_strands.first == strand) {
     // set for single strand if nothing is selected, or exactly this strand is selected
@@ -934,7 +934,8 @@ actions.UndoableAction batch_if_multiple_selected(
     if (!selected_strands.contains(strand)) {
       selected_strands = selected_strands.rebuild((b) => b.add(strand));
     }
-    action = actions.BatchAction([for (var strand in selected_strands) action_creator(strand)]);
+    action =
+        actions.BatchAction([for (var strand in selected_strands) action_creator(strand)], short_description);
   }
   return action;
 }
@@ -1069,7 +1070,10 @@ Future<void> ask_for_remove_dna_sequence(Strand strand, BuiltSet<Strand> selecte
   bool remove_all = (results[1] as DialogCheckbox).value;
 
   actions.Action action = batch_if_multiple_selected(
-      remove_dna_strand_action_creator(remove_complements, remove_all), strand, selected_strands);
+      remove_dna_strand_action_creator(remove_complements, remove_all),
+      strand,
+      selected_strands,
+      "remove dna sequence");
   app.dispatch(action);
 }
 
@@ -1087,6 +1091,7 @@ Future<void> ask_for_color(Strand strand, BuiltSet<Strand> selected_strands) asy
   String color_hex = (results[0] as DialogText).value;
 
   actions.Action action =
-      batch_if_multiple_selected(color_set_strand_action_creator(color_hex), strand, selected_strands);
+      batch_if_multiple_selected(
+      color_set_strand_action_creator(color_hex), strand, selected_strands, "set strand color");
   app.dispatch(action);
 }

@@ -5501,8 +5501,8 @@ main() {
 
     var batch_action = BatchAction([
       HelixPositionSet(helix_idx: helix0.idx, position: position0),
-      HelixPositionSet(helix_idx: helix1.idx, position: position1)
-    ]);
+      HelixPositionSet(helix_idx: helix1.idx, position: position1),
+    ], "set helix position");
     state = app_state_reducer(state, batch_action);
     expect(state.design.helices[0], expected_helix0);
     expect(state.design.helices[1], expected_helix1);
