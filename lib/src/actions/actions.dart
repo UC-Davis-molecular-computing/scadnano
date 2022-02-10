@@ -1983,6 +1983,9 @@ abstract class JoinStrandsByCrossover
   JoinStrandsByCrossover._();
 
   static Serializer<JoinStrandsByCrossover> get serializer => _$joinStrandsByCrossoverSerializer;
+
+  @override
+  String short_description() => "add crossover";
 }
 
 // used to move a linker (crossover or loopout, stored as potential_crossover.linker)
@@ -2006,6 +2009,9 @@ abstract class MoveLinker
   MoveLinker._();
 
   static Serializer<MoveLinker> get serializer => _$moveLinkerSerializer;
+
+  @override
+  String short_description() => "DELETE ME"; // TODO: Figure out usage
 }
 
 // JoinStrandsByCrossover cannot be in a BatchAction since the reducer for it looks up strands
