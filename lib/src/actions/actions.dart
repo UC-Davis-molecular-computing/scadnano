@@ -15,6 +15,7 @@ import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
 import 'package:scadnano/src/state/idt_fields.dart';
+import 'package:scadnano/src/state/linker.dart';
 import 'package:scadnano/src/state/substrand.dart';
 import 'package:scadnano/src/util.dart';
 
@@ -1991,6 +1992,8 @@ abstract class JoinStrandsByCrossover
 // used to move a linker (crossover or loopout, stored as potential_crossover.linker)
 // so that one end stays fixed (stored in potential_crossover.dna_end_first_clicked)
 // while the other end moves to dna_end_second_click, editing two strands
+//
+// https://github.com/UC-Davis-molecular-computing/scadnano/issues/716
 abstract class MoveLinker
     with BuiltJsonSerializable, UndoableAction
     implements Action, Built<MoveLinker, MoveLinkerBuilder> {
@@ -2011,7 +2014,19 @@ abstract class MoveLinker
   static Serializer<MoveLinker> get serializer => _$moveLinkerSerializer;
 
   @override
-  String short_description() => "DELETE ME"; // TODO: Figure out usage
+  String short_description() {
+    Linker l = potential_crossover.linker;
+    String linker_description;
+    if (l is Crossover) {
+      linker_description = "crossover";
+    } else if (l is Loopout) {
+      linker_description = "loopout";
+    } else {
+      throw AssertionError("${potential_crossover.linker} is not crossover nor looput");
+    }
+
+    return "move ${linker_description}";
+  }
 }
 
 // JoinStrandsByCrossover cannot be in a BatchAction since the reducer for it looks up strands
