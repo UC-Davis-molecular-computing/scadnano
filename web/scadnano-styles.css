@@ -205,6 +205,16 @@ label + select {
     font-style: italic;
 }
 
+.dialog-design-loading span {    
+    animation: pulse 0.8s infinite alternate;
+}
+
+@keyframes pulse {
+    to {
+        opacity: 0.1;
+    }
+}
+
 .context-menu {
     display: block;
     position: absolute;

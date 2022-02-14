@@ -19,7 +19,7 @@ load_file_middleware(Store<AppState> store, action, NextDispatcher next) {
   if (action is actions.LoadDNAFile && !action.unit_testing) {
     if (action.delay) {
       // delay expensive LoadDNAFile to allow browser repaint
-      Future.delayed(const Duration(milliseconds: 10),
+      Future.delayed(const Duration(milliseconds: 50),
           () => store.dispatch(action.rebuild((m) => m..delay = false)));
     } else {
       document.title = action.filename;
