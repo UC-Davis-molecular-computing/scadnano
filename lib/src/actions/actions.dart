@@ -786,6 +786,8 @@ abstract class LoadDNAFile
 
   bool get unit_testing;
 
+  bool get delay;
+
   DNAFileType get dna_file_type;
 
   // set to null when getting file from another source such as localStorage
@@ -796,12 +798,14 @@ abstract class LoadDNAFile
   factory LoadDNAFile(
       {String content,
       String filename,
+      bool delay = false,
       bool write_local_storage = true,
       bool unit_testing = false,
       DNAFileType dna_file_type = DNAFileType.scadnano_file}) {
     return LoadDNAFile.from((b) => b
       ..content = content
       ..filename = filename
+      ..delay = delay
       ..write_local_storage = write_local_storage
       ..unit_testing = unit_testing
       ..dna_file_type = dna_file_type);

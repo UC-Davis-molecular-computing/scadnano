@@ -88,6 +88,7 @@ _restore(Store<AppState> store, Storable storable) {
       action = actions.LoadDNAFile(
           content: json_str,
           filename: storables?.loaded_filename ?? 'default_filename.sc',
+          delay: true,
           write_local_storage: false);
     } else if (storable == Storable.app_ui_state_storables) {
       var storable_json_map = json.decode(json_str);

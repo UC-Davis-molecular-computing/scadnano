@@ -10,28 +10,29 @@ import '../state/app_state.dart';
 import '../util.dart' as util;
 
 load_file_middleware(Store<AppState> store, action, NextDispatcher next) {
-  if (action is actions.LoadDNAFile && !action.unit_testing) {
+  if (action is actions.LoadDNAFile && !action.unit_testing && action.delay) {
     store.dispatch(actions.LoadingDialogShow());
-    var design_view = app?.view?.design_view;
-    if (design_view != null) {
-      design_view.render_loading_dialog();
-    }
-    print("Loading");
   }
+
   next(action);
 
   if (action is actions.LoadDNAFile && !action.unit_testing) {
-    document.title = action.filename;
-    var design_view = app?.view?.design_view;
-    if (design_view != null) {
-      design_view.render(store.state);
-    }
+    if (action.delay) {
+      // delay expensive LoadDNAFile to allow browser repaint
+      Future.delayed(const Duration(milliseconds: 10),
+          () => store.dispatch(action.rebuild((m) => m..delay = false)));
+    } else {
+      document.title = action.filename;
+      var design_view = app?.view?.design_view;
+      if (design_view != null) {
+        design_view.render(store.state);
+      }
 
-    // re-center if necessary
-    if (store.state.ui_state.autofit && store.state.design != null) {
-      util.fit_and_center();
+      // re-center if necessary
+      if (store.state.ui_state.autofit && store.state.design != null) {
+        util.fit_and_center();
+      }
+      store.dispatch(actions.LoadingDialogHide());
     }
-    store.dispatch(actions.LoadingDialogHide());
-    print("Not Loading");
   }
 }

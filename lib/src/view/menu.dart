@@ -1160,7 +1160,7 @@ request_load_file_from_file_chooser(
 
 scadnano_file_loaded(FileReader file_reader, String filename) {
   var json_model_text = file_reader.result;
-  app.dispatch(actions.LoadDNAFile(content: json_model_text, filename: filename));
+  app.dispatch(actions.LoadDNAFile(content: json_model_text, filename: filename, delay: true));
 }
 
 cadnano_file_loaded(FileReader file_reader, String filename) async {
@@ -1168,7 +1168,7 @@ cadnano_file_loaded(FileReader file_reader, String filename) async {
     var json_cadnano_text = file_reader.result;
     filename = path.setExtension(filename, '.${constants.default_scadnano_file_extension}');
     app.dispatch(actions.LoadDNAFile(
-        content: json_cadnano_text, filename: filename, dna_file_type: DNAFileType.cadnano_file));
+        content: json_cadnano_text, filename: filename, dna_file_type: DNAFileType.cadnano_file, delay: true));
   } on Exception catch (e) {
     window.alert('Error importing file: ${e}');
   }

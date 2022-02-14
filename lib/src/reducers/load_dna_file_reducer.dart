@@ -15,6 +15,10 @@ import '../util.dart' as util;
 var hline = '*' * 100;
 
 AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
+
+  // we want to wait until next iteration of LoadDNAFile to allow dialog box to appear first before doing expensive state updates
+  if (action.delay) return state;
+
   String error_message;
   Design design_new;
 

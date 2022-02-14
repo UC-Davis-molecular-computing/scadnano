@@ -25,14 +25,9 @@ class DesignLoadingDialogComponent extends UiComponent2<DesignLoadingDialogProps
   @override
   render() {
     if (props.show == false) {
-      print("show is false");
-      return ((Dom.div()
-      ..className = 'dialog-form')(("Not Loading..."),
-    ));
+      return null;
     }
-    print("in component");
-    return ((Dom.div()
-      ..className = 'dialog-form')(("Loading..."),
-    ));
+    return (Dom.div()
+      ..className = 'dialog-form-form dialog-design-loading')("Loading...");
   }
 }
