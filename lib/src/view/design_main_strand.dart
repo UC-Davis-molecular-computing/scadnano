@@ -808,6 +808,7 @@ PAGEHPLC : Dual PAGE & HPLC
     if (last_mod != null) {
       initial_display_text = last_mod.display_text;
       initial_idt_text = last_mod.idt_text;
+      initial_connector_length = last_mod.connector_length;
       // initial_id = last_mod.id;
     }
 
