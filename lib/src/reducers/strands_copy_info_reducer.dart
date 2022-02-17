@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/modification.dart';
 import 'package:tuple/tuple.dart';
 
 import '../state/copy_info.dart';
@@ -39,8 +40,9 @@ CopyInfo manual_paste_initiate_reducer(CopyInfo _, AppState state, actions.Manua
     return null;
   }
 
-  List<Strand> strands = strands_and_helices_view_order.item1;
-  List<int> helices_view_order = strands_and_helices_view_order.item2;
+  List<Strand> strands = strands_and_helices_view_order[0];
+  List<int> helices_view_order = strands_and_helices_view_order[1];
+  Map<String, Modification> mods = strands_and_helices_view_order[2];
 
   if (strands.isEmpty) return null;
   // indicates helices came from more than one HelixGroup, so no way to paste
@@ -61,8 +63,8 @@ CopyInfo autopaste_initiate_reducer(CopyInfo copy_info, AppState state, actions.
     return null;
   }
 
-  List<Strand> strands = strands_and_helices_view_order.item1;
-  List<int> helices_view_order = strands_and_helices_view_order.item2;
+  List<Strand> strands = strands_and_helices_view_order[0];
+  List<int> helices_view_order = strands_and_helices_view_order[1];
 
   if (strands.isEmpty) return null;
   // indicates helices came from more than one HelixGroup, so no way to paste
@@ -77,8 +79,7 @@ CopyInfo autopaste_initiate_reducer(CopyInfo copy_info, AppState state, actions.
   return copy_info;
 }
 
-Tuple2<List<Strand>, List<int>> parse_strands_and_helices_view_order_from_clipboard(
-    String clipboard_content) {
+List parse_strands_and_helices_view_order_from_clipboard(String clipboard_content) {
   String error_msg = 'no strand info found on system clipboard, so nothing to paste; '
       'content of system clipboard: "${clipboard_content}"';
 
@@ -102,6 +103,21 @@ Tuple2<List<Strand>, List<int>> parse_strands_and_helices_view_order_from_clipbo
     helices_view_order = [for (int idx in helices_view_order_json) idx];
   }
 
+  Map<String, dynamic> mods;
+  // try to interpret JSON list as list of Strands
+  clipboard_json[constants.design_modifications_key].forEach((key, value){
+    Modification mod;
+    try {
+      mod = Modification.from_json(value);
+    } on Exception {
+      print(error_msg);
+      return null;
+    } on Error {
+      print(error_msg);
+      return null;
+    }
+    mods[key] = mod;
+  });
   // try to interpret JSON list as list of Strands
   List strand_jsons = clipboard_json[constants.strands_key];
   List<Strand> strands = [];
@@ -116,10 +132,14 @@ Tuple2<List<Strand>, List<int>> parse_strands_and_helices_view_order_from_clipbo
       print(error_msg);
       return null;
     }
+    strand.rebuild((m) => m
+      ..modification_5p = mods[strand_json[constants.modification_5p_key]]
+      ..modification_3p = mods[strand_json[constants.modification_3p_key]]
+      ..modifications_int = strand_json[constants.modifications_int_key].map((a) => mods[a]));
     strands.add(strand);
   }
 
-  return Tuple2<List<Strand>, List<int>>(strands, helices_view_order);
+  return [strands, helices_view_order, mods];
 }
 
 // need to pass in helices_view_order from clipboard since these strands may be from a different design

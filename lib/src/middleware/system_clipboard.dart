@@ -1,10 +1,12 @@
 import 'dart:html';
 
+import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 
 import 'package:scadnano/src/json_serializable.dart';
 import 'package:scadnano/src/state/clipboard.dart';
 import 'package:scadnano/src/state/group.dart';
+import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/strand.dart';
 
 import '../reducers/strands_move_reducer.dart' as strands_move_reducer;
@@ -87,10 +89,11 @@ void handle_autopaste_initiate(Store<AppState> store, actions.AutoPasteInitiate 
 // 3) helices_view_order is null
 bool paste_is_impossible_from_clipboard(String clipboard_content, bool in_browser) {
   var strands_and_helices_view_order = parse_strands_and_helices_view_order_from_clipboard(clipboard_content);
+  List<Strand> strands = strands_and_helices_view_order[0];
+  List<int> helices_view_order = strands_and_helices_view_order[1];
+
   if (strands_and_helices_view_order == null) return true;
 
-  List<Strand> strands = strands_and_helices_view_order.item1;
-  List<int> helices_view_order = strands_and_helices_view_order.item2;
   if (strands.isEmpty) return true;
 
   // indicates helices came from more than one HelixGroup, so no way to paste
@@ -127,13 +130,44 @@ void put_strand_info_on_clipboard(Store<AppState> store) {
       helices_view_order = group.helices_view_order.toList();
     }
 
+    //Get modifcations from all strands
+    var modifications = all_modifications(strands.toBuiltList());
+    List<String> mod_clipboard_strings = [];
+    var encoder = SuppressableIndentEncoder(Replacer(), suppress: true);
+    Map<String, dynamic> mods_map = {};
+    if (modifications.length > 0) {
+      for (var mod in modifications) {
+        if (!mods_map.containsKey(mod.id)) {
+          mods_map[mod.id] = mod.to_json_serializable(suppress_indent: true);
+        }
+      }
+    }
+    var mod_json = encoder.convert(mods_map);
     var clipboard_content = '''{
   "${constants.strands_key}": [
     ${strands_json}
   ],
-  "${constants.helices_view_order_key}": ${helices_view_order}
+  "${constants.helices_view_order_key}": ${helices_view_order},
+  "${constants.design_modifications_key}": [
+    ${mod_json}
+  ]
 }''';
 
     clipboard.write(clipboard_content);
   }
+}
+BuiltSet<Modification> all_modifications(BuiltList<Strand> strands) {
+  var mods_5p = BuiltSet<Modification>({
+    for (var strand in strands)
+      if (strand.modification_5p != null) strand.modification_5p
+  });
+  var mods_3p = BuiltSet<Modification>({
+    for (var strand in strands)
+      if (strand.modification_3p != null) strand.modification_3p
+  });
+  var mods_int = BuiltSet<Modification>({
+    for (var strand in strands)
+      for (var mod in strand.modifications_int.values) mod
+  });
+  return mods_5p.union(mods_3p).union(mods_int);
 }
