@@ -102,13 +102,13 @@ List parse_strands_and_helices_view_order_from_clipboard(String clipboard_conten
   if (helices_view_order_json != null) {
     helices_view_order = [for (int idx in helices_view_order_json) idx];
   }
-
-  Map<String, dynamic> mods;
-  // try to interpret JSON list as list of Strands
-  clipboard_json[constants.design_modifications_key].forEach((key, value){
+  
+  Map mod_jsons = clipboard_json[constants.design_modifications_key][0];
+  Map<String, Modification> mods = {};
+  for (var mod_key in mod_jsons.keys) {
     Modification mod;
     try {
-      mod = Modification.from_json(value);
+      mod = Modification.from_json(mod_jsons[mod_key]);
     } on Exception {
       print(error_msg);
       return null;
@@ -116,8 +116,9 @@ List parse_strands_and_helices_view_order_from_clipboard(String clipboard_conten
       print(error_msg);
       return null;
     }
-    mods[key] = mod;
-  });
+    mods[mod_key] = mod;
+  }
+  
   // try to interpret JSON list as list of Strands
   List strand_jsons = clipboard_json[constants.strands_key];
   List<Strand> strands = [];
@@ -132,10 +133,21 @@ List parse_strands_and_helices_view_order_from_clipboard(String clipboard_conten
       print(error_msg);
       return null;
     }
-    strand.rebuild((m) => m
-      ..modification_5p = mods[strand_json[constants.modification_5p_key]]
-      ..modification_3p = mods[strand_json[constants.modification_3p_key]]
-      ..modifications_int = strand_json[constants.modifications_int_key].map((a) => mods[a]));
+
+    Map<int, ModificationInternal> modifications_int = {};
+    
+    if (strand_json[constants.modifications_int_key] != null) {
+      Map mod_json = strand_json[constants.modifications_int_key];
+      for (var mod_ind in mod_json.keys) {
+        modifications_int[int.parse(mod_ind)] = mods[mod_json[mod_ind]];
+      }
+    }
+
+    strand = strand.rebuild((m) => m
+      ..modification_5p = (mods[strand_json[constants.modification_5p_key]] as Modification5Prime)?.toBuilder()
+      ..modification_3p = (mods[strand_json[constants.modification_3p_key]] as Modification3Prime)?.toBuilder()
+      ..modifications_int.replace(modifications_int));
+    
     strands.add(strand);
   }
 
