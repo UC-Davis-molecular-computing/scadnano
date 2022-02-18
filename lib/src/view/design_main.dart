@@ -1,5 +1,7 @@
 library view_main;
 
+import 'dart:html';
+
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
@@ -62,6 +64,7 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..show_domain_names = state.ui_state.show_domain_names
         ..show_strand_names = state.ui_state.show_strand_names
         ..show_helix_circles = state.ui_state.show_helix_circles_main_view
+        ..show_helix_components = state.ui_state.show_helix_components_main_view
         ..dna_sequence_png_uri = state.ui_state.dna_sequence_png_uri
         ..dna_sequence_png_horizontal_offset = state.ui_state.dna_sequence_png_horizontal_offset
         ..dna_sequence_png_vertical_offset = state.ui_state.dna_sequence_png_vertical_offset
@@ -75,6 +78,8 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..display_major_tick_widths = state.ui_state.display_major_tick_widths
         ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices
         ..helix_group_is_moving = state.ui_state.helix_group_is_moving
+        ..helix_idx_to_svg_position_map = state.helix_idx_to_svg_position_map
+        ..invert_y = state.ui_state.invert_y
         ..selection_rope = state.ui_state.selection_rope);
     }
   },
@@ -113,12 +118,15 @@ mixin DesignMainPropsMixin on UiProps {
   bool display_major_tick_widths;
   bool display_major_tick_widths_all_helices;
   bool show_helix_circles;
+  bool show_helix_components;
   bool helix_group_is_moving;
   bool show_loopout_length;
   bool show_slice_bar;
   int slice_bar_offset;
   String displayed_group_name;
   SelectionRope selection_rope;
+  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
+  bool invert_y;
 }
 
 @Props()
@@ -136,38 +144,44 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
     }
 
     ReactElement main_elt = (Dom.g()..id = 'main-view-group')([
-      (DesignMainHelices()
-        ..helices = props.design.helices
-        ..groups = props.design.groups
-        ..helix_idxs_in_group = props.design.helix_idxs_in_group
-        ..geometry = props.design.geometry
-        ..major_tick_offset_font_size = props.major_tick_offset_font_size
-        ..major_tick_width_font_size = props.major_tick_width_font_size
-        ..helix_change_apply_to_all = props.helix_change_apply_to_all
-        ..side_selected_helix_idxs = props.side_selected_helix_idxs
-        ..only_display_selected_helices = props.only_display_selected_helices
-        ..show_dna = props.show_dna
-        ..show_domain_labels = props.show_domain_names
-        ..show_helix_circles = props.show_helix_circles
-        ..display_base_offsets_of_major_ticks = props.display_base_offsets_of_major_ticks
-        ..display_base_offsets_of_major_ticks_only_first_helix =
-            props.display_base_offsets_of_major_ticks_only_first_helix
-        ..display_major_tick_widths = props.display_major_tick_widths
-        ..display_major_tick_widths_all_helices = props.display_major_tick_widths_all_helices
-        // ..slice_bar_offset = props.slice_bar_offset
-        // ..displayed_group_name = props.displayed_group_name
-        ..key = 'helices')(),
+      if (props.show_helix_components)
+        (DesignMainHelices()
+          ..helices = props.design.helices
+          ..groups = props.design.groups
+          ..helix_idxs_in_group = props.design.helix_idxs_in_group
+          ..geometry = props.design.geometry
+          ..major_tick_offset_font_size = props.major_tick_offset_font_size
+          ..major_tick_width_font_size = props.major_tick_width_font_size
+          ..helix_change_apply_to_all = props.helix_change_apply_to_all
+          ..side_selected_helix_idxs = props.side_selected_helix_idxs
+          ..only_display_selected_helices = props.only_display_selected_helices
+          ..show_dna = props.show_dna
+          ..show_domain_labels = props.show_domain_names
+          ..show_helix_circles = props.show_helix_circles
+          ..display_base_offsets_of_major_ticks = props.display_base_offsets_of_major_ticks
+          ..display_base_offsets_of_major_ticks_only_first_helix =
+              props.display_base_offsets_of_major_ticks_only_first_helix
+          ..display_major_tick_widths = props.display_major_tick_widths
+          ..display_major_tick_widths_all_helices = props.display_major_tick_widths_all_helices
+          // ..slice_bar_offset = props.slice_bar_offset
+          // ..displayed_group_name = props.displayed_group_name
+          ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
+          ..invert_y = props.invert_y
+          ..key = 'helices')(),
       if (props.show_mismatches)
         (DesignMainDNAMismatches()
           ..design = props.design
           ..only_display_selected_helices = props.only_display_selected_helices
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
+          ..helix_idx_to_svg_position_y_map = props.helix_idx_to_svg_position_map
+              .map((helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y))
           ..key = 'mismatches')(),
       if (props.show_domain_name_mismatches)
         (DesignMainDomainNameMismatches()
           ..design = props.design
           ..only_display_selected_helices = props.only_display_selected_helices
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
+          ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
           ..key = 'domain-name-mismatches')(),
       (ConnectedDesignMainStrands()..key = 'strands')(),
       // after strands so can click when crossover overlaps potential crossover
@@ -179,6 +193,8 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..groups = props.design.groups
           ..geometry = props.design.geometry
+          ..helix_idx_to_svg_position_y_map = props.helix_idx_to_svg_position_map
+              .map((helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y))
           ..key = 'potential-vertical-crossovers')(),
       if (props.strand_creation != null)
         (DesignMainStrandCreating()
@@ -192,6 +208,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
             props.strand_creation.helix.group: props.design.groups[props.strand_creation.helix.group]
           }.build()
           ..geometry = props.design.geometry
+          ..svg_position_y = props.helix_idx_to_svg_position_map[props.strand_creation.helix.idx].y
           ..key = 'strand-creating')(),
       if (props.show_dna)
         (DesignMainDNASequences()
@@ -206,6 +223,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..is_zoom_above_threshold = props.is_zoom_above_threshold
           ..disable_png_cache_until_action_completes = props.disable_png_cache_until_action_completes
           ..only_display_selected_helices = props.only_display_selected_helices
+          ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
           ..key = 'dna-sequences')(),
       if (props.show_loopout_length)
         (DesignMainLoopoutLengths()
@@ -224,8 +242,8 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..only_display_selected_helices = props.only_display_selected_helices
           ..slice_bar_offset = props.slice_bar_offset
           ..displayed_group_name = props.displayed_group_name
-          ..key = 'slice-bar'
-        )(),
+          ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
+          ..key = 'slice-bar')(),
       (ConnectedPotentialCrossoverView()
         ..id = 'potential-crossover-main'
         ..key = 'potential-crossover')(),
@@ -246,6 +264,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..only_display_selected_helices = props.only_display_selected_helices
           ..show_helix_circles = props.show_helix_circles
+          ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
           ..key = 'helix-group-moving')(),
       (ConnectedDesignMainStrandsMoving()..key = 'strands-moving')(),
       (ConnectedDesignMainDomainsMoving()..key = 'domains-moving')(),

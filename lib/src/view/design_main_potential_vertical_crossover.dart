@@ -25,6 +25,7 @@ mixin DesignMainPotentialVerticalCrossoverPropsMixin on UiProps {
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
   Geometry geometry;
+  BuiltMap<int, num> helix_idx_to_svg_position_y_map;
 }
 
 class DesignMainPotentialVerticalCrossoverProps = UiProps
@@ -54,7 +55,7 @@ class DesignMainPotentialVerticalCrossoverComponent
 
     var classname_this_curve = 'potential-vertical-crossover-curve';
     var path = crossover_path_description_within_group(
-        prev_domain, next_domain, props.helices, props.geometry);
+        prev_domain, next_domain, props.helices, props.geometry, props.helix_idx_to_svg_position_y_map[prev_domain.helix], props.helix_idx_to_svg_position_y_map[next_domain.helix]);
     var color = crossover.color;
 
     String tooltip = 'click to add a crossover';

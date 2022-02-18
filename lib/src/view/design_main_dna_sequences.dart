@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/geometry.dart';
@@ -29,6 +31,7 @@ mixin DesignMainDNASequencesProps on UiProps {
   bool is_zoom_above_threshold;
   actions.Action disable_png_cache_until_action_completes;
   bool only_display_selected_helices;
+  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
 }
 
 class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequencesProps> with PureComponent {
@@ -76,6 +79,7 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
               ..side_selected_helix_idxs = props.side_selected_helix_idxs
               ..key = strand.toString()
               ..only_display_selected_helices = props.only_display_selected_helices
+              ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
               ..className = 'strand-dna-sequence-elts')()
       ]);
     }

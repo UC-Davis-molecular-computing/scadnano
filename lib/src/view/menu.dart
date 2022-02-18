@@ -67,8 +67,9 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
           state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
       ..display_major_tick_widths = state.ui_state.display_major_tick_widths
       ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices
-      ..invert_xy = state.ui_state.invert_xy
+      ..invert_y = state.ui_state.invert_y
       ..show_helix_circles_main_view = state.ui_state.show_helix_circles_main_view
+      ..show_helix_components_main_view = state.ui_state.show_helix_components_main_view
       ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
       ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
       ..show_helices_axis_arrows = state.ui_state.show_helices_axis_arrows
@@ -117,9 +118,10 @@ mixin MenuPropsMixin on UiProps {
   bool display_base_offsets_of_major_ticks_only_first_helix;
   bool display_major_tick_widths;
   bool display_major_tick_widths_all_helices;
-  bool invert_xy;
+  bool invert_y;
   bool warn_on_exit_if_unsaved;
   bool show_helix_circles_main_view;
+  bool show_helix_components_main_view;
   bool show_grid_coordinates_side_view;
   bool show_helices_axis_arrows;
   bool show_loopout_length;
@@ -383,7 +385,7 @@ to the first end e2 after it in this order, if
         ..display = 'Set helix coordinates based on crossovers'
         ..disabled = props.no_grid_is_none
         ..tooltip = '''\
-The grid must be set to none to enable this.
+The grid must be set to none to enable this.${props.no_grid_is_none ? " (Currently disabled since the grid is not none.)" : ""}
 
 Select some crossovers and some helices. If no helices are selected, then all
 helices are processed. At most one crossover between pairs of adjacent (in
@@ -493,6 +495,7 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
       view_menu_autofit(),
       view_menu_show_labels(),
       view_menu_mods(),
+      view_menu_helices(),
       view_menu_display_major_ticks_options(),
       DropdownDivider({'key': 'divider-major-tick-widths'}),
       ...view_menu_zoom_speed(),
@@ -654,6 +657,47 @@ the surface of a DNA origami."""
     ]);
   }
 
+  ReactElement view_menu_helices() {
+    return (MenuDropdownRight()
+      ..title = 'Helices'
+      ..id = 'view_menu_helices-dropdown'
+      ..key = 'view_menu_helices-dropdown'
+      ..className = 'submenu_item')([
+      (MenuBoolean()
+        ..value = props.only_display_selected_helices
+        ..display = 'Display only selected helices'
+        ..tooltip = 'Only helices selected in the side view are displayed in the main view.'
+        ..name = 'display-only-selected-helices'
+        ..onChange = ((_) =>
+            props.dispatch(actions.SetOnlyDisplaySelectedHelices(!props.only_display_selected_helices)))
+        ..key = 'display-only-selected-helices')(),
+      (MenuBoolean()
+        ..value = props.show_helix_components_main_view
+        ..display = 'Show main view helices'
+        ..tooltip = '''\
+Shows helix representation in main view. Hiding them hides all view elements 
+associated with a helix: grid lines depicting offsets, circles with helix index,
+major tick offsets.'''
+        ..name = 'show-helix-components-main-view'
+        ..onChange = ((_) => props.dispatch(actions.ShowHelixComponentsMainViewSet(
+            show_helix_components: !props.show_helix_components_main_view)))
+        ..key = 'show-helix-components-main-view')(),
+      (MenuBoolean()
+        ..value = props.show_helix_circles_main_view
+        ..display = 'Show main view helix circles/idx'
+        ..tooltip = '''\
+Shows helix circles and idx's in main view. You may want to hide them for
+designs that have overlapping non-parallel helices.
+
+To hide all view elements associated with helices (e.g., major ticks),
+toggle "Show main view helices".'''
+        ..name = 'show-helix-circles-main-view'
+        ..onChange = ((_) => props.dispatch(actions.ShowHelixCirclesMainViewSet(
+            show_helix_circles_main_view: !props.show_helix_circles_main_view)))
+        ..key = 'show-helix-circles-main-view')(),
+    ]);
+  }
+
   ReactElement view_menu_display_major_ticks_options() {
     return (MenuDropdownRight()
       ..title = 'Major ticks'
@@ -725,38 +769,19 @@ the surface of a DNA origami."""
   List<ReactElement> view_menu_misc() {
     return [
       (MenuBoolean()
-        ..value = props.only_display_selected_helices
-        ..display = 'Display only selected helices'
-        ..tooltip = 'Only helices selected in the side view are displayed in the main view.'
-        ..name = 'display-only-selected-helices'
-        ..onChange = ((_) =>
-            props.dispatch(actions.SetOnlyDisplaySelectedHelices(!props.only_display_selected_helices)))
-        ..key = 'display-only-selected-helices')(),
-      (MenuBoolean()
-        ..value = props.invert_xy
-        ..display = 'Invert y- and x-axes'
+        ..value = props.invert_y
+        ..display = 'Invert y-axis'
         ..tooltip = '''\
-In the main view, invert the y-axis, and in the side view, invert both the 
-y-axis and the x-axis. 
+Invert the y-axis by rotating 180 degrees about the z-axis (within the x/y plane).
 
 If unchecked, then use "screen coordinates", where increasing y moves down. 
 
-If checked, then use Cartesian coordinates where increasing y moves up. 
-Also invert the x-axis to maintain chirality, so this has the net effect of 
-rotating the side view by 180 degrees.'''
-        ..name = 'invert-xy-axes'
-        ..onChange = ((_) => props.dispatch(actions.InvertXYSet(invert_xy: !props.invert_xy)))
-        ..key = 'invert-xy-axes')(),
-      (MenuBoolean()
-        ..value = props.show_helix_circles_main_view
-        ..display = 'Show main view helix circles/idx'
-        ..tooltip = '''\
-Shows helix circles and idx's in main view. You may want to hide them for
-designs that have overlapping non-parallel helices.'''
-        ..name = 'show-helix-circles-main-view'
-        ..onChange = ((_) => props.dispatch(actions.ShowHelixCirclesMainViewSet(
-            show_helix_circles_main_view: !props.show_helix_circles_main_view)))
-        ..key = 'show-helix-circles-main-view')(),
+If checked, then use Cartesian coordinates where increasing y moves up.
+
+To inspect how all axes change, check View --> Show axis arrows.'''
+        ..name = 'invert-y-axis'
+        ..onChange = ((_) => props.dispatch(actions.InvertYSet(invert_y: !props.invert_y)))
+        ..key = 'invert-y-axis')(),
       (MenuBoolean()
         ..value = props.show_grid_coordinates_side_view
         ..display = 'Show grid coordinates in side view'

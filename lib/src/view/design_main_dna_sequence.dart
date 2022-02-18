@@ -28,6 +28,7 @@ mixin DesignMainDNASequencePropsMixin on UiProps {
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
   Geometry geometry;
+  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
 }
 
 class DesignMainDNASequenceProps = UiProps
@@ -84,7 +85,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     var rotate_degrees = 0;
     int offset = domain.offset_5p;
     var helix = props.helices[domain.helix];
-    Point<num> pos = helix.svg_base_pos(offset, domain.forward);
+    Point<num> pos = helix.svg_base_pos(offset, domain.forward, props.helix_idx_to_svg_position_map[domain.helix].y);
     var rotate_x = pos.x;
     var rotate_y = pos.y;
 

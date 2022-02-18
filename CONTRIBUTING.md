@@ -475,7 +475,7 @@ For any more significant change that is made (e.g., closing an issue, adding a n
 
 7. Commit the changes. In the commit message, reference the issue using the phrase "fixes #123" (for bug fixes) or "closes #123" (for new features) (see [here](https://docs.github.com/en/enterprise/2.16/user/github/managing-your-work-on-github/closing-issues-using-keywords)). Also, in the commit message, describe the issue that was fixed (one easy way is to copy the title of the issue); this message will show up in automatically generated release notes, so this is part of the official documentation of what changed.
 
-8. Create a pull request (PR). **WARNING:** by default, it will want to merge into the `master` branch. Change the destination branch to `dev`.
+8. Create a pull request (PR). **WARNING:** by default, it will want to merge into the `master` branch. Change the destination branch to `dev`. Fill in the automatically provided template.
 
 9. Wait for all checks to complete (see next section), and then merge the changes from the new branch into `dev`. This will typically require someone else to review the code first and possibly request changes.
 

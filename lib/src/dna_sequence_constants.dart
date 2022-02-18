@@ -13,7 +13,7 @@ class DNASequencePredefined extends EnumClass {
 
   //XXX: change this if we change the variants
   static BuiltList<String> get display_names => [
-        'M13 (p7429, standard variant)',
+        'M13 (p7249, standard variant)',
         'M13 (p7650)',
         'M13 (p8064)',
       ].toBuiltList();

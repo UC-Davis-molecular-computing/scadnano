@@ -9,6 +9,7 @@ import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/dna_file_type.dart';
+import 'package:scadnano/src/state/dna_assign_options.dart';
 import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
@@ -706,17 +707,17 @@ abstract class SetOnlyDisplaySelectedHelices
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // invert y-axis
 
-abstract class InvertXYSet
+abstract class InvertYSet
     with BuiltJsonSerializable
-    implements Action, SvgPngCacheInvalidatingAction, Built<InvertXYSet, InvertXYSetBuilder> {
-  bool get invert_xy;
+    implements Action, SvgPngCacheInvalidatingAction, Built<InvertYSet, InvertYSetBuilder> {
+  bool get invert_y;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory InvertXYSet({bool invert_xy}) = _$InvertXYSet._;
+  factory InvertYSet({bool invert_y}) = _$InvertYSet._;
 
-  InvertXYSet._();
+  InvertYSet._();
 
-  static Serializer<InvertXYSet> get serializer => _$invertXYSetSerializer;
+  static Serializer<InvertYSet> get serializer => _$invertYSetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -766,7 +767,11 @@ abstract class LoadDNAFile
 
   /************************ begin BuiltValue boilerplate ************************/
   factory LoadDNAFile(
-      {String content, String filename, bool write_local_storage = true, bool unit_testing = false, DNAFileType dna_file_type = DNAFileType.scadnano_file}) {
+      {String content,
+      String filename,
+      bool write_local_storage = true,
+      bool unit_testing = false,
+      DNAFileType dna_file_type = DNAFileType.scadnano_file}) {
     return LoadDNAFile.from((b) => b
       ..content = content
       ..filename = filename
@@ -1592,6 +1597,7 @@ abstract class HelixMinOffsetSetByDomainsAll
       _$helixMinOffsetSetByDomainsAllSerializer;
 }
 
+// when we want each helix to have its own max based on its domains
 abstract class HelixMaxOffsetSetByDomainsAll
     with BuiltJsonSerializable, UndoableAction
     implements Action, Built<HelixMaxOffsetSetByDomainsAll, HelixMaxOffsetSetByDomainsAllBuilder> {
@@ -1602,6 +1608,21 @@ abstract class HelixMaxOffsetSetByDomainsAll
 
   static Serializer<HelixMaxOffsetSetByDomainsAll> get serializer =>
       _$helixMaxOffsetSetByDomainsAllSerializer;
+}
+
+// when we want the same max to be applied to all helices
+abstract class HelixMaxOffsetSetByDomainsAllSameMax
+    with BuiltJsonSerializable, UndoableAction
+    implements
+        Action,
+        Built<HelixMaxOffsetSetByDomainsAllSameMax, HelixMaxOffsetSetByDomainsAllSameMaxBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixMaxOffsetSetByDomainsAllSameMax() = _$HelixMaxOffsetSetByDomainsAllSameMax;
+
+  HelixMaxOffsetSetByDomainsAllSameMax._();
+
+  static Serializer<HelixMaxOffsetSetByDomainsAllSameMax> get serializer =>
+      _$helixMaxOffsetSetByDomainsAllSameMaxSerializer;
 }
 
 abstract class HelixOffsetChangeAll
@@ -1771,13 +1792,17 @@ abstract class ConvertCrossoverToLoopout
 
   int get length;
 
+  @nullable
+  String get dna_sequence;
+
   StrandPart get strand_part => crossover;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ConvertCrossoverToLoopout(Crossover crossover, int length) =>
+  factory ConvertCrossoverToLoopout(Crossover crossover, int length, [String dna_sequence = null]) =>
       ConvertCrossoverToLoopout.from((b) => b
         ..crossover.replace(crossover)
-        ..length = length);
+        ..length = length
+        ..dna_sequence = dna_sequence);
 
   factory ConvertCrossoverToLoopout.from([void Function(ConvertCrossoverToLoopoutBuilder) updates]) =
       _$ConvertCrossoverToLoopout;
@@ -1849,6 +1874,29 @@ abstract class JoinStrandsByCrossover
   JoinStrandsByCrossover._();
 
   static Serializer<JoinStrandsByCrossover> get serializer => _$joinStrandsByCrossoverSerializer;
+}
+
+// used to move a linker (crossover or loopout, stored as potential_crossover.linker)
+// so that one end stays fixed (stored in potential_crossover.dna_end_first_clicked)
+// while the other end moves to dna_end_second_click, editing two strands
+abstract class MoveLinker
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<MoveLinker, MoveLinkerBuilder> {
+  PotentialCrossover get potential_crossover;
+
+  DNAEnd get dna_end_second_click;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  @memoized
+  int get hashCode;
+
+  factory MoveLinker({PotentialCrossover potential_crossover, DNAEnd dna_end_second_click}) = _$MoveLinker._;
+
+  factory MoveLinker.from([void Function(MoveLinkerBuilder) updates]) = _$MoveLinker;
+
+  MoveLinker._();
+
+  static Serializer<MoveLinker> get serializer => _$moveLinkerSerializer;
 }
 
 // JoinStrandsByCrossover cannot be in a BatchAction since the reducer for it looks up strands
@@ -2167,8 +2215,12 @@ abstract class DomainsMoveStartSelectedDomains
     implements Action, Built<DomainsMoveStartSelectedDomains, DomainsMoveStartSelectedDomainsBuilder> {
   Address get address;
 
+  BuiltMap<int, int> get original_helices_view_order_inverse;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory DomainsMoveStartSelectedDomains({Address address}) = _$DomainsMoveStartSelectedDomains._;
+  factory DomainsMoveStartSelectedDomains(
+      {Address address,
+      BuiltMap<int, int> original_helices_view_order_inverse}) = _$DomainsMoveStartSelectedDomains._;
 
   DomainsMoveStartSelectedDomains._();
 
@@ -2380,15 +2432,22 @@ abstract class AssignDNA
     implements Built<AssignDNA, AssignDNABuilder> {
   Strand get strand;
 
-  String get dna_sequence;
+  DNAAssignOptions get dna_assign_options;
 
-  bool get assign_complements;
+  // convenience getters since we already have a lot of code referencing some of these from the old
+  // design of this Action
+  String get dna_sequence => dna_assign_options.dna_sequence;
 
-  bool get warn_on_change;
+  bool get use_predefined_dna_sequence => dna_assign_options.use_predefined_dna_sequence;
+
+  bool get assign_complements => dna_assign_options.assign_complements;
+
+  bool get disable_change_sequence_bound_strand => dna_assign_options.disable_change_sequence_bound_strand;
+
+  int get m13_rotation => dna_assign_options.m13_rotation;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory AssignDNA({Strand strand, String dna_sequence, bool assign_complements, bool warn_on_change}) =
-      _$AssignDNA._;
+  factory AssignDNA({Strand strand, DNAAssignOptions dna_assign_options}) = _$AssignDNA._;
 
   AssignDNA._();
 
@@ -2782,6 +2841,31 @@ abstract class ModificationRemove
   ModificationRemove._();
 
   static Serializer<ModificationRemove> get serializer => _$modificationRemoveSerializer;
+}
+
+abstract class ModificationConnectorLengthSet
+    with BuiltJsonSerializable
+    implements Action, Built<ModificationConnectorLengthSet, ModificationConnectorLengthSetBuilder> {
+  Strand get strand;
+
+  Modification get modification;
+
+  int get connector_length;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  @memoized
+  int get hashCode;
+
+  factory ModificationConnectorLengthSet({Strand strand, Modification modification, int connector_length}) =
+      _$ModificationConnectorLengthSet._;
+
+  factory ModificationConnectorLengthSet.from(
+      [void Function(ModificationConnectorLengthSetBuilder) updates]) = _$ModificationConnectorLengthSet;
+
+  ModificationConnectorLengthSet._();
+
+  static Serializer<ModificationConnectorLengthSet> get serializer =>
+      _$modificationConnectorLengthSetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3224,7 +3308,7 @@ abstract class AutofitSet with BuiltJsonSerializable implements Action, Built<Au
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// show or hide helix circles/text in main view
+// show or hide helix circles/text, or entire helix (including offset lines) in main view
 
 abstract class ShowHelixCirclesMainViewSet
     with BuiltJsonSerializable
@@ -3237,6 +3321,26 @@ abstract class ShowHelixCirclesMainViewSet
   ShowHelixCirclesMainViewSet._();
 
   static Serializer<ShowHelixCirclesMainViewSet> get serializer => _$showHelixCirclesMainViewSetSerializer;
+}
+
+abstract class ShowHelixComponentsMainViewSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowHelixComponentsMainViewSet, ShowHelixComponentsMainViewSetBuilder> {
+  bool get show_helix_components;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  @memoized
+  int get hashCode;
+
+  factory ShowHelixComponentsMainViewSet({bool show_helix_components}) = _$ShowHelixComponentsMainViewSet._;
+
+  factory ShowHelixComponentsMainViewSet.from(
+      [void Function(ShowHelixComponentsMainViewSetBuilder) updates]) = _$ShowHelixComponentsMainViewSet;
+
+  ShowHelixComponentsMainViewSet._();
+
+  static Serializer<ShowHelixComponentsMainViewSet> get serializer =>
+      _$showHelixComponentsMainViewSetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
