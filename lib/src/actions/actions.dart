@@ -239,6 +239,21 @@ abstract class LocalStorageDesignChoiceSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// erase localStorage stored design and storable UI settings
+
+abstract class ResetLocalStorage
+    with BuiltJsonSerializable
+    implements Action, Built<ResetLocalStorage, ResetLocalStorageBuilder> {
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ResetLocalStorage() = _$ResetLocalStorage._;
+
+  ResetLocalStorage._();
+
+  static Serializer<ResetLocalStorage> get serializer => _$resetLocalStorageSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Clear helix selection when loading new design
 
 abstract class ClearHelixSelectionWhenLoadingNewDesignSet
