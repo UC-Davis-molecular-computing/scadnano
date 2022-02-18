@@ -8,11 +8,12 @@ import 'state/grid.dart';
 
 // WARNING: Do not modify line below, except for the version string
 //          (and also add new version string to scadnano_versions_to_link).
-const String CURRENT_VERSION = "0.17.0";
+const String CURRENT_VERSION = "0.17.1";
 const String INITIAL_VERSION = "0.1.0";
 
 // scadnano versions that we deploy so that older versions can be used.
 final scadnano_older_versions_to_link =[
+  "0.17.0",
   "0.16.3",
   "0.16.2",
   "0.16.1",
@@ -33,22 +34,23 @@ final scadnano_older_versions_to_link =[
 final scadnano_versions_to_link = [CURRENT_VERSION] + scadnano_older_versions_to_link;
 
 const BUG_REPORT_URL = 'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
-const NO_DESIGN_MESSAGE = '''\
-scadnano is a program for designing synthetic DNA structures such as DNA origami.
+const NO_DESIGN_MESSAGE_HTML = r'''\
+<p>scadnano is a program for designing synthetic DNA structures such as DNA origami.
 scadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group.
-It is similar to cadnano (<a href="https://cadnano.org/">cadnano</a>), developed and maintained by 
-the Douglas lab at UCSF.
+Though similar in design, it is distinct from cadnano (<a target="_blank" href="https://cadnano.org/">https://cadnano.org/</a>), 
+which is developed and maintained by the <a target="_blank" href="https://bionano.ucsf.edu/">Douglas lab</a> at UCSF.
 
 If you find scadnano useful in a scientific project, please cite its associated paper:
 
 scadnano: A browser-based, scriptable tool for designing DNA nanostructures.
 David Doty, Benjamin L Lee, and Tristan Stérin.
 DNA 2020: Proceedings of the 26th International Conference on DNA Computing and Molecular Programming
+[ <a target="_blank" href="https://doi.org/10.4230/LIPIcs.DNA.2020.9">paper</a> | <a target="_blank" href="https://web.cs.ucdavis.edu/~doty/papers/scadnano.bib">BibTeX</a> ]
 
 No design is loaded.
-Try loading an example by selecting File --> Load example,
-or select File --> Open... to load a .sc file from your local drive.
-You can also drag and drop a .sc file from your file system to the browser.''';
+Try loading an example by selecting <em>File&rarr;Load example</em>,
+or select <em>File&rarr;Open</em> to load a .sc file from your local drive.
+You can also drag and drop a .sc file from your file system to the browser.</p>''';
 
 // https://www.w3schools.com/jsref/event_button.asp
 const LEFT_CLICK_BUTTON = 0;
@@ -107,6 +109,8 @@ const default_domain_name_font_size = 10;
 const default_strand_name_font_size = 16;
 const default_major_tick_offset_font_size = 12;
 const default_major_tick_width_font_size = 8;
+
+const default_modification_connector_length = 4;
 
 const default_scadnano_file_extension = 'sc';
 const legacy_scadnano_file_extensions = ['dna', 'json'];
@@ -292,12 +296,14 @@ const mod_display_text_key = 'display_text';
 const mod_id_key = 'id';
 const mod_idt_text_key = 'idt_text';
 const mod_allowed_bases_key = 'allowed_bases';
+const mod_connector_length_key = 'connector_length';
 const modification_keys = [
   mod_location_key,
   mod_display_text_key,
   mod_id_key,
   mod_idt_text_key,
   mod_allowed_bases_key,
+  mod_connector_length_key,
 ];
 
 // IDTFields keys

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/dna_file_type.dart';
 import '../state/selectable.dart';
 
 import '../state/design.dart';
@@ -19,22 +20,23 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
 
   try {
     switch (action.dna_file_type) {
-      case util.DNAFileType.scadnano_file:
-        design_new = Design.from_json_str(action.content, state.ui_state.invert_xy);
+      case DNAFileType.scadnano_file:
+        design_new = Design.from_json_str(action.content, state.ui_state.invert_y);
         break;
-      case util.DNAFileType.cadnano_file:
-        design_new = Design.from_cadnano_v2_json_str(action.content, state.ui_state.invert_xy);
+      case DNAFileType.cadnano_file:
+        design_new = Design.from_cadnano_v2_json_str(action.content, state.ui_state.invert_y);
         break;
     }
-
   } on IllegalDesignError catch (error, stack_trace) {
-    error_message = ''
-        '******************'
-        '\n* illegal design *'
-        '\n******************'
-        '\n\nThe design has the following problem:'
-        '\n\n${error.cause}'
-        '${util.stack_trace_message_bug_report(stack_trace)}';
+    error_message = '''
+******************
+* illegal design *
+******************
+
+The design has the following problem:
+
+${error.cause}
+${util.stack_trace_message_bug_report(stack_trace)}''';
   } catch (error, stack_trace) {
     error_message = "I encountered an error while reading the file ${action.filename}:"
         '\n\n$hline'
@@ -47,7 +49,7 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
   }
 
   if (error_message == null && design_new == null) {
-    error_message = constants.NO_DESIGN_MESSAGE;
+    error_message = constants.NO_DESIGN_MESSAGE_HTML;
   }
 
   AppState new_state;

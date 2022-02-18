@@ -74,11 +74,13 @@ abstract class AppUIStateStorables
 
   String get loaded_script_filename;
 
-  bool get invert_yz;
+  bool get invert_y;
 
   bool get warn_on_exit_if_unsaved;
 
   bool get show_helix_circles_main_view;
+
+  bool get show_helix_components_main_view;
 
   bool get show_edit_mode_menu;
 
@@ -130,9 +132,10 @@ abstract class AppUIStateStorables
     b.display_major_tick_widths_all_helices = false;
     b.loaded_filename = default_filename();
     b.loaded_script_filename = default_script_filename();
-    b.invert_yz = false;
+    b.invert_y = false;
     b.warn_on_exit_if_unsaved = true;
     b.show_helix_circles_main_view = true;
+    b.show_helix_components_main_view = true;
     b.show_edit_mode_menu = true;
     b.show_grid_coordinates_side_view = false;
     b.show_helices_axis_arrows = true;

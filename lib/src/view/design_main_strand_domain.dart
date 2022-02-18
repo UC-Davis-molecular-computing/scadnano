@@ -39,9 +39,12 @@ mixin DesignMainDomainPropsMixin on UiProps {
   String strand_tooltip;
   Strand strand;
   String transform;
+  Point<num> helix_svg_position;
 
   List<ContextMenuItem> Function(Strand strand,
-      {@required Domain domain, @required Address address, @required ModificationType type}) context_menu_strand;
+      {@required Domain domain,
+      @required Address address,
+      @required ModificationType type}) context_menu_strand;
 
   bool selected;
 
@@ -60,8 +63,10 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
     Domain domain = props.domain;
     String id = domain.id;
 
-    Point<num> start_svg = props.helix.svg_base_pos(domain.offset_5p, domain.forward);
-    Point<num> end_svg = props.helix.svg_base_pos(domain.offset_3p, domain.forward);
+    Point<num> start_svg =
+        props.helix.svg_base_pos(domain.offset_5p, domain.forward, props.helix_svg_position.y);
+    Point<num> end_svg =
+        props.helix.svg_base_pos(domain.offset_3p, domain.forward, props.helix_svg_position.y);
 
     var classname = constants.css_selector_domain;
     if (props.selected) {
@@ -81,8 +86,8 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
       //XXX: it matters that we reference props.mouseover_datas, not a local variable
       // this ensures that when subsequent mouse events happen, the most recent mouseover_datas is examined,
       // otherwise the callback is not updated until render executes again
-      ..onMouseEnter = ((event) => util.update_mouseover(event, props.helix))
-      ..onMouseMove = ((event) => util.update_mouseover(event, props.helix))
+      ..onMouseEnter = ((event) => util.update_mouseover(event, props.helix, props.helix_svg_position))
+      ..onMouseMove = ((event) => util.update_mouseover(event, props.helix, props.helix_svg_position))
       ..onPointerDown = handle_click_down
       ..onPointerUp = handle_click_up
       ..stroke = props.color.toHexColor().toCssString()
@@ -101,7 +106,7 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
       MouseEvent event = event_syn.nativeEvent;
       var group = app.state.design.groups[props.helix.group];
       var geometry = app.state.design.geometry;
-      var address = util.get_address_on_helix(event, props.helix, group, geometry);
+      var address = util.get_address_on_helix(event, props.helix, group, geometry, props.helix_svg_position);
       int offset = address.offset;
 
       if (offset <= domain.start || offset >= domain.end) {
@@ -130,9 +135,13 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
       if (domain_selectable(props.domain)) {
         // select/deselect
         props.domain.handle_selection_mouse_down(event);
-        // set up drag detection for moving DNA ends
-        var address = util.find_closest_address(event, [props.helix], props.groups, props.geometry);
-        app.dispatch(actions.DomainsMoveStartSelectedDomains(address: address));
+        // set up drag detection for moving domains
+        var address = util.find_closest_address(event, [props.helix], props.groups, props.geometry,
+            {props.helix.idx: props.helix_svg_position}.build());
+        HelixGroup group = app.state.design.group_of_domain(props.domain);
+        var view_order_inverse = group.helices_view_order_inverse;
+        app.dispatch(actions.DomainsMoveStartSelectedDomains(
+            address: address, original_helices_view_order_inverse: view_order_inverse));
       }
     }
   }
@@ -172,8 +181,8 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
     if (!event.shiftKey) {
       event.preventDefault();
       event.stopPropagation();
-      Address address =
-          util.get_address_on_helix(event, props.helix, props.groups[props.helix.group], props.geometry);
+      Address address = util.get_address_on_helix(
+          event, props.helix, props.groups[props.helix.group], props.geometry, props.helix_svg_position);
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
               items: props.context_menu_strand(props.strand, domain: props.domain, address: address).build(),

@@ -19,6 +19,7 @@ import 'dna_end.dart';
 import 'grid_position.dart';
 import '../json_serializable.dart';
 import 'group.dart';
+import 'linker.dart';
 import 'modification.dart';
 import 'strand.dart';
 import 'domain.dart';
@@ -53,7 +54,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       Map<String, HelixGroup> groups = null,
       Iterable<Strand> strands = const [],
       Map<String, Object> unused_fields = const {},
-      bool invert_xy = false}) {
+      bool invert_y = false}) {
     // At most one of helices or helix_builders can be set, not both.
     int num_not_null = 0;
     if (helices != null) num_not_null++;
@@ -72,16 +73,15 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     if (helices != null) {
       helix_builders = helices.map((e) => e.toBuilder());
     } else if (num_helices != null) {
-
       helix_builders = [
-          for (int idx in Iterable<int>.generate(num_helices))
-            HelixBuilder()
-              ..idx = idx
-              ..grid = grid
-              ..geometry = geometry.toBuilder()
-              ..grid_position = (grid == Grid.none ? null : default_grid_position(idx).toBuilder())
-              ..position_ = grid != Grid.none ? null : default_position(geometry, idx).toBuilder()
-        ];
+        for (int idx in Iterable<int>.generate(num_helices))
+          HelixBuilder()
+            ..idx = idx
+            ..grid = grid
+            ..geometry = geometry.toBuilder()
+            ..grid_position = (grid == Grid.none ? null : default_grid_position(idx).toBuilder())
+            ..position_ = grid != Grid.none ? null : default_position(geometry, idx).toBuilder()
+      ];
     } else if (helix_builders != null) {
       // We will use the parameter directly
     } else {
@@ -95,7 +95,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
     set_helices_min_max_offsets(helix_builders_map, strands);
 
-
     if (groups == null) {
       groups = _calculate_groups_from_helix_builder(helix_builders, grid);
     }
@@ -105,7 +104,9 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
     var helices_map = {for (var helix in helices) helix.idx: helix};
 
-    helices_map = util.helices_assign_svg(geometry, invert_xy, helices_map, groups.build());
+    for (var key in helices_map.keys) {
+      helices_map[key] = helices_map[key].rebuild((b) => b..geometry.replace(geometry));
+    }
 
     var design = Design.from((b) => b
       ..geometry.replace(geometry)
@@ -540,13 +541,24 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   @memoized
   BuiltMap<Crossover, Strand> get crossover_to_strand {
-    var crossover_to_strand_builder = MapBuilder<Crossover, Strand>();
+    var crossover_to_strand_builder = Map<Crossover, Strand>();
     for (var strand in strands) {
       for (var crossover in strand.crossovers) {
         crossover_to_strand_builder[crossover] = strand;
       }
     }
     return crossover_to_strand_builder.build();
+  }
+
+  @memoized
+  BuiltMap<Linker, Strand> get linker_to_strand {
+    var linker_to_strand_builder = Map<Linker, Strand>();
+    for (var strand in strands) {
+      for (var linker in strand.linkers) {
+        linker_to_strand_builder[linker] = strand;
+      }
+    }
+    return linker_to_strand_builder.build();
   }
 
   Strand loopout_to_strand(Loopout loopout) => substrand_to_strand[loopout];
@@ -623,6 +635,32 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       var ss = strand.last_domain;
       var key = Address(helix_idx: ss.helix, offset: ss.dnaend_3p.offset_inclusive, forward: ss.forward);
       map[key] = strand;
+    }
+    return map.build();
+  }
+
+  /// Gets Domain with 5p end at given address (helix,offset,forward)
+  /// Offset is inclusive, i.e., dna_end.offset_inclusive
+  @memoized
+  BuiltMap<Address, Domain> get address_5p_to_domain {
+    var map = Map<Address, Domain>();
+    for (Domain domain in domains_by_id.values) {
+      var key = Address(
+          helix_idx: domain.helix, offset: domain.dnaend_5p.offset_inclusive, forward: domain.forward);
+      map[key] = domain;
+    }
+    return map.build();
+  }
+
+  /// Gets Domain with 3p end at given address (helix,offset,forward)
+  /// Offset is inclusive, i.e., dna_end.offset_inclusive
+  @memoized
+  BuiltMap<Address, Domain> get address_3p_to_domain {
+    var map = Map<Address, Domain>();
+    for (Domain domain in domains_by_id.values) {
+      var key = Address(
+          helix_idx: domain.helix, offset: domain.dnaend_3p.offset_inclusive, forward: domain.forward);
+      map[key] = domain;
     }
     return map.build();
   }
@@ -910,7 +948,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   ///
   /// Pass these two maps into _groups_from_json so that groups can be assigned appropriate pitch, yaw values.
   static Tuple3<Map<int, HelixBuilder>, Map<String, HelixPitchYaw>, Map<HelixPitchYaw, List<HelixBuilder>>>
-      _helices_from_json(Map<String, dynamic> json_map, bool invert_xy, Geometry geometry) {
+      _helices_from_json(Map<String, dynamic> json_map, bool invert_y, Geometry geometry) {
     // Initialize containers
     List<HelixBuilder> helix_builders_list = [];
     Map<String, HelixPitchYaw> group_to_pitch_yaw = {};
@@ -984,7 +1022,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       /// END Backward Compatibility Code for Helix With Individual Pitch/Yaw ///
       ///////////////////////////////////////////////////////////////////////////
 
-      helix_builder.invert_xy = invert_xy;
       helix_builder.geometry = geometry.toBuilder();
       if (grid_is_none && !using_groups && helix_json.containsKey(constants.grid_position_key)) {
         throw IllegalDesignError(
@@ -1111,13 +1148,13 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   static Tuple2<Map<int, HelixBuilder>, Map<String, HelixGroupBuilder>> _helices_and_groups_from_json(
-      Map<String, dynamic> json_map, bool invert_xy, bool position_x_z_should_swap, Geometry geometry) {
+      Map<String, dynamic> json_map, bool invert_y, bool position_x_z_should_swap, Geometry geometry) {
     var grid =
         util.optional_field(json_map, constants.grid_key, constants.default_grid, transformer: Grid.valueOf);
     bool grid_is_none = grid == Grid.none;
     bool using_groups = json_map.containsKey(constants.groups_key);
 
-    var r = _helices_from_json(json_map, invert_xy, geometry);
+    var r = _helices_from_json(json_map, invert_y, geometry);
     Map<int, HelixBuilder> helix_builders_map = r.item1;
     Map<String, HelixPitchYaw> group_to_pitch_yaw = r.item2;
     Map<HelixPitchYaw, List<HelixBuilder>> pitch_yaw_to_helices = r.item3;
@@ -1152,12 +1189,12 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return Tuple2(helix_builders_map, group_builders_map);
   }
 
-  static Design from_json_str(String json_str, [bool invert_xy = false]) {
+  static Design from_json_str(String json_str, [bool invert_y = false]) {
     var json_map = jsonDecode(json_str);
-    return Design.from_json(json_map, invert_xy);
+    return Design.from_json(json_map, invert_y);
   }
 
-  static Design from_json(Map<String, dynamic> json_map, [bool invert_xy = false]) {
+  static Design from_json(Map<String, dynamic> json_map, [bool invert_y = false]) {
     if (json_map == null) return null;
 
     _check_mutually_exclusive_fields(json_map);
@@ -1173,7 +1210,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         transformer: (geometry_map) => Geometry.from_json(geometry_map),
         legacy_keys: constants.legacy_geometry_keys);
 
-    var t = Design._helices_and_groups_from_json(json_map, invert_xy, position_x_z_should_swap, geometry);
+    var t = Design._helices_and_groups_from_json(json_map, invert_y, position_x_z_should_swap, geometry);
     var helix_builders_map = t.item1;
     var group_builders_map = t.item2;
 
@@ -1184,7 +1221,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       Strand strand = Strand.from_json(strand_json);
       strands.add(strand);
     }
-
 
     // build groups
     Map<String, HelixGroup> groups_map =
@@ -1210,7 +1246,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         groups: groups_map,
         geometry: geometry,
         unused_fields: unused_fields.toMap(),
-        invert_xy: invert_xy);
+        invert_y: invert_y);
   }
 
   static List<int> set_helices_view_order_default_group(
@@ -1827,12 +1863,12 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   /// Creates a Design from a cadnano v2 file.
-  static Design from_cadnano_v2_json_str(String str, [bool invert_xy = false]) {
-    return from_cadnano_v2(jsonDecode(str), invert_xy);
+  static Design from_cadnano_v2_json_str(String str, [bool invert_y = false]) {
+    return from_cadnano_v2(jsonDecode(str), invert_y);
   }
 
   /// Creates a Design from a cadnano v2 file.
-  static Design from_cadnano_v2(Map<String, dynamic> json_dict, [bool invert_xy = false]) {
+  static Design from_cadnano_v2(Map<String, dynamic> json_dict, [bool invert_y = false]) {
     Map<String, dynamic> cadnano_v2_design = json_dict;
 
     int num_bases = cadnano_v2_design['vstrands'][0]['scaf'].length;
@@ -1884,7 +1920,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       }
     }
 
-    return Design(helix_builders: helix_builders.values, strands: strands, grid: grid_type, invert_xy: invert_xy);
+    return Design(
+        helix_builders: helix_builders.values, strands: strands, grid: grid_type, invert_y: invert_y);
   }
 
   /// Routine that will follow a cadnano v2 strand accross helices and create
@@ -1996,13 +2033,27 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       seen[Tuple2(curr_helix, curr_base)] = true;
       curr_helix = vstrands[old_helix][strand_type][old_base][2];
       curr_base = vstrands[old_helix][strand_type][old_base][3];
-      // Add crossover
-      // We have a crossover when we jump helix or when order is broken on same helix
-      // Or circular strand
+      /* Add crossover
+         We have a crossover when we jump helix or we stay on the same helix but either:
+         1. the order of curr_base vs old_base is opposite the direction of the strand
+         2. or abs(curr_base-old_base) > 1 (this accounts for test_crossover_same_helix)
+         3. or the strand is circular strand
+       */
+      // old code before fixing
+      // https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues/209
+      // if ((curr_helix != old_helix) ||
+      //     (!direction_forward && curr_base > old_base) ||
+      //     (direction_forward && curr_base < old_base) ||
+      //     (curr_helix == strand_5_end_helix && curr_base == strand_5_end_base)) {
+
       if ((curr_helix != old_helix) ||
-          (!direction_forward && curr_base > old_base) ||
-          (direction_forward && curr_base < old_base) ||
-          (curr_helix == strand_5_end_helix && curr_base == strand_5_end_base)) {
+          (((!direction_forward && curr_base > old_base) || (direction_forward && curr_base < old_base)) // 1
+              ||
+              ((curr_base - old_base).abs() > 1) // 2
+              ||
+              (curr_helix == strand_5_end_helix && curr_base == strand_5_end_base))) // 3
+
+      {
         if (direction_forward)
           end = old_base;
         else
@@ -2069,7 +2120,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 }
 
-Map<String, HelixGroup> _calculate_groups_from_helix_builder(Iterable<HelixBuilder> helix_builders, Grid grid) {
+Map<String, HelixGroup> _calculate_groups_from_helix_builder(
+    Iterable<HelixBuilder> helix_builders, Grid grid) {
   if (helix_builders.isEmpty) {
     return {constants.default_group_name: HelixGroup(grid: grid, helices_view_order: [])};
   }
@@ -2333,6 +2385,7 @@ class StrandError extends IllegalDesignError {
 class HelixPitchYaw {
   double pitch;
   double yaw;
+
   // Helix idx of the first helix found with this pitch and yaw value
   int helix_idx;
 

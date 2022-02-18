@@ -248,7 +248,7 @@ _save_file_codenano(AppState state) async {
 
       helix_dct['stap_colors'] = [];
       helix_dct['scafLoop'] = [];
-      helix_dct['stap_loop'] = [];
+      helix_dct['stapLoop'] = [];
 
       helices_ids_reverse[helix_dct['num']] = i;
       dct['vstrands'].add(helix_dct);
