@@ -239,7 +239,7 @@ abstract class LocalStorageDesignChoiceSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// set options for when to write design to localStorage
+// erase localStorage stored design and storable UI settings
 
 abstract class ResetLocalStorage
     with BuiltJsonSerializable
