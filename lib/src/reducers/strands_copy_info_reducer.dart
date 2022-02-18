@@ -40,9 +40,8 @@ CopyInfo manual_paste_initiate_reducer(CopyInfo _, AppState state, actions.Manua
     return null;
   }
 
-  List<Strand> strands = strands_and_helices_view_order[0];
-  List<int> helices_view_order = strands_and_helices_view_order[1];
-  Map<String, Modification> mods = strands_and_helices_view_order[2];
+  List<Strand> strands = strands_and_helices_view_order.item1;
+  List<int> helices_view_order = strands_and_helices_view_order.item2;
 
   if (strands.isEmpty) return null;
   // indicates helices came from more than one HelixGroup, so no way to paste
@@ -63,8 +62,8 @@ CopyInfo autopaste_initiate_reducer(CopyInfo copy_info, AppState state, actions.
     return null;
   }
 
-  List<Strand> strands = strands_and_helices_view_order[0];
-  List<int> helices_view_order = strands_and_helices_view_order[1];
+  List<Strand> strands = strands_and_helices_view_order.item1;
+  List<int> helices_view_order = strands_and_helices_view_order.item2;
 
   if (strands.isEmpty) return null;
   // indicates helices came from more than one HelixGroup, so no way to paste
@@ -79,7 +78,8 @@ CopyInfo autopaste_initiate_reducer(CopyInfo copy_info, AppState state, actions.
   return copy_info;
 }
 
-List parse_strands_and_helices_view_order_from_clipboard(String clipboard_content) {
+Tuple2<List<Strand>, List<int>> parse_strands_and_helices_view_order_from_clipboard(
+    String clipboard_content) {
   String error_msg = 'no strand info found on system clipboard, so nothing to paste; '
       'content of system clipboard: "${clipboard_content}"';
 
@@ -151,7 +151,7 @@ List parse_strands_and_helices_view_order_from_clipboard(String clipboard_conten
     strands.add(strand);
   }
 
-  return [strands, helices_view_order, mods];
+  return Tuple2<List<Strand>, List<int>>(strands, helices_view_order);
 }
 
 // need to pass in helices_view_order from clipboard since these strands may be from a different design
