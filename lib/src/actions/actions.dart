@@ -2121,6 +2121,17 @@ abstract class CopySelectedStrands
   static Serializer<CopySelectedStrands> get serializer => _$copySelectedStrandsSerializer;
 }
 
+abstract class CopySelectedDomains
+    with BuiltJsonSerializable
+    implements Action, Built<CopySelectedDomains, CopySelectedDomainsBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory CopySelectedDomains() = _$CopySelectedDomains;
+
+  CopySelectedDomains._();
+
+  static Serializer<CopySelectedDomains> get serializer => _$copySelectedDomainsSerializer;
+}
+
 // This is a poor name for the action; it is used when we want to copy strands
 // (used similarly to StrandsMoveStartSelectedStrands, but the latter is when we want to move strands)
 abstract class StrandsMoveStart

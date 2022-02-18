@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/substrand.dart';
 import 'package:tuple/tuple.dart';
 
 import '../state/copy_info.dart';
@@ -39,12 +40,13 @@ CopyInfo manual_paste_initiate_reducer(CopyInfo _, AppState state, actions.Manua
     return null;
   }
 
-  List<Strand> strands = strands_and_helices_view_order.item1;
-  List<int> helices_view_order = strands_and_helices_view_order.item2;
+  List<Strand> strands = strands_and_helices_view_order[0];
+  List<int> helices_view_order = strands_and_helices_view_order[1];
+  bool is_domain = strands_and_helices_view_order[2];
 
   if (strands.isEmpty) return null;
   // indicates helices came from more than one HelixGroup, so no way to paste
-  if (helices_view_order == null) return null;
+  if (helices_view_order == null && !is_domain) return null;
 
   CopyInfo copy_info = strands_copy_info_from_strand_list(state, strands, helices_view_order);
   return copy_info;
@@ -61,8 +63,9 @@ CopyInfo autopaste_initiate_reducer(CopyInfo copy_info, AppState state, actions.
     return null;
   }
 
-  List<Strand> strands = strands_and_helices_view_order.item1;
-  List<int> helices_view_order = strands_and_helices_view_order.item2;
+  List<Strand> strands = strands_and_helices_view_order[0];
+  List<int> helices_view_order = strands_and_helices_view_order[1];
+  
 
   if (strands.isEmpty) return null;
   // indicates helices came from more than one HelixGroup, so no way to paste
@@ -77,11 +80,12 @@ CopyInfo autopaste_initiate_reducer(CopyInfo copy_info, AppState state, actions.
   return copy_info;
 }
 
-Tuple2<List<Strand>, List<int>> parse_strands_and_helices_view_order_from_clipboard(
+List parse_strands_and_helices_view_order_from_clipboard(
     String clipboard_content) {
   String error_msg = 'no strand info found on system clipboard, so nothing to paste; '
       'content of system clipboard: "${clipboard_content}"';
 
+  bool is_domain = false;
   // try to parse JSON as a list
   Map<String, dynamic> clipboard_json;
   try {
@@ -104,22 +108,45 @@ Tuple2<List<Strand>, List<int>> parse_strands_and_helices_view_order_from_clipbo
 
   // try to interpret JSON list as list of Strands
   List strand_jsons = clipboard_json[constants.strands_key];
+  List domains_jsons = clipboard_json[constants.substrands_key];
   List<Strand> strands = [];
-  for (var strand_json in strand_jsons) {
-    Strand strand;
-    try {
-      strand = Strand.from_json(strand_json);
-    } on Exception {
-      print(error_msg);
-      return null;
-    } on Error {
-      print(error_msg);
-      return null;
+  if (strand_jsons != null) {
+    for (var strand_json in strand_jsons) {
+      Strand strand;
+      try {
+        strand = Strand.from_json(strand_json);
+      } on Exception {
+        print(error_msg);
+        return null;
+      } on Error {
+        print(error_msg);
+        return null;
+      }
+      strands.add(strand);
     }
-    strands.add(strand);
+  } else {
+    is_domain = true;
+    List<Domain> substrands = [];
+    for (var substrand in domains_jsons) {
+      DomainBuilder domain;
+      try {
+        domain = Domain.from_json(substrand);
+        domain.is_first = true;
+        domain.is_last = true;
+        domain.is_scaffold = false;
+      } on Exception {
+        print(error_msg + "in here");
+        return null;
+      } on Error {
+        print(error_msg + "in here");
+        return null;
+      }
+      substrands.add(domain.build());
+    }
+    strands.add(new Strand(substrands));
   }
 
-  return Tuple2<List<Strand>, List<int>>(strands, helices_view_order);
+  return [strands, helices_view_order, is_domain];
 }
 
 // need to pass in helices_view_order from clipboard since these strands may be from a different design

@@ -28,6 +28,9 @@ system_clipboard_middleware(Store<AppState> store, action, NextDispatcher next) 
   if (action is actions.CopySelectedStrands) {
     put_strand_info_on_clipboard(store);
     next(action);
+  } else if (action is actions.CopySelectedDomains) {
+    put_domains_info_on_clipboard(store);
+    next(action);
   } else if (action is actions.ManualPasteInitiate) {
     handle_manual_paste_initiate(store, action, next);
   } else if (action is actions.AutoPasteInitiate) {
@@ -89,12 +92,14 @@ bool paste_is_impossible_from_clipboard(String clipboard_content, bool in_browse
   var strands_and_helices_view_order = parse_strands_and_helices_view_order_from_clipboard(clipboard_content);
   if (strands_and_helices_view_order == null) return true;
 
-  List<Strand> strands = strands_and_helices_view_order.item1;
-  List<int> helices_view_order = strands_and_helices_view_order.item2;
+  List<Strand> strands = strands_and_helices_view_order[0];
+  List<int> helices_view_order = strands_and_helices_view_order[1];
+  bool is_domain = strands_and_helices_view_order[2];
+
   if (strands.isEmpty) return true;
 
   // indicates helices came from more than one HelixGroup, so no way to paste
-  if (helices_view_order == null) {
+  if (helices_view_order == null && !is_domain) {
     var msg = 'copied Strands came from more than one HelixGroup, so they cannot be pasted.';
     print(msg);
     if (in_browser) {
@@ -103,6 +108,26 @@ bool paste_is_impossible_from_clipboard(String clipboard_content, bool in_browse
     return true;
   }
   return false;
+}
+
+void put_domains_info_on_clipboard(Store<AppState> store) {
+  var domains = store.state.ui_state.selectables_store.selected_domains;
+  if (domains.isNotEmpty) {
+    List<String> clipboard_strings = [];
+    for (var domain in domains) {
+      var domain_json = json_encode(domain);
+      domain_json = domain_json.replaceAll('\n', '\n    ');
+      clipboard_strings.add(domain_json);
+    }
+    var domain_json = clipboard_strings.join(',\n    ');
+
+    var clipboard_content = '''{
+  "${constants.substrands_key}": [
+    ${domain_json}
+  ]
+}''';
+    clipboard.write(clipboard_content);
+  }
 }
 
 void put_strand_info_on_clipboard(Store<AppState> store) {

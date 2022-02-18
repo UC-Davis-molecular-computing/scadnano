@@ -599,6 +599,12 @@ class DesignViewComponent {
       copy_selected_strands();
     }
 
+    if (app.state.ui_state.selectables_store.selected_domains.isNotEmpty &&
+        (ev.ctrlKey || ev.metaKey) &&
+        key == KeyCode.C) {
+      copy_selected_domains();
+    }
+
     // can paste even if nothing selected or not in select mode, if something is in copy buffer
     if ((ev.ctrlKey || ev.metaKey) && key == KeyCode.V && !ev.shiftKey) {
       // Ctrl+V
@@ -895,6 +901,12 @@ class DesignViewComponent {
     // do nothing if no strands are selected
     if (app.state.ui_state.selectables_store.selected_strands.isEmpty) return;
     app.dispatch(actions.CopySelectedStrands());
+  }
+
+   copy_selected_domains() {
+    // do nothing if no domains are selected
+    if (app.state.ui_state.selectables_store.selected_domains.isEmpty) return;
+    app.dispatch(actions.CopySelectedDomains());
   }
 
   paste_strands_manually() {
