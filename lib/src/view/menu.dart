@@ -492,6 +492,7 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
   view_menu() {
     var elts = [
       view_menu_show_dna(),
+      view_menu_autofit(),
       view_menu_show_labels(),
       view_menu_mods(),
       view_menu_helices(),
@@ -505,6 +506,43 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
       'title': 'View',
       'id': 'view-nav-dropdown',
     }, elts);
+  }
+
+  ReactElement view_menu_autofit() {
+    return (MenuDropdownRight()
+      ..title = 'Autofit'
+      ..id = 'view_menu_autofit-dropdown'
+      ..key = 'view_menu_autofit-dropdown'
+      ..className = 'submenu-item')([
+      (MenuBoolean()
+        ..value = props.autofit
+        ..display = 'Auto-fit on loading new design'
+        ..tooltip = '''\
+The side and main views will be translated to fit the current design in the window
+whenever loading a new design. Otherwise, after loading the design, you may not 
+be able to see it because it is translated off the screen in the current translation.
+
+You may want to uncheck this when working on a design with the scripting 
+library. In that case, when repeatedly re-running the script to modify the 
+design and then re-loading it, it is preferable to keep the design centered 
+at the same location you had before, in order to be able to see the same part 
+of the design you were looking at before changing the script.
+
+To autofit the current design without reloading, click "Auto-fit current design".'''
+        ..name = 'center-on-load'
+        ..onChange = ((_) => props.dispatch(actions.AutofitSet(autofit: !props.autofit)))
+        ..key = 'autofit-on-loading-new-design')(),
+      (MenuDropdownItem()
+        ..display = 'Auto-fit current design'
+        ..tooltip = '''\
+The side and main views will be translated to fit the current design in the window.
+'''
+        ..on_click = (_){
+          util.fit_and_center();
+          util.dispatch_set_zoom_threshold(true);
+          }
+        ..key = 'autofit-current-design')(),
+    ]);
   }
 
   ReactElement view_menu_show_dna() {
@@ -730,22 +768,6 @@ toggle "Show main view helices".'''
 
   List<ReactElement> view_menu_misc() {
     return [
-      (MenuBoolean()
-        ..value = props.autofit
-        ..display = 'Auto-fit on loading new design'
-        ..tooltip = '''\
-When loading a new design, the side and main views will be translated to show 
-the lowest-index helix in the upper-left. otherwise, after loading the design, 
-you may not be able to see it because it is translated off the screen.
-
-You may want to uncheck this when working on a design with the scripting 
-library. In that case, when repeatedly re-running the script to modify the 
-design and then re-loading it, it is preferable to keep the design centered 
-at the same location you had before, in order to be able to see the same part 
-of the design you were looking at before changing the script.'''
-        ..name = 'center-on-load'
-        ..onChange = ((_) => props.dispatch(actions.AutofitSet(autofit: !props.autofit)))
-        ..key = 'autofit-on-loading-new-design')(),
       (MenuBoolean()
         ..value = props.invert_y
         ..display = 'Invert y-axis'
