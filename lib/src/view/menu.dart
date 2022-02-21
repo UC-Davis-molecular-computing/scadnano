@@ -315,7 +315,7 @@ that occurred between the last save and a browser crash.'''
         ..title = 'Undo'
         ..id = "edit_menu_undo-dropdown"
         ..disabled = props.undo_stack_empty)([
-        for (var item in props.undo_redo.undo_stack)
+        for (var item in props.undo_redo.undo_stack.reversed)
           (MenuDropdownItem()..display = 'Undo ${item.short_description}')()
       ]),
       (MenuDropdownItem()
