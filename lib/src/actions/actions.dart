@@ -159,7 +159,9 @@ abstract class BatchAction
 
   /************************ begin BuiltValue boilerplate ************************/
   factory BatchAction(Iterable<UndoableAction> actions, String short_description_value) =>
-      BatchAction.from((b) => b..actions.replace(actions));
+      BatchAction.from((b) => b
+        ..actions.replace(actions)
+        ..short_description_value = short_description_value);
 
   factory BatchAction.from([void Function(BatchActionBuilder) updates]) = _$BatchAction;
 
@@ -942,8 +944,7 @@ abstract class HelixRollSetAtOther
 
   @override
   String short_description() {
-    throw AssertionError(
-        "HelixRollSetAtOther should be bundled in a BatchAction, so HelixRollSetAtOther.short_description should never be called");
+    return "set helix roll at other";
   }
 }
 

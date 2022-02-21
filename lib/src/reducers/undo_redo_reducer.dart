@@ -25,11 +25,13 @@ AppState undo_reducer(AppState state, actions.Undo action) {
     return state;
   } else {
     Design design_cur = state.design;
-    ListBuilder<Design> undo_stack = undo_redo.undo_stack.toBuilder();
-    ListBuilder<Design> redo_stack = undo_redo.redo_stack.toBuilder();
+    ListBuilder<UndoRedoItem> undo_stack = undo_redo.undo_stack.toBuilder();
+    ListBuilder<UndoRedoItem> redo_stack = undo_redo.redo_stack.toBuilder();
 
-    Design design_prev = undo_stack.removeLast();
-    redo_stack.add(design_cur);
+    UndoRedoItem undo_redo_item_prev = undo_stack.removeLast();
+    Design design_prev = undo_redo_item_prev.design;
+    String short_description_prev = undo_redo_item_prev.short_description;
+    redo_stack.add(new UndoRedoItem(short_description_prev, design_cur));
 
     bool changed_since_last_save = undo_stack.isNotEmpty;
 
@@ -50,11 +52,13 @@ AppState redo_reducer(AppState state, actions.Redo action) {
     return state;
   } else {
     Design design_cur = state.design;
-    ListBuilder<Design> undo_stack = undo_redo.undo_stack.toBuilder();
-    ListBuilder<Design> redo_stack = undo_redo.redo_stack.toBuilder();
+    ListBuilder<UndoRedoItem> undo_stack = undo_redo.undo_stack.toBuilder();
+    ListBuilder<UndoRedoItem> redo_stack = undo_redo.redo_stack.toBuilder();
 
-    Design design_next = redo_stack.removeLast();
-    undo_stack.add(design_cur);
+    UndoRedoItem undo_redo_item_next = redo_stack.removeLast();
+    Design design_next = undo_redo_item_next.design;
+    String short_description_next = undo_redo_item_next.short_description;
+    undo_stack.add(new UndoRedoItem(short_description_next, design_cur));
 
     bool changed_since_last_save = undo_stack.isNotEmpty;
 
@@ -73,7 +77,7 @@ AppState undo_redo_clear_reducer(AppState state, actions.UndoRedoClear action) =
     state.rebuild((m) => m..undo_redo.replace(UndoRedo()));
 
 AppState undoable_action_typed_reducer(AppState state, actions.UndoableAction action) =>
-  state.rebuild((m) => m
-    ..undo_redo.replace(state.undo_redo.rebuild((u) => u
-      ..undo_stack.add(state.design)
-      ..redo_stack.clear())));
+    state.rebuild((m) => m
+      ..undo_redo.replace(state.undo_redo.rebuild((u) => u
+        ..undo_stack.add(new UndoRedoItem(action.short_description(), state.design))
+        ..redo_stack.clear())));

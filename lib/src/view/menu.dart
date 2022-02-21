@@ -12,6 +12,7 @@ import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
+import 'package:scadnano/src/state/undo_redo.dart';
 import '../state/dialog.dart';
 import '../state/example_designs.dart';
 import '../state/export_dna_format.dart';
@@ -82,7 +83,8 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..default_crossover_type_scaffold_for_setting_helix_rolls =
           state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls
       ..default_crossover_type_staple_for_setting_helix_rolls =
-          state.ui_state.default_crossover_type_staple_for_setting_helix_rolls);
+          state.ui_state.default_crossover_type_staple_for_setting_helix_rolls
+      ..undo_redo = state.undo_redo);
   },
   // Used for component test.
   forwardRef: true,
@@ -132,6 +134,7 @@ mixin MenuPropsMixin on UiProps {
   LocalStorageDesignChoice local_storage_design_choice;
   bool clear_helix_selection_when_loading_new_design;
   Geometry geometry;
+  UndoRedo undo_redo;
 }
 
 class MenuProps = UiProps with MenuPropsMixin, ConnectPropsMixin;
@@ -308,9 +311,12 @@ that occurred between the last save and a browser crash.'''
       },
       ///////////////////////////////////////////////////////////////
       // cut/copy/paste
+      // (MenuDropdownRight()..title = 'Undo')(
+      //   [for (var design in props.undo_redo.undo_stack)]
+      // ),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.Undo()))
-        ..display = 'Undo'
+        ..display = 'Old Undo'
         ..keyboard_shortcut = 'Ctrl+Z'
         ..disabled = props.undo_stack_empty)(),
       (MenuDropdownItem()
