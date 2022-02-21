@@ -311,9 +311,13 @@ that occurred between the last save and a browser crash.'''
       },
       ///////////////////////////////////////////////////////////////
       // cut/copy/paste
-      // (MenuDropdownRight()..title = 'Undo')(
-      //   [for (var design in props.undo_redo.undo_stack)]
-      // ),
+      (MenuDropdownRight()
+        ..title = 'Undo'
+        ..id = "edit_menu_undo-dropdown"
+        ..disabled = props.undo_stack_empty)([
+        for (var item in props.undo_redo.undo_stack)
+          (MenuDropdownItem()..display = 'Undo ${item.short_description}')()
+      ]),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.Undo()))
         ..display = 'Old Undo'
