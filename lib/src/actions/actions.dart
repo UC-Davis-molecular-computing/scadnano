@@ -112,8 +112,10 @@ abstract class HelixSelectSvgPngCacheInvalidatingAction extends Action {}
 // Undo/Redo
 
 abstract class Undo with BuiltJsonSerializable, DesignChangingAction implements Built<Undo, UndoBuilder> {
+  int get num_undos;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory Undo() => Undo.from((b) => b);
+  factory Undo(int num_undos) => Undo.from((b) => b..num_undos=num_undos);
 
   factory Undo.from([void Function(UndoBuilder) updates]) = _$Undo;
 

@@ -316,7 +316,7 @@ that occurred between the last save and a browser crash.'''
         ..id = "edit_menu_undo-dropdown"
         ..disabled = props.undo_stack_empty)(undo_dropdowns),
       (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.Undo()))
+        ..on_click = ((_) => props.dispatch(actions.Undo(1)))
         ..display = 'Old Undo'
         ..keyboard_shortcut = 'Ctrl+Z'
         ..disabled = props.undo_stack_empty)(),
@@ -495,12 +495,13 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
 
   List<ReactElement> get undo_dropdowns {
     List<ReactElement> dropdowns = [];
-    var num_undos_needed_to_undo_action = 1;
+    var num_undos = 1;
     for (var item in props.undo_redo.undo_stack.reversed) {
       dropdowns.add((MenuDropdownItem()
         ..display = 'Undo ${item.short_description}'
-        ..key = 'undo-${num_undos_needed_to_undo_action}')());
-      num_undos_needed_to_undo_action += 1;
+        ..key = 'undo-${num_undos}'
+        ..on_click = (_) => app.dispatch(actions.Undo(num_undos)))());
+      num_undos += 1;
     }
 
     return dropdowns;

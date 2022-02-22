@@ -2512,7 +2512,7 @@ main() {
         .rebuild((b) => b
       ..undo_stack.add(new UndoRedoItem("move DNA ends", simple_helix_no_seq_design))
       ..redo_stack.add(new UndoRedoItem("move DNA ends", final_state.design)));
-    AppState state_undo_1 = app_state_reducer(final_state, Undo());
+    AppState state_undo_1 = app_state_reducer(final_state, Undo(1));
 
     expect(state_undo_1.ui_state.changed_since_last_save, true);
     expect(state_undo_1.undo_redo, expected_undo_redo);
@@ -2524,7 +2524,7 @@ main() {
           new UndoRedoItem("move DNA ends", final_state.design),
           new UndoRedoItem("move DNA ends", mid_state.design)
         ]));
-    AppState state_undo_2 = app_state_reducer(state_undo_1, Undo());
+    AppState state_undo_2 = app_state_reducer(state_undo_1, Undo(1));
 
     expect(state_undo_2.ui_state.changed_since_last_save, false);
     expect(state_undo_2.undo_redo, expected_undo_redo);
@@ -2620,7 +2620,7 @@ main() {
         .rebuild((b) => b
       ..undo_stack.add(new UndoRedoItem("move DNA ends", simple_helix_no_seq_design))
       ..redo_stack.add(new UndoRedoItem("move DNA ends", final_state.design)));
-    AppState state_undo_1 = app_state_reducer(final_state, Undo());
+    AppState state_undo_1 = app_state_reducer(final_state, Undo(1));
 
     expect(state_undo_1.ui_state.changed_since_last_save, true);
     expect(state_undo_1.undo_redo, expected_undo_redo);
@@ -2632,7 +2632,7 @@ main() {
           new UndoRedoItem("move DNA ends", final_state.design),
           new UndoRedoItem("move DNA ends", mid_state.design)
         ]));
-    AppState state_undo_2 = app_state_reducer(state_undo_1, Undo());
+    AppState state_undo_2 = app_state_reducer(state_undo_1, Undo(1));
 
     expect(state_undo_2.ui_state.changed_since_last_save, false);
     expect(state_undo_2.undo_redo, expected_undo_redo);
@@ -2796,7 +2796,7 @@ main() {
         actual_state, SelectAll(selectables: BuiltList<Selectable>([new_dna_end]), only: true));
 
     // Undo DNA Ends move
-    actual_state = app_state_reducer(actual_state, Undo());
+    actual_state = app_state_reducer(actual_state, Undo(1));
     // Select
     actual_state = app_state_reducer(actual_state, Select(dna_end, toggle: false, only: false));
 

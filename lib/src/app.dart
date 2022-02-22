@@ -237,7 +237,7 @@ setup_undo_redo_keyboard_listeners() {
     // ctrl+Z to undo
     if ((event.ctrlKey || event.metaKey) && !event.shiftKey && key == KeyCode.Z && !event.altKey) {
       if (app.state.undo_redo.undo_stack.isNotEmpty) {
-        app.dispatch(actions.Undo());
+        app.dispatch(actions.Undo(1));
       }
     }
     // shift+ctrl+Z to redo
