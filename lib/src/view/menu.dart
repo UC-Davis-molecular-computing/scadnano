@@ -314,10 +314,7 @@ that occurred between the last save and a browser crash.'''
       (MenuDropdownRight()
         ..title = 'Undo'
         ..id = "edit_menu_undo-dropdown"
-        ..disabled = props.undo_stack_empty)([
-        for (var item in props.undo_redo.undo_stack.reversed)
-          (MenuDropdownItem()..display = 'Undo ${item.short_description}')()
-      ]),
+        ..disabled = props.undo_stack_empty)(undo_dropdowns),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.Undo()))
         ..display = 'Old Undo'
@@ -494,6 +491,19 @@ WARNING: Autobreak is an experimental feature and may be modified or removed.
 It uses cadnano code that crashes on many designs, so it is not guaranteed to work properly. It will also only work on scadnano designs that are exportable to cadnano.
         ''')(),
     );
+  }
+
+  List<ReactElement> get undo_dropdowns {
+    List<ReactElement> dropdowns = [];
+    var num_undos_needed_to_undo_action = 1;
+    for (var item in props.undo_redo.undo_stack.reversed) {
+      dropdowns.add((MenuDropdownItem()
+        ..display = 'Undo ${item.short_description}'
+        ..key = 'undo-${num_undos_needed_to_undo_action}')());
+      num_undos_needed_to_undo_action += 1;
+    }
+
+    return dropdowns;
   }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
