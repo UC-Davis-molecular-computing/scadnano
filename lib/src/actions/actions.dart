@@ -125,8 +125,10 @@ abstract class Undo with BuiltJsonSerializable, DesignChangingAction implements 
 }
 
 abstract class Redo with BuiltJsonSerializable, DesignChangingAction implements Built<Redo, RedoBuilder> {
+  int get num_redos;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory Redo() => Redo.from((b) => b);
+  factory Redo(int num_redos) => Redo.from((b) => b..num_redos = num_redos);
 
   factory Redo.from([void Function(RedoBuilder) updates]) = _$Redo;
 

@@ -243,7 +243,7 @@ setup_undo_redo_keyboard_listeners() {
     // shift+ctrl+Z to redo
     if ((event.ctrlKey || event.metaKey) && event.shiftKey && key == KeyCode.Z && !event.altKey) {
       if (app.state.undo_redo.redo_stack.isNotEmpty) {
-        app.dispatch(actions.Redo());
+        app.dispatch(actions.Redo(1));
       }
     }
   });

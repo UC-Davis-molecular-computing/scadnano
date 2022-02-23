@@ -923,7 +923,7 @@ PAGEHPLC : Dual PAGE & HPLC
   }
 }
 
-actions.UndoableAction batch_if_multiple_selected(ActionCreator action_creator, Strand strand,
+actions.UndoableAction batch_if_multiple_selected(StrandActionCreator action_creator, Strand strand,
     BuiltSet<Strand> selected_strands, String short_description) {
   actions.Action action;
   if (selected_strands.isEmpty || selected_strands.length == 1 && selected_strands.first == strand) {
@@ -940,16 +940,16 @@ actions.UndoableAction batch_if_multiple_selected(ActionCreator action_creator, 
   return action;
 }
 
-typedef ActionCreator = actions.UndoableAction Function(Strand strand);
+typedef StrandActionCreator = actions.UndoableAction Function(Strand strand);
 
-ActionCreator scaffold_set_strand_action_creator(bool is_scaffold) =>
+StrandActionCreator scaffold_set_strand_action_creator(bool is_scaffold) =>
     ((Strand strand) => actions.ScaffoldSet(strand: strand, is_scaffold: is_scaffold));
 
-ActionCreator remove_dna_strand_action_creator(bool remove_complements, bool remove_all) =>
+StrandActionCreator remove_dna_strand_action_creator(bool remove_complements, bool remove_all) =>
     ((Strand strand) =>
         actions.RemoveDNA(strand: strand, remove_complements: remove_complements, remove_all: remove_all));
 
-ActionCreator color_set_strand_action_creator(String color_hex) =>
+StrandActionCreator color_set_strand_action_creator(String color_hex) =>
     ((Strand strand) => actions.StrandColorSet(strand: strand, color: Color.hex(color_hex)));
 
 String tooltip_text(Strand strand) =>
