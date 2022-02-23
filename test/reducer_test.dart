@@ -2498,8 +2498,7 @@ main() {
 }
     ''';
     Design expected_design = Design.from_json(jsonDecode(expected_json));
-    UndoRedo expected_undo_redo =
-        UndoRedo().rebuild((b) => b.undo_stack.addAll([
+    UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.addAll([
           new UndoRedoItem("move DNA ends", simple_helix_no_seq_design),
           new UndoRedoItem("move DNA ends", mid_state.design)
         ]));
@@ -2508,8 +2507,7 @@ main() {
     expect_design_equal(final_state.design, expected_design);
 
     // First Undo.
-    expected_undo_redo = UndoRedo()
-        .rebuild((b) => b
+    expected_undo_redo = UndoRedo().rebuild((b) => b
       ..undo_stack.add(new UndoRedoItem("move DNA ends", simple_helix_no_seq_design))
       ..redo_stack.add(new UndoRedoItem("move DNA ends", final_state.design)));
     AppState state_undo_1 = app_state_reducer(final_state, Undo(1));
@@ -2519,8 +2517,7 @@ main() {
     expect_design_equal(state_undo_1.design, mid_state.design);
 
     // Second Undo.
-    expected_undo_redo =
-        UndoRedo().rebuild((b) => b.redo_stack.addAll([
+    expected_undo_redo = UndoRedo().rebuild((b) => b.redo_stack.addAll([
           new UndoRedoItem("move DNA ends", final_state.design),
           new UndoRedoItem("move DNA ends", mid_state.design)
         ]));
@@ -2605,8 +2602,7 @@ main() {
 }
     ''';
     Design expected_design = Design.from_json(jsonDecode(expected_json));
-    UndoRedo expected_undo_redo =
-        UndoRedo().rebuild((b) => b.undo_stack.addAll([
+    UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.addAll([
           new UndoRedoItem("move DNA ends", simple_helix_no_seq_design),
           new UndoRedoItem("move DNA ends", mid_state.design)
         ]));
@@ -2616,8 +2612,7 @@ main() {
     expect_design_equal(final_state.design, expected_design);
 
     // First Undo.
-    expected_undo_redo = UndoRedo()
-        .rebuild((b) => b
+    expected_undo_redo = UndoRedo().rebuild((b) => b
       ..undo_stack.add(new UndoRedoItem("move DNA ends", simple_helix_no_seq_design))
       ..redo_stack.add(new UndoRedoItem("move DNA ends", final_state.design)));
     AppState state_undo_1 = app_state_reducer(final_state, Undo(1));
@@ -2627,8 +2622,7 @@ main() {
     expect_design_equal(state_undo_1.design, mid_state.design);
 
     // Second Undo.
-    expected_undo_redo =
-        UndoRedo().rebuild((b) => b.redo_stack.addAll([
+    expected_undo_redo = UndoRedo().rebuild((b) => b.redo_stack.addAll([
           new UndoRedoItem("move DNA ends", final_state.design),
           new UndoRedoItem("move DNA ends", mid_state.design)
         ]));
@@ -7585,6 +7579,70 @@ main() {
 
     expect(new_helix0_svg.y, closeTo(helix0_svg.y, 0.001));
     expect(new_helix2_svg.y, closeTo(helix1_svg.y, 0.001));
+  });
+
+  group('multiple_undos', () {
+    test('multiple_undos_should_pop_undo_stack', () {
+      Design design1 = Design(grid: Grid.square);
+      Design design2 = Design(grid: Grid.hex);
+      Design design3 = Design(grid: Grid.honeycomb);
+      Design design4 = Design(grid: Grid.none);
+      AppState state = app_state_from_design(design4).rebuild((b) => b
+        ..undo_redo.undo_stack.replace(
+          [
+            UndoRedoItem("action from 1 to 2", design1),
+            UndoRedoItem("action from 2 to 3", design2),
+            UndoRedoItem("action from 3 to 4", design3)
+          ],
+        ));
+
+      AppState new_state = app_state_reducer(state, Undo(2));
+
+      expect(new_state.undo_redo.undo_stack, [UndoRedoItem("action from 1 to 2", design1)].build());
+    });
+
+    test('multiple_undos_should_set_current_state', () {
+      Design design1 = Design(grid: Grid.square);
+      Design design2 = Design(grid: Grid.hex);
+      Design design3 = Design(grid: Grid.honeycomb);
+      Design design4 = Design(grid: Grid.none);
+      AppState state = app_state_from_design(design4).rebuild((b) => b
+        ..undo_redo.undo_stack.replace(
+          [
+            UndoRedoItem("action from 1 to 2", design1),
+            UndoRedoItem("action from 2 to 3", design2),
+            UndoRedoItem("action from 3 to 4", design3)
+          ],
+        ));
+
+      AppState new_state = app_state_reducer(state, Undo(2));
+
+      expect_design_equal(new_state.design, design2);
+    });
+
+    test('multiple_undos_should_push_to_redo_stack', () {
+      Design design1 = Design(grid: Grid.square);
+      Design design2 = Design(grid: Grid.hex);
+      Design design3 = Design(grid: Grid.honeycomb);
+      Design design4 = Design(grid: Grid.none);
+      AppState state = app_state_from_design(design4).rebuild((b) => b
+        ..undo_redo.undo_stack.replace(
+          [
+            UndoRedoItem("action from 1 to 2", design1),
+            UndoRedoItem("action from 2 to 3", design2),
+            UndoRedoItem("action from 3 to 4", design3)
+          ],
+        ));
+
+      AppState new_state = app_state_reducer(state, Undo(2));
+
+      expect(
+          new_state.undo_redo.redo_stack,
+          [
+            UndoRedoItem("action from 3 to 4", design4),
+            UndoRedoItem("action from 2 to 3", design3),
+          ].build());
+    });
   });
 }
 
