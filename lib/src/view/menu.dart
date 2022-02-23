@@ -497,14 +497,17 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
     List<ReactElement> dropdowns = [];
     var num_undos = 1;
     for (var item in props.undo_redo.undo_stack.reversed) {
-      dropdowns.add((MenuDropdownItem()
-        ..display = 'Undo ${item.short_description}'
-        ..key = 'undo-${num_undos}'
-        ..on_click = (_) => app.dispatch(actions.Undo(num_undos)))());
+      dropdowns.add(undo_dropdown(item, num_undos));
       num_undos += 1;
     }
-
     return dropdowns;
+  }
+
+  ReactElement undo_dropdown(UndoRedoItem item, int num_undos) {
+    return (MenuDropdownItem()
+      ..display = 'Undo ${item.short_description}'
+      ..key = 'undo-${num_undos}'
+      ..on_click = (_) => app.dispatch(actions.Undo(num_undos)))();
   }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
