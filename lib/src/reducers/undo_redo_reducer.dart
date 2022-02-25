@@ -26,14 +26,14 @@ AppState undo_reducer(AppState state, actions.Undo action) {
 }
 
 AppState state_result_after_applying_undo(AppState state, actions.Undo action) {
-  Design design_cur = state.design;
+  Design new_design = state.design;
   UndoRedo undo_redo = state.undo_redo;
   ListBuilder<UndoRedoItem> undo_stack = undo_redo.undo_stack.toBuilder();
   ListBuilder<UndoRedoItem> redo_stack = undo_redo.redo_stack.toBuilder();
   for (int i = 0; i < action.num_undos; i++) {
-    design_cur = push_current_design_to_redo_and_pop_design_from_undo(undo_stack, redo_stack, design_cur);
+    new_design = push_design_to_stack_and_pop_design_from_other_stack(new_design, redo_stack, undo_stack);
   }
-  return create_new_state_with_new_design_and_undo_redo(state, design_cur, undo_stack, redo_stack);
+  return create_new_state_with_new_design_and_undo_redo(state, new_design, undo_stack, redo_stack);
 }
 
 AppState create_new_state_with_new_design_and_undo_redo(AppState old_state, Design new_design,
@@ -50,39 +50,38 @@ AppState create_new_state_with_new_design_and_undo_redo(AppState old_state, Desi
   return new_model;
 }
 
-Design push_current_design_to_redo_and_pop_design_from_undo(
-    ListBuilder<UndoRedoItem> undo_stack, ListBuilder<UndoRedoItem> redo_stack, Design current_design) {
-  UndoRedoItem undo_redo_item_prev = undo_stack.removeLast();
-  String short_description_prev = undo_redo_item_prev.short_description;
-  redo_stack.add(new UndoRedoItem(short_description_prev, current_design));
-  return undo_redo_item_prev.design;
-}
-
 AppState redo_reducer(AppState state, actions.Redo action) {
   UndoRedo undo_redo = state.undo_redo;
   if (undo_redo.redo_stack.isEmpty) {
     return state;
   } else {
-    Design design_cur = state.design;
+    Design new_design = state.design;
     ListBuilder<UndoRedoItem> undo_stack = undo_redo.undo_stack.toBuilder();
     ListBuilder<UndoRedoItem> redo_stack = undo_redo.redo_stack.toBuilder();
 
-    UndoRedoItem undo_redo_item_next = redo_stack.removeLast();
-    Design design_next = undo_redo_item_next.design;
-    String short_description_next = undo_redo_item_next.short_description;
-    undo_stack.add(new UndoRedoItem(short_description_next, design_cur));
+    for (int i = 0; i < action.num_redos; i++) {
+      new_design = push_design_to_stack_and_pop_design_from_other_stack(new_design, undo_stack, redo_stack);
+    }
 
     bool changed_since_last_save = undo_stack.isNotEmpty;
 
     AppState new_model = state.rebuild((m) => m
       ..ui_state.replace(state.ui_state.rebuild((u) => u..changed_since_last_save = changed_since_last_save))
-      ..design.replace(design_next)
+      ..design.replace(new_design)
       ..undo_redo.replace(undo_redo.rebuild((u) => u
         ..undo_stack = undo_stack
         ..redo_stack = redo_stack)));
 
     return new_model;
   }
+}
+
+Design push_design_to_stack_and_pop_design_from_other_stack(Design design_to_push,
+    ListBuilder<UndoRedoItem> stack_to_push_to, ListBuilder<UndoRedoItem> stack_to_pop_from) {
+  UndoRedoItem popped_item = stack_to_pop_from.removeLast();
+  String popped_short_description = popped_item.short_description;
+  stack_to_push_to.add(new UndoRedoItem(popped_short_description, design_to_push));
+  return popped_item.design;
 }
 
 AppState undo_redo_clear_reducer(AppState state, actions.UndoRedoClear action) =>
