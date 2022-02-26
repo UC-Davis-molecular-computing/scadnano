@@ -487,25 +487,6 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
     );
   }
 
-  List<ReactElement> undo_or_redo_dropdowns(ActionFromIntCreator undo_or_redo_action_creator,
-      BuiltList<UndoRedoItem> undo_or_redo_stack, String action_name) {
-    List<ReactElement> dropdowns = [];
-    var num_times = 1;
-    for (var item in undo_or_redo_stack.reversed) {
-      dropdowns.add(undo_or_redo_dropdown(item, undo_or_redo_action_creator, num_times, action_name));
-      num_times += 1;
-    }
-    return dropdowns;
-  }
-
-  ReactElement undo_or_redo_dropdown(UndoRedoItem item, ActionFromIntCreator undo_or_redo_action_creator,
-      int num_times, String action_name) {
-    return (MenuDropdownItem()
-      ..display = '${action_name} ${item.short_description}'
-      ..key = '${action_name.toLowerCase()}-${num_times}'
-      ..on_click = (_) => app.dispatch(undo_or_redo_action_creator(num_times)))();
-  }
-
   List<ReactElement> get undo_dropdowns {
     return undo_or_redo_dropdowns((i) => actions.Undo(i), props.undo_redo.undo_stack, "Undo");
   }
@@ -513,6 +494,30 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
   List<ReactElement> get redo_dropdowns {
     return undo_or_redo_dropdowns((i) => actions.Redo(i), props.undo_redo.redo_stack, "Redo");
   }
+
+  List<ReactElement> undo_or_redo_dropdowns(ActionFromIntCreator undo_or_redo_action_creator,
+      BuiltList<UndoRedoItem> undo_or_redo_stack, String action_name) {
+    List<ReactElement> dropdowns = [];
+    int num_times = 1;
+    bool most_recent = true;
+    for (var item in undo_or_redo_stack.reversed) {
+      dropdowns
+          .add(undo_or_redo_dropdown(item, undo_or_redo_action_creator, num_times, action_name, most_recent));
+      num_times += 1;
+      most_recent = false;
+    }
+    return dropdowns;
+  }
+
+  ReactElement undo_or_redo_dropdown(UndoRedoItem item, ActionFromIntCreator undo_or_redo_action_creator,
+      int num_times, String action_name, bool is_most_recent) {
+    String most_recent_string = is_most_recent ? " [Most Recent]" : "";
+    return (MenuDropdownItem()
+      ..display = '${action_name} ${item.short_description}${most_recent_string}'
+      ..key = '${action_name.toLowerCase()}-${num_times}'
+      ..on_click = (_) => app.dispatch(undo_or_redo_action_creator(num_times)))();
+  }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // view menu
