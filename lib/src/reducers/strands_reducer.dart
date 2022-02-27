@@ -370,6 +370,7 @@ class InsertionDeletionRecord {
 
 Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop_reducer(
     Strand strand, DNAEndsMove all_move, Design design) {
+  String old_sequence = strand.dna_sequence;
   List<InsertionDeletionRecord> records = [];
   List<Substrand> substrands = strand.substrands.toList();
 
@@ -414,8 +415,11 @@ Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop
     }
     substrands[i] = new_substrand;
   }
-  return Tuple2<Strand, List<InsertionDeletionRecord>>(
-      strand.rebuild((b) => b..substrands.replace(substrands)), records);
+  strand = strand.rebuild((b) => b..substrands.replace(substrands));
+  if (old_sequence != null) {
+    strand = strand.set_dna_sequence(old_sequence);
+  }
+  return Tuple2<Strand, List<InsertionDeletionRecord>>(strand, records);
 }
 
 List<int> get_remaining_deletions(Domain substrand, int new_offset, DNAEnd dnaend) => substrand.deletions
@@ -519,6 +523,7 @@ Strand idt_fields_remove_reducer(Strand strand, actions.IDTFieldsRemove action) 
   Strand strand_with_new_idt_fields = strand.rebuild((m) => m.idt = null);
   return strand_with_new_idt_fields;
 }
+
 Strand plate_well_idt_fields_remove_reducer(Strand strand, actions.PlateWellIDTFieldsRemove action) {
   if (strand.idt != null) {
     Strand strand_with_new_idt_fields;
@@ -526,7 +531,7 @@ Strand plate_well_idt_fields_remove_reducer(Strand strand, actions.PlateWellIDTF
       ..plate = null
       ..well = null);
     return strand_with_new_idt_fields;
-  }else{
+  } else {
     return strand;
   }
 }

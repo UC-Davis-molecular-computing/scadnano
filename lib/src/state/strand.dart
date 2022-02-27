@@ -61,7 +61,6 @@ abstract class Strand
       ..color = color
       ..circular = circular
       ..substrands.replace(substrands)
-      ..dna_sequence = dna_sequence
       ..idt = idt?.toBuilder()
       ..modification_5p = modification_5p?.toBuilder()
       ..modification_3p = modification_3p?.toBuilder()
@@ -70,6 +69,10 @@ abstract class Strand
       ..name = name
       ..label = label
       ..unused_fields = MapBuilder<String, Object>({}));
+
+    if (dna_sequence != null) {
+      strand = strand.set_dna_sequence(dna_sequence);
+    }
 
     strand = strand.initialize();
     return strand;
@@ -106,10 +109,6 @@ abstract class Strand
   /// FIXME: remove duplicated code between initialize() and _finalizeBuilder
   Strand initialize() {
     Strand strand = this;
-
-    if (dna_sequence != null) {
-      strand = strand.set_dna_sequence(dna_sequence);
-    }
 
     String id = strand.id;
     int idx = 0;
@@ -178,8 +177,17 @@ abstract class Strand
 
   BuiltList<Substrand> get substrands;
 
-  @nullable
-  String get dna_sequence;
+  @memoized
+  String get dna_sequence {
+    String sequence = "";
+    for (Substrand s in this.substrands) {
+      if (s.dna_sequence == null) {
+        return null;
+      }
+      sequence += s.dna_sequence;
+    }
+    return sequence;
+  }
 
   @nullable
   IDTFields get idt;
@@ -581,9 +589,7 @@ abstract class Strand
       start_idx_ss = end_idx_ss;
     }
 
-    return rebuild((strand) => strand
-      ..substrands.replace(substrands_new)
-      ..dna_sequence = null);
+    return rebuild((strand) => strand..substrands.replace(substrands_new));
   }
 
   /// Sets DNA sequence of strand (but does not assign complement to any Strands bound to it).
@@ -608,9 +614,7 @@ abstract class Strand
       start_idx_ss = end_idx_ss;
     }
 
-    return rebuild((strand) => strand
-      ..substrands.replace(substrands_new)
-      ..dna_sequence = dna_sequence_new);
+    return rebuild((strand) => strand..substrands.replace(substrands_new));
   }
 
   static Strand from_json(Map<String, dynamic> json_map) {

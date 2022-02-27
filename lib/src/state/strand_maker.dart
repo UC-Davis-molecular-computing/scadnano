@@ -151,8 +151,7 @@ class StrandMaker {
       String purification = constants.default_idt_purification,
       String plate = null,
       String well = null}) {
-    this.idt = IDTFields(
-        scale: scale, purification: purification, plate: plate, well: well);
+    this.idt = IDTFields(scale: scale, purification: purification, plate: plate, well: well);
     return this;
   }
 
