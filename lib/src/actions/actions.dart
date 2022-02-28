@@ -115,7 +115,7 @@ abstract class Undo with BuiltJsonSerializable, DesignChangingAction implements 
   int get num_undos;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory Undo(int num_undos) => Undo.from((b) => b..num_undos=num_undos);
+  factory Undo(int num_undos) => Undo.from((b) => b..num_undos = num_undos);
 
   factory Undo.from([void Function(UndoBuilder) updates]) = _$Undo;
 
@@ -402,7 +402,7 @@ abstract class SubstrandNameSet
   int get hashCode;
 
   @override
-  String short_description() => "set substrand name";
+  String short_description() => "set ${substrand.type_description()} name";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

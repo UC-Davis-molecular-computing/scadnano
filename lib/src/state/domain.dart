@@ -205,6 +205,9 @@ abstract class Domain
   @memoized
   Address get address_3p => forward ? address_end : address_start;
 
+  @override
+  String type_description() => "domain";
+
   dynamic to_json_serializable({bool suppress_indent = false}) {
     Map<String, dynamic> json_map = {};
     if (name != null) {
