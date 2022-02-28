@@ -2943,7 +2943,7 @@ abstract class ScalePurificationIDTFieldsAssign
       _$scalePurificationIDTFieldsAssignSerializer;
 
   @override
-  String short_description() => "assign scale purification idf fields";
+  String short_description() => "assign scale purification IDT fields";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
