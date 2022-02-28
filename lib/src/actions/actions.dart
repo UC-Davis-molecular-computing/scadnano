@@ -2963,7 +2963,7 @@ abstract class PlateWellIDTFieldsAssign
   static Serializer<PlateWellIDTFieldsAssign> get serializer => _$plateWellIDTFieldsAssignSerializer;
 
   @override
-  String short_description() => "assign plate well idt fields";
+  String short_description() => "assign plate well IDT fields";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2981,7 +2981,7 @@ abstract class PlateWellIDTFieldsRemove
   static Serializer<PlateWellIDTFieldsRemove> get serializer => _$plateWellIDTFieldsRemoveSerializer;
 
   @override
-  String short_description() => "remove plate well idt fields";
+  String short_description() => "remove plate well IDT fields";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2999,7 +2999,7 @@ abstract class IDTFieldsRemove
   static Serializer<IDTFieldsRemove> get serializer => _$iDTFieldsRemoveSerializer;
 
   @override
-  String short_description() => "remove idt fields";
+  String short_description() => "remove IDT fields";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
