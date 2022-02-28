@@ -1178,7 +1178,7 @@ abstract class GeometrySet
   static Serializer<GeometrySet> get serializer => _$geometrySetSerializer;
 
   @override
-  String short_description() => "set geometric parameteres";
+  String short_description() => "set geometric parameters";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
