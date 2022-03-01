@@ -13,6 +13,7 @@ import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
+import 'package:scadnano/src/state/undo_redo.dart';
 import '../state/dialog.dart';
 import '../state/example_designs.dart';
 import '../state/export_dna_format.dart';
@@ -83,7 +84,8 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..default_crossover_type_scaffold_for_setting_helix_rolls =
           state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls
       ..default_crossover_type_staple_for_setting_helix_rolls =
-          state.ui_state.default_crossover_type_staple_for_setting_helix_rolls);
+          state.ui_state.default_crossover_type_staple_for_setting_helix_rolls
+      ..undo_redo = state.undo_redo);
   },
   // Used for component test.
   forwardRef: true,
@@ -133,6 +135,7 @@ mixin MenuPropsMixin on UiProps {
   LocalStorageDesignChoice local_storage_design_choice;
   bool clear_helix_selection_when_loading_new_design;
   Geometry geometry;
+  UndoRedo undo_redo;
 }
 
 class MenuProps = UiProps with MenuPropsMixin, ConnectPropsMixin;
@@ -334,16 +337,14 @@ that occurred between the last save and a browser crash.'''
       },
       ///////////////////////////////////////////////////////////////
       // cut/copy/paste
-      (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.Undo()))
-        ..display = 'Undo'
-        ..keyboard_shortcut = 'Ctrl+Z'
-        ..disabled = props.undo_stack_empty)(),
-      (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.Redo()))
-        ..display = 'Redo'
-        ..keyboard_shortcut = 'Ctrl+Shift+Z'
-        ..disabled = props.redo_stack_empty)(),
+      (MenuDropdownRight()
+        ..title = 'Undo'
+        ..id = "edit_menu_undo-dropdown"
+        ..disabled = props.undo_stack_empty)(undo_dropdowns),
+      (MenuDropdownRight()
+        ..title = 'Redo'
+        ..id = "edit_menu_redo-dropdown"
+        ..disabled = props.redo_stack_empty)(redo_dropdowns),
       DropdownDivider({}),
       (MenuDropdownItem()
         ..on_click = (_) {
@@ -513,6 +514,38 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
         ''')(),
     );
   }
+
+  List<ReactElement> get undo_dropdowns {
+    return undo_or_redo_dropdowns((i) => actions.Undo(i), props.undo_redo.undo_stack, "Undo");
+  }
+
+  List<ReactElement> get redo_dropdowns {
+    return undo_or_redo_dropdowns((i) => actions.Redo(i), props.undo_redo.redo_stack, "Redo");
+  }
+
+  List<ReactElement> undo_or_redo_dropdowns(ActionFromIntCreator undo_or_redo_action_creator,
+      BuiltList<UndoRedoItem> undo_or_redo_stack, String action_name) {
+    List<ReactElement> dropdowns = [];
+    int num_times = 1;
+    bool most_recent = true;
+    for (var item in undo_or_redo_stack.reversed) {
+      dropdowns
+          .add(undo_or_redo_dropdown(item, undo_or_redo_action_creator, num_times, action_name, most_recent));
+      num_times += 1;
+      most_recent = false;
+    }
+    return dropdowns;
+  }
+
+  ReactElement undo_or_redo_dropdown(UndoRedoItem item, ActionFromIntCreator undo_or_redo_action_creator,
+      int num_times, String action_name, bool is_most_recent) {
+    String most_recent_string = is_most_recent ? " [Most Recent]" : "";
+    return (MenuDropdownItem()
+      ..display = '${action_name} ${item.short_description}${most_recent_string}'
+      ..key = '${action_name.toLowerCase()}-${num_times}'
+      ..on_click = (_) => app.dispatch(undo_or_redo_action_creator(num_times)))();
+  }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // view menu
@@ -1159,6 +1192,8 @@ However, it may be less stable than the main site.'''
     props.dispatch(actions.ExampleDesignsLoad(selected_idx: selected_idx));
   }
 }
+
+typedef ActionFromIntCreator = actions.Action Function(int);
 
 Future<void> ask_for_autobreak_parameters() async {
   var items = List<DialogItem>.filled(4, null);

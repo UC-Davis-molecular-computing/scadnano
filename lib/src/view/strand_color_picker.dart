@@ -112,7 +112,8 @@ class StrandColorPickerComponent
       if (!selected_strands.contains(strand)) {
         selected_strands = selected_strands.rebuild((b) => b.add(strand));
       }
-      action = actions.BatchAction([for (var strand in selected_strands) action_creator(strand)]);
+      action = actions.BatchAction(
+          [for (var strand in selected_strands) action_creator(strand)], "set strand color");
     }
     return action;
   }

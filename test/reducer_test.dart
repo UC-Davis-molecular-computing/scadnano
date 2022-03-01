@@ -2498,25 +2498,30 @@ main() {
 }
     ''';
     Design expected_design = Design.from_json(jsonDecode(expected_json));
-    UndoRedo expected_undo_redo =
-        UndoRedo().rebuild((b) => b.undo_stack.addAll([simple_helix_no_seq_design, mid_state.design]));
+    UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.addAll([
+          new UndoRedoItem("move DNA ends", simple_helix_no_seq_design),
+          new UndoRedoItem("move DNA ends", mid_state.design)
+        ]));
 
     expect(final_state.ui_state.changed_since_last_save, true);
     expect_design_equal(final_state.design, expected_design);
 
     // First Undo.
-    expected_undo_redo = UndoRedo()
-        .rebuild((b) => b..undo_stack.add(simple_helix_no_seq_design)..redo_stack.add(final_state.design));
-    AppState state_undo_1 = app_state_reducer(final_state, Undo());
+    expected_undo_redo = UndoRedo().rebuild((b) => b
+      ..undo_stack.add(new UndoRedoItem("move DNA ends", simple_helix_no_seq_design))
+      ..redo_stack.add(new UndoRedoItem("move DNA ends", final_state.design)));
+    AppState state_undo_1 = app_state_reducer(final_state, Undo(1));
 
     expect(state_undo_1.ui_state.changed_since_last_save, true);
     expect(state_undo_1.undo_redo, expected_undo_redo);
     expect_design_equal(state_undo_1.design, mid_state.design);
 
     // Second Undo.
-    expected_undo_redo =
-        UndoRedo().rebuild((b) => b.redo_stack.addAll([final_state.design, mid_state.design]));
-    AppState state_undo_2 = app_state_reducer(state_undo_1, Undo());
+    expected_undo_redo = UndoRedo().rebuild((b) => b.redo_stack.addAll([
+          new UndoRedoItem("move DNA ends", final_state.design),
+          new UndoRedoItem("move DNA ends", mid_state.design)
+        ]));
+    AppState state_undo_2 = app_state_reducer(state_undo_1, Undo(1));
 
     expect(state_undo_2.ui_state.changed_since_last_save, false);
     expect(state_undo_2.undo_redo, expected_undo_redo);
@@ -2597,26 +2602,31 @@ main() {
 }
     ''';
     Design expected_design = Design.from_json(jsonDecode(expected_json));
-    UndoRedo expected_undo_redo =
-        UndoRedo().rebuild((b) => b.undo_stack.addAll([simple_helix_no_seq_design, mid_state.design]));
+    UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.addAll([
+          new UndoRedoItem("move DNA ends", simple_helix_no_seq_design),
+          new UndoRedoItem("move DNA ends", mid_state.design)
+        ]));
 
     expect(final_state.ui_state.changed_since_last_save, true);
     expect(final_state.undo_redo, expected_undo_redo);
     expect_design_equal(final_state.design, expected_design);
 
     // First Undo.
-    expected_undo_redo = UndoRedo()
-        .rebuild((b) => b..undo_stack.add(simple_helix_no_seq_design)..redo_stack.add(final_state.design));
-    AppState state_undo_1 = app_state_reducer(final_state, Undo());
+    expected_undo_redo = UndoRedo().rebuild((b) => b
+      ..undo_stack.add(new UndoRedoItem("move DNA ends", simple_helix_no_seq_design))
+      ..redo_stack.add(new UndoRedoItem("move DNA ends", final_state.design)));
+    AppState state_undo_1 = app_state_reducer(final_state, Undo(1));
 
     expect(state_undo_1.ui_state.changed_since_last_save, true);
     expect(state_undo_1.undo_redo, expected_undo_redo);
     expect_design_equal(state_undo_1.design, mid_state.design);
 
     // Second Undo.
-    expected_undo_redo =
-        UndoRedo().rebuild((b) => b.redo_stack.addAll([final_state.design, mid_state.design]));
-    AppState state_undo_2 = app_state_reducer(state_undo_1, Undo());
+    expected_undo_redo = UndoRedo().rebuild((b) => b.redo_stack.addAll([
+          new UndoRedoItem("move DNA ends", final_state.design),
+          new UndoRedoItem("move DNA ends", mid_state.design)
+        ]));
+    AppState state_undo_2 = app_state_reducer(state_undo_1, Undo(1));
 
     expect(state_undo_2.ui_state.changed_since_last_save, false);
     expect(state_undo_2.undo_redo, expected_undo_redo);
@@ -2780,7 +2790,7 @@ main() {
         actual_state, SelectAll(selectables: BuiltList<Selectable>([new_dna_end]), only: true));
 
     // Undo DNA Ends move
-    actual_state = app_state_reducer(actual_state, Undo());
+    actual_state = app_state_reducer(actual_state, Undo(1));
     // Select
     actual_state = app_state_reducer(actual_state, Select(dna_end, toggle: false, only: false));
 
@@ -3240,7 +3250,8 @@ main() {
       Design two_helices_helix_add_design = Design.from_json(jsonDecode(two_helices_helix_add_json));
 
       expect(state.ui_state.changed_since_last_save, false);
-      expect(state.undo_redo.undo_stack, BuiltList<Design>([two_helices_design]));
+      expect(state.undo_redo.undo_stack,
+          BuiltList<UndoRedoItem>([new UndoRedoItem("create helix", two_helices_design)]));
       expect_design_equal(state.design, two_helices_helix_add_design);
     });
 
@@ -5501,8 +5512,8 @@ main() {
 
     var batch_action = BatchAction([
       HelixPositionSet(helix_idx: helix0.idx, position: position0),
-      HelixPositionSet(helix_idx: helix1.idx, position: position1)
-    ]);
+      HelixPositionSet(helix_idx: helix1.idx, position: position1),
+    ], "set helix position");
     state = app_state_reducer(state, batch_action);
     expect(state.design.helices[0], expected_helix0);
     expect(state.design.helices[1], expected_helix1);
@@ -5898,8 +5909,8 @@ main() {
         state = app_state_reducer(state, Select(crossover56, toggle: false, only: true));
         state = app_state_reducer(state, DeleteAllSelected());
 
-        expect_design_equal(state.undo_redo.undo_stack[1], expected_design1);
-        expect_design_equal(state.undo_redo.undo_stack[0], many_helices_modification_design);
+        expect_design_equal(state.undo_redo.undo_stack[1].design, expected_design1);
+        expect_design_equal(state.undo_redo.undo_stack[0].design, many_helices_modification_design);
         expect_design_equal(state.design, expected_design2);
       },
     );
@@ -7151,14 +7162,19 @@ main() {
   group('DesignNewSet', () {
     test('DesignNewSet should set new design', () {
       AppState initial_state = app_state_from_design(two_helices_design);
-      AppState final_state = app_state_reducer(initial_state, NewDesignSet(design: small_design_h0));
+      AppState final_state =
+          app_state_reducer(initial_state, NewDesignSet(small_design_h0, "some description"));
       expect(final_state.design, small_design_h0);
     });
 
     test('DesignNewSet should be undoable', () {
       AppState initial_state = app_state_from_design(two_helices_design);
-      AppState final_state = app_state_reducer(initial_state, NewDesignSet(design: small_design_h0));
-      expect(final_state.undo_redo, UndoRedo().rebuild((b) => b..undo_stack.replace([two_helices_design])));
+      AppState final_state =
+          app_state_reducer(initial_state, NewDesignSet(small_design_h0, "some description"));
+      expect(
+          final_state.undo_redo,
+          UndoRedo().rebuild(
+              (b) => b..undo_stack.replace([new UndoRedoItem("some description", two_helices_design)])));
     });
   });
 

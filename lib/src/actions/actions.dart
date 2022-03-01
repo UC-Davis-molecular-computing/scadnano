@@ -15,6 +15,7 @@ import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
 import 'package:scadnano/src/state/idt_fields.dart';
+import 'package:scadnano/src/state/linker.dart';
 import 'package:scadnano/src/state/substrand.dart';
 import 'package:scadnano/src/util.dart';
 
@@ -69,6 +70,8 @@ abstract class DesignChangingAction implements StorableAction, SvgPngCacheInvali
 /// currently used to detect whether to affect the undo stack.
 abstract class UndoableAction implements DesignChangingAction {
   Iterable<Storable> storables() => [Storable.design];
+
+  String short_description();
 }
 
 /// Fast actions are not dispatched to normal store for optimization
@@ -109,8 +112,10 @@ abstract class HelixSelectSvgPngCacheInvalidatingAction extends Action {}
 // Undo/Redo
 
 abstract class Undo with BuiltJsonSerializable, DesignChangingAction implements Built<Undo, UndoBuilder> {
+  int get num_undos;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory Undo() => Undo.from((b) => b);
+  factory Undo(int num_undos) => Undo.from((b) => b..num_undos = num_undos);
 
   factory Undo.from([void Function(UndoBuilder) updates]) = _$Undo;
 
@@ -120,8 +125,10 @@ abstract class Undo with BuiltJsonSerializable, DesignChangingAction implements 
 }
 
 abstract class Redo with BuiltJsonSerializable, DesignChangingAction implements Built<Redo, RedoBuilder> {
+  int get num_redos;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory Redo() => Redo.from((b) => b);
+  factory Redo(int num_redos) => Redo.from((b) => b..num_redos = num_redos);
 
   factory Redo.from([void Function(RedoBuilder) updates]) = _$Redo;
 
@@ -152,10 +159,13 @@ abstract class BatchAction
     with BuiltJsonSerializable, UndoableAction
     implements Built<BatchAction, BatchActionBuilder> {
   BuiltList<UndoableAction> get actions;
+  String get short_description_value;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory BatchAction(Iterable<UndoableAction> actions) =>
-      BatchAction.from((b) => b..actions.replace(actions));
+  factory BatchAction(Iterable<UndoableAction> actions, String short_description_value) =>
+      BatchAction.from((b) => b
+        ..actions.replace(actions)
+        ..short_description_value = short_description_value);
 
   factory BatchAction.from([void Function(BatchActionBuilder) updates]) = _$BatchAction;
 
@@ -165,6 +175,9 @@ abstract class BatchAction
 
   @override
   dynamic toJson() => {'actions': actions.toList()};
+
+  @override
+  String short_description() => short_description_value;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -376,6 +389,9 @@ abstract class StrandNameSet
 
   @memoized
   int get hashCode;
+
+  @override
+  String short_description() => "set strand name";
 }
 
 // used to set or remove (set name=null to remove)
@@ -399,6 +415,9 @@ abstract class SubstrandNameSet
 
   @memoized
   int get hashCode;
+
+  @override
+  String short_description() => "set ${substrand.type_description()} name";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -807,9 +826,13 @@ abstract class NewDesignSet
     implements Action, Built<NewDesignSet, NewDesignSetBuilder> {
   Design get design;
 
+  String get short_description_value;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory NewDesignSet({Design design}) {
-    return NewDesignSet.from((b) => b..design.replace(design));
+  factory NewDesignSet(Design design, String short_description_value) {
+    return NewDesignSet.from((b) => b
+      ..design.replace(design)
+      ..short_description_value = short_description_value);
   }
 
   factory NewDesignSet.from([void Function(NewDesignSetBuilder) updates]) = _$NewDesignSet;
@@ -817,6 +840,9 @@ abstract class NewDesignSet
   NewDesignSet._();
 
   static Serializer<NewDesignSet> get serializer => _$newDesignSetSerializer;
+
+  @override
+  String short_description() => short_description_value;
 }
 
 abstract class ExportCadnanoFile
@@ -903,6 +929,9 @@ abstract class HelixRollSet
   HelixRollSet._();
 
   static Serializer<HelixRollSet> get serializer => _$helixRollSetSerializer;
+
+  @override
+  String short_description() => "set helix roll";
 }
 
 // set helix roll such that rotation at anchor points at helix_other
@@ -931,6 +960,11 @@ abstract class HelixRollSetAtOther
   HelixRollSetAtOther._();
 
   static Serializer<HelixRollSetAtOther> get serializer => _$helixRollSetAtOtherSerializer;
+
+  @override
+  String short_description() {
+    return "set helix roll at other";
+  }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1157,6 +1191,9 @@ abstract class GeometrySet
   GeometrySet._();
 
   static Serializer<GeometrySet> get serializer => _$geometrySetSerializer;
+
+  @override
+  String short_description() => "set geometric parameters";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1276,6 +1313,9 @@ abstract class DeleteAllSelected
   DeleteAllSelected._();
 
   static Serializer<DeleteAllSelected> get serializer => _$deleteAllSelectedSerializer;
+
+  @override
+  String short_description() => "remove all selected items";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1305,6 +1345,9 @@ abstract class HelixAdd
   HelixAdd._();
 
   static Serializer<HelixAdd> get serializer => _$helixAddSerializer;
+
+  @override
+  String short_description() => "create helix";
 }
 
 abstract class HelixRemove
@@ -1320,6 +1363,9 @@ abstract class HelixRemove
   HelixRemove._();
 
   static Serializer<HelixRemove> get serializer => _$helixRemoveSerializer;
+
+  @override
+  String short_description() => "delete helix";
 }
 
 abstract class HelixRemoveAllSelected
@@ -1334,6 +1380,9 @@ abstract class HelixRemoveAllSelected
   HelixRemoveAllSelected._();
 
   static Serializer<HelixRemoveAllSelected> get serializer => _$helixRemoveAllSelectedSerializer;
+
+  @override
+  String short_description() => "delete all selected helices";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1422,6 +1471,9 @@ abstract class HelixMajorTickDistanceChange
   HelixMajorTickDistanceChange._();
 
   static Serializer<HelixMajorTickDistanceChange> get serializer => _$helixMajorTickDistanceChangeSerializer;
+
+  @override
+  String short_description() => "change helix major tick distance";
 }
 
 abstract class HelixMajorTickDistanceChangeAll
@@ -1436,6 +1488,9 @@ abstract class HelixMajorTickDistanceChangeAll
 
   static Serializer<HelixMajorTickDistanceChangeAll> get serializer =>
       _$helixMajorTickDistanceChangeAllSerializer;
+
+  @override
+  String short_description() => "change all helix major tick distance";
 }
 
 abstract class HelixMajorTickStartChange
@@ -1451,6 +1506,9 @@ abstract class HelixMajorTickStartChange
   HelixMajorTickStartChange._();
 
   static Serializer<HelixMajorTickStartChange> get serializer => _$helixMajorTickStartChangeSerializer;
+
+  @override
+  String short_description() => "change helix major tick start";
 }
 
 abstract class HelixMajorTickStartChangeAll
@@ -1464,6 +1522,9 @@ abstract class HelixMajorTickStartChangeAll
   HelixMajorTickStartChangeAll._();
 
   static Serializer<HelixMajorTickStartChangeAll> get serializer => _$helixMajorTickStartChangeAllSerializer;
+
+  @override
+  String short_description() => "change all helix major tick start";
 }
 
 abstract class HelixMajorTicksChange
@@ -1479,6 +1540,9 @@ abstract class HelixMajorTicksChange
   HelixMajorTicksChange._();
 
   static Serializer<HelixMajorTicksChange> get serializer => _$helixMajorTicksChangeSerializer;
+
+  @override
+  String short_description() => "change helix major ticks";
 }
 
 abstract class HelixMajorTicksChangeAll
@@ -1492,6 +1556,9 @@ abstract class HelixMajorTicksChangeAll
   HelixMajorTicksChangeAll._();
 
   static Serializer<HelixMajorTicksChangeAll> get serializer => _$helixMajorTicksChangeAllSerializer;
+
+  @override
+  String short_description() => "change all helix major ticks";
 }
 
 // For simplicity this action also changes major_tick_start, which is paired with major_tick_distances
@@ -1513,6 +1580,9 @@ abstract class HelixMajorTickPeriodicDistancesChange
 
   static Serializer<HelixMajorTickPeriodicDistancesChange> get serializer =>
       _$helixMajorTickPeriodicDistancesChangeSerializer;
+
+  @override
+  String short_description() => "change helix major tick periodic distances";
 }
 
 // For simplicity this action also changes major_tick_start, which is paired with major_tick_distances
@@ -1531,6 +1601,9 @@ abstract class HelixMajorTickPeriodicDistancesChangeAll
 
   static Serializer<HelixMajorTickPeriodicDistancesChangeAll> get serializer =>
       _$helixMajorTickPeriodicDistancesChangeAllSerializer;
+
+  @override
+  String short_description() => "change all helix major tick periodic distances";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1550,6 +1623,9 @@ abstract class HelixIdxsChange
   HelixIdxsChange._();
 
   static Serializer<HelixIdxsChange> get serializer => _$helixIdxsChangeSerializer;
+
+  @override
+  String short_description() => "set helix idx";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1572,6 +1648,9 @@ abstract class HelixOffsetChange
   HelixOffsetChange._();
 
   static Serializer<HelixOffsetChange> get serializer => _$helixOffsetChangeSerializer;
+
+  @override
+  String short_description() => "change helix offset";
 }
 
 abstract class HelixMinOffsetSetByDomains
@@ -1585,6 +1664,9 @@ abstract class HelixMinOffsetSetByDomains
   HelixMinOffsetSetByDomains._();
 
   static Serializer<HelixMinOffsetSetByDomains> get serializer => _$helixMinOffsetSetByDomainsSerializer;
+
+  @override
+  String short_description() => "set helix min offset";
 }
 
 abstract class HelixMaxOffsetSetByDomains
@@ -1598,6 +1680,9 @@ abstract class HelixMaxOffsetSetByDomains
   HelixMaxOffsetSetByDomains._();
 
   static Serializer<HelixMaxOffsetSetByDomains> get serializer => _$helixMaxOffsetSetByDomainsSerializer;
+
+  @override
+  String short_description() => "set helix min offset";
 }
 
 abstract class HelixMinOffsetSetByDomainsAll
@@ -1610,6 +1695,9 @@ abstract class HelixMinOffsetSetByDomainsAll
 
   static Serializer<HelixMinOffsetSetByDomainsAll> get serializer =>
       _$helixMinOffsetSetByDomainsAllSerializer;
+
+  @override
+  String short_description() => "set helix min offset";
 }
 
 // when we want each helix to have its own max based on its domains
@@ -1623,6 +1711,9 @@ abstract class HelixMaxOffsetSetByDomainsAll
 
   static Serializer<HelixMaxOffsetSetByDomainsAll> get serializer =>
       _$helixMaxOffsetSetByDomainsAllSerializer;
+
+  @override
+  String short_description() => "set helix max offset";
 }
 
 // when we want the same max to be applied to all helices
@@ -1638,6 +1729,9 @@ abstract class HelixMaxOffsetSetByDomainsAllSameMax
 
   static Serializer<HelixMaxOffsetSetByDomainsAllSameMax> get serializer =>
       _$helixMaxOffsetSetByDomainsAllSameMaxSerializer;
+
+  @override
+  String short_description() => "set helix max offset";
 }
 
 abstract class HelixOffsetChangeAll
@@ -1655,6 +1749,9 @@ abstract class HelixOffsetChangeAll
   HelixOffsetChangeAll._();
 
   static Serializer<HelixOffsetChangeAll> get serializer => _$helixOffsetChangeAllSerializer;
+
+  @override
+  String short_description() => "change all helix offsets";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1778,6 +1875,9 @@ abstract class LoopoutLengthChange
   LoopoutLengthChange._();
 
   static Serializer<LoopoutLengthChange> get serializer => _$loopoutLengthChangeSerializer;
+
+  @override
+  String short_description() => "change loopout length";
 }
 
 abstract class LoopoutsLengthChange
@@ -1798,6 +1898,9 @@ abstract class LoopoutsLengthChange
   LoopoutsLengthChange._();
 
   static Serializer<LoopoutsLengthChange> get serializer => _$loopoutsLengthChangeSerializer;
+
+  @override
+  String short_description() => "change loopouts length";
 }
 
 abstract class ConvertCrossoverToLoopout
@@ -1825,6 +1928,9 @@ abstract class ConvertCrossoverToLoopout
   ConvertCrossoverToLoopout._();
 
   static Serializer<ConvertCrossoverToLoopout> get serializer => _$convertCrossoverToLoopoutSerializer;
+
+  @override
+  String short_description() => "convert crossover to loopout";
 }
 
 abstract class ConvertCrossoversToLoopouts
@@ -1846,6 +1952,9 @@ abstract class ConvertCrossoversToLoopouts
   ConvertCrossoversToLoopouts._();
 
   static Serializer<ConvertCrossoversToLoopouts> get serializer => _$convertCrossoversToLoopoutsSerializer;
+
+  @override
+  String short_description() => "convert crossovers to loopouts";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1862,6 +1971,9 @@ abstract class Nick with BuiltJsonSerializable, UndoableAction implements Built<
   Nick._();
 
   static Serializer<Nick> get serializer => _$nickSerializer;
+
+  @override
+  String short_description() => "nick";
 }
 
 abstract class Ligate with BuiltJsonSerializable, UndoableAction implements Built<Ligate, LigateBuilder> {
@@ -1873,6 +1985,9 @@ abstract class Ligate with BuiltJsonSerializable, UndoableAction implements Buil
   Ligate._();
 
   static Serializer<Ligate> get serializer => _$ligateSerializer;
+
+  @override
+  String short_description() => "ligate";
 }
 
 abstract class JoinStrandsByCrossover
@@ -1889,11 +2004,16 @@ abstract class JoinStrandsByCrossover
   JoinStrandsByCrossover._();
 
   static Serializer<JoinStrandsByCrossover> get serializer => _$joinStrandsByCrossoverSerializer;
+
+  @override
+  String short_description() => "add crossover";
 }
 
 // used to move a linker (crossover or loopout, stored as potential_crossover.linker)
 // so that one end stays fixed (stored in potential_crossover.dna_end_first_clicked)
 // while the other end moves to dna_end_second_click, editing two strands
+//
+// https://github.com/UC-Davis-molecular-computing/scadnano/issues/716
 abstract class MoveLinker
     with BuiltJsonSerializable, UndoableAction
     implements Action, Built<MoveLinker, MoveLinkerBuilder> {
@@ -1912,6 +2032,21 @@ abstract class MoveLinker
   MoveLinker._();
 
   static Serializer<MoveLinker> get serializer => _$moveLinkerSerializer;
+
+  @override
+  String short_description() {
+    Linker l = potential_crossover.linker;
+    String linker_description;
+    if (l is Crossover) {
+      linker_description = "crossover";
+    } else if (l is Loopout) {
+      linker_description = "loopout";
+    } else {
+      throw AssertionError("${potential_crossover.linker} is not crossover nor looput");
+    }
+
+    return "move ${linker_description}";
+  }
 }
 
 // JoinStrandsByCrossover cannot be in a BatchAction since the reducer for it looks up strands
@@ -1931,6 +2066,9 @@ abstract class JoinStrandsByMultipleCrossovers
 
   @memoized
   int get hashCode;
+
+  @override
+  String short_description() => "join strands by multiple crossovers";
 }
 
 abstract class StrandsReflect
@@ -1963,6 +2101,9 @@ abstract class ReplaceStrands
   ReplaceStrands._();
 
   static Serializer<ReplaceStrands> get serializer => _$replaceStrandsSerializer;
+
+  @override
+  String short_description() => "replace strands";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2027,6 +2168,9 @@ abstract class StrandCreateCommit
   StrandCreateCommit._();
 
   static Serializer<StrandCreateCommit> get serializer => _$strandCreateCommitSerializer;
+
+  @override
+  String short_description() => "create strand";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2220,6 +2364,9 @@ abstract class StrandsMoveCommit
   StrandsMoveCommit._();
 
   static Serializer<StrandsMoveCommit> get serializer => _$strandsMoveCommitSerializer;
+
+  @override
+  String short_description() => "move strands";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2278,6 +2425,9 @@ abstract class DomainsMoveCommit
   DomainsMoveCommit._();
 
   static Serializer<DomainsMoveCommit> get serializer => _$domainsMoveCommitSerializer;
+
+  @override
+  String short_description() => "move domains";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2367,6 +2517,9 @@ abstract class DNAEndsMoveCommit
   DNAEndsMoveCommit._();
 
   static Serializer<DNAEndsMoveCommit> get serializer => _$dNAEndsMoveCommitSerializer;
+
+  @override
+  String short_description() => "move DNA ends";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2437,6 +2590,9 @@ abstract class HelixGroupMoveCommit
   HelixGroupMoveCommit._();
 
   static Serializer<HelixGroupMoveCommit> get serializer => _$helixGroupMoveCommitSerializer;
+
+  @override
+  String short_description() => "move helix group";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2467,6 +2623,9 @@ abstract class AssignDNA
   AssignDNA._();
 
   static Serializer<AssignDNA> get serializer => _$assignDNASerializer;
+
+  @override
+  String short_description() => "assign DNA sequence";
 }
 
 /// used when other strands have DNA already assigned, and are bound to this one, and we want to
@@ -2492,6 +2651,9 @@ abstract class AssignDNAComplementFromBoundStrands
 
   @memoized
   int get hashCode;
+
+  @override
+  String short_description() => "add DNA complement from bound strands";
 }
 
 abstract class AssignDomainNameComplementFromBoundStrands
@@ -2516,6 +2678,9 @@ abstract class AssignDomainNameComplementFromBoundStrands
 
   @memoized
   int get hashCode;
+
+  @override
+  String short_description() => "assign domain name complement from bound strands";
 }
 
 abstract class AssignDomainNameComplementFromBoundDomains
@@ -2540,6 +2705,9 @@ abstract class AssignDomainNameComplementFromBoundDomains
 
   @memoized
   int get hashCode;
+
+  @override
+  String short_description() => "assign domain name complement from bound domains";
 }
 
 abstract class RemoveDNA
@@ -2557,6 +2725,9 @@ abstract class RemoveDNA
   RemoveDNA._();
 
   static Serializer<RemoveDNA> get serializer => _$removeDNASerializer;
+
+  @override
+  String short_description() => "remove DNA sequence";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2593,6 +2764,9 @@ abstract class InsertionAdd
   InsertionAdd._();
 
   static Serializer<InsertionAdd> get serializer => _$insertionAddSerializer;
+
+  @override
+  String short_description() => "add insertion";
 }
 
 abstract class InsertionLengthChange
@@ -2633,6 +2807,9 @@ abstract class InsertionLengthChange
   InsertionLengthChange._();
 
   static Serializer<InsertionLengthChange> get serializer => _$insertionLengthChangeSerializer;
+
+  @override
+  String short_description() => "change insertion length";
 }
 
 abstract class InsertionsLengthChange
@@ -2661,6 +2838,9 @@ abstract class InsertionsLengthChange
   InsertionsLengthChange._();
 
   static Serializer<InsertionsLengthChange> get serializer => _$insertionsLengthChangeSerializer;
+
+  @override
+  String short_description() => "change insertions length";
 }
 
 abstract class DeletionAdd
@@ -2682,6 +2862,9 @@ abstract class DeletionAdd
   DeletionAdd._();
 
   static Serializer<DeletionAdd> get serializer => _$deletionAddSerializer;
+
+  @override
+  String short_description() => "add deletion";
 }
 
 abstract class InsertionRemove
@@ -2715,6 +2898,9 @@ abstract class InsertionRemove
   InsertionRemove._();
 
   static Serializer<InsertionRemove> get serializer => _$insertionRemoveSerializer;
+
+  @override
+  String short_description() => "remove insertion";
 }
 
 abstract class DeletionRemove
@@ -2746,6 +2932,9 @@ abstract class DeletionRemove
   DeletionRemove._();
 
   static Serializer<DeletionRemove> get serializer => _$deletionRemoveSerializer;
+
+  @override
+  String short_description() => "remove deletion";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2767,6 +2956,9 @@ abstract class ScalePurificationIDTFieldsAssign
 
   static Serializer<ScalePurificationIDTFieldsAssign> get serializer =>
       _$scalePurificationIDTFieldsAssignSerializer;
+
+  @override
+  String short_description() => "assign scale purification IDT fields";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2784,6 +2976,9 @@ abstract class PlateWellIDTFieldsAssign
   PlateWellIDTFieldsAssign._();
 
   static Serializer<PlateWellIDTFieldsAssign> get serializer => _$plateWellIDTFieldsAssignSerializer;
+
+  @override
+  String short_description() => "assign plate well IDT fields";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2799,6 +2994,9 @@ abstract class PlateWellIDTFieldsRemove
   PlateWellIDTFieldsRemove._();
 
   static Serializer<PlateWellIDTFieldsRemove> get serializer => _$plateWellIDTFieldsRemoveSerializer;
+
+  @override
+  String short_description() => "remove plate well IDT fields";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2814,6 +3012,9 @@ abstract class IDTFieldsRemove
   IDTFieldsRemove._();
 
   static Serializer<IDTFieldsRemove> get serializer => _$iDTFieldsRemoveSerializer;
+
+  @override
+  String short_description() => "remove IDT fields";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2835,6 +3036,9 @@ abstract class ModificationAdd
   ModificationAdd._();
 
   static Serializer<ModificationAdd> get serializer => _$modificationAddSerializer;
+
+  @override
+  String short_description() => "add modification";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2856,6 +3060,9 @@ abstract class ModificationRemove
   ModificationRemove._();
 
   static Serializer<ModificationRemove> get serializer => _$modificationRemoveSerializer;
+
+  @override
+  String short_description() => "remove modification";
 }
 
 abstract class ModificationConnectorLengthSet
@@ -2903,6 +3110,9 @@ abstract class ModificationEdit
   ModificationEdit._();
 
   static Serializer<ModificationEdit> get serializer => _$modificationEditSerializer;
+
+  @override
+  String short_description() => "edit modification";
 }
 
 abstract class Modifications5PrimeEdit
@@ -2925,6 +3135,9 @@ abstract class Modifications5PrimeEdit
   Modifications5PrimeEdit._();
 
   static Serializer<Modifications5PrimeEdit> get serializer => _$modifications5PrimeEditSerializer;
+
+  @override
+  String short_description() => "edit 5' modifications";
 }
 
 abstract class Modifications3PrimeEdit
@@ -2947,6 +3160,9 @@ abstract class Modifications3PrimeEdit
   Modifications3PrimeEdit._();
 
   static Serializer<Modifications3PrimeEdit> get serializer => _$modifications3PrimeEditSerializer;
+
+  @override
+  String short_description() => "edit 3' modifications";
 }
 
 abstract class ModificationsInternalEdit
@@ -2969,6 +3185,9 @@ abstract class ModificationsInternalEdit
   ModificationsInternalEdit._();
 
   static Serializer<ModificationsInternalEdit> get serializer => _$modificationsInternalEditSerializer;
+
+  @override
+  String short_description() => "edit internal modifications";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2987,6 +3206,9 @@ abstract class GridChange
   GridChange._();
 
   static Serializer<GridChange> get serializer => _$gridChangeSerializer;
+
+  @override
+  String short_description() => "change grid";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3018,6 +3240,9 @@ abstract class GroupAdd
   GroupAdd._();
 
   static Serializer<GroupAdd> get serializer => _$groupAddSerializer;
+
+  @override
+  String short_description() => "create new helix group";
 }
 
 abstract class GroupRemove
@@ -3031,6 +3256,9 @@ abstract class GroupRemove
   GroupRemove._();
 
   static Serializer<GroupRemove> get serializer => _$groupRemoveSerializer;
+
+  @override
+  String short_description() => "remove group";
 }
 
 //FIXME: warning: should not change the grid through this action; dispatch GridChange instead
@@ -3051,6 +3279,9 @@ abstract class GroupChange
   GroupChange._();
 
   static Serializer<GroupChange> get serializer => _$groupChangeSerializer;
+
+  @override
+  String short_description() => "adjust helix group";
 }
 
 // moves existing helices to another existing group
@@ -3070,6 +3301,9 @@ abstract class MoveHelicesToGroup
 
   @memoized
   int get hashCode;
+
+  @override
+  String short_description() => "move helices to group";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3172,6 +3406,9 @@ abstract class ScaffoldSet
   ScaffoldSet._();
 
   static Serializer<ScaffoldSet> get serializer => _$scaffoldSetSerializer;
+
+  @override
+  String short_description() => "set scaffold";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3190,6 +3427,9 @@ abstract class StrandColorSet
   StrandColorSet._();
 
   static Serializer<StrandColorSet> get serializer => _$strandColorSetSerializer;
+
+  @override
+  String short_description() => "set strand color";
 }
 
 abstract class StrandPasteKeepColorSet
@@ -3237,6 +3477,9 @@ abstract class HelixPositionSet
   HelixPositionSet._();
 
   static Serializer<HelixPositionSet> get serializer => _$helixPositionSetSerializer;
+
+  @override
+  String short_description() => "set helix position";
 }
 
 abstract class HelixGridPositionSet
@@ -3254,6 +3497,9 @@ abstract class HelixGridPositionSet
   HelixGridPositionSet._();
 
   static Serializer<HelixGridPositionSet> get serializer => _$helixGridPositionSetSerializer;
+
+  @override
+  String short_description() => "set helix grid position";
 }
 
 // NOTE: not an undoable action because it merely triggers middleware to gather data to send actions
@@ -3282,6 +3528,9 @@ abstract class InlineInsertionsDeletions
   InlineInsertionsDeletions._();
 
   static Serializer<InlineInsertionsDeletions> get serializer => _$inlineInsertionsDeletionsSerializer;
+
+  @override
+  String short_description() => "inline insertions/deletions";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
