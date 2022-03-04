@@ -786,8 +786,6 @@ abstract class LoadDNAFile
 
   bool get unit_testing;
 
-  bool get delay;
-
   DNAFileType get dna_file_type;
 
   // set to null when getting file from another source such as localStorage
@@ -798,14 +796,12 @@ abstract class LoadDNAFile
   factory LoadDNAFile(
       {String content,
       String filename,
-      bool delay = false,
       bool write_local_storage = true,
       bool unit_testing = false,
       DNAFileType dna_file_type = DNAFileType.scadnano_file}) {
     return LoadDNAFile.from((b) => b
       ..content = content
       ..filename = filename
-      ..delay = delay
       ..write_local_storage = write_local_storage
       ..unit_testing = unit_testing
       ..dna_file_type = dna_file_type);
@@ -816,6 +812,43 @@ abstract class LoadDNAFile
   LoadDNAFile._();
 
   static Serializer<LoadDNAFile> get serializer => _$loadDNAFileSerializer;
+}
+
+abstract class PrepareToLoadDNAFile
+    with BuiltJsonSerializable, DesignChangingAction
+    implements Action, Built<PrepareToLoadDNAFile, PrepareToLoadDNAFileBuilder> {
+  String get content;
+
+  bool get write_local_storage;
+
+  bool get unit_testing;
+
+  DNAFileType get dna_file_type;
+
+  // set to null when getting file from another source such as localStorage
+  @nullable
+  String get filename;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory PrepareToLoadDNAFile(
+      {String content,
+      String filename,
+      bool write_local_storage = true,
+      bool unit_testing = false,
+      DNAFileType dna_file_type = DNAFileType.scadnano_file}) {
+    return PrepareToLoadDNAFile.from((b) => b
+      ..content = content
+      ..filename = filename
+      ..write_local_storage = write_local_storage
+      ..unit_testing = unit_testing
+      ..dna_file_type = dna_file_type);
+  }
+
+  factory PrepareToLoadDNAFile.from([void Function(PrepareToLoadDNAFileBuilder) updates]) = _$PrepareToLoadDNAFile;
+
+  PrepareToLoadDNAFile._();
+
+  static Serializer<PrepareToLoadDNAFile> get serializer => _$prepareToLoadDNAFileSerializer;
 }
 
 abstract class NewDesignSet

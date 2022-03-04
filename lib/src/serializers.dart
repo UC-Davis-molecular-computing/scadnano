@@ -109,6 +109,7 @@ part 'serializers.g.dart';
   ShowMismatchesSet,
   SetShowEditor,
   SaveDNAFile,
+  PrepareToLoadDNAFile,
   LoadDNAFile,
   DNAFileType,
   ExportCadnanoFile,
