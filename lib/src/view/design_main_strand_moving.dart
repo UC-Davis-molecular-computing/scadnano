@@ -120,6 +120,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
       if (substrand is Domain) {
         Domain domain = substrand;
         // substrand line
+        helix_svg_position_y = props.helix_idx_to_svg_position_map[helix.idx].y;
         var end_svg = helix.svg_base_pos(domain.offset_3p, domain.forward, helix_svg_position_y);
         path_cmds.add('L ${end_svg.x} ${end_svg.y}');
 
