@@ -216,6 +216,7 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
 
     var color = strand.color; //i==0?strand.color:null;
     var new_strand = Strand(substrands,
+        name: strand.name,
         dna_sequence: dna_sequence,
         idt: idt,
         is_scaffold: is_scaffold,

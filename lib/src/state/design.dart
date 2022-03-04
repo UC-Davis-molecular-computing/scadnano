@@ -2033,13 +2033,27 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       seen[Tuple2(curr_helix, curr_base)] = true;
       curr_helix = vstrands[old_helix][strand_type][old_base][2];
       curr_base = vstrands[old_helix][strand_type][old_base][3];
-      // Add crossover
-      // We have a crossover when we jump helix or when order is broken on same helix
-      // Or circular strand
+      /* Add crossover
+         We have a crossover when we jump helix or we stay on the same helix but either:
+         1. the order of curr_base vs old_base is opposite the direction of the strand
+         2. or abs(curr_base-old_base) > 1 (this accounts for test_crossover_same_helix)
+         3. or the strand is circular strand
+       */
+      // old code before fixing
+      // https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues/209
+      // if ((curr_helix != old_helix) ||
+      //     (!direction_forward && curr_base > old_base) ||
+      //     (direction_forward && curr_base < old_base) ||
+      //     (curr_helix == strand_5_end_helix && curr_base == strand_5_end_base)) {
+
       if ((curr_helix != old_helix) ||
-          (!direction_forward && curr_base > old_base) ||
-          (direction_forward && curr_base < old_base) ||
-          (curr_helix == strand_5_end_helix && curr_base == strand_5_end_base)) {
+          (((!direction_forward && curr_base > old_base) || (direction_forward && curr_base < old_base)) // 1
+              ||
+              ((curr_base - old_base).abs() > 1) // 2
+              ||
+              (curr_helix == strand_5_end_helix && curr_base == strand_5_end_base))) // 3
+
+      {
         if (direction_forward)
           end = old_base;
         else

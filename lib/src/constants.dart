@@ -8,11 +8,12 @@ import 'state/grid.dart';
 
 // WARNING: Do not modify line below, except for the version string
 //          (and also add new version string to scadnano_versions_to_link).
-const String CURRENT_VERSION = "0.17.0";
+const String CURRENT_VERSION = "0.17.1";
 const String INITIAL_VERSION = "0.1.0";
 
 // scadnano versions that we deploy so that older versions can be used.
 final scadnano_older_versions_to_link =[
+  "0.17.0",
   "0.16.3",
   "0.16.2",
   "0.16.1",
@@ -108,6 +109,8 @@ const default_domain_name_font_size = 10;
 const default_strand_name_font_size = 16;
 const default_major_tick_offset_font_size = 12;
 const default_major_tick_width_font_size = 8;
+
+const default_modification_connector_length = 4;
 
 const default_scadnano_file_extension = 'sc';
 const legacy_scadnano_file_extensions = ['dna', 'json'];
@@ -293,12 +296,14 @@ const mod_display_text_key = 'display_text';
 const mod_id_key = 'id';
 const mod_idt_text_key = 'idt_text';
 const mod_allowed_bases_key = 'allowed_bases';
+const mod_connector_length_key = 'connector_length';
 const modification_keys = [
   mod_location_key,
   mod_display_text_key,
   mod_id_key,
   mod_idt_text_key,
   mod_allowed_bases_key,
+  mod_connector_length_key,
 ];
 
 // IDTFields keys

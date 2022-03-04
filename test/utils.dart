@@ -66,17 +66,6 @@ AppState app_state_from_design(Design design, {bool in_browser = false}) {
   return state;
 }
 
-/// Returns an [AppState] based on design_json
-/// and initial DNA design state. This is used to generate
-/// expected app states by adding the initial action to
-/// the undo stack as well as changing changed_since_last_save
-/// to true.
-AppState expected_state_from_json_string(String design_json, Design initial_design) {
-  return app_state_from_design(Design.from_json(json.decode(design_json))).rebuild((b) => b
-    ..undo_redo.undo_stack.add(initial_design)
-    ..ui_state.changed_since_last_save = true);
-}
-
 Color DUMMY_COLOR = Color.rgb(0, 0, 0);
 
 Strand recolor_strand(Strand strand) {
@@ -137,11 +126,11 @@ void expect_ui_state_equal(AppUIState actual, AppUIState matcher) {
 }
 
 /// Asserts that [actual] stack matches [matcher] stack.
-void expect_stack_equal(BuiltList<Design> actual, BuiltList<Design> matcher) {
+void expect_stack_equal(BuiltList<UndoRedoItem> actual, BuiltList<UndoRedoItem> matcher) {
   expect(actual.length, matcher.length);
 
   for (int i = 0; i < actual.length; ++i) {
-    expect_design_equal(actual[i], matcher[i]);
+    expect_design_equal(actual[i].design, matcher[i].design);
   }
 }
 

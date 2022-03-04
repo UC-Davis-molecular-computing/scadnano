@@ -29,7 +29,7 @@ helix_positions_set_based_on_crossovers_middleware(
   next(action);
   if (action is actions.HelicesPositionsSetBasedOnCrossovers) {
     var all_actions = get_helix_position_and_roll_actions(store.state);
-    store.dispatch(actions.BatchAction(all_actions));
+    store.dispatch(actions.BatchAction(all_actions, "set helix coordinates based on crossovers"));
   }
 }
 

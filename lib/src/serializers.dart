@@ -6,6 +6,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:built_value/standard_json_plugin.dart';
 import 'package:color/color.dart';
 import 'package:scadnano/src/dna_file_type.dart';
+import 'package:scadnano/src/state/undo_redo.dart';
 import 'package:tuple/tuple.dart';
 
 import 'state/dna_assign_options.dart';
@@ -60,6 +61,7 @@ part 'serializers.g.dart';
 @SerializersFor([
   LoadingDialogHide,
   LoadingDialogShow,
+  ResetLocalStorage,
   DNAAssignOptions,
   MoveHelicesToGroup,
   ModificationType,
@@ -74,6 +76,7 @@ part 'serializers.g.dart';
   DomainNameMismatch,
   ShowDomainNameMismatchesSet,
   ModificationEdit,
+  ModificationConnectorLengthSet,
   Modifications5PrimeEdit,
   Modifications3PrimeEdit,
   ModificationsInternalEdit,
@@ -98,6 +101,7 @@ part 'serializers.g.dart';
   ReplaceStrands,
   ShowGridCoordinatesSideViewSet,
   ShowHelixCirclesMainViewSet,
+  ShowHelixComponentsMainViewSet,
   SelectModeToggle,
   SelectModesSet,
   SelectModesAdd,
@@ -328,6 +332,7 @@ part 'serializers.g.dart';
   AssignDomainNameComplementFromBoundDomains,
   // BrowserClipboard,
   // CLIClipboard,
+  UndoRedoItem,
 ])
 Serializers serializers = _$serializers;
 

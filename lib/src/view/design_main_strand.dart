@@ -99,9 +99,19 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
     // only store enough of helix svg positions for helices this strand has
     Map<int, Point<num>> helix_idx_to_svg_position_y_map_on_strand_unbuilt = {};
+    var helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map;
     for (var domain in props.strand.domains) {
-      helix_idx_to_svg_position_y_map_on_strand_unbuilt[domain.helix] =
-          props.helix_idx_to_svg_position_map[domain.helix];
+      int helix_idx = domain.helix;
+      if (props.side_selected_helix_idxs == null || props.side_selected_helix_idxs.contains(helix_idx)) {
+        // If props.side_selected_helix_idxs == null, then we are displaying all helices and need to
+        // include this helix. Otherwise we are not displaying unselected helices.
+        // In that case if props.side_selected_helix_idxs.contains(helix_idx) is false,
+        // then helix_idx will not even be in helix_idx_to_svg_position_map.
+        // since the memoized getter for AppState.helix_idx_to_svg_position_map skips it.
+        // But we won't need it anyway in that case.
+        var svg_pos = helix_idx_to_svg_position_map[helix_idx];
+        helix_idx_to_svg_position_y_map_on_strand_unbuilt[domain.helix] = svg_pos;
+      }
     }
     BuiltMap<int, Point<num>> helix_idx_to_svg_position_y_map_on_strand =
         helix_idx_to_svg_position_y_map_on_strand_unbuilt.build();
@@ -333,7 +343,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     Strand strand = props.strand;
     var selected_strands = app.state.ui_state.selectables_store.selected_strands;
     actions.Action action = batch_if_multiple_selected(
-        scaffold_set_strand_action_creator(!strand.is_scaffold), strand, selected_strands);
+        scaffold_set_strand_action_creator(!strand.is_scaffold), strand, selected_strands, "set scaffold");
     app.dispatch(action);
   }
 
@@ -757,7 +767,6 @@ PAGEHPLC : Dual PAGE & HPLC
     type - type of modification: five_prime, three_prime, internal (default)
     */
 
-    bool is_end = type != ModificationType.internal;
     int selected_index = 2;
 
     if (type == ModificationType.five_prime) {
@@ -771,14 +780,15 @@ PAGEHPLC : Dual PAGE & HPLC
     int modification_type_idx = 0;
     int display_text_idx = 1;
     int idt_text_idx = 2;
-    int index_of_dna_base_idx = 3;
-    // int id_idx = 4;
-    var items = List<DialogItem>.filled(4, null);
+    int connector_length_idx = 3;
+    int index_of_dna_base_idx = 4;
+    var items = List<DialogItem>.filled(5, null);
     items[modification_type_idx] = DialogRadio(
         label: 'modification type', options: {"3'", "5'", "internal"}, selected_idx: selected_index);
 
     String initial_display_text = "";
     String initial_idt_text = "";
+    int initial_connector_length = constants.default_modification_connector_length;
     // String initial_id = "";
 
     // if there is a last mod of this type, it auto-populates the dialog inputs
@@ -798,11 +808,13 @@ PAGEHPLC : Dual PAGE & HPLC
     if (last_mod != null) {
       initial_display_text = last_mod.display_text;
       initial_idt_text = last_mod.idt_text;
+      initial_connector_length = last_mod.connector_length;
       // initial_id = last_mod.id;
     }
 
     items[display_text_idx] = DialogText(label: 'display text', value: initial_display_text);
     items[idt_text_idx] = DialogText(label: 'idt text', value: initial_idt_text);
+    items[connector_length_idx] = DialogInteger(label: 'connector length', value: initial_connector_length);
     // items[id_idx] = DialogText(label: 'id', value: initial_id);
 
     items[index_of_dna_base_idx] = DialogInteger(label: 'index of DNA base', value: strand_dna_idx);
@@ -820,24 +832,30 @@ PAGEHPLC : Dual PAGE & HPLC
     String display_text = (results[display_text_idx] as DialogText).value;
     // String id = (results[id_idx] as DialogText).value;
     String idt_text = (results[idt_text_idx] as DialogText).value;
+    int connector_length = (results[connector_length_idx] as DialogInteger).value;
     int index_of_dna_base = (results[index_of_dna_base_idx] as DialogInteger).value;
 
     Modification mod;
     if (modification_type == "3'") {
       mod = Modification3Prime(
-          //id: id,
-          display_text: display_text,
-          idt_text: idt_text);
+        //id: id,
+        display_text: display_text,
+        idt_text: idt_text,
+        connector_length: connector_length,
+      );
     } else if (modification_type == "5'") {
       mod = Modification5Prime(
-          //id: id,
-          display_text: display_text,
-          idt_text: idt_text);
+        //id: id,
+        display_text: display_text,
+        idt_text: idt_text,
+        connector_length: connector_length,
+      );
     } else {
       mod = ModificationInternal(
         // id: id,
         display_text: display_text,
         idt_text: idt_text,
+        connector_length: connector_length,
       );
     }
 
@@ -867,7 +885,7 @@ PAGEHPLC : Dual PAGE & HPLC
               strand: strand_of_end_selected, modification: mod, strand_dna_idx: null);
           all_actions.add(new_action);
         }
-        action = actions.BatchAction(all_actions);
+        action = actions.BatchAction(all_actions, "add modifications");
       } else {
         print('WARNING: selectable_mods should have at least one element in it by this line');
         return;
@@ -906,8 +924,8 @@ PAGEHPLC : Dual PAGE & HPLC
   }
 }
 
-actions.UndoableAction batch_if_multiple_selected(
-    ActionCreator action_creator, Strand strand, BuiltSet<Strand> selected_strands) {
+actions.UndoableAction batch_if_multiple_selected(StrandActionCreator action_creator, Strand strand,
+    BuiltSet<Strand> selected_strands, String short_description) {
   actions.Action action;
   if (selected_strands.isEmpty || selected_strands.length == 1 && selected_strands.first == strand) {
     // set for single strand if nothing is selected, or exactly this strand is selected
@@ -917,21 +935,22 @@ actions.UndoableAction batch_if_multiple_selected(
     if (!selected_strands.contains(strand)) {
       selected_strands = selected_strands.rebuild((b) => b.add(strand));
     }
-    action = actions.BatchAction([for (var strand in selected_strands) action_creator(strand)]);
+    action =
+        actions.BatchAction([for (var strand in selected_strands) action_creator(strand)], short_description);
   }
   return action;
 }
 
-typedef ActionCreator = actions.UndoableAction Function(Strand strand);
+typedef StrandActionCreator = actions.UndoableAction Function(Strand strand);
 
-ActionCreator scaffold_set_strand_action_creator(bool is_scaffold) =>
+StrandActionCreator scaffold_set_strand_action_creator(bool is_scaffold) =>
     ((Strand strand) => actions.ScaffoldSet(strand: strand, is_scaffold: is_scaffold));
 
-ActionCreator remove_dna_strand_action_creator(bool remove_complements, bool remove_all) =>
+StrandActionCreator remove_dna_strand_action_creator(bool remove_complements, bool remove_all) =>
     ((Strand strand) =>
         actions.RemoveDNA(strand: strand, remove_complements: remove_complements, remove_all: remove_all));
 
-ActionCreator color_set_strand_action_creator(String color_hex) =>
+StrandActionCreator color_set_strand_action_creator(String color_hex) =>
     ((Strand strand) => actions.StrandColorSet(strand: strand, color: Color.hex(color_hex)));
 
 String tooltip_text(Strand strand) =>
@@ -1052,7 +1071,10 @@ Future<void> ask_for_remove_dna_sequence(Strand strand, BuiltSet<Strand> selecte
   bool remove_all = (results[1] as DialogCheckbox).value;
 
   actions.Action action = batch_if_multiple_selected(
-      remove_dna_strand_action_creator(remove_complements, remove_all), strand, selected_strands);
+      remove_dna_strand_action_creator(remove_complements, remove_all),
+      strand,
+      selected_strands,
+      "remove dna sequence");
   app.dispatch(action);
 }
 
@@ -1070,6 +1092,7 @@ Future<void> ask_for_color(Strand strand, BuiltSet<Strand> selected_strands) asy
   String color_hex = (results[0] as DialogText).value;
 
   actions.Action action =
-      batch_if_multiple_selected(color_set_strand_action_creator(color_hex), strand, selected_strands);
+      batch_if_multiple_selected(
+      color_set_strand_action_creator(color_hex), strand, selected_strands, "set strand color");
   app.dispatch(action);
 }

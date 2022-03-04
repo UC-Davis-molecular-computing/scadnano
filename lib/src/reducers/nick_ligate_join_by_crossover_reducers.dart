@@ -244,6 +244,7 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
     return strands_mutable.build();
   } else {
     Strand strand_5p = Strand(substrands_before,
+        name: strand.name,
         color: strand.color,
         dna_sequence: dna_before,
         idt: strand.idt,
@@ -265,6 +266,7 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
     }
 
     Strand strand_3p = Strand(substrands_after,
+        name: strand.name,
         color: strand.is_scaffold == true ? strand.color : null,
         dna_sequence: dna_after,
         is_scaffold: strand.is_scaffold,
@@ -405,7 +407,11 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
     var substrands_3p_new = strand_3p.substrands.toList()..removeLast();
     // take properties from existing strands
     var substrands_new = substrands_3p_new + [dom_new] + substrands_5p_new;
-    Strand new_strand = join_two_strands_with_substrands(strand_3p, strand_5p, substrands_new);
+
+    //TODO: figure out if strand_3p was the one clicked
+    bool first_clicked_is_3p = dna_end_clicked.is_3p;
+    Strand new_strand =
+        join_two_strands_with_substrands(strand_3p, strand_5p, substrands_new, first_clicked_is_3p);
 
     return swap_old_strands_for_new(strands, [strand_left, strand_right], [new_strand]);
   }
@@ -578,22 +584,22 @@ BuiltList<Strand> join_strands_by_crossover_reducer(
 
   // "from" strand is the one with the 3' end adjacent to the new crossover
   // (in 5' to 3' direction, this crossover goes from one strand to another)
-  bool first_clicked_is_from = end_first_click.is_3p;
-  DNAEnd end_from = first_clicked_is_from ? end_first_click : end_second_click;
-  DNAEnd end_to = first_clicked_is_from ? end_second_click : end_first_click;
-  Strand strand_from = state.design.end_to_strand(end_from);
-  Strand strand_to = state.design.end_to_strand(end_to);
+  bool first_clicked_is_3p = end_first_click.is_3p;
+  DNAEnd end_3p = first_clicked_is_3p ? end_first_click : end_second_click;
+  DNAEnd end_5p = first_clicked_is_3p ? end_second_click : end_first_click;
+  Strand strand_3p = state.design.end_to_strand(end_3p);
+  Strand strand_5p = state.design.end_to_strand(end_5p);
 
   // if joining strand to itself by crossover, just make it circular
-  return _join_strands_with_crossover(strand_from, strand_to, strands, first_clicked_is_from);
+  return _join_strands_with_crossover(strand_3p, strand_5p, strands, first_clicked_is_3p);
 }
 
 // This is a common function used by actions JoinStrandsByCrossover and JoinStrandsByMultipleCrossovers
 BuiltList<Strand> _join_strands_with_crossover(
-    Strand strand_from, Strand strand_to, BuiltList<Strand> strands, bool first_clicked_is_3p) {
+    Strand strand_3p, Strand strand_5p, BuiltList<Strand> strands, bool first_clicked_is_3p) {
   // if joining strand to itself by crossover, just make it circular
-  if (strand_from == strand_to) {
-    var strand = strand_from;
+  if (strand_3p == strand_5p) {
+    var strand = strand_3p;
     int strand_idx = strands.indexOf(strand);
     var strands_mutable = strands.toList();
     var new_strand = strand.rebuild((b) => b..circular = true);
@@ -602,81 +608,89 @@ BuiltList<Strand> _join_strands_with_crossover(
     return strands_mutable.toBuiltList();
   }
 
-  Strand strand_first_clicked = first_clicked_is_3p ? strand_from : strand_to;
-  Strand strand_second_clicked = first_clicked_is_3p ? strand_to : strand_from;
-  List<Substrand> substrands_from = strand_from.substrands.toList();
-  List<Substrand> substrands_to = strand_to.substrands.toList();
+  List<Substrand> substrands_3p = strand_3p.substrands.toList();
+  List<Substrand> substrands_5p = strand_5p.substrands.toList();
 
   // change substrand data
-  int last_idx_from = substrands_from.length - 1;
-  Domain last_domain_from = substrands_from[last_idx_from];
-  Domain first_domain_to = substrands_to[0];
-  last_domain_from = last_domain_from.rebuild((b) => b..is_last = false);
-  first_domain_to = first_domain_to.rebuild((b) => b
+  int last_idx_3p = substrands_3p.length - 1;
+  Domain last_domain_3p = substrands_3p[last_idx_3p];
+  Domain first_domain_5p = substrands_5p[0];
+  last_domain_3p = last_domain_3p.rebuild((b) => b..is_last = false);
+  first_domain_5p = first_domain_5p.rebuild((b) => b
     ..is_first = false
-    ..strand_id = strand_to.id);
+    ..strand_id = strand_5p.id);
 
   // put back into Substrand lists
-  substrands_from[last_idx_from] = last_domain_from;
-  substrands_to[0] = first_domain_to;
+  substrands_3p[last_idx_3p] = last_domain_3p;
+  substrands_5p[0] = first_domain_5p;
 
-  List<Substrand> substrands_new = substrands_from + substrands_to;
+  List<Substrand> substrands_new = substrands_3p + substrands_5p;
 
   // create new Strand
-  Strand new_strand = join_two_strands_with_substrands(
-      strand_first_clicked, strand_second_clicked, substrands_new,
-      dna_in_order_1_2: first_clicked_is_3p);
+  Strand new_strand =
+      join_two_strands_with_substrands(strand_3p, strand_5p, substrands_new, first_clicked_is_3p);
 
-  return swap_old_strands_for_new(strands, [strand_from, strand_to], [new_strand]);
+  return swap_old_strands_for_new(strands, [strand_3p, strand_5p], [new_strand]);
 }
 
 /// Joins two Strands using specified list of Substrands. Used to merge properties in a consistent way.
-/// Defaults to using strand1 for properties, but lets is_scaffold property override.
+/// properties_from_strand_3p indicates whether to use strand_3p for properties,
+/// but lets is_scaffold property override this.
 /// Note that it *ignores* the substrands in strand1 and strand2.
-/// Set dna_in_order_1_2=false to reverse the order of DNA concatenation.
-Strand join_two_strands_with_substrands(Strand strand1, Strand strand2, List<Substrand> substrands_new,
-    {bool dna_in_order_1_2 = true}) {
-  var color = strand1.color;
-  var idt = strand1.idt;
-  if (strand2.is_scaffold == true) {
-    color = strand2.color;
-    idt = strand2.idt;
+/// Set properties_from_strand_3p
+Strand join_two_strands_with_substrands(
+    Strand strand_3p, Strand strand_5p, List<Substrand> substrands_new, bool properties_from_strand_3p) {
+  // if one is scaffold and the other isn't, take properties from scaffold
+  if (strand_3p.is_scaffold && !strand_5p.is_scaffold) {
+    properties_from_strand_3p = true;
+  } else if (!strand_3p.is_scaffold && strand_5p.is_scaffold) {
+    properties_from_strand_3p = false;
   }
 
+  //TODO: use properties_from_strand_3p to determine where to get properties
+  var color = properties_from_strand_3p ? strand_3p.color : strand_5p.color;
+  var idt = properties_from_strand_3p ?  strand_3p.idt : strand_5p.idt;
+
+  // strand_3p is strand whose 3' end is being joined to the other strand's 5' end
   var dna = null;
-  var strand_5p = strand1;
-  var strand_3p = strand2;
-  if (!dna_in_order_1_2) {
-    strand_5p = strand2;
-    strand_3p = strand1;
-  }
-  if (strand_5p.dna_sequence == null && strand_3p.dna_sequence == null) {
+  if (strand_3p.dna_sequence == null && strand_5p.dna_sequence == null) {
     dna = null;
-  } else if (strand_5p.dna_sequence != null && strand_3p.dna_sequence != null) {
-    dna = strand_5p.dna_sequence + strand_3p.dna_sequence;
-  } else if (strand_5p.dna_sequence == null) {
-    dna = constants.DNA_BASE_WILDCARD * strand_5p.dna_length + strand_3p.dna_sequence;
+  } else if (strand_3p.dna_sequence != null && strand_5p.dna_sequence != null) {
+    dna = strand_3p.dna_sequence + strand_5p.dna_sequence;
   } else if (strand_3p.dna_sequence == null) {
-    dna = strand_5p.dna_sequence + constants.DNA_BASE_WILDCARD * strand_3p.dna_length;
+    dna = constants.DNA_BASE_WILDCARD * strand_3p.dna_length + strand_5p.dna_sequence;
+  } else if (strand_5p.dna_sequence == null) {
+    dna = strand_3p.dna_sequence + constants.DNA_BASE_WILDCARD * strand_5p.dna_length;
   }
 
   // include 5' mod from 5' strand and 3' mod from 3' strand.
-  var mod_5p = strand_5p.modification_5p;
-  var mod_3p = strand_3p.modification_3p;
+  var mod_5p = strand_3p.modification_5p;
+  var mod_3p = strand_5p.modification_3p;
 
   // put internal mods from both on new strand
-  var mods_int = strand_5p.modifications_int.toMap();
-  for (int idx in strand_3p.modifications_int.keys) {
-    var mod_3p = strand_3p.modifications_int[idx];
-    int new_idx = strand_5p.dna_length + idx;
+  var mods_int = strand_3p.modifications_int.toMap();
+  for (int idx in strand_5p.modifications_int.keys) {
+    var mod_3p = strand_5p.modifications_int[idx];
+    int new_idx = strand_3p.dna_length + idx;
     mods_int[new_idx] = mod_3p;
   }
 
+  String strand_name;
+
+  if (strand_3p.name != null && strand_5p.name == null) {
+    strand_name = strand_3p.name;
+  } else if (strand_3p.name == null && strand_5p.name != null) {
+    strand_name = strand_5p.name;
+  } else if (strand_3p.name != null && strand_5p.name != null) {
+    strand_name = properties_from_strand_3p ? strand_3p.name : strand_5p.name;
+  }
+
   Strand new_strand = Strand(substrands_new,
+      name: strand_name,
       color: color,
       dna_sequence: dna,
       idt: idt,
-      is_scaffold: strand1.is_scaffold || strand2.is_scaffold,
+      is_scaffold: strand_3p.is_scaffold || strand_5p.is_scaffold,
       modification_5p: mod_5p,
       modification_3p: mod_3p,
       modifications_int: mods_int);

@@ -9,22 +9,24 @@ mixin MenuDropdownRightPropsMixin on UiProps {
   String tooltip;
   String title;
   String id;
+  bool disabled;
 }
 
 class MenuDropdownRightProps = UiProps with MenuDropdownRightPropsMixin;
 
 class MenuDropdownRightComponent extends UiComponent2<MenuDropdownRightProps> {
   @override
+  get defaultProps => (newProps()..disabled = false);
+
+  @override
   render() {
-    var menu_dropdown_right = DropdownButton(
-      {
-        'title': props.title,
-        'drop': 'right',
-        'id': props.id,
-        'variant': 'none'
-      },
-      props.children
-    );
+    var menu_dropdown_right = DropdownButton({
+      'title': props.title,
+      'drop': 'right',
+      'id': props.id,
+      'variant': 'none',
+      'disabled': props.disabled,
+    }, props.children);
 
     if (props.tooltip == null) {
       return menu_dropdown_right;

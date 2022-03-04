@@ -32,9 +32,11 @@ If you find scadnano useful in a scientific project, please cite its associated 
 * [Assigning DNA](#assigning-dna)
 * [Exporting to cadnano](#exporting-to-cadnano)
 * [How to design structures manually using scadnano](#how-to-design-structures-manually-using-scadnano)
+* [Reset local settings](#reset-local-settings)
 * [Running offline](#running-offline)
 * [Performance tips](#performance-tips)
 * [Contributing](#contributing)
+
 
 ## Overview
 
@@ -741,6 +743,11 @@ One downside is that a complete novice, who has no idea where staples ought to g
 However, numerous example designs are provided to learn what good staple design looks like. 
 
 See the [tutorial](tutorial/tutorial.md) for detailed instructions on creating a 24-helix DNA origami rectangle using the scadnano web interface.
+
+
+## Reset local settings
+You may need to reset the local settings, in particular to remove a locally stored design that is causing a problem loading. For instructions, see the section "Reset local settings" [here](https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/v0.17.1). 
+
 
 
 ## Running offline
