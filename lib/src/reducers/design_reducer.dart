@@ -68,6 +68,7 @@ GlobalReducer<Design, AppState> design_whole_global_reducer = combineGlobalReduc
   TypedGlobalReducer<Design, AppState, actions.HelixRemoveAllSelected>(
       helix_remove_all_selected_design_global_reducer),
   TypedGlobalReducer<Design, AppState, actions.HelixGroupMoveCommit>(helix_group_move_commit_global_reducer),
+  TypedGlobalReducer<Design, AppState, actions.GroupDuplicate>(duplicate_group_groups_reducer),
 ]);
 
 // need to operate on Design so we can re-set helix svg coordinates

@@ -89,6 +89,7 @@ part 'serializers.g.dart';
   HelixGroupMoveCommit,
   GroupDisplayedChange,
   GroupAdd,
+  GroupDuplicate,
   GroupRemove,
   GroupChange,
   LocalStorageDesignOption,

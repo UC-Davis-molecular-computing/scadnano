@@ -92,6 +92,10 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
         ..on_click = ((ev) => add_new_group(props.groups.keys))
         ..key = 'new-group')(),
       (MenuDropdownItem()
+        ..display = 'duplicate group'
+        ..on_click = ((ev) => add_duplicate_group())
+        ..key = 'duplicate-group')(),
+      (MenuDropdownItem()
         ..display = 'remove current group'
         ..disabled = props.groups.length == 1
         ..on_click = ((ev) => app.dispatch(actions.GroupRemove(name: props.displayed_group_name)))
@@ -261,5 +265,9 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
 
     app.dispatch(
         actions.GroupChange(old_name: props.displayed_group_name, new_name: new_name, new_group: new_group));
+  }
+
+  add_duplicate_group() {
+    app.dispatch(actions.GroupDuplicate(name: 'Copy of ' + props.displayed_group_name, groupToDuplicate: props.displayed_group_name));
   }
 }

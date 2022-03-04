@@ -1,6 +1,7 @@
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/app_state.dart';
+import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/helix.dart';
 
 import '../state/group.dart';
@@ -99,4 +100,55 @@ BuiltMap<String, HelixGroup> move_helices_to_group_groups_reducer(BuiltMap<Strin
   groups[to_group_name] = to_group;
 
   return groups.build();
+}
+
+
+Design duplicate_group_groups_reducer(Design design, AppState state, actions.GroupDuplicate action) {
+  var groups = state.design.groups.toMap();
+  var group_original = groups[action.groupToDuplicate];
+  var new_group_name = action.name;
+
+  var helices_original = design.helices_in_group(action.groupToDuplicate);
+  
+  Map<int, Helix> new_helices = design.helices.toMap();
+
+  int num_helices = design.helices.length;
+  int helix_idx;
+  List<int> new_helices_view_order = [];
+
+  if (num_helices > 0) {
+    helix_idx = design.helices.keys.max + 1;
+  } else {
+    helix_idx = 0;
+  }
+  for (var helix in helices_original.values) {    
+    Helix new_helix = Helix(
+      idx: helix_idx,
+      grid: helix.grid,
+      geometry: helix.geometry,
+      grid_position: helix.grid_position,
+      roll: helix.roll,
+      min_offset: helix.min_offset,
+      major_tick_start: helix.major_tick_start,
+      max_offset: helix.max_offset,
+      position: helix.position_,
+      group: new_group_name
+    );
+    new_helices[helix_idx] = new_helix;
+    new_helices_view_order.add(helix_idx);
+    helix_idx++;
+  }
+  
+  var new_group = HelixGroup(
+    helices_view_order: new_helices_view_order,
+    grid: group_original.grid,
+    position: group_original.position,
+    pitch: group_original.pitch,
+    yaw: group_original.yaw,
+    roll: group_original.roll,
+  );
+
+  groups[new_group_name] = new_group;
+
+  return design.rebuild((d) => d..helices.replace(new_helices)..groups.replace(groups));
 }

@@ -3245,6 +3245,24 @@ abstract class GroupAdd
   String short_description() => "create new helix group";
 }
 
+abstract class GroupDuplicate
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<GroupDuplicate, GroupDuplicateBuilder> {
+  String get name;
+
+  String get groupToDuplicate;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory GroupDuplicate({String name, String groupToDuplicate}) = _$GroupDuplicate._;
+
+  GroupDuplicate._();
+
+  static Serializer<GroupDuplicate> get serializer => _$groupDuplicateSerializer;
+
+  @override
+  String short_description() => "duplicate helix group";
+}
+
 abstract class GroupRemove
     with BuiltJsonSerializable, UndoableAction
     implements Built<GroupRemove, GroupRemoveBuilder> {
