@@ -370,7 +370,6 @@ class InsertionDeletionRecord {
 
 Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop_reducer(
     Strand strand, DNAEndsMove all_move, Design design) {
-  String old_sequence = strand.dna_sequence;
   List<InsertionDeletionRecord> records = [];
   List<Substrand> substrands = strand.substrands.toList();
 
@@ -416,9 +415,6 @@ Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop
     substrands[i] = new_substrand;
   }
   strand = strand.rebuild((b) => b..substrands.replace(substrands));
-  if (old_sequence != null) {
-    strand = strand.set_dna_sequence(old_sequence);
-  }
   return Tuple2<Strand, List<InsertionDeletionRecord>>(strand, records);
 }
 
