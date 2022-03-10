@@ -105,44 +105,74 @@ abstract class Strand
     }
   }
 
-  /// Sets up data such as DNA sequence and part strand_id's
-  /// FIXME: remove duplicated code between initialize() and _finalizeBuilder
   Strand initialize() {
     Strand strand = this;
 
-    String id = strand.id;
-    int idx = 0;
-    bool updated = false;
-    var substrands_new = strand.substrands.toBuilder();
-    for (var ss in strand.substrands) {
-      if (ss is Loopout) {
-        var loopout = ss.rebuild((l) => l
-          ..is_scaffold = is_scaffold
-          ..strand_id = id
-          ..prev_domain_idx = idx - 1
-          ..next_domain_idx = idx + 1);
-        substrands_new[idx] = loopout;
-        updated = true;
-      } else if (ss is Domain) {
-        bool is_first = idx == 0;
-        bool is_last = idx == strand.substrands.length - 1;
-        var domain = ss.rebuild((l) => l
-          ..strand_id = id
-          ..is_first = is_first
-          ..is_last = is_last
-          ..is_scaffold = is_scaffold);
-        substrands_new[idx] = domain;
-        updated = true;
-      }
-      idx++;
-    }
-    if (updated) {
-      strand = strand.rebuild((s) => s..substrands = substrands_new);
-    }
+    strand = _rebuild_substrands_with_new_fields_based_on_strand(strand);
+    strand = _rebuild_substrands_with_new_dna_sequences_based_on_strand(strand);
 
     _ensure_loopouts_legal();
 
     return strand;
+  }
+
+  /// Sets up data such as DNA sequence and part strand_id's
+  /// FIXME: remove duplicated code between initialize() and _finalizeBuilder
+  Strand _rebuild_substrands_with_new_fields_based_on_strand(Strand strand) {
+    int idx = 0;
+    var substrands_new = strand.substrands.toBuilder();
+    for (var ss in strand.substrands) {
+      var new_ss;
+      if (ss is Loopout) {
+        new_ss = _rebuild_loopout_with_new_fields_based_on_strand(ss, idx, strand);
+      } else if (ss is Domain) {
+        new_ss = _rebuild_domain_with_new_fields_based_on_strand(ss, idx, strand);
+      }
+      assert(new_ss != null);
+      substrands_new[idx] = new_ss;
+      idx++;
+    }
+    return strand.rebuild((s) => s..substrands = substrands_new);
+  }
+
+  _rebuild_domain_with_new_fields_based_on_strand(Domain domain, int idx, Strand strand) {
+    bool is_first = idx == 0;
+    bool is_last = idx == strand.substrands.length - 1;
+    return domain.rebuild((l) => l
+      ..strand_id = strand.id
+      ..is_first = is_first
+      ..is_last = is_last
+      ..is_scaffold = is_scaffold);
+  }
+
+  _rebuild_loopout_with_new_fields_based_on_strand(Loopout loopout, int idx, Strand strand) {
+    return loopout.rebuild((l) => l
+      ..is_scaffold = is_scaffold
+      ..strand_id = strand.id
+      ..prev_domain_idx = idx - 1
+      ..next_domain_idx = idx + 1);
+  }
+
+  Strand _rebuild_substrands_with_new_dna_sequences_based_on_strand(Strand strand) {
+    bool strand_has_sequence = _at_least_one_substrand_has_dna_sequence(strand);
+    if (!strand_has_sequence) {
+      return strand;
+    }
+    List<Substrand> new_substrands = [];
+    for (var substrand in strand.substrands) {
+      new_substrands.add(_rebuild_substrand_with_dna_sequence_to_match_its_length(substrand));
+    }
+    return strand.rebuild((b) => b.substrands.replace(new_substrands));
+  }
+
+  bool _at_least_one_substrand_has_dna_sequence(Strand strand) {
+    return strand.substrands.any((ss) => ss.dna_sequence != null);
+  }
+
+  Substrand _rebuild_substrand_with_dna_sequence_to_match_its_length(Substrand substrand) {
+    String old_sequence = substrand.dna_sequence == null ? '' : substrand.dna_sequence;
+    return substrand
+        .set_dna_sequence(_trim_or_pad_sequence_to_desired_length(old_sequence, substrand.dna_length()));
   }
 
   _ensure_loopouts_legal() {
@@ -594,14 +624,7 @@ abstract class Strand
 
   /// Sets DNA sequence of strand (but does not assign complement to any Strands bound to it).
   Strand set_dna_sequence(String dna_sequence_new) {
-    // truncate dna_sequence_new if too long; pad with ?'s if to short
-    int seq_len = dna_sequence_new.length;
-    int dna_len_strand = this.dna_length;
-    if (seq_len > dna_len_strand) {
-      dna_sequence_new = dna_sequence_new.substring(0, dna_len_strand);
-    } else if (seq_len < dna_len_strand) {
-      dna_sequence_new = dna_sequence_new + (constants.DNA_BASE_WILDCARD * (dna_len_strand - seq_len));
-    }
+    dna_sequence_new = _trim_or_pad_sequence_to_desired_length(dna_sequence_new, this.dna_length);
 
     int start_idx_ss = 0;
     List<Substrand> substrands_new = [];
@@ -615,6 +638,17 @@ abstract class Strand
     }
 
     return rebuild((strand) => strand..substrands.replace(substrands_new));
+  }
+
+  String _trim_or_pad_sequence_to_desired_length(String dna_sequence_new, int desired_length) {
+    // truncate dna_sequence_new if too long; pad with ?'s if to short
+    int seq_len = dna_sequence_new.length;
+    if (seq_len > desired_length) {
+      dna_sequence_new = dna_sequence_new.substring(0, desired_length);
+    } else if (seq_len < desired_length) {
+      dna_sequence_new = dna_sequence_new + (constants.DNA_BASE_WILDCARD * (desired_length - seq_len));
+    }
+    return dna_sequence_new;
   }
 
   static Strand from_json(Map<String, dynamic> json_map) {

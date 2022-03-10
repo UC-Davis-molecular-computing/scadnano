@@ -4247,7 +4247,7 @@ main() {
           r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
           {
-            "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
+            "sequence": "AGTCAGTCAGTCAGTCAATT?GACTGACTGACTGACT",
             "domains": [
               {"helix": 0, "forward": true,  "start": 0, "end": 16},
               {"loopout": 5},
@@ -4270,7 +4270,7 @@ main() {
           r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
           {
-            "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
+            "sequence": "AGTCAGTCAGTCAGTCAATGACTGACTGACTGACT",
             "domains": [
               {"helix": 0, "forward": true,  "start": 0, "end": 16},
               {"loopout": 3},
@@ -4304,7 +4304,7 @@ main() {
           r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
           {
-            "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
+            "sequence": "AGTCAGTCAGTCAGTCGACTGACTGACTGACT",
             "domains": [
               {"helix": 0, "forward": true,  "start": 0, "end": 16},
               {"helix": 0, "forward": false,  "start": 0, "end": 16}

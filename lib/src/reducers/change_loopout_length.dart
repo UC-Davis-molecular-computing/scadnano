@@ -130,7 +130,6 @@ BuiltList<Strand> loopouts_length_change_reducer(
 }
 
 Strand loopout_length_change_reducer(Strand strand, actions.LoopoutLengthChange action) {
-  var old_dna_sequence = strand.dna_sequence;
   int loopout_idx = strand.substrands.indexOf(action.loopout);
   var substrands_builder = strand.substrands.toBuilder();
   if (action.length > 0) {
@@ -142,8 +141,5 @@ Strand loopout_length_change_reducer(Strand strand, actions.LoopoutLengthChange 
     substrands_builder.removeAt(loopout_idx);
   }
   strand = strand.rebuild((s) => s..substrands = substrands_builder);
-  if (old_dna_sequence != null) {
-    strand = strand.set_dna_sequence(old_dna_sequence);
-  }
   return strand;
 }
