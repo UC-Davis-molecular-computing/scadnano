@@ -228,13 +228,8 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
 
   if (strand.circular) {
     var substrands = substrands_after + substrands_before;
-    String dna_sequence = null;
-    if (strand.dna_sequence != null) {
-      dna_sequence = dna_before + dna_after;
-    }
     var strand_new = strand.rebuild((b) => b
       ..substrands.replace(substrands)
-      ..dna_sequence = dna_sequence
       ..circular = false);
     strand_new = strand_new.initialize();
 
@@ -649,7 +644,7 @@ Strand join_two_strands_with_substrands(
 
   //TODO: use properties_from_strand_3p to determine where to get properties
   var color = properties_from_strand_3p ? strand_3p.color : strand_5p.color;
-  var idt = properties_from_strand_3p ?  strand_3p.idt : strand_5p.idt;
+  var idt = properties_from_strand_3p ? strand_3p.idt : strand_5p.idt;
 
   // strand_3p is strand whose 3' end is being joined to the other strand's 5' end
   var dna = null;

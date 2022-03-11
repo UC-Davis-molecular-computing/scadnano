@@ -4258,7 +4258,7 @@ main() {
           r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
           {
-            "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
+            "sequence": "AGTCAGTCAGTCAGTCAATT?GACTGACTGACTGACT",
             "domains": [
               {"helix": 0, "forward": true,  "start": 0, "end": 16},
               {"loopout": 5},
@@ -4281,7 +4281,7 @@ main() {
           r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
           {
-            "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
+            "sequence": "AGTCAGTCAGTCAGTCAATGACTGACTGACTGACT",
             "domains": [
               {"helix": 0, "forward": true,  "start": 0, "end": 16},
               {"loopout": 3},
@@ -4315,7 +4315,7 @@ main() {
           r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
           {
-            "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
+            "sequence": "AGTCAGTCAGTCAGTCGACTGACTGACTGACT",
             "domains": [
               {"helix": 0, "forward": true,  "start": 0, "end": 16},
               {"helix": 0, "forward": false,  "start": 0, "end": 16}
@@ -7579,6 +7579,96 @@ main() {
 
     expect(new_helix0_svg.y, closeTo(helix0_svg.y, 0.001));
     expect(new_helix2_svg.y, closeTo(helix1_svg.y, 0.001));
+  });
+
+  // Setup:
+  //      domain1
+  //     AAAAAAAA
+  //   0 [-------
+  //            |
+  //   1 <-------
+  //     GGGGGGGG
+  //     domain2
+  //
+  // Action: Move 5' end to the right
+  //
+  // Expected Result:
+  //     domain1
+  //         AAAA
+  //   0     [---
+  //            |
+  //   1 <-------
+  //     GGGGGGGG
+  //     domain2
+  //
+  //   domain2 sequence should remain unchanged, domain1 should trim
+  test('dna_ends_move_should_change_domain_sequence_locally__trim', () {
+    // Setup:
+    Helix helix0 = Helix(idx: 0, grid_position: GridPosition(0, 0), max_offset: 8);
+    Helix helix1 = Helix(idx: 1, grid_position: GridPosition(0, 1), max_offset: 8);
+    Design design = Design(helices: [helix0, helix1], grid: Grid.square)
+        .strand(0, 0)
+        .to(8)
+        .cross(1)
+        .to(0)
+        .with_sequence('AAAAAAAAGGGGGGGG')
+        .commit();
+    AppState state = app_state_from_design(design);
+
+    // Action:
+    DNAEndMove move =
+        DNAEndMove(dna_end: design.strands.first.dnaend_5p, lowest_offset: 0, highest_offset: 8);
+    DNAEndsMove dna_ends_move =
+        DNAEndsMove(moves: [move].build(), original_offset: 0, current_offset: 4, helix: helix0);
+    AppState new_state = app_state_reducer(state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
+
+    // Expected Result:
+    expect(new_state.design.strands.first.dna_sequence, 'AAAAGGGGGGGG');
+  });
+
+  // Setup:
+  //      domain1
+  //     AAAAAAAA
+  //   0 ------->
+  //     |
+  //   1 -------]
+  //     GGGGGGGG
+  //     domain2
+  //
+  // Action: Move 5' end to the right
+  //
+  // Expected Result:
+  //      domain1
+  //     AAAAAAAA
+  //   0 ------->
+  //     |
+  //   1 ----------]
+  //     ???GGGGGGGG
+  //     domain2
+  //
+  //   domain1 sequence should remain unchanged, domain2 should pad
+  test('dna_ends_move_should_change_domain_sequence_locally__pad', () {
+    // Setup:
+    Helix helix0 = Helix(idx: 0, grid_position: GridPosition(0, 0), max_offset: 16);
+    Helix helix1 = Helix(idx: 1, grid_position: GridPosition(0, 1), max_offset: 16);
+    Design design = Design(helices: [helix0, helix1], grid: Grid.square)
+        .strand(1, 8)
+        .to(0)
+        .cross(0)
+        .to(8)
+        .with_sequence('GGGGGGGGAAAAAAAA')
+        .commit();
+    AppState state = app_state_from_design(design);
+
+    // Action:
+    DNAEndMove move =
+        DNAEndMove(dna_end: design.strands.first.dnaend_5p, lowest_offset: 0, highest_offset: 16);
+    DNAEndsMove dna_ends_move =
+        DNAEndsMove(moves: [move].build(), original_offset: 7, current_offset: 10, helix: helix1);
+    AppState new_state = app_state_reducer(state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
+
+    // Expected Result:
+    expect(new_state.design.strands.first.dna_sequence, 'GGGGGGGG???AAAAAAAA');
   });
 }
 
