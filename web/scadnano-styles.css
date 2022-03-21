@@ -861,6 +861,13 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
     white-space: nowrap;
 }
 
+/* Shift dropdown upwards when bottom goes beyond screen. offset-top and overflow-y variables are given by inline css of parent React components */
+.dropdown-menu {
+    transform: translateY(min(0px, calc(-1 * (var(--offset-top, 0) + 100% - 95vh))));
+    max-height: 90vh;
+    overflow-y: var(--overflow-y, visible);
+}
+
 
 /************************************************
 ** BEGIN Dropdown Right
