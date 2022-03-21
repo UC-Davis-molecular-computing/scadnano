@@ -98,15 +98,13 @@ To begin the design, we need to create helices. Click "(p)encil" under Edit mode
 
 Now click in the side view to create a helix. 
 
-You may notice that it will be zoomed in very far:
+You may notice that it will be zoomed in very far (see issue https://github.com/UC-Davis-molecular-computing/scadnano/issues/648):
 
 ![](images/one_helix_zoomed_in.png)
 
 Use the mouse wheel or two finger scroll in both the side view on the left and the main view in the middle, to zoom out, and click and drag the background to pan the view left/right/up/down:
 
 ![](images/one_helix_initial.png)
-
-As you are editing the design, you may notice that the pan feature stops working, i.e., you click and drag the background, but it no longer moves. This is a known bug that is notoriously difficult to reproduce (and therefore difficult to diagnose and fix): https://github.com/UC-Davis-molecular-computing/scadnano/issues/163 If this happens while you are editing, the fix is to press the Ctrl or Shift key once, which should re-enable normal panning.
 
 In scadnano, a "helix" doesn't refer to a literal DNA double helix. It is a 1D set of locations called "offsets" (small white squares with gray borders) where DNA strands *could* go; each DNA base occupies one offset. By default the allowed offsets are 0 through 63. When using the graphical interface to scadnano, you don't usually need to think much about these numbers, but they are important if you use the Python scripting library, because it uses these numerical offsets to specify where DNA strands begin and end.
 
