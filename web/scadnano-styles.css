@@ -153,7 +153,7 @@ label + select {
     padding-right: 5px;
 }
 
-.dialog-form-container {
+.dialog-form-container, .dialog-loading-container {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -196,6 +196,23 @@ label + select {
     text-align: center;
     opacity: 0.8;
     cursor: auto;
+}
+
+.dialog-design-loading {
+    font-size: 1.5rem;
+    padding: 1em;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.dialog-design-loading span {    
+    animation: pulse 0.8s infinite alternate;
+}
+
+@keyframes pulse {
+    to {
+        opacity: 0.1;
+    }
 }
 
 .context-menu {

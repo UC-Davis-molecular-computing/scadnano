@@ -771,6 +771,33 @@ abstract class WarnOnExitIfUnsavedSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// loading DNA files
+
+abstract class LoadingDialogShow
+    with BuiltJsonSerializable
+    implements Action, Built<LoadingDialogShow, LoadingDialogShowBuilder> {
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory LoadingDialogShow() = _$LoadingDialogShow._;
+
+  LoadingDialogShow._();
+
+  static Serializer<LoadingDialogShow> get serializer => _$loadingDialogShowSerializer;
+}
+
+abstract class LoadingDialogHide
+    with BuiltJsonSerializable
+    implements Action, Built<LoadingDialogHide, LoadingDialogHideBuilder> {
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory LoadingDialogHide() = _$LoadingDialogHide._;
+
+  LoadingDialogHide._();
+
+  static Serializer<LoadingDialogHide> get serializer => _$loadingDialogHideSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Save/load files
 
 abstract class SaveDNAFile
@@ -819,6 +846,43 @@ abstract class LoadDNAFile
   LoadDNAFile._();
 
   static Serializer<LoadDNAFile> get serializer => _$loadDNAFileSerializer;
+}
+
+abstract class PrepareToLoadDNAFile
+    with BuiltJsonSerializable, DesignChangingAction
+    implements Action, Built<PrepareToLoadDNAFile, PrepareToLoadDNAFileBuilder> {
+  String get content;
+
+  bool get write_local_storage;
+
+  bool get unit_testing;
+
+  DNAFileType get dna_file_type;
+
+  // set to null when getting file from another source such as localStorage
+  @nullable
+  String get filename;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory PrepareToLoadDNAFile(
+      {String content,
+      String filename,
+      bool write_local_storage = true,
+      bool unit_testing = false,
+      DNAFileType dna_file_type = DNAFileType.scadnano_file}) {
+    return PrepareToLoadDNAFile.from((b) => b
+      ..content = content
+      ..filename = filename
+      ..write_local_storage = write_local_storage
+      ..unit_testing = unit_testing
+      ..dna_file_type = dna_file_type);
+  }
+
+  factory PrepareToLoadDNAFile.from([void Function(PrepareToLoadDNAFileBuilder) updates]) = _$PrepareToLoadDNAFile;
+
+  PrepareToLoadDNAFile._();
+
+  static Serializer<PrepareToLoadDNAFile> get serializer => _$prepareToLoadDNAFileSerializer;
 }
 
 abstract class NewDesignSet

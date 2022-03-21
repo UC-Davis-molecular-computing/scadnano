@@ -59,6 +59,8 @@ import 'state/domain_name_mismatch.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  LoadingDialogHide,
+  LoadingDialogShow,
   ResetLocalStorage,
   DNAAssignOptions,
   MoveHelicesToGroup,
@@ -111,6 +113,7 @@ part 'serializers.g.dart';
   ShowMismatchesSet,
   SetShowEditor,
   SaveDNAFile,
+  PrepareToLoadDNAFile,
   LoadDNAFile,
   DNAFileType,
   ExportCadnanoFile,

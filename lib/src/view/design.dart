@@ -31,6 +31,7 @@ import '../state/app_state.dart';
 import '../app.dart';
 import 'design_context_menu.dart';
 import 'design_dialog_form.dart';
+import 'design_loading_dialog.dart';
 import 'design_main_error_boundary.dart';
 import 'design_side_arrows.dart';
 import 'menu_side.dart';
@@ -78,6 +79,7 @@ class DesignViewComponent {
 
   DivElement context_menu_container = DivElement()..attributes = {'id': 'context-menu-container'};
   DivElement dialog_form_container = DivElement()..attributes = {'class': 'dialog-form-container'};
+  DivElement dialog_loading_container = DivElement()..attributes = {'class': 'dialog-loading-container'};
   DivElement strand_color_picker_container = DivElement()
     ..attributes = {'id': 'strand-color-picker-container'};
 
@@ -153,6 +155,7 @@ class DesignViewComponent {
     this.root_element.children.add(design_above_footer_pane);
     this.root_element.children.add(this.context_menu_container);
     this.root_element.children.add(this.dialog_form_container);
+    this.root_element.children.add(this.dialog_loading_container);
     this.root_element.children.add(this.strand_color_picker_container);
     this.root_element.children.add(this.footer_separator);
     this.root_element.children.add(this.footer_element);
@@ -699,13 +702,23 @@ class DesignViewComponent {
       app.dispatch(actions.HelixGroupMoveStop());
     }
   }
-
+  render_loading_dialog(){
+      react_dom.render(
+        over_react_components.ErrorBoundary()(
+          (ReduxProvider()..store = app.store)(
+            ConnectedLoadingDialog()(),
+          ),
+        ),
+        this.dialog_loading_container,
+      );
+  }
   render(AppState state) {
     if (state.has_error) {
       if (!root_element.children.contains(this.error_message_pane)) {
         this.root_element.children.clear();
         this.root_element.children.add(this.error_message_pane);
         this.root_element.children.add(this.dialog_form_container);
+        this.root_element.children.add(this.dialog_loading_container);
         this.root_element.children.add(this.strand_color_picker_container);
       }
       this.error_message_component.render(state.error_message);
@@ -717,6 +730,15 @@ class DesignViewComponent {
           ),
         ),
         this.dialog_form_container,
+      );
+
+      react_dom.render(
+        over_react_components.ErrorBoundary()(
+          (ReduxProvider()..store = app.store)(
+            ConnectedLoadingDialog()(),
+          ),
+        ),
+        this.dialog_loading_container,
       );
     } else {
 //      var react_svg_pan_zoom_side = UncontrolledReactSVGPanZoom(
@@ -753,6 +775,7 @@ class DesignViewComponent {
         this.root_element.children.add(this.footer_separator);
         this.root_element.children.add(this.footer_element);
         this.root_element.children.add(this.dialog_form_container);
+         this.root_element.children.add(this.dialog_loading_container);
         this.root_element.children.add(this.strand_color_picker_container);
         this.root_element.children.add(this.context_menu_container);
       }
@@ -864,6 +887,18 @@ class DesignViewComponent {
         ),
         this.dialog_form_container,
       );
+
+
+      // loading dialog
+      react_dom.render(
+        over_react_components.ErrorBoundary()(
+          (ReduxProvider()..store = app.store)(
+            ConnectedLoadingDialog()(),
+          ),
+        ),
+        this.dialog_loading_container,
+      );
+
 
       react_dom.render(
           over_react_components.ErrorBoundary()(
