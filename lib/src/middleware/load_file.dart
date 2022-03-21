@@ -10,6 +10,11 @@ import '../state/app_state.dart';
 import '../util.dart' as util;
 
 load_file_middleware(Store<AppState> store, action, NextDispatcher next) {
+  // We have to distinguish between PrepareToLoadDNAFile and LoadDNAFile because the former ensures the loading dialog will show properly.
+  // This is done by *delaying* LoadDNAFile by some milliseconds to allow the loading dialog to be rendered by React before Scadnano does expensive
+  // computation relating to loading a new file. 
+  // Without this delay, Dart tries to load a new design in the same frame it tells React to show the dialog component, thus hanging the frame until
+  // the new design is loaded, and the dialog component never shows. 
   if (action is actions.PrepareToLoadDNAFile && !action.unit_testing) {
     store.dispatch(actions.LoadingDialogShow());
     Future.delayed(
