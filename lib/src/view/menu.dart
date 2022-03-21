@@ -1075,6 +1075,7 @@ the .sc file in a .zip file, then it can be uploaded.'''
       (MenuDropdownRight()
         ..title = "Other versions"
         ..id = "older-version-dropdown"
+        ..disallow_overflow = true
         ..tooltip = '''\
 Older versions of scadnano, as well as the newest development version.
 
