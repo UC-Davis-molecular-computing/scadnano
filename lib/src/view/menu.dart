@@ -575,6 +575,16 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
       ..id = 'view_menu_autofit-dropdown'
       ..key = 'view_menu_autofit-dropdown'
       ..className = 'submenu-item')([
+      (MenuDropdownItem()
+        ..display = 'Auto-fit current design'
+        ..tooltip = '''\
+The side and main views will be translated to fit the current design in the window.
+'''
+        ..on_click = (_){
+          util.fit_and_center();
+          util.dispatch_set_zoom_threshold(true);
+        }
+        ..key = 'autofit-current-design')(),
       (MenuBoolean()
         ..value = props.autofit
         ..display = 'Auto-fit on loading new design'
@@ -593,16 +603,6 @@ To autofit the current design without reloading, click "Auto-fit current design"
         ..name = 'center-on-load'
         ..onChange = ((_) => props.dispatch(actions.AutofitSet(autofit: !props.autofit)))
         ..key = 'autofit-on-loading-new-design')(),
-      (MenuDropdownItem()
-        ..display = 'Auto-fit current design'
-        ..tooltip = '''\
-The side and main views will be translated to fit the current design in the window.
-'''
-        ..on_click = (_){
-          util.fit_and_center();
-          util.dispatch_set_zoom_threshold(true);
-          }
-        ..key = 'autofit-current-design')(),
     ]);
   }
 
