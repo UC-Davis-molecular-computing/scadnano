@@ -2498,25 +2498,30 @@ main() {
 }
     ''';
     Design expected_design = Design.from_json(jsonDecode(expected_json));
-    UndoRedo expected_undo_redo =
-        UndoRedo().rebuild((b) => b.undo_stack.addAll([simple_helix_no_seq_design, mid_state.design]));
+    UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.addAll([
+          new UndoRedoItem("move DNA ends", simple_helix_no_seq_design),
+          new UndoRedoItem("move DNA ends", mid_state.design)
+        ]));
 
     expect(final_state.ui_state.changed_since_last_save, true);
     expect_design_equal(final_state.design, expected_design);
 
     // First Undo.
-    expected_undo_redo = UndoRedo()
-        .rebuild((b) => b..undo_stack.add(simple_helix_no_seq_design)..redo_stack.add(final_state.design));
-    AppState state_undo_1 = app_state_reducer(final_state, Undo());
+    expected_undo_redo = UndoRedo().rebuild((b) => b
+      ..undo_stack.add(new UndoRedoItem("move DNA ends", simple_helix_no_seq_design))
+      ..redo_stack.add(new UndoRedoItem("move DNA ends", final_state.design)));
+    AppState state_undo_1 = app_state_reducer(final_state, Undo(1));
 
     expect(state_undo_1.ui_state.changed_since_last_save, true);
     expect(state_undo_1.undo_redo, expected_undo_redo);
     expect_design_equal(state_undo_1.design, mid_state.design);
 
     // Second Undo.
-    expected_undo_redo =
-        UndoRedo().rebuild((b) => b.redo_stack.addAll([final_state.design, mid_state.design]));
-    AppState state_undo_2 = app_state_reducer(state_undo_1, Undo());
+    expected_undo_redo = UndoRedo().rebuild((b) => b.redo_stack.addAll([
+          new UndoRedoItem("move DNA ends", final_state.design),
+          new UndoRedoItem("move DNA ends", mid_state.design)
+        ]));
+    AppState state_undo_2 = app_state_reducer(state_undo_1, Undo(1));
 
     expect(state_undo_2.ui_state.changed_since_last_save, false);
     expect(state_undo_2.undo_redo, expected_undo_redo);
@@ -2597,26 +2602,31 @@ main() {
 }
     ''';
     Design expected_design = Design.from_json(jsonDecode(expected_json));
-    UndoRedo expected_undo_redo =
-        UndoRedo().rebuild((b) => b.undo_stack.addAll([simple_helix_no_seq_design, mid_state.design]));
+    UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.addAll([
+          new UndoRedoItem("move DNA ends", simple_helix_no_seq_design),
+          new UndoRedoItem("move DNA ends", mid_state.design)
+        ]));
 
     expect(final_state.ui_state.changed_since_last_save, true);
     expect(final_state.undo_redo, expected_undo_redo);
     expect_design_equal(final_state.design, expected_design);
 
     // First Undo.
-    expected_undo_redo = UndoRedo()
-        .rebuild((b) => b..undo_stack.add(simple_helix_no_seq_design)..redo_stack.add(final_state.design));
-    AppState state_undo_1 = app_state_reducer(final_state, Undo());
+    expected_undo_redo = UndoRedo().rebuild((b) => b
+      ..undo_stack.add(new UndoRedoItem("move DNA ends", simple_helix_no_seq_design))
+      ..redo_stack.add(new UndoRedoItem("move DNA ends", final_state.design)));
+    AppState state_undo_1 = app_state_reducer(final_state, Undo(1));
 
     expect(state_undo_1.ui_state.changed_since_last_save, true);
     expect(state_undo_1.undo_redo, expected_undo_redo);
     expect_design_equal(state_undo_1.design, mid_state.design);
 
     // Second Undo.
-    expected_undo_redo =
-        UndoRedo().rebuild((b) => b.redo_stack.addAll([final_state.design, mid_state.design]));
-    AppState state_undo_2 = app_state_reducer(state_undo_1, Undo());
+    expected_undo_redo = UndoRedo().rebuild((b) => b.redo_stack.addAll([
+          new UndoRedoItem("move DNA ends", final_state.design),
+          new UndoRedoItem("move DNA ends", mid_state.design)
+        ]));
+    AppState state_undo_2 = app_state_reducer(state_undo_1, Undo(1));
 
     expect(state_undo_2.ui_state.changed_since_last_save, false);
     expect(state_undo_2.undo_redo, expected_undo_redo);
@@ -2780,7 +2790,7 @@ main() {
         actual_state, SelectAll(selectables: BuiltList<Selectable>([new_dna_end]), only: true));
 
     // Undo DNA Ends move
-    actual_state = app_state_reducer(actual_state, Undo());
+    actual_state = app_state_reducer(actual_state, Undo(1));
     // Select
     actual_state = app_state_reducer(actual_state, Select(dna_end, toggle: false, only: false));
 
@@ -3240,7 +3250,8 @@ main() {
       Design two_helices_helix_add_design = Design.from_json(jsonDecode(two_helices_helix_add_json));
 
       expect(state.ui_state.changed_since_last_save, false);
-      expect(state.undo_redo.undo_stack, BuiltList<Design>([two_helices_design]));
+      expect(state.undo_redo.undo_stack,
+          BuiltList<UndoRedoItem>([new UndoRedoItem("create helix", two_helices_design)]));
       expect_design_equal(state.design, two_helices_helix_add_design);
     });
 
@@ -4247,7 +4258,7 @@ main() {
           r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
           {
-            "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
+            "sequence": "AGTCAGTCAGTCAGTCAATT?GACTGACTGACTGACT",
             "domains": [
               {"helix": 0, "forward": true,  "start": 0, "end": 16},
               {"loopout": 5},
@@ -4270,7 +4281,7 @@ main() {
           r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
           {
-            "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
+            "sequence": "AGTCAGTCAGTCAGTCAATGACTGACTGACTGACT",
             "domains": [
               {"helix": 0, "forward": true,  "start": 0, "end": 16},
               {"loopout": 3},
@@ -4304,7 +4315,7 @@ main() {
           r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
           {
-            "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
+            "sequence": "AGTCAGTCAGTCAGTCGACTGACTGACTGACT",
             "domains": [
               {"helix": 0, "forward": true,  "start": 0, "end": 16},
               {"helix": 0, "forward": false,  "start": 0, "end": 16}
@@ -5501,8 +5512,8 @@ main() {
 
     var batch_action = BatchAction([
       HelixPositionSet(helix_idx: helix0.idx, position: position0),
-      HelixPositionSet(helix_idx: helix1.idx, position: position1)
-    ]);
+      HelixPositionSet(helix_idx: helix1.idx, position: position1),
+    ], "set helix position");
     state = app_state_reducer(state, batch_action);
     expect(state.design.helices[0], expected_helix0);
     expect(state.design.helices[1], expected_helix1);
@@ -5898,8 +5909,8 @@ main() {
         state = app_state_reducer(state, Select(crossover56, toggle: false, only: true));
         state = app_state_reducer(state, DeleteAllSelected());
 
-        expect_design_equal(state.undo_redo.undo_stack[1], expected_design1);
-        expect_design_equal(state.undo_redo.undo_stack[0], many_helices_modification_design);
+        expect_design_equal(state.undo_redo.undo_stack[1].design, expected_design1);
+        expect_design_equal(state.undo_redo.undo_stack[0].design, many_helices_modification_design);
         expect_design_equal(state.design, expected_design2);
       },
     );
@@ -7151,14 +7162,19 @@ main() {
   group('DesignNewSet', () {
     test('DesignNewSet should set new design', () {
       AppState initial_state = app_state_from_design(two_helices_design);
-      AppState final_state = app_state_reducer(initial_state, NewDesignSet(design: small_design_h0));
+      AppState final_state =
+          app_state_reducer(initial_state, NewDesignSet(small_design_h0, "some description"));
       expect(final_state.design, small_design_h0);
     });
 
     test('DesignNewSet should be undoable', () {
       AppState initial_state = app_state_from_design(two_helices_design);
-      AppState final_state = app_state_reducer(initial_state, NewDesignSet(design: small_design_h0));
-      expect(final_state.undo_redo, UndoRedo().rebuild((b) => b..undo_stack.replace([two_helices_design])));
+      AppState final_state =
+          app_state_reducer(initial_state, NewDesignSet(small_design_h0, "some description"));
+      expect(
+          final_state.undo_redo,
+          UndoRedo().rebuild(
+              (b) => b..undo_stack.replace([new UndoRedoItem("some description", two_helices_design)])));
     });
   });
 
@@ -7563,6 +7579,96 @@ main() {
 
     expect(new_helix0_svg.y, closeTo(helix0_svg.y, 0.001));
     expect(new_helix2_svg.y, closeTo(helix1_svg.y, 0.001));
+  });
+
+  // Setup:
+  //      domain1
+  //     AAAAAAAA
+  //   0 [-------
+  //            |
+  //   1 <-------
+  //     GGGGGGGG
+  //     domain2
+  //
+  // Action: Move 5' end to the right
+  //
+  // Expected Result:
+  //     domain1
+  //         AAAA
+  //   0     [---
+  //            |
+  //   1 <-------
+  //     GGGGGGGG
+  //     domain2
+  //
+  //   domain2 sequence should remain unchanged, domain1 should trim
+  test('dna_ends_move_should_change_domain_sequence_locally__trim', () {
+    // Setup:
+    Helix helix0 = Helix(idx: 0, grid_position: GridPosition(0, 0), max_offset: 8);
+    Helix helix1 = Helix(idx: 1, grid_position: GridPosition(0, 1), max_offset: 8);
+    Design design = Design(helices: [helix0, helix1], grid: Grid.square)
+        .strand(0, 0)
+        .to(8)
+        .cross(1)
+        .to(0)
+        .with_sequence('AAAAAAAAGGGGGGGG')
+        .commit();
+    AppState state = app_state_from_design(design);
+
+    // Action:
+    DNAEndMove move =
+        DNAEndMove(dna_end: design.strands.first.dnaend_5p, lowest_offset: 0, highest_offset: 8);
+    DNAEndsMove dna_ends_move =
+        DNAEndsMove(moves: [move].build(), original_offset: 0, current_offset: 4, helix: helix0);
+    AppState new_state = app_state_reducer(state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
+
+    // Expected Result:
+    expect(new_state.design.strands.first.dna_sequence, 'AAAAGGGGGGGG');
+  });
+
+  // Setup:
+  //      domain1
+  //     AAAAAAAA
+  //   0 ------->
+  //     |
+  //   1 -------]
+  //     GGGGGGGG
+  //     domain2
+  //
+  // Action: Move 5' end to the right
+  //
+  // Expected Result:
+  //      domain1
+  //     AAAAAAAA
+  //   0 ------->
+  //     |
+  //   1 ----------]
+  //     ???GGGGGGGG
+  //     domain2
+  //
+  //   domain1 sequence should remain unchanged, domain2 should pad
+  test('dna_ends_move_should_change_domain_sequence_locally__pad', () {
+    // Setup:
+    Helix helix0 = Helix(idx: 0, grid_position: GridPosition(0, 0), max_offset: 16);
+    Helix helix1 = Helix(idx: 1, grid_position: GridPosition(0, 1), max_offset: 16);
+    Design design = Design(helices: [helix0, helix1], grid: Grid.square)
+        .strand(1, 8)
+        .to(0)
+        .cross(0)
+        .to(8)
+        .with_sequence('GGGGGGGGAAAAAAAA')
+        .commit();
+    AppState state = app_state_from_design(design);
+
+    // Action:
+    DNAEndMove move =
+        DNAEndMove(dna_end: design.strands.first.dnaend_5p, lowest_offset: 0, highest_offset: 16);
+    DNAEndsMove dna_ends_move =
+        DNAEndsMove(moves: [move].build(), original_offset: 7, current_offset: 10, helix: helix1);
+    AppState new_state = app_state_reducer(state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
+
+    // Expected Result:
+    expect(new_state.design.strands.first.dna_sequence, 'GGGGGGGG???AAAAAAAA');
   });
 }
 

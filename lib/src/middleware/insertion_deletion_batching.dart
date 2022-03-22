@@ -20,7 +20,7 @@ insertion_deletion_batching_middleware(Store<AppState> store, dynamic action, Ne
         var other_actions = [
           for (var other_domain in other_domains) action.clone_for_other_domain(other_domain)
         ];
-        var batch_action = actions.BatchAction([action] + other_actions);
+        var batch_action = actions.BatchAction([action] + other_actions, action.short_description());
         store.dispatch(batch_action);
       }
     } else {
@@ -30,7 +30,7 @@ insertion_deletion_batching_middleware(Store<AppState> store, dynamic action, Ne
         next(action);
       } else {
         var other_action = action.clone_for_other_domain(paired_domain);
-        var batch_action = actions.BatchAction([action, other_action]);
+        var batch_action = actions.BatchAction([action, other_action], action.short_description());
         store.dispatch(batch_action);
       }
     }

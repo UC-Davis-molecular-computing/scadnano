@@ -11,13 +11,13 @@ final DEFAULT_UndoRedoBuilder = UndoRedoBuilder();
 final DEFAULT_UndoRedo = DEFAULT_UndoRedoBuilder.build();
 
 abstract class UndoRedo with BuiltJsonSerializable implements Built<UndoRedo, UndoRedoBuilder> {
-  BuiltList<Design> get undo_stack;
+  BuiltList<UndoRedoItem> get undo_stack;
 
-  BuiltList<Design> get redo_stack;
+  BuiltList<UndoRedoItem> get redo_stack;
 
   static void _initializeBuilder(UndoRedoBuilder b) {
-    b.undo_stack = ListBuilder<Design>();
-    b.redo_stack = ListBuilder<Design>();
+    b.undo_stack = ListBuilder<UndoRedoItem>();
+    b.redo_stack = ListBuilder<UndoRedoItem>();
   }
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -28,6 +28,27 @@ abstract class UndoRedo with BuiltJsonSerializable implements Built<UndoRedo, Un
   UndoRedo._();
 
   static Serializer<UndoRedo> get serializer => _$undoRedoSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class UndoRedoItem with BuiltJsonSerializable implements Built<UndoRedoItem, UndoRedoItemBuilder> {
+  String get short_description;
+
+  Design get design;
+
+  /************************ begin BuiltValue boilerplate ************************/
+
+  factory UndoRedoItem(String short_description, Design design) => UndoRedoItem.from((b) => b
+    ..short_description = short_description
+    ..design.replace(design));
+
+  factory UndoRedoItem.from([void Function(UndoRedoItemBuilder) updates]) = _$UndoRedoItem;
+
+  UndoRedoItem._();
+
+  static Serializer<UndoRedoItem> get serializer => _$undoRedoItemSerializer;
 
   @memoized
   int get hashCode;

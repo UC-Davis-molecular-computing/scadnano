@@ -51,6 +51,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get helix_group_is_moving;
 
+  bool get load_dialog;
+
   bool get slice_bar_is_moving;
 
   bool get selection_box_displayed_main;
@@ -225,6 +227,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
     b.potential_crossover_is_drawing = false;
     b.dna_ends_are_moving = false;
     b.helix_group_is_moving = false;
+    b.load_dialog = false;
     b.slice_bar_is_moving = false;
     b.changed_since_last_save = false;
     b.side_view_grid_position_mouse_cursor = null;

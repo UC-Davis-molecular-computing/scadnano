@@ -12,6 +12,8 @@ import '../app.dart';
 import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 
+const SET_HELIX_TICK_MARKS_SHORT_DESCRIPTION = "set helix tick marks";
+
 List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to_all) {
   Future<void> dialog_helix_set_min_offset() async {
     int min_idx = 0;
@@ -246,13 +248,13 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
         action = actions.BatchAction([
           actions.HelixMajorTickDistanceChangeAll(major_tick_distance: major_tick_distance),
           actions.HelixMajorTickStartChangeAll(major_tick_start: major_tick_start),
-        ]);
+        ], SET_HELIX_TICK_MARKS_SHORT_DESCRIPTION);
       } else if (use_major_tick_periodic_distances) {
         action = actions.BatchAction([
           actions.HelixMajorTickPeriodicDistancesChangeAll(
               major_tick_periodic_distances: major_tick_periodic_distances.build()),
           actions.HelixMajorTickStartChangeAll(major_tick_start: major_tick_start),
-        ]);
+        ], SET_HELIX_TICK_MARKS_SHORT_DESCRIPTION);
       } else if (use_major_ticks) {
         action = actions.HelixMajorTicksChangeAll(major_ticks: major_ticks.build());
       } else {
@@ -283,20 +285,20 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
           throw AssertionError('should not be reachable');
         }
       }
-      action = actions.BatchAction(all_actions);
+      action = actions.BatchAction(all_actions, SET_HELIX_TICK_MARKS_SHORT_DESCRIPTION);
     } else {
       if (use_major_tick_distance) {
         action = actions.BatchAction([
           actions.HelixMajorTickDistanceChange(
               helix_idx: helix_idx, major_tick_distance: major_tick_distance),
           actions.HelixMajorTickStartChange(helix_idx: helix_idx, major_tick_start: major_tick_start),
-        ]);
+          ], SET_HELIX_TICK_MARKS_SHORT_DESCRIPTION);
       } else if (use_major_tick_periodic_distances) {
         action = actions.BatchAction([
           actions.HelixMajorTickPeriodicDistancesChange(
               helix_idx: helix_idx, major_tick_periodic_distances: major_tick_periodic_distances.build()),
           actions.HelixMajorTickStartChange(helix_idx: helix_idx, major_tick_start: major_tick_start),
-        ]);
+        ], SET_HELIX_TICK_MARKS_SHORT_DESCRIPTION);
       } else if (use_major_ticks) {
         action = actions.HelixMajorTicksChange(helix_idx: helix_idx, major_ticks: major_ticks.build());
       } else {

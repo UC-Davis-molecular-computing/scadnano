@@ -174,7 +174,7 @@ class DesignMainStrandCrossoverComponent
       var roll_action = actions.HelixRollSetAtOther(domain.helix, other_domain.helix, domain.forward, anchor);
       roll_actions.add(roll_action);
     }
-    var action = actions.BatchAction(roll_actions);
+    var action = actions.BatchAction(roll_actions, "unstrain backbone at crossover");
     app.dispatch(action);
   }
 

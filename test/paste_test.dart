@@ -1023,7 +1023,7 @@ main() {
       expect(state.design.strands.last.first_domain.forward, true);
 
       // undo last manual paste
-      state = test_dispatch(store, actions.Undo());
+      state = test_dispatch(store, actions.Undo(1));
 
       expect(state.design.strands.length, 1);
       expect(state.design.strands.last.first_domain.helix, 0);

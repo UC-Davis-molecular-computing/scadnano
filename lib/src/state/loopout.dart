@@ -82,6 +82,9 @@ abstract class Loopout
 
   int dna_length() => this.loopout_length;
 
+  @override
+  String type_description() => "loopout";
+
   static LoopoutBuilder from_json(Map<String, dynamic> json_map) {
     var class_name = 'Loopout';
     int loopout_length = util.mandatory_field(json_map, constants.loopout_key, class_name);

@@ -98,7 +98,7 @@ To begin the design, we need to create helices. Click "(p)encil" under Edit mode
 
 Now click in the side view to create a helix. 
 
-You may notice that it will be zoomed in very far:
+You may notice that it will be zoomed in very far (see issue https://github.com/UC-Davis-molecular-computing/scadnano/issues/648):
 
 ![](images/one_helix_zoomed_in.png)
 
@@ -106,11 +106,9 @@ Use the mouse wheel or two finger scroll in both the side view on the left and t
 
 ![](images/one_helix_initial.png)
 
-As you are editing the design, you may notice that the pan feature stops working, i.e., you click and drag the background, but it no longer moves. This is a known bug that is notoriously difficult to reproduce (and therefore difficult to diagnose and fix): https://github.com/UC-Davis-molecular-computing/scadnano/issues/163 If this happens while you are editing, the fix is to press the Ctrl or Shift key once, which should re-enable normal panning.
-
 In scadnano, a "helix" doesn't refer to a literal DNA double helix. It is a 1D set of locations called "offsets" (small white squares with gray borders) where DNA strands *could* go; each DNA base occupies one offset. By default the allowed offsets are 0 through 63. When using the graphical interface to scadnano, you don't usually need to think much about these numbers, but they are important if you use the Python scripting library, because it uses these numerical offsets to specify where DNA strands begin and end.
 
-Each helix has two "rows" of offsets. The top row always contains the strand whose 3' end is to the right of its 5' end; this strand is a *forward* strand. If there is another strand occupying some of the same offsets, it must be oriented in the opposite direction, i.e., its 3' end is to the left, a so-called *reverse* strand, and it will be drawn in the second row of the helix's offsets.
+Each helix has two "rows" of offsets. The top row always contains the strand whose 3' end (represented with an arrowhead) is to the right of its 5' end (represented with a square); this strand is a *forward* strand. In other words a forward strand appears as an arrow pointing to the right. If there is another strand occupying some of the same offsets, it must be oriented in the opposite direction, i.e., its 3' end is to the left, a so-called *reverse* strand, and it will be drawn in the second row of the helix's offsets.
 
 For now, just understand that moving to the right in the main view moves "into the screen" in the side view. Thus we can think of these as two 2D [projections](https://en.wikipedia.org/wiki/3D_projection) of the 3D space in which helices live. The side view shows the *x*-*y* plane (where moving in the *x* and/or *y* direction moves us between helices) and the main view shows "something like" the *y*-*z* plane (where moving in the *z* direction moves between DNA bases within a helix). The reason for the quotes around "something like" is that we actually will show every helix in the main view, even those with overlapping *x*-coordinates, so the main view is not formally a [linear projection](https://en.wikipedia.org/wiki/Projection_(linear_algebra)). See the [documentation](../README.md) for an explanation of how scadnano chooses helix positions in the main view.
 

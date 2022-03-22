@@ -28,7 +28,7 @@ _autostaple(Store<AppState> store) async {
     headers: {"Content-Type": "application/json"},
   );
 
-  _handle_response(store, response);
+  _handle_response(store, response, "autostaple");
 }
 
 _autobreak(Store<AppState> store, actions.Autobreak action) async {
@@ -47,14 +47,14 @@ _autobreak(Store<AppState> store, actions.Autobreak action) async {
     headers: {"Content-Type": "application/json"},
   );
 
-  _handle_response(store, response);
+  _handle_response(store, response, "autobreak");
 }
 
-void _handle_response(Store<AppState> store, http.Response response) {
+void _handle_response(Store<AppState> store, http.Response response, String short_description) {
   if (response.statusCode == 200) {
     var json_model_text = response.body;
     var design_new = Design.from_json_str(json_model_text, store.state.ui_state.invert_y);
-    store.dispatch(actions.NewDesignSet(design: design_new));
+    store.dispatch(actions.NewDesignSet(design_new, short_description));
   } else {
     Map response_body_json = jsonDecode(response.body);
     window.alert('Error: ${response_body_json['error']}');
