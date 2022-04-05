@@ -81,6 +81,7 @@ class App {
       initialize_state();
       setup_undo_redo_keyboard_listeners();
       setup_save_open_dna_file_keyboard_listeners();
+      copy_as_SVG_keyboard_listeners();
 //    util.save_editor_content_to_js_context(state.editor_content);
       restore_all_local_storage(app.store);
       setup_warning_before_unload();
@@ -262,6 +263,17 @@ setup_save_open_dna_file_keyboard_listeners() {
       event.preventDefault();
       // TODO(benlee12): maybe this is slightly hacky.
       document.getElementById('open-form-file').click();
+    }
+  });
+}
+
+copy_as_SVG_keyboard_listeners() {
+  document.body.onKeyDown.listen((KeyboardEvent event) {
+    int key = event.which;
+    // ctrl+I to copy SVG
+    if ((event.ctrlKey || event.metaKey) && !event.shiftKey && key == KeyCode.I && !event.altKey) {
+      event.preventDefault();
+      app.dispatch(actions.CopySVG());
     }
   });
 }
