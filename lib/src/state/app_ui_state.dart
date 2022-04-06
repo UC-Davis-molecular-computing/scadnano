@@ -237,7 +237,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
     b.dialog = null;
     b.strand_color_picker_strand = null;
     b.strand_creation = null;
-    b.helix_change_apply_to_all = false;
+    b.helix_change_apply_to_all = true;
     b.example_designs = DEFAULT_example_designs_builder;
     b.dna_assign_options = DEFAULT_dna_assign_options_builder;
     b.dna_sequence_png_uri = null;

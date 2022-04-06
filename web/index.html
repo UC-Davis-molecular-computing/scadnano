@@ -78,16 +78,18 @@
             console.log('host = ' + host);
             console.log('disabling Google analytics because host is local');
             window['ga-disable-UA-156000688-1'] = true; // enter your tracking ID
+        } else {
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+
+            gtag('js', new Date());
+            // gtag('config', 'UA-156000688-1');
+            // gtag('config', 'G-309628413');
+            gtag('config', 'G-XNFP92VLQG');
         }
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-
-        gtag('js', new Date());
-
-        gtag('config', 'UA-156000688-1');
     </script>
 
 </head>
