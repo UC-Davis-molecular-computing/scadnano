@@ -938,6 +938,18 @@ In a large design, this can slow down the performance, so uncheck it when not in
         ..tooltip = "Export design to cadnano (version 2) .json file."
         ..display = 'cadnano v2'
         ..key = 'export-cadnano')(),
+      DropdownItem(
+        {
+          'href': 'https://scadnano-python-package.readthedocs.io/en/latest/#interoperability-cadnano-v2',
+          'target': '_blank',
+          'title': """\
+Read constraints that the scadnano design must obey to exportable to cadnano v2.
+The constraints are the same for the scadnano Python package (described at the 
+linked page) as for the web interface.
+"""
+        },
+        'cadnano v2 export instructions',
+      ),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.OxdnaExport()))
         ..tooltip = "Export design to oxDNA .dat and .top files, which can be loaded in oxDNA or oxView."
