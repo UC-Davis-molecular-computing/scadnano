@@ -13,7 +13,7 @@ const String INITIAL_VERSION = "0.1.0";
 
 // scadnano versions that we deploy so that older versions can be used.
 final scadnano_older_versions_to_link =[
-  "0.17.3",
+  // "0.17.3", // accidentally skipped this version
   "0.17.2",
   "0.17.1",
   "0.17.0",
