@@ -934,7 +934,7 @@ In a large design, this can slow down the performance, so uncheck it when not in
         ..display = 'DNA sequences')(),
       DropdownDivider({'key': 'divider-not-full-design'}),
       (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile()))
+        ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile(whitespace: true)))
         ..tooltip = "Export design to cadnano (version 2) .json file."
         ..display = 'cadnano v2'
         ..key = 'export-cadnano')(),
@@ -950,6 +950,15 @@ linked page) as for the web interface.
         },
         'cadnano v2 export instructions',
       ),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile(whitespace: false)))
+        ..tooltip = """\
+Export design to cadnano (version 2) .json file with no whitespace or newlines.
+This is necessary to use the cadnano file with CanDo, which causes a confusing error 
+cadnano files that have whitespace. ("Bad .json file format is detected in 
+'structure.json'. Or no dsDNA or strand crossovers exist.")"""
+        ..display = 'cadnano v2 no whitespace'
+        ..key = 'export-cadnano-no-whitespace')(),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.OxdnaExport()))
         ..tooltip = "Export design to oxDNA .dat and .top files, which can be loaded in oxDNA or oxView."
