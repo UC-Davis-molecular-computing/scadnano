@@ -365,7 +365,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   /// They are used in reverse order to determine precedence. (e.g., [Helix.major_ticks]
   /// overrides [Helix.major_tick_distance].
   @memoized
-  List<int> get calculate_major_ticks {
+  BuiltList<int> get calculate_major_ticks {
     List<int> ticks = [];
     if (has_major_ticks) {
       var sorted_ticks = major_ticks.toList();
@@ -387,6 +387,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
         ticks = [for (int tick = major_tick_start; tick <= max_offset; tick += distance) tick];
       }
     }
-    return ticks;
+    return ticks.build();
   }
 }

@@ -108,6 +108,15 @@ abstract class StrandPasteKeepColorSet
 
 As you can see, there's quite a bit of boilerplate code, not only below the comment line, but also in the lines declaring the class.
 
+The built_value library allows a useful feature called *memoized getters*: these are fields that are calculated from other fields, for example, `Helix.num_bases` is calculated based on the values of `Helix.min_offset` and `Helix.max_offset`. By marking such a field as memoized, it is not calculated until the first time it is accessed, and then the value is stored so that it does not need to be recalculated. (This is safe to do since the immutability of the object ensures that no other field values will update and changed the correct value of this memoized field.) For example, here is how `Helix.num_bases` is calculated:
+
+```dart
+  @memoized
+  int get num_bases => this.max_offset - this.min_offset;
+```
+
+**Memoized fields should return immutable objects**: WARNING: memoized fields should always return immutable objects. Otherwise there can be errors where a field is not properly updated when it should be. For example, the bug in issue [#761](https://github.com/UC-Davis-molecular-computing/scadnano/issues/761) was caused by the memoized getter `Helix.calculate_major_ticks` returning a `List<int>` instead of a `BuiltList<int>`.
+
 Another disadvantage of built_value is that it (as well as OverReact) uses *code generation* (on compiling, first some extra code is generated that implement many of the features), and there are so many built_value and OverReact classes that the compilation time for the project, at the time of this writing, is 20 seconds minimum, and often more like 30-70 seconds, depending on your system. So although Dart's dartdevc incremental compiler is nice in allowing you to make one change to code, save it, and have dartdevc (run through `webdev serve` when developing locally) re-run and show the changed code in the browser (after a browser refresh), it does take a bit of time.
 
 Another thing to note is that many IDEs and editors come with a static analysis tool that will warn about errors. Prior to the code generation running, the analyzer will report many errors, because the code written refers to types that don't exist yet, but that will be generated when the compilation is successful. This can make it difficult to track down compilation errors, because some are "real" (i.e., you made a mistake), and some are artifacts of this process that will go away once the compilation is successful. Even worse, OverReact's code generation retains the errors until the analyzer is refreshed; so even after successfully compiling, the analyzer will warn about errors. In WebStorm, this can be refreshed by clicking "Dart Analysis" at the bottom of the screen, and then clicking the "Restart Dart Analysis Server" button (circular red arrow).
