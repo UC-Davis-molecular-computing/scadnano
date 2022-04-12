@@ -165,7 +165,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   final num DISTANCE_OFFSET_DISPLAY_FROM_HELIX = 3;
 
   _major_tick_offsets_svg_group() {
-    List<int> major_ticks = props.helix.calculate_major_ticks;
+    BuiltList<int> major_ticks = props.helix.calculate_major_ticks;
 
     // offset if DNA sequences and/or domain labels are present
     num offset = 0;
@@ -198,7 +198,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   }
 
   _major_tick_widths_svg_group() {
-    List<int> major_ticks = props.helix.calculate_major_ticks;
+    BuiltList<int> major_ticks = props.helix.calculate_major_ticks;
 
     // offset if DNA sequences and/or domain labels are present
     num offset = 0;
@@ -261,7 +261,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 
   /// Return Map {'minor': thin_lines, 'major': thick_lines} to paths describing minor and major vertical lines.
   Map<String, String> _vert_line_paths(Helix helix, num helix_svg_position_y) {
-    List<int> major_ticks = helix.calculate_major_ticks;
+    BuiltList<int> major_ticks = helix.calculate_major_ticks;
 //  var major_tick_distance =
 //      helix.has_major_tick_distance() ? helix.major_tick_distance : design_major_tick_distance;
 //  Set<int> major_ticks = (helix.has_major_ticks()

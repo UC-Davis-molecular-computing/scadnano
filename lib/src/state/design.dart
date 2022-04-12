@@ -150,7 +150,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<int, Helix> helices_in_group(String group_name) =>
       BuiltMap<int, Helix>.from(helices.toMap()..removeWhere((idx, helix) => helix.group != group_name));
 
-  StrandMaker strand(int current_helix, int current_offset) {
+  StrandMaker draw_strand(int current_helix, int current_offset) {
     return StrandMaker(this, current_helix, current_offset);
   }
 
@@ -470,7 +470,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return map.build();
   }
 
-  /// design.strands_overlapping[strand] is a list of all strands that overlap strand, including possibly itself.
+  /// design.strands_overlapping[draw_strand] is a list of all strands that overlap strand, including possibly itself.
   @memoized
   BuiltMap<Strand, BuiltList<Strand>> get strands_overlapping {
     Map<Strand, List<Strand>> map = {};
@@ -2355,6 +2355,8 @@ class IllegalDesignError implements Exception {
   String cause;
 
   IllegalDesignError(this.cause);
+
+  bool operator ==(Object other) => other is IllegalDesignError;
 }
 
 class IllegalCadnanoDesignError implements IllegalDesignError {

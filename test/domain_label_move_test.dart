@@ -49,7 +49,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design
-          .strand(0, 0)
+          .draw_strand(0, 0)
           .move(8)
           .with_domain_name("ABC")
           .cross(1)
@@ -124,7 +124,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design
-          .strand(0, 0)
+          .draw_strand(0, 0)
           .move(8)
           .with_domain_name("ABC")
           .loopout(1, 2)
@@ -198,7 +198,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design
-          .strand(0, 0)
+          .draw_strand(0, 0)
           .move(8)
           .with_domain_name("ABC")
           .cross(1)
@@ -273,7 +273,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design
-          .strand(0, 0)
+          .draw_strand(0, 0)
           .move(8)
           .with_domain_name("ABC")
           .loopout(1, 2)
@@ -344,7 +344,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design
-          .strand(0, 0)
+          .draw_strand(0, 0)
           .move(8)
           .with_domain_name("ABC")
           .cross(1)
