@@ -34,8 +34,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(16).commit();
-      design = design.strand(0, 16).move(-16).commit();
+      design = design.draw_strand(0, 0).move(16).commit();
+      design = design.draw_strand(0, 16).move(-16).commit();
       AppState state = app_state_from_design(design);
       Strand strand = design.strands.first;
       String dna_sequence = 'AACGTACGATGCATCC';
@@ -94,7 +94,7 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 5, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(5).loopout(0, 5).move(-5).commit();
+      design = design.draw_strand(0, 0).move(5).loopout(0, 5).move(-5).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand = design.strands.first;
@@ -144,9 +144,9 @@ main() {
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(5).loopout(1, 5).move(-5).commit();
-      design = design.strand(0, 5).move(-5).commit();
-      design = design.strand(1, 0).move(5).commit();
+      design = design.draw_strand(0, 0).move(5).loopout(1, 5).move(-5).commit();
+      design = design.draw_strand(0, 5).move(-5).commit();
+      design = design.draw_strand(1, 0).move(5).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand = design.strands.first;
@@ -202,9 +202,9 @@ main() {
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(5).loopout(1, 5).move(-5).commit();
-      design = design.strand(0, 5).move(-5).commit();
-      design = design.strand(1, 0).move(5).commit();
+      design = design.draw_strand(0, 0).move(5).loopout(1, 5).move(-5).commit();
+      design = design.draw_strand(0, 5).move(-5).commit();
+      design = design.draw_strand(1, 0).move(5).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand = design.strands[1];
@@ -285,8 +285,8 @@ main() {
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 4).move(4).cross(1).move(-8).cross(0).move(4).commit();
-      design = design.strand(0, 8).move(-8).commit();
+      design = design.draw_strand(0, 4).move(4).cross(1).move(-8).cross(0).move(4).commit();
+      design = design.draw_strand(0, 8).move(-8).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand = design.strands[0];
@@ -333,8 +333,8 @@ main() {
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 4).move(4).cross(1).move(-8).cross(0).move(4).commit();
-      design = design.strand(0, 8).move(-8).commit();
+      design = design.draw_strand(0, 4).move(4).cross(1).move(-8).cross(0).move(4).commit();
+      design = design.draw_strand(0, 8).move(-8).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand = design.strands[1];
@@ -377,8 +377,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 10, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(8).commit();
-      design = design.strand(0, 4).move(-4).commit();
+      design = design.draw_strand(0, 0).move(8).commit();
+      design = design.draw_strand(0, 4).move(-4).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand1 = design.strands[0];
@@ -432,8 +432,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 10, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(8).commit();
-      design = design.strand(0, 6).move(-4).commit();
+      design = design.draw_strand(0, 0).move(8).commit();
+      design = design.draw_strand(0, 6).move(-4).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand1 = design.strands[0];
@@ -476,8 +476,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 10, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(5).commit();
-      design = design.strand(0, 5).move(-5).commit();
+      design = design.draw_strand(0, 0).move(5).commit();
+      design = design.draw_strand(0, 5).move(-5).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand = design.strands.last;
@@ -508,8 +508,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 10, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(5).commit();
-      design = design.strand(0, 5).move(-5).commit();
+      design = design.draw_strand(0, 0).move(5).commit();
+      design = design.draw_strand(0, 5).move(-5).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand = design.strands.last;
@@ -540,9 +540,9 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 10, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(8).commit();
-      design = design.strand(0, 4).move(-4).commit();
-      design = design.strand(0, 8).move(-4).commit();
+      design = design.draw_strand(0, 0).move(8).commit();
+      design = design.draw_strand(0, 4).move(-4).commit();
+      design = design.draw_strand(0, 8).move(-4).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand1 = design.strands[1];
@@ -590,10 +590,10 @@ main() {
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(1, 0).move(6).cross(0).move(-6).commit();
-      design = design.strand(0, 2).move(8).cross(1).move(-8).commit();
-      design = design.strand(0, 12).move(-6).commit();
-      design = design.strand(1, 6).move(6).commit();
+      design = design.draw_strand(1, 0).move(6).cross(0).move(-6).commit();
+      design = design.draw_strand(0, 2).move(8).cross(1).move(-8).commit();
+      design = design.draw_strand(0, 12).move(-6).commit();
+      design = design.draw_strand(1, 6).move(6).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand1 = design.strands[2];
@@ -656,9 +656,9 @@ main() {
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(1, 0).move(6).cross(0).move(-6).add_deletion(0, 3).commit();
+      design = design.draw_strand(1, 0).move(6).cross(0).move(-6).add_deletion(0, 3).commit();
       design = design
-          .strand(0, 2)
+          .draw_strand(0, 2)
           .move(8)
           .add_deletion(0, 3)
           .add_deletion(0, 8)
@@ -666,8 +666,8 @@ main() {
           .move(-8)
           .add_deletion(1, 8)
           .commit();
-      design = design.strand(0, 12).move(-6).add_deletion(0, 8).commit();
-      design = design.strand(1, 6).move(6).add_deletion(1, 8).commit();
+      design = design.draw_strand(0, 12).move(-6).add_deletion(0, 8).commit();
+      design = design.draw_strand(1, 6).move(6).add_deletion(1, 8).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand1 = design.strands[2];
@@ -729,17 +729,17 @@ main() {
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(1, 0).move(6).cross(0).move(-6).commit();
+      design = design.draw_strand(1, 0).move(6).cross(0).move(-6).commit();
       design = design
-          .strand(0, 2)
+          .draw_strand(0, 2)
           .move(8)
           .add_insertion(0, 8, 1)
           .cross(1)
           .move(-8)
           .add_insertion(1, 8, 1)
           .commit();
-      design = design.strand(0, 12).move(-6).add_insertion(0, 8, 1).commit();
-      design = design.strand(1, 6).move(6).add_insertion(1, 8, 1).commit();
+      design = design.draw_strand(0, 12).move(-6).add_insertion(0, 8, 1).commit();
+      design = design.draw_strand(1, 6).move(6).add_insertion(1, 8, 1).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand1 = design.strands[2];
@@ -795,8 +795,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 10, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(10).commit();
-      design = design.strand(0, 5).move(-5).commit();
+      design = design.draw_strand(0, 0).move(10).commit();
+      design = design.draw_strand(0, 5).move(-5).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand = design.strands.last;
@@ -827,8 +827,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 10, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(5).commit();
-      design = design.strand(0, 10).move(-10).commit();
+      design = design.draw_strand(0, 0).move(5).commit();
+      design = design.draw_strand(0, 10).move(-10).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand = design.strands.first;
@@ -862,8 +862,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 10, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 5).move(-5).commit();
-      design = design.strand(0, 0).move(10).move(-3).commit();
+      design = design.draw_strand(0, 5).move(-5).commit();
+      design = design.draw_strand(0, 0).move(10).move(-3).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand = design.strands.first;
@@ -900,8 +900,8 @@ main() {
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 10).move(-5).commit();
-      design = design.strand(0, 0).move(10).cross(1).move(-3).commit();
+      design = design.draw_strand(0, 10).move(-5).commit();
+      design = design.draw_strand(0, 0).move(10).cross(1).move(-3).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand = design.strands.first;
@@ -932,10 +932,10 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 10, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 9).move(-9).commit();
-      design = design.strand(0, 0).move(3).commit();
-      design = design.strand(0, 3).move(3).commit();
-      design = design.strand(0, 6).move(3).commit();
+      design = design.draw_strand(0, 9).move(-9).commit();
+      design = design.draw_strand(0, 0).move(3).commit();
+      design = design.draw_strand(0, 3).move(3).commit();
+      design = design.draw_strand(0, 6).move(3).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand = design.strands.first;
@@ -972,9 +972,9 @@ main() {
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(12).cross(1).move(-12).commit();
-      design = design.strand(0, 3).move(-3).cross(1).move(6).cross(0).move(-3).commit();
-      design = design.strand(1, 9).move(3).cross(0).move(-6).cross(1).move(3).commit();
+      design = design.draw_strand(0, 0).move(12).cross(1).move(-12).commit();
+      design = design.draw_strand(0, 3).move(-3).cross(1).move(6).cross(0).move(-3).commit();
+      design = design.draw_strand(1, 9).move(3).cross(0).move(-6).cross(1).move(3).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand = design.strands.first;
@@ -1009,8 +1009,8 @@ main() {
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(1, 16).move(-16).cross(0).move(16).commit();
-      design = design.strand(1, 0).move(16).cross(0).move(-16).commit();
+      design = design.draw_strand(1, 16).move(-16).cross(0).move(16).commit();
+      design = design.draw_strand(1, 0).move(16).cross(0).move(-16).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand = design.strands.first;
@@ -1053,7 +1053,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design
-          .strand(1, 3)
+          .draw_strand(1, 3)
           .move(-3)
           .add_deletion(1, 1)
           .cross(0)
@@ -1064,8 +1064,8 @@ main() {
           .move(-3)
           .add_deletion(1, 4)
           .commit();
-      design = design.strand(1, 0).move(3).add_deletion(1, 1).cross(0).move(-3).add_deletion(0, 1).commit();
-      design = design.strand(0, 6).move(-3).add_deletion(0, 4).cross(1).move(3).add_deletion(1, 4).commit();
+      design = design.draw_strand(1, 0).move(3).add_deletion(1, 1).cross(0).move(-3).add_deletion(0, 1).commit();
+      design = design.draw_strand(0, 6).move(-3).add_deletion(0, 4).cross(1).move(3).add_deletion(1, 4).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand = design.strands.first;
@@ -1097,10 +1097,10 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 9, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(3).commit();
-      design = design.strand(0, 3).move(3).commit();
-      design = design.strand(0, 6).move(3).commit();
-      design = design.strand(0, 9).move(-9).commit();
+      design = design.draw_strand(0, 0).move(3).commit();
+      design = design.draw_strand(0, 3).move(3).commit();
+      design = design.draw_strand(0, 6).move(3).commit();
+      design = design.draw_strand(0, 9).move(-9).commit();
 
       AppState state = app_state_from_design(design);
 
@@ -1143,8 +1143,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(16).with_sequence("AACGTACGATGCATCC").commit();
-      design = design.strand(0, 16).move(-16).with_sequence("GGATGCATCGTACGTT").commit();
+      design = design.draw_strand(0, 0).move(16).with_sequence("AACGTACGATGCATCC").commit();
+      design = design.draw_strand(0, 16).move(-16).with_sequence("GGATGCATCGTACGTT").commit();
       AppState state = app_state_from_design(design);
       Strand strand = design.strands.last;
       state =
@@ -1161,8 +1161,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(16).with_sequence('AACGTACGATGCATCC').commit();
-      design = design.strand(0, 16).move(-16).commit();
+      design = design.draw_strand(0, 0).move(16).with_sequence('AACGTACGATGCATCC').commit();
+      design = design.draw_strand(0, 16).move(-16).commit();
 
       var action = actions.AssignDNAComplementFromBoundStrands(design.strands);
       var state = app_state_from_design(design);
@@ -1185,8 +1185,8 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design =
-          design.strand(0, 0).move(16).add_insertion(0, 8, 3).with_sequence('AACGTATCGCGATGCATCC').commit();
-      design = design.strand(0, 16).move(-16).add_insertion(0, 8, 3).commit();
+          design.draw_strand(0, 0).move(16).add_insertion(0, 8, 3).with_sequence('AACGTATCGCGATGCATCC').commit();
+      design = design.draw_strand(0, 16).move(-16).add_insertion(0, 8, 3).commit();
 
       var action = actions.AssignDNAComplementFromBoundStrands([design.strands[1]]);
       var state = app_state_from_design(design);
@@ -1210,9 +1210,9 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(16).add_insertion(0, 8, 3).commit();
-      design = design.strand(0, 5).move(-5).with_sequence("ACGTT").commit();
-      design = design.strand(0, 16).move(-11).add_insertion(0, 8, 3).with_sequence('GGATGCATCGCGAT').commit();
+      design = design.draw_strand(0, 0).move(16).add_insertion(0, 8, 3).commit();
+      design = design.draw_strand(0, 5).move(-5).with_sequence("ACGTT").commit();
+      design = design.draw_strand(0, 16).move(-11).add_insertion(0, 8, 3).with_sequence('GGATGCATCGCGAT').commit();
 
       var action = actions.AssignDNAComplementFromBoundStrands([design.strands[0]]);
       var state = app_state_from_design(design);
@@ -1236,8 +1236,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(16).add_deletion(0, 8).with_sequence('AACGTACGTGCATCC').commit();
-      design = design.strand(0, 16).move(-16).add_deletion(0, 8).commit();
+      design = design.draw_strand(0, 0).move(16).add_deletion(0, 8).with_sequence('AACGTACGTGCATCC').commit();
+      design = design.draw_strand(0, 16).move(-16).add_deletion(0, 8).commit();
 
       var action = actions.AssignDNAComplementFromBoundStrands([design.strands[1]]);
       var state = app_state_from_design(design);
@@ -1259,9 +1259,9 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(16).add_deletion(0, 8).commit();
-      design = design.strand(0, 5).move(-5).with_sequence("ACGTT").commit();
-      design = design.strand(0, 16).move(-11).add_deletion(0, 8).with_sequence('TGCATCGGAT').commit();
+      design = design.draw_strand(0, 0).move(16).add_deletion(0, 8).commit();
+      design = design.draw_strand(0, 5).move(-5).with_sequence("ACGTT").commit();
+      design = design.draw_strand(0, 16).move(-11).add_deletion(0, 8).with_sequence('TGCATCGGAT').commit();
 
       var action = actions.AssignDNAComplementFromBoundStrands([design.strands[0]]);
       var state = app_state_from_design(design);

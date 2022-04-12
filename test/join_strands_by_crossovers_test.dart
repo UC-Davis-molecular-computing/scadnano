@@ -42,11 +42,11 @@ main() {
 
         if (helix == 0) {
           // top scaffold has no nick
-          design = design.strand(0, 0).to(right_end).as_scaffold().commit();
+          design = design.draw_strand(0, 0).to(right_end).as_scaffold().commit();
         } else {
-          design = design.strand(helix, scaffold_5p).move(scaffold_move).as_scaffold().commit();
+          design = design.draw_strand(helix, scaffold_5p).move(scaffold_move).as_scaffold().commit();
           design =
-              design.strand(helix, scaffold_5p + scaffold_move).move(scaffold_move).as_scaffold().commit();
+              design.draw_strand(helix, scaffold_5p + scaffold_move).move(scaffold_move).as_scaffold().commit();
         }
       }
 
@@ -60,7 +60,7 @@ main() {
         }
         int staple_offset = staple_5p;
         for (int i = 0; i < 4; i++) {
-          design = design.strand(helix, staple_offset).move(staple_move).commit();
+          design = design.draw_strand(helix, staple_offset).move(staple_move).commit();
           staple_offset += staple_move;
         }
       }

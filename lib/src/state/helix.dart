@@ -56,6 +56,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     bool invert_y = false,
     Position3D position = null,
     Point<num> svg_position = null,
+    Iterable<int> major_tick_periodic_distances = null,
     String group = constants.default_group_name,
   }) {
     if (grid == null) {
@@ -70,6 +71,9 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     if (grid_position == null && grid != Grid.none) {
       grid_position = GridPosition(0, idx);
     }
+    if (major_tick_periodic_distances == null) {
+      major_tick_periodic_distances = [];
+    }
     return Helix.from((b) => b
       ..idx = idx
       ..geometry = geometry?.toBuilder()
@@ -81,6 +85,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
       ..min_offset = min_offset
       ..max_offset = max_offset
       ..major_tick_start = major_tick_start
+      ..major_tick_periodic_distances.replace(major_tick_periodic_distances)
       ..unused_fields.replace({}));
   }
 

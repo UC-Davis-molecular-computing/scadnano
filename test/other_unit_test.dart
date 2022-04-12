@@ -79,8 +79,8 @@ main() {
   test('duplicate_deletions_in_design_removed', () {
     var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square),Helix(idx: 1, max_offset: 100, grid: Grid.square) ];
     var design = Design(helices: helices, grid: Grid.square);
-    design = design.strand(0, 0).move(8).commit();
-    design = design.strand(1, 8).move(-8).add_deletion(1, 4).commit();
+    design = design.draw_strand(0, 0).move(8).commit();
+    design = design.draw_strand(1, 8).move(-8).add_deletion(1, 4).commit();
     var action = actions.DeletionAdd(domain: design.all_domains[0], offset: 4, all_helices: true);
     var new_domains = deletion_add_reducer(design.all_domains[0], action);
     expect(1, new_domains.deletions.length);
@@ -98,8 +98,8 @@ main() {
   test('duplicate_inseritons_in_design_removed', () {
     var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square),Helix(idx: 1, max_offset: 100, grid: Grid.square) ];
     var design = Design(helices: helices, grid: Grid.square);
-    design = design.strand(0, 0).move(8).commit();
-    design = design.strand(1, 8).move(-8).add_insertion(1, 4, 1).commit();
+    design = design.draw_strand(0, 0).move(8).commit();
+    design = design.draw_strand(1, 8).move(-8).add_insertion(1, 4, 1).commit();
     var action = actions.InsertionAdd(domain: design.all_domains[0], offset: 4, all_helices: true);
     var new_domains = insertion_add_reducer(design.all_domains[0], action);
     expect(1, new_domains.insertions.length);
@@ -243,7 +243,7 @@ main() {
     ];
     test('test_strand__0_0_to_10_cross_1_to_5', () {
       Design actual_design = new Design(grid: Grid.square, helices: helices);
-      actual_design = actual_design.strand(0, 0).to(10).cross(1).to(5).commit();
+      actual_design = actual_design.draw_strand(0, 0).to(10).cross(1).to(5).commit();
 
       Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild((s) => s
@@ -255,7 +255,7 @@ main() {
     });
     test('test_strand__0_0_to_10_cross_1_to_5__reverse', () {
       Design actual_design = new Design(grid: Grid.square, helices: helices);
-      actual_design = actual_design.strand(1, 5).to(10).cross(0).to(0).commit();
+      actual_design = actual_design.draw_strand(1, 5).to(10).cross(0).to(0).commit();
 
       Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild((s) => s
@@ -267,7 +267,7 @@ main() {
     });
     test('test_strand__h0_off0_to_off10_cross_h1_to_off5_loopout_length3_h2_to_off15', () {
       Design actual_design = new Design(grid: Grid.square, helices: helices);
-      actual_design = actual_design.strand(0, 0).to(10).cross(1).to(5).loopout(2, 3).to(15).commit();
+      actual_design = actual_design.draw_strand(0, 0).to(10).cross(1).to(5).loopout(2, 3).to(15).commit();
 
       Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild((s) => s
@@ -281,7 +281,7 @@ main() {
     });
     test('test_strand__two_forward_paranemic_crossovers', () {
       Design actual_design = new Design(grid: Grid.square, helices: helices);
-      actual_design = actual_design.strand(0, 0).to(10).cross(1).to(15).cross(2).to(20).commit();
+      actual_design = actual_design.draw_strand(0, 0).to(10).cross(1).to(15).cross(2).to(20).commit();
 
       Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild((s) => s
@@ -295,7 +295,7 @@ main() {
     });
     test('test_strand__two_reverse_paranemic_crossovers', () {
       Design actual_design = new Design(grid: Grid.square, helices: helices);
-      actual_design = actual_design.strand(0, 20).to(10).cross(1).to(5).cross(2).to(0).commit();
+      actual_design = actual_design.draw_strand(0, 20).to(10).cross(1).to(5).cross(2).to(0).commit();
 
       Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild((s) => s
@@ -308,8 +308,8 @@ main() {
     });
     test('test_strand__multiple_strands', () {
       Design actual_design = new Design(grid: Grid.square, helices: helices);
-      actual_design = actual_design.strand(0, 0).to(10).cross(1).to(0).commit();
-      actual_design = actual_design.strand(0, 20).to(10).cross(1).to(20).commit();
+      actual_design = actual_design.draw_strand(0, 0).to(10).cross(1).to(0).commit();
+      actual_design = actual_design.draw_strand(0, 20).to(10).cross(1).to(20).commit();
 
       Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild((s) => s
@@ -332,8 +332,8 @@ main() {
     });
     test('test_strand__multiple_strands_other_order', () {
       Design actual_design = new Design(grid: Grid.square, helices: helices);
-      actual_design = actual_design.strand(0, 20).to(10).cross(1).to(20).commit();
-      actual_design = actual_design.strand(0, 0).to(10).cross(1).to(0).commit();
+      actual_design = actual_design.draw_strand(0, 20).to(10).cross(1).to(20).commit();
+      actual_design = actual_design.draw_strand(0, 0).to(10).cross(1).to(0).commit();
 
       Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild((s) => s
@@ -357,7 +357,7 @@ main() {
     test('test_strand__multiple_strands_overlap_no_error', () {
       Design actual_design = new Design(grid: Grid.square, helices: helices);
       actual_design = actual_design
-          .strand(0, 0)
+          .draw_strand(0, 0)
           .to(10)
           .cross(1)
           .to(0)
@@ -372,7 +372,7 @@ main() {
                   unused_fields: BuiltMap<String, Object>()))
           .commit();
       actual_design = actual_design
-          .strand(0, 10)
+          .draw_strand(0, 10)
           .to(0)
           .cross(1)
           .to(10)
@@ -416,7 +416,7 @@ main() {
     });
     test('test_strand__call_to_twice_legally', () {
       Design actual_design = new Design(grid: Grid.square, helices: helices);
-      actual_design = actual_design.strand(0, 0).to(10).cross(1).to(5).to(0).commit();
+      actual_design = actual_design.draw_strand(0, 0).to(10).cross(1).to(5).to(0).commit();
 
       Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild((s) => s

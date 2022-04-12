@@ -7607,7 +7607,7 @@ main() {
     Helix helix0 = Helix(idx: 0, grid_position: GridPosition(0, 0), max_offset: 8);
     Helix helix1 = Helix(idx: 1, grid_position: GridPosition(0, 1), max_offset: 8);
     Design design = Design(helices: [helix0, helix1], grid: Grid.square)
-        .strand(0, 0)
+        .draw_strand(0, 0)
         .to(8)
         .cross(1)
         .to(0)
@@ -7652,7 +7652,7 @@ main() {
     Helix helix0 = Helix(idx: 0, grid_position: GridPosition(0, 0), max_offset: 16);
     Helix helix1 = Helix(idx: 1, grid_position: GridPosition(0, 1), max_offset: 16);
     Design design = Design(helices: [helix0, helix1], grid: Grid.square)
-        .strand(1, 8)
+        .draw_strand(1, 8)
         .to(0)
         .cross(0)
         .to(8)
