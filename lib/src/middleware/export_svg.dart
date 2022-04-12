@@ -43,11 +43,14 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
         }
       } else if (action is actions.CopySVG) {
         var selected_strands = store.state.ui_state.selectables_store.selected_strands;
+        List<Element> selected_elts = [];
         for (var strand in selected_strands) {
-          var elt = document.getElementById(strand.id);
-          var svgElement = SvgSvgElement()..children = [elt.clone(true)];
-           _export_from_element(elt, 'side');
+          var strand_elt = document.getElementById(strand.id);
+          var dna_seq_elt = document.getElementById('dna-sequence-${strand.id}');
+          var mismatch_elts = document.getElementsByClassName('mismatch-${strand.id}');
+          selected_elts.addAll([strand_elt, if (dna_seq_elt != null) dna_seq_elt, ...mismatch_elts]);
         }
+        _copy_from_elements(selected_elts, 'selected');
       }
     }
   } else {
@@ -55,34 +58,62 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
   }
 }
 
-_export_from_element(Element svg_element, String filename_append) {
-  var cloned_svg_element_with_style = SvgSvgElement()..children = [clone_and_apply_style(svg_element)];
+_export_svg(svg.SvgSvgElement svg_element, String filename_append, { bool to_clipboard = false }) {
 
   var serializer = new XmlSerializer();
-  var source = serializer.serializeToString(cloned_svg_element_with_style);
-
-  //add name spaces.
-//    if(!source.match(r'/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)') {
-//      source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
-//    }
-//    if(!source.match(/^<svg[^>]+"http\:\/\/www\.w3\.org\/1999\/xlink"/)){
-//      source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
-//    }
-
-  //add xml declaration
-//  source = '<?xml version="1.1" standalone="no"?>\r\n' + source;
-
-  //convert svg source to URI data scheme.
-//  var url = "data:image/svg+xml;charset=utf-8," + Uri.encodeComponent(source);
-
-//  String blob_type = "data:image/svg+xml;charset=utf-8,";
+  var source = serializer.serializeToString(svg_element);
+  
+  if (to_clipboard) {
+    util.copy_svg_as_png(source);
+  }
+  else {
 
   //clipboard.write(source);
-  String filename = app.state.ui_state.loaded_filename;
-  filename = filename.substring(0, filename.lastIndexOf('.'));
-  filename += '_${filename_append}.svg';
+    //add name spaces.
+  //    if(!source.match(r'/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)') {
+  //      source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+  //    }
+  //    if(!source.match(/^<svg[^>]+"http\:\/\/www\.w3\.org\/1999\/xlink"/)){
+  //      source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
+  //    }
 
-  util.save_file(filename, source, blob_type: util.BlobType.image);
+    //add xml declaration
+  //  source = '<?xml version="1.1" standalone="no"?>\r\n' + source;
+
+    //convert svg source to URI data scheme.
+  //  var url = "data:image/svg+xml;charset=utf-8," + Uri.encodeComponent(source);
+
+  //  String blob_type = "data:image/svg+xml;charset=utf-8,";
+
+    String filename = app.state.ui_state.loaded_filename;
+    filename = filename.substring(0, filename.lastIndexOf('.'));
+    filename += '_${filename_append}.svg';
+
+    util.save_file(filename, source, blob_type: util.BlobType.image);
+  }
+}
+
+_copy_from_elements(List<Element> svg_elements, String filename_append) {
+  var cloned_svg_element_with_style = SvgSvgElement()..children = svg_elements.map(clone_and_apply_style).toList();
+
+  // we can't get bbox without it being added to the DOM first
+  document.body.append(cloned_svg_element_with_style);
+  var bbox = cloned_svg_element_with_style.getBBox();
+  cloned_svg_element_with_style.remove();
+
+  // have to add some padding to viewbox, for some reason bbox doesn't always fit it by a few pixels?? 
+  cloned_svg_element_with_style.setAttribute('viewBox', '${bbox.x.floor() - 1} ${bbox.y.floor() - 1} ${bbox.width.ceil() + 3} ${bbox.height.ceil() + 3}');
+
+  _export_svg(cloned_svg_element_with_style, filename_append, to_clipboard: true);
+}
+
+_export_from_element(Element svg_element, String filename_append) {
+  var cloned_svg_element_with_style = clone_and_apply_style(svg_element);
+  // if element is not an svg element (it can be a child element of svg e.g. groups, lines, text, etc), wrap in svg tag
+  if (!(svg_element is svg.SvgSvgElement))
+    cloned_svg_element_with_style = SvgSvgElement()..children = [cloned_svg_element_with_style];
+
+  _export_svg(cloned_svg_element_with_style, filename_append);
 }
 
 const List<String> text_styles = [
@@ -115,10 +146,16 @@ final relevant_styles = {
   "textPath": text_styles + text_path_only_styles,
 };
 
-clone_and_apply_style(Element svg_elt_orig) {
-  Element svg_elt_styled = svg_elt_orig.clone(true);
-  svg_elt_orig.classes.remove('selected');
-  clone_and_apply_style_rec(svg_elt_styled, svg_elt_orig);
+Element clone_and_apply_style(Element elt_orig) {
+  Element elt_styled = elt_orig.clone(true);
+
+  bool selected = elt_orig.classes.contains('selected');
+  
+  elt_orig.classes.remove('selected');
+  clone_and_apply_style_rec(elt_styled, elt_orig);
+  
+  if (selected) 
+    elt_orig.classes.add('selected');
 
   // need to get from original since it has been rendered (styled hasn't been rendered so has 0 bounding box
   // also need to get from g element, not svg element, since svg element dimensions based on original
@@ -130,7 +167,7 @@ clone_and_apply_style(Element svg_elt_orig) {
   svg_elt_styled.setAttribute('width', '${bbox_orig_g.width + 100}');
   svg_elt_styled.setAttribute('height', '${bbox_orig_g.height + 50}');
   */
-  return svg_elt_styled;
+  return elt_styled;
 }
 
 clone_and_apply_style_rec(Element elt_styled, Element elt_orig, {int depth = 0}) {

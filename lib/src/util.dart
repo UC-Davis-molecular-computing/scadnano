@@ -995,6 +995,9 @@ num sigmoid(num x) {
   return 1.0 / (1.0 + exp(-x));
 }
 
+@JS()
+external clipboard_write(String blob_type_string, Blob content);
+
 @JS(constants.js_function_name_cache_svg)
 external ImageElement cache_svg(String svg_elt_id);
 
@@ -1081,6 +1084,34 @@ String blob_type_to_string(BlobType blob_type) {
       return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
   }
   throw AssertionError(ASSERTION_ERROR_MESSAGE);
+}
+
+copy_svg_as_png(var svg_string) async {
+  try {
+    var svgUrl = Url.createObjectUrlFromBlob(new Blob([svg_string], 'image/svg+xml'));
+    var svgImage = new ImageElement(src: svgUrl);//, width: cloned_svg_elem.viewBox.baseVal.width.round(), height: cloned_svg_elem.viewBox.baseVal.height.round());
+    document.body.append(svgImage);
+    svgImage.addEventListener('load', (event) async {
+        var canvas = new CanvasElement();
+        canvas.width = svgImage.clientWidth;
+        canvas.height = svgImage.clientHeight;
+        var canvasCtx = canvas.context2D;
+        canvasCtx.drawImage(svgImage, 0, 0);
+        var imgData = await canvas.toBlob('image/png');
+        clipboard_write('image/png', imgData);
+        svgImage.remove();
+
+        Url.revokeObjectUrl(svgUrl);
+    });
+    svgImage.src = svgUrl;
+    
+    // window.navigator.clipboard.write(DataTransfer()..setData(blob_type_string, content));
+
+  } on Exception catch (e, stackTrace) {
+    print(stackTrace);
+  } on Error catch (e, stackTrace) {
+    print(stackTrace);
+  }
 }
 
 /// [and_then] is a callback to do if the file save dialog is not canceled and no other error occurs.
