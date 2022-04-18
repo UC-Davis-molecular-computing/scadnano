@@ -1086,15 +1086,17 @@ String blob_type_to_string(BlobType blob_type) {
   throw AssertionError(ASSERTION_ERROR_MESSAGE);
 }
 
-copy_svg_as_png(var svg_string) async {
+copy_svg_as_png(SvgSvgElement svg_element) async {
   try {
-    var svgUrl = Url.createObjectUrlFromBlob(new Blob([svg_string], 'image/svg+xml'));
-    var svgImage = new ImageElement(src: svgUrl);//, width: cloned_svg_elem.viewBox.baseVal.width.round(), height: cloned_svg_elem.viewBox.baseVal.height.round());
+    var serializer = new XmlSerializer();
+    var source = serializer.serializeToString(svg_element);
+    var svgUrl = Url.createObjectUrlFromBlob(new Blob([source], 'image/svg+xml'));
+    var svgImage = new ImageElement(src: svgUrl);
     document.body.append(svgImage);
     svgImage.addEventListener('load', (event) async {
         var canvas = new CanvasElement();
-        canvas.width = svgImage.clientWidth;
-        canvas.height = svgImage.clientHeight;
+        canvas.width = svg_element.viewBox.baseVal.width * 2;
+        canvas.height = svg_element.viewBox.baseVal.height * 2;
         var canvasCtx = canvas.context2D;
         canvasCtx.drawImage(svgImage, 0, 0);
         var imgData = await canvas.toBlob('image/png');

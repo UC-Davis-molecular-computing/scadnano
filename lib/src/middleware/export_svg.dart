@@ -60,14 +60,19 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
 
 _export_svg(svg.SvgSvgElement svg_element, String filename_append, { bool to_clipboard = false }) {
 
-  var serializer = new XmlSerializer();
-  var source = serializer.serializeToString(svg_element);
   
   if (to_clipboard) {
-    util.copy_svg_as_png(source);
+    util.copy_svg_as_png(svg_element);
+    // String filename = app.state.ui_state.loaded_filename;
+    // filename = filename.substring(0, filename.lastIndexOf('.'));
+    // filename += '_${filename_append}.svg';
+
+    // util.save_file(filename, source, blob_type: util.BlobType.image);
   }
   else {
 
+    var serializer = new XmlSerializer();
+    var source = serializer.serializeToString(svg_element);
   //clipboard.write(source);
     //add name spaces.
   //    if(!source.match(r'/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)') {
