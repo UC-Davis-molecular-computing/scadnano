@@ -7,6 +7,10 @@ html, body {
     font-family: sans-serif;
 }
 
+body {
+    overflow: hidden;
+}
+
 /************************************************
 ** BEGIN layout
 ************************************************/

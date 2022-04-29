@@ -43,14 +43,17 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
         }
       } else if (action is actions.CopySVG) {
         var selected_strands = store.state.ui_state.selectables_store.selected_strands;
-        List<Element> selected_elts = [];
-        for (var strand in selected_strands) {
-          var strand_elt = document.getElementById(strand.id);
-          var dna_seq_elt = document.getElementById('dna-sequence-${strand.id}');
-          var mismatch_elts = document.getElementsByClassName('mismatch-${strand.id}');
-          selected_elts.addAll([strand_elt, if (dna_seq_elt != null) dna_seq_elt, ...mismatch_elts]);
+
+        if (selected_strands.length != 0) {
+          List<Element> selected_elts = [];
+          for (var strand in selected_strands) {
+            var strand_elt = document.getElementById(strand.id);
+            var dna_seq_elt = document.getElementById('dna-sequence-${strand.id}');
+            var mismatch_elts = document.getElementsByClassName('mismatch-${strand.id}');
+            selected_elts.addAll([strand_elt, if (dna_seq_elt != null) dna_seq_elt, ...mismatch_elts]);
+          }
+          _copy_from_elements(selected_elts);
         }
-        _copy_from_elements(selected_elts, 'selected');
       }
     }
   } else {
@@ -58,18 +61,7 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
   }
 }
 
-_export_svg(svg.SvgSvgElement svg_element, String filename_append, { bool to_clipboard = false }) {
-
-  
-  if (to_clipboard) {
-    util.copy_svg_as_png(svg_element);
-    // String filename = app.state.ui_state.loaded_filename;
-    // filename = filename.substring(0, filename.lastIndexOf('.'));
-    // filename += '_${filename_append}.svg';
-
-    // util.save_file(filename, source, blob_type: util.BlobType.image);
-  }
-  else {
+_export_svg(svg.SvgSvgElement svg_element, String filename_append) {
 
     var serializer = new XmlSerializer();
     var source = serializer.serializeToString(svg_element);
@@ -95,10 +87,9 @@ _export_svg(svg.SvgSvgElement svg_element, String filename_append, { bool to_cli
     filename += '_${filename_append}.svg';
 
     util.save_file(filename, source, blob_type: util.BlobType.image);
-  }
 }
 
-_copy_from_elements(List<Element> svg_elements, String filename_append) {
+_copy_from_elements(List<Element> svg_elements) {
   var cloned_svg_element_with_style = SvgSvgElement()..children = svg_elements.map(clone_and_apply_style).toList();
 
   // we can't get bbox without it being added to the DOM first
@@ -109,7 +100,7 @@ _copy_from_elements(List<Element> svg_elements, String filename_append) {
   // have to add some padding to viewbox, for some reason bbox doesn't always fit it by a few pixels?? 
   cloned_svg_element_with_style.setAttribute('viewBox', '${bbox.x.floor() - 1} ${bbox.y.floor() - 1} ${bbox.width.ceil() + 3} ${bbox.height.ceil() + 3}');
 
-  _export_svg(cloned_svg_element_with_style, filename_append, to_clipboard: true);
+  util.copy_svg_as_png(cloned_svg_element_with_style);
 }
 
 _export_from_element(Element svg_element, String filename_append) {
