@@ -465,7 +465,7 @@
 
     function current_zoom_main() {
         if ('undefined' !== typeof main_view_svg_pan_zoom) {
-            return main_view_svg_pan_zoom.getZoom();
+            return main_view_svg_pan_zoom.getSizes().realZoom;
         } else {
             // console.log('using default zoom for main');
             return 1;
@@ -474,7 +474,7 @@
 
     function current_zoom_side() {
         if ('undefined' !== typeof side_view_svg_pan_zoom) {
-            return side_view_svg_pan_zoom.getZoom();
+            return side_view_svg_pan_zoom.getSizes().realZoom;
         } else {
             // console.log('using default zoom for side');
             return 1;
