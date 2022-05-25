@@ -361,7 +361,7 @@ Most of the steps below are about how to change the code. Before and after are s
     **Special instructions for modifying Design:** If the new states show up in the `Design`, some care must be taken. `to_json_serializable` and `from_json` must be modified to handle the new data, since as a part of the `Design`, it needs to be stored in the JSON `.sc` file. The goal of `to_json_serializable` is to create a "naturally" JSON serializable object (i.e., one that can be handed off to Dart's (`jsonEncode` function)[https://api.dart.dev/stable/2.8.4/dart-convert/jsonEncode.html]). We also want to keep the JSON readable. We do this by using indenting with 2 spaces by default (this is done already; you don't have to do this yourself), but for short lists/maps that would look too spaced out on separate lines, e.g., 
 
     ```json
-      "grid_position" = [
+      "grid_position": [
         0,
         1
       ],
@@ -384,7 +384,7 @@ Most of the steps below are about how to change the code. Before and after are s
     This will create the following JSON output instead:
 
     ```json
-      "grid_position" = [0, 1],
+      "grid_position": [0, 1],
     ```
 
     However, there should be only *one* `NoIndent` along any path from leaf to root in the object tree. Otherwise, you will get an error stating that Dart does not know how to serialize an object of type `NoIndent`.
