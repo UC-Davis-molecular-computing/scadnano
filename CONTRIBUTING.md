@@ -318,7 +318,7 @@ As described above, the use of React and Redux is intended to reduce the number 
 
 All built_value classes should use the mixin `BuiltJsonSerializable`, which is done by adding `with BuiltJsonSerializable`. Read more about [mixins](https://dart.dev/guides/language/language-tour#adding-features-to-a-class-mixins).
 
-For many typical features one would want to add that involve changing some aspect of the model through interacting with the view, there is a recipe to follow for adding features. The general steps are as follows. (These steps can more or less be done in any order, but the following order will keep intermediate compilation errors to a minimum.) We explain them by example for modifying the "modification font size", which is a type `num` (which can represent either `int` or `double`).
+For many typical features one would want to add that involve changing some aspect of the model through interacting with the view, there is a recipe to follow for adding features. The general steps are as follows. (These steps can more or less be done in any order, but the following order will keep intermediate compilation errors to a minimum.) We explain them by example for modifying the "modification font size", which is of type `num` (which can represent either `int` or `double`).
 
 Most of the steps below are about how to change the code. Before and after are steps that involve making changes to the GitHub repository, which are explained in more detail in the next section.
 
