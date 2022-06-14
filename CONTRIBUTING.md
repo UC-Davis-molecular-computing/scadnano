@@ -324,7 +324,7 @@ Most of the steps below are about how to change the code. Before and after are s
 
 
 1. **Follow GitHub steps**:
-    Make an issue describing the feature/bug fix, then make a new branch based off of dev named after the issue. See [Pushing to the repository dev branch and documenting changes (done on all updates)](#pushing-to-the-repository-dev-branch-and-documenting-changes-done-on-all-updates) below for more details. 
+    Make an issue describing the feature/bug fix. Then make a new branch based off of dev named after the issue. Follow the naming convention that the name of the branch starts with the number of the issue, followed by its title. For example, if issue 148 is "simplify API of evaluate function in constraint" (https://github.com/UC-Davis-molecular-computing/nuad/issues/148), then the branch should be named `148-simplify-api-of-evaluate-function-in-constraint`. If you go to the issue on GitHub, on the right side under "Development", you can click "Create a branch" to create a branch using this naming convention. See [Pushing to the repository dev branch and documenting changes (done on all updates)](#pushing-to-the-repository-dev-branch-and-documenting-changes-done-on-all-updates) below for more details. 
 
 2. **add unit tests reproducing bug**:
     If this is a bug fix, *first* add unit tests reproducing it. Depending on the exact sort of input/behavior that causes the bug, this may not be straightforward. However, if it is due to faulty logic in a reducer or middleware, then generally one can add a unit test that just calls the reducer/middleware to reproduce the bug. Bugs in view code are less straightforward to unit test.
