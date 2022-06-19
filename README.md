@@ -734,9 +734,7 @@ We have found that the autostaple and autobreak tools are largely unnecessary in
 since scadnano allows one to copy and paste strands (unlike cadnano), 
 encouraging a more free-form method of creating large designs rapidly.
 
-Recursive copy/pasting speeds up this process even further.
-For instance, to create a vertical "column" of 32 staples in a 32-helix rectangle, one would create 2 types of staples (plus some special cases near the top/bottom), copy/paste them to make 4, copy/paste *those* to make 8, then 16, and finally 32 staples. 
-Since most of the design consists of horizontally translated copies of this column it can be created quickly by copying and pasting the whole column.
+Copy/pasting speeds up this process even further. For instance, to create a vertical "column" of 32 staples in a 32-helix rectangle, one would create a staple, copy/paste it below, then use the [Autopaste](https://github.com/UC-Davis-molecular-computing/scadnano/issues/580) feature to repeatedly paste more copies below to create a full "column" of staples. Then this entire column can be selected, and autopaste can be used to fill in the rest of the design with those staples. See the [tutorial](tutorial/tutorial.md) for more details.
 
 A standard DNA origami rectangle, for instance, can be created in about 10 minutes.
 One downside is that a complete novice, who has no idea where staples ought to go, does not have a default push-button way to create an initial design.
@@ -754,11 +752,11 @@ You may need to reset the local settings, in particular to remove a locally stor
 It is possible to run scadnano offline, so that no internet connection is needed.
 To do this, follow the [instructions](CONTRIBUTING.md#making-contributions) for running a local server in the CONTRIBUTING document, which involves three steps:
 
-- [Cloning](CONTRIBUTING.md#cloning) the scadnano repository from GitHub.
+- [Clone](CONTRIBUTING.md#cloning) the scadnano repository from GitHub.
 
-- [Installing](CONTRIBUTING.md#installing-dart) the Dart SDK.
+- [Install](CONTRIBUTING.md#installing-dart) the Dart SDK.
 
-- [Running](CONTRIBUTING.md#running-a-local-server) a local server.
+- [Run](CONTRIBUTING.md#running-a-local-server) a local server.
 
 
 
