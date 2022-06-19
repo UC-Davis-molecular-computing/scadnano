@@ -740,7 +740,7 @@ Then this entire column can be selected, and autopaste can be used to fill in th
 See the [tutorial](tutorial/tutorial.md) for more details.
 
 A standard DNA origami rectangle, for instance, can be created in about 10 minutes.
-One downside is that a complete novice, who has no idea where staples ought to go, does not have a default push-button way to create an initial design without using autostaple.
+One downside is that a complete novice, who has no idea where staples ought to go or what they should look like, does not have a default push-button way to create an initial design without using autostaple.
 However, numerous example designs are provided to learn what good staple design looks like. 
 
 See the [tutorial](tutorial/tutorial.md) for detailed instructions on creating a 24-helix DNA origami rectangle using the scadnano web interface.
