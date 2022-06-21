@@ -1428,6 +1428,25 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
   }
 
+  check_strands_in_bounds() {
+    String err_msg(Domain domain, int h_idx) {
+      return "domain found out of bounds on helix ${h_idx}: "
+          "\n${domain}";
+    }
+
+    for (int helix_idx in helices.keys) {
+      var domains = this.domains_on_helix(helix_idx);
+      var helix = helices[helix_idx];
+      if (domains.length == 0) continue;
+
+      for (var domain in domains) {
+        if (domain.start < helix.min_offset || domain.end > helix.max_offset) {
+              throw IllegalDesignError(err_msg(domain, helix_idx));
+            }
+      }
+    }
+  }
+
   @memoized
   BuiltMap<String, BuiltList<int>> get helix_idxs_in_group {
     Map<String, List<int>> map = {for (var name in groups.keys) name: []};
