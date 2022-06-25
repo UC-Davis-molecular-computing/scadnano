@@ -41,9 +41,8 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
     return (Menu()
       ..selected_ends = state.ui_state.selectables_store.selected_dna_ends
       ..geometry = state.design?.geometry
-      ..no_grid_is_none = state.design == null
-          ? false
-          : state.design.groups.values.every((group) => group.grid != Grid.none)
+      ..no_grid_is_none =
+          state.design == null ? false : state.design.groups.values.every((group) => group.grid != Grid.none)
       ..show_dna = state.ui_state.show_dna
       ..show_domain_names = state.ui_state.show_domain_names
       ..show_strand_names = state.ui_state.show_strand_names
@@ -55,36 +54,27 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..strand_paste_keep_color = state.ui_state.strand_paste_keep_color
       ..zoom_speed = state.ui_state.zoom_speed
       ..autofit = state.ui_state.autofit
-      ..only_display_selected_helices =
-          state.ui_state.only_display_selected_helices
+      ..only_display_selected_helices = state.ui_state.only_display_selected_helices
 //    ..grid = state.design?.grid
       ..example_designs = state.ui_state.example_designs
-      ..design_has_insertions_or_deletions =
-          state.design?.has_insertions_or_deletions == true
+      ..design_has_insertions_or_deletions = state.design?.has_insertions_or_deletions == true
       ..undo_stack_empty = state.undo_redo.undo_stack.isEmpty
       ..redo_stack_empty = state.undo_redo.redo_stack.isEmpty
-      ..enable_copy =
-          app.state.ui_state.selectables_store.selected_strands.isNotEmpty
+      ..enable_copy = app.state.ui_state.selectables_store.selected_strands.isNotEmpty
       ..modification_font_size = state.ui_state.modification_font_size
       ..major_tick_offset_font_size = state.ui_state.major_tick_offset_font_size
       ..major_tick_width_font_size = state.ui_state.major_tick_width_font_size
-      ..modification_display_connector =
-          state.ui_state.modification_display_connector
-      ..display_of_major_ticks_offsets =
-          state.ui_state.display_base_offsets_of_major_ticks
+      ..modification_display_connector = state.ui_state.modification_display_connector
+      ..display_of_major_ticks_offsets = state.ui_state.display_base_offsets_of_major_ticks
       ..display_base_offsets_of_major_ticks_only_first_helix =
           state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
       ..display_major_tick_widths = state.ui_state.display_major_tick_widths
-      ..display_major_tick_widths_all_helices =
-          state.ui_state.display_major_tick_widths_all_helices
+      ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices
       ..invert_y = state.ui_state.invert_y
-      ..show_helix_circles_main_view =
-          state.ui_state.show_helix_circles_main_view
-      ..show_helix_components_main_view =
-          state.ui_state.show_helix_components_main_view
+      ..show_helix_circles_main_view = state.ui_state.show_helix_circles_main_view
+      ..show_helix_components_main_view = state.ui_state.show_helix_components_main_view
       ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
-      ..show_grid_coordinates_side_view =
-          state.ui_state.show_grid_coordinates_side_view
+      ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
       ..show_helices_axis_arrows = state.ui_state.show_helices_axis_arrows
       ..show_loopout_length = state.ui_state.show_loopout_length
       ..show_slice_bar = state.ui_state.show_slice_bar
@@ -205,17 +195,13 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
       'id': 'file-nav-dropdown',
     }, [
       (MenuDropdownItem()
-        ..on_click =
-            ((_) => app.disable_keyboard_shortcuts_while(load_example_dialog))
+        ..on_click = ((_) => app.disable_keyboard_shortcuts_while(load_example_dialog))
         ..display = '📄 Load example'
         ..key = 'load-example')(),
       (MenuFormFile()
         ..id = 'open-form-file'
-        ..accept = constants.all_scadnano_file_extensions
-            .map((ext) => '.' + ext)
-            .join(",")
-        ..onChange = ((e) =>
-            request_load_file_from_file_chooser(e.target, scadnano_file_loaded))
+        ..accept = constants.all_scadnano_file_extensions.map((ext) => '.' + ext).join(",")
+        ..onChange = ((e) => request_load_file_from_file_chooser(e.target, scadnano_file_loaded))
         ..display = '📂 Open'
         ..keyboard_shortcut = 'Ctrl+O'
         ..key = 'open-form-file')(),
@@ -232,15 +218,14 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
 If checked, before attempting to close or refresh the page, if the design has 
 changed since it was last saved, a warning dialog is displayed to ask if you
 really want to exit without saving.'''
-        ..onChange = ((_) => props.dispatch(actions.WarnOnExitIfUnsavedSet(
-            warn: !props.warn_on_exit_if_unsaved)))
+        ..onChange =
+            ((_) => props.dispatch(actions.WarnOnExitIfUnsavedSet(warn: !props.warn_on_exit_if_unsaved)))
         ..key = 'warn-on-exit-if-unsaved')(),
       DropdownDivider({'key': 'divider-save'}),
       (MenuFormFile()
         ..id = 'import-cadnano-form-file'
         ..accept = '.json'
-        ..onChange = ((e) =>
-            request_load_file_from_file_chooser(e.target, cadnano_file_loaded))
+        ..onChange = ((e) => request_load_file_from_file_chooser(e.target, cadnano_file_loaded))
         ..display = 'Import cadnano v2'
         ..key = 'import-cadnano')(),
       DropdownDivider({'key': 'divider-import-cadnano'}),
@@ -260,14 +245,12 @@ Are you sure you want to continue?''');
 Clear the stored design, reset all local settings, and reload the page.'''
         ..key = 'reset-local-storage')(),
       file_menu_save_design_local_storage_options(),
-      DropdownDivider(
-          {'key': 'divide-clear-helix-selection-when-loading-new-design'}),
+      DropdownDivider({'key': 'divide-clear-helix-selection-when-loading-new-design'}),
       (MenuBoolean()
         ..value = props.clear_helix_selection_when_loading_new_design
         ..display = 'Clear helix selection when loading new design'
-        ..onChange = ((_) => props.dispatch(
-            actions.ClearHelixSelectionWhenLoadingNewDesignSet(
-                clear: !props.clear_helix_selection_when_loading_new_design)))
+        ..onChange = ((_) => props.dispatch(actions.ClearHelixSelectionWhenLoadingNewDesignSet(
+            clear: !props.clear_helix_selection_when_loading_new_design)))
         ..tooltip = '''\
 If checked, the selected helices will be clear when loading a new design.
 Otherwise, helix selection is not cleared, meaning that all the selected helices in the current
@@ -276,39 +259,33 @@ design will be selected (based on helix index) on the loaded design.'''
     ]);
   }
 
-  ReactElement file_menu_save_design_local_storage_options() =>
-      (MenuDropdownRight()
+  ReactElement file_menu_save_design_local_storage_options() => (MenuDropdownRight()
         ..title = 'Local storage design save options'
         ..id = 'file_menu_local-storage-options'
         ..key = 'file_menu_local-storage-options'
         ..className = 'submenu_item')([
         (MenuBoolean()
-          ..value = props.local_storage_design_choice.option ==
-              LocalStorageDesignOption.on_edit
+          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.on_edit
           ..display = 'Save design in localStorage on every edit'
           ..tooltip = '''\
 On every edit, save current design in localStorage (in your web browser).
 
 Disabling this minimizes the time needed to render large designs.'''
           ..onChange = ((_) => props.dispatch(
-              actions.LocalStorageDesignChoiceSet(
-                  choice: props.local_storage_design_choice.to_on_edit())))
+              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_on_edit())))
           ..key = 'save-dna-design-in-local-storage')(),
         (MenuBoolean()
-          ..value = props.local_storage_design_choice.option ==
-              LocalStorageDesignOption.on_exit
+          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.on_exit
           ..display = 'Save design in localStorage before exiting'
           ..tooltip = '''\
 Before exiting, save current design in localStorage (in your web browser). 
 For large designs, this is faster than saving on every edit, but if the browser crashes, 
 all changes made will be lost, so it is not as safe as storing on every edit.'''
           ..onChange = ((_) => props.dispatch(
-              actions.LocalStorageDesignChoiceSet(
-                  choice: props.local_storage_design_choice.to_on_exit())))
+              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_on_exit())))
           ..key = 'save-dna-design-in-local-storage-on-exit')(),
         (MenuBoolean()
-          ..value = props.local_storage_design_choice.option ==
-              LocalStorageDesignOption.never
+          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.never
           ..display = 'Do not save design in localStorage'
           ..tooltip = '''\
 Never saves the design in localStorage.
@@ -316,12 +293,10 @@ Never saves the design in localStorage.
 WARNING: you must save your design manually by pressing Ctrl+S or selecting 
 File-->Save, or your design will be lost when you close the browser tab.'''
           ..onChange = ((_) => props.dispatch(
-              actions.LocalStorageDesignChoiceSet(
-                  choice: props.local_storage_design_choice.to_never())))
+              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_never())))
           ..key = 'never-save-dna-design-in-local-storage')(),
         (MenuBoolean()
-          ..value = props.local_storage_design_choice.option ==
-              LocalStorageDesignOption.periodic
+          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.periodic
           ..display = 'Save design in localStorage periodically'
           ..tooltip = '''\
 Every <period> seconds, save current design in localStorage (in your web browser). 
@@ -329,20 +304,16 @@ Also saves before exiting.
 This is safer than never saving, or saving only before exiting, but will not save edits
 that occurred between the last save and a browser crash.'''
           ..onChange = ((_) => props.dispatch(
-              actions.LocalStorageDesignChoiceSet(
-                  choice: props.local_storage_design_choice.to_periodic())))
+              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_periodic())))
           ..key = 'save-dna-design-in-local-storage-periodically')(),
         (MenuNumber()
           ..display = 'period (seconds)'
           ..min_value = 1
           ..default_value = props.local_storage_design_choice.period_seconds
-          ..hide = props.local_storage_design_choice.option !=
-              LocalStorageDesignOption.periodic
+          ..hide = props.local_storage_design_choice.option != LocalStorageDesignOption.periodic
           ..tooltip = 'Number of seconds between saving design to localStorage.'
-          ..on_new_value = ((num period) => props.dispatch(
-              actions.LocalStorageDesignChoiceSet(
-                  choice: LocalStorageDesignChoice(
-                      LocalStorageDesignOption.periodic, period))))
+          ..on_new_value = ((num period) => props.dispatch(actions.LocalStorageDesignChoiceSet(
+              choice: LocalStorageDesignChoice(LocalStorageDesignOption.periodic, period))))
           ..key = 'period-of-save-dna-design-in-local-storage-periodically')(),
       ]);
 
@@ -369,17 +340,15 @@ that occurred between the last save and a browser crash.'''
       (MenuDropdownItem()
         ..on_click = (_) {
           if (props.enable_copy) {
-            window.dispatchEvent(
-                new KeyEvent('keydown', keyCode: KeyCode.C, ctrlKey: true)
-                    .wrapped);
+            window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.C, ctrlKey: true).wrapped);
           }
         }
         ..display = 'Copy'
         ..keyboard_shortcut = 'Ctrl+C'
         ..disabled = !props.enable_copy)(),
       (MenuDropdownItem()
-        ..on_click = ((_) => window.dispatchEvent(
-            new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped))
+        ..on_click =
+            ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped))
         ..display = 'Paste'
         ..keyboard_shortcut = 'Ctrl+V')(),
       (MenuDropdownItem()
@@ -395,14 +364,13 @@ that occurred between the last save and a browser crash.'''
         ..tooltip = '''\
 If checked, when copying and pasting a strand, the color is preserved.
 If unchecked, then a new color is generated.'''
-        ..onChange = ((_) => props.dispatch(actions.StrandPasteKeepColorSet(
-            keep: !props.strand_paste_keep_color))))(),
+        ..onChange =
+            ((_) => props.dispatch(actions.StrandPasteKeepColorSet(keep: !props.strand_paste_keep_color))))(),
       ///////////////////////////////////////////////////////////////
       // inline insertions/deletions
       DropdownDivider({}),
       (MenuDropdownItem()
-        ..on_click =
-            ((_) => props.dispatch(actions.InlineInsertionsDeletions()))
+        ..on_click = ((_) => props.dispatch(actions.InlineInsertionsDeletions()))
         ..display = 'Inline insertions/deletions'
         ..disabled = !props.design_has_insertions_or_deletions
         ..tooltip = ''
@@ -416,8 +384,7 @@ marks on helices so that they are adjacent to the same bases as before.''')(),
       DropdownDivider({}),
       (MenuDropdownItem()
         // ..on_click = ((_) => connect_ends_by_crossovers(props.selected_ends))
-        ..on_click =
-            ((_) => props.dispatch(actions.JoinStrandsByMultipleCrossovers()))
+        ..on_click = ((_) => props.dispatch(actions.JoinStrandsByMultipleCrossovers()))
         ..display = 'Connect selected ends by crossovers'
         ..disabled = props.selected_ends.isEmpty
         ..tooltip = ''
@@ -436,8 +403,7 @@ to the first end e2 after it in this order, if
       // Set helix coordinates based on crossovers
       DropdownDivider({}),
       (MenuDropdownItem()
-        ..on_click = ((_) =>
-            props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers()))
+        ..on_click = ((_) => props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers()))
         ..display = 'Set helix coordinates based on crossovers'
         ..disabled = props.no_grid_is_none
         ..tooltip = '''\
@@ -469,10 +435,8 @@ Ignored if design is not an origami (i.e., does not have at least one scaffold).
           // disallow if both would be unchecked
           if (props.default_crossover_type_staple_for_setting_helix_rolls) {
             props.dispatch(actions.DefaultCrossoverTypeForSettingHelixRollsSet(
-                scaffold: !props
-                    .default_crossover_type_scaffold_for_setting_helix_rolls,
-                staple: props
-                    .default_crossover_type_staple_for_setting_helix_rolls));
+                scaffold: !props.default_crossover_type_scaffold_for_setting_helix_rolls,
+                staple: props.default_crossover_type_staple_for_setting_helix_rolls));
           }
         })(),
       (MenuBoolean()
@@ -493,10 +457,8 @@ Ignored if design is not an origami (i.e., does not have at least one scaffold).
           // disallow if both would be unchecked
           if (props.default_crossover_type_scaffold_for_setting_helix_rolls) {
             props.dispatch(actions.DefaultCrossoverTypeForSettingHelixRollsSet(
-                scaffold: props
-                    .default_crossover_type_scaffold_for_setting_helix_rolls,
-                staple: !props
-                    .default_crossover_type_staple_for_setting_helix_rolls));
+                scaffold: props.default_crossover_type_scaffold_for_setting_helix_rolls,
+                staple: !props.default_crossover_type_staple_for_setting_helix_rolls));
           }
         })(),
       ///////////////////////////////////////////////////////////////
@@ -547,44 +509,34 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
   }
 
   List<ReactElement> get undo_dropdowns {
-    return undo_or_redo_dropdowns(
-        (i) => actions.Undo(i), props.undo_redo.undo_stack, "Undo");
+    return undo_or_redo_dropdowns((i) => actions.Undo(i), props.undo_redo.undo_stack, "Undo");
   }
 
   List<ReactElement> get redo_dropdowns {
-    return undo_or_redo_dropdowns(
-        (i) => actions.Redo(i), props.undo_redo.redo_stack, "Redo");
+    return undo_or_redo_dropdowns((i) => actions.Redo(i), props.undo_redo.redo_stack, "Redo");
   }
 
-  List<ReactElement> undo_or_redo_dropdowns(
-      ActionFromIntCreator undo_or_redo_action_creator,
-      BuiltList<UndoRedoItem> undo_or_redo_stack,
-      String action_name) {
+  List<ReactElement> undo_or_redo_dropdowns(ActionFromIntCreator undo_or_redo_action_creator,
+      BuiltList<UndoRedoItem> undo_or_redo_stack, String action_name) {
     List<ReactElement> dropdowns = [];
     int num_times = 1;
     bool most_recent = true;
     for (var item in undo_or_redo_stack.reversed) {
-      dropdowns.add(undo_or_redo_dropdown(item, undo_or_redo_action_creator,
-          num_times, action_name, most_recent));
+      dropdowns
+          .add(undo_or_redo_dropdown(item, undo_or_redo_action_creator, num_times, action_name, most_recent));
       num_times += 1;
       most_recent = false;
     }
     return dropdowns;
   }
 
-  ReactElement undo_or_redo_dropdown(
-      UndoRedoItem item,
-      ActionFromIntCreator undo_or_redo_action_creator,
-      int num_times,
-      String action_name,
-      bool is_most_recent) {
+  ReactElement undo_or_redo_dropdown(UndoRedoItem item, ActionFromIntCreator undo_or_redo_action_creator,
+      int num_times, String action_name, bool is_most_recent) {
     String most_recent_string = is_most_recent ? " [Most Recent]" : "";
     return (MenuDropdownItem()
-      ..display =
-          '${action_name} ${item.short_description}${most_recent_string}'
+      ..display = '${action_name} ${item.short_description}${most_recent_string}'
       ..key = '${action_name.toLowerCase()}-${num_times}'
-      ..on_click =
-          (_) => app.dispatch(undo_or_redo_action_creator(num_times)))();
+      ..on_click = (_) => app.dispatch(undo_or_redo_action_creator(num_times)))();
   }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -641,8 +593,7 @@ of the design you were looking at before changing the script.
 
 To autofit the current design without reloading, click "Auto-fit current design".'''
         ..name = 'center-on-load'
-        ..onChange =
-            ((_) => props.dispatch(actions.AutofitSet(autofit: !props.autofit)))
+        ..onChange = ((_) => props.dispatch(actions.AutofitSet(autofit: !props.autofit)))
         ..key = 'autofit-on-loading-new-design')(),
     ]);
   }
@@ -660,8 +611,7 @@ To autofit the current design without reloading, click "Auto-fit current design"
 Show DNA sequences that have been assigned to strands. In a large design, this
 can slow down the performance of panning and zooming navigation, so uncheck it
 to speed up navigation.'''
-        ..onChange =
-            ((_) => props.dispatch(actions.ShowDNASet(!props.show_dna)))
+        ..onChange = ((_) => props.dispatch(actions.ShowDNASet(!props.show_dna)))
         ..key = 'show-dna-sequences')(),
       (MenuBoolean()
         ..value = props.show_mismatches
@@ -686,31 +636,29 @@ helix with the opposite orientation.'''
         ..value = props.show_strand_names
         ..display = 'Show strand names'
         ..tooltip = "Show strand names near 5' domain of strand."
-        ..onChange = ((_) => props
-            .dispatch(actions.ShowStrandNamesSet(!props.show_strand_names)))
+        ..onChange = ((_) => props.dispatch(actions.ShowStrandNamesSet(!props.show_strand_names)))
         ..key = 'show-strand-name')(),
       (MenuNumber()
         ..display = 'strand name font size'
         ..default_value = props.strand_name_font_size
         ..hide = !props.show_strand_names
         ..tooltip = 'Adjust to change the font size of strand name.'
-        ..on_new_value = ((num font_size) =>
-            props.dispatch(actions.StrandNameFontSizeSet(font_size: font_size)))
+        ..on_new_value =
+            ((num font_size) => props.dispatch(actions.StrandNameFontSizeSet(font_size: font_size)))
         ..key = 'strand-name-font-size')(),
       (MenuBoolean()
         ..value = props.show_domain_names
         ..display = 'Show domain names'
         ..tooltip = 'Show domain and loopout names.'
-        ..onChange = ((_) => props
-            .dispatch(actions.ShowDomainNamesSet(!props.show_domain_names)))
+        ..onChange = ((_) => props.dispatch(actions.ShowDomainNamesSet(!props.show_domain_names)))
         ..key = 'show-domain-name')(),
       (MenuNumber()
         ..display = 'domain name font size'
         ..default_value = props.domain_name_font_size
         ..hide = !props.show_domain_names
         ..tooltip = 'Adjust to change the font size of domain and loopout name.'
-        ..on_new_value = ((num font_size) =>
-            props.dispatch(actions.DomainNameFontSizeSet(font_size: font_size)))
+        ..on_new_value =
+            ((num font_size) => props.dispatch(actions.DomainNameFontSizeSet(font_size: font_size)))
         ..key = 'domain-name-font-size')(),
       (MenuBoolean()
         ..value = props.show_domain_name_mismatches
@@ -719,8 +667,7 @@ helix with the opposite orientation.'''
 Show mismatches between domain names assigned to one strand and the strand on the same
 helix with the opposite orientation.'''
         ..onChange = (_) {
-          props.dispatch(actions.ShowDomainNameMismatchesSet(
-              !props.show_domain_name_mismatches));
+          props.dispatch(actions.ShowDomainNameMismatchesSet(!props.show_domain_name_mismatches));
         }
         ..key = 'show-domain-name-mismatches')(),
     ]);
@@ -735,10 +682,8 @@ helix with the opposite orientation.'''
       (MenuBoolean()
         ..value = props.show_modifications
         ..display = 'Show modifications'
-        ..tooltip =
-            'Check to show DNA modifications (e.g., biotins, fluorophores).'
-        ..onChange = ((_) => props
-            .dispatch(actions.ShowModificationsSet(!props.show_modifications)))
+        ..tooltip = 'Check to show DNA modifications (e.g., biotins, fluorophores).'
+        ..onChange = ((_) => props.dispatch(actions.ShowModificationsSet(!props.show_modifications)))
         ..key = 'show-mods')(),
       (MenuBoolean()
         ..value = props.modification_display_connector
@@ -752,17 +697,15 @@ If this is unchecked, then the modification is displayed directly on top of
 the 5'/3' end or the base. This is useful for visualizing the exact position
 of the modifications, e.g., to see where a pattern of biotins will appear on
 the surface of a DNA origami."""
-        ..onChange = ((_) => props.dispatch(
-            actions.SetModificationDisplayConnector(
-                !props.modification_display_connector)))
+        ..onChange = ((_) =>
+            props.dispatch(actions.SetModificationDisplayConnector(!props.modification_display_connector)))
         ..key = 'display-mod-connector')(),
       (MenuNumber()
         ..display = 'Modification font size'
         ..default_value = props.modification_font_size
         ..hide = !props.show_modifications
         ..tooltip = 'Adjust the font size of modification text representation.'
-        ..on_new_value = ((num font_size) =>
-            props.dispatch(actions.ModificationFontSizeSet(font_size)))
+        ..on_new_value = ((num font_size) => props.dispatch(actions.ModificationFontSizeSet(font_size)))
         ..key = 'mod-font-size')(),
     ]);
   }
@@ -776,12 +719,10 @@ the surface of a DNA origami."""
       (MenuBoolean()
         ..value = props.only_display_selected_helices
         ..display = 'Display only selected helices'
-        ..tooltip =
-            'Only helices selected in the side view are displayed in the main view.'
+        ..tooltip = 'Only helices selected in the side view are displayed in the main view.'
         ..name = 'display-only-selected-helices'
-        ..onChange = ((_) => props.dispatch(
-            actions.SetOnlyDisplaySelectedHelices(
-                !props.only_display_selected_helices)))
+        ..onChange = ((_) =>
+            props.dispatch(actions.SetOnlyDisplaySelectedHelices(!props.only_display_selected_helices)))
         ..key = 'display-only-selected-helices')(),
       (MenuBoolean()
         ..value = props.show_helix_components_main_view
@@ -791,9 +732,8 @@ Shows helix representation in main view. Hiding them hides all view elements
 associated with a helix: grid lines depicting offsets, circles with helix index,
 major tick offsets.'''
         ..name = 'show-helix-components-main-view'
-        ..onChange = ((_) => props.dispatch(
-            actions.ShowHelixComponentsMainViewSet(
-                show_helix_components: !props.show_helix_components_main_view)))
+        ..onChange = ((_) => props.dispatch(actions.ShowHelixComponentsMainViewSet(
+            show_helix_components: !props.show_helix_components_main_view)))
         ..key = 'show-helix-components-main-view')(),
       (MenuBoolean()
         ..value = props.show_helix_circles_main_view
@@ -820,28 +760,24 @@ toggle "Show main view helices".'''
       (MenuBoolean()
         ..value = props.display_of_major_ticks_offsets
         ..display = 'Display major tick offsets'
-        ..tooltip =
-            'Display the integer base offset to the right of each major tick, on the first helix.'
-        ..onChange = ((_) => props.dispatch(actions.DisplayMajorTicksOffsetsSet(
-            !props.display_of_major_ticks_offsets)))
+        ..tooltip = 'Display the integer base offset to the right of each major tick, on the first helix.'
+        ..onChange = ((_) =>
+            props.dispatch(actions.DisplayMajorTicksOffsetsSet(!props.display_of_major_ticks_offsets)))
         ..key = 'display-major-tick-offsets')(),
       (MenuBoolean()
         ..value = !props.display_base_offsets_of_major_ticks_only_first_helix
         ..hide = !props.display_of_major_ticks_offsets
         ..display = '... on all helices'
-        ..tooltip =
-            'Display the integer base offset to the right of each major tick, for all helices.'
-        ..onChange = ((_) => props.dispatch(
-            actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(
-                !props.display_base_offsets_of_major_ticks_only_first_helix)))
+        ..tooltip = 'Display the integer base offset to the right of each major tick, for all helices.'
+        ..onChange = ((_) => props.dispatch(actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(
+            !props.display_base_offsets_of_major_ticks_only_first_helix)))
         ..key = 'display-major-tick-offsets-on-all-helices')(),
       (MenuNumber()
         ..display = 'major tick offset font size'
         ..default_value = props.major_tick_offset_font_size
         ..hide = !props.display_of_major_ticks_offsets
         ..tooltip = 'Adjust to change the font size of major tick offsets.'
-        ..on_new_value = ((num font_size) =>
-            props.dispatch(actions.MajorTickOffsetFontSizeSet(font_size)))
+        ..on_new_value = ((num font_size) => props.dispatch(actions.MajorTickOffsetFontSizeSet(font_size)))
         ..key = 'major-tick-offset-font-size')(),
       DropdownDivider({'key': 'divider-major-tick-offset-from-width'}),
       (MenuBoolean()
@@ -849,26 +785,23 @@ toggle "Show main view helices".'''
         ..display = 'Display major tick widths'
         ..tooltip =
             'Display the number of bases between each adjacent pair of major ticks, on the first helix.'
-        ..onChange = ((_) => props.dispatch(actions.SetDisplayMajorTickWidths(
-            !props.display_major_tick_widths)))
+        ..onChange =
+            ((_) => props.dispatch(actions.SetDisplayMajorTickWidths(!props.display_major_tick_widths)))
         ..key = 'display-major-tick-widths')(),
       (MenuBoolean()
         ..value = props.display_major_tick_widths_all_helices
         ..hide = !props.display_major_tick_widths
         ..display = '...on all helices'
-        ..tooltip =
-            'Display the number of bases between each adjacent pair of major ticks, on all helices.'
+        ..tooltip = 'Display the number of bases between each adjacent pair of major ticks, on all helices.'
         ..onChange = ((_) => props.dispatch(
-            actions.SetDisplayMajorTickWidthsAllHelices(
-                !props.display_major_tick_widths_all_helices)))
+            actions.SetDisplayMajorTickWidthsAllHelices(!props.display_major_tick_widths_all_helices)))
         ..key = 'display-major-tick-widths-on-all-helices')(),
       (MenuNumber()
         ..display = 'Major tick width font size'
         ..default_value = props.major_tick_width_font_size
         ..hide = !props.display_major_tick_widths
         ..tooltip = 'Adjust to change the font size of major tick offsets.'
-        ..on_new_value = ((num font_size) =>
-            props.dispatch(actions.MajorTickWidthFontSizeSet(font_size)))
+        ..on_new_value = ((num font_size) => props.dispatch(actions.MajorTickWidthFontSizeSet(font_size)))
         ..key = 'major-tick-width-font-size')(),
     ]);
   }
@@ -880,10 +813,8 @@ toggle "Show main view helices".'''
         ..default_value = props.zoom_speed
         ..min_value = 0
         ..step = 0.05
-        ..tooltip =
-            'The speed at which the mouse wheel or two-finger scroll zooms the view in and out.'
-        ..on_new_value = ((num new_zoom_speed) =>
-            props.dispatch(actions.ZoomSpeedSet(speed: new_zoom_speed)))
+        ..tooltip = 'The speed at which the mouse wheel or two-finger scroll zooms the view in and out.'
+        ..on_new_value = ((num new_zoom_speed) => props.dispatch(actions.ZoomSpeedSet(speed: new_zoom_speed)))
         ..key = 'zoom-speed')(),
     ];
   }
@@ -902,8 +833,7 @@ If checked, then use Cartesian coordinates where increasing y moves up.
 
 To inspect how all axes change, check View --> Show axis arrows.'''
         ..name = 'invert-y-axis'
-        ..onChange = ((_) =>
-            props.dispatch(actions.InvertYSet(invert_y: !props.invert_y)))
+        ..onChange = ((_) => props.dispatch(actions.InvertYSet(invert_y: !props.invert_y)))
         ..key = 'invert-y-axis')(),
       (MenuBoolean()
         ..value = props.show_grid_coordinates_side_view
@@ -911,10 +841,8 @@ To inspect how all axes change, check View --> Show axis arrows.'''
         ..tooltip = '''\
 Shows grid coordinates in the side view under the helix index.'''
         ..name = 'show-grid-coordinates-side-view'
-        ..onChange = ((_) => props.dispatch(
-            actions.ShowGridCoordinatesSideViewSet(
-                show_grid_coordinates_side_view:
-                    !props.show_grid_coordinates_side_view)))
+        ..onChange = ((_) => props.dispatch(actions.ShowGridCoordinatesSideViewSet(
+            show_grid_coordinates_side_view: !props.show_grid_coordinates_side_view)))
         ..key = 'show-grid-coordinates-side-view')(),
       (MenuBoolean()
         ..value = props.show_helices_axis_arrows
@@ -925,8 +853,8 @@ Red : X-axis
 Green : Y-axis
 Blue : Z-axis'''
         ..name = 'show-helices-axis-arrows'
-        ..onChange = ((_) => props.dispatch(actions.ShowAxisArrowsSet(
-            show_helices_axis_arrows: !props.show_helices_axis_arrows)))
+        ..onChange = ((_) => props
+            .dispatch(actions.ShowAxisArrowsSet(show_helices_axis_arrows: !props.show_helices_axis_arrows)))
         ..key = 'show-helices-axis-arrows')(),
       (MenuBoolean()
         ..value = props.show_loopout_length
@@ -934,8 +862,8 @@ Blue : Z-axis'''
         ..tooltip = '''\
 When selected, the length of each loopout is displayed next to it.'''
         ..name = 'show-loopout-length'
-        ..onChange = ((_) => props.dispatch(actions.ShowLoopoutLengthSet(
-            show_loopout_length: !props.show_loopout_length)))
+        ..onChange = ((_) =>
+            props.dispatch(actions.ShowLoopoutLengthSet(show_loopout_length: !props.show_loopout_length)))
         ..key = 'show-loopout-length')(),
       (MenuBoolean()
         ..value = props.show_slice_bar
@@ -962,8 +890,7 @@ In a large design, this can slow down the performance, so uncheck it when not in
         '''
         ..name = 'show-mouseover-data'
         ..onChange = (_) {
-          props.dispatch(
-              actions.ShowMouseoverDataSet(!props.show_mouseover_data));
+          props.dispatch(actions.ShowMouseoverDataSet(!props.show_mouseover_data));
         }
         ..key = 'show-mouseover-data')()
     ];
@@ -979,16 +906,12 @@ In a large design, this can slow down the performance, so uncheck it when not in
         'id': 'export-nav-dropdown',
       },
       (MenuDropdownItem()
-        ..on_click = ((_) =>
-            props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.side)))
-        ..tooltip =
-            "Export SVG figure of side view (cross-section of helices on the left side of screen)."
+        ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.side)))
+        ..tooltip = "Export SVG figure of side view (cross-section of helices on the left side of screen)."
         ..display = 'SVG side view')(),
       (MenuDropdownItem()
-        ..on_click = ((_) =>
-            props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.main)))
-        ..tooltip =
-            "Export SVG figure of main view (design shown in center of screen)."
+        ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.main)))
+        ..tooltip = "Export SVG figure of main view (design shown in center of screen)."
         ..display = 'SVG main view')(),
       (MenuDropdownItem()
         ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna))
@@ -996,15 +919,13 @@ In a large design, this can slow down the performance, so uncheck it when not in
         ..display = 'DNA sequences')(),
       DropdownDivider({'key': 'divider-not-full-design'}),
       (MenuDropdownItem()
-        ..on_click =
-            ((_) => props.dispatch(actions.ExportCadnanoFile(whitespace: true)))
+        ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile(whitespace: true)))
         ..tooltip = "Export design to cadnano (version 2) .json file."
         ..display = 'cadnano v2'
         ..key = 'export-cadnano')(),
       DropdownItem(
         {
-          'href':
-              'https://scadnano-python-package.readthedocs.io/en/latest/#interoperability-cadnano-v2',
+          'href': 'https://scadnano-python-package.readthedocs.io/en/latest/#interoperability-cadnano-v2',
           'target': '_blank',
           'title': """\
 Read constraints that the scadnano design must obey to exportable to cadnano v2.
@@ -1015,8 +936,7 @@ linked page) as for the web interface.
         'cadnano v2 export instructions',
       ),
       (MenuDropdownItem()
-        ..on_click = ((_) =>
-            props.dispatch(actions.ExportCadnanoFile(whitespace: false)))
+        ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile(whitespace: false)))
         ..tooltip = """\
 Export design to cadnano (version 2) .json file with no whitespace or newlines.
 This is necessary to use the cadnano file with CanDo, which causes a confusing error 
@@ -1026,16 +946,13 @@ cadnano files that have whitespace. ("Bad .json file format is detected in
         ..key = 'export-cadnano-no-whitespace')(),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.OxdnaExport()))
-        ..tooltip =
-            "Export design to oxDNA .dat and .top files, which can be loaded in oxDNA or oxView."
+        ..tooltip = "Export design to oxDNA .dat and .top files, which can be loaded in oxDNA or oxView."
         ..display = 'oxDNA'
         ..key = 'export-oxdna')(),
       (MenuDropdownItem()
-        ..on_click = ((_) =>
-            props.dispatch(actions.OxdnaExport(selected_strands_only: true)))
-        ..tooltip =
-            "Export design to oxDNA .dat and .top files, which can be loaded in oxDNA or oxView.\n"
-                "Only exports the currently selected strands."
+        ..on_click = ((_) => props.dispatch(actions.OxdnaExport(selected_strands_only: true)))
+        ..tooltip = "Export design to oxDNA .dat and .top files, which can be loaded in oxDNA or oxView.\n"
+            "Only exports the currently selected strands."
         ..display = 'oxDNA (selected strands)'
         ..key = 'export-oxdna-selected-strands')(),
       //TODO: figure out if ENSnano is close to codenano format; if so this might work for exporting to it.
@@ -1075,24 +992,21 @@ cadnano files that have whitespace. ("Bad .json file format is detected in
       },
       DropdownItem(
         {
-          'href':
-              'https://github.com/UC-Davis-molecular-computing/scadnano#readme',
+          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano#readme',
           'target': '_blank',
         },
         'help (web interface)',
       ),
       DropdownItem(
         {
-          'href':
-              'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/tutorial/tutorial.md',
+          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/tutorial/tutorial.md',
           'target': '_blank',
         },
         'tutorial (web interface)',
       ),
       DropdownItem(
         {
-          'href':
-              'https://github.com/UC-Davis-molecular-computing/scadnano-python-package#readme',
+          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano-python-package#readme',
           'target': '_blank',
         },
         'help (Python scripting)',
@@ -1114,8 +1028,7 @@ cadnano files that have whitespace. ("Bad .json file format is detected in
       ),
       DropdownItem(
         {
-          'href':
-              'https://github.com/UC-Davis-molecular-computing/scadnano/issues',
+          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/issues',
           'target': '_blank',
           'title': '''\
 To file a bug report or feature request for the scadnano web interface, 
@@ -1134,8 +1047,7 @@ the .sc file in a .zip file, then it can be uploaded.'''
       ),
       DropdownItem(
         {
-          'href':
-              'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues',
+          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues',
           'target': '_blank',
           'title': '''\
 To file a bug report or feature request for the Python scripting library, 
@@ -1153,16 +1065,14 @@ the .sc file in a .zip file, then it can be uploaded.'''
       ),
       DropdownItem(
         {
-          'href':
-              'https://github.com/UC-Davis-molecular-computing/scadnano/releases',
+          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/releases',
           'target': '_blank',
         },
         'Release notes (web interface)',
       ),
       DropdownItem(
         {
-          'href':
-              'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/releases',
+          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/releases',
           'target': '_blank',
         },
         'Release notes (Python scripting)',
@@ -1225,10 +1135,8 @@ However, it may be less stable than the main site.'''
 // helper methods
 
   Future<void> export_dna() async {
-    List<String> export_options =
-        ExportDNAFormat.values.map((v) => v.toString()).toList();
-    List<String> sort_options =
-        StrandOrder.values.map((v) => v.toString()).toList();
+    List<String> export_options = ExportDNAFormat.values.map((v) => v.toString()).toList();
+    List<String> sort_options = StrandOrder.values.map((v) => v.toString()).toList();
 
     int idx_include_scaffold = 0;
     int idx_include_only_selected_strands = 1;
@@ -1238,41 +1146,32 @@ However, it may be less stable than the main site.'''
     int idx_strand_order_str = 5;
 
     List<DialogItem> items = [null, null, null, null, null, null];
-    items[idx_include_scaffold] =
-        DialogCheckbox(label: 'include scaffold', value: false);
+    items[idx_include_scaffold] = DialogCheckbox(label: 'include scaffold', value: false);
     items[idx_include_only_selected_strands] =
         DialogCheckbox(label: 'include only selected strands', value: false);
-    items[idx_format_str] =
-        DialogRadio(label: 'designs', options: export_options);
+    items[idx_format_str] = DialogRadio(label: 'designs', options: export_options);
     items[idx_sort] = DialogCheckbox(label: 'sort strands', value: false);
-    items[idx_column_major] = DialogCheckbox(
-        label: 'column-major order (uncheck for row-major order)', value: true);
-    items[idx_strand_order_str] =
-        DialogRadio(label: 'strand part to sort by', options: sort_options);
+    items[idx_column_major] =
+        DialogCheckbox(label: 'column-major order (uncheck for row-major order)', value: true);
+    items[idx_strand_order_str] = DialogRadio(label: 'strand part to sort by', options: sort_options);
 
-    var dialog = Dialog(
-        title: 'export DNA sequences',
-        items: items,
-        disable_when_any_checkboxes_off: {
-          idx_column_major: [idx_sort],
-          idx_strand_order_str: [idx_sort]
-        });
+    var dialog = Dialog(title: 'export DNA sequences', items: items, disable_when_any_checkboxes_off: {
+      idx_column_major: [idx_sort],
+      idx_strand_order_str: [idx_sort]
+    });
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
-    bool include_scaffold =
-        (results[idx_include_scaffold] as DialogCheckbox).value;
-    bool include_only_selected_strands =
-        (results[idx_include_only_selected_strands] as DialogCheckbox).value;
+    bool include_scaffold = (results[idx_include_scaffold] as DialogCheckbox).value;
+    bool include_only_selected_strands = (results[idx_include_only_selected_strands] as DialogCheckbox).value;
     String format_str = (results[idx_format_str] as DialogRadio).value;
     bool sort = (results[idx_sort] as DialogCheckbox).value;
     StrandOrder strand_order = null;
     bool column_major = true;
     if (sort) {
       column_major = (results[idx_column_major] as DialogCheckbox).value;
-      String strand_order_str =
-          (results[idx_strand_order_str] as DialogRadio).value;
+      String strand_order_str = (results[idx_strand_order_str] as DialogRadio).value;
       strand_order = StrandOrder.fromString(strand_order_str);
     }
     ExportDNAFormat format = ExportDNAFormat.fromString(format_str);
@@ -1311,8 +1210,7 @@ Future<void> ask_for_autobreak_parameters() async {
   items[target_length_idx] = DialogInteger(label: 'target length', value: 49);
   items[min_length_idx] = DialogInteger(label: 'min length', value: 15);
   items[max_length_idx] = DialogInteger(label: 'max length', value: 60);
-  items[min_distance_to_xover_idx] =
-      DialogInteger(label: 'min distance to xover', value: 3);
+  items[min_distance_to_xover_idx] = DialogInteger(label: 'min distance to xover', value: 3);
 
   var dialog = Dialog(title: 'Choose autobreak parameters', items: items);
   List<DialogItem> results = await util.dialog(dialog);
@@ -1321,8 +1219,7 @@ Future<void> ask_for_autobreak_parameters() async {
   int target_length = (results[target_length_idx] as DialogInteger).value;
   int min_length = (results[min_length_idx] as DialogInteger).value;
   int max_length = (results[max_length_idx] as DialogInteger).value;
-  int min_distance_to_xover =
-      (results[min_distance_to_xover_idx] as DialogInteger).value;
+  int min_distance_to_xover = (results[min_distance_to_xover_idx] as DialogInteger).value;
 
   app.dispatch(actions.Autobreak(
       target_length: target_length,
@@ -1339,29 +1236,23 @@ Future<void> ask_for_geometry(Geometry geometry) async {
   int minor_groove_angle_idx = 4;
 
   var items = List<DialogItem>.filled(5, null);
-  items[rise_per_base_pair_idx] = DialogFloat(
-      label: 'rise per base pair (nm)', value: geometry.rise_per_base_pair);
-  items[helix_radius_idx] =
-      DialogFloat(label: 'helix radius (nm)', value: geometry.helix_radius);
-  items[inter_helix_gap_idx] = DialogFloat(
-      label: 'inter helix gap (nm)', value: geometry.inter_helix_gap);
-  items[bases_per_turn_idx] =
-      DialogFloat(label: 'bases per turn', value: geometry.bases_per_turn);
-  items[minor_groove_angle_idx] = DialogFloat(
-      label: 'minor groove angle (degrees)',
-      value: geometry.minor_groove_angle);
+  items[rise_per_base_pair_idx] =
+      DialogFloat(label: 'rise per base pair (nm)', value: geometry.rise_per_base_pair);
+  items[helix_radius_idx] = DialogFloat(label: 'helix radius (nm)', value: geometry.helix_radius);
+  items[inter_helix_gap_idx] = DialogFloat(label: 'inter helix gap (nm)', value: geometry.inter_helix_gap);
+  items[bases_per_turn_idx] = DialogFloat(label: 'bases per turn', value: geometry.bases_per_turn);
+  items[minor_groove_angle_idx] =
+      DialogFloat(label: 'minor groove angle (degrees)', value: geometry.minor_groove_angle);
 
   var dialog = Dialog(title: 'adjust geometric parameters', items: items);
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 
-  double rise_per_base_pair =
-      (results[rise_per_base_pair_idx] as DialogFloat).value;
+  double rise_per_base_pair = (results[rise_per_base_pair_idx] as DialogFloat).value;
   double helix_radius = (results[helix_radius_idx] as DialogFloat).value;
   double inter_helix_gap = (results[inter_helix_gap_idx] as DialogFloat).value;
   double bases_per_turn = (results[bases_per_turn_idx] as DialogFloat).value;
-  double minor_groove_angle =
-      (results[minor_groove_angle_idx] as DialogFloat).value;
+  double minor_groove_angle = (results[minor_groove_angle_idx] as DialogFloat).value;
 
   var new_geometry = Geometry(
     rise_per_base_pair: rise_per_base_pair,
@@ -1373,8 +1264,8 @@ Future<void> ask_for_geometry(Geometry geometry) async {
   app.dispatch(actions.GeometrySet(geometry: new_geometry));
 }
 
-request_load_file_from_file_chooser(FileUploadInputElement file_chooser,
-    void Function(FileReader, String) onload_callback) {
+request_load_file_from_file_chooser(
+    FileUploadInputElement file_chooser, void Function(FileReader, String) onload_callback) {
   List<File> files = file_chooser.files;
   assert(files.isNotEmpty);
   File file = files[0];
@@ -1394,19 +1285,15 @@ request_load_file_from_file_chooser(FileUploadInputElement file_chooser,
 
 scadnano_file_loaded(FileReader file_reader, String filename) {
   var json_model_text = file_reader.result;
-  app.dispatch(actions.PrepareToLoadDNAFile(
-      content: json_model_text, filename: filename));
+  app.dispatch(actions.PrepareToLoadDNAFile(content: json_model_text, filename: filename));
 }
 
 cadnano_file_loaded(FileReader file_reader, String filename) async {
   try {
     var json_cadnano_text = file_reader.result;
-    filename = path.setExtension(
-        filename, '.${constants.default_scadnano_file_extension}');
+    filename = path.setExtension(filename, '.${constants.default_scadnano_file_extension}');
     app.dispatch(actions.PrepareToLoadDNAFile(
-        content: json_cadnano_text,
-        filename: filename,
-        dna_file_type: DNAFileType.cadnano_file));
+        content: json_cadnano_text, filename: filename, dna_file_type: DNAFileType.cadnano_file));
   } on Exception catch (e) {
     window.alert('Error importing file: ${e}');
   }
