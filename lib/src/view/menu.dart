@@ -28,6 +28,7 @@ import '../view/menu_boolean.dart';
 import '../view/menu_dropdown_item.dart';
 import '../view/menu_dropdown_right.dart';
 import '../view/menu_form_file.dart';
+import 'design.dart';
 
 import '../app.dart';
 import '../actions/actions.dart' as actions;
@@ -1297,15 +1298,4 @@ cadnano_file_loaded(FileReader file_reader, String filename) async {
   } on Exception catch (e) {
     window.alert('Error importing file: ${e}');
   }
-}
-
-paste_strands_auto() {
-  // it was much easier to handle the asynchronous read (seems to be the only way to read the clipboard)
-  // here than to handle it in middleware;
-  // unit testing especially seemed to be very difficult with all the asynchronous calls
-  clipboard.read().then((String content) {
-    if (content != null && content.isNotEmpty) {
-      app.dispatch(actions.AutoPasteInitiate(clipboard_content: content));
-    }
-  });
 }
