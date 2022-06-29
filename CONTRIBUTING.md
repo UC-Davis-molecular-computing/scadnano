@@ -8,13 +8,28 @@ or post questions as issues on the [issues page](https://github.com/UC-Davis-mol
 
 ## Table of contents
 
-- [What should I know before I get started?](#what-should-i-know-before-i-get-started)
-- [Required reading and intro to scadnano architecture](#required-reading-and-intro-to-scadnano-architecture)
-- [Making contributions](#making-contributions)
-- [General recipe for adding features](#general-recipe-for-adding-features)
-- [Pushing to the repository dev branch and documenting changes (done on all updates)](#pushing-to-the-repository-dev-branch-and-documenting-changes-done-on-all-updates)
-- [Pushing to the repository master branch and documenting changes (done less frequently)](#pushing-to-the-repository-master-branch-and-documenting-changes-done-less-frequently)
-- [Styleguide](#styleguide)
+- [Contributing to the scadnano web interface](#contributing-to-the-scadnano-web-interface)
+  - [Table of contents](#table-of-contents)
+  - [What should I know before I get started?](#what-should-i-know-before-i-get-started)
+    - [Dart](#dart)
+    - [Packages](#packages)
+  - [Required reading and intro to scadnano architecture](#required-reading-and-intro-to-scadnano-architecture)
+    - [Required reading: Dart](#required-reading-dart)
+    - [git](#git)
+    - [Required reading: Libraries](#required-reading-libraries)
+    - [Immutability](#immutability)
+    - [unidirectional data flow architecture of scadnano](#unidirectional-data-flow-architecture-of-scadnano)
+  - [Making contributions](#making-contributions)
+    - [Cloning](#cloning)
+    - [Installing Dart](#installing-dart)
+    - [Running a Local Server](#running-a-local-server)
+    - [Running Tests](#running-tests)
+    - [Building](#building)
+    - [Troubleshooting](#troubleshooting)
+  - [General recipe for adding features](#general-recipe-for-adding-features)
+  - [Pushing to the repository dev branch and documenting changes (done on all updates)](#pushing-to-the-repository-dev-branch-and-documenting-changes-done-on-all-updates)
+  - [Pushing to the repository master branch and documenting changes (done less frequently)](#pushing-to-the-repository-master-branch-and-documenting-changes-done-less-frequently)
+  - [Styleguide](#styleguide)
 
 ## What should I know before I get started?
 
@@ -215,32 +230,76 @@ git checkout dev
 
 ### Installing Dart
 
-1. First, install the [Dart SDK](https://dart.dev/get-dart).
+This project requires using Dart version **2.13.4**, not the latest version. Click on a dropdown below for installation instructions for your operating system.
 
-Then install the 2.13.4 version of Dart:
+<!--TODO: Find a way to use code blocks with syntax highlighting inside <details>-->
 
-```
-brew install dart@2.13
-```
+<details><summary><strong>Windows</strong></summary>
+First, install <a href="https://chocolatey.org/install">Chocolatey</a> if you haven't already. If <code>choco help</code> shows a help menu for using Chocolatey, then you've set it up correctly.
 
-Next switch to the 2.13.4 version of Dart:
+Then, install Dart 2.13.4:
 
-```
-brew unlink dart@2.17 && brew unlink dart@2.13 && brew link dart@2.13
-```
+<pre>
+choco install dart-sdk --version 2.13.4
+</pre>
 
-Next install all the Dart dependencies (from the same directory `scadnano` into which the project was cloned by git):
+To stop Chocolatey from automatically updating Dart to the latest version, pin it:
 
-```
-pub get
-```
+<pre>
+choco pin --name="'dart-sdk'" --version="'2.13.4'"
+</pre>
 
-2. Or, install 2.13.4 version directly by using the follow commands:
-   brew tap dart-lang/dart
+</details>
 
-```
+<details><summary><strong>macOS</strong></summary>
+First, install <a href="https://brew.sh/">Homebrew</a> if you haven't already. If <code>brew -v</code> shows some version numbers, then you've set it up correctly.
 
-brew install dart@2.13
+Then, install Dart 2.13.4:
+
+<pre>
+brew install dart@2.13.4
+</pre>
+
+To stop Homebrew from automatically updating Dart to the latest version, pin it:
+
+<pre>
+brew pin dart@2.13.4
+</pre>
+
+If running `dart` in a terminal now does not work, you may need to follow <a href="https://docs.brew.sh/FAQ#my-mac-apps-dont-find-homebrew-utilities">these instructions</a>.
+</details>
+
+<details><summary><strong>Linux (apt)</strong></summary>
+First, run these commands:
+
+<pre>
+sudo apt-get update
+sudo apt-get install apt-transport-https
+wget -qO- https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/dart.gpg
+echo 'deb [signed-by=/usr/share/keyrings/dart.gpg arch=amd64] https://storage.googleapis.com/download.dartlang.org/linux/debian stable main' | sudo tee /etc/apt/sources.list.d/dart_stable.list
+</pre>
+
+Then, install Dart 2.13.4:
+
+<pre>
+sudo apt-get update
+sudo apt-get install dart=2.13.4-1
+</pre>
+
+To stop apt from automatically updating Dart to the latest version, hold it:
+
+<pre>
+sudo apt-mark hold dart=2.13.4-1
+</pre>
+
+</details>
+
+<!--TODO: Add instructions for more package managers-->
+
+After installing the Dart SDK, you should see a help menu when you run `dart`.
+
+Once you have installed Dart, install all the Dart dependencies (from the same directory `scadnano` into which the project was cloned by git):
+
 ```
 
 pub get
