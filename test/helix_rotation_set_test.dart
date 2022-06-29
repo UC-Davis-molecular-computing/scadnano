@@ -45,7 +45,7 @@ main() {
     //  2  <----+
     setUp(() async {
       var pre_design_vert = Design(grid: Grid.square, num_helices: 3);
-      design_vert = pre_design_vert.strand(0, 5).to(0).cross(1).to(5).cross(2).to(0).commit();
+      design_vert = pre_design_vert.draw_strand(0, 5).to(0).cross(1).to(5).cross(2).to(0).commit();
       state_vert = app_state_from_design(design_vert);
     });
 
@@ -141,7 +141,7 @@ main() {
         Helix(idx: 2, grid: Grid.square, geometry: geometry, grid_position: GridPosition(2, 0)),
       ];
       var pre_design_horz = Design(grid: Grid.square, helices: helices);
-      design_horz = pre_design_horz.strand(0, 5).to(0).cross(1).to(5).cross(2).to(0).commit();
+      design_horz = pre_design_horz.draw_strand(0, 5).to(0).cross(1).to(5).cross(2).to(0).commit();
       state_horz = app_state_from_design(design_horz);
     });
 
@@ -247,8 +247,8 @@ main() {
             roll: 0),
       ];
       design = Design(grid: Grid.none, helices: helices, geometry: geometry);
-      design = design.strand(1, 5).to(0).cross(0).to(5).commit();
-      design = design.strand(2, 5).to(0).cross(1).to(5).commit();
+      design = design.draw_strand(1, 5).to(0).cross(0).to(5).commit();
+      design = design.draw_strand(2, 5).to(0).cross(1).to(5).commit();
       state = app_state_from_design(design);
     });
 

@@ -50,18 +50,18 @@ class StrandMaker {
         modification_3p: this.modification_3p,
         modification_5p: this.modification_5p,
         modifications_int: this.modifications_int);
-    this.design = this
-        .design
-        .add_strand(strand); //error-checking automatically done by this method
+    this.design = this.design.add_strand(strand); //error-checking automatically done by this method
     return this.design;
   }
 
   // relative coordinates
   StrandMaker move(int delta) => to(current_offset + delta);
 
+  bool last_substrand_was_loopout() => this.loopout_length != null;
+
   // absolute coordinates
   StrandMaker to(int offset) {
-    if (this.loopout_length != null) {
+    if (last_substrand_was_loopout()) {
       Loopout loopout = Loopout(
         loopout_length: loopout_length,
         prev_domain_idx: current_offset,
@@ -233,6 +233,71 @@ class StrandMaker {
         }
       }
     }
+    return this;
+  }
+
+  // more convenient version of add_deletion where you don't have to specify helix;
+  // it goes to most recently added domain
+  StrandMaker with_deletion(int deletion) {
+    return this.with_deletions([deletion]);
+  }
+
+  StrandMaker with_deletions(Iterable<int> deletions) {
+    if (this.substrands.isEmpty) {
+      throw ArgumentError('no Strand created yet; make at least one domain first');
+    }
+
+    var last_ss = substrands.last;
+
+    if (last_substrand_was_loopout()) {
+      throw ArgumentError('can only create a deletion on a bound Domain, '
+          'not a ${last_ss.runtimeType}; be sure only to call with_deletions immediately '
+          'after a call to move, to, or update_to');
+    }
+    Domain last_domain = last_ss;
+
+    for (int deletion in deletions) {
+      if (!(last_domain.start <= deletion && deletion < last_domain.end)) {
+        throw IllegalDesignError('all deletions must be between start=${last_domain.start} '
+            'and end=${last_domain.end}, but deletion=${deletion} is outside that range');
+      }
+    }
+
+    last_domain = last_domain.rebuild((b) => b..deletions.replace(deletions));
+    substrands.last = last_domain;
+
+    return this;
+  }
+
+  StrandMaker with_insertion(int offset, int count) {
+    var insertion = Insertion(offset, count);
+    return this.with_insertions([insertion]);
+  }
+
+  StrandMaker with_insertions(Iterable<Insertion> insertions) {
+    if (this.substrands.isEmpty) {
+      throw ArgumentError('no Strand created yet; make at least one domain first');
+    }
+
+    var last_ss = substrands.last;
+
+    if (last_substrand_was_loopout()) {
+      throw ArgumentError('can only create an insertion on a bound Domain, '
+          'not a ${last_ss.runtimeType}; be sure only to call with_insertions immediately '
+          'after a call to move, to, or update_to');
+    }
+    Domain last_domain = last_ss;
+
+    for (Insertion insertion in insertions) {
+      if (!(last_domain.start <= insertion.offset && insertion.offset < last_domain.end)) {
+        throw IllegalDesignError('all insertions must be between start=${last_domain.start} '
+            'and end=${last_domain.end}, but insertion=${insertion} is outside that range');
+      }
+    }
+
+    last_domain = last_domain.rebuild((b) => b..insertions.replace(insertions));
+    substrands.last = last_domain;
+
     return this;
   }
 }

@@ -128,7 +128,16 @@ abstract class StrandPasteKeepColorSet
 
 As you can see, there's quite a bit of boilerplate code, not only below the comment line, but also in the lines declaring the class.
 
-Another disadvantage of built*value is that it (as well as OverReact) uses \_code generation* (on compiling, first some extra code is generated that implement many of the features), and there are so many built_value and OverReact classes that the compilation time for the project, at the time of this writing, is 20 seconds minimum, and often more like 30-70 seconds, depending on your system. So although Dart's dartdevc incremental compiler is nice in allowing you to make one change to code, save it, and have dartdevc (run through `webdev serve` when developing locally) re-run and show the changed code in the browser (after a browser refresh), it does take a bit of time.
+The built_value library allows a useful feature called *memoized getters*: these are fields that are calculated from other fields, for example, `Helix.num_bases` is calculated based on the values of `Helix.min_offset` and `Helix.max_offset`. By marking such a field as memoized, it is not calculated until the first time it is accessed, and then the value is stored so that it does not need to be recalculated. (This is safe to do since the immutability of the object ensures that no other field values will update and changed the correct value of this memoized field.) For example, here is how `Helix.num_bases` is calculated:
+
+```dart
+  @memoized
+  int get num_bases => this.max_offset - this.min_offset;
+```
+
+**Memoized fields should return immutable objects**: WARNING: memoized fields should always return immutable objects. Otherwise there can be errors where a field is not properly updated when it should be. For example, the bug in issue [#761](https://github.com/UC-Davis-molecular-computing/scadnano/issues/761) was caused by the memoized getter `Helix.calculate_major_ticks` returning a `List<int>` instead of a `BuiltList<int>`.
+
+Another disadvantage of built_value is that it (as well as OverReact) uses *code generation* (on compiling, first some extra code is generated that implement many of the features), and there are so many built_value and OverReact classes that the compilation time for the project, at the time of this writing, is 20 seconds minimum, and often more like 30-70 seconds, depending on your system. So although Dart's dartdevc incremental compiler is nice in allowing you to make one change to code, save it, and have dartdevc (run through `webdev serve` when developing locally) re-run and show the changed code in the browser (after a browser refresh), it does take a bit of time.
 
 Another thing to note is that many IDEs and editors come with a static analysis tool that will warn about errors. Prior to the code generation running, the analyzer will report many errors, because the code written refers to types that don't exist yet, but that will be generated when the compilation is successful. This can make it difficult to track down compilation errors, because some are "real" (i.e., you made a mistake), and some are artifacts of this process that will go away once the compilation is successful. Even worse, OverReact's code generation retains the errors until the analyzer is refreshed; so even after successfully compiling, the analyzer will warn about errors. In WebStorm, this can be refreshed by clicking "Dart Analysis" at the bottom of the screen, and then clicking the "Restart Dart Analysis Server" button (circular red arrow).
 
@@ -401,13 +410,13 @@ As described above, the use of React and Redux is intended to reduce the number 
 
 All built_value classes should use the mixin `BuiltJsonSerializable`, which is done by adding `with BuiltJsonSerializable`. Read more about [mixins](https://dart.dev/guides/language/language-tour#adding-features-to-a-class-mixins).
 
-For many typical features one would want to add that involve changing some aspect of the model though interacting with the view, there is a recipe to follow for adding features. The general steps are as follows. (These steps can more or less be done in any order, but the following order will keep intermediate compilation errors to a minimum.) We explain them by example for modifying the "modification font size", which is a type `num` (which can represent either `int` or `double`).
+For many typical features one would want to add that involve changing some aspect of the model through interacting with the view, there is a recipe to follow for adding features. The general steps are as follows. (These steps can more or less be done in any order, but the following order will keep intermediate compilation errors to a minimum.) We explain them by example for modifying the "modification font size", which is of type `num` (which can represent either `int` or `double`).
 
 Most of the steps below are about how to change the code. Before and after are steps that involve making changes to the GitHub repository, which are explained in more detail in the next section.
 
 
 1. **Follow GitHub steps**:
-    Make an issue describing the feature/bug fix, then make a new branch based off of dev named after the issue. See [Pushing to the repository dev branch and documenting changes (done on all updates)](#pushing-to-the-repository-dev-branch-and-documenting-changes-done-on-all-updates) below for more details.
+    Make an issue describing the feature/bug fix. Then make a new branch based off of dev named after the issue. Follow the naming convention that the name of the branch starts with the number of the issue, followed by its title. For example, if issue 148 is "simplify API of evaluate function in constraint" (https://github.com/UC-Davis-molecular-computing/nuad/issues/148), then the branch should be named `148-simplify-api-of-evaluate-function-in-constraint`. If you go to the issue on GitHub, on the right side under "Development", you can click "Create a branch" to create a branch using this naming convention. See [Pushing to the repository dev branch and documenting changes (done on all updates)](#pushing-to-the-repository-dev-branch-and-documenting-changes-done-on-all-updates) below for more details.
 
 2. **add unit tests reproducing bug**:
     If this is a bug fix, *first* add unit tests reproducing it. Depending on the exact sort of input/behavior that causes the bug, this may not be straightforward. However, if it is due to faulty logic in a reducer or middleware, then generally one can add a unit test that just calls the reducer/middleware to reproduce the bug. Bugs in view code are less straightforward to unit test.
@@ -444,7 +453,7 @@ Most of the steps below are about how to change the code. Before and after are s
     **Special instructions for modifying Design:** If the new states show up in the `Design`, some care must be taken. `to_json_serializable` and `from_json` must be modified to handle the new data, since as a part of the `Design`, it needs to be stored in the JSON `.sc` file. The goal of `to_json_serializable` is to create a "naturally" JSON serializable object (i.e., one that can be handed off to Dart's (`jsonEncode` function)[https://api.dart.dev/stable/2.8.4/dart-convert/jsonEncode.html]). We also want to keep the JSON readable. We do this by using indenting with 2 spaces by default (this is done already; you don't have to do this yourself), but for short lists/maps that would look too spaced out on separate lines, e.g.,
 
     ```json
-      "grid_position" = [
+      "grid_position": [
         0,
         1
       ],
@@ -467,7 +476,7 @@ Most of the steps below are about how to change the code. Before and after are s
     This will create the following JSON output instead:
 
     ```json
-      "grid_position" = [0, 1],
+      "grid_position": [0, 1],
     ```
 
     However, there should be only *one* `NoIndent` along any path from leaf to root in the object tree. Otherwise, you will get an error stating that Dart does not know how to serialize an object of type `NoIndent`.

@@ -83,11 +83,13 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) =>
 bool helix_change_apply_to_all_reducer(bool helix_change_apply_to_all, action) {
   if (action is actions.HelixMajorTickDistanceChange ||
       action is actions.HelixMajorTicksChange ||
-      action is actions.HelixOffsetChange) {
+      action is actions.HelixOffsetChange ||
+      action is actions.HelixMajorTickPeriodicDistancesChange) {
     return false;
   } else if (action is actions.HelixMajorTickDistanceChangeAll ||
       action is actions.HelixMajorTicksChangeAll ||
-      action is actions.HelixOffsetChangeAll) {
+      action is actions.HelixOffsetChangeAll ||
+      action is actions.HelixMajorTickPeriodicDistancesChangeAll) {
     return true;
   } else {
     return helix_change_apply_to_all;

@@ -159,6 +159,7 @@ abstract class BatchAction
     with BuiltJsonSerializable, UndoableAction
     implements Built<BatchAction, BatchActionBuilder> {
   BuiltList<UndoableAction> get actions;
+
   String get short_description_value;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -257,7 +258,6 @@ abstract class LocalStorageDesignChoiceSet
 abstract class ResetLocalStorage
     with BuiltJsonSerializable
     implements Action, Built<ResetLocalStorage, ResetLocalStorageBuilder> {
-
   /************************ begin BuiltValue boilerplate ************************/
   factory ResetLocalStorage() = _$ResetLocalStorage._;
 
@@ -776,7 +776,6 @@ abstract class WarnOnExitIfUnsavedSet
 abstract class LoadingDialogShow
     with BuiltJsonSerializable
     implements Action, Built<LoadingDialogShow, LoadingDialogShowBuilder> {
-
   /************************ begin BuiltValue boilerplate ************************/
   factory LoadingDialogShow() = _$LoadingDialogShow._;
 
@@ -788,7 +787,6 @@ abstract class LoadingDialogShow
 abstract class LoadingDialogHide
     with BuiltJsonSerializable
     implements Action, Built<LoadingDialogHide, LoadingDialogHideBuilder> {
-
   /************************ begin BuiltValue boilerplate ************************/
   factory LoadingDialogHide() = _$LoadingDialogHide._;
 
@@ -878,7 +876,8 @@ abstract class PrepareToLoadDNAFile
       ..dna_file_type = dna_file_type);
   }
 
-  factory PrepareToLoadDNAFile.from([void Function(PrepareToLoadDNAFileBuilder) updates]) = _$PrepareToLoadDNAFile;
+  factory PrepareToLoadDNAFile.from([void Function(PrepareToLoadDNAFileBuilder) updates]) =
+      _$PrepareToLoadDNAFile;
 
   PrepareToLoadDNAFile._();
 
@@ -912,8 +911,15 @@ abstract class NewDesignSet
 abstract class ExportCadnanoFile
     with BuiltJsonSerializable
     implements Action, Built<ExportCadnanoFile, ExportCadnanoFileBuilder> {
+  bool get whitespace;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory ExportCadnanoFile([void Function(ExportCadnanoFileBuilder) updates]) = _$ExportCadnanoFile;
+  @memoized
+  int get hashCode;
+
+  factory ExportCadnanoFile({bool whitespace}) = _$ExportCadnanoFile._;
+
+  factory ExportCadnanoFile.from([void Function(ExportCadnanoFileBuilder) updates]) = _$ExportCadnanoFile;
 
   ExportCadnanoFile._();
 
