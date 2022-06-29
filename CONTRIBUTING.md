@@ -213,6 +213,18 @@ git checkout dev
 
 First, install the [Dart SDK](https://dart.dev/get-dart).
 
+Then install the 2.13.4 version of Dart:
+
+```
+brew install dart@2.13
+```
+
+Next switch to the 2.13.4 version of Dart: 
+
+```
+brew unlink dart@2.17 && brew unlink dart@2.13 && brew link dart@2.13
+```
+
 Next install all the Dart dependencies (from the same directory `scadnano` into which the project was cloned by git):
 
 ```
