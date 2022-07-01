@@ -40,6 +40,8 @@ abstract class AppUIStateStorables
 
   bool get show_domain_name_mismatches;
 
+  bool get show_insertion_deletion_mismatches;
+
   bool get show_editor;
 
   bool get show_slice_bar;
@@ -118,6 +120,7 @@ abstract class AppUIStateStorables
     b.show_modifications = true;
     b.show_mismatches = false;
     b.show_domain_name_mismatches = false;
+    b.show_insertion_deletion_mismatches = true;
     b.show_editor = false;
     b.only_display_selected_helices = false;
     b.zoom_speed = 0.3;

@@ -507,6 +507,22 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   @memoized
+  BuiltMap<Domain, BuiltList<Mismatch>> get insertion_deletion_mismatches_map {
+    var insertion_deletion_mismatches_map_builder = MapBuilder<Domain, ListBuilder<Mismatch>>();
+    for (Strand strand in this.strands) {
+      for (Domain domain in strand.domains) {
+        insertion_deletion_mismatches_map_builder[domain] =
+            this._find_mismatches_on_substrand(domain, only_insertion_deletion: true);
+      }
+    }
+    var insertion_deletion_mismatches_builtmap_builder = MapBuilder<Domain, BuiltList<Mismatch>>();
+    insertion_deletion_mismatches_map_builder.build().forEach((domain, mismatches) {
+      insertion_deletion_mismatches_builtmap_builder[domain] = mismatches.build();
+    });
+    return insertion_deletion_mismatches_builtmap_builder.build();
+  }
+
+  @memoized
   BuiltMap<DNAEnd, Domain> get end_to_domain {
     var end_to_substrand_builder = MapBuilder<DNAEnd, Domain>();
     for (var strand in strands) {
@@ -1464,7 +1480,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
   }
 
-  ListBuilder<Mismatch> _find_mismatches_on_substrand(Domain substrand) {
+  ListBuilder<Mismatch> _find_mismatches_on_substrand(Domain substrand, {bool only_insertion_deletion = false}) {
     var mismatches = ListBuilder<Mismatch>();
 
     for (int offset = substrand.start; offset < substrand.end; offset++) {
@@ -1473,7 +1489,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       }
 
       var other_ss = this.other_substrand_at_offset(substrand, offset);
-      if (other_ss == null || other_ss.dna_sequence == null) {
+      if (other_ss == null || (other_ss.dna_sequence == null && !only_insertion_deletion)) {
         continue;
       }
 
@@ -1489,7 +1505,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       if (other_ss.deletions.contains(offset)) {
         // This throws an error if substrand has a deletion at offset.
         int dna_idx = substrand.substrand_offset_to_substrand_dna_idx(offset, substrand.forward);
-        int within_insertion = seq.length == 1 ? -1 : 0;
+        int within_insertion = only_insertion_deletion || seq.length == 1 ? -1 : 0;
         var mismatch = Mismatch(dna_idx, offset, within_insertion: within_insertion);
         mismatches.add(mismatch);
         continue;
@@ -1500,22 +1516,24 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       if (length_insertion_substrand != length_insertion_other_ss) {
         // one has an insertion and the other doesn't, or they both have insertions of different lengths
         int dna_idx = substrand.substrand_offset_to_substrand_dna_idx(offset, substrand.forward);
-        int within_insertion = seq.length == 1 ? -1 : 0;
+        int within_insertion = only_insertion_deletion || seq.length == 1 ? -1 : 0;
         var mismatch = Mismatch(dna_idx, offset, within_insertion: within_insertion);
         mismatches.add(mismatch);
         continue;
       }
 
-      // at this point, they both have an insertion here, or the both don't,
-      // and if they both do, they're the same length
-      assert(other_seq.length == seq.length);
+      if (!only_insertion_deletion) {
+        // at this point, they both have an insertion here, or the both don't,
+        // and if they both do, they're the same length
+        assert(other_seq.length == seq.length);
 
-      for (int idx = 0, idx_other = seq.length - 1; idx < seq.length; idx++, idx_other--) {
-        if (seq.codeUnitAt(idx) != _wc(other_seq.codeUnitAt(idx_other))) {
-          int dna_idx = substrand.substrand_offset_to_substrand_dna_idx(offset, substrand.forward) + idx;
-          int within_insertion = seq.length == 1 ? -1 : idx;
-          var mismatch = Mismatch(dna_idx, offset, within_insertion: within_insertion);
-          mismatches.add(mismatch);
+        for (int idx = 0, idx_other = seq.length - 1; idx < seq.length; idx++, idx_other--) {
+          if (seq.codeUnitAt(idx) != _wc(other_seq.codeUnitAt(idx_other))) {
+            int dna_idx = substrand.substrand_offset_to_substrand_dna_idx(offset, substrand.forward) + idx;
+            int within_insertion = seq.length == 1 ? -1 : idx;
+            var mismatch = Mismatch(dna_idx, offset, within_insertion: within_insertion);
+            mismatches.add(mismatch);
+          }
         }
       }
     }
@@ -1539,6 +1557,14 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   /// If a mismatch occurs in an insertion, within_insertion = relative position within insertion (0,1,...)).
   BuiltList<Mismatch> dna_mismatches_on_domain(Domain domain) {
     var ret = this.domain_mismatches_map[domain];
+    if (ret == null) {
+      ret = BuiltList<Mismatch>();
+    }
+    return ret;
+  }
+
+  BuiltList<Mismatch> insertion_deletion_mismatches_on_domain(Domain domain) {
+    var ret = this.insertion_deletion_mismatches_map[domain];
     if (ret == null) {
       ret = BuiltList<Mismatch>();
     }

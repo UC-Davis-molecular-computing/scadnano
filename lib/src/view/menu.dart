@@ -52,6 +52,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..show_modifications = state.ui_state.show_modifications
       ..show_mismatches = state.ui_state.show_mismatches
       ..show_domain_name_mismatches = state.ui_state.show_domain_name_mismatches
+      ..show_insertion_deletion_mismatches = state.ui_state.show_insertion_deletion_mismatches
       ..strand_paste_keep_color = state.ui_state.strand_paste_keep_color
       ..zoom_speed = state.ui_state.zoom_speed
       ..autofit = state.ui_state.autofit
@@ -111,6 +112,7 @@ mixin MenuPropsMixin on UiProps {
   bool modification_display_connector;
   bool show_mismatches;
   bool show_domain_name_mismatches;
+  bool show_insertion_deletion_mismatches;
   bool strand_paste_keep_color;
   bool autofit;
   bool only_display_selected_helices;
@@ -624,6 +626,16 @@ helix with the opposite orientation.'''
           props.dispatch(actions.ShowMismatchesSet(!props.show_mismatches));
         }
         ..key = 'show-mismatches')(),
+      (MenuBoolean()
+        ..value = props.show_insertion_deletion_mismatches
+        ..display = 'Show insertion/deletion mismatches'
+        ..tooltip = '''\
+        Show unpaired deletions and insertions.
+        '''
+        ..onChange = (_) {
+          props.dispatch(actions.ShowInsertionDeletionMismatchesSet(!props.show_insertion_deletion_mismatches));
+        }
+        ..key = 'show-insertion-deletion-mismatches')(),
     ]);
   }
 
