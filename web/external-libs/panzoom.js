@@ -1475,7 +1475,7 @@ function makeAggregateRaf() {
 
     var t = backBuffer;
     backBuffer = frontBuffer;
-    frontBuffer = t;
+        frontBuffer = t;
 
     frontBuffer.forEach(function(callback) {
       callback();
