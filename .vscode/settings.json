@@ -1,0 +1,23 @@
+{
+    // Stay on older version of Dart because we rely on it
+    "dart.checkForSdkUpdates": false,
+
+    // Format code with line length 110
+    "dart.lineLength": 110,
+
+    "[dart]": {
+        // Show ruler at 110 for formatting
+        "editor.rulers": [110]
+    },
+
+    // Treat scadnano files as JSON
+    "files.associations": {
+        "*.sc": "json",
+        "*.dna": "json"
+    },
+
+    "yaml.schemas": {
+        // The YAML plugin can't autodetect this for some reason
+        "https://json.schemastore.org/dart-build.json": "build.yaml"
+    }
+}

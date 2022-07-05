@@ -1,0 +1,58 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "dart",
+            "command": "dart",
+            "cwd": "",
+            "args": ["pub", "get"],
+            "problemMatcher": [],
+            "label": "dart pub get",
+            "detail": "Get the project dependencies."
+        },
+        {
+            "type": "dart",
+            "command": "webdev",
+            "cwd": "",
+            "args": ["serve"],
+            "problemMatcher": [],
+            "label": "webdev serve",
+            "detail": "Start the dev server."
+        },
+        {
+            "type": "dart",
+            "command": "webdev",
+            "cwd": "",
+            "args": ["build"],
+            "problemMatcher": [],
+            "label": "webdev build",
+            "detail": "Build the project.",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "dart",
+            "command": "dart",
+            "cwd": "",
+            "args": ["format", "--line-length=110", "."],
+            "problemMatcher": [],
+            "label": "dart format --line-length=110 .",
+            "detail": "Format the project files."
+        },
+        {
+            "type": "dart",
+            "command": "dart",
+            "cwd": "",
+            "args": ["run", "build_runner", "test"],
+            "problemMatcher": [],
+            "label": "dart run build_runner test",
+            "detail": "Run the project tests.",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        }
+    ]
+}
