@@ -8,7 +8,7 @@ indent_style = space
 insert_final_newline = true
 charset = utf-8
 
-[{**.dart, **.sc, **.dna, **.yaml, **.yml, **.json, **.sh}]
+[{**.dart, **.sc, **.dna, **.yaml, **.yml, **.json, **.sh, **.xml}]
 indent_size = 2
 
 [{**.html, **.css, **.js, **.md, **.py}]

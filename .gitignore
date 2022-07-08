@@ -270,8 +270,6 @@ $RECYCLE.BIN/
 
 **/*.g.dart
 
-.idea/
-
 **/node_modules/
 **/package-lock.json
 
