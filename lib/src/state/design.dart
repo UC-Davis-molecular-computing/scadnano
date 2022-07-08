@@ -507,19 +507,19 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   @memoized
-  BuiltMap<Domain, BuiltList<Mismatch>> get insertion_deletion_mismatches_map {
-    var insertion_deletion_mismatches_map_builder = MapBuilder<Domain, ListBuilder<Mismatch>>();
+  BuiltMap<Domain, BuiltList<Address>> get unpaired_insertion_deletion_map {
+    var unpaired_insertion_deletion_map_builder = Map<Domain, List<Address>>();
     for (Strand strand in this.strands) {
       for (Domain domain in strand.domains) {
-        insertion_deletion_mismatches_map_builder[domain] =
-            this._find_mismatches_on_substrand(domain, only_insertion_deletion: true);
+        unpaired_insertion_deletion_map_builder[domain] =
+            this._find_unpaired_insertion_deletions_on_substrand(domain);
       }
     }
-    var insertion_deletion_mismatches_builtmap_builder = MapBuilder<Domain, BuiltList<Mismatch>>();
-    insertion_deletion_mismatches_map_builder.build().forEach((domain, mismatches) {
-      insertion_deletion_mismatches_builtmap_builder[domain] = mismatches.build();
+    var unpaired_insertion_deletion_half_built_map = Map<Domain, BuiltList<Address>>();
+    unpaired_insertion_deletion_map_builder.forEach((domain, mismatches) {
+      unpaired_insertion_deletion_half_built_map[domain] = mismatches.build();
     });
-    return insertion_deletion_mismatches_builtmap_builder.build();
+    return unpaired_insertion_deletion_half_built_map.build();
   }
 
   @memoized
@@ -1480,7 +1480,36 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
   }
 
-  ListBuilder<Mismatch> _find_mismatches_on_substrand(Domain substrand, {bool only_insertion_deletion = false}) {
+  List<Address> _find_unpaired_insertion_deletions_on_substrand(Domain substrand) {
+    var unpaireds = List<Address>();
+
+    for (int offset = substrand.start; offset < substrand.end; offset++) {
+      if (substrand.deletions.contains(offset)) {
+        continue;
+      }
+
+      var other_ss = this.other_substrand_at_offset(substrand, offset);
+      if (other_ss == null || other_ss.dna_sequence == null) {
+        continue;
+      }
+
+      // other_ss has a deletion (and substrand implicitly doesn't since we would have continue'd),
+      if (other_ss.deletions.contains(offset)) {
+        unpaireds.add(new Address(helix_idx: other_ss.helix, offset: offset, forward: other_ss.forward));
+        continue;
+      }
+
+      int length_insertion_substrand = substrand.insertion_offset_to_length[offset];
+      int length_insertion_other_ss = other_ss.insertion_offset_to_length[offset];
+      if (length_insertion_substrand != length_insertion_other_ss) {
+        unpaireds.add(new Address(helix_idx: other_ss.helix, offset: offset, forward: other_ss.forward));
+        continue;
+      }
+    }
+    return unpaireds;
+  }
+
+  ListBuilder<Mismatch> _find_mismatches_on_substrand(Domain substrand) {
     var mismatches = ListBuilder<Mismatch>();
 
     for (int offset = substrand.start; offset < substrand.end; offset++) {
@@ -1489,7 +1518,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       }
 
       var other_ss = this.other_substrand_at_offset(substrand, offset);
-      if (other_ss == null || (other_ss.dna_sequence == null && !only_insertion_deletion)) {
+      if (other_ss == null || other_ss.dna_sequence == null) {
         continue;
       }
 
@@ -1505,7 +1534,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       if (other_ss.deletions.contains(offset)) {
         // This throws an error if substrand has a deletion at offset.
         int dna_idx = substrand.substrand_offset_to_substrand_dna_idx(offset, substrand.forward);
-        int within_insertion = only_insertion_deletion || seq.length == 1 ? -1 : 0;
+        int within_insertion = seq.length == 1 ? -1 : 0;
         var mismatch = Mismatch(dna_idx, offset, within_insertion: within_insertion);
         mismatches.add(mismatch);
         continue;
@@ -1516,24 +1545,22 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       if (length_insertion_substrand != length_insertion_other_ss) {
         // one has an insertion and the other doesn't, or they both have insertions of different lengths
         int dna_idx = substrand.substrand_offset_to_substrand_dna_idx(offset, substrand.forward);
-        int within_insertion = only_insertion_deletion || seq.length == 1 ? -1 : 0;
+        int within_insertion = seq.length == 1 ? -1 : 0;
         var mismatch = Mismatch(dna_idx, offset, within_insertion: within_insertion);
         mismatches.add(mismatch);
         continue;
       }
 
-      if (!only_insertion_deletion) {
-        // at this point, they both have an insertion here, or the both don't,
-        // and if they both do, they're the same length
-        assert(other_seq.length == seq.length);
+      // at this point, they both have an insertion here, or the both don't,
+      // and if they both do, they're the same length
+      assert(other_seq.length == seq.length);
 
-        for (int idx = 0, idx_other = seq.length - 1; idx < seq.length; idx++, idx_other--) {
-          if (seq.codeUnitAt(idx) != _wc(other_seq.codeUnitAt(idx_other))) {
-            int dna_idx = substrand.substrand_offset_to_substrand_dna_idx(offset, substrand.forward) + idx;
-            int within_insertion = seq.length == 1 ? -1 : idx;
-            var mismatch = Mismatch(dna_idx, offset, within_insertion: within_insertion);
-            mismatches.add(mismatch);
-          }
+      for (int idx = 0, idx_other = seq.length - 1; idx < seq.length; idx++, idx_other--) {
+        if (seq.codeUnitAt(idx) != _wc(other_seq.codeUnitAt(idx_other))) {
+          int dna_idx = substrand.substrand_offset_to_substrand_dna_idx(offset, substrand.forward) + idx;
+          int within_insertion = seq.length == 1 ? -1 : idx;
+          var mismatch = Mismatch(dna_idx, offset, within_insertion: within_insertion);
+          mismatches.add(mismatch);
         }
       }
     }
@@ -1563,10 +1590,10 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return ret;
   }
 
-  BuiltList<Mismatch> insertion_deletion_mismatches_on_domain(Domain domain) {
-    var ret = this.insertion_deletion_mismatches_map[domain];
+  BuiltList<Address> unpaired_insertion_deletion_on_domain(Domain domain) {
+    var ret = this.unpaired_insertion_deletion_map[domain];
     if (ret == null) {
-      ret = BuiltList<Mismatch>();
+      ret = BuiltList<Address>();
     }
     return ret;
   }

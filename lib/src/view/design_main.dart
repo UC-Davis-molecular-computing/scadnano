@@ -187,7 +187,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
           ..key = 'domain-name-mismatches')(),
       if (props.show_insertion_deletion_mismatches)
-        (DesignMainInsertionDeletionMismatches()
+        (DesignMainUnpairedInsertionDeletion()
           ..design = props.design
           ..only_display_selected_helices = props.only_display_selected_helices
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
