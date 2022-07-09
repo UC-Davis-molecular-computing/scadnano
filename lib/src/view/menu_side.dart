@@ -268,6 +268,14 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
   }
 
   add_duplicate_group() {
-    app.dispatch(actions.GroupDuplicate(name: 'Copy of ' + props.displayed_group_name, groupToDuplicate: props.displayed_group_name));
+    app.dispatch(actions.GroupDuplicate(name: get_available_group_name(props.displayed_group_name), groupToDuplicate: props.displayed_group_name));
+  }
+
+  get_available_group_name(String name) {
+    do {
+      name = 'Copy of ' + name;
+    } while (props.groups.containsKey(name));
+
+    return name;
   }
 }
