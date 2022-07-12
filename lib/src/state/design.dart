@@ -1489,7 +1489,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       }
 
       var other_ss = this.other_substrand_at_offset(substrand, offset);
-      if (other_ss == null || other_ss.dna_sequence == null) {
+      if (other_ss == null) {
         continue;
       }
 
