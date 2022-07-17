@@ -96,6 +96,11 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
         ..disabled = props.groups.length == 1
         ..on_click = ((ev) => app.dispatch(actions.GroupRemove(name: props.displayed_group_name)))
         ..key = 'remove-current-group')(),
+      (MenuDropdownItem()
+        ..display = 'adjust helix indices'
+        ..disabled = props.groups[props.displayed_group_name].helices_view_order.length == 0
+        ..on_click = ((ev) => adjust_helix_indices_for_current_group())
+        ..key = 'adjust-helix-indices')(),
     ]);
     return NavDropdown({
       'title': 'Group',
@@ -124,6 +129,9 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
 
   set_new_parameters_for_current_group() =>
       app.disable_keyboard_shortcuts_while(ask_new_parameters_for_current_group);
+
+  adjust_helix_indices_for_current_group() =>
+    app.disable_keyboard_shortcuts_while(ask_new_helix_indices_for_current_group);
 
   add_new_group(Iterable<String> existing_names) =>
       app.disable_keyboard_shortcuts_while(() => ask_about_new_group(existing_names));
@@ -262,4 +270,56 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
     app.dispatch(
         actions.GroupChange(old_name: props.displayed_group_name, new_name: new_name, new_group: new_group));
   }
+
+  Future<void> ask_new_helix_indices_for_current_group() async {
+    var group = props.groups[props.displayed_group_name];
+    var existing_grid = group.grid;
+
+    List<DialogItem> items = []; 
+    items.add(DialogLabel(label: 'current view order: ' + group.helices_view_order.join(' ')));
+
+    for (var helix_index in group.helices_view_order) {
+      items.add(DialogInteger(label: helix_index.toString(), value: helix_index));
+    }
+
+    var dialog =
+        Dialog(title: 'adjust Helix indices', items: items);
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+
+    List<int> new_indices = []; 
+    for (int i = 1; i < results.length; i++) {
+      new_indices.add((results[i] as DialogInteger).value);
+    }
+
+    //Check that there are no duplicates
+    for(int i = 0; i < new_indices.length; i++) {
+      for(var group_name in props.groups.keys) {
+        var other_group = props.groups[group_name];
+        if(other_group == group)
+          continue; 
+        for(var helix in other_group.helices_view_order) {
+          if(helix == new_indices[i]) {
+            window.alert('Duplicate Helix: ' + new_indices[i].toString() + ' found on group: ' + group_name); 
+            return; 
+          }
+        }
+      }
+
+      for(int j = 0; j < new_indices.length; j++) {
+        if(i != j) {
+          if(new_indices[i] == new_indices[j]) {
+            window.alert('Duplicate Helix indices entered: ' + new_indices[i].toString()); 
+            return; 
+          }
+        }
+      }
+    }
+
+
+
+  }
+
 }
+
+

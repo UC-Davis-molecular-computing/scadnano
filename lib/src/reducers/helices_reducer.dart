@@ -50,6 +50,9 @@ GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGl
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixMaxOffsetSetByDomainsAllSameMax>(
     helix_max_offset_set_by_domains_all_same_max_reducer,
   ),
+  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixGroupIndexChange>(
+      helix_group_index_change_all_reducer,
+  ),
 ]);
 
 BuiltMap<int, Helix> helix_individual_reducer(
@@ -241,6 +244,13 @@ BuiltMap<int, Helix> helix_max_offset_set_by_domains_all_same_max_reducer(
     max_offset = 10;
   }
   return helices.map_values((_, helix) => helix.rebuild((b) => b..max_offset = max_offset));
+}
+
+BuiltMap<int, Helix> helix_group_index_change_all_reducer(
+  BuiltMap<int, Helix> helices, AppState state, actions.HelixGroupIndexChange action) {
+  Design design = state.design;
+
+  
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -538,3 +548,6 @@ BuiltMap<int, Helix> move_helices_to_group_helices_reducer(
   }
   return helices_map.build();
 }
+
+//BuiltMap<int, Helix> helix_group_index_change_all_reducer(BuiltMap<int, Helix> local_state, AppState global_state, actions.HelixGroupIndexChange action) {
+//}

@@ -3348,6 +3348,25 @@ abstract class GroupChange
   String short_description() => "adjust helix group";
 }
 
+abstract class HelixGroupIndexChange
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<HelixGroupIndexChange, HelixGroupIndexChangeBuilder> {
+
+  String get group_name; 
+
+  List<int> get new_indices; 
+ 
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixGroupIndexChange({String group_name, List<int> new_indices}) = _$HelixGroupIndexChange._;
+
+  HelixGroupIndexChange._();
+
+  static Serializer<HelixGroupIndexChange> get serializer => _$helixGroupIndexChangeSerializer;
+
+  @override
+  String short_description() => "adjust helix group indices";
+}
+
 // moves existing helices to another existing group
 abstract class MoveHelicesToGroup
     with BuiltJsonSerializable, UndoableAction
