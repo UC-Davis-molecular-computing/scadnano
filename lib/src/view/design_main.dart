@@ -6,7 +6,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:react/react_client/react_interop.dart';
-import 'package:scadnano/src/view/design_main_insertion_deletion_mismatches.dart';
+import 'package:scadnano/src/view/design_main_unpaired_insertion_deletions.dart';
 import 'package:scadnano/src/view/design_main_slice_bar.dart';
 
 import '../state/selection_rope.dart';
@@ -61,7 +61,7 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..slice_bar_offset = state.ui_state.slice_bar_offset
         ..displayed_group_name = state.ui_state.displayed_group_name
         ..show_domain_name_mismatches = state.ui_state.show_domain_name_mismatches
-        ..show_insertion_deletion_mismatches = state.ui_state.show_insertion_deletion_mismatches
+        ..show_unpaired_insertion_deletions = state.ui_state.show_unpaired_insertion_deletions
         ..show_dna = state.ui_state.show_dna
         ..show_domain_names = state.ui_state.show_domain_names
         ..show_strand_names = state.ui_state.show_strand_names
@@ -101,7 +101,7 @@ mixin DesignMainPropsMixin on UiProps {
   bool has_error;
   bool show_mismatches;
   bool show_domain_name_mismatches;
-  bool show_insertion_deletion_mismatches;
+  bool show_unpaired_insertion_deletions;
   bool show_dna;
   bool show_domain_names;
   bool show_strand_names;
@@ -186,14 +186,14 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
           ..key = 'domain-name-mismatches')(),
-      if (props.show_insertion_deletion_mismatches)
-        (DesignMainUnpairedInsertionDeletion()
+      if (props.show_unpaired_insertion_deletions)
+        (DesignMainUnpairedInsertionDeletions()
           ..design = props.design
           ..only_display_selected_helices = props.only_display_selected_helices
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..helix_idx_to_svg_position_y_map = props.helix_idx_to_svg_position_map
               .map((helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y))
-          ..key = 'insertion_deletion_mismatches')(),
+          ..key = 'unpaired-insertion-deletions')(),
       (ConnectedDesignMainStrands()..key = 'strands')(),
       // after strands so can click when crossover overlaps potential crossover
       if (props.edit_modes.contains(EditModeChoice.pencil) && !props.drawing_potential_crossover)

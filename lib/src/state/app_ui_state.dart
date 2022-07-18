@@ -164,7 +164,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get show_domain_name_mismatches => storables.show_domain_name_mismatches;
 
-  bool get show_insertion_deletion_mismatches => storables.show_insertion_deletion_mismatches;
+  bool get show_unpaired_insertion_deletions => storables.show_unpaired_insertion_deletions;
 
   bool get show_editor => storables.show_editor;
 

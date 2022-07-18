@@ -12,7 +12,7 @@ import '../state/geometry.dart';
 import '../state/strand.dart';
 import '../state/domain.dart';
 import 'pure_component.dart';
-import 'design_main_mismatch.dart';
+import 'design_main_warning_star.dart';
 import '../util.dart' as util;
 
 part 'design_main_slice_bar.over_react.g.dart';

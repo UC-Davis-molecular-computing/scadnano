@@ -516,8 +516,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       }
     }
     var unpaired_insertion_deletion_half_built_map = Map<Domain, BuiltList<Address>>();
-    unpaired_insertion_deletion_map_builder.forEach((domain, mismatches) {
-      unpaired_insertion_deletion_half_built_map[domain] = mismatches.build();
+    unpaired_insertion_deletion_map_builder.forEach((domain, unpaireds) {
+      unpaired_insertion_deletion_half_built_map[domain] = unpaireds.build();
     });
     return unpaired_insertion_deletion_half_built_map.build();
   }
@@ -1481,7 +1481,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   List<Address> _find_unpaired_insertion_deletions_on_substrand(Domain substrand) {
-    var unpaireds = List<Address>();
+    var unpaireds = [];
 
     for (int offset = substrand.start; offset < substrand.end; offset++) {
       if (substrand.deletions.contains(offset)) {

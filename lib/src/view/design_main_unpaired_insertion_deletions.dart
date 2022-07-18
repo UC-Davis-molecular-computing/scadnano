@@ -10,23 +10,23 @@ import '../state/design.dart';
 import '../state/strand.dart';
 import '../state/domain.dart';
 import 'pure_component.dart';
-import 'design_main_mismatch.dart';
+import 'design_main_warning_star.dart';
 import '../util.dart' as util;
 
-part 'design_main_insertion_deletion_mismatches.over_react.g.dart';
+part 'design_main_unpaired_insertion_deletions.over_react.g.dart';
 
-UiFactory<DesignMainUnpairedInsertionDeletionProps> DesignMainUnpairedInsertionDeletion =
-    _$DesignMainUnpairedInsertionDeletion;
+UiFactory<DesignMainUnpairedInsertionDeletionsProps> DesignMainUnpairedInsertionDeletions =
+    _$DesignMainUnpairedInsertionDeletions;
 
-mixin DesignMainUnpairedInsertionDeletionProps on UiProps {
+mixin DesignMainUnpairedInsertionDeletionsProps on UiProps {
   Design design;
   bool only_display_selected_helices;
   BuiltSet<int> side_selected_helix_idxs;
   BuiltMap<int, num> helix_idx_to_svg_position_y_map;
 }
 
-class DesignMainUnpairedInsertionDeletionComponent
-    extends UiComponent2<DesignMainUnpairedInsertionDeletionProps> with PureComponent {
+class DesignMainUnpairedInsertionDeletionsComponent
+    extends UiComponent2<DesignMainUnpairedInsertionDeletionsProps> with PureComponent {
   @override
   render() {
     List<ReactElement> unpaired_components = this._create_unpaired_components();
@@ -51,7 +51,7 @@ class DesignMainUnpairedInsertionDeletionComponent
             if (!keys.contains(key)) {
               // otherwise, already rendered mismatch for this insertion
               keys.add(key);
-              var mismatch_component = (DesignMainMismatch()
+              var mismatch_component = (DesignMainWarningStar()
                 ..base_svg_pos = base_svg_pos
                 ..geometry = props.design.geometry
                 ..forward = domain.forward

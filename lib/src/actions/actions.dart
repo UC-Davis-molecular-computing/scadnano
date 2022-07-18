@@ -625,21 +625,21 @@ abstract class ShowDomainNameMismatchesSet
   static Serializer<ShowDomainNameMismatchesSet> get serializer => _$showDomainNameMismatchesSetSerializer;
 }
 
-abstract class ShowInsertionDeletionMismatchesSet
+abstract class ShowUnpairedInsertionDeletionsSet
     with BuiltJsonSerializable
-    implements Action, Built<ShowInsertionDeletionMismatchesSet, ShowInsertionDeletionMismatchesSetBuilder> {
-  bool get show_insertion_deletion_mismatches;
+    implements Action, Built<ShowUnpairedInsertionDeletionsSet, ShowUnpairedInsertionDeletionsSetBuilder> {
+  bool get show_unpaired_insertion_deletions;
 
-  factory ShowInsertionDeletionMismatchesSet(bool show_insertion_deletion_mismatches) =>
-      ShowInsertionDeletionMismatchesSet.from((b) => b..show_insertion_deletion_mismatches = show_insertion_deletion_mismatches);
+  factory ShowUnpairedInsertionDeletionsSet(bool show_unpaired_insertion_deletions) =>
+      ShowUnpairedInsertionDeletionsSet.from((b) => b..show_unpaired_insertion_deletions = show_unpaired_insertion_deletions);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ShowInsertionDeletionMismatchesSet.from([void Function(ShowInsertionDeletionMismatchesSetBuilder) updates]) =
-  _$ShowInsertionDeletionMismatchesSet;
+  factory ShowUnpairedInsertionDeletionsSet.from([void Function(ShowUnpairedInsertionDeletionsSetBuilder) updates]) =
+  _$ShowUnpairedInsertionDeletionsSet;
 
-  ShowInsertionDeletionMismatchesSet._();
+  ShowUnpairedInsertionDeletionsSet._();
 
-  static Serializer<ShowInsertionDeletionMismatchesSet> get serializer => _$showInsertionDeletionMismatchesSetSerializer;
+  static Serializer<ShowUnpairedInsertionDeletionsSet> get serializer => _$showUnpairedInsertionDeletionsSetSerializer;
 }
 
 abstract class SetShowEditor

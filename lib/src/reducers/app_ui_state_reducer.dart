@@ -170,8 +170,8 @@ bool show_mismatches_reducer(bool _, actions.ShowMismatchesSet action) => action
 bool show_domain_name_mismatches_reducer(bool _, actions.ShowDomainNameMismatchesSet action) =>
     action.show_domain_name_mismatches;
 
-bool show_insertion_deletion_mismatches_reducer(bool _, actions.ShowInsertionDeletionMismatchesSet action) =>
-    action.show_insertion_deletion_mismatches;
+bool show_unpaired_insertion_deletions_reducer(bool _, actions.ShowUnpairedInsertionDeletionsSet action) =>
+    action.show_unpaired_insertion_deletions;
 
 bool invert_y_reducer(bool _, actions.InvertYSet action) => action.invert_y;
 
@@ -412,9 +412,9 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..show_domain_name_mismatches = TypedReducer<bool, actions.ShowDomainNameMismatchesSet>(
         show_domain_name_mismatches_reducer)(
         storables.show_domain_name_mismatches, action)
-    ..show_insertion_deletion_mismatches = TypedReducer<bool, actions.ShowInsertionDeletionMismatchesSet>(
-        show_insertion_deletion_mismatches_reducer)(
-        storables.show_insertion_deletion_mismatches, action)
+    ..show_unpaired_insertion_deletions = TypedReducer<bool, actions.ShowUnpairedInsertionDeletionsSet>(
+        show_unpaired_insertion_deletions_reducer)(
+        storables.show_unpaired_insertion_deletions, action)
     ..invert_y = TypedReducer<bool, actions.InvertYSet>(invert_y_reducer)(storables.invert_y, action)
     ..warn_on_exit_if_unsaved =
     TypedReducer<bool, actions.WarnOnExitIfUnsavedSet>(warn_on_exit_if_unsaved_reducer)(
