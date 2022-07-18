@@ -1481,7 +1481,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   List<Address> _find_unpaired_insertion_deletions_on_substrand(Domain substrand) {
-    var unpaireds = [];
+    var unpaireds = List<Address>();
 
     for (int offset = substrand.start; offset < substrand.end; offset++) {
       if (substrand.deletions.contains(offset)) {
