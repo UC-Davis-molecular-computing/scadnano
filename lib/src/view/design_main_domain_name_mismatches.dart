@@ -8,7 +8,7 @@ import '../state/domain_name_mismatch.dart';
 import '../state/design.dart';
 import '../state/domain.dart';
 import 'pure_component.dart';
-import 'design_main_mismatch.dart';
+import 'design_main_warning_star.dart';
 import '../util.dart' as util;
 
 part 'design_main_domain_name_mismatches.over_react.g.dart';
@@ -51,7 +51,7 @@ class DesignMainDomainNameMismatchesComponent extends UiComponent2<DesignMainDom
         for (Domain domain in [forward_domain, reverse_domain]) {
           var base_svg_pos = helix.svg_base_pos(mid, domain.forward, props.helix_idx_to_svg_position_map[helix.idx].y);
           String key = '${domain.helix};${domain.forward};${domain.start};${mid};${domain.end}';
-          var mismatch_component = (DesignMainMismatch()
+          var mismatch_component = (DesignMainWarningStar()
             ..base_svg_pos = base_svg_pos
             ..geometry = props.design.geometry
             ..forward = domain.forward

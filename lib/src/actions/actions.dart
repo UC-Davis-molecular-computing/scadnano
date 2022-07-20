@@ -625,6 +625,23 @@ abstract class ShowDomainNameMismatchesSet
   static Serializer<ShowDomainNameMismatchesSet> get serializer => _$showDomainNameMismatchesSetSerializer;
 }
 
+abstract class ShowUnpairedInsertionDeletionsSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowUnpairedInsertionDeletionsSet, ShowUnpairedInsertionDeletionsSetBuilder> {
+  bool get show_unpaired_insertion_deletions;
+
+  factory ShowUnpairedInsertionDeletionsSet(bool show_unpaired_insertion_deletions) =>
+      ShowUnpairedInsertionDeletionsSet.from((b) => b..show_unpaired_insertion_deletions = show_unpaired_insertion_deletions);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowUnpairedInsertionDeletionsSet.from([void Function(ShowUnpairedInsertionDeletionsSetBuilder) updates]) =
+  _$ShowUnpairedInsertionDeletionsSet;
+
+  ShowUnpairedInsertionDeletionsSet._();
+
+  static Serializer<ShowUnpairedInsertionDeletionsSet> get serializer => _$showUnpairedInsertionDeletionsSetSerializer;
+}
+
 abstract class SetShowEditor
     with BuiltJsonSerializable
     implements Action, Built<SetShowEditor, SetShowEditorBuilder> {
