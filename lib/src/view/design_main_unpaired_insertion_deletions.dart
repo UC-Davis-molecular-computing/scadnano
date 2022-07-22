@@ -54,7 +54,7 @@ class DesignMainUnpairedInsertionDeletionsComponent
               // otherwise, already rendered mismatch for this insertion
               keys.add(key);
               var mismatch_component = (DesignMainWarningStar()
-                ..base_svg_pos = base_svg_pos + Point(0, is_insertion ? helix.geometry.base_width_svg * 2 * (unpaired.forward ? 1 : -1) : 0)
+                ..base_svg_pos = base_svg_pos + Point(0, is_insertion ? helix.geometry.base_height_svg * 2 * (unpaired.forward ? 1 : -1) : 0)
                 ..geometry = props.design.geometry
                 ..forward = domain.forward
                 ..key = key)();
