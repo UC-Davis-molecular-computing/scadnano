@@ -287,37 +287,12 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
-    List<int> new_indices = []; 
+    Map<int, int> new_indices_map = {}; 
     for (int i = 1; i < results.length; i++) {
-      new_indices.add((results[i] as DialogInteger).value);
+      new_indices_map[group.helices_view_order[i-1]] = (results[i] as DialogInteger).value; 
     }
 
-    //Check that there are no duplicates
-    for(int i = 0; i < new_indices.length; i++) {
-      for(var group_name in props.groups.keys) {
-        var other_group = props.groups[group_name];
-        if(other_group == group)
-          continue; 
-        for(var helix in other_group.helices_view_order) {
-          if(helix == new_indices[i]) {
-            window.alert('Duplicate Helix: ' + new_indices[i].toString() + ' found on group: ' + group_name); 
-            return; 
-          }
-        }
-      }
-
-      for(int j = 0; j < new_indices.length; j++) {
-        if(i != j) {
-          if(new_indices[i] == new_indices[j]) {
-            window.alert('Duplicate Helix indices entered: ' + new_indices[i].toString()); 
-            return; 
-          }
-        }
-      }
-    }
-
-
-
+   app.dispatch(actions.HelixIdxsChange(idx_replacements: new_indices_map));
   }
 
 }

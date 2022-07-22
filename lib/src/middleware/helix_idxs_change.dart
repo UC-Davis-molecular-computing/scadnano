@@ -12,6 +12,13 @@ helix_idxs_change_middleware(Store<AppState> store, dynamic action, NextDispatch
     Set<int> existing_idxs = store.state.design.helices.keys.toSet();
     Set<int> old_idxs = action.idx_replacements.keys.toSet();
     Set<int> remaining_idxs = existing_idxs.difference(old_idxs);
+
+    if(action.idx_replacements.values.toSet().length != action.idx_replacements.length) {
+      var msg = 'Duplicates found.';
+      window.alert(msg); 
+      return;  
+    }
+
     for (int new_idx in action.idx_replacements.values) {
       if (remaining_idxs.contains(new_idx)) {
         var msg = 'Index ${new_idx} is already taken.';

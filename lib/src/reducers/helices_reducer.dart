@@ -50,9 +50,6 @@ GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGl
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixMaxOffsetSetByDomainsAllSameMax>(
     helix_max_offset_set_by_domains_all_same_max_reducer,
   ),
-  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixGroupIndexChange>(
-      helix_group_index_change_all_reducer,
-  ),
 ]);
 
 BuiltMap<int, Helix> helix_individual_reducer(
@@ -92,12 +89,13 @@ Design helix_idx_change_reducer(Design design, AppState state, actions.HelixIdxs
   var strands = design.strands.toList();
 
   Map<String, HelixGroup> new_groups = change_groups(action, helices, design);
-
+  var copy_helices = design.helices.toMap();
   // change helices
+
+  helices.removeWhere((key, _) => action.idx_replacements.containsKey(key));
   for (int old_idx in action.idx_replacements.keys) {
     int new_idx = action.idx_replacements[old_idx];
-    var helix = helices[old_idx].rebuild((b) => b..idx = new_idx);
-    helices.remove(old_idx);
+    var helix = copy_helices[old_idx].rebuild((b) => b..idx = new_idx);
     helices[new_idx] = helix;
   }
 
@@ -244,13 +242,6 @@ BuiltMap<int, Helix> helix_max_offset_set_by_domains_all_same_max_reducer(
     max_offset = 10;
   }
   return helices.map_values((_, helix) => helix.rebuild((b) => b..max_offset = max_offset));
-}
-
-BuiltMap<int, Helix> helix_group_index_change_all_reducer(
-  BuiltMap<int, Helix> helices, AppState state, actions.HelixGroupIndexChange action) {
-  Design design = state.design;
-
-  
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -548,6 +539,3 @@ BuiltMap<int, Helix> move_helices_to_group_helices_reducer(
   }
   return helices_map.build();
 }
-
-//BuiltMap<int, Helix> helix_group_index_change_all_reducer(BuiltMap<int, Helix> local_state, AppState global_state, actions.HelixGroupIndexChange action) {
-//}

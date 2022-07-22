@@ -93,7 +93,6 @@ part 'serializers.g.dart';
   GroupAdd,
   GroupRemove,
   GroupChange,
-  HelixGroupIndexChange,
   LocalStorageDesignOption,
   LocalStorageDesignChoice,
   LocalStorageDesignChoiceSet,
