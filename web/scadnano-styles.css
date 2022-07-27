@@ -716,7 +716,7 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
     fill: none;
 }
 
-.mismatch-star {
+.warning-star {
     /*stroke: black;*/
     stroke: red;
     fill: red;

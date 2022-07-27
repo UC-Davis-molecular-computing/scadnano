@@ -52,6 +52,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..show_modifications = state.ui_state.show_modifications
       ..show_mismatches = state.ui_state.show_mismatches
       ..show_domain_name_mismatches = state.ui_state.show_domain_name_mismatches
+      ..show_unpaired_insertion_deletions = state.ui_state.show_unpaired_insertion_deletions
       ..strand_paste_keep_color = state.ui_state.strand_paste_keep_color
       ..zoom_speed = state.ui_state.zoom_speed
       ..autofit = state.ui_state.autofit
@@ -111,6 +112,7 @@ mixin MenuPropsMixin on UiProps {
   bool modification_display_connector;
   bool show_mismatches;
   bool show_domain_name_mismatches;
+  bool show_unpaired_insertion_deletions;
   bool strand_paste_keep_color;
   bool autofit;
   bool only_display_selected_helices;
@@ -545,7 +547,8 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
 
   view_menu() {
     var elts = [
-      view_menu_show_dna(),
+      view_menu_warnings(),
+      // view_menu_show_dna(),
       view_menu_autofit(),
       view_menu_show_labels(),
       view_menu_mods(),
@@ -599,21 +602,12 @@ To autofit the current design without reloading, click "Auto-fit current design"
     ]);
   }
 
-  ReactElement view_menu_show_dna() {
+  ReactElement view_menu_warnings() {
     return (MenuDropdownRight()
-      ..title = 'DNA sequences'
-      ..id = 'view_menu_show_dna-dropdown'
-      ..key = 'view_menu_show_dna-dropdown'
+      ..title = 'Warnings'
+      ..id = 'view_menu_show_warnings'
+      ..key = 'view_menu_show_warnings'
       ..className = 'submenu_item')([
-      (MenuBoolean()
-        ..value = props.show_dna
-        ..display = 'Show DNA sequences'
-        ..tooltip = '''\
-Show DNA sequences that have been assigned to strands. In a large design, this
-can slow down the performance of panning and zooming navigation, so uncheck it
-to speed up navigation.'''
-        ..onChange = ((_) => props.dispatch(actions.ShowDNASet(!props.show_dna)))
-        ..key = 'show-dna-sequences')(),
       (MenuBoolean()
         ..value = props.show_mismatches
         ..display = 'Show DNA base mismatches'
@@ -624,8 +618,48 @@ helix with the opposite orientation.'''
           props.dispatch(actions.ShowMismatchesSet(!props.show_mismatches));
         }
         ..key = 'show-mismatches')(),
+      (MenuBoolean()
+        ..value = props.show_domain_name_mismatches
+        ..display = 'Show domain name mismatches'
+        ..tooltip = '''\
+Show mismatches between domain names assigned to one strand and the strand on the same
+helix with the opposite orientation.'''
+        ..onChange = (_) {
+          props.dispatch(actions.ShowDomainNameMismatchesSet(!props.show_domain_name_mismatches));
+        }
+        ..key = 'show-domain-name-mismatches')(),
+      (MenuBoolean()
+        ..value = props.show_unpaired_insertion_deletions
+        ..display = 'Show unpaired insertion/deletions'
+        ..tooltip = '''\
+Show unpaired deletions and insertions. This is defined to be an insertion/deletion on
+a strand, where another strand is at the same (helix,offset) (in the opposite direction),
+which lacks the insertion/deletion. It does NOT show a warning if there is no other
+strand at the same (helix,offset).'''
+        ..onChange = (_) {
+          props.dispatch(actions.ShowUnpairedInsertionDeletionsSet(!props.show_unpaired_insertion_deletions));
+        }
+        ..key = 'show-unpaired-insertion-deletions')(),
     ]);
   }
+
+//   ReactElement view_menu_show_dna() {
+//     return (MenuDropdownRight()
+//       ..title = 'DNA sequences'
+//       ..id = 'view_menu_show_dna-dropdown'
+//       ..key = 'view_menu_show_dna-dropdown'
+//       ..className = 'submenu_item')([
+//       (MenuBoolean()
+//         ..value = props.show_dna
+//         ..display = 'Show DNA sequences'
+//         ..tooltip = '''\
+// Show DNA sequences that have been assigned to strands. In a large design, this
+// can slow down the performance of panning and zooming navigation, so uncheck it
+// to speed up navigation.'''
+//         ..onChange = ((_) => props.dispatch(actions.ShowDNASet(!props.show_dna)))
+//         ..key = 'show-dna-sequences')(),
+//     ]);
+//   }
 
   ReactElement view_menu_show_labels() {
     return (MenuDropdownRight()
@@ -661,16 +695,6 @@ helix with the opposite orientation.'''
         ..on_new_value =
             ((num font_size) => props.dispatch(actions.DomainNameFontSizeSet(font_size: font_size)))
         ..key = 'domain-name-font-size')(),
-      (MenuBoolean()
-        ..value = props.show_domain_name_mismatches
-        ..display = 'Show domain name mismatches'
-        ..tooltip = '''\
-Show mismatches between domain names assigned to one strand and the strand on the same
-helix with the opposite orientation.'''
-        ..onChange = (_) {
-          props.dispatch(actions.ShowDomainNameMismatchesSet(!props.show_domain_name_mismatches));
-        }
-        ..key = 'show-domain-name-mismatches')(),
     ]);
   }
 
@@ -822,6 +846,15 @@ toggle "Show main view helices".'''
 
   List<ReactElement> view_menu_misc() {
     return [
+      (MenuBoolean()
+        ..value = props.show_dna
+        ..display = 'Show DNA sequences'
+        ..tooltip = '''\
+Show DNA sequences that have been assigned to strands. In a large design, this
+can slow down the performance of panning and zooming navigation, so uncheck it
+to speed up navigation.'''
+        ..onChange = ((_) => props.dispatch(actions.ShowDNASet(!props.show_dna)))
+        ..key = 'show-dna-sequences')(),
       (MenuBoolean()
         ..value = props.invert_y
         ..display = 'Invert y-axis'
