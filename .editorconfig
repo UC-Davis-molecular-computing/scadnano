@@ -13,3 +13,6 @@ indent_size = 2
 
 [{**.html, **.css, **.js, **.md, **.py}]
 indent_size = 4
+
+[.idea/**]
+insert_final_newline = false
