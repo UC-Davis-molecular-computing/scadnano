@@ -281,6 +281,7 @@ part 'serializers.g.dart';
   DialogShow,
   DialogHide,
   DialogLink,
+  DialogType,
   StrandOrder,
   StrandColorSet,
   StrandColorPickerShow,
