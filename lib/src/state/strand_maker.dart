@@ -2,6 +2,7 @@ import 'package:scadnano/src/actions/actions.dart';
 import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/loopout.dart';
+import 'package:scadnano/src/state/extension.dart';
 import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:color/color.dart';
@@ -115,6 +116,55 @@ class StrandMaker {
     this.loopout_length = length;
     this.cross(helix, offset);
     return this;
+  }
+
+  StrandMaker extension_3p(int num_bases, {double display_length = 1.0, double display_angle = 45.0}) {
+    _verify_extension_3p_is_valid();
+    Extension ext =
+        Extension(num_bases: num_bases, display_length: display_length, display_angle: display_angle);
+    this.substrands.add(ext);
+    return this;
+  }
+
+  void _verify_extension_3p_is_valid() {
+    if (substrands.length == 0) {
+      throw IllegalDesignError('Cannot add a 3\' extension when there are no domains. '
+          'Did you mean to create a 5\' extension?');
+    }
+    if (this._is_last_domain_a_loopout()) {
+      throw IllegalDesignError('Cannot add a 3\' extension immediately after a loopout.');
+    }
+    if (this._is_last_domain_an_extension_3p()) {
+      throw IllegalDesignError('Cannot add a 3\' extension after another 3\' extension.');
+    }
+    this._verify_strand_is_not_circular();
+  }
+
+  void _verify_strand_is_not_circular() {
+    if (this.circular) {
+      throw new IllegalDesignError('Cannot add an extension to a circular strand.');
+    }
+  }
+
+  bool _is_last_domain_a_loopout() => substrands[-1] is Loopout;
+
+  bool _is_last_domain_an_extension() => substrands[-1] is Extension;
+
+  bool _is_last_domain_an_extension_3p() => substrands.length > 1 && this._is_last_domain_an_extension();
+
+  StrandMaker extension_5p(int num_bases, {double display_length = 1.0, double display_angle = 45.0}) {
+    this._verify_extension_5p_is_valid();
+    Extension ext =
+        Extension(num_bases: num_bases, display_length: display_length, display_angle: display_angle);
+    this.substrands.add(ext);
+    return this;
+  }
+
+  void _verify_extension_5p_is_valid() {
+    if (substrands.length > 0) {
+      throw IllegalDesignError('Cannot add a 5\' extension when there are already domains. '
+          'Did you mean to create a 3\' extension?');
+    }
   }
 
   StrandMaker as_circular() {
