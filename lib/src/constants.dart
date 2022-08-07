@@ -164,6 +164,10 @@ const default_pitch = 0.0;
 const default_yaw = 0.0;
 //const default_helix_rotation_anchor = 0;
 
+// for extensions
+const default_display_angle = 45.0;
+const default_display_length = 1.0;
+
 const default_side_pane_width = '8%';
 
 const default_group_name = 'default_group';
@@ -351,6 +355,19 @@ const loopout_keys = [
   name_key,
 ];
 
+// Extension keys
+const extension_key = 'extension';
+const is_5p_key = 'is_5p';
+const display_length_key = 'display_length';
+const display_angle_key = 'display_angle';
+const extension_keys = [
+  extension_key,
+  is_5p_key,
+  display_length_key,
+  display_angle_key,
+  label_key,
+  name_key,
+];
 ////////////////////////////////////////////////////
 /// svg-png-caching constants
 

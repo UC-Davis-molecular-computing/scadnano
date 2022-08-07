@@ -18,6 +18,7 @@ class SelectModeChoice extends EnumClass {
   static const SelectModeChoice domain = _$domain;
   static const SelectModeChoice crossover = _$crossover;
   static const SelectModeChoice loopout = _$loopout;
+  static const SelectModeChoice extension_ = _$extension_; // extension is reserved keyword
   static const SelectModeChoice strand = _$strand;
   static const SelectModeChoice insertion = _$insertion;
   static const SelectModeChoice deletion = _$deletion;
@@ -66,6 +67,8 @@ class SelectModeChoice extends EnumClass {
       case crossover:
         return 'images/select_mode_icons/crossover.svg';
       case loopout:
+        return 'images/select_mode_icons/loopout.svg';
+      case extension_:
         return 'images/select_mode_icons/loopout.svg';
       case deletion:
         return 'images/select_mode_icons/del.svg';

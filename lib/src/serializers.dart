@@ -43,6 +43,7 @@ import 'state/grid.dart';
 import 'state/helix.dart';
 import 'state/idt_fields.dart';
 import 'state/loopout.dart';
+import 'state/extension.dart';
 import 'state/mouseover_data.dart';
 import 'state/position3d.dart';
 import 'state/select_mode.dart';
@@ -135,6 +136,7 @@ part 'serializers.g.dart';
   DesignSideRotationData,
   Helix,
   HelixGroup,
+  Extension,
   Domain,
   Strand,
   Geometry,

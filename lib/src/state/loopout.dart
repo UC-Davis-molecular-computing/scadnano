@@ -74,6 +74,8 @@ abstract class Loopout
 
   bool is_loopout() => true;
 
+  bool is_extension() => false;
+
   @memoized
   SelectModeChoice get select_mode => SelectModeChoice.loopout;
 
