@@ -20,6 +20,7 @@ import '../util.dart' as util;
 import 'design.dart';
 import 'domain.dart';
 import 'loopout.dart';
+import 'extension.dart';
 import 'substrand.dart';
 import 'unused_fields.dart';
 
@@ -121,16 +122,20 @@ abstract class Strand
   Strand _rebuild_substrands_with_new_fields_based_on_strand(Strand strand) {
     int idx = 0;
     var substrands_new = strand.substrands.toBuilder();
+    bool is_5p = true;
     for (var ss in strand.substrands) {
       var new_ss;
       if (ss is Loopout) {
         new_ss = _rebuild_loopout_with_new_fields_based_on_strand(ss, idx, strand);
       } else if (ss is Domain) {
         new_ss = _rebuild_domain_with_new_fields_based_on_strand(ss, idx, strand);
+      } else if (ss is Extension) {
+        new_ss = _rebuild_extension_with_new_fields_based_on_strand(ss, is_5p, strand);
       }
       assert(new_ss != null);
       substrands_new[idx] = new_ss;
       idx++;
+      is_5p = false;
     }
     return strand.rebuild((s) => s..substrands = substrands_new);
   }
@@ -138,7 +143,7 @@ abstract class Strand
   _rebuild_domain_with_new_fields_based_on_strand(Domain domain, int idx, Strand strand) {
     bool is_first = idx == 0;
     bool is_last = idx == strand.substrands.length - 1;
-    return domain.rebuild((l) => l
+    return domain.rebuild((b) => b
       ..strand_id = strand.id
       ..is_first = is_first
       ..is_last = is_last
@@ -146,11 +151,18 @@ abstract class Strand
   }
 
   _rebuild_loopout_with_new_fields_based_on_strand(Loopout loopout, int idx, Strand strand) {
-    return loopout.rebuild((l) => l
+    return loopout.rebuild((b) => b
       ..is_scaffold = is_scaffold
       ..strand_id = strand.id
       ..prev_domain_idx = idx - 1
       ..next_domain_idx = idx + 1);
+  }
+
+  _rebuild_extension_with_new_fields_based_on_strand(Extension ext, bool is_5p, Strand strand) {
+    return ext.rebuild((b) => b
+      ..is_scaffold = is_scaffold
+      ..strand_id = strand.id
+      ..is_5p = is_5p);
   }
 
   Strand _rebuild_substrands_with_new_dna_sequences_based_on_strand(Strand strand) {
@@ -488,7 +500,7 @@ abstract class Strand
       if (substrands[i] is Domain) {
         if (substrands[i + 1] is Domain) {
           linkers.add(Crossover(i, i + 1, id, is_scaffold));
-        } else {
+        } else if (substrands[i + 1] is Loopout) {
           var loopout = substrands[i + 1];
           assert(loopout is Loopout);
           if (loopout is Loopout) {

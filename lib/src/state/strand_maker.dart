@@ -120,8 +120,12 @@ class StrandMaker {
 
   StrandMaker extension_3p(int num_bases, {double display_length = 1.0, double display_angle = 45.0}) {
     _verify_extension_3p_is_valid();
-    Extension ext =
-        Extension(num_bases: num_bases, display_length: display_length, display_angle: display_angle);
+    Extension ext = Extension(
+      num_bases: num_bases,
+      display_length: display_length,
+      display_angle: display_angle,
+      is_5p: false,
+    );
     this.substrands.add(ext);
     return this;
   }
@@ -146,16 +150,20 @@ class StrandMaker {
     }
   }
 
-  bool _is_last_domain_a_loopout() => substrands[-1] is Loopout;
+  bool _is_last_domain_a_loopout() => substrands.last is Loopout;
 
-  bool _is_last_domain_an_extension() => substrands[-1] is Extension;
+  bool _is_last_domain_an_extension() => substrands.last is Extension;
 
   bool _is_last_domain_an_extension_3p() => substrands.length > 1 && this._is_last_domain_an_extension();
 
   StrandMaker extension_5p(int num_bases, {double display_length = 1.0, double display_angle = 45.0}) {
     this._verify_extension_5p_is_valid();
-    Extension ext =
-        Extension(num_bases: num_bases, display_length: display_length, display_angle: display_angle);
+    Extension ext = Extension(
+      num_bases: num_bases,
+      display_length: display_length,
+      display_angle: display_angle,
+      is_5p: true,
+    );
     this.substrands.add(ext);
     return this;
   }

@@ -76,7 +76,7 @@ abstract class Domain
       Iterable<Insertion> insertions,
       String dna_sequence,
       String strand_id,
-      bool is_scaffold,
+      bool is_scaffold = false,
       String name = null,
       Object label = null,
       bool is_first = false,
