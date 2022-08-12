@@ -1,6 +1,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:scadnano/src/view/pure_component.dart';
 import '../state/dialog.dart';
 
 import '../app.dart';
@@ -26,21 +27,35 @@ mixin DesignDialogFormProps on UiProps {
 mixin DesignDialogFormState on UiState {
   BuiltList<DialogItem>
       responses; // these are UPDATED as user changes form inputs
-  DialogType dialogType;
-  BuiltMap<DialogType, BuiltList<DialogItem>> saved_responses;
+  // DialogType dialogType;   // we're using hashes instead of dialogtype for now
+  BuiltMap<String, BuiltList<DialogItem>> saved_responses;
+}
+
+create_hash(Iterable<DialogItem> items) {
+  return items.map((item) => item.label).join('-');
 }
 
 class DesignDialogFormComponent
-    extends UiStatefulComponent2<DesignDialogFormProps, DesignDialogFormState> {
+    extends UiStatefulComponent2<DesignDialogFormProps, DesignDialogFormState> with PureComponent {
+      
+  @override
+  Map get initialState => (newState()
+    ..responses = null
+    // ..dialogType = null
+    ..saved_responses = new BuiltMap<String, BuiltList<DialogItem>>());
+      
   @override
   Map getDerivedStateFromProps(Map nextPropsUntyped, Map prevStateUntyped) {
     var new_props = typedPropsFactory(nextPropsUntyped);
     var prev_state = typedStateFactory(prevStateUntyped);
     if (new_props.dialog != null) {
       if (prev_state.responses == null) {
+        var key = create_hash(new_props.dialog.items);
         return newState()
-          ..dialogType = new_props.dialog.type
-          ..responses = new_props.dialog.items;
+          // ..dialogType = new_props.dialog.type
+          ..responses = prev_state.saved_responses.containsKey(key)
+              ? prev_state.saved_responses[key]
+              : new_props.dialog.items;
       } else {
         return prevStateUntyped;
       }
@@ -48,25 +63,16 @@ class DesignDialogFormComponent
       //XXX: We cannot simply return null here. Must set responses to null in state, so the next time props
       // are set (when a new dialog is created), we have a fresh dialog. Otherwise the old state persists
       // and the dialog won't be refreshed for the new use.
-      if (prev_state.saved_responses == null) {
-        var new_saved_responses =
-            new BuiltMap<DialogType, BuiltList<DialogItem>>();
-        new_saved_responses.rebuild((responses) {
-          responses[prev_state.dialogType] = prev_state.responses;
-          return responses;
-        });
+      if (prev_state.responses != null)
         return newState()
-          ..saved_responses = new_saved_responses
-          ..dialogType = null
+          ..saved_responses = prev_state.saved_responses.rebuild((old_responses) {
+            old_responses[create_hash(prev_state.responses)] = prev_state.responses;
+            return old_responses;
+          })
+          // ..dialogType = null
           ..responses = null;
-      }
-      return newState()
-        ..saved_responses.rebuild((old_responses) {
-          old_responses[prev_state.dialogType] = prev_state.responses;
-          return old_responses;
-        })
-        ..dialogType = null
-        ..responses = null;
+      else
+        return prevStateUntyped;
     }
   }
 
