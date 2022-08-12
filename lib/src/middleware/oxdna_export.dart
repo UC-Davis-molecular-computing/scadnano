@@ -407,7 +407,10 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand> strands_
         // these will be updated later, for now we just need the base
         for (int i = 0; i < domain.dna_length(); i++) {
           String base = seq[i];
-          var nuc = OxdnaNucleotide(OxdnaVector(0, 0, 0), OxdnaVector(0, -1, 0), OxdnaVector(0, 0, 1), base);
+          var center = OxdnaVector(0, 0, 0);
+          var normal = OxdnaVector(0, -1, 0);
+          var forward = OxdnaVector(0, 0, 1);
+          var nuc = OxdnaNucleotide(center, normal, forward, base);
           dom_strand.nucleotides.add(nuc);
         }
         dom_strands.add(Tuple2<OxdnaStrand, bool>(dom_strand, true));
@@ -431,12 +434,12 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand> strands_
         // now we position loopouts relative to the previous and next strand
         // for now we use a linear interpolation
         var forward = next_nuc.center - prev_nuc.center;
-        var normal = (prev_nuc.forward + next_nuc.forward) * 0.5;
+        var normal = get_normal_vector_to(forward);
 
         for (int loopout_idx = 0; loopout_idx < strand_length; loopout_idx++) {
           OxdnaVector pos = prev_nuc.center + forward * ((loopout_idx + 1) / (strand_length + 1));
           var old_nuc = dstrand.nucleotides[loopout_idx];
-          var new_nuc = OxdnaNucleotide(pos, normal, forward.normalize(), old_nuc.base);
+          var new_nuc = OxdnaNucleotide(pos, normal.normalize(), forward.normalize(), old_nuc.base);
           dstrand.nucleotides[loopout_idx] = new_nuc;
         }
       }
@@ -446,4 +449,13 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand> strands_
   }
 
   return system;
+}
+
+OxdnaVector get_normal_vector_to(OxdnaVector vec) {
+  var unit = OxdnaVector(1, 0, 0);
+  var normalized_vec = vec.normalize();
+  if (1 - normalized_vec.dot(unit).abs() < 0.001) {
+    unit = OxdnaVector(0, 1, 0);
+  }
+  return unit.cross(vec);
 }
