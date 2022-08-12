@@ -22,10 +22,6 @@ helix_idxs_change_middleware(Store<AppState> store, dynamic action, NextDispatch
       for (var old_index in old_idxs) {
         var new_index = action.idx_replacements[old_index];
         if (ints_so_far.contains(new_index)) {
-          // var msg = 'First duplicate found for helix ${old_index} with new index ${new_index}. ';
-          // window.alert(msg);
-          // return;
-
           if (dupe_key_to_idxs.containsKey(new_index))
             dupe_key_to_idxs[new_index].add(old_index);
           else
