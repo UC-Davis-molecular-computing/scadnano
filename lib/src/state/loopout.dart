@@ -33,7 +33,7 @@ abstract class Loopout
     int loopout_length,
     int prev_domain_idx,
     int next_domain_idx,
-    bool is_scaffold,
+    bool is_scaffold=false,
     String dna_sequence = null,
     String name,
     Object label,

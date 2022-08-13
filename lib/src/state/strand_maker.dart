@@ -18,7 +18,6 @@ class StrandMaker {
   Color color = Color.rgb(247, 67, 8); //(#f74308)
   IDTFields idt = null; //(#f74308)
   String dna_sequence = null;
-  String domain_dna_sequence = null;
   bool circular = false;
   String name = null;
   Object label = null;
@@ -27,6 +26,8 @@ class StrandMaker {
   int current_helix, current_offset, loopout_length;
   Map<int, ModificationInternal> modifications_int = {};
   bool is_scaffold = false;
+  bool contains_extension = false;
+  String loopout_dna_sequence = null;
 
   StrandMaker(
     Design design,
@@ -58,19 +59,25 @@ class StrandMaker {
   // relative coordinates
   StrandMaker move(int delta) => to(current_offset + delta);
 
-  bool last_substrand_was_loopout() => this.loopout_length != null;
+  bool most_recently_added_substrand_is_loopout() => this.loopout_length != null;
 
   // absolute coordinates
   StrandMaker to(int offset) {
-    if (last_substrand_was_loopout()) {
+    if (most_recently_added_substrand_is_loopout()) {
       Loopout loopout = Loopout(
         loopout_length: loopout_length,
         prev_domain_idx: current_offset,
         next_domain_idx: offset,
         is_scaffold: is_scaffold,
+        dna_sequence: loopout_dna_sequence,
       );
       this.substrands.add(loopout);
       this.loopout_length = null;
+      this.loopout_dna_sequence = null;
+    }
+
+    if (this._most_recently_added_substrand_is_extension_3p()) {
+      throw IllegalDesignError('cannot make a new domain once 3\' extension has been added');
     }
     bool forward;
     var start, end;
@@ -92,10 +99,8 @@ class StrandMaker {
       start: start,
       end: end,
       is_scaffold: this.is_scaffold,
-      dna_sequence: this.domain_dna_sequence,
-
-      /*label: this.domain_label,
-        name: this.domain_name,*/
+      // label: this.domain_label,
+      // name: this.domain_name,
     );
     //Fix for domain_label and domain_name repeating bug:
     //this.domain_label = this.domain_name = null;
@@ -105,6 +110,9 @@ class StrandMaker {
   }
 
   StrandMaker cross(int helix, [int offset = null]) {
+    if (this._most_recently_added_substrand_is_extension()) {
+      throw IllegalDesignError('Cannot cross after an extension.');
+    }
     this.current_helix = helix;
     if (offset != null) {
       this.current_offset = offset;
@@ -127,6 +135,7 @@ class StrandMaker {
       is_5p: false,
     );
     this.substrands.add(ext);
+    this.contains_extension = true;
     return this;
   }
 
@@ -135,10 +144,10 @@ class StrandMaker {
       throw IllegalDesignError('Cannot add a 3\' extension when there are no domains. '
           'Did you mean to create a 5\' extension?');
     }
-    if (this._is_last_domain_a_loopout()) {
+    if (this.most_recently_added_substrand_is_loopout()) {
       throw IllegalDesignError('Cannot add a 3\' extension immediately after a loopout.');
     }
-    if (this._is_last_domain_an_extension_3p()) {
+    if (this._most_recently_added_substrand_is_extension_3p()) {
       throw IllegalDesignError('Cannot add a 3\' extension after another 3\' extension.');
     }
     this._verify_strand_is_not_circular();
@@ -150,11 +159,10 @@ class StrandMaker {
     }
   }
 
-  bool _is_last_domain_a_loopout() => substrands.last is Loopout;
+  bool _most_recently_added_substrand_is_extension() => substrands.last is Extension;
 
-  bool _is_last_domain_an_extension() => substrands.last is Extension;
-
-  bool _is_last_domain_an_extension_3p() => substrands.length > 1 && this._is_last_domain_an_extension();
+  bool _most_recently_added_substrand_is_extension_3p() =>
+      substrands.length > 1 && this._most_recently_added_substrand_is_extension();
 
   StrandMaker extension_5p(int num_bases, {double display_length = 1.0, double display_angle = 45.0}) {
     this._verify_extension_5p_is_valid();
@@ -165,6 +173,7 @@ class StrandMaker {
       is_5p: true,
     );
     this.substrands.add(ext);
+    this.contains_extension = true;
     return this;
   }
 
@@ -173,9 +182,15 @@ class StrandMaker {
       throw IllegalDesignError('Cannot add a 5\' extension when there are already domains. '
           'Did you mean to create a 3\' extension?');
     }
+    if (this.circular) {
+      throw IllegalDesignError('cannot have extensions on a circular strand');
+    }
   }
 
   StrandMaker as_circular() {
+    if (this.contains_extension) {
+      throw IllegalDesignError('cannot have extensions on a circular strand');
+    }
     this.circular = true;
     return this;
   }
@@ -229,7 +244,21 @@ class StrandMaker {
   }
 
   StrandMaker with_domain_sequence(String sequence) {
-    this.domain_dna_sequence = sequence;
+    if (most_recently_added_substrand_is_loopout()) {
+      this.loopout_dna_sequence = sequence;
+      return this;
+    }
+    int idx_last = this.substrands.length - 1;
+    Substrand substrand = this.substrands[idx_last];
+    Substrand new_substrand;
+    if (substrand is Domain) {
+      new_substrand = substrand.rebuild((b) => b..dna_sequence = sequence);
+    } else if (substrand is Extension) {
+      new_substrand = substrand.rebuild((b) => b..dna_sequence = sequence);
+    } else {
+      throw AssertionError('substrand should be Domain or Extension, but is ${substrand}');
+    }
+    substrands[idx_last] = new_substrand;
     return this;
   }
 
@@ -246,6 +275,10 @@ class StrandMaker {
       new_substrand = substrand.rebuild((b) => b..label = label);
     } else if (substrand is Loopout) {
       new_substrand = substrand.rebuild((b) => b..label = label);
+    } else if (substrand is Extension) {
+      new_substrand = substrand.rebuild((b) => b..label = label);
+    } else {
+      throw AssertionError('substrand should be Domain, Loopout, or Extension, but is ${substrand}');
     }
     substrands[idx_last] = new_substrand;
     return this;
@@ -259,6 +292,10 @@ class StrandMaker {
       new_substrand = substrand.rebuild((b) => b..name = name);
     } else if (substrand is Loopout) {
       new_substrand = substrand.rebuild((b) => b..name = name);
+    } else if (substrand is Extension) {
+      new_substrand = substrand.rebuild((b) => b..name = name);
+    } else {
+      throw AssertionError('substrand should be Domain, Loopout, or Extension, but is ${substrand}');
     }
     substrands[idx_last] = new_substrand;
     return this;
@@ -307,7 +344,7 @@ class StrandMaker {
 
     var last_ss = substrands.last;
 
-    if (last_substrand_was_loopout()) {
+    if (most_recently_added_substrand_is_loopout()) {
       throw ArgumentError('can only create a deletion on a bound Domain, '
           'not a ${last_ss.runtimeType}; be sure only to call with_deletions immediately '
           'after a call to move, to, or update_to');
@@ -339,7 +376,7 @@ class StrandMaker {
 
     var last_ss = substrands.last;
 
-    if (last_substrand_was_loopout()) {
+    if (most_recently_added_substrand_is_loopout()) {
       throw ArgumentError('can only create an insertion on a bound Domain, '
           'not a ${last_ss.runtimeType}; be sure only to call with_insertions immediately '
           'after a call to move, to, or update_to');

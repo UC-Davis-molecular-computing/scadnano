@@ -40,6 +40,9 @@ abstract class Extension
 
   double get display_angle;
 
+  // not really nullable but this helps in creating extensions programmatically
+  // and it gets set automatically by Strand.initialize() anyway
+  @nullable
   bool get is_5p;
 
   @nullable

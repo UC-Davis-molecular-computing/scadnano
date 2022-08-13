@@ -82,8 +82,16 @@ abstract class Strand
   //FIXME: remove prev_ and next_ from Loopout so they don't need to be recalculated
 
   static void _finalizeBuilder(StrandBuilder builder) {
-    Domain first_ss = builder.substrands.first;
-    String id = id_from_data(first_ss.helix, first_ss.offset_5p, first_ss.forward);
+    Substrand first_ss = builder.substrands.first;
+    Domain first_dom;
+    if (first_ss is Domain) {
+      first_dom = first_ss;
+    } else {
+      assert(first_ss is Extension);
+      assert(builder.substrands.length > 1);
+      first_dom = builder.substrands[1];
+    }
+    String id = id_from_data(first_dom.helix, first_dom.offset_5p, first_dom.forward);
     // ensure Loopouts have appropriate prev and next indices for adjacent Domains
     // (not necessary for Crossovers since they are lazily evaluated,
     // but Loopout objects are created prior to creating the Strand)
@@ -102,6 +110,10 @@ abstract class Strand
         builder.substrands[i] = substrand.rebuild((b) => b..strand_id = id);
       } else if (substrand is Loopout) {
         builder.substrands[i] = substrand.rebuild((b) => b..strand_id = id);
+      } else if (substrand is Extension) {
+        builder.substrands[i] = substrand.rebuild((b) => b..strand_id = id);
+      } else {
+        throw AssertionError('substrand ${i} should be Domain, Loopout, or Extension, but is ${substrand}');
       }
     }
   }
@@ -113,6 +125,7 @@ abstract class Strand
     strand = _rebuild_substrands_with_new_dna_sequences_based_on_strand(strand);
 
     _ensure_loopouts_legal();
+    _ensure_extensions_legal();
 
     return strand;
   }
@@ -185,6 +198,55 @@ abstract class Strand
     String old_sequence = substrand.dna_sequence == null ? '' : substrand.dna_sequence;
     return substrand
         .set_dna_sequence(_trim_or_pad_sequence_to_desired_length(old_sequence, substrand.dna_length()));
+  }
+
+  _ensure_extensions_legal() {
+    check_at_least_one_domain();
+    check_only_at_ends();
+    check_not_adjacent_to_loopout();
+  }
+
+  check_at_least_one_domain() {
+    for (var ss in substrands) {
+      if (ss is Domain) {
+        return;
+      }
+    }
+    throw StrandError(this, 'strand must have at least one domain; here are all substrands:\n${substrands}');
+  }
+
+  check_only_at_ends() {
+    for (int i = 1; i < substrands.length - 1; i++) {
+      if (substrands[i] is Extension) {
+        throw StrandError(
+            this,
+            "Extension must be at 5' or 3' end, but there is an Extension at index "
+            "${i}: ${substrands[i]}");
+      }
+    }
+  }
+
+  check_not_adjacent_to_loopout() {
+    if (substrands[0] is Extension) {
+      assert(substrands.length > 1);
+      if (substrands[1] is Loopout) {
+        throw StrandError(
+            this,
+            'cannot have Extension adjacent to Loopout, but first substrand is '
+            'Extension: ${substrands[0]}\n and second substrand is Loopout: ${substrands[1]}');
+      }
+    }
+    if (substrands.last is Extension) {
+      assert(substrands.length > 1);
+      int second_last_idx = substrands.length - 2;
+      if (substrands[second_last_idx] is Loopout) {
+        throw StrandError(
+            this,
+            'cannot have Extension adjacent to Loopout, but last substrand is '
+            'Extension: ${substrands.last}\n and second-to-last substrand is Loopout: '
+            '${substrands[second_last_idx]}');
+      }
+    }
   }
 
   _ensure_loopouts_legal() {

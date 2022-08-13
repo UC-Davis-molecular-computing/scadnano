@@ -30,12 +30,53 @@ main() {
       color = Color.rgb(0, 0, 0);
     });
 
+    test('to_after_3p_extension_should_raise_error', () {
+      var sb = design.draw_strand(0, 0).to(10).extension_3p(5);
+      expect(() => sb.to(15), throwsException);
+    });
+
+    test('move_after_3p_extension_should_raise_error', () {
+      var sb = design.draw_strand(0, 0).move(10).extension_3p(5);
+      expect(() => sb.move(5), throwsException);
+    });
+
+    test('cross_after_5p_extension_should_raise_error', () {
+      var sb = design.draw_strand(0, 0).extension_5p(5);
+      expect(() => sb.cross(1), throwsException);
+    });
+
+    test('cross_after_3p_extension_should_raise_error', () {
+      var sb = design.draw_strand(0, 0).to(5).extension_3p(5);
+      expect(() => sb.cross(1), throwsException);
+    });
+
+    test('extension_3p_after_loopout_should_raise_error', () {
+      var sb = design.draw_strand(0, 0).to(10).loopout(1, 3);
+      expect(() => sb.extension_3p(5), throwsException);
+    });
+
+    test('extension_3p_after_extension_should_raise_error', () {
+      var sb = design.draw_strand(0, 0).to(10).extension_3p(4);
+      expect(() => sb.extension_3p(5), throwsException);
+    });
+
+    test('as_circular_with_3p_extension_should_raise_error', () {
+      var sb = design.draw_strand(0, 0).to(10).extension_3p(4);
+      expect(() => sb.as_circular(), throwsException);
+    });
+
+    test('as_circular_with_5p_extension_should_raise_error', () {
+      var sb = design.draw_strand(0, 0).extension_5p(4).to(10);
+      expect(() => sb.as_circular(), throwsException);
+    });
+
+    test('extension_3p_on_circular_strand_should_raise_error', () {
+      var sb = design.draw_strand(0, 0).to(10).as_circular();
+      expect(() => sb.extension_3p(4), throwsException);
+    });
+
     test('3p_extension', () {
-      var sb = design.draw_strand(0, 0);
-      sb.to(10);
-      sb.extension_3p(5);
-      sb.with_color(color);
-      design = sb.commit();
+      design = design.draw_strand(0, 0).to(10).extension_3p(5).with_color(color).commit();
 
       var expected_strand = Strand([
         Domain(helix: 0, forward: true, start: 0, end: 10),
@@ -44,237 +85,147 @@ main() {
       expect(design.strands.length, 1);
       expect(design.strands[0], expected_strand);
     });
+
+    test('5p_extension', () {
+      design = design.draw_strand(0, 0).extension_5p(5).to(10).with_color(color).commit();
+
+      var expected_strand = Strand([
+        Extension(num_bases: 5, is_5p: true),
+        Domain(helix: 0, forward: true, start: 0, end: 10),
+      ], color: color);
+      expect(design.strands.length, 1);
+      expect(design.strands[0], expected_strand);
+    });
+
+    test('move_after_5p_extension_ok', () {
+      design = design.draw_strand(0, 0).extension_5p(5).move(15).with_color(color).commit();
+
+      var expected_strand = Strand([
+        Extension(num_bases: 5, is_5p: true),
+        Domain(helix: 0, forward: true, start: 0, end: 15),
+      ], color: color);
+      expect(design.strands.length, 1);
+      expect(design.strands[0], expected_strand);
+    });
+
+    test('extension_3p_with_label', () {
+      design = design
+          .draw_strand(0, 0)
+          .to(10)
+          .extension_3p(5)
+          .with_domain_label('ext1')
+          .with_color(color)
+          .commit();
+
+      var expected_strand = Strand([
+        Domain(helix: 0, forward: true, start: 0, end: 10),
+        Extension(num_bases: 5, label: 'ext1'),
+      ], color: color);
+      expect(design.strands.length, 1);
+      expect(design.strands[0], expected_strand);
+    });
+
+    test('extension_5p_with_label', () {
+      design = design
+          .draw_strand(0, 0)
+          .extension_5p(5)
+          .with_domain_label('ext1')
+          .to(10)
+          .with_color(color)
+          .commit();
+
+      var expected_strand = Strand([
+        Extension(num_bases: 5, label: 'ext1'),
+        Domain(helix: 0, forward: true, start: 0, end: 10),
+      ], color: color);
+      expect(design.strands.length, 1);
+      expect(design.strands[0], expected_strand);
+    });
+
+    test('with_sequence_on_3p_extension', () {
+      design = design
+          .draw_strand(0, 0)
+          .to(10)
+          .extension_3p(5)
+          .with_sequence("A" * 10 + "G" * 5)
+          .with_color(color)
+          .commit();
+
+      var expected_strand = Strand([
+        Domain(helix: 0, forward: true, start: 0, end: 10, dna_sequence: 'A' * 10),
+        Extension(num_bases: 5, dna_sequence: 'G' * 5),
+      ], color: color);
+      expect(design.strands.length, 1);
+      expect(design.strands[0], expected_strand);
+    });
+
+    test('with_sequence_on_5p_extension', () {
+      design = design
+          .draw_strand(0, 0)
+          .extension_5p(5)
+          .to(10)
+          .with_sequence("C" * 5 + "T" * 10)
+          .with_color(color)
+          .commit();
+
+      var expected_strand = Strand([
+        Extension(num_bases: 5, dna_sequence: 'C' * 5),
+        Domain(helix: 0, forward: true, start: 0, end: 10, dna_sequence: 'T' * 10),
+      ], color: color);
+      expect(design.strands.length, 1);
+      expect(design.strands[0], expected_strand);
+    });
+
+    test('with_domain_sequence_on_extension', () {
+      design = design
+          .draw_strand(0, 0)
+          .to(10)
+          .extension_3p(5)
+          .with_domain_sequence("G" * 5)
+          .with_color(color)
+          .commit();
+
+      var expected_strand = Strand([
+        Domain(helix: 0, forward: true, start: 0, end: 10, dna_sequence: '?' * 10),
+        Extension(num_bases: 5, dna_sequence: 'G' * 5),
+      ], color: color);
+      expect(design.strands.length, 1);
+      expect(design.strands[0], expected_strand);
+    });
+
+    test('with_domain_sequence_on_extension_and_loopout_and_domain', () {
+      var sb = design.draw_strand(0, 0);
+      sb.move(3);
+      sb.with_domain_sequence('AAA');
+      sb.loopout(1, 2);
+      sb.with_domain_sequence('CC');
+      sb.move(-3);
+      sb.with_domain_sequence('GGG');
+      sb.extension_3p(4);
+      sb.with_domain_sequence('TTTT');
+      sb.with_color(color);
+      design = sb.commit();
+
+      var expected_strand = Strand([
+        Domain(helix: 0, forward: true, start: 0, end: 3, dna_sequence: 'AAA'),
+        Loopout(loopout_length: 2, dna_sequence: 'CC', prev_domain_idx: 0, next_domain_idx: 2),
+        Domain(helix: 1, forward: false, start: 0, end: 3, dna_sequence: 'GGG'),
+        Extension(num_bases: 4, dna_sequence: 'TTTT'),
+      ], color: color);
+      expect(design.strands.length, 1);
+      expect(design.strands[0], expected_strand);
+    });
+
+    test('extension_with_name', () {
+      design =
+          design.draw_strand(0, 0).to(10).extension_3p(5).with_domain_name('ext1').with_color(color).commit();
+
+      var expected_strand = Strand([
+        Domain(helix: 0, forward: true, start: 0, end: 10),
+        Extension(num_bases: 5, name: 'ext1'),
+      ], color: color);
+      expect(design.strands.length, 1);
+      expect(design.strands[0], expected_strand);
+    });
   });
 }
-/*
-
-    def test_strand__3p_extension(self) -> None:
-        design = self.design_6helix
-        sb = design.draw_strand(0, 0)
-        sb.to(10)
-
-        sb.extension_3p(5)
-
-        expected_strand: sc.Strand = sc.Strand([
-            sc.Domain(0, True, 0, 10),
-            sc.Extension(num_bases=5),
-        ])
-        self.assertEqual(1, len(design.strands))
-        self.assertEqual(expected_strand, design.strands[0])
-
-    def test_strand__5p_extension(self) -> None:
-        design = self.design_6helix
-        sb = design.draw_strand(0, 0)
-        sb.extension_5p(5)
-        sb.to(10)
-
-        expected_strand: sc.Strand = sc.Strand([
-            sc.Extension(5),
-            sc.Domain(0, True, 0, 10),
-        ])
-
-        self.assertEqual(1, len(design.strands))
-        self.assertEqual(expected_strand, design.strands[0])
-
-    def test_strand__update_to_after_5p_extension_ok(self) -> None:
-        design = self.design_6helix
-        sb = design.draw_strand(0, 0)
-        sb.extension_5p(5)
-
-        sb.to(10)
-        sb.update_to(15)
-
-        expected_strand: sc.Strand = sc.Strand([
-            sc.Extension(5),
-            sc.Domain(0, True, 0, 15),
-        ])
-
-        self.assertEqual(1, len(design.strands))
-        self.assertEqual(expected_strand, design.strands[0])
-
-    def test_strand__move_after_5p_extension_ok(self) -> None:
-        design = self.design_6helix
-        sb = design.draw_strand(0, 0)
-        sb.extension_5p(5)
-
-        sb.move(15)
-
-        expected_strand: sc.Strand = sc.Strand([
-            sc.Extension(5),
-            sc.Domain(0, True, 0, 15),
-        ])
-
-        self.assertEqual(1, len(design.strands))
-        self.assertEqual(expected_strand, design.strands[0])
-
-    def test_strand__to_after_3p_extension_should_raise_error(self) -> None:
-        design = self.design_6helix
-        sb = design.draw_strand(0, 0)
-        sb.to(10)
-        sb.extension_3p(5)
-
-        with self.assertRaises(sc.IllegalDesignError):
-            sb.to(15)
-
-    def test_strand__move_after_3p_extension_should_raise_error(self) -> None:
-        design = self.design_6helix
-        sb = design.draw_strand(0, 0)
-        sb.move(10)
-        sb.extension_3p(5)
-
-        with self.assertRaises(sc.IllegalDesignError):
-            sb.move(5)
-
-    def test_strand__cross_after_5p_extension_should_raise_error(self) -> None:
-        design = self.design_6helix
-        sb = design.draw_strand(0, 0)
-        sb.extension_5p(5)
-
-        with self.assertRaises(sc.IllegalDesignError):
-            sb.cross(1)
-
-    def test_strand__cross_after_3p_extension_should_raise_error(self) -> None:
-        design = self.design_6helix
-        sb = design.draw_strand(0, 0)
-        sb.to(5)
-        sb.extension_3p(5)
-
-        with self.assertRaises(sc.IllegalDesignError):
-            sb.cross(1)
-
-    def test_strand__extension_3p_after_loopout_should_raise_error(self) -> None:
-        design = self.design_6helix
-        sb = design.draw_strand(0, 0)
-        sb.to(10)
-        sb.loopout(1, 3)
-
-        with self.assertRaises(sc.IllegalDesignError):
-            sb.extension_3p(5)
-
-    def test_strand__extension_3p_after_extension_should_raise_error(self) -> None:
-        design = self.design_6helix
-        sb = design.draw_strand(0, 0)
-        sb.to(10)
-        sb.extension_3p(4)
-
-        with self.assertRaises(sc.IllegalDesignError):
-            sb.extension_3p(5)
-
-    def test_strand__update_to_after_3p_extension_should_raise_error(self) -> None:
-        design = self.design_6helix
-        sb = design.draw_strand(0, 0)
-        sb.to(10)
-        sb.extension_3p(4)
-
-        with self.assertRaises(sc.IllegalDesignError):
-            sb.update_to(15)
-
-    def test_strand__as_circular_with_3p_extension_should_raise_error(self) -> None:
-        design = self.design_6helix
-        sb = design.draw_strand(0, 0)
-        sb.to(10)
-        sb.extension_3p(4)
-
-        with self.assertRaises(sc.IllegalDesignError):
-            sb.as_circular()
-
-    def test_strand__as_circular_with_5p_extension_should_raise_error(self) -> None:
-        design = self.design_6helix
-        sb = design.draw_strand(0, 0)
-        sb.extension_5p(4)
-        sb.to(10)
-
-        with self.assertRaises(sc.IllegalDesignError):
-            sb.as_circular()
-
-    def test_strand__extension_3p_on_circular_strand_should_raise_error(self) -> None:
-        design = self.design_6helix
-        sb = design.draw_strand(0, 0)
-        sb.to(10)
-        sb.as_circular()
-
-        with self.assertRaises(sc.IllegalDesignError):
-            sb.extension_3p(4)
-
-    def test_strand__extension_3p_with_label(self) -> None:
-        design = self.design_6helix
-        sb = design.draw_strand(0, 0)
-        sb.to(10)
-        sb.extension_3p(5)
-        sb.with_domain_label("ext1")
-
-        expected_strand: sc.Strand = sc.Strand([
-            sc.Domain(0, True, 0, 10),
-            sc.Extension(5, label="ext1"),
-        ])
-        self.assertEqual(1, len(design.strands))
-        self.assertEqual(expected_strand, design.strands[0])
-
-    def test_strand__extension_5p_with_label(self) -> None:
-        design = self.design_6helix
-        sb = design.draw_strand(0, 0)
-        sb.extension_5p(5)
-        sb.with_domain_label("ext1")
-        sb.to(10)
-
-        expected_strand: sc.Strand = sc.Strand([
-            sc.Extension(5, label="ext1"),
-            sc.Domain(0, True, 0, 10)
-        ])
-
-    def test_strand__with_sequence_on_3p_extension(self) -> None:
-        design = self.design_6helix
-        sb = design.draw_strand(0, 0)
-        sb.to(10)
-        sb.extension_3p(5)
-        sb.with_sequence("A" * 10 + "G" * 5)
-
-        expected_strand: sc.Strand = sc.Strand([
-            sc.Domain(0, True, 0, 10, dna_sequence="A" * 10),
-            sc.Extension(5, dna_sequence="G" * 5),
-        ])
-        self.assertEqual(1, len(design.strands))
-        self.assertEqual(expected_strand, design.strands[0])
-
-    def test_strand__with_sequence_on_5p_extension(self) -> None:
-        design = self.design_6helix
-        sb = design.draw_strand(0, 0)
-        sb.extension_5p(5)
-        sb.to(10)
-        sb.with_sequence("C" * 5 + "T" * 10)
-
-        expected_strand: sc.Strand = sc.Strand([
-            sc.Extension(5, dna_sequence="C" * 5),
-            sc.Domain(0, True, 0, 10, dna_sequence="T" * 10),
-        ])
-        self.assertEqual(1, len(design.strands))
-        self.assertEqual(expected_strand, design.strands[0])
-
-    def test_strand__with_domain_sequence_on_extension(self) -> None:
-        design = self.design_6helix
-        sb = design.draw_strand(0, 0)
-        sb.to(10)
-        sb.extension_3p(5)
-        sb.with_domain_sequence("G" * 5)
-
-        expected_strand: sc.Strand = sc.Strand([
-            sc.Domain(0, True, 0, 10, dna_sequence="?" * 10),
-            sc.Extension(5, dna_sequence="G" * 5),
-        ])
-        self.assertEqual(1, len(design.strands))
-        self.assertEqual(expected_strand, design.strands[0])
-
-    def test_strand__extension_with_name(self) -> None:
-        design = self.design_6helix
-        sb = design.draw_strand(0, 0)
-        sb.to(10)
-        sb.extension_3p(5)
-        sb.with_domain_name("ext1")
-
-        expected_strand: sc.Strand = sc.Strand([
-            sc.Domain(0, True, 0, 10),
-            sc.Extension(5, name="ext1"),
-        ])
-        self.assertEqual(1, len(design.strands))
-        self.assertEqual(expected_strand, design.strands[0])
- */
