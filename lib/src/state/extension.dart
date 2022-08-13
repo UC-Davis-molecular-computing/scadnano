@@ -33,7 +33,6 @@ abstract class Extension
 
   /******************************* end built_value boilerplate ************************************/
 
-  
   int get num_bases;
 
   double get display_length;
@@ -59,19 +58,19 @@ abstract class Extension
   String get strand_id;
 
   bool get is_scaffold;
-  
+
   factory Extension(
       {int num_bases,
-      double display_length=constants.default_display_length,
-      double display_angle=constants.default_display_angle,
+      double display_length = constants.default_display_length,
+      double display_angle = constants.default_display_angle,
       bool is_5p,
-      Object label=null,
-      String name=null,
+      Object label = null,
+      String name = null,
       String dna_sequence = null,
       bool is_scaffold = false,
       Map<String, dynamic> unused_fields = null}) {
     if (unused_fields == null) {
-        unused_fields = {};
+      unused_fields = {};
     }
     return Extension.from((b) => b
       ..num_bases = num_bases
@@ -91,16 +90,16 @@ abstract class Extension
       constants.is_5p_key: is_5p,
     };
     if (display_length != constants.default_display_length) {
-        json_map[constants.display_length_key] = display_length;
+      json_map[constants.display_length_key] = display_length;
     }
     if (display_angle != constants.default_display_angle) {
-        json_map[constants.display_angle_key] = display_angle;
+      json_map[constants.display_angle_key] = display_angle;
     }
     if (name != null) {
-        json_map[constants.name_key] = name;
+      json_map[constants.name_key] = name;
     }
     if (label != null) {
-        json_map[constants.label_key] = label;
+      json_map[constants.label_key] = label;
     }
     // if (dna_sequence != null) {
     //     json_map[constants.dna_sequence_key] = dna_sequence;
@@ -113,25 +112,26 @@ abstract class Extension
     var class_name = 'Extension';
     var num_bases = util.mandatory_field(json_map, constants.extension_key, class_name);
     var is_5p = util.mandatory_field(json_map, constants.is_5p_key, class_name);
-    double display_length = util.optional_field(json_map, constants.display_length_key, 
-                                                constants.default_display_length);
-    double display_angle = util.optional_field(json_map, constants.display_angle_key, 
-                                               constants.default_display_angle);
+    double display_length =
+        util.optional_field(json_map, constants.display_length_key, constants.default_display_length);
+    double display_angle =
+        util.optional_field(json_map, constants.display_angle_key, constants.default_display_angle);
     String name = util.optional_field_with_null_default(json_map, constants.name_key);
     Object label = util.optional_field_with_null_default(json_map, constants.label_key);
 
     String dna_sequence = util.optional_field_with_null_default(json_map, constants.dna_sequence_key);
-    
+
     var unused_fields = util.unused_fields_map(json_map, constants.extension_keys);
 
-    return Extension(num_bases: num_bases,
-      is_5p: is_5p,
-      display_length: display_length,
-      display_angle: display_angle,
-      name: name,
-      label: label,
-      dna_sequence: dna_sequence,
-      unused_fields: unused_fields.build().toMap());
+    return Extension(
+        num_bases: num_bases,
+        is_5p: is_5p,
+        display_length: display_length,
+        display_angle: display_angle,
+        name: name,
+        label: label,
+        dna_sequence: dna_sequence,
+        unused_fields: unused_fields.build().toMap());
   }
 
   Extension set_dna_sequence(String seq) => rebuild((ext) => ext..dna_sequence = seq);
@@ -146,13 +146,10 @@ abstract class Extension
   SelectModeChoice get select_mode => SelectModeChoice.extension_;
 
   @memoized
-  String get id => 'extension-${is_5p? "5'": "3'"}-${strand_id}';
+  String get id => 'extension-${is_5p ? "5'" : "3'"}-${strand_id}';
 
   int dna_length() => this.num_bases;
 
   @override
   String type_description() => "extension";
-
-
 }
-
