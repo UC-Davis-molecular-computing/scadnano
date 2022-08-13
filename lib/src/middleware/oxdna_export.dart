@@ -330,9 +330,9 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand> strands_
   };
 
   for (var strand in strands_to_export) {
-    List<Tuple2<OxdnaStrand, bool>> dom_strands = [];
+    List<Tuple2<OxdnaStrand, bool>> strand_domains = [];
     for (var domain in strand.substrands) {
-      var dom_strand = OxdnaStrand();
+      var ox_strand = OxdnaStrand();
       String seq = domain.dna_sequence;
       if (seq == null) {
         seq = 'T' * domain.dna_length();
@@ -375,45 +375,45 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand> strands_
             if (insertions.containsKey(offset)) {
               int num = insertions[offset];
               for (int i = 0; i < num; i++) {
-                var r = origin +
+                var cen = origin +
                     forward * (offset + mod - num + i) * geometry.rise_per_base_pair * NM_TO_OX_UNITS;
-                var b = normal.rotate(step_rot * (offset + mod - num + i), forward);
-                var n = domain.forward ? -forward : forward;
-                var nuc = OxdnaNucleotide(r, b, n, seq[index]);
-                dom_strand.nucleotides.add(nuc);
+                var norm = normal.rotate(step_rot * (offset + mod - num + i), forward);
+                var forw = domain.forward ? -forward : forward;
+                var nuc = OxdnaNucleotide(cen, norm, forw, seq[index]);
+                ox_strand.nucleotides.add(nuc);
                 index += 1;
               }
             }
 
-            var r = origin + forward * (offset + mod) * geometry.rise_per_base_pair * NM_TO_OX_UNITS;
-            var b = normal.rotate(step_rot * (offset + mod), forward);
-            var n = domain.forward ? -forward : forward;
-            var nuc = OxdnaNucleotide(r, b, n, seq[index]);
-            dom_strand.nucleotides.add(nuc);
+            var cen = origin + forward * (offset + mod) * geometry.rise_per_base_pair * NM_TO_OX_UNITS;
+            var norm = normal.rotate(step_rot * (offset + mod), forward);
+            var forw = domain.forward ? -forward : forward;
+            var nuc = OxdnaNucleotide(cen, norm, forw, seq[index]);
+            ox_strand.nucleotides.add(nuc);
             index += 1;
           }
         }
 
         // strands are stored from 5' to 3' end
         if (!domain.forward) {
-          dom_strand.nucleotides = List<OxdnaNucleotide>.from(dom_strand.nucleotides.reversed);
+          ox_strand.nucleotides = List<OxdnaNucleotide>.from(ox_strand.nucleotides.reversed);
         }
-        dom_strands.add(Tuple2<OxdnaStrand, bool>(dom_strand, false));
+        strand_domains.add(Tuple2<OxdnaStrand, bool>(ox_strand, false));
         // because we need to know the positions of nucleotides before and after the loopout
         // we temporarily store domain strands with a boolean that is true if it's a loopout
         // handle loopouts
       } else if (domain is Loopout) {
-        // we place the loopout nucleotides at temporary nonsense positions and orientations
-        // these will be updated later, for now we just need the base
         for (int i = 0; i < domain.dna_length(); i++) {
           String base = seq[i];
+          // we place the loopout nucleotides at temporary nonsense positions and orientations
+          // these will be updated later, for now we just need the base
           var center = OxdnaVector(0, 0, 0);
           var normal = OxdnaVector(0, -1, 0);
           var forward = OxdnaVector(0, 0, 1);
           var nuc = OxdnaNucleotide(center, normal, forward, base);
-          dom_strand.nucleotides.add(nuc);
+          ox_strand.nucleotides.add(nuc);
         }
-        dom_strands.add(Tuple2<OxdnaStrand, bool>(dom_strand, true));
+        strand_domains.add(Tuple2<OxdnaStrand, bool>(ox_strand, true));
       } else {
         throw AssertionError('unreachable');
       }
@@ -421,13 +421,13 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand> strands_
 
     var sstrand = OxdnaStrand();
     // process loopouts and join strands
-    for (int i = 0; i < dom_strands.length; i++) {
-      var dstrand_is_loopout = dom_strands[i];
+    for (int i = 0; i < strand_domains.length; i++) {
+      var dstrand_is_loopout = strand_domains[i];
       var dstrand = dstrand_is_loopout.item1;
       var is_loopout = dstrand_is_loopout.item2;
       if (is_loopout) {
-        var prev_nuc = dom_strands[i - 1].item1.nucleotides.last;
-        var next_nuc = dom_strands[i + 1].item1.nucleotides.first;
+        var prev_nuc = strand_domains[i - 1].item1.nucleotides.last;
+        var next_nuc = strand_domains[i + 1].item1.nucleotides.first;
 
         int strand_length = dstrand.nucleotides.length;
 
