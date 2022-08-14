@@ -69,7 +69,7 @@ class SelectModeChoice extends EnumClass {
       case loopout:
         return 'images/select_mode_icons/loopout.svg';
       case extension_:
-        return 'images/select_mode_icons/loopout.svg';
+        return 'images/select_mode_icons/extension.svg';
       case deletion:
         return 'images/select_mode_icons/del.svg';
       case insertion:
@@ -255,6 +255,8 @@ strand, 5' domain, 3' domain.''';
         return constants.css_selector_crossover;
       case loopout:
         return constants.css_selector_loopout;
+      case extension_:
+        return constants.css_selector_extension;
       case deletion:
         return constants.css_selector_deletion;
       case insertion:
@@ -287,6 +289,7 @@ strand, 5' domain, 3' domain.''';
     end_3p_domain,
     crossover,
     loopout,
+    extension_,
     insertion,
     deletion,
     modification,

@@ -142,7 +142,7 @@ abstract class Extension
   SelectModeChoice get select_mode => SelectModeChoice.extension_;
 
   @memoized
-  String get id => 'extension-${is_5p ? "5'" : "3'"}-${strand_id}';
+  String get id => 'extension-${is_5p ? "5p" : "3p"}-${strand_id}';
 
   int dna_length() => this.num_bases;
 

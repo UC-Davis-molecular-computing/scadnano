@@ -602,7 +602,7 @@ label + select {
     pointer-events: all;
 }
 
-.domain-line, .loopout-curve, .domain-line-moving {
+.domain-line, .loopout-curve, .domain-line-moving, .extension-line {
     stroke-width: 4;
     stroke-linecap: round;
     fill: none;
@@ -644,7 +644,8 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
 .selected.insertion-curve,
 .selected.deletion-cross,
 .selected.modification,
-.selected.domain-line {
+.selected.domain-line,
+.selected.extension-line {
     stroke: hotpink;
     stroke-width: 5pt;
 }
@@ -666,7 +667,8 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
 .selected .insertion-curve,
 .selected .deletion-cross,
 .selected .modification,
-.selected .domain-line {
+.selected .domain-line,
+.selected .extension-line {
     stroke: hotpink;
     stroke-width: 5pt;
 }

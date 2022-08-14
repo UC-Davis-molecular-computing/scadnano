@@ -400,6 +400,7 @@ const css_selector_strand = 'strand';
 const css_selector_scaffold = 'scaffold';
 const css_selector_staple = 'staple';
 const css_selector_domain = 'domain-line';
+const css_selector_extension = 'extension-line';
 const css_selector_crossover = 'crossover-curve';
 const css_selector_loopout = 'loopout-curve';
 const css_selector_end_5p_strand = 'five-prime-end-first-substrand';

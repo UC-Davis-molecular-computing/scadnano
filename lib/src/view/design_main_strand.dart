@@ -28,6 +28,7 @@ import '../state/loopout.dart';
 import '../app.dart';
 import '../state/strand.dart';
 import '../state/domain.dart';
+import '../state/extension.dart';
 import '../state/dna_assign_options.dart';
 import 'design_main_strand_deletion.dart';
 import 'design_main_strand_insertion.dart';
@@ -53,6 +54,7 @@ mixin DesignMainStrandPropsMixin on UiProps {
   BuiltSet<DNAEnd> selected_ends_in_strand;
   BuiltSet<Crossover> selected_crossovers_in_strand;
   BuiltSet<Loopout> selected_loopouts_in_strand;
+  BuiltSet<Extension> selected_extensions_in_strand;
   BuiltSet<Domain> selected_domains_in_strand;
   BuiltSet<SelectableDeletion> selected_deletions_in_strand;
   BuiltSet<SelectableInsertion> selected_insertions_in_strand;
@@ -131,6 +133,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..selected_ends_in_strand = props.selected_ends_in_strand
         ..selected_crossovers_in_strand = props.selected_crossovers_in_strand
         ..selected_loopouts_in_strand = props.selected_loopouts_in_strand
+        ..selected_extensions_in_strand = props.selected_extensions_in_strand
         ..selected_domains_in_strand = props.selected_domains_in_strand
         ..context_menu_strand = context_menu_strand
         ..side_selected_helix_idxs = props.side_selected_helix_idxs

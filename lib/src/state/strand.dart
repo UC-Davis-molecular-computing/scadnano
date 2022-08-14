@@ -589,6 +589,12 @@ abstract class Strand
       ]);
 
   @memoized
+  BuiltList<Extension> get extensions => BuiltList<Extension>.from([
+        if (substrands.first is Extension) substrands.first,
+        if (substrands.last is Extension) substrands.last,
+      ]);
+
+  @memoized
   SelectModeChoice get select_mode => SelectModeChoice.strand;
 
   @memoized

@@ -87,8 +87,16 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     String path_description;
 
     if (within_group) {
-      path_description = loopout_path_description_within_group(props.prev_helix, props.next_helix,
-          props.prev_domain, props.next_domain, props.loopout, true, props.show_domain_names, props.prev_helix_svg_position_y, props.next_helix_svg_position_y);
+      path_description = loopout_path_description_within_group(
+          props.prev_helix,
+          props.next_helix,
+          props.prev_domain,
+          props.next_domain,
+          props.loopout,
+          true,
+          props.show_domain_names,
+          props.prev_helix_svg_position_y,
+          props.next_helix_svg_position_y);
     } else {
       path_description = loopout_path_description_between_groups();
     }
@@ -215,8 +223,10 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     var prev_group = props.groups[props.prev_helix.group];
     var next_group = props.groups[props.next_helix.group];
 
-    var prev_svg_untransformed = props.prev_helix.svg_base_pos(prev_offset, props.prev_domain.forward, props.prev_helix_svg_position_y);
-    var next_svg_untransformed = props.next_helix.svg_base_pos(next_offset, props.next_domain.forward, props.next_helix_svg_position_y);
+    var prev_svg_untransformed = props.prev_helix
+        .svg_base_pos(prev_offset, props.prev_domain.forward, props.prev_helix_svg_position_y);
+    var next_svg_untransformed = props.next_helix
+        .svg_base_pos(next_offset, props.next_domain.forward, props.next_helix_svg_position_y);
 
     var prev_svg = prev_group.transform_point_main_view(prev_svg_untransformed, props.geometry);
     var next_svg = next_group.transform_point_main_view(next_svg_untransformed, props.geometry);
@@ -249,8 +259,16 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
 // The bool [include_start_M] indicates whether to start the path with a command like "M 0 1".
 // When drawing a normal loopout this is needed, but when drawing a moving strand, where all path commands
 // are concatenated together, it is not needed.
-String loopout_path_description_within_group(Helix prev_helix, Helix next_helix, Domain prev_domain,
-    Domain next_domain, Loopout loopout, bool include_start_M, bool show_loopout_labels, num prev_helix_svg_position_y, num next_helix_svg_position_y) {
+String loopout_path_description_within_group(
+    Helix prev_helix,
+    Helix next_helix,
+    Domain prev_domain,
+    Domain next_domain,
+    Loopout loopout,
+    bool include_start_M,
+    bool show_loopout_labels,
+    num prev_helix_svg_position_y,
+    num next_helix_svg_position_y) {
   Helix top_helix = prev_helix;
   Helix bot_helix = next_helix;
   Geometry geometry = top_helix.geometry;
@@ -259,8 +277,8 @@ String loopout_path_description_within_group(Helix prev_helix, Helix next_helix,
 
   bool same_helix = top_helix.idx == bot_helix.idx;
   if (same_helix && top_dom.forward == bot_dom.forward) {
-    return loopout_path_description_same_helix_same_direction(
-        loopout, prev_helix, prev_domain, next_domain, include_start_M, show_loopout_labels, prev_helix_svg_position_y);
+    return loopout_path_description_same_helix_same_direction(loopout, prev_helix, prev_domain, next_domain,
+        include_start_M, show_loopout_labels, prev_helix_svg_position_y);
   } else if (prev_helix_svg_position_y > next_helix_svg_position_y || same_helix && !top_dom.forward) {
     // helices are same if same_helix is true, but we'd still like top_dom/bot_dom to reflect which
     // is on top, i.e. that of the forward domain
