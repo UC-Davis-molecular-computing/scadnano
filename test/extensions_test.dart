@@ -263,7 +263,6 @@ main() {
         Extension(num_bases: 7, name: 'ext_3p'),
       ], color: color);
       expect(design.strands.length, 1);
-      expect(design.strands[0].color, expected_strand.color);
       expect(design.strands[0], expected_strand);
     });
   });
