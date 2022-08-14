@@ -29,7 +29,7 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> wi
     var dy = '${0.1 * props.geometry.base_width_svg}';
 
     Map<String, dynamic> style_map = {'fontSize': '${9}px'};
-    var loopout_length = props.loopout.loopout_length.toString().split('').reversed.join('');
+    var loopout_length = props.loopout.loopout_num_bases.toString().split('').reversed.join('');
 
     SvgProps text_path_props = (Dom.textPath()
       ..className = constants.css_selector_loopout_length

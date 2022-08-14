@@ -81,7 +81,7 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
 //      update_mouseover_loopout();
 //    }
 
-    String tooltip = 'loopout: length ${props.loopout.loopout_length}';
+    String tooltip = 'loopout: length ${props.loopout.loopout_num_bases}';
 
     bool within_group = props.prev_helix.group == props.next_helix.group;
     String path_description;
@@ -177,9 +177,9 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
   loopout_length_change() async {
     int new_length = await app.disable_keyboard_shortcuts_while(() => ask_for_length(
         'change loopout length (0 to convert to crossover)',
-        current_length: props.loopout.loopout_length,
+        current_length: props.loopout.loopout_num_bases,
         lower_bound: 0));
-    if (new_length == null || new_length == props.loopout.loopout_length) {
+    if (new_length == null || new_length == props.loopout.loopout_num_bases) {
       return;
     }
     var selected_loopouts = app.state.ui_state.selectables_store.selected_loopouts;
@@ -221,8 +221,8 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     var prev_svg = prev_group.transform_point_main_view(prev_svg_untransformed, props.geometry);
     var next_svg = next_group.transform_point_main_view(next_svg_untransformed, props.geometry);
 
-    var w = 2 * util.sigmoid(props.loopout.loopout_length) * props.geometry.base_width_svg;
-    var h = 10 * util.sigmoid(props.loopout.loopout_length - 3) * props.geometry.base_height_svg;
+    var w = 2 * util.sigmoid(props.loopout.loopout_num_bases) * props.geometry.base_width_svg;
+    var h = 10 * util.sigmoid(props.loopout.loopout_num_bases - 3) * props.geometry.base_height_svg;
 
     // un-rotated
     var prev_y_offset = prev_svg.y + h;
@@ -282,15 +282,15 @@ String loopout_path_description_within_group(Helix prev_helix, Helix next_helix,
   var w, h;
 
   if (top_helix.idx == bot_helix.idx) {
-    w = 1.5 * util.sigmoid(loopout.loopout_length - 1) * geometry.base_width_svg;
+    w = 1.5 * util.sigmoid(loopout.loopout_num_bases - 1) * geometry.base_width_svg;
     if (show_loopout_labels) {
-      h = 10 * util.sigmoid(loopout.loopout_length) * geometry.base_height_svg;
+      h = 10 * util.sigmoid(loopout.loopout_num_bases) * geometry.base_height_svg;
     } else {
-      h = 10 * util.sigmoid(loopout.loopout_length - 5) * geometry.base_height_svg;
+      h = 10 * util.sigmoid(loopout.loopout_num_bases - 5) * geometry.base_height_svg;
     }
   } else {
-    w = 2 * util.sigmoid(loopout.loopout_length) * geometry.base_width_svg;
-    h = 10 * util.sigmoid(loopout.loopout_length - 3) * geometry.base_height_svg;
+    w = 2 * util.sigmoid(loopout.loopout_num_bases) * geometry.base_width_svg;
+    h = 10 * util.sigmoid(loopout.loopout_num_bases - 3) * geometry.base_height_svg;
   }
 
   var x_offset1, x_offset2, y_offset1, y_offset2;
@@ -344,8 +344,8 @@ String loopout_path_description_same_helix_same_direction(Loopout loopout, Helix
   }
 
   num x_distance = right_svg.x - left_svg.x;
-  num h = 3 * util.sigmoid(loopout.loopout_length - 1) * geometry.base_height_svg;
-  num length = loopout.loopout_length;
+  num h = 3 * util.sigmoid(loopout.loopout_num_bases - 1) * geometry.base_height_svg;
+  num length = loopout.loopout_num_bases;
   if (!show_loopout_labels) {
     length -= 5;
   }

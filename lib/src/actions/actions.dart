@@ -1947,14 +1947,14 @@ abstract class LoopoutLengthChange
     implements StrandPartAction, Built<LoopoutLengthChange, LoopoutLengthChangeBuilder> {
   Loopout get loopout;
 
-  int get length;
+  int get num_bases;
 
   StrandPart get strand_part => loopout;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory LoopoutLengthChange(Loopout loopout, int length) => LoopoutLengthChange.from((b) => b
+  factory LoopoutLengthChange(Loopout loopout, int num_bases) => LoopoutLengthChange.from((b) => b
     ..loopout.replace(loopout)
-    ..length = length);
+    ..num_bases = num_bases);
 
   factory LoopoutLengthChange.from([void Function(LoopoutLengthChangeBuilder) updates]) =
       _$LoopoutLengthChange;

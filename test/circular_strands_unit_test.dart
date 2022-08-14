@@ -149,7 +149,7 @@ main() {
       Loopout loopout = strand.substrands[1] as Loopout;
       Domain d1 = strand.substrands[2] as Domain;
 
-      expect(loopout.loopout_length, 5);
+      expect(loopout.loopout_num_bases, 5);
 
       expect(d0.helix, 0);
       expect(d0.forward, true);
@@ -195,7 +195,7 @@ main() {
       Loopout loopout = strand.substrands[1] as Loopout;
       Domain d1 = strand.substrands[2] as Domain;
 
-      expect(loopout.loopout_length, 5);
+      expect(loopout.loopout_num_bases, 5);
 
       expect(d0.helix, 1);
       expect(d0.forward, false);
@@ -572,7 +572,7 @@ main() {
       var loopout = strand.substrands[1] as Loopout;
       var d1 = strand.substrands[2] as Domain;
 
-      expect(loopout.loopout_length, 5);
+      expect(loopout.loopout_num_bases, 5);
 
       expect(d0.helix, 0);
       expect(d0.forward, true);
@@ -686,7 +686,7 @@ main() {
       var loopout = strand.substrands[2] as Loopout;
       var d2 = strand.substrands[3] as Domain;
 
-      expect(loopout.loopout_length, 5);
+      expect(loopout.loopout_num_bases, 5);
 
       expect(d0.helix, 2);
       expect(d0.forward, true);
@@ -837,7 +837,7 @@ main() {
       Domain d2 = strand.substrands[3];
       Domain d3 = strand.substrands[4];
 
-      expect(loopout.loopout_length, 5);
+      expect(loopout.loopout_num_bases, 5);
 
       expect(d0.helix, 0);
       expect(d0.forward, true);
@@ -899,7 +899,7 @@ main() {
       Loopout loopout = strand.substrands[3];
       Domain d3 = strand.substrands[4];
 
-      expect(loopout.loopout_length, 5);
+      expect(loopout.loopout_num_bases, 5);
 
       expect(d0.helix, 1);
       expect(d0.forward, false);
@@ -961,7 +961,7 @@ main() {
       Domain d2 = strand.substrands[3];
       Domain d3 = strand.substrands[4];
 
-      expect(loopout.loopout_length, 5);
+      expect(loopout.loopout_num_bases, 5);
 
       expect(d0.helix, 2);
       expect(d0.forward, true);
@@ -1059,7 +1059,7 @@ main() {
       Loopout loopout = strand.substrands[1] as Loopout;
       Domain d1 = strand.substrands[2] as Domain;
 
-      expect(loopout.loopout_length, 5);
+      expect(loopout.loopout_num_bases, 5);
 
       expect(d0.helix, 0);
       expect(d0.forward, true);
@@ -1114,7 +1114,7 @@ main() {
       Loopout loopout = strand.substrands[1] as Loopout;
       Domain d1 = strand.substrands[2] as Domain;
 
-      expect(loopout.loopout_length, 5);
+      expect(loopout.loopout_num_bases, 5);
 
       expect(d0.helix, 0);
       expect(d0.forward, true);

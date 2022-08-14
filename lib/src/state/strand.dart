@@ -99,9 +99,7 @@ abstract class Strand
       var substrand = builder.substrands[i];
       if (substrand is Loopout) {
         if (substrand.prev_domain_idx != i - 1 || substrand.next_domain_idx != i + 1) {
-          var loopout = substrand.rebuild((b) => b
-            ..prev_domain_idx = i - 1
-            ..next_domain_idx = i + 1);
+          var loopout = substrand.rebuild((b) => b..prev_domain_idx = i - 1);
           builder.substrands[i] = loopout;
         }
       }
@@ -167,8 +165,7 @@ abstract class Strand
     return loopout.rebuild((b) => b
       ..is_scaffold = is_scaffold
       ..strand_id = strand.id
-      ..prev_domain_idx = idx - 1
-      ..next_domain_idx = idx + 1);
+      ..prev_domain_idx = idx - 1);
   }
 
   _rebuild_extension_with_new_fields_based_on_strand(Extension ext, bool is_5p, Strand strand) {
@@ -273,8 +270,8 @@ abstract class Strand
 
   check_loopouts_length() {
     for (var loopout in loopouts) {
-      if (loopout.loopout_length <= 0) {
-        throw StrandError(this, 'loopout length must be positive but is ${loopout.loopout_length}');
+      if (loopout.loopout_num_bases <= 0) {
+        throw StrandError(this, 'loopout length must be positive but is ${loopout.loopout_num_bases}');
       }
     }
   }
@@ -726,7 +723,7 @@ abstract class Strand
   }
 
   static Strand from_json(Map<String, dynamic> json_map) {
-    var substrand_jsons = util.mandatory_field(json_map, constants.substrands_key, 'Strand',
+    List<dynamic> substrand_jsons = util.mandatory_field(json_map, constants.substrands_key, 'Strand',
         legacy_keys: constants.legacy_substrands_keys);
 
     bool is_scaffold = util.optional_field(json_map, constants.is_scaffold_key, false);
@@ -734,27 +731,55 @@ abstract class Strand
 
     // need to parse all Domains before Loopouts,
     // because prev and next Domains need to be referenced by Loopouts
-    // Also, no DNA sequence parsing yet because we want all the lengths of Substrands calculated before assigning.
+    // Also, no DNA sequence parsing yet because we want all the lengths of Substrands calculated
+    // before assigning.
     Map<int, Domain> domains = {};
-    int start_idx_ss = 0;
-    for (int i = 0; i < substrand_jsons.length; i++) {
+    int num_substrands = substrand_jsons.length;
+    // we'll fill in Domains and Extensions in this loop, then calculate Loopouts later
+    var substrands = List<Substrand>.filled(num_substrands, null);
+    int start_dna_idx_ss = 0; // help identify dna_length of each substrand
+    for (int i = 0; i < num_substrands; i++) {
       var substrand_json = substrand_jsons[i];
-
-      int end_idx_ss;
-      if (!substrand_json.containsKey(constants.loopout_key)) {
+      int end_dna_idx_ss;
+      if (substrand_json.containsKey(constants.loopout_key)) {
+        // Loopout
+        int loopout_length = substrand_json[constants.loopout_key];
+        end_dna_idx_ss = start_dna_idx_ss + loopout_length;
+        if (i == 0 || i == num_substrands - 1) {
+          throw IllegalDesignError("found loopout ${substrand_json} at index ${i} in substrand list. "
+              "cannot have loopouts at the beginning (index 0) or end (index ${num_substrands - 1}).\n"
+              "substrands JSON list: ${substrand_jsons}");
+        }
+      } else if (substrand_json.containsKey(constants.extension_key)) {
+        // Extension
+        var ext = Extension.from_json(substrand_json);
+        bool is_5p = (i == 0);
+        ext = ext.rebuild((b) => b..is_5p = is_5p);
+        substrands[i] = ext;
+        end_dna_idx_ss = start_dna_idx_ss + ext.num_bases;
+        if (0 < i && i < num_substrands - 1) {
+          throw IllegalDesignError("found extension ${ext} at index ${i} in substrand list. "
+              "can only have extension at beginning (index 0) or end (index ${num_substrands - 1}).\n"
+              "substrands JSON list: ${substrand_jsons}");
+        }
+      } else if (substrand_json.containsKey(constants.helix_idx_key)) {
+        // Domain
         DomainBuilder ssb = Domain.from_json(substrand_json);
         ssb.is_first = (i == 0);
         ssb.is_last = (i == substrand_jsons.length - 1);
         int num_insertions = Domain.num_insertions_in_list(ssb.insertions.build());
         int dna_length = ssb.end - ssb.start + num_insertions - ssb.deletions.length;
         ssb.is_scaffold = is_scaffold;
-        end_idx_ss = start_idx_ss + dna_length;
-        domains[i] = ssb.build();
+        end_dna_idx_ss = start_dna_idx_ss + dna_length;
+        domains[i] = substrands[i] = ssb.build();
       } else {
-        int loopout_length = substrand_json[constants.loopout_key];
-        end_idx_ss = start_idx_ss + loopout_length;
+        throw IllegalDesignError('unrecognized substrand; does not have any of these keys:\n'
+            '${constants.extension_key} for an Extension, '
+            '${constants.loopout_key} for a Loopout, or'
+            '${constants.helix_idx_key} for a Domain.\n'
+            'JSON: ${substrand_json}');
       }
-      start_idx_ss = end_idx_ss;
+      start_dna_idx_ss = end_dna_idx_ss;
     }
 
     // parse Loopouts now that we have all the Domains
@@ -764,20 +789,20 @@ abstract class Strand
       if (substrand_json.containsKey(constants.loopout_key)) {
         LoopoutBuilder lb = Loopout.from_json(substrand_json);
         lb.prev_domain_idx = i - 1;
-        lb.next_domain_idx = i + 1;
         lb.is_scaffold = is_scaffold;
         loopouts[i] = lb.build();
       }
     }
 
-    List<Substrand> substrands = [];
-    for (int i = 0; i < substrand_jsons.length; i++) {
-      if (domains.containsKey(i)) {
-        substrands.add(domains[i]);
-      } else if (loopouts.containsKey(i)) {
-        substrands.add(loopouts[i]);
-      } else {
-        throw AssertionError('one of domains or loopouts must contain index i=${i}');
+    // insert Loopouts into appropriate positions in the List substrands
+    for (int i in loopouts.keys) {
+      substrands[i] = loopouts[i];
+    }
+
+    for (int i = 0; i < num_substrands; i++) {
+      if (substrands[i] == null) {
+        throw AssertionError('should not have any null entries in substrands but ${i} is null:\n'
+            'substrands = ${substrands}');
       }
     }
 
@@ -785,7 +810,6 @@ abstract class Strand
     //XXX: important to do this check after setting substrands so dna_length() is well-defined
     var dna_sequence = util.optional_field_with_null_default(json_map, constants.dna_sequence_key,
         legacy_keys: constants.legacy_dna_sequence_keys);
-//    var dna_sequence = json_map.containsKey(constants.dna_sequence_key) ? json_map[constants.dna_sequence_key] : null;
 
     var color = json_map.containsKey(constants.color_key)
         ? parse_json_color(json_map[constants.color_key])

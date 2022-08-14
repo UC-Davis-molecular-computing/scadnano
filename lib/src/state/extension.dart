@@ -85,10 +85,7 @@ abstract class Extension
   }
 
   dynamic to_json_serializable({bool suppress_indent = false}) {
-    Map<String, dynamic> json_map = {
-      constants.extension_key: num_bases,
-      constants.is_5p_key: is_5p,
-    };
+    Map<String, dynamic> json_map = {constants.extension_key: num_bases};
     if (display_length != constants.default_display_length) {
       json_map[constants.display_length_key] = display_length;
     }
@@ -111,7 +108,6 @@ abstract class Extension
   static Extension from_json(Map<String, dynamic> json_map) {
     var class_name = 'Extension';
     var num_bases = util.mandatory_field(json_map, constants.extension_key, class_name);
-    var is_5p = util.mandatory_field(json_map, constants.is_5p_key, class_name);
     double display_length =
         util.optional_field(json_map, constants.display_length_key, constants.default_display_length);
     double display_angle =
@@ -125,7 +121,7 @@ abstract class Extension
 
     return Extension(
         num_bases: num_bases,
-        is_5p: is_5p,
+        is_5p: null, // let Strand calculate it based on position
         display_length: display_length,
         display_angle: display_angle,
         name: name,

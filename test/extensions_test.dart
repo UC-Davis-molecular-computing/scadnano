@@ -208,7 +208,7 @@ main() {
 
       var expected_strand = Strand([
         Domain(helix: 0, forward: true, start: 0, end: 3, dna_sequence: 'AAA'),
-        Loopout(loopout_length: 2, dna_sequence: 'CC', prev_domain_idx: 0, next_domain_idx: 2),
+        Loopout(loopout_num_bases: 2, dna_sequence: 'CC', prev_domain_idx: 0),
         Domain(helix: 1, forward: false, start: 0, end: 3, dna_sequence: 'GGG'),
         Extension(num_bases: 4, dna_sequence: 'TTTT'),
       ], color: color);
@@ -225,6 +225,45 @@ main() {
         Extension(num_bases: 5, name: 'ext1'),
       ], color: color);
       expect(design.strands.length, 1);
+      expect(design.strands[0], expected_strand);
+    });
+
+    test('json_reading', () {
+      var json_str = '''
+{
+  "version": "0.17.3",
+  "grid": "square",
+  "helices": [
+    {"grid_position": [0, 0]},
+    {"grid_position": [0, 1]},
+    {"grid_position": [0, 2]}
+  ],
+  "strands": [
+    {
+      "color": "#000000",
+      "domains": [
+        {"extension_num_bases": 5, "display_length": 2, "display_angle": 30},
+        {"helix": 0, "forward": true, "start": 0, "end": 16},
+        {"helix": 1, "forward": false, "start": 0, "end": 16},
+        {"loopout": 3},
+        {"helix": 2, "forward": true, "start": 0, "end": 16},
+        {"extension_num_bases": 7, "name": "ext_3p"}
+      ]
+    }
+  ]
+}
+''';
+      var design = Design.from_json_str(json_str);
+      var expected_strand = Strand([
+        Extension(num_bases: 5, display_length: 2, display_angle: 30),
+        Domain(helix: 0, forward: true, start: 0, end: 16),
+        Domain(helix: 1, forward: false, start: 0, end: 16),
+        Loopout(loopout_num_bases: 3, prev_domain_idx: 2),
+        Domain(helix: 2, forward: true, start: 0, end: 16),
+        Extension(num_bases: 7, name: 'ext_3p'),
+      ], color: color);
+      expect(design.strands.length, 1);
+      expect(design.strands[0].color, expected_strand.color);
       expect(design.strands[0], expected_strand);
     });
   });

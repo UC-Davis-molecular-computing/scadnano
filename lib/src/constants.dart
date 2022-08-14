@@ -356,7 +356,7 @@ const loopout_keys = [
 ];
 
 // Extension keys
-const extension_key = 'extension';
+const extension_key = 'extension_num_bases';
 const is_5p_key = 'is_5p';
 const display_length_key = 'display_length';
 const display_angle_key = 'display_angle';

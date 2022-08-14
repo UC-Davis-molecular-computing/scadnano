@@ -65,9 +65,8 @@ class StrandMaker {
   StrandMaker to(int offset) {
     if (most_recently_added_substrand_is_loopout()) {
       Loopout loopout = Loopout(
-        loopout_length: loopout_length,
-        prev_domain_idx: current_offset,
-        next_domain_idx: offset,
+        loopout_num_bases: loopout_length,
+        prev_domain_idx: substrands.length - 1,
         is_scaffold: is_scaffold,
         dna_sequence: loopout_dna_sequence,
       );

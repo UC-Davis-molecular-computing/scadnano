@@ -10,9 +10,8 @@ import '../actions/actions.dart' as actions;
 
 Strand convert_crossover_to_loopout_reducer(Strand strand, actions.ConvertCrossoverToLoopout action) {
   Loopout loopout_new = Loopout(
-    loopout_length: action.length,
+    loopout_num_bases: action.length,
     prev_domain_idx: action.crossover.prev_domain_idx,
-    next_domain_idx: action.crossover.next_domain_idx + 1,
     is_scaffold: strand.is_scaffold,
   );
   var substrands = strand.substrands.toList();
@@ -73,9 +72,8 @@ BuiltList<Strand> convert_crossovers_to_loopouts_reducer(
       int prev_domain_idx = crossover.prev_domain_idx + num_crossovers_processed_on_strand;
       int next_domain_idx = crossover.next_domain_idx + num_crossovers_processed_on_strand;
       Loopout loopout_new = Loopout(
-        loopout_length: action.length,
+        loopout_num_bases: action.length,
         prev_domain_idx: prev_domain_idx,
-        next_domain_idx: next_domain_idx + 1,
         is_scaffold: strand.is_scaffold,
       );
       substrands_builder.insert(next_domain_idx, loopout_new);
@@ -114,7 +112,7 @@ BuiltList<Strand> loopouts_length_change_reducer(
       int loopout_idx = substrands.indexOf(loopout);
       if (action.length > 0) {
         // shorten length of existing loopout
-        Loopout loopout_new = loopout.rebuild((l) => l..loopout_length = action.length);
+        Loopout loopout_new = loopout.rebuild((l) => l..loopout_num_bases = action.length);
         substrands[loopout_idx] = loopout_new;
       } else if (action.length == 0) {
         // convert to crossover by removing loopout
@@ -132,11 +130,11 @@ BuiltList<Strand> loopouts_length_change_reducer(
 Strand loopout_length_change_reducer(Strand strand, actions.LoopoutLengthChange action) {
   int loopout_idx = strand.substrands.indexOf(action.loopout);
   var substrands_builder = strand.substrands.toBuilder();
-  if (action.length > 0) {
+  if (action.num_bases > 0) {
     // shorten length of existing loopout
-    Loopout loopout_new = action.loopout.rebuild((l) => l..loopout_length = action.length);
+    Loopout loopout_new = action.loopout.rebuild((l) => l..loopout_num_bases = action.num_bases);
     substrands_builder[loopout_idx] = loopout_new;
-  } else if (action.length == 0) {
+  } else if (action.num_bases == 0) {
     // convert to crossover by removing loopout
     substrands_builder.removeAt(loopout_idx);
   }
