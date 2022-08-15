@@ -1545,6 +1545,7 @@ mouse_leave_update_mouseover() {
   }
 }
 
+// computes the SVG coordinates of the end of an Extension that is not shared with the adjacent Domain
 Point<num> compute_extension_end(Point<num> domain_end_svg, Extension ext, Domain adjacent_domain,
     Geometry geometry) {
   num x = domain_end_svg.x;
