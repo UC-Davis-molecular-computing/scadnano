@@ -165,8 +165,8 @@ const default_yaw = 0.0;
 //const default_helix_rotation_anchor = 0;
 
 // for extensions
-const default_display_angle = 45.0;
-const default_display_length = 1.0;
+const default_display_angle = 35.0;
+const default_display_length = 1.5;
 
 const default_side_pane_width = '8%';
 

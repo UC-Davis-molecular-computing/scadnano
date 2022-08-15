@@ -71,12 +71,8 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     int end_offset = ext.is_5p ? adj_dom.offset_5p : adj_dom.offset_3p;
     Point<num> end_svg =
         adj_helix.svg_base_pos(end_offset, adj_dom.forward, props.adjacent_helix_svg_position.y);
-    num x = end_svg.x;
-    num y = end_svg.y;
-    //TODO this is just to test; adjust these offsets
-    x += 20;
-    y += 10;
-    Point<num> start_svg = Point<num>(x, y);
+
+    Point<num> start_svg = util.compute_extension_end(end_svg, ext, adj_dom, props.geometry);
 
     var classname = constants.css_selector_extension;
     if (props.selected) {
