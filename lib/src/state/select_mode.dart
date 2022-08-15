@@ -192,6 +192,15 @@ picking "convert to loopout" (or
 "change loopout length" if a loopout;
 changing to length 0 converts it to a
 crossover).''';
+      case extension_:
+        return '''\
+extension: An extension is a single-stranded
+portion of a strand that is not on a
+Helix (like a domain) and does not connect
+two domains. It is like a loopout but on
+the end of a strand, useful for modeling
+toeholds for DNA strand displacement, 
+for instance.''';
       case deletion:
         return '''deletion: Deletions can be selected and
 deleted in batch by pressing the Delete
