@@ -77,7 +77,7 @@ const default_max_offset = 64;
 final default_geometry = Geometry();
 
 const scadnano_css_stylesheet_name_no_ext = r'scadnano-styles';
-const scadnano_css_stylesheet_name = r'scadnano-styles.css';
+const scadnano_css_stylesheet_name = '${scadnano_css_stylesheet_name_no_ext}.css';
 
 const NUM_DIGITS_PRECISION_POSITION_DISPLAYED = 2;
 
