@@ -33,8 +33,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 16, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0,0).move(8).with_name("Scaf").as_scaffold().commit();
-      design = design.strand(0,8).move(4).with_name("NotScaf").commit();
+      design = design.draw_strand(0,0).move(8).with_name("Scaf").as_scaffold().commit();
+      design = design.draw_strand(0,8).move(4).with_name("NotScaf").commit();
 
             
       expect(design.strands[0].name, "Scaf");
@@ -52,8 +52,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 16, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0,0).move(8).with_name("Scaf").as_scaffold().commit();
-      design = design.strand(0,8).move(4).commit();
+      design = design.draw_strand(0,0).move(8).with_name("Scaf").as_scaffold().commit();
+      design = design.draw_strand(0,8).move(4).commit();
 
             
       expect(design.strands[0].name, "Scaf");
@@ -73,8 +73,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 20, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0,0).move(8).with_name("ABC").commit();
-      design = design.strand(0,8).move(8).with_name("XYZ").commit();
+      design = design.draw_strand(0,0).move(8).with_name("ABC").commit();
+      design = design.draw_strand(0,8).move(8).with_name("XYZ").commit();
 
       var action = actions.Ligate(dna_end: design.strands[0].dnaend_3p);
       var state = app_state_from_design(design);
@@ -87,8 +87,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 20, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0,0).move(8).with_name("ABC").commit();
-      design = design.strand(0,8).move(8).with_name("XYZ").commit();
+      design = design.draw_strand(0,0).move(8).with_name("ABC").commit();
+      design = design.draw_strand(0,8).move(8).with_name("XYZ").commit();
 
       var action = actions.Ligate(dna_end: design.strands[1].dnaend_5p);
       var state = app_state_from_design(design);
@@ -101,8 +101,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 20, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0,0).move(8).with_name("ABC").commit();
-      design = design.strand(0,8).move(-8).with_name("XYZ").commit();
+      design = design.draw_strand(0,0).move(8).with_name("ABC").commit();
+      design = design.draw_strand(0,8).move(-8).with_name("XYZ").commit();
 
       var action = 
           actions.JoinStrandsByCrossover(dna_end_first_click: design.strands[0].dnaend_3p, dna_end_second_click: design.strands[1].dnaend_5p);
@@ -116,8 +116,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 20, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0,0).move(8).with_name("ABC").commit();
-      design = design.strand(0,8).move(-8).with_name("XYZ").commit();
+      design = design.draw_strand(0,0).move(8).with_name("ABC").commit();
+      design = design.draw_strand(0,8).move(-8).with_name("XYZ").commit();
 
       var action = 
           actions.JoinStrandsByCrossover(dna_end_first_click: design.strands[1].dnaend_3p, dna_end_second_click: design.strands[0].dnaend_5p);
@@ -131,8 +131,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 20, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0,0).move(8).with_name("ABC").as_scaffold().commit();
-      design = design.strand(0,8).move(8).with_name("XYZ").as_scaffold().commit();
+      design = design.draw_strand(0,0).move(8).with_name("ABC").as_scaffold().commit();
+      design = design.draw_strand(0,8).move(8).with_name("XYZ").as_scaffold().commit();
 
       var action = actions.Ligate(dna_end: design.strands[0].dnaend_3p);
       var state = app_state_from_design(design);
@@ -145,8 +145,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 20, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0,0).move(8).with_name("ABC").as_scaffold().commit();
-      design = design.strand(0,8).move(8).with_name("XYZ").as_scaffold().commit();
+      design = design.draw_strand(0,0).move(8).with_name("ABC").as_scaffold().commit();
+      design = design.draw_strand(0,8).move(8).with_name("XYZ").as_scaffold().commit();
 
       var action = actions.Ligate(dna_end: design.strands[1].dnaend_5p);
       var state = app_state_from_design(design);
@@ -159,8 +159,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 20, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0,0).move(8).with_name("ABC").as_scaffold().commit();
-      design = design.strand(0,8).move(-8).with_name("XYZ").as_scaffold().commit();
+      design = design.draw_strand(0,0).move(8).with_name("ABC").as_scaffold().commit();
+      design = design.draw_strand(0,8).move(-8).with_name("XYZ").as_scaffold().commit();
 
       var action = 
           actions.JoinStrandsByCrossover(dna_end_first_click: design.strands[0].dnaend_3p, dna_end_second_click: design.strands[1].dnaend_5p);
@@ -174,8 +174,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 20, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0,0).move(8).with_name("ABC").as_scaffold().commit();
-      design = design.strand(0,8).move(-8).with_name("XYZ").as_scaffold().commit();
+      design = design.draw_strand(0,0).move(8).with_name("ABC").as_scaffold().commit();
+      design = design.draw_strand(0,8).move(-8).with_name("XYZ").as_scaffold().commit();
 
       var action = 
           actions.JoinStrandsByCrossover(dna_end_first_click: design.strands[1].dnaend_3p, dna_end_second_click: design.strands[0].dnaend_5p);
@@ -190,8 +190,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 16, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0,0).move(8).with_name("ABC").commit();
-      design = design.strand(0,8).move(4).commit();
+      design = design.draw_strand(0,0).move(8).with_name("ABC").commit();
+      design = design.draw_strand(0,8).move(4).commit();
 
             
       expect(design.strands[0].name, "ABC");
@@ -210,8 +210,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 16, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0,0).move(8).with_name("XYZ").commit();
-      design = design.strand(0,8).move(-8).commit();
+      design = design.draw_strand(0,0).move(8).with_name("XYZ").commit();
+      design = design.draw_strand(0,8).move(-8).commit();
 
       expect(design.strands[0].name, "XYZ");
       expect(design.strands[1].name, null);
