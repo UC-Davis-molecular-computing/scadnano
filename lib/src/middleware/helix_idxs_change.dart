@@ -15,26 +15,20 @@ helix_idxs_change_middleware(Store<AppState> store, dynamic action, NextDispatch
     var new_indices = action.idx_replacements.values.toSet();
 
     if (new_indices.length != action.idx_replacements.length) {
-      Set<int> ints_so_far = {};
-      List<int> all_helices = action.idx_replacements.values.toList();
-      Map<int, List<int>> dupe_key_to_idxs = new Map<int, List<int>>();
+      Map<int, List<int>> key_to_idxs = new Map<int, List<int>>();
 
       for (var old_index in old_idxs) {
         var new_index = action.idx_replacements[old_index];
-        if (ints_so_far.contains(new_index)) {
-          if (dupe_key_to_idxs.containsKey(new_index))
-            dupe_key_to_idxs[new_index].add(old_index);
-          else
-            dupe_key_to_idxs[new_index] = [ old_index ];
-        } else {
-          ints_so_far.add(new_index);
-        }
+        if (key_to_idxs.containsKey(new_index))
+          key_to_idxs[new_index].add(old_index);
+        else
+          key_to_idxs[new_index] = [ old_index ];
       }
 
-      if (dupe_key_to_idxs.length != 0) {
+      if (key_to_idxs.length != action.idx_replacements.length) {
         var msg = 'You tried to assign existing helices ';
         
-        msg += dupe_key_to_idxs.entries.map((element) {
+        msg += key_to_idxs.entries.where((element) => element.value.length != 1).map((element) {
           return element.value.join(', ') + " to " + element.key.toString();
         }).join(" and helices ");
 
