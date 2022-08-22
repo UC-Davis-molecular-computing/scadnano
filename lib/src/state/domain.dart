@@ -154,6 +154,7 @@ abstract class Domain
       is_scaffold: is_scaffold,
       substrand_is_first: is_first,
       substrand_is_last: is_last,
+      is_on_extension: false,
       substrand_id: id);
 
   @memoized
@@ -164,6 +165,7 @@ abstract class Domain
       is_scaffold: is_scaffold,
       substrand_is_first: is_first,
       substrand_is_last: is_last,
+      is_on_extension: false,
       substrand_id: id);
 
   @memoized

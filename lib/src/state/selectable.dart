@@ -55,6 +55,14 @@ abstract class SelectablesStore
   BuiltSet<DNAEnd> get selected_dna_ends => BuiltSet<DNAEnd>.from(selected_items.where((s) => s is DNAEnd));
 
   @memoized
+  BuiltSet<DNAEnd> get selected_dna_ends_on_domains =>
+      BuiltSet<DNAEnd>.from(selected_dna_ends.where((end) => !end.is_on_extension));
+
+  @memoized
+  BuiltSet<DNAEnd> get selected_dna_ends_on_extensions =>
+      BuiltSet<DNAEnd>.from(selected_dna_ends.where((end) => end.is_on_extension));
+
+  @memoized
   BuiltSet<SelectableDeletion> get selected_deletions =>
       BuiltSet<SelectableDeletion>.from(selected_items.where((s) => s is SelectableDeletion));
 

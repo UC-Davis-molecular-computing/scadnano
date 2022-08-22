@@ -104,6 +104,12 @@ class StrandMaker {
     //Fix for domain_label and domain_name repeating bug:
     //this.domain_label = this.domain_name = null;
 
+    if (substrands.last is Extension) {
+      Extension ext = substrands.last;
+      ext = ext.rebuild((b) => b..adjacent_domain.replace(new_domain));
+      int last_idx = substrands.length-1;
+      substrands[last_idx] = ext;
+    }
     this.substrands.add(new_domain);
     return this;
   }
@@ -132,6 +138,7 @@ class StrandMaker {
       display_length: display_length,
       display_angle: display_angle,
       is_5p: false,
+      adjacent_domain: this.substrands.last,
     );
     this.substrands.add(ext);
     this.contains_extension = true;

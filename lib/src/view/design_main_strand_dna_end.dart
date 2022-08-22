@@ -21,6 +21,8 @@ import '../state/dna_end.dart';
 import '../state/helix.dart';
 import '../state/potential_crossover.dart';
 import '../state/domain.dart';
+import '../state/substrand.dart';
+import '../state/extension.dart';
 import '../app.dart';
 import '5p_end.dart';
 import '3p_end.dart';
@@ -39,9 +41,11 @@ UiFactory<DesignMainDNAEndProps> DesignMainDNAEnd = _$DesignMainDNAEnd;
 mixin DesignMainDNAEndPropsMixin on UiProps {
   Strand strand;
   Domain domain;
+  Extension ext;
   Color color;
   bool is_5p;
   bool is_scaffold;
+  bool is_on_extension;
 
   String transform;
   Helix helix;
@@ -63,11 +67,13 @@ class DesignMainDNAEndProps = UiProps with DesignMainDNAEndPropsMixin;
 
 @Component2()
 class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with PureComponent {
-  DNAEnd get dna_end => props.is_5p ? props.domain.dnaend_5p : props.domain.dnaend_3p;
+  DNAEnd get dna_end => props.domain != null
+      ? (props.is_5p ? props.domain.dnaend_5p : props.domain.dnaend_3p)
+      : props.ext.dnaend_free;
 
-  bool get is_first => props.domain.is_first && props.is_5p;
+  bool get is_first => props.domain != null ? props.domain.is_first && props.is_5p : props.is_5p;
 
-  bool get is_last => props.domain.is_last && !props.is_5p;
+  bool get is_last => props.domain != null ? props.domain.is_last && !props.is_5p : !props.is_5p;
 
   @override
   render() {
@@ -93,16 +99,37 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       classname += ' ' + constants.css_selector_scaffold;
     }
 
-    //XXX: need to listen to onPointerDown instead of onMouseDown for when draggable is enabled,
-    // which it is when Shift or Ctrl (or Meta) keys are pressed
-    // see here: https://github.com/marcojakob/dart-dnd/issues/27
-    Domain substrand = this.props.domain;
-    DNAEnd dna_end = props.is_5p ? substrand.dnaend_5p : substrand.dnaend_3p;
-    var helix = app.state.design.helices[substrand.helix];
-    var offset = props.is_5p ? substrand.offset_5p : substrand.offset_3p;
-    var pos = helix.svg_base_pos(offset, substrand.forward, props.helix_svg_position.y);
+    assert((props.is_on_extension && props.domain == null && props.ext != null) ||
+        (!props.is_on_extension && props.domain != null && props.ext == null));
 
     EndEitherPrimeProps end_props = (props.is_5p ? End5Prime() : End3Prime());
+    EndMovingProps end_moving_props = ConnectedEndMoving();
+
+    DNAEnd dna_end;
+    Helix helix;
+    int offset;
+    Point<num> pos;
+    bool forward;
+
+    if (!props.is_on_extension) {
+      //XXX: need to listen to onPointerDown instead of onMouseDown for when draggable is enabled,
+      // which it is when Shift or Ctrl (or Meta) keys are pressed
+      // see here: https://github.com/marcojakob/dart-dnd/issues/27
+      forward = props.domain.forward;
+      dna_end = props.is_5p ? props.domain.dnaend_5p : props.domain.dnaend_3p;
+      helix = app.state.design.helices[props.domain.helix];
+      offset = props.is_5p ? props.domain.offset_5p : props.domain.offset_3p;
+      pos = helix.svg_base_pos(offset, props.domain.forward, props.helix_svg_position.y);
+    } else {
+      // is on extension
+      forward = props.ext.adjacent_domain.forward;
+      dna_end = props.ext.dnaend_free;
+      helix = null;
+      offset = null;
+      //TODO for testing; change to other end of extension line
+      pos = helix.svg_base_pos(offset, props.domain.forward, props.helix_svg_position.y);
+    }
+
     end_props = end_props
       ..on_pointer_down = handle_end_click_select_and_or_move_start
       ..on_pointer_up = handle_end_pointer_up_select
@@ -113,17 +140,16 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       ..pos = pos
       ..color = props.color
       ..classname = classname
-      ..forward = substrand.forward
+      ..forward = forward
       ..id = dna_end.id
       ..key = 'nonmoving-end';
 
     // draw avatar of moving DNA end if it is moving
-    EndMovingProps end_moving_props = ConnectedEndMoving();
     end_moving_props = end_moving_props
       ..dna_end = dna_end
       ..helix = helix
       ..color = props.color
-      ..forward = substrand.forward
+      ..forward = forward
       ..is_5p = props.is_5p
       ..svg_position_y = props.helix_svg_position.y
       ..key = 'moving-end';
@@ -179,16 +205,21 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
 
   handle_end_click_select_and_or_move_start(react.SyntheticPointerEvent event_synthetic) {
     if (end_selectable(dna_end)) {
-      // select end
-      MouseEvent event = event_synthetic.nativeEvent;
-      //On a mac event.button is: 0-left, 1-middle, 2-right.
-      //On chrome mac, only handle_end_click_ligate_or_potential_crossover gets called on a right or middle click.
-      if (event.button == constants.RIGHT_CLICK_BUTTON || event.button == constants.MIDDLE_CLICK_BUTTON) {
-        return;
+      if (!props.is_on_extension) {
+        // select end
+        MouseEvent event = event_synthetic.nativeEvent;
+        //On a mac event.button is: 0-left, 1-middle, 2-right.
+        //On chrome mac, only handle_end_click_ligate_or_potential_crossover gets
+        // called on a right or middle click.
+        if (event.button == constants.RIGHT_CLICK_BUTTON || event.button == constants.MIDDLE_CLICK_BUTTON) {
+          return;
+        }
+        dna_end.handle_selection_mouse_down(event);
+        // set up drag detection for moving DNA ends
+        app.dispatch(actions.DNAEndsMoveStart(offset: dna_end.offset_inclusive, helix: props.helix));
+      } else {
+        print('not yet implemented moving free end of an extension');
       }
-      dna_end.handle_selection_mouse_down(event);
-      // set up drag detection for moving DNA ends
-      app.dispatch(actions.DNAEndsMoveStart(offset: dna_end.offset_inclusive, helix: props.helix));
     }
   }
 
@@ -205,6 +236,10 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
 
   handle_end_click_ligate_or_potential_crossover(SyntheticMouseEvent event) {
     if (event.nativeEvent.button != constants.LEFT_CLICK_BUTTON) {
+      return;
+    }
+
+    if (props.is_on_extension) {
       return;
     }
 

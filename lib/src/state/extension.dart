@@ -12,6 +12,7 @@ import '../json_serializable.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
 import 'substrand.dart';
+import 'domain.dart';
 import 'unused_fields.dart';
 import 'design.dart';
 import 'helix.dart';
@@ -59,6 +60,9 @@ abstract class Extension
 
   bool get is_scaffold;
 
+  @nullable
+  Domain get adjacent_domain;
+
   factory Extension(
       {int num_bases,
       double display_length = constants.default_display_length,
@@ -68,6 +72,7 @@ abstract class Extension
       String name = null,
       String dna_sequence = null,
       bool is_scaffold = false,
+      Domain adjacent_domain = null,
       Map<String, dynamic> unused_fields = null}) {
     if (unused_fields == null) {
       unused_fields = {};
@@ -81,6 +86,7 @@ abstract class Extension
       ..label = label
       ..dna_sequence = dna_sequence
       ..is_scaffold = is_scaffold
+      ..adjacent_domain.replace(adjacent_domain)
       ..unused_fields.replace(unused_fields));
   }
 
@@ -121,7 +127,8 @@ abstract class Extension
 
     return Extension(
         num_bases: num_bases,
-        is_5p: null, // let Strand calculate it based on position
+        is_5p: null,
+        // let Strand calculate it based on position
         display_length: display_length,
         display_angle: display_angle,
         name: name,
@@ -148,4 +155,15 @@ abstract class Extension
 
   @override
   String type_description() => "extension";
+
+  @memoized
+  DNAEnd get dnaend_free => DNAEnd(
+      is_5p: is_5p,
+      is_start: true,
+      offset: null,
+      is_scaffold: is_scaffold,
+      substrand_is_first: is_5p,
+      substrand_is_last: !is_5p,
+      is_on_extension: true,
+      substrand_id: id);
 }
