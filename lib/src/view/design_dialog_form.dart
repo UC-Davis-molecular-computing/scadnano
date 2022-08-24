@@ -31,7 +31,7 @@ mixin DesignDialogFormState on UiState {
   BuiltMap<String, BuiltList<DialogItem>> saved_responses;
 }
 
-create_hash(Iterable<DialogItem> items) {
+String create_hash(Iterable<DialogItem> items) {
   return items.map((item) => item.label).join('-');
 }
 
