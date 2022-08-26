@@ -83,11 +83,13 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) =>
 bool helix_change_apply_to_all_reducer(bool helix_change_apply_to_all, action) {
   if (action is actions.HelixMajorTickDistanceChange ||
       action is actions.HelixMajorTicksChange ||
-      action is actions.HelixOffsetChange) {
+      action is actions.HelixOffsetChange ||
+      action is actions.HelixMajorTickPeriodicDistancesChange) {
     return false;
   } else if (action is actions.HelixMajorTickDistanceChangeAll ||
       action is actions.HelixMajorTicksChangeAll ||
-      action is actions.HelixOffsetChangeAll) {
+      action is actions.HelixOffsetChangeAll ||
+      action is actions.HelixMajorTickPeriodicDistancesChangeAll) {
     return true;
   } else {
     return helix_change_apply_to_all;
@@ -167,6 +169,9 @@ bool show_mismatches_reducer(bool _, actions.ShowMismatchesSet action) => action
 
 bool show_domain_name_mismatches_reducer(bool _, actions.ShowDomainNameMismatchesSet action) =>
     action.show_domain_name_mismatches;
+
+bool show_unpaired_insertion_deletions_reducer(bool _, actions.ShowUnpairedInsertionDeletionsSet action) =>
+    action.show_unpaired_insertion_deletions;
 
 bool invert_y_reducer(bool _, actions.InvertYSet action) => action.invert_y;
 
@@ -407,6 +412,9 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..show_domain_name_mismatches = TypedReducer<bool, actions.ShowDomainNameMismatchesSet>(
         show_domain_name_mismatches_reducer)(
         storables.show_domain_name_mismatches, action)
+    ..show_unpaired_insertion_deletions = TypedReducer<bool, actions.ShowUnpairedInsertionDeletionsSet>(
+        show_unpaired_insertion_deletions_reducer)(
+        storables.show_unpaired_insertion_deletions, action)
     ..invert_y = TypedReducer<bool, actions.InvertYSet>(invert_y_reducer)(storables.invert_y, action)
     ..warn_on_exit_if_unsaved =
     TypedReducer<bool, actions.WarnOnExitIfUnsavedSet>(warn_on_exit_if_unsaved_reducer)(

@@ -365,6 +365,13 @@ class DesignDialogFormComponent
         ..href = item.link
         ..target = '_blank')(item.label);
     }
+    else if (item is DialogLabel) {
+      return (Dom.span()
+        ..title = item.tooltip
+        )(item.label);
+    }
+
+
     return null;
   }
 

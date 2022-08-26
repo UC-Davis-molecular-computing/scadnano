@@ -368,11 +368,40 @@ abstract class DialogLink
       ..tooltip = tooltip);
   }
 
+
+
   /************************ end BuiltValue boilerplate ************************/
 
   String get label;
 
   String get link;
+
+  String get value;
+}
+
+abstract class DialogLabel
+    with BuiltJsonSerializable
+    implements DialogItem, Built<DialogLabel, DialogLabelBuilder> {
+  DialogLabel._();
+
+  factory DialogLabel.from([void Function(DialogLabelBuilder) updates]) = _$DialogLabel;
+
+  static Serializer<DialogLabel> get serializer => _$dialogLabelSerializer;
+
+  @memoized
+  int get hashCode;
+
+  factory DialogLabel({String label, String tooltip}) {
+    return DialogLabel.from((b) => b
+      ..label = label
+      ..value = ""
+      ..tooltip = tooltip);
+  }
+
+
+  /************************ end BuiltValue boilerplate ************************/
+
+  String get label;
 
   String get value;
 }
