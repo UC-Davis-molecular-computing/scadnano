@@ -27,12 +27,8 @@ mixin DesignDialogFormProps on UiProps {
 mixin DesignDialogFormState on UiState {
   BuiltList<DialogItem>
       responses; // these are UPDATED as user changes form inputs
-  // DialogType dialogType;   // we're using hashes instead of dialogtype for now
-  BuiltMap<String, BuiltList<DialogItem>> saved_responses;
-}
-
-String create_hash(Iterable<DialogItem> items) {
-  return items.map((item) => item.label).join('-');
+  DialogType dialogType;   // we're using hashes instead of dialogtype for now
+  BuiltMap<DialogType, BuiltList<DialogItem>> saved_responses;
 }
 
 class DesignDialogFormComponent
@@ -41,21 +37,23 @@ class DesignDialogFormComponent
   @override
   Map get initialState => (newState()
     ..responses = null
-    // ..dialogType = null
-    ..saved_responses = new BuiltMap<String, BuiltList<DialogItem>>());
+    ..dialogType = null
+    ..saved_responses = new BuiltMap<DialogType, BuiltList<DialogItem>>());
       
   @override
   Map getDerivedStateFromProps(Map nextPropsUntyped, Map prevStateUntyped) {
     var new_props = typedPropsFactory(nextPropsUntyped);
     var prev_state = typedStateFactory(prevStateUntyped);
+    print(prev_state.saved_responses);
     if (new_props.dialog != null) {
       if (prev_state.responses == null) {
-        var key = create_hash(new_props.dialog.items);
+        var key = new_props.dialog.type;
         return newState()
-          // ..dialogType = new_props.dialog.type
+          ..dialogType = new_props.dialog.type
           ..responses = prev_state.saved_responses.containsKey(key)
               ? prev_state.saved_responses[key]
-              : new_props.dialog.items;
+              : new_props.dialog.items
+          ..saved_responses = prev_state.saved_responses;
       } else {
         return prevStateUntyped;
       }
@@ -66,10 +64,10 @@ class DesignDialogFormComponent
       if (prev_state.responses != null)
         return newState()
           ..saved_responses = prev_state.saved_responses.rebuild((old_responses) {
-            old_responses[create_hash(prev_state.responses)] = prev_state.responses;
+            old_responses[prev_state.dialogType] = prev_state.responses;
             return old_responses;
           })
-          // ..dialogType = null
+          ..dialogType = null
           ..responses = null;
       else
         return prevStateUntyped;
