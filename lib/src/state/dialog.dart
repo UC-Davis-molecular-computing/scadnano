@@ -20,9 +20,12 @@ class DialogType extends EnumClass {
 
   /******************** end BuiltValue boilerplate *********************/
 
+  static const DialogType choose_autobreak_parameters = _$choose_autobreak_parameters;
+  static const DialogType adjust_geometric_parameters = _$adjust_geometric_parameters;
   static const DialogType create_new_helix_group = _$create_new_helix_group;
   static const DialogType adjust_current_helix_group =
       _$adjust_current_helix_group;
+  static const DialogType adjust_helix_indices = _$adjust_helix_indices;
 
   static BuiltSet<DialogType> get values => _$values;
 
@@ -40,6 +43,8 @@ class DialogType extends EnumClass {
   }
 }
 
+typedef ProcessCallback = Function(BuiltList<DialogItem> items);
+
 /// Describes form for pop-up dialog interacting with user.
 abstract class Dialog
     with BuiltJsonSerializable
@@ -50,6 +55,10 @@ abstract class Dialog
 
   static Serializer<Dialog> get serializer => _$dialogSerializer;
 
+  static BuiltList<DialogItem> identity_function(BuiltList<DialogItem> items) {
+    return items;
+  }
+
   @memoized
   int get hashCode;
 
@@ -57,6 +66,7 @@ abstract class Dialog
   factory Dialog(
       {String title,
       DialogType type = DialogType.create_new_helix_group,
+      ProcessCallback process_saved_response = identity_function,
       Iterable<DialogItem> items,
       Iterable<Iterable<int>> mutually_exclusive_checkbox_groups = const [],
       Iterable<int> disable = const {},
@@ -98,6 +108,7 @@ abstract class Dialog
     return Dialog.from((b) => b
       ..title = title
       ..type = type
+      ..process_saved_response = process_saved_response
       ..items.replace(items)
       ..disable.replace(disable)
       ..mutually_exclusive_checkbox_groups
@@ -115,6 +126,10 @@ abstract class Dialog
   String get title;
 
   DialogType get type;
+
+  @nullable
+  @BuiltValueField(serialize: false, compare: false)
+  ProcessCallback get process_saved_response;
 
   BuiltList<DialogItem> get items;
 

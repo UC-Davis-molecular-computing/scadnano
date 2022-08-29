@@ -137,7 +137,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
       app.disable_keyboard_shortcuts_while(() => ask_about_new_group(existing_names));
 
   Future<void> ask_about_new_group(Iterable<String> existing_names) async {
-    var dialog = Dialog(title: 'create new Helix group', items: [
+    var dialog = Dialog(title: 'create new Helix group', type: DialogType.create_new_helix_group, items: [
       DialogText(label: 'name'),
       DialogRadio(label: 'grid', options: ['square', 'honeycomb', 'hex', 'none'], selected_idx: 0),
     ]);
@@ -185,7 +185,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
         DialogText(label: 'helices view order (space separated)', value: group.helices_view_order.join(' '));
 
     var dialog =
-        Dialog(title: 'adjust current Helix group (to adjust grid use Grid menu on left)', items: items);
+        Dialog(title: 'adjust current Helix group (to adjust grid use Grid menu on left)', type: DialogType.adjust_current_helix_group, items: items);
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
@@ -283,7 +283,11 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
     }
 
     var dialog =
-        Dialog(title: 'adjust Helix indices', items: items);
+        Dialog(title: 'adjust Helix indices', type: DialogType.adjust_helix_indices, items: items, process_saved_response: (saved_items) {
+          if (saved_items.length != items.length)
+            return items.build();
+          return saved_items;
+        });
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 

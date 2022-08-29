@@ -27,8 +27,9 @@ mixin DesignDialogFormProps on UiProps {
 mixin DesignDialogFormState on UiState {
   BuiltList<DialogItem>
       responses; // these are UPDATED as user changes form inputs
-  DialogType dialogType;   // we're using hashes instead of dialogtype for now
-  BuiltMap<DialogType, BuiltList<DialogItem>> saved_responses;
+  DialogType dialogType;
+  Dialog currentDialog;
+  BuiltMap<DialogType, Dialog> saved_dialogs;
 }
 
 class DesignDialogFormComponent
@@ -38,22 +39,25 @@ class DesignDialogFormComponent
   Map get initialState => (newState()
     ..responses = null
     ..dialogType = null
-    ..saved_responses = new BuiltMap<DialogType, BuiltList<DialogItem>>());
+    ..currentDialog = null
+    ..saved_dialogs = new BuiltMap<DialogType, Dialog>());
       
   @override
   Map getDerivedStateFromProps(Map nextPropsUntyped, Map prevStateUntyped) {
     var new_props = typedPropsFactory(nextPropsUntyped);
     var prev_state = typedStateFactory(prevStateUntyped);
-    print(prev_state.saved_responses);
     if (new_props.dialog != null) {
       if (prev_state.responses == null) {
         var key = new_props.dialog.type;
         return newState()
-          ..dialogType = new_props.dialog.type
-          ..responses = prev_state.saved_responses.containsKey(key)
-              ? prev_state.saved_responses[key]
+          ..responses = prev_state.saved_dialogs.containsKey(key)
+              ? new_props.dialog.process_saved_response(prev_state.saved_dialogs[key].items)
               : new_props.dialog.items
-          ..saved_responses = prev_state.saved_responses;
+          ..dialogType = new_props.dialog.type
+          ..currentDialog = prev_state.saved_dialogs.containsKey(key)
+              ? prev_state.saved_dialogs[key]
+              : new_props.dialog
+          ..saved_dialogs = prev_state.saved_dialogs;
       } else {
         return prevStateUntyped;
       }
@@ -63,12 +67,13 @@ class DesignDialogFormComponent
       // and the dialog won't be refreshed for the new use.
       if (prev_state.responses != null)
         return newState()
-          ..saved_responses = prev_state.saved_responses.rebuild((old_responses) {
-            old_responses[prev_state.dialogType] = prev_state.responses;
-            return old_responses;
-          })
+          ..responses = null
           ..dialogType = null
-          ..responses = null;
+          ..currentDialog = null
+          ..saved_dialogs = prev_state.saved_dialogs.rebuild((old_responses) {
+            old_responses[prev_state.dialogType] = prev_state.currentDialog.rebuild((b) => b..items.replace(prev_state.responses));
+            return old_responses;
+          });
       else
         return prevStateUntyped;
     }
@@ -89,10 +94,10 @@ class DesignDialogFormComponent
       bool disabled = false;
 
       // disable if radio button in disable_when_any_radio_button_selected to which this has forbidden value
-      if (props.dialog.disable_when_any_radio_button_selected
+      if (state.currentDialog.disable_when_any_radio_button_selected
           .containsKey(component_idx)) {
         BuiltMap<int, BuiltList<String>> radio_idx_maps =
-            props.dialog.disable_when_any_radio_button_selected[component_idx];
+            state.currentDialog.disable_when_any_radio_button_selected[component_idx];
         for (int radio_idx in radio_idx_maps.keys) {
           BuiltList<String> forbidden_values = radio_idx_maps[radio_idx];
           DialogRadio radio = state.responses[radio_idx];
@@ -105,10 +110,10 @@ class DesignDialogFormComponent
       }
 
       // disable if checkbox in disable_when_any_checkboxes_off to which this maps is false
-      if (props.dialog.disable_when_any_checkboxes_off
+      if (state.currentDialog.disable_when_any_checkboxes_off
           .containsKey(component_idx)) {
         BuiltList<int> check_idxs =
-            props.dialog.disable_when_any_checkboxes_off[component_idx];
+            state.currentDialog.disable_when_any_checkboxes_off[component_idx];
         for (int check_idx in check_idxs) {
           DialogCheckbox check = state.responses[check_idx];
           if (check.value == false) {
@@ -119,10 +124,10 @@ class DesignDialogFormComponent
       }
 
       // disable if checkbox in disable_when_any_checkboxes_on to which this maps is true
-      if (props.dialog.disable_when_any_checkboxes_on
+      if (state.currentDialog.disable_when_any_checkboxes_on
           .containsKey(component_idx)) {
         BuiltList<int> check_idxs =
-            props.dialog.disable_when_any_checkboxes_on[component_idx];
+            state.currentDialog.disable_when_any_checkboxes_on[component_idx];
         for (int check_idx in check_idxs) {
           DialogCheckbox check = state.responses[check_idx];
           if (check.value == true) {
@@ -132,7 +137,7 @@ class DesignDialogFormComponent
         }
       }
 
-      if (props.dialog.disable.contains(component_idx)) {
+      if (state.currentDialog.disable.contains(component_idx)) {
         disabled = true;
       }
 
@@ -152,7 +157,7 @@ class DesignDialogFormComponent
         ..className = 'dialog-form-form')([
         (Dom.p()
           ..className = 'dialog-form-title'
-          ..key = 'dialog-form-title')(props.dialog.title),
+          ..key = 'dialog-form-title')(state.currentDialog.title),
         ...components,
         (Dom.span()
           ..className = 'dialog-buttons'
@@ -195,7 +200,7 @@ class DesignDialogFormComponent
 
             // see if this is mutually exclusive with any checkbox that's checked; if so, uncheck it
             for (var mutually_exclusive_group
-                in props.dialog.mutually_exclusive_checkbox_groups) {
+                in state.currentDialog.mutually_exclusive_checkbox_groups) {
               if (mutually_exclusive_group.contains(dialog_item_idx)) {
                 for (int other_idx in mutually_exclusive_group) {
                   if (other_idx != dialog_item_idx) {

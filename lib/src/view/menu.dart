@@ -1246,7 +1246,7 @@ Future<void> ask_for_autobreak_parameters() async {
   items[max_length_idx] = DialogInteger(label: 'max length', value: 60);
   items[min_distance_to_xover_idx] = DialogInteger(label: 'min distance to xover', value: 3);
 
-  var dialog = Dialog(title: 'Choose autobreak parameters', items: items);
+  var dialog = Dialog(title: 'Choose autobreak parameters', type: DialogType.choose_autobreak_parameters, items: items);
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 
@@ -1278,7 +1278,7 @@ Future<void> ask_for_geometry(Geometry geometry) async {
   items[minor_groove_angle_idx] =
       DialogFloat(label: 'minor groove angle (degrees)', value: geometry.minor_groove_angle);
 
-  var dialog = Dialog(title: 'adjust geometric parameters', items: items);
+  var dialog = Dialog(title: 'adjust geometric parameters', type: DialogType.adjust_geometric_parameters, items: items);
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 
