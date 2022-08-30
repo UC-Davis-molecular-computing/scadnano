@@ -30,6 +30,11 @@ class DialogType extends EnumClass {
   static const DialogType add_modification = _$add_modification;
   static const DialogType set_strand_name = _$set_strand_name;
   static const DialogType set_domain_name = _$set_domain_name;
+  static const DialogType assign_dna_sequence = _$assign_dna_sequence;
+  static const DialogType remove_dna_sequence = _$remove_dna_sequence;
+  static const DialogType edit_modification = _$edit_modification;
+  static const DialogType set_color = _$set_color; 
+  static const DialogType set_loopout_name = _$set_loopout_name; 
   static const DialogType set_helix_minimum_offset = _$set_helix_minimum_offset;
   static const DialogType set_helix_maximum_offset = _$set_helix_maximum_offset;
   static const DialogType set_helix_index = _$set_helix_index;

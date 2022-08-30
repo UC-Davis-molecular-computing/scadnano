@@ -1015,7 +1015,7 @@ Future<void> ask_for_assign_dna_sequence(Strand strand, DNAAssignOptions options
       label: 'Information about sequence variants',
       link: 'https://scadnano-python-package.readthedocs.io/en/latest/#scadnano.M13Variant');
 
-  var dialog = Dialog(title: 'assign DNA sequence', items: items, disable_when_any_checkboxes_on: {
+  var dialog = Dialog(title: 'assign DNA sequence', type: DialogType.assign_dna_sequence, items: items, disable_when_any_checkboxes_on: {
     idx_sequence: [idx_use_predefined_dna_sequence]
   }, disable_when_any_checkboxes_off: {
     idx_predefined_sequence_name: [idx_use_predefined_dna_sequence],
@@ -1060,7 +1060,7 @@ Future<void> ask_for_assign_dna_sequence(Strand strand, DNAAssignOptions options
 }
 
 Future<void> ask_for_remove_dna_sequence(Strand strand, BuiltSet<Strand> selected_strands) async {
-  var dialog = Dialog(title: 'remove DNA sequence', items: [
+  var dialog = Dialog(title: 'remove DNA sequence', type: DialogType.static const DialogType.remove_dna_sequence, items: [
     DialogCheckbox(label: 'remove from bound strands', value: true),
     DialogCheckbox(label: 'remove from all strands', value: false),
   ]);
@@ -1079,7 +1079,7 @@ Future<void> ask_for_remove_dna_sequence(Strand strand, BuiltSet<Strand> selecte
 }
 
 Future<void> ask_for_color(Strand strand, BuiltSet<Strand> selected_strands) async {
-  var dialog = Dialog(title: 'set color', items: [
+  var dialog = Dialog(title: 'set color', type: DialogType.set_color, items: [
     DialogText(
       label: 'color',
 //      label: 'color (hex rgb, e.g., "#00ff00")',
