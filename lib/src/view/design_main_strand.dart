@@ -646,7 +646,7 @@ PAGEHPLC : Dual PAGE & HPLC
         value: (items[purification_options_idx].value != "" ? "" : custom_purification_value(all_strands)));
 
     var dialog =
-        Dialog(title: "assign scale/purification IDT fields", items: items, disable_when_any_checkboxes_off: {
+        Dialog(title: "assign scale/purification IDT fields", type: DialogType.assign_scale_purification, items: items, disable_when_any_checkboxes_off: {
       scale_custom_idx: [custom_scale_check_idx],
       purification_custom_idx: [custom_purification_check_idx]
     }, disable_when_any_checkboxes_on: {
@@ -701,7 +701,7 @@ PAGEHPLC : Dual PAGE & HPLC
         value: props.strand.idt?.well != null ? props.strand.idt.well : "",
         tooltip: all_strands.length > 1 ? "Only individual strands can have a well assigned." : "");
     var dialog = Dialog(
-        title: "assign plate/well IDT fields", items: items, disable: {if (all_strands.length > 1) well_idx});
+        title: "assign plate/well IDT fields", type: DialogType.assign_plate_well, items: items, disable: {if (all_strands.length > 1) well_idx});
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
@@ -820,7 +820,7 @@ PAGEHPLC : Dual PAGE & HPLC
     items[index_of_dna_base_idx] = DialogInteger(label: 'index of DNA base', value: strand_dna_idx);
 
     // don't allow to modify index of DNA base when 3' or 5' is selected
-    var dialog = Dialog(title: 'add modification', items: items, disable_when_any_radio_button_selected: {
+    var dialog = Dialog(title: 'add modification', type: DialogType.add_modification, items: items, disable_when_any_radio_button_selected: {
       index_of_dna_base_idx: {
         modification_type_idx: ["3'", "5'"]
       },
@@ -899,7 +899,7 @@ PAGEHPLC : Dual PAGE & HPLC
     int name_idx = 0;
     var items = List<DialogItem>.filled(1, null);
     items[name_idx] = DialogText(label: 'name', value: props.strand.name ?? '');
-    var dialog = Dialog(title: 'set strand name', items: items);
+    var dialog = Dialog(title: 'set strand name', type: DialogType.set_strand_name, items: items);
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
@@ -913,7 +913,7 @@ PAGEHPLC : Dual PAGE & HPLC
     int name_idx = 0;
     var items = List<DialogItem>.filled(1, null);
     items[name_idx] = DialogText(label: 'name', value: domain.name ?? '');
-    var dialog = Dialog(title: 'set domain name', items: items);
+    var dialog = Dialog(title: 'set domain name', type: DialogType.set_domain_name, items: items);
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;

@@ -26,6 +26,12 @@ class DialogType extends EnumClass {
   static const DialogType adjust_current_helix_group =
       _$adjust_current_helix_group;
   static const DialogType adjust_helix_indices = _$adjust_helix_indices;
+  static const DialogType assign_scale_purification = _$assign_scale_purification;
+  static const DialogType assign_plate_well = _$assign_plate_well;
+  static const DialogType add_modification = _$add_modification;
+  static const DialogType set_strand_name = _$set_strand_name;
+  static const DialogType set_domain_name = _$set_domain_name;
+
 
   static BuiltSet<DialogType> get values => _$values;
 
