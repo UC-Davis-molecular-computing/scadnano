@@ -26,7 +26,7 @@ mixin DesignDialogFormProps on UiProps {
 @State()
 mixin DesignDialogFormState on UiState {
   BuiltList<DialogItem>
-      responses; // these are UPDATED as user changes form inputs
+      current_responses; // these are UPDATED as user changes form inputs
   DialogType dialogType;
   Dialog currentDialog;
   BuiltMap<DialogType, Dialog> saved_dialogs;
@@ -37,7 +37,7 @@ class DesignDialogFormComponent
       
   @override
   Map get initialState => (newState()
-    ..responses = null
+    ..current_responses = null
     ..dialogType = null
     ..currentDialog = null
     ..saved_dialogs = new BuiltMap<DialogType, Dialog>());
@@ -47,10 +47,12 @@ class DesignDialogFormComponent
     var new_props = typedPropsFactory(nextPropsUntyped);
     var prev_state = typedStateFactory(prevStateUntyped);
     if (new_props.dialog != null) {
-      if (prev_state.responses == null) {
+      // next if statement is true if the Dialog has just popped up, so user hasn't typed any
+      // current responses yet, though some may be saved in TODO: saved where?
+      if (prev_state.current_responses == null) {
         var key = new_props.dialog.type;
         return newState()
-          ..responses = prev_state.saved_dialogs.containsKey(key)
+          ..current_responses = prev_state.saved_dialogs.containsKey(key)
               ? new_props.dialog.process_saved_response(prev_state.saved_dialogs[key].items)
               : new_props.dialog.items
           ..dialogType = new_props.dialog.type
@@ -65,13 +67,13 @@ class DesignDialogFormComponent
       //XXX: We cannot simply return null here. Must set responses to null in state, so the next time props
       // are set (when a new dialog is created), we have a fresh dialog. Otherwise the old state persists
       // and the dialog won't be refreshed for the new use.
-      if (prev_state.responses != null)
+      if (prev_state.current_responses != null)
         return newState()
-          ..responses = null
+          ..current_responses = null
           ..dialogType = null
           ..currentDialog = null
           ..saved_dialogs = prev_state.saved_dialogs.rebuild((old_responses) {
-            old_responses[prev_state.dialogType] = prev_state.currentDialog.rebuild((b) => b..items.replace(prev_state.responses));
+            old_responses[prev_state.dialogType] = prev_state.currentDialog.rebuild((b) => b..items.replace(prev_state.current_responses));
             return old_responses;
           });
       else
@@ -81,7 +83,7 @@ class DesignDialogFormComponent
 
   @override
   render() {
-    if (props.dialog == null || state.responses == null) {
+    if (props.dialog == null || state.current_responses == null) {
       return null;
     }
 
@@ -90,7 +92,7 @@ class DesignDialogFormComponent
 
     int component_idx = 0;
     List<ReactElement> components = [];
-    for (var item in state.responses) {
+    for (var item in state.current_responses) {
       bool disabled = false;
 
       // disable if radio button in disable_when_any_radio_button_selected to which this has forbidden value
@@ -100,7 +102,7 @@ class DesignDialogFormComponent
             state.currentDialog.disable_when_any_radio_button_selected[component_idx];
         for (int radio_idx in radio_idx_maps.keys) {
           BuiltList<String> forbidden_values = radio_idx_maps[radio_idx];
-          DialogRadio radio = state.responses[radio_idx];
+          DialogRadio radio = state.current_responses[radio_idx];
           String selected_value = radio.options[radio.selected_idx];
           if (forbidden_values.contains(selected_value)) {
             disabled = true;
@@ -115,7 +117,7 @@ class DesignDialogFormComponent
         BuiltList<int> check_idxs =
             state.currentDialog.disable_when_any_checkboxes_off[component_idx];
         for (int check_idx in check_idxs) {
-          DialogCheckbox check = state.responses[check_idx];
+          DialogCheckbox check = state.current_responses[check_idx];
           if (check.value == false) {
             disabled = true;
             break;
@@ -129,7 +131,7 @@ class DesignDialogFormComponent
         BuiltList<int> check_idxs =
             state.currentDialog.disable_when_any_checkboxes_on[component_idx];
         for (int check_idx in check_idxs) {
-          DialogCheckbox check = state.responses[check_idx];
+          DialogCheckbox check = state.current_responses[check_idx];
           if (check.value == true) {
             disabled = true;
             break;
@@ -192,9 +194,9 @@ class DesignDialogFormComponent
           ..checked = item.value
           ..title = item.tooltip ?? ""
           ..onChange = (SyntheticFormEvent e) {
-            var new_responses = state.responses.toBuilder();
+            var new_responses = state.current_responses.toBuilder();
             bool new_checked = e.target.checked;
-            DialogCheckbox response = state.responses[dialog_item_idx];
+            DialogCheckbox response = state.current_responses[dialog_item_idx];
             new_responses[dialog_item_idx] =
                 response.rebuild((b) => b.value = new_checked);
 
@@ -204,7 +206,7 @@ class DesignDialogFormComponent
               if (mutually_exclusive_group.contains(dialog_item_idx)) {
                 for (int other_idx in mutually_exclusive_group) {
                   if (other_idx != dialog_item_idx) {
-                    DialogCheckbox other_response = state.responses[other_idx];
+                    DialogCheckbox other_response = state.current_responses[other_idx];
                     if (other_response.value == true) {
                       new_responses[other_idx] =
                           other_response.rebuild((b) => b.value = false);
@@ -213,7 +215,7 @@ class DesignDialogFormComponent
                 }
               }
             }
-            setState(newState()..responses = new_responses.build());
+            setState(newState()..current_responses = new_responses.build());
           })(),
         item.label,
       );
@@ -228,12 +230,12 @@ class DesignDialogFormComponent
           ..size = item.size
 //          ..width = '${item.size}ch'
           ..onChange = (SyntheticFormEvent e) {
-            var new_responses = state.responses.toBuilder();
+            var new_responses = state.current_responses.toBuilder();
             String new_value = e.target.value;
-            DialogText response = state.responses[dialog_item_idx];
+            DialogText response = state.current_responses[dialog_item_idx];
             new_responses[dialog_item_idx] =
                 response.rebuild((b) => b.value = new_value);
-            setState(newState()..responses = new_responses.build());
+            setState(newState()..current_responses = new_responses.build());
           })(),
       );
     } else if (item is DialogTextArea) {
@@ -247,12 +249,12 @@ class DesignDialogFormComponent
           ..rows = item.rows
           ..cols = item.cols
           ..onChange = (SyntheticFormEvent e) {
-            var new_responses = state.responses.toBuilder();
+            var new_responses = state.current_responses.toBuilder();
             String new_value = e.target.value;
-            DialogTextArea response = state.responses[dialog_item_idx];
+            DialogTextArea response = state.current_responses[dialog_item_idx];
             new_responses[dialog_item_idx] =
                 response.rebuild((b) => b.value = new_value);
-            setState(newState()..responses = new_responses.build());
+            setState(newState()..current_responses = new_responses.build());
           })(),
       );
     } else if (item is DialogInteger) {
@@ -265,13 +267,13 @@ class DesignDialogFormComponent
           ..pattern = r'-?\d+' // allow to type integers
           ..value = item.value
           ..onChange = (SyntheticFormEvent e) {
-            var new_responses = state.responses.toBuilder();
+            var new_responses = state.current_responses.toBuilder();
             num new_value = int.tryParse(e.target.value);
             if (new_value == null) return;
-            DialogInteger response = state.responses[dialog_item_idx];
+            DialogInteger response = state.current_responses[dialog_item_idx];
             new_responses[dialog_item_idx] =
                 response.rebuild((b) => b.value = new_value);
-            setState(newState()..responses = new_responses.build());
+            setState(newState()..current_responses = new_responses.build());
           })(),
       );
     } else if (item is DialogFloat) {
@@ -285,13 +287,13 @@ class DesignDialogFormComponent
           ..value = item.value
           ..step = 'any'
           ..onChange = (SyntheticFormEvent e) {
-            var new_responses = state.responses.toBuilder();
+            var new_responses = state.current_responses.toBuilder();
             num new_value = double.tryParse(e.target.value);
             if (new_value == null) return;
-            DialogFloat response = state.responses[dialog_item_idx];
+            DialogFloat response = state.current_responses[dialog_item_idx];
             new_responses[dialog_item_idx] =
                 response.rebuild((b) => b.value = new_value);
-            setState(newState()..responses = new_responses.build());
+            setState(newState()..current_responses = new_responses.build());
           })(),
       );
     } else if (item is DialogRadio && item.radio) {
@@ -311,11 +313,11 @@ class DesignDialogFormComponent
           ..onChange = (SyntheticFormEvent e) {
             var selected_title = e.target.value;
             int selected_radio_idx = item.options.indexOf(selected_title);
-            DialogRadio response = state.responses[dialog_item_idx];
-            var new_responses = state.responses.toBuilder();
+            DialogRadio response = state.current_responses[dialog_item_idx];
+            var new_responses = state.current_responses.toBuilder();
             new_responses[dialog_item_idx] =
                 response.rebuild((b) => b.selected_idx = selected_radio_idx);
-            setState(newState()..responses = new_responses.build());
+            setState(newState()..current_responses = new_responses.build());
           }
           ..key = '$radio_idx')());
         components.add((Dom.label()..key = 'label-$radio_idx')(option));
@@ -337,11 +339,11 @@ class DesignDialogFormComponent
           ..onChange = (SyntheticFormEvent e) {
             var selected_title = e.target.value;
             int selected_radio_idx = item.options.indexOf(selected_title);
-            DialogRadio response = state.responses[dialog_item_idx];
-            var new_responses = state.responses.toBuilder();
+            DialogRadio response = state.current_responses[dialog_item_idx];
+            var new_responses = state.current_responses.toBuilder();
             new_responses[dialog_item_idx] =
                 response.rebuild((b) => b.selected_idx = selected_radio_idx);
-            setState(newState()..responses = new_responses.build());
+            setState(newState()..current_responses = new_responses.build());
           }
           ..key = '$radio_idx')(option));
         // components.add((Dom.label()..key = 'label-$radio_idx')(option));
@@ -357,11 +359,11 @@ class DesignDialogFormComponent
             ..onChange = (SyntheticFormEvent e) {
               var selected_title = e.target.value;
               int selected_radio_idx = item.options.indexOf(selected_title);
-              DialogRadio response = state.responses[dialog_item_idx];
-              var new_responses = state.responses.toBuilder();
+              DialogRadio response = state.current_responses[dialog_item_idx];
+              var new_responses = state.current_responses.toBuilder();
               new_responses[dialog_item_idx] =
                   response.rebuild((b) => b.selected_idx = selected_radio_idx);
-              setState(newState()..responses = new_responses.build());
+              setState(newState()..current_responses = new_responses.build());
             })('${item.label}: ', components));
     } else if (item is DialogLink) {
       return (Dom.a()
@@ -382,6 +384,6 @@ class DesignDialogFormComponent
     event.preventDefault();
     event.stopPropagation();
     app.dispatch(actions.DialogHide());
-    props.dialog.on_submit(state.responses.toList());
+    props.dialog.on_submit(state.current_responses.toList());
   }
 }

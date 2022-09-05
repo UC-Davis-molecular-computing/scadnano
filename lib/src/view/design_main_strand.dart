@@ -1060,7 +1060,7 @@ Future<void> ask_for_assign_dna_sequence(Strand strand, DNAAssignOptions options
 }
 
 Future<void> ask_for_remove_dna_sequence(Strand strand, BuiltSet<Strand> selected_strands) async {
-  var dialog = Dialog(title: 'remove DNA sequence', type: DialogType.static const DialogType.remove_dna_sequence, items: [
+  var dialog = Dialog(title: 'remove DNA sequence', type: DialogType.remove_dna_sequence, items: [
     DialogCheckbox(label: 'remove from bound strands', value: true),
     DialogCheckbox(label: 'remove from all strands', value: false),
   ]);
