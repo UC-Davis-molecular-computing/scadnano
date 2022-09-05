@@ -47,6 +47,8 @@ class DesignDialogFormComponent
   // their latest responses.
   @override
   Map getDerivedStateFromProps(Map nextPropsUntyped, Map prevStateUntyped) {
+    // new_props has the current dialog type, which we use to look up the React state (in particular
+    // the previous responses) the last time this type of Dialog was used.
     var new_props = typedPropsFactory(nextPropsUntyped);
     var prev_state = typedStateFactory(prevStateUntyped);
     if (new_props.dialog != null) {
