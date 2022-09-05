@@ -53,14 +53,14 @@ class DesignDialogFormComponent
       // next if statement is true if the Dialog has just popped up, so user hasn't typed any
       // current responses yet, though some may be saved in TODO: saved where?
       if (prev_state.current_responses == null) {
-        var key = new_props.dialog.type;
+        var dialog_type = new_props.dialog.type;
         return newState()
-          ..current_responses = prev_state.saved_dialogs.containsKey(key)
-              ? new_props.dialog.process_saved_response(prev_state.saved_dialogs[key].items)
+          ..current_responses = prev_state.saved_dialogs.containsKey(dialog_type)
+              ? new_props.dialog.process_saved_response(prev_state.saved_dialogs[dialog_type].items)
               : new_props.dialog.items
           ..dialogType = new_props.dialog.type
-          ..currentDialog = prev_state.saved_dialogs.containsKey(key)
-              ? prev_state.saved_dialogs[key]
+          ..currentDialog = prev_state.saved_dialogs.containsKey(dialog_type)
+              ? prev_state.saved_dialogs[dialog_type]
               : new_props.dialog
           ..saved_dialogs = prev_state.saved_dialogs;
       } else {
