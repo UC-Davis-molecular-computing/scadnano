@@ -67,20 +67,23 @@ class DesignDialogFormComponent
         return prevStateUntyped;
       }
     } else {
+      // This runs once each time the Dialog is closed.
       //XXX: We cannot simply return null here. Must set responses to null in state, so the next time props
       // are set (when a new dialog is created), we have a fresh dialog. Otherwise the old state persists
       // and the dialog won't be refreshed for the new use.
-      if (prev_state.current_responses != null)
+      if (prev_state.current_responses != null) {
         return newState()
           ..current_responses = null
           ..dialogType = null
           ..currentDialog = null
           ..saved_dialogs = prev_state.saved_dialogs.rebuild((old_responses) {
-            old_responses[prev_state.dialogType] = prev_state.currentDialog.rebuild((b) => b..items.replace(prev_state.current_responses));
+            old_responses[prev_state.dialogType] =
+                prev_state.currentDialog.rebuild((b) => b..items.replace(prev_state.current_responses));
             return old_responses;
           });
-      else
+      } else {
         return prevStateUntyped;
+      }
     }
   }
 
