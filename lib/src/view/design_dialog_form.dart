@@ -41,7 +41,10 @@ class DesignDialogFormComponent
     ..dialogType = null
     ..currentDialog = null
     ..saved_dialogs = new BuiltMap<DialogType, Dialog>());
-      
+
+  // This executes when the Dialog first pops up, and also whenever the user changes input fields,
+  // which we respond to by setting a new React state, which re-renders the dialog view to show
+  // their latest responses.
   @override
   Map getDerivedStateFromProps(Map nextPropsUntyped, Map prevStateUntyped) {
     var new_props = typedPropsFactory(nextPropsUntyped);
