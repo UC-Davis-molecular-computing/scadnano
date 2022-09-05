@@ -72,6 +72,9 @@ class DesignDialogFormComponent
       // are set (when a new dialog is created), we have a fresh dialog. Otherwise the old state persists
       // and the dialog won't be refreshed for the new use.
       if (prev_state.current_responses != null) {
+        // This happens if the user closes the Dialog after entering some input, which is stored in
+        // current_responses.
+        // We save those responses for next time this type of Dialog opens.
         return newState()
           ..current_responses = null
           ..dialogType = null
@@ -82,6 +85,7 @@ class DesignDialogFormComponent
             return old_responses;
           });
       } else {
+        // This happens if the user closes the Dialog without entering any input
         return prevStateUntyped;
       }
     }
