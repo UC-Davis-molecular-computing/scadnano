@@ -1559,7 +1559,7 @@ Point<num> compute_extension_free_end_svg(
   num x = attached_end_svg.x;
   num y = attached_end_svg.y;
   var angle_radians = ext.display_angle * 2 * pi / 360.0;
-  // convert polar coordiantes in Extension to rectangular coordines, and convert from nm to SVG pixels
+  // convert polar coordinates in Extension to rectangular coordinates, and convert from nm to SVG pixels
   num x_delta = ext.display_length * cos(angle_radians) * geometry.nm_to_svg_pixels;
   num y_delta = ext.display_length * sin(angle_radians) * geometry.nm_to_svg_pixels;
   if (adjacent_domain.forward) {

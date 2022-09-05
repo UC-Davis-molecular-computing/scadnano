@@ -109,6 +109,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     int offset;
     Point<num> pos;
     bool forward;
+    double rotation_degrees = 0;
 
     if (!props.is_on_extension) {
       //XXX: need to listen to onPointerDown instead of onMouseDown for when draggable is enabled,
@@ -129,7 +130,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       pos = util.compute_extension_free_end_svg(
           extension_attached_end_svg, props.ext, props.ext.adjacent_domain, props.geometry);
 
-      //TODO: apply rotation
+      rotation_degrees = props.ext.compute_rotation();
     }
 
     end_props = end_props
@@ -143,6 +144,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       ..color = props.color
       ..classname = classname
       ..forward = forward
+      ..transform = 'rotate(${rotation_degrees})'
       ..id = dna_end.id
       ..key = 'nonmoving-end';
 
@@ -153,6 +155,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       ..color = props.color
       ..forward = forward
       ..is_5p = props.is_5p
+      ..transform = 'rotate(${rotation_degrees})'
       ..svg_position_y = props.helix_svg_position.y
       ..key = 'moving-end';
 
@@ -166,25 +169,25 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
 
   @override
   componentDidMount() {
-    var element;
+    String id;
     if (props.is_5p) {
-      var id = props.domain != null ? props.domain.dnaend_5p.id : props.ext.dnaend_free.id;
-      element = querySelector('#${id}');
+      id = props.domain != null ? props.domain.dnaend_5p.id : props.ext.dnaend_free.id;
     } else {
-      var id = props.domain != null ? props.domain.dnaend_3p.id : props.ext.dnaend_free.id;
-      element = querySelector('#${id}');
+      id = props.domain != null ? props.domain.dnaend_3p.id : props.ext.dnaend_free.id;
     }
+    var element = querySelector('#${id}');
     element.addEventListener('contextmenu', on_context_menu);
   }
 
   @override
   componentWillUnmount() {
-    var element;
+    String id;
     if (props.is_5p) {
-      element = querySelector('#${props.domain.dnaend_5p.id}');
+      id = props.domain != null ? props.domain.dnaend_5p.id : props.ext.dnaend_free.id;
     } else {
-      element = querySelector('#${props.domain.dnaend_3p.id}');
+      id = props.domain != null ? props.domain.dnaend_3p.id : props.ext.dnaend_free.id;
     }
+    var element = querySelector('#${id}');
     element.removeEventListener('contextmenu', on_context_menu);
     super.componentWillUnmount();
   }

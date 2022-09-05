@@ -800,6 +800,16 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
     white-space: pre; /* needed to display multiple space symbols in a row */
 }
 
+/* next is needed so that we can rotate ends on extensions
+around their centers instead of around the origin
+https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-center-in-svg
+*/
+.five-prime-end-first-substrand, .three-prime-end-last-substrand,
+.five-prime-end-moving, .three-prime-end-moving {
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
 .main-view-helix-circle {
     fill: goldenrod;
 }

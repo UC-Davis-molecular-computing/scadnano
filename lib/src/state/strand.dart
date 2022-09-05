@@ -123,6 +123,7 @@ abstract class Strand
     strand = _rebuild_substrands_with_new_fields_based_on_strand(strand);
     strand = _rebuild_substrands_with_new_dna_sequences_based_on_strand(strand);
 
+
     _ensure_loopouts_legal();
     _ensure_extensions_legal();
 
@@ -170,9 +171,11 @@ abstract class Strand
   }
 
   _rebuild_extension_with_new_fields_based_on_strand(Extension ext, bool is_5p, Strand strand) {
+    Domain adjacent_domain = ext.is_5p? strand.first_domain: strand.last_domain;
     return ext.rebuild((b) => b
       ..is_scaffold = is_scaffold
       ..strand_id = strand.id
+      ..adjacent_domain.replace(adjacent_domain)
       ..is_5p = is_5p);
   }
 
