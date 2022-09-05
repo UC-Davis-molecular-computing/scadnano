@@ -57,6 +57,8 @@ class DialogType extends EnumClass {
   }
 }
 
+// built_value isn't able to parse ProcessCallback if we add a return type to it, so just leave it out
+// but FYI, this returns BuiltList<DialogItem>
 typedef ProcessCallback = Function(BuiltList<DialogItem> items);
 
 /// Describes form for pop-up dialog interacting with user.

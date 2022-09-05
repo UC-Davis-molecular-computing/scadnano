@@ -27,9 +27,8 @@ mixin DesignDialogFormProps on UiProps {
 mixin DesignDialogFormState on UiState {
   BuiltList<DialogItem>
       current_responses; // these are UPDATED as user changes form inputs
-  DialogType dialogType;
-  Dialog currentDialog;
-  BuiltMap<DialogType, Dialog> saved_dialogs;
+  DialogType dialog_type;
+  BuiltMap<DialogType, BuiltList<DialogItem>> saved_responses;
 }
 
 class DesignDialogFormComponent
@@ -38,9 +37,8 @@ class DesignDialogFormComponent
   @override
   Map get initialState => (newState()
     ..current_responses = null
-    ..dialogType = null
-    ..currentDialog = null
-    ..saved_dialogs = new BuiltMap<DialogType, Dialog>());
+    ..dialog_type = null
+    ..saved_responses = new BuiltMap<DialogType, BuiltList<DialogItem>>());
 
   // This executes when the Dialog first pops up, and also whenever the user changes input fields,
   // which we respond to by setting a new React state, which re-renders the dialog view to show
@@ -55,16 +53,14 @@ class DesignDialogFormComponent
       // next if statement is true if the Dialog has just popped up, so user hasn't typed any
       // current responses yet, though some may be saved in TODO: saved where?
       if (prev_state.current_responses == null) {
+        assert(new_props.dialog.process_saved_response != null);
         var dialog_type = new_props.dialog.type;
         return newState()
-          ..current_responses = prev_state.saved_dialogs.containsKey(dialog_type)
-              ? new_props.dialog.process_saved_response(prev_state.saved_dialogs[dialog_type].items)
+          ..current_responses = prev_state.saved_responses.containsKey(dialog_type)
+              ? new_props.dialog.process_saved_response(prev_state.saved_responses[dialog_type])
               : new_props.dialog.items
-          ..dialogType = new_props.dialog.type
-          ..currentDialog = prev_state.saved_dialogs.containsKey(dialog_type)
-              ? prev_state.saved_dialogs[dialog_type]
-              : new_props.dialog
-          ..saved_dialogs = prev_state.saved_dialogs;
+          ..dialog_type = new_props.dialog.type
+          ..saved_responses = prev_state.saved_responses;
       } else {
         return prevStateUntyped;
       }
@@ -79,11 +75,9 @@ class DesignDialogFormComponent
         // We save those responses for next time this type of Dialog opens.
         return newState()
           ..current_responses = null
-          ..dialogType = null
-          ..currentDialog = null
-          ..saved_dialogs = prev_state.saved_dialogs.rebuild((old_responses) {
-            old_responses[prev_state.dialogType] =
-                prev_state.currentDialog.rebuild((b) => b..items.replace(prev_state.current_responses));
+          ..dialog_type = null
+          ..saved_responses = prev_state.saved_responses.rebuild((old_responses) {
+            old_responses[prev_state.dialog_type] = prev_state.current_responses;
             return old_responses;
           });
       } else {
@@ -109,10 +103,10 @@ class DesignDialogFormComponent
       bool disabled = false;
 
       // disable if radio button in disable_when_any_radio_button_selected to which this has forbidden value
-      if (state.currentDialog.disable_when_any_radio_button_selected
+      if (props.dialog.disable_when_any_radio_button_selected
           .containsKey(component_idx)) {
         BuiltMap<int, BuiltList<String>> radio_idx_maps =
-            state.currentDialog.disable_when_any_radio_button_selected[component_idx];
+            props.dialog.disable_when_any_radio_button_selected[component_idx];
         for (int radio_idx in radio_idx_maps.keys) {
           BuiltList<String> forbidden_values = radio_idx_maps[radio_idx];
           DialogRadio radio = state.current_responses[radio_idx];
@@ -125,10 +119,10 @@ class DesignDialogFormComponent
       }
 
       // disable if checkbox in disable_when_any_checkboxes_off to which this maps is false
-      if (state.currentDialog.disable_when_any_checkboxes_off
+      if (props.dialog.disable_when_any_checkboxes_off
           .containsKey(component_idx)) {
         BuiltList<int> check_idxs =
-            state.currentDialog.disable_when_any_checkboxes_off[component_idx];
+            props.dialog.disable_when_any_checkboxes_off[component_idx];
         for (int check_idx in check_idxs) {
           DialogCheckbox check = state.current_responses[check_idx];
           if (check.value == false) {
@@ -139,10 +133,10 @@ class DesignDialogFormComponent
       }
 
       // disable if checkbox in disable_when_any_checkboxes_on to which this maps is true
-      if (state.currentDialog.disable_when_any_checkboxes_on
+      if (props.dialog.disable_when_any_checkboxes_on
           .containsKey(component_idx)) {
         BuiltList<int> check_idxs =
-            state.currentDialog.disable_when_any_checkboxes_on[component_idx];
+            props.dialog.disable_when_any_checkboxes_on[component_idx];
         for (int check_idx in check_idxs) {
           DialogCheckbox check = state.current_responses[check_idx];
           if (check.value == true) {
@@ -152,7 +146,7 @@ class DesignDialogFormComponent
         }
       }
 
-      if (state.currentDialog.disable.contains(component_idx)) {
+      if (props.dialog.disable.contains(component_idx)) {
         disabled = true;
       }
 
@@ -172,7 +166,7 @@ class DesignDialogFormComponent
         ..className = 'dialog-form-form')([
         (Dom.p()
           ..className = 'dialog-form-title'
-          ..key = 'dialog-form-title')(state.currentDialog.title),
+          ..key = 'dialog-form-title')(props.dialog.title),
         ...components,
         (Dom.span()
           ..className = 'dialog-buttons'
@@ -215,7 +209,7 @@ class DesignDialogFormComponent
 
             // see if this is mutually exclusive with any checkbox that's checked; if so, uncheck it
             for (var mutually_exclusive_group
-                in state.currentDialog.mutually_exclusive_checkbox_groups) {
+                in props.dialog.mutually_exclusive_checkbox_groups) {
               if (mutually_exclusive_group.contains(dialog_item_idx)) {
                 for (int other_idx in mutually_exclusive_group) {
                   if (other_idx != dialog_item_idx) {
