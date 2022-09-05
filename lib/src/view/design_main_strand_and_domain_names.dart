@@ -4,6 +4,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/state/address.dart';
 import 'package:scadnano/src/state/context_menu.dart';
+import 'package:scadnano/src/state/extension.dart';
 import 'package:scadnano/src/state/modification_type.dart';
 
 import 'transform_by_helix_group.dart';
@@ -15,6 +16,7 @@ import 'design_main_strand_paths.dart';
 import 'design_main_strand_domain_name.dart';
 import 'design_main_strand_strand_name.dart';
 import 'design_main_strand_loopout_name.dart';
+import 'design_main_strand_extension_name.dart';
 import 'pure_component.dart';
 import '../state/strand.dart';
 import '../state/helix.dart';
@@ -163,8 +165,22 @@ class DesignMainStrandAndDomainNamesComponent extends UiComponent2<DesignMainStr
             ..className = constants.css_selector_loopout_name
             ..key = "loopout-name-$i")());
         }
+      } else if (substrand is Extension) {
+        Extension ext = substrand;
+        int adj_helix_idx = ext.adjacent_domain.helix;
+        bool draw_loopout = should_draw_extension(adj_helix_idx, props.side_selected_helix_idxs,
+            props.only_display_selected_helices);
+        if (draw_loopout && ext.name != null) {
+          names.add((DesignMainStrandExtensionName()
+            ..ext = ext
+            ..geometry = props.geometry
+            ..font_size = props.domain_name_font_size
+            ..show_dna = props.show_dna
+            ..className = constants.css_selector_extension_name
+            ..key = "extension-name-$i")());
+        }
       } else {
-        throw AssertionError('substrand must be Domain or Loopout');
+        throw AssertionError('substrand must be Domain, Loopout, or Extension');
       }
       i++;
     }

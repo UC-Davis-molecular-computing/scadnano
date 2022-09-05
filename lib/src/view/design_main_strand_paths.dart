@@ -203,7 +203,6 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
           ends.add((DesignMainDNAEnd()
             ..ext = ext
             ..is_on_extension = true
-            ..is_on_extension = false
             ..is_5p = ext.is_5p
             ..transform = transform_of_helix(ext.adjacent_domain.helix)
             ..color = strand.color

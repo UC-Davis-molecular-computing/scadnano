@@ -67,12 +67,13 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     String id = props.ext.id;
     var adj_dom = props.adjacent_domain;
     var adj_helix = props.adjacent_helix;
+    var adj_helix_svg_y = props.adjacent_helix_svg_position.y;
 
-    int end_offset = ext.is_5p ? adj_dom.offset_5p : adj_dom.offset_3p;
-    Point<num> end_svg =
-        adj_helix.svg_base_pos(end_offset, adj_dom.forward, props.adjacent_helix_svg_position.y);
+    Point<num> extension_attached_end_svg =
+        util.compute_extension_attached_end_svg(ext, adj_dom, adj_helix, adj_helix_svg_y);
 
-    Point<num> start_svg = util.compute_extension_end(end_svg, ext, adj_dom, props.geometry);
+    Point<num> extension_free_end_svg =
+        util.compute_extension_free_end_svg(extension_attached_end_svg, ext, adj_dom, props.geometry);
 
     var classname = constants.css_selector_extension;
     if (props.selected) {
@@ -88,13 +89,14 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
       ..onPointerUp = handle_click_up
       ..stroke = props.color.toHexColor().toCssString()
       ..transform = props.transform
-      ..x1 = '${start_svg.x}'
-      ..y1 = '${start_svg.y}'
-      ..x2 = '${end_svg.x}'
-      ..y2 = '${end_svg.y}'
+      ..x1 = '${extension_free_end_svg.x}'
+      ..y1 = '${extension_free_end_svg.y}'
+      ..x2 = '${extension_attached_end_svg.x}'
+      ..y2 = '${extension_attached_end_svg.y}'
       ..id = id
       ..key = id)(Dom.svgTitle()(tooltip_text(ext) + '\n' + props.strand_tooltip));
   }
+
 
   handle_click_down(react.SyntheticPointerEvent event_syn) {
     MouseEvent event = event_syn.nativeEvent;

@@ -106,7 +106,6 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     EndMovingProps end_moving_props = ConnectedEndMoving();
 
     DNAEnd dna_end;
-    Helix helix;
     int offset;
     Point<num> pos;
     bool forward;
@@ -117,17 +116,20 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       // see here: https://github.com/marcojakob/dart-dnd/issues/27
       forward = props.domain.forward;
       dna_end = props.is_5p ? props.domain.dnaend_5p : props.domain.dnaend_3p;
-      helix = app.state.design.helices[props.domain.helix];
       offset = props.is_5p ? props.domain.offset_5p : props.domain.offset_3p;
-      pos = helix.svg_base_pos(offset, props.domain.forward, props.helix_svg_position.y);
+      pos = props.helix.svg_base_pos(offset, props.domain.forward, props.helix_svg_position.y);
     } else {
       // is on extension
       forward = props.ext.adjacent_domain.forward;
       dna_end = props.ext.dnaend_free;
-      helix = null;
-      offset = null;
-      //TODO for testing; change to other end of extension line
-      pos = helix.svg_base_pos(offset, props.domain.forward, props.helix_svg_position.y);
+
+      Point<num> extension_attached_end_svg = util.compute_extension_attached_end_svg(
+          props.ext, props.ext.adjacent_domain, props.helix, props.helix_svg_position.y);
+
+      pos = util.compute_extension_free_end_svg(
+          extension_attached_end_svg, props.ext, props.ext.adjacent_domain, props.geometry);
+
+      //TODO: apply rotation
     }
 
     end_props = end_props
@@ -147,7 +149,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     // draw avatar of moving DNA end if it is moving
     end_moving_props = end_moving_props
       ..dna_end = dna_end
-      ..helix = helix
+      ..helix = props.helix
       ..color = props.color
       ..forward = forward
       ..is_5p = props.is_5p
@@ -166,9 +168,11 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
   componentDidMount() {
     var element;
     if (props.is_5p) {
-      element = querySelector('#${props.domain.dnaend_5p.id}');
+      var id = props.domain != null ? props.domain.dnaend_5p.id : props.ext.dnaend_free.id;
+      element = querySelector('#${id}');
     } else {
-      element = querySelector('#${props.domain.dnaend_3p.id}');
+      var id = props.domain != null ? props.domain.dnaend_3p.id : props.ext.dnaend_free.id;
+      element = querySelector('#${id}');
     }
     element.addEventListener('contextmenu', on_context_menu);
   }

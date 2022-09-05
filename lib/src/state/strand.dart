@@ -6,6 +6,7 @@ import 'package:react/react.dart';
 import 'package:tuple/tuple.dart';
 
 import 'address.dart';
+import 'helix.dart';
 import 'linker.dart';
 import 'modification.dart';
 import '../serializers.dart';
@@ -803,6 +804,17 @@ abstract class Strand
     // insert Loopouts into appropriate positions in the List substrands
     for (int i in loopouts.keys) {
       substrands[i] = loopouts[i];
+    }
+
+    // go through extensions and set adjacent domains and adjacent helices
+    for (int i = 0; i < substrands.length; i++) {
+      if (substrands[i] is Extension) {
+        Extension ext = substrands[i];
+        Domain adjacent_domain = ext.is_5p ? substrands[i + 1] as Domain : substrands[i - 1] as Domain;
+        ext = ext.rebuild(
+            (b) => b..adjacent_domain.replace(adjacent_domain));
+        substrands[i] = ext;
+      }
     }
 
     for (int i = 0; i < num_substrands; i++) {

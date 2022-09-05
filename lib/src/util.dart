@@ -1545,11 +1545,19 @@ mouse_leave_update_mouseover() {
   }
 }
 
+Point<num> compute_extension_attached_end_svg(
+    Extension ext, Domain adj_dom, Helix adj_helix, num adj_helix_svg_y) {
+  int end_offset = ext.is_5p ? adj_dom.offset_5p : adj_dom.offset_3p;
+  Point<num> extension_attached_end_svg =
+      adj_helix.svg_base_pos(end_offset, adj_dom.forward, adj_helix_svg_y);
+  return extension_attached_end_svg;
+}
+
 // computes the SVG coordinates of the end of an Extension that is not shared with the adjacent Domain
-Point<num> compute_extension_end(Point<num> domain_end_svg, Extension ext, Domain adjacent_domain,
-    Geometry geometry) {
-  num x = domain_end_svg.x;
-  num y = domain_end_svg.y;
+Point<num> compute_extension_free_end_svg(
+    Point<num> attached_end_svg, Extension ext, Domain adjacent_domain, Geometry geometry) {
+  num x = attached_end_svg.x;
+  num y = attached_end_svg.y;
   var angle_radians = ext.display_angle * 2 * pi / 360.0;
   // convert polar coordiantes in Extension to rectangular coordines, and convert from nm to SVG pixels
   num x_delta = ext.display_length * cos(angle_radians) * geometry.nm_to_svg_pixels;

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:tuple/tuple.dart';
@@ -86,7 +88,7 @@ abstract class Extension
       ..label = label
       ..dna_sequence = dna_sequence
       ..is_scaffold = is_scaffold
-      ..adjacent_domain.replace(adjacent_domain)
+      ..adjacent_domain = adjacent_domain?.toBuilder()
       ..unused_fields.replace(unused_fields));
   }
 
@@ -166,4 +168,5 @@ abstract class Extension
       substrand_is_last: !is_5p,
       is_on_extension: true,
       substrand_id: id);
+
 }

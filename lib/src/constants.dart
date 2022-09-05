@@ -416,6 +416,8 @@ const css_selector_domain_name_text = 'domain-name-text';
 const css_selector_strand_name_text = 'strand-name-text';
 const css_selector_loopout_name = 'loopout-name';
 const css_selector_loopout_name_text = 'loopout-name-text';
+const css_selector_extension_name = 'extension-name';
+const css_selector_extension_name_text = 'extension-name-text';
 
 const css_selector_domain_moving = 'domain-line-moving';
 const css_selector_disallowed = 'disallowed';

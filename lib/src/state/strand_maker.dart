@@ -106,8 +106,9 @@ class StrandMaker {
 
     if (substrands.last is Extension) {
       Extension ext = substrands.last;
-      ext = ext.rebuild((b) => b..adjacent_domain.replace(new_domain));
-      int last_idx = substrands.length-1;
+      ext =
+          ext.rebuild((b) => b..adjacent_domain.replace(new_domain));
+      int last_idx = substrands.length - 1;
       substrands[last_idx] = ext;
     }
     this.substrands.add(new_domain);
@@ -133,12 +134,13 @@ class StrandMaker {
 
   StrandMaker extension_3p(int num_bases, {double display_length = 1.0, double display_angle = 45.0}) {
     _verify_extension_3p_is_valid();
+    Domain adjacent_domain = this.substrands.last;
     Extension ext = Extension(
       num_bases: num_bases,
       display_length: display_length,
       display_angle: display_angle,
       is_5p: false,
-      adjacent_domain: this.substrands.last,
+      adjacent_domain: adjacent_domain,
     );
     this.substrands.add(ext);
     this.contains_extension = true;
