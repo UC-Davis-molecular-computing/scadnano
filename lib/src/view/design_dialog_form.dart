@@ -87,7 +87,8 @@ class DesignDialogFormComponent
             return old_responses;
           });
       } else {
-        // This happens if the user closes the Dialog without entering any input
+        // We're not sure when this executes, but it apparently happens at some point in the React lifecycle
+        // (we know this from testing) so it has to be handled.
         return prevStateUntyped;
       }
     }
