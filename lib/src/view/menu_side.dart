@@ -284,6 +284,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
 
     var dialog =
         Dialog(title: 'adjust Helix indices', type: DialogType.adjust_helix_indices, items: items, process_saved_response: (saved_items) {
+          //TODO: check that the indices are the same, if not then don't use the old indices
           if (saved_items.length != items.length) {
             return items.build();
           }
