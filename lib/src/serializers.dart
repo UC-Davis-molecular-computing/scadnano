@@ -84,7 +84,7 @@ part 'serializers.g.dart';
   ModificationsInternalEdit,
   ModificationRemove,
   ModificationAdd,
-  ShowLoopoutLengthSet,
+  ShowLoopoutExtensionLengthSet,
   HelixGroupMove,
   HelixGroupMoveStart,
   HelixGroupMoveCreate,

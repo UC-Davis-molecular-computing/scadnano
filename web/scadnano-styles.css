@@ -772,20 +772,28 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
     white-space: pre; /* needed to display multiple space symbols in a row */
 }
 
+.loopout-extension-length,
 .dna-seq-insertion,
-.loopout-length,
 .dna-seq-loopout {
     font-family: "Consolas", "Lucida Console", "Courier New", monospace;
     font-weight: bold;
     text-anchor: middle;
     pointer-events: none;
-    dominant-baseline: ideographic;
     text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
     0.7px -0.7px 0 #fff,
     -0.7px 0.7px 0 #fff,
     0.7px 0.7px 0 #fff;
     text-rendering: optimizeSpeed; /* doesn't seem to do much to improve rendering speed */
     white-space: pre; /* needed to display multiple space symbols in a row */
+}
+
+.loopout-extension-length {
+    dominant-baseline: hanging;
+}
+
+.dna-seq-insertion,
+.dna-seq-loopout {
+    dominant-baseline: ideographic;
 }
 
 .loopout-name, .extension-name {

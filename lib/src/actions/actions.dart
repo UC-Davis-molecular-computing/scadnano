@@ -631,15 +631,18 @@ abstract class ShowUnpairedInsertionDeletionsSet
   bool get show_unpaired_insertion_deletions;
 
   factory ShowUnpairedInsertionDeletionsSet(bool show_unpaired_insertion_deletions) =>
-      ShowUnpairedInsertionDeletionsSet.from((b) => b..show_unpaired_insertion_deletions = show_unpaired_insertion_deletions);
+      ShowUnpairedInsertionDeletionsSet.from(
+          (b) => b..show_unpaired_insertion_deletions = show_unpaired_insertion_deletions);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ShowUnpairedInsertionDeletionsSet.from([void Function(ShowUnpairedInsertionDeletionsSetBuilder) updates]) =
-  _$ShowUnpairedInsertionDeletionsSet;
+  factory ShowUnpairedInsertionDeletionsSet.from(
+          [void Function(ShowUnpairedInsertionDeletionsSetBuilder) updates]) =
+      _$ShowUnpairedInsertionDeletionsSet;
 
   ShowUnpairedInsertionDeletionsSet._();
 
-  static Serializer<ShowUnpairedInsertionDeletionsSet> get serializer => _$showUnpairedInsertionDeletionsSetSerializer;
+  static Serializer<ShowUnpairedInsertionDeletionsSet> get serializer =>
+      _$showUnpairedInsertionDeletionsSetSerializer;
 }
 
 abstract class SetShowEditor
@@ -3743,19 +3746,20 @@ abstract class ShowAxisArrowsSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// show or hide grid coordinates in side view
+// show or hide loopout and extension lengths displayed next to the substrand
 
-abstract class ShowLoopoutLengthSet
+abstract class ShowLoopoutExtensionLengthSet
     with BuiltJsonSerializable
-    implements Built<ShowLoopoutLengthSet, ShowLoopoutLengthSetBuilder> {
-  bool get show_loopout_length;
+    implements Built<ShowLoopoutExtensionLengthSet, ShowLoopoutExtensionLengthSetBuilder> {
+  bool get show_length;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ShowLoopoutLengthSet({bool show_loopout_length}) = _$ShowLoopoutLengthSet._;
+  factory ShowLoopoutExtensionLengthSet({bool show_length}) = _$ShowLoopoutExtensionLengthSet._;
 
-  ShowLoopoutLengthSet._();
+  ShowLoopoutExtensionLengthSet._();
 
-  static Serializer<ShowLoopoutLengthSet> get serializer => _$showLoopoutLengthSetSerializer;
+  static Serializer<ShowLoopoutExtensionLengthSet> get serializer =>
+      _$showLoopoutExtensionLengthSetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -19,7 +19,7 @@ import '../state/potential_vertical_crossover.dart';
 import '../state/strand_creation.dart';
 import '../state/strands_move.dart';
 import 'design_main_domain_name_mismatches.dart';
-import 'design_main_loopout_lengths.dart';
+import 'design_main_loopout_extension_lengths.dart';
 import 'design_main_strand_creating.dart';
 import 'design_main_dna_mismatches.dart';
 import 'design_main_helices.dart';
@@ -74,7 +74,7 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..is_zoom_above_threshold = state.ui_state.is_zoom_above_threshold
         ..only_display_selected_helices = state.ui_state.only_display_selected_helices
         ..display_base_offsets_of_major_ticks = state.ui_state.display_base_offsets_of_major_ticks
-        ..show_loopout_length = state.ui_state.show_loopout_length
+        ..show_loopout_extension_length = state.ui_state.show_loopout_extension_length
         ..display_base_offsets_of_major_ticks_only_first_helix =
             state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
         ..display_major_tick_widths = state.ui_state.display_major_tick_widths
@@ -123,7 +123,7 @@ mixin DesignMainPropsMixin on UiProps {
   bool show_helix_circles;
   bool show_helix_components;
   bool helix_group_is_moving;
-  bool show_loopout_length;
+  bool show_loopout_extension_length;
   bool show_slice_bar;
   int slice_bar_offset;
   String displayed_group_name;
@@ -236,12 +236,12 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..only_display_selected_helices = props.only_display_selected_helices
           ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
           ..key = 'dna-sequences')(),
-      if (props.show_loopout_length)
-        (DesignMainLoopoutLengths()
+      if (props.show_loopout_extension_length)
+        (DesignMainLoopoutExtensionLengths()
           ..geometry = props.design.geometry
           ..strands = props.design.strands
-          ..show_loopout_length = props.show_loopout_length
-          ..key = 'loopout-length')(),
+          ..show_length = props.show_loopout_extension_length
+          ..key = 'loopout-extension-length')(),
       // slice_bar_offset null means displayed helix group has no helices, so omit slice bar
       if (props.show_slice_bar && props.slice_bar_offset != null)
         (DesignMainSliceBar()

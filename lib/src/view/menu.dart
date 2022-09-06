@@ -78,7 +78,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
       ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
       ..show_helices_axis_arrows = state.ui_state.show_helices_axis_arrows
-      ..show_loopout_length = state.ui_state.show_loopout_length
+      ..show_loopout_extension_length = state.ui_state.show_loopout_extension_length
       ..show_slice_bar = state.ui_state.show_slice_bar
       ..show_mouseover_data = state.ui_state.show_mouseover_data
       ..local_storage_design_choice = state.ui_state.local_storage_design_choice
@@ -131,7 +131,7 @@ mixin MenuPropsMixin on UiProps {
   bool show_helix_components_main_view;
   bool show_grid_coordinates_side_view;
   bool show_helices_axis_arrows;
-  bool show_loopout_length;
+  bool show_loopout_extension_length;
   bool show_slice_bar;
   bool show_mouseover_data;
   bool default_crossover_type_scaffold_for_setting_helix_rolls;
@@ -891,14 +891,14 @@ Blue : Z-axis'''
             .dispatch(actions.ShowAxisArrowsSet(show_helices_axis_arrows: !props.show_helices_axis_arrows)))
         ..key = 'show-helices-axis-arrows')(),
       (MenuBoolean()
-        ..value = props.show_loopout_length
-        ..display = 'Show loopout lengths'
+        ..value = props.show_loopout_extension_length
+        ..display = 'Show loopout/extension lengths'
         ..tooltip = '''\
-When selected, the length of each loopout is displayed next to it.'''
-        ..name = 'show-loopout-length'
-        ..onChange = ((_) =>
-            props.dispatch(actions.ShowLoopoutLengthSet(show_loopout_length: !props.show_loopout_length)))
-        ..key = 'show-loopout-length')(),
+When selected, the length of each loopout and extension is displayed next to it.'''
+        ..name = 'show-loopout-extension-length'
+        ..onChange = ((_) => props.dispatch(
+            actions.ShowLoopoutExtensionLengthSet(show_length: !props.show_loopout_extension_length)))
+        ..key = 'show-loopout-extension-length')(),
       (MenuBoolean()
         ..value = props.show_slice_bar
         ..display = 'Show slice bar'

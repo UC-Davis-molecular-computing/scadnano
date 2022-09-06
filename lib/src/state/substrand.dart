@@ -21,4 +21,6 @@ abstract class Substrand implements JSONSerializable, StrandPart {
   Object get label;
 
   String type_description();
+
+  String get id;
 }
