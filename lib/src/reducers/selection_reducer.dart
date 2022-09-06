@@ -85,6 +85,7 @@ SelectablesStore select_all_selectables_reducer(
         (!strand.is_scaffold && staple_selectable)) {
       if (modes.contains(SelectModeChoice.strand)) selected.add(strand);
       if (modes.contains(SelectModeChoice.loopout)) selected.addAll(strand.loopouts);
+      if (modes.contains(SelectModeChoice.extension_)) selected.addAll(strand.extensions);
       if (modes.contains(SelectModeChoice.crossover)) selected.addAll(strand.crossovers);
       if (modes.contains(SelectModeChoice.deletion)) selected.addAll(strand.selectable_deletions);
       if (modes.contains(SelectModeChoice.insertion)) selected.addAll(strand.selectable_insertions);
