@@ -383,7 +383,7 @@ const int DNA_SEQUENCE_VERTICAL_OFFSET = 50;
 const int DNA_SEQUENCE_HORIZONTAL_OFFSET = 50;
 
 // Zoom threshold used for caching the svg as png.
-const num ZOOM_THRESHOLD = 1;
+const num ZOOM_THRESHOLD = 0.5;
 
 /////////////////////////////////////////////////////////////
 // Backend
