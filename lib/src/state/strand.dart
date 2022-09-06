@@ -368,6 +368,12 @@ abstract class Strand
   }
 
   @memoized
+  bool get has_5p_extension => substrands.first is Extension;
+
+  @memoized
+  bool get has_3p_extension => substrands.last is Extension;
+
+  @memoized
   Address get address_5p => first_domain.address_5p;
 
   @memoized
