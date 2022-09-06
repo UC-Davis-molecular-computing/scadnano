@@ -1,6 +1,6 @@
 // @dart=2.9
 
-import 'package:scadnano/src/reducers/change_loopout_length.dart';
+import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
 import 'package:scadnano/src/reducers/delete_reducer.dart';
 import 'package:scadnano/src/reducers/nick_ligate_join_by_crossover_reducers.dart';
 import 'package:scadnano/src/state/domain.dart';

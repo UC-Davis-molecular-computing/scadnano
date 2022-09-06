@@ -408,7 +408,7 @@ abstract class Domain
     var insertions_map = Map<int, int>.fromIterable(
       this.insertions,
       key: (insertion) => insertion.offset,
-      value: (insertion) => insertion.length,
+      value: (insertion) => insertion.num_bases,
     );
 
     int seq_idx = 0;
@@ -502,7 +502,7 @@ abstract class Domain
       var insertion_map = Map<int, int>.fromIterable(
         this.insertions,
         key: (insertion) => insertion.offset,
-        value: (insertion) => insertion.length,
+        value: (insertion) => insertion.num_bases,
       );
       if (insertion_map.containsKey(offset_edge)) {
         int insertion_length = insertion_map[offset_edge];

@@ -34,6 +34,7 @@ import '../state/grid.dart';
 import '../state/helix.dart';
 import '../state/local_storage_design_choice.dart';
 import '../state/loopout.dart';
+import '../state/extension.dart';
 import '../state/modification.dart';
 import '../state/position3d.dart';
 import '../state/potential_crossover.dart';
@@ -1942,8 +1943,89 @@ abstract class StrandPartAction extends Action {
   StrandPart get strand_part;
 }
 
+abstract class ExtensionDisplayLengthAngleSet
+    with BuiltJsonSerializable, UndoableAction
+    implements
+        StrandPartAction,
+        Built<ExtensionDisplayLengthAngleSet, ExtensionDisplayLengthAngleSetBuilder> {
+  Extension get ext;
+
+  num get display_length;
+
+  num get display_angle;
+
+  StrandPart get strand_part => ext;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExtensionDisplayLengthAngleSet({Extension ext, num display_length, num display_angle}) =>
+      ExtensionDisplayLengthAngleSet.from((b) => b
+        ..ext.replace(ext)
+        ..display_length = display_length
+        ..display_angle = display_angle);
+
+  factory ExtensionDisplayLengthAngleSet.from(
+      [void Function(ExtensionDisplayLengthAngleSetBuilder) updates]) = _$ExtensionDisplayLengthAngleSet;
+
+  ExtensionDisplayLengthAngleSet._();
+
+  static Serializer<ExtensionDisplayLengthAngleSet> get serializer =>
+      _$extensionDisplayLengthAngleSetSerializer;
+
+  @override
+  String short_description() => "change extension display length/angle";
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// loopout length change
+// loopout/extension length change
+
+abstract class ExtensionNumBasesChange
+    with BuiltJsonSerializable, UndoableAction
+    implements StrandPartAction, Built<ExtensionNumBasesChange, ExtensionNumBasesChangeBuilder> {
+  Extension get ext;
+
+  int get num_bases;
+
+  StrandPart get strand_part => ext;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExtensionNumBasesChange(Extension ext, int num_bases) => ExtensionNumBasesChange.from((b) => b
+    ..ext.replace(ext)
+    ..num_bases = num_bases);
+
+  factory ExtensionNumBasesChange.from([void Function(ExtensionNumBasesChangeBuilder) updates]) =
+      _$ExtensionNumBasesChange;
+
+  ExtensionNumBasesChange._();
+
+  static Serializer<ExtensionNumBasesChange> get serializer => _$extensionNumBasesChangeSerializer;
+
+  @override
+  String short_description() => "change extension number of bases";
+}
+
+abstract class ExtensionsNumBasesChange
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<ExtensionsNumBasesChange, ExtensionsNumBasesChangeBuilder> {
+  BuiltList<Extension> get extensions;
+
+  int get num_bases;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExtensionsNumBasesChange(Iterable<Extension> extensions, int num_bases) =>
+      ExtensionsNumBasesChange.from((b) => b
+        ..extensions.replace(extensions)
+        ..num_bases = num_bases);
+
+  factory ExtensionsNumBasesChange.from([void Function(ExtensionsNumBasesChangeBuilder) updates]) =
+      _$ExtensionsNumBasesChange;
+
+  ExtensionsNumBasesChange._();
+
+  static Serializer<ExtensionsNumBasesChange> get serializer => _$extensionsNumBasesChangeSerializer;
+
+  @override
+  String short_description() => "change extensions number of bases";
+}
 
 abstract class LoopoutLengthChange
     with BuiltJsonSerializable, UndoableAction

@@ -419,11 +419,11 @@ _save_file_codenano(AppState state) async {
       (helix_to_dct[strand_type][start_to] as List<int>).setRange(0, 2, [helix_from, start_from]);
     } else if (forward_from && forward_to) {
       helix_from_dct[strand_type][end_from - 1]
-          .setRange(2, helix_from_dct[strand_type][end_from - 1].length, [helix_to, start_to]);
+          .setRange(2, helix_from_dct[strand_type][end_from - 1].num_bases, [helix_to, start_to]);
       helix_to_dct[strand_type][end_to - 1].setRange(0, 2, [helix_from, start_from]);
     } else if (!forward_from && !forward_to) {
       helix_from_dct[strand_type][start_from]
-          .setRange(2, helix_from_dct[strand_type][start_from].length, [helix_to, end_to - 1]);
+          .setRange(2, helix_from_dct[strand_type][start_from].num_bases, [helix_to, end_to - 1]);
       helix_to_dct[strand_type][start_to].setRange(0, 2, [helix_from, end_from - 1]);
     }
   }

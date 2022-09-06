@@ -959,7 +959,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   static int _num_helix_groups(Map<String, dynamic> json_map) {
     int num_groups_used = 0;
     if (json_map.containsKey(constants.groups_key)) {
-      num_groups_used = json_map[constants.groups_key].length;
+      num_groups_used = json_map[constants.groups_key].num_bases;
     }
     return num_groups_used;
   }
@@ -1937,7 +1937,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   static Design from_cadnano_v2(Map<String, dynamic> json_dict, [bool invert_y = false]) {
     Map<String, dynamic> cadnano_v2_design = json_dict;
 
-    int num_bases = cadnano_v2_design['vstrands'][0]['scaf'].length;
+    int num_bases = cadnano_v2_design['vstrands'][0]['scaf'].num_bases;
     Grid grid_type = Grid.square;
     if (num_bases % 21 == 0) grid_type = Grid.honeycomb;
 

@@ -6,10 +6,13 @@ import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
+import 'package:smart_dialogs/smart_dialogs.dart';
+
 import 'package:scadnano/src/state/modification_type.dart';
 import 'package:scadnano/src/view/transform_by_helix_group.dart';
 
 import '../state/strand.dart';
+import '../state/dialog.dart';
 import '../state/address.dart';
 import '../state/geometry.dart';
 import '../state/group.dart';
@@ -43,11 +46,6 @@ mixin DesignMainExtensionPropsMixin on UiProps {
   String strand_tooltip;
   String transform;
   Point<num> adjacent_helix_svg_position;
-
-  List<ContextMenuItem> Function(Strand strand,
-      {@required Domain domain,
-      @required Address address,
-      @required ModificationType type}) context_menu_strand;
 
   bool selected;
 
@@ -109,7 +107,6 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
       ..key = id)(Dom.svgTitle()(tooltip_text(ext) + '\n' + props.strand_tooltip));
   }
 
-
   handle_click_down(react.SyntheticPointerEvent event_syn) {
     MouseEvent event = event_syn.nativeEvent;
     if (event.button == constants.LEFT_CLICK_BUTTON) {
@@ -135,8 +132,6 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     }
   }
 
-  // needed for capturing right-click events with React:
-  // https://medium.com/@ericclemmons/react-event-preventdefault-78c28c950e46
   @override
   componentDidMount() {
     var element = querySelector('#${props.ext.id}');
@@ -147,24 +142,100 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
   componentWillUnmount() {
     var element = querySelector('#${props.ext.id}');
     element.removeEventListener('contextmenu', on_context_menu);
-    super.componentWillUnmount();
   }
 
   on_context_menu(Event ev) {
     MouseEvent event = ev;
     if (!event.shiftKey) {
       event.preventDefault();
-      event.stopPropagation();
-      Address address = util.get_address_on_helix(event, props.adjacent_helix,
-          props.groups[props.adjacent_helix.group], props.geometry, props.adjacent_helix_svg_position);
+      event.stopPropagation(); // needed to prevent strand context menu from popping up
       app.dispatch(actions.ContextMenuShow(
-          context_menu: ContextMenu(
-              items: props
-                  .context_menu_strand(props.strand, domain: props.adjacent_domain, address: address)
-                  .build(),
-              position: event.page)));
+          context_menu: ContextMenu(items: context_menu_extension().build(), position: event.page)));
     }
   }
+
+  List<ContextMenuItem> context_menu_extension() => [
+        ContextMenuItem(
+          title: 'change extension display length/angle',
+          on_click: extension_display_length_and_angle_change,
+        ),
+        ContextMenuItem(
+          title: 'change extension number of bases',
+          on_click: extension_num_bases_change,
+        ),
+        ContextMenuItem(
+          title: 'set extension name',
+          on_click: set_extension_name,
+        ),
+        if (props.ext.name != null)
+          ContextMenuItem(
+              title: 'remove extension name',
+              on_click: () => app.dispatch(actions.SubstrandNameSet(name: null, substrand: props.ext))),
+      ];
+
+  extension_num_bases_change() async {
+    int new_num_bases = await app.disable_keyboard_shortcuts_while(() => ask_for_num_bases(
+        'change extension number of bases',
+        current_num_bases: props.ext.num_bases,
+        lower_bound: 1));
+    if (new_num_bases == null || new_num_bases == props.ext.num_bases) {
+      return;
+    }
+    var selected_extensions = app.state.ui_state.selectables_store.selected_extensions;
+    actions.UndoableAction action;
+    if (selected_extensions.length > 0) {
+      action = actions.ExtensionsNumBasesChange(selected_extensions, new_num_bases);
+    } else {
+      action = actions.ExtensionNumBasesChange(props.ext, new_num_bases);
+    }
+    app.dispatch(action);
+  }
+
+  set_extension_name() => app.disable_keyboard_shortcuts_while(ask_for_extension_name);
+
+  Future<void> ask_for_extension_name() async {
+    int name_idx = 0;
+    var items = List<DialogItem>.filled(1, null);
+    items[name_idx] = DialogText(label: 'name', value: props.ext.name ?? '');
+    var dialog = Dialog(title: 'set extension name', items: items);
+
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+
+    String name = (results[name_idx] as DialogText).value;
+    actions.UndoableAction action = actions.SubstrandNameSet(name: name, substrand: props.ext);
+    app.dispatch(action);
+  }
+
+  extension_display_length_and_angle_change() =>
+      app.disable_keyboard_shortcuts_while(ask_for_extension_display_length_and_angle);
+
+  Future<void> ask_for_extension_display_length_and_angle() async {
+    int display_length_idx = 0;
+    int display_angle_idx = 1;
+    var items = List<DialogItem>.filled(2, null);
+    items[display_length_idx] =
+        DialogFloat(label: 'display length (nm)', value: props.ext.display_length ?? '');
+    items[display_angle_idx] =
+        DialogFloat(label: 'display angle (degrees)', value: props.ext.display_angle ?? '');
+    var dialog = Dialog(title: 'set extension display length/angle', items: items);
+
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+
+    num display_length = (results[display_length_idx] as DialogFloat).value;
+    num display_angle = (results[display_angle_idx] as DialogFloat).value;
+    if (display_length <= 0) {
+      window.alert('display_length must be positive, but is ${display_length}');
+    } else {
+      actions.UndoableAction action =
+      actions.ExtensionDisplayLengthAngleSet(ext: props.ext,
+          display_length: display_length,
+          display_angle: display_angle);
+      app.dispatch(action);
+    }
+  }
+
 }
 
 tooltip_text(Extension ext) =>
@@ -173,3 +244,35 @@ tooltip_text(Extension ext) =>
         '    num_bases=${ext.num_bases}\n' +
     (ext.name == null ? "" : "\n    name=${ext.name}") +
     (ext.label == null ? "" : "\n    label=${ext.label.toString()}");
+
+Future<int> ask_for_num_bases(String title, {int current_num_bases, int lower_bound}) async {
+  // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html
+  String buttontype = DiaAttr.CHECKBOX;
+  String htmlTitleText = title;
+  List<String> textLabels = ['new number of bases:'];
+  List<List<String>> comboInfo = null;
+  List<String> defaultInputTexts = ['${current_num_bases}'];
+  List<int> widths = [1];
+  List<String> isChecked = null;
+  bool alternateRowColor = false;
+  List<String> buttonLabels = ['OK', 'Cancel'];
+
+  UserInput result = await Info.get(buttontype, htmlTitleText, textLabels, comboInfo, defaultInputTexts,
+      widths, isChecked, alternateRowColor, buttonLabels);
+
+  if (result.buttonCode != 'DIA_ACT_OK') {
+    return null;
+  }
+
+  String length_str = result.getUserInput(0)[0];
+  int length = int.tryParse(length_str);
+  if (length == null) {
+    Info.show('"$length_str" is not a valid integer');
+    return null;
+  } else if (length < lower_bound) {
+    Info.show('number of bases must be at least ${lower_bound}, but it is $length_str');
+    return null;
+  }
+
+  return length;
+}

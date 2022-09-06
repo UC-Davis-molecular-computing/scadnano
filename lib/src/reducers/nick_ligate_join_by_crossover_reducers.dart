@@ -1,7 +1,7 @@
 import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/reducers/change_loopout_length.dart';
+import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
 import 'package:scadnano/src/state/linker.dart';
 import 'package:scadnano/src/state/potential_crossover.dart';
 import 'package:tuple/tuple.dart';

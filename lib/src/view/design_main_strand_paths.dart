@@ -192,7 +192,6 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..adjacent_domain = adj_dom
             ..adjacent_helix = adj_helix
             ..strand_tooltip = props.strand_tooltip
-            ..context_menu_strand = props.context_menu_strand
             ..adjacent_helix_svg_position = props.helix_idx_to_svg_position_map[adj_helix.idx]
             ..key = "extension-${is_5p_str}-$i")());
           DNAEnd end = ext.dnaend_free;

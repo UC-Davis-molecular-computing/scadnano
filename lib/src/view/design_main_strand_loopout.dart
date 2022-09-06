@@ -149,11 +149,11 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
       event.preventDefault();
       event.stopPropagation(); // needed to prevent strand context menu from popping up
       app.dispatch(actions.ContextMenuShow(
-          context_menu: ContextMenu(items: context_menu_strand(props.strand).build(), position: event.page)));
+          context_menu: ContextMenu(items: context_menu_loopout().build(), position: event.page)));
     }
   }
 
-  List<ContextMenuItem> context_menu_strand(Strand strand) => [
+  List<ContextMenuItem> context_menu_loopout() => [
         ContextMenuItem(
           title: 'change loopout length',
           on_click: loopout_length_change,

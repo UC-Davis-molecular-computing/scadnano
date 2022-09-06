@@ -3,7 +3,7 @@
 import 'dart:convert';
 
 import 'package:scadnano/src/json_serializable.dart';
-import 'package:scadnano/src/reducers/change_loopout_length.dart';
+import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
 import 'package:scadnano/src/reducers/delete_reducer.dart';
 import 'package:scadnano/src/reducers/inline_insertions_deletions_reducer.dart';
 import 'package:scadnano/src/reducers/nick_ligate_join_by_crossover_reducers.dart';

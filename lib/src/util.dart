@@ -1238,8 +1238,8 @@ String remove_whitespace_and_uppercase(String string) {
 }
 
 /// Return [sequence] modified to have length [length].
-/// If [sequence.length] < [length], pad with [constants.DNA_BASE_WILDCARD].
-/// If [sequence.length] > [length], remove extra symbols.
+/// If [sequence.num_bases] < [length], pad with [constants.DNA_BASE_WILDCARD].
+/// If [sequence.num_bases] > [length], remove extra symbols.
 String pad_dna(String sequence, int length) {
   if (sequence.length > length) {
     sequence = sequence.substring(0, length);

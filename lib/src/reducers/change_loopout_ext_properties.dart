@@ -4,6 +4,7 @@ import 'package:scadnano/src/state/crossover.dart';
 import 'package:scadnano/src/state/domain.dart';
 
 import '../state/loopout.dart';
+import '../state/extension.dart';
 import '../state/strand.dart';
 
 import '../actions/actions.dart' as actions;
@@ -127,6 +128,43 @@ BuiltList<Strand> loopouts_length_change_reducer(
   return strands_builder.build();
 }
 
+BuiltList<Strand> extensions_num_bases_change_reducer(
+    BuiltList<Strand> strands, AppState state, actions.ExtensionsNumBasesChange action) {
+  Map<String, List<Extension>> exts_on_strand_id = {};
+  for (var ext in action.extensions) {
+    String strand_id = ext.strand_id;
+    if (!exts_on_strand_id.containsKey(strand_id)) {
+      exts_on_strand_id[strand_id] = [];
+    }
+    exts_on_strand_id[strand_id].add(ext);
+  }
+
+  var strands_builder = strands.toBuilder();
+  for (String strand_id in exts_on_strand_id.keys) {
+    Strand strand = state.design.strands_by_id[strand_id];
+    int strand_idx = strands.indexOf(strand);
+    var substrands = strand.substrands.toList();
+
+    List<Extension> exts = exts_on_strand_id[strand_id];
+
+    for (var ext in exts) {
+      int idx = substrands.indexOf(ext);
+      if (action.num_bases > 0) {
+        // shorten length of existing loopout
+        Extension ext_new = ext.rebuild((b) => b..num_bases = action.num_bases);
+        substrands[idx] = ext_new;
+      } else if (action.num_bases == 0) {
+        throw AssertionError('extension must have positive number of bases');
+      }
+    }
+    var new_strand = strand.rebuild((s) => s..substrands.replace(substrands));
+    new_strand = new_strand.initialize();
+    strands_builder[strand_idx] = new_strand;
+  }
+
+  return strands_builder.build();
+}
+
 Strand loopout_length_change_reducer(Strand strand, actions.LoopoutLengthChange action) {
   int loopout_idx = strand.substrands.indexOf(action.loopout);
   var substrands_builder = strand.substrands.toBuilder();
@@ -138,6 +176,34 @@ Strand loopout_length_change_reducer(Strand strand, actions.LoopoutLengthChange 
     // convert to crossover by removing loopout
     substrands_builder.removeAt(loopout_idx);
   }
+  strand = strand.rebuild((s) => s..substrands = substrands_builder);
+  return strand;
+}
+
+Strand extension_num_bases_change_reducer(Strand strand, actions.ExtensionNumBasesChange action) {
+  int idx = strand.substrands.indexOf(action.ext);
+  var substrands_builder = strand.substrands.toBuilder();
+  if (action.num_bases > 0) {
+    Extension ext_new = action.ext.rebuild((l) => l..num_bases = action.num_bases);
+    substrands_builder[idx] = ext_new;
+  } else {
+    throw AssertionError('extension must have positive number of bases');
+  }
+  strand = strand.rebuild((s) => s..substrands = substrands_builder);
+  return strand;
+}
+
+Strand extension_display_length_angle_change_reducer(
+    Strand strand, actions.ExtensionDisplayLengthAngleSet action) {
+  int idx = strand.substrands.indexOf(action.ext);
+  var substrands_builder = strand.substrands.toBuilder();
+  if (action.display_length <= 0) {
+    throw ArgumentError('extension must have positive display_angle');
+  }
+  Extension ext_new = action.ext.rebuild((b) => b
+    ..display_length = action.display_length
+    ..display_angle = action.display_angle);
+  substrands_builder[idx] = ext_new;
   strand = strand.rebuild((s) => s..substrands = substrands_builder);
   return strand;
 }
