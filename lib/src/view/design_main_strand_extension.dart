@@ -83,16 +83,18 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
       classname += ' ' + constants.css_selector_scaffold;
     }
 
-    return (Dom.line()
+    // This is just a straight line, but for some reason, for displaying the extension name,
+    // it only works to attach a textPath to it if it is a path, not a line.
+    // So we use Dom.path() instead of Dom.line()
+    var path_d = 'M ${extension_free_end_svg.x} ${extension_free_end_svg.y} '
+        'L ${extension_attached_end_svg.x} ${extension_attached_end_svg.y}';
+    return (Dom.path()
       ..className = classname
       ..onPointerDown = handle_click_down
       ..onPointerUp = handle_click_up
       ..stroke = props.color.toHexColor().toCssString()
       ..transform = props.transform
-      ..x1 = '${extension_free_end_svg.x}'
-      ..y1 = '${extension_free_end_svg.y}'
-      ..x2 = '${extension_attached_end_svg.x}'
-      ..y2 = '${extension_attached_end_svg.y}'
+      ..d = path_d
       ..id = id
       ..key = id)(Dom.svgTitle()(tooltip_text(ext) + '\n' + props.strand_tooltip));
   }
