@@ -774,7 +774,8 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
 
 .loopout-extension-length,
 .dna-seq-insertion,
-.dna-seq-loopout {
+.dna-seq-loopout,
+.dna-seq-extension {
     font-family: "Consolas", "Lucida Console", "Courier New", monospace;
     font-weight: bold;
     text-anchor: middle;
@@ -792,7 +793,8 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
 }
 
 .dna-seq-insertion,
-.dna-seq-loopout {
+.dna-seq-loopout,
+.dna-seq-extension {
     dominant-baseline: ideographic;
 }
 
