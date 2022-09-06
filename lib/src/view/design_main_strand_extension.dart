@@ -83,11 +83,21 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
       classname += ' ' + constants.css_selector_scaffold;
     }
 
+    // To ensure that the extension name displays right-side up, we always draw from the
+    // left point to the right point, regardless of which is the free end and which is attached.
+    var left_svg = extension_free_end_svg;
+    var right_svg = extension_attached_end_svg;
+    if (left_svg.x > right_svg.x) {
+      var swap = left_svg;
+      left_svg = right_svg;
+      right_svg = swap;
+    }
+
     // This is just a straight line, but for some reason, for displaying the extension name,
     // it only works to attach a textPath to it if it is a path, not a line.
     // So we use Dom.path() instead of Dom.line()
-    var path_d = 'M ${extension_free_end_svg.x} ${extension_free_end_svg.y} '
-        'L ${extension_attached_end_svg.x} ${extension_attached_end_svg.y}';
+    var path_d = 'M ${left_svg.x} ${left_svg.y} '
+        'L ${right_svg.x} ${right_svg.y}';
     return (Dom.path()
       ..className = classname
       ..onPointerDown = handle_click_down
