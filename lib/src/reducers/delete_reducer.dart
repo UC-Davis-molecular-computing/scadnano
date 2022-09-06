@@ -6,6 +6,7 @@ import '../state/crossover.dart';
 import '../state/dna_end.dart';
 import '../state/linker.dart';
 import '../state/loopout.dart';
+import '../state/extension.dart';
 import '../state/modification.dart';
 import '../state/selectable.dart';
 import '../state/strand.dart';
@@ -269,8 +270,8 @@ List<Strand> _remove_domains_from_strand(Strand strand, Set<Domain> domains_to_r
   for (int ss_idx = 0; ss_idx < strand.substrands.length; ss_idx++) {
     var substrand = strand.substrands[ss_idx];
     if (domains_to_remove.contains(substrand)) {
-      // also remove previous substrand if it is a Loopout
-      if (substrands.isNotEmpty && substrands.last is Loopout) {
+      // also remove previous substrand if it is a Loopout or Extension
+      if (substrands.isNotEmpty && (substrands.last is Loopout || substrands.last is Extension)) {
         substrands.removeLast();
       }
       // start new list of substrands if we added some to previous
@@ -278,8 +279,9 @@ List<Strand> _remove_domains_from_strand(Strand strand, Set<Domain> domains_to_r
         substrands = [];
         substrands_list.add(substrands);
       }
-      // if Loopout is next, remove it (i.e., leave it out by skipping its index)
-      if (ss_idx < strand.substrands.length - 1 && strand.substrands[ss_idx + 1] is Loopout) {
+      // if Loopout or Extension is next, remove it (i.e., leave it out by skipping its index)
+      if (ss_idx < strand.substrands.length - 1 &&
+          (strand.substrands[ss_idx + 1] is Loopout || strand.substrands[ss_idx + 1] is Extension)) {
         ss_idx++;
       }
     } else {
