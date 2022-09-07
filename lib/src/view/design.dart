@@ -278,7 +278,7 @@ class DesignViewComponent {
         DNAEndsMove moves_store = app.store_dna_ends_move.state;
         if (moves_store != null) {
           var group_names = group_names_of_ends(moves_store);
-          if (group_names.num_bases != 1) {
+          if (group_names.length != 1) {
             var msg = 'Cannot move or copy DNA ends unless they are all on the same helix group.\n'
                 'The selected ends occupy the following helix groups: ${group_names?.join(", ")}';
             window.alert(msg);
@@ -317,7 +317,7 @@ class DesignViewComponent {
           bool can_paste = true;
           if (!strands_move.copy) {
             var group_names = group_names_of_strands(strands_move);
-            if (group_names != null && group_names.num_bases != 1) {
+            if (group_names != null && group_names.length != 1) {
               var msg = 'Cannot move or copy strands unless they are all on the same helix group.\n'
                   'These strands occupy the following helix groups: ${group_names?.join(", ")}';
               window.alert(msg);
@@ -346,7 +346,7 @@ class DesignViewComponent {
       if (domains_move != null) {
         if (left_mouse_button_is_down) {
           var group_names = group_names_of_domains(domains_move);
-          if (group_names.num_bases != 1) {
+          if (group_names.length != 1) {
             var msg = 'Cannot move or copy domains unless they are all on the same helix group.\n'
                 'These domains occupy the following helix groups: ${group_names?.join(", ")}';
             window.alert(msg);
