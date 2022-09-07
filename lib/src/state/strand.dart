@@ -441,7 +441,7 @@ abstract class Strand
     for (int i = 0; i < substrands.length; i++) {
       var substrand = substrands[i];
       if (substrand is Domain) {
-        // TODO: support displaying mods on loopouts eventually
+        // TODO: support displaying mods on loopouts and extensions
         BuiltMap<int, ModificationInternal> mods_on_ss = internal_modifications_on_substrand_absolute_idx[i];
         for (int dna_idx in mods_on_ss.keys) {
           var mod = mods_on_ss[dna_idx];
