@@ -9,6 +9,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
 import 'package:scadnano/src/state/idt_fields.dart';
 import 'package:scadnano/src/state/modification_type.dart';
+import 'package:scadnano/src/state/substrand.dart';
 
 import 'design_main_strand_and_domain_names.dart';
 import 'design_main_strand_dna_end.dart';
@@ -244,8 +245,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     }
   }
 
-  add_modification(Domain domain, Address address, ModificationType type) =>
-      app.disable_keyboard_shortcuts_while(() => ask_for_add_modification(domain, address, type));
+  add_modification(Substrand substrand, Address address, ModificationType type) =>
+      app.disable_keyboard_shortcuts_while(() => ask_for_add_modification(substrand, address, type));
 
   assign_scale_purification_fields() =>
       app.disable_keyboard_shortcuts_while(ask_for_assign_scale_purification_fields);
@@ -254,7 +255,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
   set_strand_name() => app.disable_keyboard_shortcuts_while(ask_for_strand_name);
 
-  set_domain_name(Domain domain) => app.disable_keyboard_shortcuts_while(() => ask_for_domain_name(domain));
+  set_substrand_name(Substrand substrand) =>
+      app.disable_keyboard_shortcuts_while(() => ask_for_substrand_name(substrand));
 
   ReactElement _insertions() {
     List<ReactElement> paths = [];
@@ -351,113 +353,113 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
   }
 
   List<ContextMenuItem> context_menu_strand(Strand strand,
-          {@required Domain domain,
-          @required Address address,
-          ModificationType type = ModificationType.internal}) =>
-      [
-        ContextMenuItem(
-            title: 'edit DNA',
-            nested: [
-              ContextMenuItem(
-                title: 'assign DNA',
-                tooltip: '''\
+      {@required Substrand substrand,
+      @required Address address,
+      ModificationType type = ModificationType.internal}) {
+    return [
+      ContextMenuItem(
+          title: 'edit DNA',
+          nested: [
+            ContextMenuItem(
+              title: 'assign DNA',
+              tooltip: '''\
 Assign a specific DNA sequence to this strand (and optionally assign complementary
 sequence to strands bound to it).
 ''',
-                on_click: assign_dna,
-              ),
-              ContextMenuItem(
-                title: 'assign DNA complement from bound strands',
-                tooltip: '''\
+              on_click: assign_dna,
+            ),
+            ContextMenuItem(
+              title: 'assign DNA complement from bound strands',
+              tooltip: '''\
 If other strands bound to this strand (or the selected strands) have DNA already 
 assigned, assign the complementary DNA sequence to this strand.
 ''',
-                on_click: assign_dna_complement_from_bound_strands,
+              on_click: assign_dna_complement_from_bound_strands,
+            ),
+            if (strand.dna_sequence != null)
+              ContextMenuItem(
+                title: 'remove DNA',
+                on_click: remove_dna,
               ),
-              if (strand.dna_sequence != null)
-                ContextMenuItem(
-                  title: 'remove DNA',
-                  on_click: remove_dna,
-                ),
-            ].build()),
-        ContextMenuItem(
-          title: 'add modification',
-          on_click: () => add_modification(domain, address, type),
-        ),
-        ContextMenuItem(
-            title: 'edit idt fields',
-            nested: [
+          ].build()),
+      ContextMenuItem(
+        title: 'add modification',
+        on_click: () => add_modification(substrand, address, type),
+      ),
+      ContextMenuItem(
+          title: 'edit idt fields',
+          nested: [
+            ContextMenuItem(
+              title: 'assign scale/purification fields',
+              on_click: assign_scale_purification_fields,
+            ),
+            ContextMenuItem(
+                title: 'assign plate/well fields',
+                on_click: assign_plate_well_fields,
+                disabled: app.state.ui_state.selectables_store.selected_strands
+                        .toList()
+                        .any((element) => element.idt == null) ||
+                    props.strand.idt == null),
+            if (app.state.ui_state.selectables_store.selected_strands
+                    .toList()
+                    .any((element) => element.idt != null) ||
+                props.strand.idt != null)
               ContextMenuItem(
-                title: 'assign scale/purification fields',
-                on_click: assign_scale_purification_fields,
+                title: 'remove all IDT fields',
+                on_click: () => remove_idt_fields(),
               ),
+            if (app.state.ui_state.selectables_store.selected_strands
+                    .toList()
+                    .any((element) => element.idt?.plate != null && element.idt?.well != null) ||
+                props.strand.idt?.well != null && props.strand.idt?.purification != null)
               ContextMenuItem(
-                  title: 'assign plate/well fields',
-                  on_click: assign_plate_well_fields,
-                  disabled: app.state.ui_state.selectables_store.selected_strands
-                          .toList()
-                          .any((element) => element.idt == null) ||
-                      props.strand.idt == null),
-              if (app.state.ui_state.selectables_store.selected_strands
-                      .toList()
-                      .any((element) => element.idt != null) ||
-                  props.strand.idt != null)
-                ContextMenuItem(
-                  title: 'remove all IDT fields',
-                  on_click: () => remove_idt_fields(),
-                ),
-              if (app.state.ui_state.selectables_store.selected_strands
-                      .toList()
-                      .any((element) => element.idt?.plate != null && element.idt?.well != null) ||
-                  props.strand.idt?.well != null && props.strand.idt?.purification != null)
-                ContextMenuItem(
-                  title: 'remove plate/well fields',
-                  on_click: () => remove_plate_well_fields(),
-                ),
-            ].build()),
-        ContextMenuItem(
-          title: strand.is_scaffold ? 'set as non-scaffold' : 'set as scaffold',
-          on_click: set_scaffold,
-        ),
-        ContextMenuItem(
-            title: 'set color',
-            on_click: () => app.dispatch(actions.StrandColorPickerShow(strand: props.strand))),
-        ContextMenuItem(
-            title: 'edit name',
-            nested: [
-              ContextMenuItem(
-                title: 'set strand name',
-                on_click: set_strand_name,
+                title: 'remove plate/well fields',
+                on_click: () => remove_plate_well_fields(),
               ),
-              if (props.strand.name != null)
-                ContextMenuItem(
-                    title: 'remove strand name',
-                    on_click: () => app.dispatch(actions.StrandNameSet(name: null, strand: props.strand))),
+          ].build()),
+      ContextMenuItem(
+        title: strand.is_scaffold ? 'set as non-scaffold' : 'set as scaffold',
+        on_click: set_scaffold,
+      ),
+      ContextMenuItem(
+          title: 'set color',
+          on_click: () => app.dispatch(actions.StrandColorPickerShow(strand: props.strand))),
+      ContextMenuItem(
+          title: 'edit name',
+          nested: [
+            ContextMenuItem(
+              title: 'set strand name',
+              on_click: set_strand_name,
+            ),
+            if (props.strand.name != null)
               ContextMenuItem(
-                title: 'set domain name',
-                on_click: () => set_domain_name(domain),
-              ),
-              ContextMenuItem(
-                title: 'assign domain name complement from bound strands',
-                tooltip: '''\
+                  title: 'remove strand name',
+                  on_click: () => app.dispatch(actions.StrandNameSet(name: null, strand: props.strand))),
+            ContextMenuItem(
+              title: 'set domain name',
+              on_click: () => set_substrand_name(substrand),
+            ),
+            ContextMenuItem(
+              title: 'assign domain name complement from bound strands',
+              tooltip: '''\
 If other strands bound to this strand (or the selected strands) have domain names already 
 assigned, assign the complementary domain names sequence to this strand. To use this
 feature for individual domains, set select mode to domain.
 ''',
-                on_click: () => assign_domain_name_complement_from_bound_strands(domain: domain),
-              ),
-              if (domain.name != null)
-                ContextMenuItem(
-                    title: 'remove domain name',
-                    on_click: () => app.dispatch(actions.SubstrandNameSet(name: null, substrand: domain))),
-            ].build()),
-        ContextMenuItem(
-            title: 'reflect',
-            nested: [
+              on_click: () => assign_domain_name_complement_from_bound_strands(domain: substrand),
+            ),
+            if (substrand.name != null)
               ContextMenuItem(
-                title: 'reflect horizontally',
-                on_click: () => reflect(true, false),
-                tooltip: '''\
+                  title: 'remove domain name',
+                  on_click: () => app.dispatch(actions.SubstrandNameSet(name: null, substrand: substrand))),
+          ].build()),
+      ContextMenuItem(
+          title: 'reflect',
+          nested: [
+            ContextMenuItem(
+              title: 'reflect horizontally',
+              on_click: () => reflect(true, false),
+              tooltip: '''\
 replace strand(s) with horizontal mirror image, 
 without reversing polarity "vertically"
 
@@ -469,11 +471,11 @@ after:
   strand's 5' end on helix 0
   strand's 3' end on helix 1\
 ''',
-              ),
-              ContextMenuItem(
-                title: 'reflect horizontally (reverse vertical polarity)',
-                on_click: () => reflect(true, true),
-                tooltip: '''\
+            ),
+            ContextMenuItem(
+              title: 'reflect horizontally (reverse vertical polarity)',
+              on_click: () => reflect(true, true),
+              tooltip: '''\
 replace strand(s) with horizontal mirror image, 
 with polarity reversed "vertically" 
 
@@ -485,11 +487,11 @@ after:
   strand's 5' end on helix 1
   strand's 3' end on helix 0\
 ''',
-              ),
-              ContextMenuItem(
-                title: 'reflect vertically',
-                on_click: () => reflect(false, false),
-                tooltip: '''\
+            ),
+            ContextMenuItem(
+              title: 'reflect vertically',
+              on_click: () => reflect(false, false),
+              tooltip: '''\
 replace strand(s) with vertical mirror image, 
 without reversing polarity "vertically"
 
@@ -499,11 +501,11 @@ before:
 after:
   strand's 5' end is still on a helix below that of the strand's 3' end\
 ''',
-              ),
-              ContextMenuItem(
-                title: 'reflect vertically (reverse vertical polarity)',
-                on_click: () => reflect(false, true),
-                tooltip: '''\
+            ),
+            ContextMenuItem(
+              title: 'reflect vertically (reverse vertical polarity)',
+              on_click: () => reflect(false, true),
+              tooltip: '''\
 replace strand(s) with vertical mirror image, 
 with polarity reversed "vertically"
 
@@ -513,9 +515,10 @@ before:
 after:
   strand's 5' end is now on a helix above that of the strand's 3' end\
 ''',
-              ),
-            ].build()),
-      ];
+            ),
+          ].build()),
+    ];
+  }
 
   select_index_for_one_strand(String idt_option, Set<String> options, bool default_index) {
     if (options.contains(idt_option)) {
@@ -762,14 +765,16 @@ PAGEHPLC : Dual PAGE & HPLC
     }
   }
 
-  Future<void> ask_for_add_modification(Domain domain, Address address,
+  Future<void> ask_for_add_modification(Substrand substrand, Address address,
       [ModificationType type = ModificationType.internal]) async {
     /*
-    domain -  selected domain
-    address - address of DNA base
+    substrand -  selected substrand (domain or extension)
+    address - address of DNA base (nullable if substrand is an extension)
     type - type of modification: five_prime, three_prime, internal (default)
     */
-
+    if (address == null) {
+      assert(substrand is Extension);
+    }
     int selected_index = 2;
 
     if (type == ModificationType.five_prime) {
@@ -778,7 +783,8 @@ PAGEHPLC : Dual PAGE & HPLC
       selected_index = 0;
     }
 
-    int strand_dna_idx = clicked_strand_dna_idx(domain, address, props.strand);
+    // if they clicked on a domain, get the address; if an extension, just default to 0
+    int strand_dna_idx = address != null ? clicked_strand_dna_idx(substrand, address, props.strand) : 0;
 
     int modification_type_idx = 0;
     int display_text_idx = 1;
@@ -912,17 +918,17 @@ PAGEHPLC : Dual PAGE & HPLC
     app.dispatch(action);
   }
 
-  Future<void> ask_for_domain_name(Domain domain) async {
+  Future<void> ask_for_substrand_name(Substrand substrand) async {
     int name_idx = 0;
     var items = List<DialogItem>.filled(1, null);
-    items[name_idx] = DialogText(label: 'name', value: domain.name ?? '');
-    var dialog = Dialog(title: 'set domain name', items: items);
+    items[name_idx] = DialogText(label: 'name', value: substrand.name ?? '');
+    var dialog = Dialog(title: 'set ${substrand.type_description()} name', items: items);
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
     String name = (results[name_idx] as DialogText).value;
-    actions.UndoableAction action = actions.SubstrandNameSet(name: name, substrand: domain);
+    actions.UndoableAction action = actions.SubstrandNameSet(name: name, substrand: substrand);
     app.dispatch(action);
   }
 }
@@ -1094,8 +1100,7 @@ Future<void> ask_for_color(Strand strand, BuiltSet<Strand> selected_strands) asy
 
   String color_hex = (results[0] as DialogText).value;
 
-  actions.Action action =
-      batch_if_multiple_selected(
+  actions.Action action = batch_if_multiple_selected(
       color_set_strand_action_creator(color_hex), strand, selected_strands, "set strand color");
   app.dispatch(action);
 }

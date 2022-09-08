@@ -7,6 +7,7 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
 import 'package:scadnano/src/state/modification_type.dart';
+import 'package:scadnano/src/state/substrand.dart';
 import 'package:scadnano/src/view/transform_by_helix_group.dart';
 
 import '../state/strand.dart';
@@ -41,7 +42,7 @@ mixin DesignMainDomainPropsMixin on UiProps {
   Point<num> helix_svg_position;
 
   List<ContextMenuItem> Function(Strand strand,
-      {@required Domain domain,
+      {@required Substrand substrand,
       @required Address address,
       @required ModificationType type}) context_menu_strand;
 
@@ -184,7 +185,8 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
           event, props.helix, props.groups[props.helix.group], props.geometry, props.helix_svg_position);
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
-              items: props.context_menu_strand(props.strand, domain: props.domain, address: address).build(),
+              items:
+                  props.context_menu_strand(props.strand, substrand: props.domain, address: address).build(),
               position: event.page)));
     }
   }

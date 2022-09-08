@@ -6,6 +6,7 @@ import 'package:scadnano/src/state/address.dart';
 import 'package:scadnano/src/state/context_menu.dart';
 import 'package:scadnano/src/state/extension.dart';
 import 'package:scadnano/src/state/modification_type.dart';
+import 'package:scadnano/src/state/substrand.dart';
 
 import 'transform_by_helix_group.dart';
 import '../state/geometry.dart';
@@ -46,7 +47,7 @@ mixin DesignMainStrandAndDomainNamesPropsMixin on UiProps {
 
   BuiltMap<int, Point<num>> helix_idx_to_svg_position;
 
-  List<ContextMenuItem> Function(Strand strand, {Domain domain, Address address, ModificationType type})
+  List<ContextMenuItem> Function(Strand strand, {Substrand substrand, Address address, ModificationType type})
       context_menu_strand;
 }
 
@@ -168,8 +169,8 @@ class DesignMainStrandAndDomainNamesComponent extends UiComponent2<DesignMainStr
       } else if (substrand is Extension) {
         Extension ext = substrand;
         int adj_helix_idx = ext.adjacent_domain.helix;
-        bool draw_loopout = should_draw_extension(adj_helix_idx, props.side_selected_helix_idxs,
-            props.only_display_selected_helices);
+        bool draw_loopout = should_draw_extension(
+            adj_helix_idx, props.side_selected_helix_idxs, props.only_display_selected_helices);
         if (draw_loopout && ext.name != null) {
           names.add((DesignMainStrandExtensionName()
             ..ext = ext

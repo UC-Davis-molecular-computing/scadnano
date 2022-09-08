@@ -54,7 +54,7 @@ mixin DesignMainDNAEndPropsMixin on UiProps {
   bool selected;
 
   List<ContextMenuItem> Function(Strand strand,
-      {@required Domain domain,
+      {@required Substrand substrand,
       @required Address address,
       @required ModificationType type}) context_menu_strand;
 
@@ -197,12 +197,15 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     if (!event.shiftKey) {
       event.preventDefault();
       event.stopPropagation();
-      var address = props.is_5p ? props.domain.address_5p : props.domain.address_3p;
+      Address address = null;
+      if (props.domain != null) {
+        address = props.is_5p ? props.domain.address_5p : props.domain.address_3p;
+      }
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
               items: props
                   .context_menu_strand(props.strand,
-                      domain: props.domain,
+                      substrand: props.domain ?? props.ext,
                       address: address,
                       type: (props.is_5p ? ModificationType.five_prime : ModificationType.three_prime))
                   .build(),
