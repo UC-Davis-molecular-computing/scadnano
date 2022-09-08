@@ -96,6 +96,11 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
         ..disabled = props.groups.length == 1
         ..on_click = ((ev) => app.dispatch(actions.GroupRemove(name: props.displayed_group_name)))
         ..key = 'remove-current-group')(),
+      (MenuDropdownItem()
+        ..display = 'adjust helix indices'
+        ..disabled = props.groups[props.displayed_group_name].helices_view_order.length == 0
+        ..on_click = ((ev) => adjust_helix_indices_for_current_group())
+        ..key = 'adjust-helix-indices')(),
     ]);
     return NavDropdown({
       'title': 'Group',
@@ -124,6 +129,9 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
 
   set_new_parameters_for_current_group() =>
       app.disable_keyboard_shortcuts_while(ask_new_parameters_for_current_group);
+
+  adjust_helix_indices_for_current_group() =>
+    app.disable_keyboard_shortcuts_while(ask_new_helix_indices_for_current_group);
 
   add_new_group(Iterable<String> existing_names) =>
       app.disable_keyboard_shortcuts_while(() => ask_about_new_group(existing_names));
@@ -262,4 +270,31 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
     app.dispatch(
         actions.GroupChange(old_name: props.displayed_group_name, new_name: new_name, new_group: new_group));
   }
+
+  Future<void> ask_new_helix_indices_for_current_group() async {
+    var group = props.groups[props.displayed_group_name];
+    var existing_grid = group.grid;
+
+    List<DialogItem> items = []; 
+    items.add(DialogLabel(label: 'current view order: ' + group.helices_view_order.join(' ')));
+
+    for (var helix_index in group.helices_view_order) {
+      items.add(DialogInteger(label: helix_index.toString(), value: helix_index));
+    }
+
+    var dialog =
+        Dialog(title: 'adjust Helix indices', items: items);
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+
+    Map<int, int> new_indices_map = {}; 
+    for (int i = 1; i < results.length; i++) {
+      new_indices_map[group.helices_view_order[i-1]] = (results[i] as DialogInteger).value; 
+    }
+
+   app.dispatch(actions.HelixIdxsChange(idx_replacements: new_indices_map));
+  }
+
 }
+
+
