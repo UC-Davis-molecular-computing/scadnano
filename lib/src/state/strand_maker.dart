@@ -104,10 +104,9 @@ class StrandMaker {
     //Fix for domain_label and domain_name repeating bug:
     //this.domain_label = this.domain_name = null;
 
-    if (substrands.last is Extension) {
+    if (substrands.isNotEmpty && substrands.last is Extension) {
       Extension ext = substrands.last;
-      ext =
-          ext.rebuild((b) => b..adjacent_domain.replace(new_domain));
+      ext = ext.rebuild((b) => b..adjacent_domain.replace(new_domain));
       int last_idx = substrands.length - 1;
       substrands[last_idx] = ext;
     }
@@ -132,7 +131,9 @@ class StrandMaker {
     return this;
   }
 
-  StrandMaker extension_3p(int num_bases, {double display_length = 1.0, double display_angle = 45.0}) {
+  StrandMaker extension_3p(int num_bases,
+      {double display_length = constants.default_display_length,
+      double display_angle = constants.default_display_angle}) {
     _verify_extension_3p_is_valid();
     Domain adjacent_domain = this.substrands.last;
     Extension ext = Extension(
@@ -172,7 +173,9 @@ class StrandMaker {
   bool _most_recently_added_substrand_is_extension_3p() =>
       substrands.length > 1 && this._most_recently_added_substrand_is_extension();
 
-  StrandMaker extension_5p(int num_bases, {double display_length = 1.0, double display_angle = 45.0}) {
+  StrandMaker extension_5p(int num_bases,
+      {double display_length = constants.default_display_length,
+      double display_angle = constants.default_display_angle}) {
     this._verify_extension_5p_is_valid();
     Extension ext = Extension(
       num_bases: num_bases,

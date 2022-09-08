@@ -523,7 +523,7 @@ after:
           disabled: strand.has_5p_extension && strand.has_3p_extension
       ),
     ];
-    
+
     return items;
   }
 

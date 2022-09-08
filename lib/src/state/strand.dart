@@ -120,9 +120,11 @@ abstract class Strand
   Strand initialize() {
     Strand strand = this;
 
-    strand = _rebuild_substrands_with_new_fields_based_on_strand(strand);
+    // important these are in this order, because each Extension stores its adjacent domain,
+    // and if the domain is assigned ?'s as DNA sequence, they need to be updated in
+    // the field Extension.adjacent_domain
     strand = _rebuild_substrands_with_new_dna_sequences_based_on_strand(strand);
-
+    strand = _rebuild_substrands_with_new_fields_based_on_strand(strand);
 
     _ensure_loopouts_legal();
     _ensure_extensions_legal();
@@ -171,7 +173,7 @@ abstract class Strand
   }
 
   _rebuild_extension_with_new_fields_based_on_strand(Extension ext, bool is_5p, Strand strand) {
-    Domain adjacent_domain = ext.is_5p? strand.first_domain: strand.last_domain;
+    Domain adjacent_domain = is_5p? strand.first_domain: strand.last_domain;
     return ext.rebuild((b) => b
       ..is_scaffold = is_scaffold
       ..strand_id = strand.id
