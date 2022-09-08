@@ -89,12 +89,13 @@ Design helix_idx_change_reducer(Design design, AppState state, actions.HelixIdxs
   var strands = design.strands.toList();
 
   Map<String, HelixGroup> new_groups = change_groups(action, helices, design);
-
+  var copy_helices = design.helices.toMap();
   // change helices
+
+  helices.removeWhere((key, _) => action.idx_replacements.containsKey(key));
   for (int old_idx in action.idx_replacements.keys) {
     int new_idx = action.idx_replacements[old_idx];
-    var helix = helices[old_idx].rebuild((b) => b..idx = new_idx);
-    helices.remove(old_idx);
+    var helix = copy_helices[old_idx].rebuild((b) => b..idx = new_idx);
     helices[new_idx] = helix;
   }
 
