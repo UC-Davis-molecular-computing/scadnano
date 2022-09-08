@@ -620,9 +620,7 @@ label+select {
     pointer-events: all;
 }
 
-.domain-line,
-.loopout-curve,
-.domain-line-moving {
+.domain-line, .loopout-curve, .domain-line-moving, .extension-line {
     stroke-width: 4;
     stroke-linecap: round;
     fill: none;
@@ -664,7 +662,8 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
 .selected.insertion-curve,
 .selected.deletion-cross,
 .selected.modification,
-.selected.domain-line {
+.selected.domain-line,
+.selected.extension-line {
     stroke: hotpink;
     stroke-width: 5pt;
 }
@@ -687,7 +686,8 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
 .selected .insertion-curve,
 .selected .deletion-cross,
 .selected .modification,
-.selected .domain-line {
+.selected .domain-line,
+.selected .extension-line {
     stroke: hotpink;
     stroke-width: 5pt;
 }
@@ -804,11 +804,34 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
     /* needed to display multiple space symbols in a row */
 }
 
+.loopout-extension-length,
 .dna-seq-insertion,
-.loopout-length,
-.dna-seq-loopout {
+.dna-seq-loopout,
+.dna-seq-extension {
     font-family: "Consolas", "Lucida Console", "Courier New", monospace;
     font-weight: bold;
+    text-anchor: middle;
+    pointer-events: none;
+    text-shadow:
+        -0.7px -0.7px 0 #fff,
+        0.7px -0.7px 0 #fff,
+        -0.7px 0.7px 0 #fff,
+        0.7px 0.7px 0 #fff;
+    text-rendering: optimizeSpeed; /* doesn't seem to do much to improve rendering speed */
+    white-space: pre; /* needed to display multiple space symbols in a row */
+}
+
+.loopout-extension-length {
+    dominant-baseline: hanging;
+}
+
+.dna-seq-insertion,
+.dna-seq-loopout,
+.dna-seq-extension {
+    dominant-baseline: ideographic;
+}
+
+.loopout-name, .extension-name {
     text-anchor: middle;
     pointer-events: none;
     dominant-baseline: ideographic;
@@ -827,23 +850,14 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
     /* needed to display multiple space symbols in a row */
 }
 
-.loopout-name {
-    text-anchor: middle;
-    pointer-events: none;
-    dominant-baseline: ideographic;
-    text-shadow:
-        /*-1px -1px 0 #fff,*/
-        /*1px -1px 0 #fff,*/
-        /*-1px 1px 0 #fff,*/
-        /*1px 1px 0 #fff;*/
-        -0.7px -0.7px 0 #fff,
-        0.7px -0.7px 0 #fff,
-        -0.7px 0.7px 0 #fff,
-        0.7px 0.7px 0 #fff;
-    text-rendering: optimizeSpeed;
-    /* doesn't seem to do much to improve rendering speed */
-    white-space: pre;
-    /* needed to display multiple space symbols in a row */
+/* next is needed so that we can rotate ends on extensions
+around their centers instead of around the origin
+https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-center-in-svg
+*/
+.five-prime-end-first-substrand, .three-prime-end-last-substrand,
+.five-prime-end-moving, .three-prime-end-moving {
+    transform-box: fill-box;
+    transform-origin: center;
 }
 
 .main-view-helix-circle {
