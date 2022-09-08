@@ -19,7 +19,7 @@ import '../state/app_state.dart';
 // it triggers a new action to be dispatched.
 dna_ends_move_start_middleware(Store<AppState> store, action, NextDispatcher next) {
   if (action is actions.DNAEndsMoveStart) {
-    BuiltSet<DNAEnd> selected_ends = store.state.ui_state.selectables_store.selected_dna_ends;
+    BuiltSet<DNAEnd> selected_ends = store.state.ui_state.selectables_store.selected_dna_ends_on_domains;
     List<DNAEndMove> moves = [];
     for (var end in selected_ends) {
       int lowest_offset = find_allowable_offset(store.state.design, end, selected_ends, false);

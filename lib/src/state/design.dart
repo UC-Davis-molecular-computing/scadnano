@@ -23,6 +23,7 @@ import 'linker.dart';
 import 'modification.dart';
 import 'strand.dart';
 import 'domain.dart';
+import 'extension.dart';
 import 'helix.dart';
 import 'grid.dart';
 import '../util.dart' as util;
@@ -342,6 +343,17 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   @memoized
+  BuiltMap<String, Extension> get extensions_by_id {
+    var builder = MapBuilder<String, Extension>();
+    for (var strand in strands) {
+      for (var ext in strand.extensions) {
+        builder[ext.id] = ext;
+      }
+    }
+    return builder.build();
+  }
+
+  @memoized
   BuiltMap<String, Crossover> get crossovers_by_id {
     var builder = MapBuilder<String, Crossover>();
     for (var strand in strands) {
@@ -455,6 +467,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     for (var map_small in [
       strands_by_id,
       loopouts_by_id,
+      extensions_by_id,
       crossovers_by_id,
       ends_by_id,
       domains_by_id,
