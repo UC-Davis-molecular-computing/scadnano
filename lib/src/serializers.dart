@@ -176,6 +176,7 @@ part 'serializers.g.dart';
   SelectAllSelectable,
   Select,
   Loopout,
+  ExtensionAdd,
   ExtensionDisplayLengthAngleSet,
   ExtensionNumBasesChange,
   ExtensionsNumBasesChange,

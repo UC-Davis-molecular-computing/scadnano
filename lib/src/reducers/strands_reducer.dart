@@ -512,6 +512,7 @@ Reducer<Strand> single_strand_reducer = combineReducers([
   TypedReducer<Strand, actions.ScaffoldSet>(scaffold_set_reducer),
   TypedReducer<Strand, actions.StrandColorSet>(strand_color_set_reducer),
   TypedReducer<Strand, actions.ModificationAdd>(modification_add_reducer),
+  TypedReducer<Strand, actions.ExtensionAdd>(extension_add_reducer),
   TypedReducer<Strand, actions.ModificationRemove>(modification_remove_reducer),
   TypedReducer<Strand, actions.ModificationEdit>(modification_edit_reducer),
   TypedReducer<Strand, actions.StrandNameSet>(strand_name_set_reducer),
@@ -554,6 +555,28 @@ Strand scale_purification_idt_fields_assign_reducer(
 
 Strand strand_name_set_reducer(Strand strand, actions.StrandNameSet action) =>
     strand.rebuild((b) => b..name = action.name);
+
+Strand extension_add_reducer(Strand strand, actions.ExtensionAdd action) {
+  var substrands = strand.substrands.toList();
+  Domain adjacent_domain;
+  if (action.is_5p) {
+    adjacent_domain = substrands.first;
+  } else {
+    adjacent_domain = substrands.last;
+  }
+  Extension ext = Extension(
+      num_bases: action.num_bases,
+      is_5p: action.is_5p,
+      adjacent_domain: adjacent_domain,
+      is_scaffold: strand.is_scaffold);
+  if (action.is_5p) {
+    substrands.insert(0, ext);
+  } else {
+    substrands.add(ext);
+  }
+  strand = strand.rebuild((b) => b..substrands.replace(substrands));
+  return strand;
+}
 
 Strand modification_add_reducer(Strand strand, actions.ModificationAdd action) {
   Strand strand_with_new_modification;

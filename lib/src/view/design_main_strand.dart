@@ -356,7 +356,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       {@required Substrand substrand,
       @required Address address,
       ModificationType type = ModificationType.internal}) {
-    return [
+    var items = [
       ContextMenuItem(
           title: 'edit DNA',
           nested: [
@@ -517,7 +517,63 @@ after:
 ''',
             ),
           ].build()),
+      ContextMenuItem(
+          title: 'add extension',
+          on_click: () => app.disable_keyboard_shortcuts_while(() => ask_for_add_extension(strand)),
+          disabled: strand.has_5p_extension && strand.has_3p_extension
+      ),
     ];
+    
+    return items;
+  }
+
+  Future<void> ask_for_add_extension(Strand strand) async {
+    if (strand.has_5p_extension && strand.has_3p_extension) {
+      // This shouldn't be reachable since the context menu should not include the
+      // add extension option in this case, but let's check just in case.
+      window.alert("strand ${strand.name ?? strand.toString()} already has a 5' and 3' extension");
+      return;
+    }
+
+    List<String> options = [];
+    if (!strand.has_5p_extension) {
+      options.add("5'");
+    }
+    if (!strand.has_3p_extension) {
+      options.add("3'");
+    }
+    assert(options.isNotEmpty);
+
+    int selected_index = 0;
+    int extension_end_idx = 0;
+    int num_bases_idx = 1;
+    var items = List<DialogItem>.filled(2, null);
+    items[extension_end_idx] =
+        DialogRadio(label: 'end of strand', options: options, selected_idx: selected_index);
+    items[num_bases_idx] = DialogInteger(
+        label: 'number of bases', value: 5, tooltip: 'number of bases to include in this extension');
+
+    var dialog = Dialog(title: 'add extension', items: items);
+
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+
+    String extension_end = (results[extension_end_idx] as DialogRadio).value;
+    bool is_5p;
+    if (extension_end == "3'") {
+      is_5p = false;
+    } else if (extension_end == "5'") {
+      is_5p = true;
+    } else {
+      // should be unreachable
+      window.alert("invalid selection ${extension_end}");
+      return;
+    }
+    int num_bases = (results[num_bases_idx] as DialogInteger).value;
+
+    actions.UndoableAction action =
+        actions.ExtensionAdd(strand: props.strand, is_5p: is_5p, num_bases: num_bases);
+    app.dispatch(action);
   }
 
   select_index_for_one_strand(String idt_option, Set<String> options, bool default_index) {

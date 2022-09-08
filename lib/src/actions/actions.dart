@@ -1976,6 +1976,34 @@ abstract class ExtensionDisplayLengthAngleSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// add extension to strand
+
+abstract class ExtensionAdd
+    with BuiltJsonSerializable, UndoableAction
+    implements SingleStrandAction, Built<ExtensionAdd, ExtensionAddBuilder> {
+  Strand get strand;
+
+  bool get is_5p;
+
+  int get num_bases;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExtensionAdd({Strand strand, bool is_5p, int num_bases}) => ExtensionAdd.from((b) => b
+    ..strand.replace(strand)
+    ..is_5p = is_5p
+    ..num_bases = num_bases);
+
+  factory ExtensionAdd.from([void Function(ExtensionAddBuilder) updates]) = _$ExtensionAdd;
+
+  ExtensionAdd._();
+
+  static Serializer<ExtensionAdd> get serializer => _$extensionAddSerializer;
+
+  @override
+  String short_description() => "add extension to strand";
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // loopout/extension length change
 
 abstract class ExtensionNumBasesChange
@@ -3559,11 +3587,14 @@ abstract class StrandColorPickerHide
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// scaffold set/unset
+// abstract supertype of actions that operate on a single strand
 
 abstract class SingleStrandAction implements Action {
   Strand get strand;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// scaffold set/unset
 
 abstract class ScaffoldSet
     with BuiltJsonSerializable, UndoableAction
