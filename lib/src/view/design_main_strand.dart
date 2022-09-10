@@ -552,7 +552,7 @@ after:
     items[num_bases_idx] = DialogInteger(
         label: 'number of bases', value: 5, tooltip: 'number of bases to include in this extension');
 
-    var dialog = Dialog(title: 'add extension', items: items);
+    var dialog = Dialog(title: 'add extension', items: items, type: DialogType.add_extension);
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
