@@ -41,6 +41,7 @@ import 'state/grid.dart';
 import 'state/grid_position.dart';
 import 'state/helix.dart';
 import 'state/loopout.dart';
+import 'state/extension.dart';
 import 'state/design.dart';
 import 'state/mouseover_data.dart';
 import 'constants.dart' as constants;
@@ -1542,6 +1543,35 @@ mouse_leave_update_mouseover() {
   if (show_mouseover_data()) {
     app.dispatch(actions.MouseoverDataClear());
   }
+}
+
+Point<num> compute_extension_attached_end_svg(
+    Extension ext, Domain adj_dom, Helix adj_helix, num adj_helix_svg_y) {
+  int end_offset = ext.is_5p ? adj_dom.offset_5p : adj_dom.offset_3p;
+  Point<num> extension_attached_end_svg =
+      adj_helix.svg_base_pos(end_offset, adj_dom.forward, adj_helix_svg_y);
+  return extension_attached_end_svg;
+}
+
+// computes the SVG coordinates of the end of an Extension that is not shared with the adjacent Domain
+Point<num> compute_extension_free_end_svg(
+    Point<num> attached_end_svg, Extension ext, Domain adjacent_domain, Geometry geometry) {
+  num x = attached_end_svg.x;
+  num y = attached_end_svg.y;
+  var angle_radians = ext.display_angle * 2 * pi / 360.0;
+  // convert polar coordinates in Extension to rectangular coordinates, and convert from nm to SVG pixels
+  num x_delta = ext.display_length * cos(angle_radians) * geometry.nm_to_svg_pixels;
+  num y_delta = ext.display_length * sin(angle_radians) * geometry.nm_to_svg_pixels;
+  if (adjacent_domain.forward) {
+    y_delta = -y_delta;
+  }
+  if ((adjacent_domain.forward && ext.is_5p) || (!adjacent_domain.forward && !ext.is_5p)) {
+    x_delta = -x_delta;
+  }
+  x += x_delta;
+  y += y_delta;
+  Point<num> ext_end_svg = Point<num>(x, y);
+  return ext_end_svg;
 }
 
 update_mouseover(SyntheticMouseEvent event_syn, Helix helix, Point<num> helix_svg_position) {

@@ -192,7 +192,8 @@ bool show_grid_coordinates_side_view_reducer(bool _, actions.ShowGridCoordinates
 bool show_helices_axis_arrows_reducer(bool _, actions.ShowAxisArrowsSet action) =>
     action.show_helices_axis_arrows;
 
-bool show_loopout_length_reducer(bool _, actions.ShowLoopoutLengthSet action) => action.show_loopout_length;
+bool show_loopout_extension_length_reducer(bool _, actions.ShowLoopoutExtensionLengthSet action) =>
+    action.show_length;
 
 bool show_slice_bar_reducer(bool _, actions.ShowSliceBarSet action) => action.show;
 
@@ -431,8 +432,9 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
         show_grid_coordinates_side_view_reducer)(storables.show_grid_coordinates_side_view, action)
     ..show_helices_axis_arrows = TypedReducer<bool, actions.ShowAxisArrowsSet>(
         show_helices_axis_arrows_reducer)(storables.show_helices_axis_arrows, action)
-    ..show_loopout_length = TypedReducer<bool, actions.ShowLoopoutLengthSet>(show_loopout_length_reducer)(
-        storables.show_loopout_length, action)
+    ..show_loopout_extension_length = TypedReducer<bool, actions.ShowLoopoutExtensionLengthSet>(
+        show_loopout_extension_length_reducer)(
+        storables.show_loopout_extension_length, action)
     ..show_slice_bar = TypedReducer<bool, actions.ShowSliceBarSet>(show_slice_bar_reducer)(
         storables.show_slice_bar, action)
     ..slice_bar_offset = TypedReducer<int, actions.SliceBarOffsetSet>(slice_bar_offset_set_reducer)(

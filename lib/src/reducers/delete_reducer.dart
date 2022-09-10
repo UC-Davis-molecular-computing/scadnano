@@ -6,6 +6,7 @@ import '../state/crossover.dart';
 import '../state/dna_end.dart';
 import '../state/linker.dart';
 import '../state/loopout.dart';
+import '../state/extension.dart';
 import '../state/modification.dart';
 import '../state/selectable.dart';
 import '../state/strand.dart';
@@ -53,6 +54,10 @@ BuiltList<Strand> delete_all_reducer(
     var modifications =
         List<SelectableModification>.from(items.where((item) => item is SelectableModification));
     strands = remove_modifications(strands, state, modifications);
+  } else if (select_mode_state.extensions_selectable) {
+    // extensions
+    var extensions = List<Extension>.from(items.where((item) => item is Extension));
+    strands = remove_extensions(strands, state, extensions);
   }
 
   return strands;
@@ -185,9 +190,7 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
         internal_mods_on_these_substrands[dna_length_cur_substrands + idx_within_ss] = mod;
       }
       if (substrand is Loopout) {
-        substrand = (substrand as Loopout).rebuild((loopout) => loopout
-          ..prev_domain_idx = i - 1
-          ..next_domain_idx = i + 1);
+        substrand = (substrand as Loopout).rebuild((loopout) => loopout..prev_domain_idx = i - 1);
       }
       if (i == 0 && (substrand is Domain)) {
         substrand = (substrand as Domain).rebuild((s) => s..is_first = true);
@@ -228,6 +231,50 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
     new_strands.add(new_strand);
   }
   return new_strands;
+}
+
+BuiltList<Strand> remove_extensions(
+    BuiltList<Strand> strands, AppState state, Iterable<Extension> extensions) {
+  // collect all Extensions for one strand
+  Map<Strand, Set<Extension>> strand_to_exts = {};
+  for (var ext in extensions) {
+    var strand = state.design.substrand_to_strand[ext];
+    if (strand_to_exts[strand] == null) {
+      strand_to_exts[strand] = {};
+    }
+    strand_to_exts[strand].add(ext);
+  }
+
+  var new_strands = strands.toList();
+  // remove extensions one strand at a time
+  for (int i = 0; i < new_strands.length; i++) {
+    var strand = new_strands[i];
+    if (strand_to_exts.keys.contains(strand)) {
+      Strand new_strand = _remove_extensions_from_strand(strand, strand_to_exts[strand]);
+      new_strands[i] = new_strand;
+    }
+  }
+
+  return new_strands.build();
+}
+
+Strand _remove_extensions_from_strand(Strand strand, Set<Extension> exts) {
+  if (strand.has_5p_extension && exts.contains(strand.substrands.first)) {
+    strand = _remove_extension_from_strand(strand, is_5p: true);
+  }
+  if (strand.has_3p_extension && exts.contains(strand.substrands.last)) {
+    strand = _remove_extension_from_strand(strand, is_5p: false);
+  }
+  strand = strand.initialize();
+  return strand;
+}
+
+Strand _remove_extension_from_strand(Strand strand, {bool is_5p}) {
+  var substrands = strand.substrands.toList();
+  int idx = is_5p ? 0 : substrands.length - 1;
+  substrands.removeAt(idx);
+  strand = strand.rebuild((b) => b..substrands.replace(substrands));
+  return strand;
 }
 
 BuiltList<Strand> remove_domains(BuiltList<Strand> strands, AppState state, Iterable<Domain> domains) {
@@ -271,8 +318,8 @@ List<Strand> _remove_domains_from_strand(Strand strand, Set<Domain> domains_to_r
   for (int ss_idx = 0; ss_idx < strand.substrands.length; ss_idx++) {
     var substrand = strand.substrands[ss_idx];
     if (domains_to_remove.contains(substrand)) {
-      // also remove previous substrand if it is a Loopout
-      if (substrands.isNotEmpty && substrands.last is Loopout) {
+      // also remove previous substrand if it is a Loopout or Extension
+      if (substrands.isNotEmpty && (substrands.last is Loopout || substrands.last is Extension)) {
         substrands.removeLast();
       }
       // start new list of substrands if we added some to previous
@@ -280,8 +327,9 @@ List<Strand> _remove_domains_from_strand(Strand strand, Set<Domain> domains_to_r
         substrands = [];
         substrands_list.add(substrands);
       }
-      // if Loopout is next, remove it (i.e., leave it out by skipping its index)
-      if (ss_idx < strand.substrands.length - 1 && strand.substrands[ss_idx + 1] is Loopout) {
+      // if Loopout or Extension is next, remove it (i.e., leave it out by skipping its index)
+      if (ss_idx < strand.substrands.length - 1 &&
+          (strand.substrands[ss_idx + 1] is Loopout || strand.substrands[ss_idx + 1] is Extension)) {
         ss_idx++;
       }
     } else {

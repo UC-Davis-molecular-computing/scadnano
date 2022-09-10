@@ -2,6 +2,7 @@ import 'package:scadnano/src/actions/actions.dart';
 import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/loopout.dart';
+import 'package:scadnano/src/state/extension.dart';
 import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:color/color.dart';
@@ -17,7 +18,6 @@ class StrandMaker {
   Color color = Color.rgb(247, 67, 8); //(#f74308)
   IDTFields idt = null; //(#f74308)
   String dna_sequence = null;
-  String domain_dna_sequence = null;
   bool circular = false;
   String name = null;
   Object label = null;
@@ -26,6 +26,8 @@ class StrandMaker {
   int current_helix, current_offset, loopout_length;
   Map<int, ModificationInternal> modifications_int = {};
   bool is_scaffold = false;
+  bool contains_extension = false;
+  String loopout_dna_sequence = null;
 
   StrandMaker(
     Design design,
@@ -57,19 +59,24 @@ class StrandMaker {
   // relative coordinates
   StrandMaker move(int delta) => to(current_offset + delta);
 
-  bool last_substrand_was_loopout() => this.loopout_length != null;
+  bool most_recently_added_substrand_is_loopout() => this.loopout_length != null;
 
   // absolute coordinates
   StrandMaker to(int offset) {
-    if (last_substrand_was_loopout()) {
+    if (most_recently_added_substrand_is_loopout()) {
       Loopout loopout = Loopout(
-        loopout_length: loopout_length,
-        prev_domain_idx: current_offset,
-        next_domain_idx: offset,
+        loopout_num_bases: loopout_length,
+        prev_domain_idx: substrands.length - 1,
         is_scaffold: is_scaffold,
+        dna_sequence: loopout_dna_sequence,
       );
       this.substrands.add(loopout);
       this.loopout_length = null;
+      this.loopout_dna_sequence = null;
+    }
+
+    if (this._most_recently_added_substrand_is_extension_3p()) {
+      throw IllegalDesignError('cannot make a new domain once 3\' extension has been added');
     }
     bool forward;
     var start, end;
@@ -91,19 +98,26 @@ class StrandMaker {
       start: start,
       end: end,
       is_scaffold: this.is_scaffold,
-      dna_sequence: this.domain_dna_sequence,
-
-      /*label: this.domain_label,
-        name: this.domain_name,*/
+      // label: this.domain_label,
+      // name: this.domain_name,
     );
     //Fix for domain_label and domain_name repeating bug:
     //this.domain_label = this.domain_name = null;
 
+    if (substrands.isNotEmpty && substrands.last is Extension) {
+      Extension ext = substrands.last;
+      ext = ext.rebuild((b) => b..adjacent_domain.replace(new_domain));
+      int last_idx = substrands.length - 1;
+      substrands[last_idx] = ext;
+    }
     this.substrands.add(new_domain);
     return this;
   }
 
   StrandMaker cross(int helix, [int offset = null]) {
+    if (this._most_recently_added_substrand_is_extension()) {
+      throw IllegalDesignError('Cannot cross after an extension.');
+    }
     this.current_helix = helix;
     if (offset != null) {
       this.current_offset = offset;
@@ -117,7 +131,77 @@ class StrandMaker {
     return this;
   }
 
+  StrandMaker extension_3p(int num_bases,
+      {double display_length = constants.default_display_length,
+      double display_angle = constants.default_display_angle}) {
+    _verify_extension_3p_is_valid();
+    Domain adjacent_domain = this.substrands.last;
+    Extension ext = Extension(
+      num_bases: num_bases,
+      display_length: display_length,
+      display_angle: display_angle,
+      is_5p: false,
+      adjacent_domain: adjacent_domain,
+    );
+    this.substrands.add(ext);
+    this.contains_extension = true;
+    return this;
+  }
+
+  void _verify_extension_3p_is_valid() {
+    if (substrands.length == 0) {
+      throw IllegalDesignError('Cannot add a 3\' extension when there are no domains. '
+          'Did you mean to create a 5\' extension?');
+    }
+    if (this.most_recently_added_substrand_is_loopout()) {
+      throw IllegalDesignError('Cannot add a 3\' extension immediately after a loopout.');
+    }
+    if (this._most_recently_added_substrand_is_extension_3p()) {
+      throw IllegalDesignError('Cannot add a 3\' extension after another 3\' extension.');
+    }
+    this._verify_strand_is_not_circular();
+  }
+
+  void _verify_strand_is_not_circular() {
+    if (this.circular) {
+      throw new IllegalDesignError('Cannot add an extension to a circular strand.');
+    }
+  }
+
+  bool _most_recently_added_substrand_is_extension() => substrands.last is Extension;
+
+  bool _most_recently_added_substrand_is_extension_3p() =>
+      substrands.length > 1 && this._most_recently_added_substrand_is_extension();
+
+  StrandMaker extension_5p(int num_bases,
+      {double display_length = constants.default_display_length,
+      double display_angle = constants.default_display_angle}) {
+    this._verify_extension_5p_is_valid();
+    Extension ext = Extension(
+      num_bases: num_bases,
+      display_length: display_length,
+      display_angle: display_angle,
+      is_5p: true,
+    );
+    this.substrands.add(ext);
+    this.contains_extension = true;
+    return this;
+  }
+
+  void _verify_extension_5p_is_valid() {
+    if (substrands.length > 0) {
+      throw IllegalDesignError('Cannot add a 5\' extension when there are already domains. '
+          'Did you mean to create a 3\' extension?');
+    }
+    if (this.circular) {
+      throw IllegalDesignError('cannot have extensions on a circular strand');
+    }
+  }
+
   StrandMaker as_circular() {
+    if (this.contains_extension) {
+      throw IllegalDesignError('cannot have extensions on a circular strand');
+    }
     this.circular = true;
     return this;
   }
@@ -171,7 +255,21 @@ class StrandMaker {
   }
 
   StrandMaker with_domain_sequence(String sequence) {
-    this.domain_dna_sequence = sequence;
+    if (most_recently_added_substrand_is_loopout()) {
+      this.loopout_dna_sequence = sequence;
+      return this;
+    }
+    int idx_last = this.substrands.length - 1;
+    Substrand substrand = this.substrands[idx_last];
+    Substrand new_substrand;
+    if (substrand is Domain) {
+      new_substrand = substrand.rebuild((b) => b..dna_sequence = sequence);
+    } else if (substrand is Extension) {
+      new_substrand = substrand.rebuild((b) => b..dna_sequence = sequence);
+    } else {
+      throw AssertionError('substrand should be Domain or Extension, but is ${substrand}');
+    }
+    substrands[idx_last] = new_substrand;
     return this;
   }
 
@@ -188,6 +286,10 @@ class StrandMaker {
       new_substrand = substrand.rebuild((b) => b..label = label);
     } else if (substrand is Loopout) {
       new_substrand = substrand.rebuild((b) => b..label = label);
+    } else if (substrand is Extension) {
+      new_substrand = substrand.rebuild((b) => b..label = label);
+    } else {
+      throw AssertionError('substrand should be Domain, Loopout, or Extension, but is ${substrand}');
     }
     substrands[idx_last] = new_substrand;
     return this;
@@ -201,6 +303,10 @@ class StrandMaker {
       new_substrand = substrand.rebuild((b) => b..name = name);
     } else if (substrand is Loopout) {
       new_substrand = substrand.rebuild((b) => b..name = name);
+    } else if (substrand is Extension) {
+      new_substrand = substrand.rebuild((b) => b..name = name);
+    } else {
+      throw AssertionError('substrand should be Domain, Loopout, or Extension, but is ${substrand}');
     }
     substrands[idx_last] = new_substrand;
     return this;
@@ -249,7 +355,7 @@ class StrandMaker {
 
     var last_ss = substrands.last;
 
-    if (last_substrand_was_loopout()) {
+    if (most_recently_added_substrand_is_loopout()) {
       throw ArgumentError('can only create a deletion on a bound Domain, '
           'not a ${last_ss.runtimeType}; be sure only to call with_deletions immediately '
           'after a call to move, to, or update_to');
@@ -281,7 +387,7 @@ class StrandMaker {
 
     var last_ss = substrands.last;
 
-    if (last_substrand_was_loopout()) {
+    if (most_recently_added_substrand_is_loopout()) {
       throw ArgumentError('can only create an insertion on a bound Domain, '
           'not a ${last_ss.runtimeType}; be sure only to call with_insertions immediately '
           'after a call to move, to, or update_to');

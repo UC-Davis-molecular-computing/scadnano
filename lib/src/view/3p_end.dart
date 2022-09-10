@@ -23,6 +23,7 @@ mixin End3PrimeProps on UiProps implements EndEitherPrimeProps {
   Color color;
   bool forward;
   String id;
+  String transform;
 }
 
 
@@ -44,7 +45,7 @@ class End3PrimeComponent extends UiComponent2<End3PrimeProps> {
           '${pos.x - 0.9 * scale},${pos.y - scale}';
     }
 
-    return (Dom.polygon()
+    var poly_props = Dom.polygon()
       ..onPointerDown = props.on_pointer_down
       ..onPointerUp = props.on_pointer_up
       ..onMouseUp = props.on_mouse_up
@@ -54,6 +55,10 @@ class End3PrimeComponent extends UiComponent2<End3PrimeProps> {
       ..className = props.classname
       ..points = points
       ..id = props.id
-      ..fill = props.color.toHexColor().toCssString())();
+      ..fill = props.color.toHexColor().toCssString();
+    if (props.transform != null) {
+      poly_props = poly_props..transform = props.transform;
+    }
+    return poly_props();
   }
 }
