@@ -88,7 +88,7 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
   /// See comments on fields below for explanation of their meaning.
   factory Dialog(
       {String title,
-      DialogType type = DialogType.create_new_helix_group,
+      DialogType type,
       ProcessCallback process_saved_response = identity_function,
       Iterable<DialogItem> items,
       Iterable<Iterable<int>> mutually_exclusive_checkbox_groups = const [],

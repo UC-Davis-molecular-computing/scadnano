@@ -290,7 +290,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
         items: items,
         process_saved_response: (saved_items) {
           for (var saved_item in saved_items) {
-            if (!items.contains(saved_item)) {
+            if (!items.any((e) => e.label == saved_item.label)) {
               return items.build();
             }
           }
