@@ -320,7 +320,7 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
   Future<void> dialog_helix_set_grid_position() async {
     var grid_position = helix.grid_position ?? GridPosition(0, 0);
 
-    var dialog = Dialog(title: 'set helix grid position', items: [
+    var dialog = Dialog(title: 'set helix grid position', type: DialogType.set_helix_grid_position, items: [
       DialogInteger(label: 'h', value: grid_position.h),
       DialogInteger(label: 'v', value: grid_position.v),
     ]);
@@ -337,7 +337,7 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
   Future<void> dialog_helix_set_position() async {
     var position = helix.position ?? Position3D();
 
-    var dialog = Dialog(title: 'set helix position', items: [
+    var dialog = Dialog(title: 'set helix position', type: DialogType.set_helix_position, items: [
       DialogFloat(label: 'x', value: position.x),
       DialogFloat(label: 'y', value: position.y),
       DialogFloat(label: 'z', value: position.z),
@@ -371,7 +371,7 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
     var existing_group_name = helix.group ?? Position3D();
     other_group_names.remove(existing_group_name);
 
-    var dialog = Dialog(title: 'move selected helices to group', items: [
+    var dialog = Dialog(title: 'move selected helices to group', type: DialogType.move_selected_helices_to_group, items: [
       DialogRadio(options: other_group_names, radio: false, label: 'new group'),
     ]);
 

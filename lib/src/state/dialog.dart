@@ -40,6 +40,11 @@ class DialogType extends EnumClass {
   static const DialogType set_helix_index = _$set_helix_index;
   static const DialogType set_helix_roll_degrees = _$set_helix_roll_degrees;
   static const DialogType set_helix_tick_marks = _$set_helix_tick_marks;
+  static const DialogType set_helix_grid_position = _$set_helix_grid_position;
+  static const DialogType set_helix_position = _$set_helix_position;
+  static const DialogType move_selected_helices_to_group = _$move_selected_helices_to_group;
+  static const DialogType export_dna_sequences = _$export_dna_sequences;
+  static const DialogType load_example_dna_design = _$load_example_dna_design;
 
   static const DialogType add_extension = _$add_extension;
   static const DialogType set_extension_name = _$set_extension_name;

@@ -1189,7 +1189,7 @@ However, it may be less stable than the main site.'''
         DialogCheckbox(label: 'column-major order (uncheck for row-major order)', value: true);
     items[idx_strand_order_str] = DialogRadio(label: 'strand part to sort by', options: sort_options);
 
-    var dialog = Dialog(title: 'export DNA sequences', items: items, disable_when_any_checkboxes_off: {
+    var dialog = Dialog(title: 'export DNA sequences', type: DialogType.export_dna_sequences, items: items, disable_when_any_checkboxes_off: {
       idx_column_major: [idx_sort],
       idx_strand_order_str: [idx_sort]
     });
@@ -1219,7 +1219,7 @@ However, it may be less stable than the main site.'''
   }
 
   Future<void> load_example_dialog() async {
-    var dialog = Dialog(title: 'Load example DNA design', items: [
+    var dialog = Dialog(title: 'Load example DNA design', type: DialogType.load_example_dna_design, items: [
       DialogRadio(
         label: 'designs',
         options: props.example_designs.filenames,
