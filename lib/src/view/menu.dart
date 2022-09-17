@@ -933,8 +933,13 @@ In a large design, this can slow down the performance, so uncheck it when not in
         ..value = props.disable_png_caching_dna_sequences
         ..display = 'Disable PNG caching of DNA sequences'
         ..tooltip = '''\
-When selected, PNG caching of DNA sequences is disabled. This can be useful when debugging.
-        '''
+DNA sequences are displayed as SVG (scaled vector graphics), which slow down the program
+significantly when zoomed far out on a large design and hundreds or thousands of DNA bases 
+are displayed simultaneously. To prevent this, the image of DNA sequences is converted 
+to a PNG image when zoomed out sufficiently far, which is much faster to display.
+
+Select this option to disable this PNG caching of DNA sequences. This can be useful when 
+debugging, but be warned that it will be very slow to render a large number of DNA bases.'''
         ..name = 'disable-png-caching-dna-sequences'
         ..onChange = (_) {
           props.dispatch(actions.DisablePngCachingDnaSequencesSet(!props.disable_png_caching_dna_sequences));
