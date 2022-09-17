@@ -57,6 +57,7 @@ class DesignDialogFormComponent
         var dialog_type = new_props.dialog.type;
         return newState()
           ..current_responses = prev_state.saved_responses.containsKey(dialog_type)
+            && new_props.dialog.use_saved_response
               ? new_props.dialog.process_saved_response(prev_state.saved_responses[dialog_type])
               : new_props.dialog.items
           ..dialog_type = new_props.dialog.type

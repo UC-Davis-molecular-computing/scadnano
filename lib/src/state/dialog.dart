@@ -90,6 +90,7 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
       {String title,
       DialogType type,
       ProcessCallback process_saved_response = identity_function,
+      bool use_saved_response = true,
       Iterable<DialogItem> items,
       Iterable<Iterable<int>> mutually_exclusive_checkbox_groups = const [],
       Iterable<int> disable = const {},
@@ -127,6 +128,7 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
       ..title = title
       ..type = type
       ..process_saved_response = process_saved_response
+      ..use_saved_response = use_saved_response
       ..items.replace(items)
       ..disable.replace(disable)
       ..mutually_exclusive_checkbox_groups.replace(mutually_exclusive_checkbox_groups_half_built)
@@ -144,6 +146,8 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
   @nullable
   @BuiltValueField(serialize: false, compare: false)
   ProcessCallback get process_saved_response;
+
+  bool get use_saved_response;
 
   BuiltList<DialogItem> get items;
 

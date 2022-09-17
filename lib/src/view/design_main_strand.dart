@@ -552,12 +552,9 @@ after:
     items[num_bases_idx] = DialogInteger(
         label: 'number of bases', value: 5, tooltip: 'number of bases to include in this extension');
 
-    var dialog = Dialog(title: 'add extension', items: items, type: DialogType.add_extension, process_saved_response: (saved_items) {
-      // override saved dialog items if current extension options do not match the saved extension options
-      if ((saved_items[extension_end_idx] as DialogRadio).options.length != options.length)
-        return items.build();
-      return saved_items;
-    });
+    var dialog = Dialog(
+      title: 'add extension', items: items, type: DialogType.add_extension, use_saved_response: false
+    );
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
