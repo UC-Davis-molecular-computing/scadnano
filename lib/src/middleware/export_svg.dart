@@ -14,9 +14,14 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
     var dna_sequence_png_uri = ui_state.dna_sequence_png_uri;
     var is_zoom_above_threshold = ui_state.is_zoom_above_threshold;
     var disable_png_cache_until_action_completes = ui_state.disable_png_cache_until_action_completes;
+    var disable_png_caching_dna_sequences = ui_state.disable_png_caching_dna_sequences;
 
-    bool using_png_dna_sequence =
-        util.use_png(dna_sequence_png_uri, is_zoom_above_threshold, disable_png_cache_until_action_completes);
+    bool using_png_dna_sequence = util.use_png(
+      dna_sequence_png_uri,
+      is_zoom_above_threshold,
+      disable_png_cache_until_action_completes,
+      disable_png_caching_dna_sequences
+    );
 
     // If main needs to be exported, then the png needs to be disabled if currently being used.
     bool need_to_disable_png = (action.type == actions.ExportSvgType.main) && using_png_dna_sequence;

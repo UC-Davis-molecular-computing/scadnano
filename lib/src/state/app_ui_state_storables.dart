@@ -105,6 +105,8 @@ abstract class AppUIStateStorables
   @nullable
   int get slice_bar_offset;
 
+  bool get disable_png_caching_dna_sequences;
+
   static void _initializeBuilder(AppUIStateStorablesBuilder b) {
     // This ensures that even if these keys are not in localStorage (e.g., due to upgrading),
     // then they will be populated with a default value instead of raising an exception.
@@ -148,6 +150,7 @@ abstract class AppUIStateStorables
     b.displayed_group_name = constants.default_group_name;
     b.show_slice_bar = false;
     b.slice_bar_offset = null;
+    b.disable_png_caching_dna_sequences = false;
     b.local_storage_design_choice = LocalStorageDesignChoice().toBuilder();
     b.clear_helix_selection_when_loading_new_design = false;
     b.show_mouseover_data = false;

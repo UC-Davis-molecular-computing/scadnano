@@ -3978,6 +3978,26 @@ abstract class SliceBarOffsetSet
   static Serializer<SliceBarOffsetSet> get serializer => _$sliceBarOffsetSetSerializer;
 }
 
+abstract class DisablePngCachingDnaSequencesSet
+    with BuiltJsonSerializable
+    implements
+        Action,
+        Built<DisablePngCachingDnaSequencesSet, DisablePngCachingDnaSequencesSetBuilder> {
+  bool get disable_png_caching_dna_sequences;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DisablePngCachingDnaSequencesSet(bool disable_png_caching_dna_sequences) =>
+      DisablePngCachingDnaSequencesSet.from((b) => b..disable_png_caching_dna_sequences = disable_png_caching_dna_sequences);
+  
+  factory DisablePngCachingDnaSequencesSet.from(
+          [void Function(DisablePngCachingDnaSequencesSetBuilder) updates]) = _$DisablePngCachingDnaSequencesSet;
+  
+  DisablePngCachingDnaSequencesSet._();
+
+  static Serializer<DisablePngCachingDnaSequencesSet> get serializer =>
+      _$disablePngCachingDnaSequencesSetSerializer;
+}
+
 abstract class SliceBarMoveStart
     with BuiltJsonSerializable
     implements Action, Built<SliceBarMoveStart, SliceBarMoveStartBuilder> {

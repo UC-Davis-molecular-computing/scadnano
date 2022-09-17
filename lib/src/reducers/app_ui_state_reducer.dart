@@ -199,6 +199,9 @@ bool show_slice_bar_reducer(bool _, actions.ShowSliceBarSet action) => action.sh
 
 int slice_bar_offset_set_reducer(int _, actions.SliceBarOffsetSet action) => action.offset;
 
+bool disable_png_caching_dna_sequences_reducer(bool _, actions.DisablePngCachingDnaSequencesSet action) =>
+    action.disable_png_caching_dna_sequences;
+
 bool display_base_offsets_of_major_ticks_reducer(bool _, actions.DisplayMajorTicksOffsetsSet action) =>
     action.show;
 
@@ -439,6 +442,8 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
         storables.show_slice_bar, action)
     ..slice_bar_offset = TypedReducer<int, actions.SliceBarOffsetSet>(slice_bar_offset_set_reducer)(
         storables.slice_bar_offset, action)
+    ..disable_png_caching_dna_sequences = TypedReducer<bool, actions.DisablePngCachingDnaSequencesSet>(
+        disable_png_caching_dna_sequences_reducer)(storables.disable_png_caching_dna_sequences, action)
     ..local_storage_design_choice = TypedReducer<LocalStorageDesignChoice,
         actions.LocalStorageDesignChoiceSet>(local_storage_design_choice_reducer)(
         storables.local_storage_design_choice, action).toBuilder()

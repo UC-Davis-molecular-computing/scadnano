@@ -326,6 +326,7 @@ part 'serializers.g.dart';
   SetDisplayMajorTickWidths,
   SetDisplayMajorTickWidthsAllHelices,
   SliceBarOffsetSet,
+  DisablePngCachingDnaSequencesSet,
   SliceBarMoveStart,
   SliceBarMoveStop,
   ShowSliceBarSet,

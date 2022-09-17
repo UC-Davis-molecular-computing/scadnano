@@ -32,6 +32,7 @@ mixin DesignMainDNASequencesProps on UiProps {
   actions.Action disable_png_cache_until_action_completes;
   bool only_display_selected_helices;
   BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
+  bool disable_png_caching_dna_sequences;
 }
 
 class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequencesProps> with PureComponent {
@@ -52,7 +53,7 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
   @override
   render() {
     bool should_use_png_dna_sequence = use_png(props.dna_sequence_png_uri, props.is_zoom_above_threshold,
-        props.disable_png_cache_until_action_completes);
+        props.disable_png_cache_until_action_completes, props.disable_png_caching_dna_sequences);
 
     if (should_use_png_dna_sequence) {
       // DNA sequence png.

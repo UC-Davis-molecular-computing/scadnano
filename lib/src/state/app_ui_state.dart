@@ -215,6 +215,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   int get slice_bar_offset => storables.slice_bar_offset;
 
+  bool get disable_png_caching_dna_sequences => storables.disable_png_caching_dna_sequences;
+
   bool get show_mouseover_data => storables.show_mouseover_data;
 
   static void _initializeBuilder(AppUIStateBuilder b) {

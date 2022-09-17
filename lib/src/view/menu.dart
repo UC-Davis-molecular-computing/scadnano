@@ -81,6 +81,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..show_loopout_extension_length = state.ui_state.show_loopout_extension_length
       ..show_slice_bar = state.ui_state.show_slice_bar
       ..show_mouseover_data = state.ui_state.show_mouseover_data
+      ..disable_png_caching_dna_sequences = state.ui_state.disable_png_caching_dna_sequences
       ..local_storage_design_choice = state.ui_state.local_storage_design_choice
       ..clear_helix_selection_when_loading_new_design =
           state.ui_state.clear_helix_selection_when_loading_new_design
@@ -134,6 +135,7 @@ mixin MenuPropsMixin on UiProps {
   bool show_loopout_extension_length;
   bool show_slice_bar;
   bool show_mouseover_data;
+  bool disable_png_caching_dna_sequences;
   bool default_crossover_type_scaffold_for_setting_helix_rolls;
   bool default_crossover_type_staple_for_setting_helix_rolls;
   LocalStorageDesignChoice local_storage_design_choice;
@@ -926,7 +928,18 @@ In a large design, this can slow down the performance, so uncheck it when not in
         ..onChange = (_) {
           props.dispatch(actions.ShowMouseoverDataSet(!props.show_mouseover_data));
         }
-        ..key = 'show-mouseover-data')()
+        ..key = 'show-mouseover-data')(),
+        (MenuBoolean()
+        ..value = props.disable_png_caching_dna_sequences
+        ..display = 'Disable PNG caching of DNA sequences'
+        ..tooltip = '''\
+When selected, PNG caching of DNA sequences is disabled. This can be useful when debugging.
+        '''
+        ..name = 'disable-png-caching-dna-sequences'
+        ..onChange = (_) {
+          props.dispatch(actions.DisablePngCachingDnaSequencesSet(!props.disable_png_caching_dna_sequences));
+        }
+        ..key = 'disable-png-caching-dna-sequences')()
     ];
   }
 
