@@ -77,7 +77,7 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) =>
       ..dna_sequence_png_vertical_offset =
       dna_sequence_vertical_offset_reducer(ui_state.dna_sequence_png_vertical_offset, action)
       ..disable_png_cache_until_action_completes =
-      disable_png_cache_until_action_completes(ui_state.disable_png_cache_until_action_completes, action)
+      disable_png_cache_until_action_completes(ui_state.export_svg_action_delayed_for_png_cache, action)
       ..is_zoom_above_threshold = is_zoom_above_threshold_reducer(ui_state.is_zoom_above_threshold, action));
 
 bool helix_change_apply_to_all_reducer(bool helix_change_apply_to_all, action) {

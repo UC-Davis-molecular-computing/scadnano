@@ -7,7 +7,7 @@ import 'package:built_value/built_value.dart';
 import 'package:scadnano/src/state/design_side_rotation_data.dart';
 import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/copy_info.dart';
-import '../actions/actions.dart';
+import '../actions/actions.dart' as actions;
 import '../state/local_storage_design_choice.dart';
 
 import 'app_ui_state_storables.dart';
@@ -115,7 +115,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   /// Otherwise, disable png-caching (if a png would otherwise be used)
   /// until action is dispatched.
   @nullable
-  Action get disable_png_cache_until_action_completes;
+  actions.ExportSvg get export_svg_action_delayed_for_png_cache;
 
   /// PNG image should be used (if available) if false.
   bool get is_zoom_above_threshold;

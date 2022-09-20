@@ -29,7 +29,7 @@ mixin DesignMainDNASequencesProps on UiProps {
   num dna_sequence_png_horizontal_offset;
   num dna_sequence_png_vertical_offset;
   bool is_zoom_above_threshold;
-  actions.Action disable_png_cache_until_action_completes;
+  actions.ExportSvg export_svg_action_delayed_for_png_cache;
   bool only_display_selected_helices;
   BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
   bool disable_png_caching_dna_sequences;
@@ -40,7 +40,7 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
   /// If this prop is not null, then it dispatches the prop action before disabling it.
   @override
   void componentDidUpdate(Map prevProps, Map prevState, [snapshot]) {
-    var action_to_complete = props.disable_png_cache_until_action_completes;
+    var action_to_complete = props.export_svg_action_delayed_for_png_cache;
 
     if (action_to_complete != null) {
       app.dispatch(action_to_complete);
@@ -53,7 +53,7 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
   @override
   render() {
     bool should_use_png_dna_sequence = use_png(props.dna_sequence_png_uri, props.is_zoom_above_threshold,
-        props.disable_png_cache_until_action_completes, props.disable_png_caching_dna_sequences);
+        props.export_svg_action_delayed_for_png_cache, props.disable_png_caching_dna_sequences);
 
     if (should_use_png_dna_sequence) {
       // DNA sequence png.

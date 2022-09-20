@@ -13,13 +13,13 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
     var ui_state = store.state.ui_state;
     var dna_sequence_png_uri = ui_state.dna_sequence_png_uri;
     var is_zoom_above_threshold = ui_state.is_zoom_above_threshold;
-    var disable_png_cache_until_action_completes = ui_state.disable_png_cache_until_action_completes;
+    var export_svg_action_delayed_for_png_cache = ui_state.export_svg_action_delayed_for_png_cache;
     var disable_png_caching_dna_sequences = ui_state.disable_png_caching_dna_sequences;
 
     bool using_png_dna_sequence = util.use_png(
       dna_sequence_png_uri,
       is_zoom_above_threshold,
-      disable_png_cache_until_action_completes,
+      export_svg_action_delayed_for_png_cache,
       disable_png_caching_dna_sequences
     );
 
