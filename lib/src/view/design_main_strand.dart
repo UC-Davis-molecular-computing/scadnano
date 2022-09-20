@@ -520,8 +520,7 @@ after:
       ContextMenuItem(
           title: 'add extension',
           on_click: () => app.disable_keyboard_shortcuts_while(() => ask_for_add_extension(strand)),
-          disabled: strand.has_5p_extension && strand.has_3p_extension
-      ),
+          disabled: strand.has_5p_extension && strand.has_3p_extension),
     ];
 
     return items;
@@ -553,7 +552,9 @@ after:
     items[num_bases_idx] = DialogInteger(
         label: 'number of bases', value: 5, tooltip: 'number of bases to include in this extension');
 
-    var dialog = Dialog(title: 'add extension', items: items);
+    var dialog = Dialog(
+      title: 'add extension', items: items, type: DialogType.add_extension, use_saved_response: false
+    );
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
@@ -707,14 +708,18 @@ PAGEHPLC : Dual PAGE & HPLC
         label: "custom purification",
         value: (items[purification_options_idx].value != "" ? "" : custom_purification_value(all_strands)));
 
-    var dialog =
-        Dialog(title: "assign scale/purification IDT fields", items: items, disable_when_any_checkboxes_off: {
-      scale_custom_idx: [custom_scale_check_idx],
-      purification_custom_idx: [custom_purification_check_idx]
-    }, disable_when_any_checkboxes_on: {
-      scale_options_idx: [custom_scale_check_idx],
-      purification_options_idx: [custom_purification_check_idx]
-    });
+    var dialog = Dialog(
+        title: "assign scale/purification IDT fields",
+        type: DialogType.assign_scale_purification,
+        items: items,
+        disable_when_any_checkboxes_off: {
+          scale_custom_idx: [custom_scale_check_idx],
+          purification_custom_idx: [custom_purification_check_idx]
+        },
+        disable_when_any_checkboxes_on: {
+          scale_options_idx: [custom_scale_check_idx],
+          purification_options_idx: [custom_purification_check_idx]
+        });
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
     String scale, purification;
@@ -763,7 +768,10 @@ PAGEHPLC : Dual PAGE & HPLC
         value: props.strand.idt?.well != null ? props.strand.idt.well : "",
         tooltip: all_strands.length > 1 ? "Only individual strands can have a well assigned." : "");
     var dialog = Dialog(
-        title: "assign plate/well IDT fields", items: items, disable: {if (all_strands.length > 1) well_idx});
+        title: "assign plate/well IDT fields",
+        type: DialogType.assign_plate_well,
+        items: items,
+        disable: {if (all_strands.length > 1) well_idx});
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
@@ -885,11 +893,15 @@ PAGEHPLC : Dual PAGE & HPLC
     items[index_of_dna_base_idx] = DialogInteger(label: 'index of DNA base', value: strand_dna_idx);
 
     // don't allow to modify index of DNA base when 3' or 5' is selected
-    var dialog = Dialog(title: 'add modification', items: items, disable_when_any_radio_button_selected: {
-      index_of_dna_base_idx: {
-        modification_type_idx: ["3'", "5'"]
-      },
-    });
+    var dialog = Dialog(
+        title: 'add modification',
+        type: DialogType.add_modification,
+        items: items,
+        disable_when_any_radio_button_selected: {
+          index_of_dna_base_idx: {
+            modification_type_idx: ["3'", "5'"]
+          },
+        });
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
@@ -964,7 +976,7 @@ PAGEHPLC : Dual PAGE & HPLC
     int name_idx = 0;
     var items = List<DialogItem>.filled(1, null);
     items[name_idx] = DialogText(label: 'name', value: props.strand.name ?? '');
-    var dialog = Dialog(title: 'set strand name', items: items);
+    var dialog = Dialog(title: 'set strand name', type: DialogType.set_strand_name, items: items);
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
@@ -977,6 +989,7 @@ PAGEHPLC : Dual PAGE & HPLC
   Future<void> ask_for_substrand_name(Substrand substrand) async {
     int name_idx = 0;
     var items = List<DialogItem>.filled(1, null);
+
     items[name_idx] = DialogText(label: 'name', value: substrand.name ?? '');
     var dialog = Dialog(title: 'set ${substrand.type_description()} name', items: items);
 
@@ -1080,13 +1093,18 @@ Future<void> ask_for_assign_dna_sequence(Strand strand, DNAAssignOptions options
       label: 'Information about sequence variants',
       link: 'https://scadnano-python-package.readthedocs.io/en/latest/#scadnano.M13Variant');
 
-  var dialog = Dialog(title: 'assign DNA sequence', items: items, disable_when_any_checkboxes_on: {
-    idx_sequence: [idx_use_predefined_dna_sequence]
-  }, disable_when_any_checkboxes_off: {
-    idx_predefined_sequence_name: [idx_use_predefined_dna_sequence],
-    idx_rotation: [idx_use_predefined_dna_sequence],
-    idx_disable_change_sequence_bound_strand: [idx_assign_complements],
-  });
+  var dialog = Dialog(
+      title: 'assign DNA sequence',
+      type: DialogType.assign_dna_sequence,
+      items: items,
+      disable_when_any_checkboxes_on: {
+        idx_sequence: [idx_use_predefined_dna_sequence]
+      },
+      disable_when_any_checkboxes_off: {
+        idx_predefined_sequence_name: [idx_use_predefined_dna_sequence],
+        idx_rotation: [idx_use_predefined_dna_sequence],
+        idx_disable_change_sequence_bound_strand: [idx_assign_complements],
+      });
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 
@@ -1125,7 +1143,7 @@ Future<void> ask_for_assign_dna_sequence(Strand strand, DNAAssignOptions options
 }
 
 Future<void> ask_for_remove_dna_sequence(Strand strand, BuiltSet<Strand> selected_strands) async {
-  var dialog = Dialog(title: 'remove DNA sequence', items: [
+  var dialog = Dialog(title: 'remove DNA sequence', type: DialogType.remove_dna_sequence, items: [
     DialogCheckbox(label: 'remove from bound strands', value: true),
     DialogCheckbox(label: 'remove from all strands', value: false),
   ]);
@@ -1144,7 +1162,7 @@ Future<void> ask_for_remove_dna_sequence(Strand strand, BuiltSet<Strand> selecte
 }
 
 Future<void> ask_for_color(Strand strand, BuiltSet<Strand> selected_strands) async {
-  var dialog = Dialog(title: 'set color', items: [
+  var dialog = Dialog(title: 'set color', type: DialogType.set_color, items: [
     DialogText(
       label: 'color',
 //      label: 'color (hex rgb, e.g., "#00ff00")',

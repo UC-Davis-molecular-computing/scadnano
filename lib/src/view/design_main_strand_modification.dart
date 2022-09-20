@@ -165,7 +165,7 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
         DialogInteger(label: 'connector length', value: props.modification.connector_length);
     // items[id_idx] = DialogText(label: 'id', value: props.modification.id);
 
-    var dialog = Dialog(title: 'edit modification', items: items);
+    var dialog = Dialog(title: 'edit modification', type: DialogType.edit_modification, items: items);
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 

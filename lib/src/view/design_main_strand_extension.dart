@@ -197,7 +197,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     int name_idx = 0;
     var items = List<DialogItem>.filled(1, null);
     items[name_idx] = DialogText(label: 'name', value: props.ext.name ?? '');
-    var dialog = Dialog(title: 'set extension name', items: items);
+    var dialog = Dialog(title: 'set extension name', items: items, type: DialogType.set_extension_name);
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
@@ -218,7 +218,10 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
         DialogFloat(label: 'display length (nm)', value: props.ext.display_length ?? '');
     items[display_angle_idx] =
         DialogFloat(label: 'display angle (degrees)', value: props.ext.display_angle ?? '');
-    var dialog = Dialog(title: 'set extension display length/angle', items: items);
+    var dialog = Dialog(
+        title: 'set extension display length/angle',
+        items: items,
+        type: DialogType.set_extension_display_length_angle);
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
@@ -228,14 +231,11 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     if (display_length <= 0) {
       window.alert('display_length must be positive, but is ${display_length}');
     } else {
-      actions.UndoableAction action =
-      actions.ExtensionDisplayLengthAngleSet(ext: props.ext,
-          display_length: display_length,
-          display_angle: display_angle);
+      actions.UndoableAction action = actions.ExtensionDisplayLengthAngleSet(
+          ext: props.ext, display_length: display_length, display_angle: display_angle);
       app.dispatch(action);
     }
   }
-
 }
 
 tooltip_text(Extension ext) =>
