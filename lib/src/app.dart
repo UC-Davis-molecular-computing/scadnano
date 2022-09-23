@@ -51,7 +51,7 @@ class App {
   AppState get state => store.state;
   View view;
 
-  Store store;
+  Store<AppState> store;
 
   // for optimization; too slow to store in Model since it's updated 60 times/sec
   Store<SelectionRope> store_selection_rope;
