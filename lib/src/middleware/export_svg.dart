@@ -16,19 +16,15 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
     var export_svg_action_delayed_for_png_cache = ui_state.export_svg_action_delayed_for_png_cache;
     var disable_png_caching_dna_sequences = ui_state.disable_png_caching_dna_sequences;
 
-    bool using_png_dna_sequence = util.use_png(
-      dna_sequence_png_uri,
-      is_zoom_above_threshold,
-      export_svg_action_delayed_for_png_cache,
-      disable_png_caching_dna_sequences
-    );
+    bool using_png_dna_sequence = util.use_png(dna_sequence_png_uri, is_zoom_above_threshold,
+        export_svg_action_delayed_for_png_cache, disable_png_caching_dna_sequences);
 
     // If main needs to be exported, then the png needs to be disabled if currently being used.
     bool need_to_disable_png = (action.type == actions.ExportSvgType.main) && using_png_dna_sequence;
 
     if (need_to_disable_png) {
       // Disables the png
-      store.dispatch(actions.SetDisablePngCacheUntilActionCompletes(action));
+      store.dispatch(actions.SetExportSvgActionDelayedForPngCache(action));
 
       // Note that the ExportSvgType action cannot be dispatched in this if branch because we need to
       // let this middleware resolve so that React can render the DNA sequences as an SVG.

@@ -247,7 +247,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
     b.dna_sequence_png_uri = null;
     b.dna_sequence_png_horizontal_offset = 0;
     b.dna_sequence_png_vertical_offset = 0;
-    b.disable_png_cache_until_action_completes = null;
+    b.export_svg_action_delayed_for_png_cache = null;
     b.is_zoom_above_threshold = false;
     b.storables.replace(DEFAULT_AppUIStateStorable);
   }

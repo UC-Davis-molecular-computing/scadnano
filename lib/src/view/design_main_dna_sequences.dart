@@ -46,7 +46,7 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
       app.dispatch(action_to_complete);
 
       // After exporting svg, re-enable png caching.
-      app.dispatch(actions.SetDisablePngCacheUntilActionCompletes(null));
+      app.dispatch(actions.SetExportSvgActionDelayedForPngCache(null));
     }
   }
 
@@ -58,11 +58,10 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
     if (should_use_png_dna_sequence) {
       // DNA sequence png.
       return (Dom.g()
-            ..className = 'dna-sequences-main-view'
-            ..pointerEvents = 'none'
-            ..transform =
-                'translate(${props.dna_sequence_png_horizontal_offset}, ${props.dna_sequence_png_vertical_offset})'
-          )(
+        ..className = 'dna-sequences-main-view'
+        ..pointerEvents = 'none'
+        ..transform =
+            'translate(${props.dna_sequence_png_horizontal_offset}, ${props.dna_sequence_png_vertical_offset})')(
         (Dom.image()
           ..xlinkHref = props.dna_sequence_png_uri
           ..id = 'dna-sequences-main-view-png')(),
