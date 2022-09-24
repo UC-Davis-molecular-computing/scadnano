@@ -5553,11 +5553,11 @@ main() {
 
       Action action = ExportSvg(type: ExportSvgType.main);
 
-      AppState new_state = app_state_reducer(old_state, SetDisablePngCacheUntilActionCompletes(action));
+      AppState new_state = app_state_reducer(old_state, SetExportSvgActionDelayedForPngCache(action));
 
       expect(new_state.ui_state.export_svg_action_delayed_for_png_cache, action);
 
-      new_state = app_state_reducer(new_state, SetDisablePngCacheUntilActionCompletes(null));
+      new_state = app_state_reducer(new_state, SetExportSvgActionDelayedForPngCache(null));
       expect(new_state.ui_state.export_svg_action_delayed_for_png_cache, null);
     });
   });
