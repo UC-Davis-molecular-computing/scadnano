@@ -1497,10 +1497,11 @@ void svg_to_png_data() {
 /// and the zoom is not above threshold `is_zoom_above_threshold`,
 /// and there is no pending action `disable_png_cache_until_action_completes`.
 bool use_png(String dna_sequence_png_uri, bool is_zoom_above_threshold,
-    actions.Action disable_png_cache_until_action_completes) {
+    actions.ExportSvg export_svg_action_delayed_for_png_cache, bool disable_png_caching_dna_sequences) {
   return dna_sequence_png_uri != null &&
       !is_zoom_above_threshold &&
-      disable_png_cache_until_action_completes == null;
+      export_svg_action_delayed_for_png_cache == null &&
+      !disable_png_caching_dna_sequences;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

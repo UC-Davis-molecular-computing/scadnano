@@ -3921,27 +3921,27 @@ abstract class SetIsZoomAboveThreshold
   static Serializer<SetIsZoomAboveThreshold> get serializer => _$setIsZoomAboveThresholdSerializer;
 }
 
-abstract class SetDisablePngCacheUntilActionCompletes
+abstract class SetExportSvgActionDelayedForPngCache
     with BuiltJsonSerializable
     implements
         Action,
-        Built<SetDisablePngCacheUntilActionCompletes, SetDisablePngCacheUntilActionCompletesBuilder> {
+        Built<SetExportSvgActionDelayedForPngCache, SetExportSvgActionDelayedForPngCacheBuilder> {
   @nullable
-  Action get disable_png_cache_until_action_completes;
+  Action get export_svg_action_delayed_for_png_cache;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SetDisablePngCacheUntilActionCompletes(Action disable_png_cache_until_action_completes) =>
-      SetDisablePngCacheUntilActionCompletes.from(
-          (b) => b..disable_png_cache_until_action_completes = disable_png_cache_until_action_completes);
+  factory SetExportSvgActionDelayedForPngCache(Action export_svg_action_delayed_for_png_cache) =>
+      SetExportSvgActionDelayedForPngCache.from(
+          (b) => b..export_svg_action_delayed_for_png_cache = export_svg_action_delayed_for_png_cache);
 
-  factory SetDisablePngCacheUntilActionCompletes.from(
-          [void Function(SetDisablePngCacheUntilActionCompletesBuilder) updates]) =
-      _$SetDisablePngCacheUntilActionCompletes;
+  factory SetExportSvgActionDelayedForPngCache.from(
+          [void Function(SetExportSvgActionDelayedForPngCacheBuilder) updates]) =
+      _$SetExportSvgActionDelayedForPngCache;
 
-  SetDisablePngCacheUntilActionCompletes._();
+  SetExportSvgActionDelayedForPngCache._();
 
-  static Serializer<SetDisablePngCacheUntilActionCompletes> get serializer =>
-      _$setDisablePngCacheUntilActionCompletesSerializer;
+  static Serializer<SetExportSvgActionDelayedForPngCache> get serializer =>
+      _$setExportSvgActionDelayedForPngCacheSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3976,6 +3976,26 @@ abstract class SliceBarOffsetSet
   SliceBarOffsetSet._();
 
   static Serializer<SliceBarOffsetSet> get serializer => _$sliceBarOffsetSetSerializer;
+}
+
+abstract class DisablePngCachingDnaSequencesSet
+    with BuiltJsonSerializable
+    implements
+        Action,
+        Built<DisablePngCachingDnaSequencesSet, DisablePngCachingDnaSequencesSetBuilder> {
+  bool get disable_png_caching_dna_sequences;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DisablePngCachingDnaSequencesSet(bool disable_png_caching_dna_sequences) =>
+      DisablePngCachingDnaSequencesSet.from((b) => b..disable_png_caching_dna_sequences = disable_png_caching_dna_sequences);
+  
+  factory DisablePngCachingDnaSequencesSet.from(
+          [void Function(DisablePngCachingDnaSequencesSetBuilder) updates]) = _$DisablePngCachingDnaSequencesSet;
+  
+  DisablePngCachingDnaSequencesSet._();
+
+  static Serializer<DisablePngCachingDnaSequencesSet> get serializer =>
+      _$disablePngCachingDnaSequencesSetSerializer;
 }
 
 abstract class SliceBarMoveStart

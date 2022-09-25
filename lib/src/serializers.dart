@@ -308,7 +308,7 @@ part 'serializers.g.dart';
   SelectableModification3Prime,
   SelectableModificationInternal,
   LoadDnaSequenceImageUri,
-  SetDisablePngCacheUntilActionCompletes,
+  SetExportSvgActionDelayedForPngCache,
   SetIsZoomAboveThreshold,
   DNASequencePredefined,
   SetOnlyDisplaySelectedHelices,
@@ -326,6 +326,7 @@ part 'serializers.g.dart';
   SetDisplayMajorTickWidths,
   SetDisplayMajorTickWidthsAllHelices,
   SliceBarOffsetSet,
+  DisablePngCachingDnaSequencesSet,
   SliceBarMoveStart,
   SliceBarMoveStop,
   ShowSliceBarSet,
@@ -356,8 +357,7 @@ Serializers standard_serializers = (serializers.toBuilder()
             const FullType(int),
             const FullType(BuiltList, const [const FullType(String)])
           ]),
-          () => new MapBuilder<int, BuiltList<String>>())
-      )
+          () => new MapBuilder<int, BuiltList<String>>()))
     .build();
 
 //Serializers standard_serializers2 = (serializers.toBuilder()..addPlugin(new StandardJsonPlugin())).build();
