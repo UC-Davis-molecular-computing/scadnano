@@ -874,6 +874,7 @@ GridPosition position3d_to_grid_position(Position3D position, Grid grid, Geometr
 
 Position3D grid_position_to_position3d(GridPosition grid_position, Grid grid, Geometry geometry) {
   num x, y;
+
   if (grid == Grid.square) {
     x = grid_position.h * geometry.distance_between_helices_nm;
     y = grid_position.v * geometry.distance_between_helices_nm;
