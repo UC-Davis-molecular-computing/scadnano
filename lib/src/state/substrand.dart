@@ -6,7 +6,9 @@ abstract class Substrand implements JSONSerializable, StrandPart {
 
   bool is_loopout();
 
-  bool is_domain() => !this.is_loopout();
+  bool is_domain();
+
+  bool is_extension();
 
   String get dna_sequence;
 
@@ -19,4 +21,6 @@ abstract class Substrand implements JSONSerializable, StrandPart {
   Object get label;
 
   String type_description();
+
+  String get id;
 }

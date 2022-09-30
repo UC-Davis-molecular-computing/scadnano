@@ -5,6 +5,7 @@ import 'package:path/path.dart' as path;
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/domain.dart';
+import 'package:scadnano/src/state/extension.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/loopout.dart';
@@ -331,7 +332,8 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand> strands_
 
   for (var strand in strands_to_export) {
     List<Tuple2<OxdnaStrand, bool>> strand_domains = [];
-    for (var domain in strand.substrands) {
+    for (int ss_idx=0; ss_idx<strand.substrands.length; ss_idx++) {
+      var domain = strand.substrands[ss_idx];
       var ox_strand = OxdnaStrand();
       String seq = domain.dna_sequence;
       if (seq == null) {
@@ -414,6 +416,12 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand> strands_
           ox_strand.nucleotides.add(nuc);
         }
         strand_domains.add(Tuple2<OxdnaStrand, bool>(ox_strand, true));
+      } else if (domain is Extension) {
+        bool is_5p = ss_idx == 0;
+        var nucleotides = _compute_extension_nucleotides(
+            design: design, strand: strand, is_5p: is_5p, helix_vectors: helix_vectors, mod_map: mod_map);
+        ox_strand.nucleotides.addAll(nucleotides);
+        strand_domains.add(Tuple2<OxdnaStrand, bool>(ox_strand, false));
       } else {
         throw AssertionError('unreachable');
       }
@@ -449,6 +457,66 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand> strands_
   }
 
   return system;
+}
+
+List<OxdnaNucleotide> _compute_extension_nucleotides(
+    {Design design,
+    Strand strand,
+    bool is_5p,
+    Map<int, Tuple3<OxdnaVector, OxdnaVector, OxdnaVector>> helix_vectors,
+    Map<int, List<int>> mod_map}) {
+  var geometry = design.geometry;
+  var step_rot = -360 / geometry.bases_per_turn;
+
+  var adj_dom = is_5p ? strand.domains.first : strand.domains.last;
+  var adj_helix = design.helices[adj_dom.helix];
+  var offset = is_5p ? adj_dom.offset_5p : adj_dom.offset_3p; // offset of attached end of domain
+
+  var origin_forward_normal = helix_vectors[adj_dom.helix];
+  var origin_ = origin_forward_normal.item1;
+  var forward = origin_forward_normal.item2;
+  var normal = origin_forward_normal.item3;
+
+  if (!adj_dom.forward) {
+    normal = normal.rotate(-geometry.minor_groove_angle, forward);
+  }
+  // oxDNA will rotate our backbone vector by +- _GROOVE_GAMMA (20 degrees)
+  // we apply the opposite rotation so that we get the expected vector from scadnano in oxDNA
+  var groove_gamma_correction = adj_dom.forward ? _GROOVE_GAMMA : -_GROOVE_GAMMA;
+  normal = normal.rotate(groove_gamma_correction, forward).normalize();
+
+  // rotate normal by angle about the forward vector to get vector pointing at backbone at attached_offset
+  var mod = mod_map[adj_dom.helix][offset - adj_helix.min_offset];
+  var cen = origin_ + forward * (offset + mod) * geometry.rise_per_base_pair * NM_TO_OX_UNITS;
+  var norm = normal.rotate(step_rot * (offset + mod), forward);
+  // note oxDNA n vector points 3' to 5' opposite of scadnano forward vector
+  var forw = adj_dom.forward ? -forward : forward;
+  var ext = is_5p ? strand.substrands.first : strand.substrands.last;
+
+  var seq = ext.dna_sequence;
+  if (seq == null) {
+    seq = 'T' * ext.dna_length();
+  }
+  assert(seq.length == ext.dna_length());
+  if (is_5p) {
+    seq = seq.split('').reversed.join('');
+  }
+
+  var new_forw = norm;
+  var new_norm = forw;
+  List<OxdnaNucleotide> nucs = [];
+  for (int i = 0; i < seq.length; i++) {
+    String base = seq[i];
+    cen += norm;
+    var nuc = OxdnaNucleotide(cen, new_norm, new_forw, base);
+    nucs.add(nuc);
+  }
+
+  if (is_5p) {
+    nucs = List<OxdnaNucleotide>.from(nucs.reversed);
+  }
+
+  return nucs;
 }
 
 OxdnaVector get_normal_vector_to(OxdnaVector vec) {

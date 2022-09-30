@@ -76,7 +76,7 @@ abstract class Domain
       Iterable<Insertion> insertions,
       String dna_sequence,
       String strand_id,
-      bool is_scaffold,
+      bool is_scaffold = false,
       String name = null,
       Object label = null,
       bool is_first = false,
@@ -154,6 +154,7 @@ abstract class Domain
       is_scaffold: is_scaffold,
       substrand_is_first: is_first,
       substrand_is_last: is_last,
+      is_on_extension: false,
       substrand_id: id);
 
   @memoized
@@ -164,6 +165,7 @@ abstract class Domain
       is_scaffold: is_scaffold,
       substrand_is_first: is_first,
       substrand_is_last: is_last,
+      is_on_extension: false,
       substrand_id: id);
 
   @memoized
@@ -187,6 +189,8 @@ abstract class Domain
   bool is_domain() => true;
 
   bool is_loopout() => false;
+
+  bool is_extension() => false;
 
   DNAEnd get dnaend_5p => forward ? dnaend_start : dnaend_end;
 
@@ -237,7 +241,7 @@ abstract class Domain
   }
 
   static DomainBuilder from_json(Map<String, dynamic> json_map) {
-    var class_name = 'Substrand';
+    var class_name = 'Domain';
     var forward = util.mandatory_field(json_map, constants.forward_key, class_name,
         legacy_keys: constants.legacy_forward_keys);
     var helix = util.mandatory_field(json_map, constants.helix_idx_key, class_name);

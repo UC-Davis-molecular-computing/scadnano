@@ -1,4 +1,5 @@
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/extension.dart';
 import '../state/domain.dart';
 import '../state/design.dart';
 import '../state/loopout.dart';
@@ -144,7 +145,7 @@ String compute_dna_complement_from(Strand strand_to, Strand strand_from, bool er
   for (int ss_idx = 0; ss_idx < strand_to.substrands.length; ss_idx++) {
     Substrand substrand_to = strand_to.substrands[ss_idx];
     String substrand_to_dna_sequence;
-    if (substrand_to is Loopout) {
+    if (substrand_to is Loopout || substrand_to is Extension) {
       substrand_to_dna_sequence = constants.DNA_BASE_WILDCARD * substrand_to.dna_length();
     } else if (substrand_to is Domain) {
       int helix_idx = substrand_to.helix;
@@ -213,9 +214,9 @@ String compute_dna_complement_from(Strand strand_to, Strand strand_from, bool er
         new_dna_sequence =
             util.merge_wildcards(strand_to.dna_sequence, new_dna_sequence, constants.DNA_BASE_WILDCARD);
       } on ArgumentError {
-        Domain ss_to = strand_to.first_domain;
-        Domain ss_from = strand_from.first_domain;
-        var msg = 'strand starting at helix ${ss_to.helix}, offset ${ss_to.offset_5p} has '
+        Domain dom_to = strand_to.first_domain;
+        Domain dom_from = strand_from.first_domain;
+        var msg = 'strand starting at helix ${dom_to.helix}, offset ${dom_to.offset_5p} has '
             'length '
             '${strand_to.dna_length} and already has a partial DNA sequence assignment of length '
             '${strand_to.dna_sequence.length}, which is \n'
@@ -223,7 +224,7 @@ String compute_dna_complement_from(Strand strand_to, Strand strand_from, bool er
             'but you tried to assign sequence of length ${new_dna_sequence.length} to it, which '
             'is\n${new_dna_sequence} (this assignment was indirect, since you assigned directly '
             'to a strand bound to this one). This occurred while directly assigning a DNA '
-            'sequence to the strand whose 5\' end is at helix ${ss_from.helix}, and is of '
+            'sequence to the strand whose 5\' end is at helix ${dom_from.helix}, and is of '
             'length ${strand_from.dna_length}.';
         throw IllegalDesignError(msg);
       }

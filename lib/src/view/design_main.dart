@@ -19,7 +19,7 @@ import '../state/potential_vertical_crossover.dart';
 import '../state/strand_creation.dart';
 import '../state/strands_move.dart';
 import 'design_main_domain_name_mismatches.dart';
-import 'design_main_loopout_lengths.dart';
+import 'design_main_loopout_extension_lengths.dart';
 import 'design_main_strand_creating.dart';
 import 'design_main_dna_mismatches.dart';
 import 'design_main_helices.dart';
@@ -70,11 +70,11 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..dna_sequence_png_uri = state.ui_state.dna_sequence_png_uri
         ..dna_sequence_png_horizontal_offset = state.ui_state.dna_sequence_png_horizontal_offset
         ..dna_sequence_png_vertical_offset = state.ui_state.dna_sequence_png_vertical_offset
-        ..disable_png_cache_until_action_completes = state.ui_state.disable_png_cache_until_action_completes
+        ..export_svg_action_delayed_for_png_cache = state.ui_state.export_svg_action_delayed_for_png_cache
         ..is_zoom_above_threshold = state.ui_state.is_zoom_above_threshold
         ..only_display_selected_helices = state.ui_state.only_display_selected_helices
         ..display_base_offsets_of_major_ticks = state.ui_state.display_base_offsets_of_major_ticks
-        ..show_loopout_length = state.ui_state.show_loopout_length
+        ..show_loopout_extension_length = state.ui_state.show_loopout_extension_length
         ..display_base_offsets_of_major_ticks_only_first_helix =
             state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
         ..display_major_tick_widths = state.ui_state.display_major_tick_widths
@@ -82,7 +82,8 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..helix_group_is_moving = state.ui_state.helix_group_is_moving
         ..helix_idx_to_svg_position_map = state.helix_idx_to_svg_position_map
         ..invert_y = state.ui_state.invert_y
-        ..selection_rope = state.ui_state.selection_rope);
+        ..selection_rope = state.ui_state.selection_rope
+        ..disable_png_caching_dna_sequences = state.ui_state.disable_png_caching_dna_sequences);
     }
   },
 )(DesignMain);
@@ -112,7 +113,7 @@ mixin DesignMainPropsMixin on UiProps {
   String dna_sequence_png_uri;
   num dna_sequence_png_horizontal_offset;
   num dna_sequence_png_vertical_offset;
-  actions.Action disable_png_cache_until_action_completes;
+  actions.ExportSvg export_svg_action_delayed_for_png_cache;
   bool is_zoom_above_threshold;
   bool only_display_selected_helices;
   bool helix_change_apply_to_all;
@@ -123,11 +124,12 @@ mixin DesignMainPropsMixin on UiProps {
   bool show_helix_circles;
   bool show_helix_components;
   bool helix_group_is_moving;
-  bool show_loopout_length;
+  bool show_loopout_extension_length;
   bool show_slice_bar;
   int slice_bar_offset;
   String displayed_group_name;
   SelectionRope selection_rope;
+  bool disable_png_caching_dna_sequences;
   BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
   bool invert_y;
 }
@@ -232,16 +234,17 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..dna_sequence_png_horizontal_offset = props.dna_sequence_png_horizontal_offset
           ..dna_sequence_png_vertical_offset = props.dna_sequence_png_vertical_offset
           ..is_zoom_above_threshold = props.is_zoom_above_threshold
-          ..disable_png_cache_until_action_completes = props.disable_png_cache_until_action_completes
+          ..export_svg_action_delayed_for_png_cache = props.export_svg_action_delayed_for_png_cache
           ..only_display_selected_helices = props.only_display_selected_helices
           ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
+          ..disable_png_caching_dna_sequences = props.disable_png_caching_dna_sequences
           ..key = 'dna-sequences')(),
-      if (props.show_loopout_length)
-        (DesignMainLoopoutLengths()
+      if (props.show_loopout_extension_length)
+        (DesignMainLoopoutExtensionLengths()
           ..geometry = props.design.geometry
           ..strands = props.design.strands
-          ..show_loopout_length = props.show_loopout_length
-          ..key = 'loopout-length')(),
+          ..show_length = props.show_loopout_extension_length
+          ..key = 'loopout-extension-length')(),
       // slice_bar_offset null means displayed helix group has no helices, so omit slice bar
       if (props.show_slice_bar && props.slice_bar_offset != null)
         (DesignMainSliceBar()

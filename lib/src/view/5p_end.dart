@@ -21,6 +21,7 @@ abstract class EndEitherPrimeProps implements UiProps {
   Color color;
   bool forward;
   String id;
+  String transform;
 }
 
 UiFactory<End5PrimeProps> End5Prime = _$End5Prime;
@@ -37,6 +38,7 @@ mixin End5PrimeProps on UiProps implements EndEitherPrimeProps {
   Color color;
   bool forward;
   String id;
+  String transform;
 }
 
 class End5PrimeComponent extends UiComponent2<End5PrimeProps> {
@@ -45,7 +47,7 @@ class End5PrimeComponent extends UiComponent2<End5PrimeProps> {
     //XXX: width, height, rx, ry should be do-able in CSS. However, Firefox won't display properly
     // if they are specified in CSS, but it will if they are specified here.
     num width = 7;
-    return (Dom.rect()
+    var rect_props = Dom.rect()
       ..onPointerDown = props.on_pointer_down
       ..onPointerUp = props.on_pointer_up
       ..onMouseUp = props.on_mouse_up
@@ -60,6 +62,12 @@ class End5PrimeComponent extends UiComponent2<End5PrimeProps> {
       ..rx = '1.5px'
       ..ry = '1.5px'
       ..id = props.id
-      ..fill = props.color.toHexColor().toCssString())();
+      ..fill = props.color.toHexColor().toCssString();
+
+    if (props.transform != null) {
+      // https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-center-in-svg
+      rect_props = rect_props..transform = props.transform;
+    }
+    return rect_props();
   }
 }

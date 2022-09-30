@@ -78,9 +78,10 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
       ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
       ..show_helices_axis_arrows = state.ui_state.show_helices_axis_arrows
-      ..show_loopout_length = state.ui_state.show_loopout_length
+      ..show_loopout_extension_length = state.ui_state.show_loopout_extension_length
       ..show_slice_bar = state.ui_state.show_slice_bar
       ..show_mouseover_data = state.ui_state.show_mouseover_data
+      ..disable_png_caching_dna_sequences = state.ui_state.disable_png_caching_dna_sequences
       ..local_storage_design_choice = state.ui_state.local_storage_design_choice
       ..clear_helix_selection_when_loading_new_design =
           state.ui_state.clear_helix_selection_when_loading_new_design
@@ -131,9 +132,10 @@ mixin MenuPropsMixin on UiProps {
   bool show_helix_components_main_view;
   bool show_grid_coordinates_side_view;
   bool show_helices_axis_arrows;
-  bool show_loopout_length;
+  bool show_loopout_extension_length;
   bool show_slice_bar;
   bool show_mouseover_data;
+  bool disable_png_caching_dna_sequences;
   bool default_crossover_type_scaffold_for_setting_helix_rolls;
   bool default_crossover_type_staple_for_setting_helix_rolls;
   LocalStorageDesignChoice local_storage_design_choice;
@@ -891,14 +893,14 @@ Blue : Z-axis'''
             .dispatch(actions.ShowAxisArrowsSet(show_helices_axis_arrows: !props.show_helices_axis_arrows)))
         ..key = 'show-helices-axis-arrows')(),
       (MenuBoolean()
-        ..value = props.show_loopout_length
-        ..display = 'Show loopout lengths'
+        ..value = props.show_loopout_extension_length
+        ..display = 'Show loopout/extension lengths'
         ..tooltip = '''\
-When selected, the length of each loopout is displayed next to it.'''
-        ..name = 'show-loopout-length'
-        ..onChange = ((_) =>
-            props.dispatch(actions.ShowLoopoutLengthSet(show_loopout_length: !props.show_loopout_length)))
-        ..key = 'show-loopout-length')(),
+When selected, the length of each loopout and extension is displayed next to it.'''
+        ..name = 'show-loopout-extension-length'
+        ..onChange = ((_) => props.dispatch(
+            actions.ShowLoopoutExtensionLengthSet(show_length: !props.show_loopout_extension_length)))
+        ..key = 'show-loopout-extension-length')(),
       (MenuBoolean()
         ..value = props.show_slice_bar
         ..display = 'Show slice bar'
@@ -926,7 +928,23 @@ In a large design, this can slow down the performance, so uncheck it when not in
         ..onChange = (_) {
           props.dispatch(actions.ShowMouseoverDataSet(!props.show_mouseover_data));
         }
-        ..key = 'show-mouseover-data')()
+        ..key = 'show-mouseover-data')(),
+        (MenuBoolean()
+        ..value = props.disable_png_caching_dna_sequences
+        ..display = 'Disable PNG caching of DNA sequences'
+        ..tooltip = '''\
+DNA sequences are displayed as SVG (scaled vector graphics), which slow down the program
+significantly when zoomed far out on a large design and hundreds or thousands of DNA bases 
+are displayed simultaneously. To prevent this, the image of DNA sequences is converted 
+to a PNG image when zoomed out sufficiently far, which is much faster to display.
+
+Select this option to disable this PNG caching of DNA sequences. This can be useful when 
+debugging, but be warned that it will be very slow to render a large number of DNA bases.'''
+        ..name = 'disable-png-caching-dna-sequences'
+        ..onChange = (_) {
+          props.dispatch(actions.DisablePngCachingDnaSequencesSet(!props.disable_png_caching_dna_sequences));
+        }
+        ..key = 'disable-png-caching-dna-sequences')()
     ];
   }
 
@@ -1189,7 +1207,7 @@ However, it may be less stable than the main site.'''
         DialogCheckbox(label: 'column-major order (uncheck for row-major order)', value: true);
     items[idx_strand_order_str] = DialogRadio(label: 'strand part to sort by', options: sort_options);
 
-    var dialog = Dialog(title: 'export DNA sequences', items: items, disable_when_any_checkboxes_off: {
+    var dialog = Dialog(title: 'export DNA sequences', type: DialogType.export_dna_sequences, items: items, disable_when_any_checkboxes_off: {
       idx_column_major: [idx_sort],
       idx_strand_order_str: [idx_sort]
     });
@@ -1219,7 +1237,7 @@ However, it may be less stable than the main site.'''
   }
 
   Future<void> load_example_dialog() async {
-    var dialog = Dialog(title: 'Load example DNA design', items: [
+    var dialog = Dialog(title: 'Load example DNA design', type: DialogType.load_example_dna_design, items: [
       DialogRadio(
         label: 'designs',
         options: props.example_designs.filenames,
@@ -1246,7 +1264,7 @@ Future<void> ask_for_autobreak_parameters() async {
   items[max_length_idx] = DialogInteger(label: 'max length', value: 60);
   items[min_distance_to_xover_idx] = DialogInteger(label: 'min distance to xover', value: 3);
 
-  var dialog = Dialog(title: 'Choose autobreak parameters', items: items);
+  var dialog = Dialog(title: 'Choose autobreak parameters', type: DialogType.choose_autobreak_parameters, items: items);
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 
@@ -1278,7 +1296,7 @@ Future<void> ask_for_geometry(Geometry geometry) async {
   items[minor_groove_angle_idx] =
       DialogFloat(label: 'minor groove angle (degrees)', value: geometry.minor_groove_angle);
 
-  var dialog = Dialog(title: 'adjust geometric parameters', items: items);
+  var dialog = Dialog(title: 'adjust geometric parameters', type: DialogType.adjust_geometric_parameters, items: items);
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 
