@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="38px" height="39px" viewBox="0 0 38 39" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
+    <title>Group 3@3x</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-3" transform="translate(17.859650, 20.859650) rotate(-135.000000) translate(-17.859650, -20.859650) translate(12.859650, -3.640350)" fill="#FFFDFD" stroke="#000000">
+            <rect id="Rectangle" x="0.5" y="9.5" width="9" height="39" rx="2"></rect>
+            <path d="M5.87455651,1.55625128 C5.77382859,1.30466512 5.57530451,1.10473349 5.32443627,1.00223063 C4.81318152,0.793335837 4.22938498,1.038447 4.02049018,1.54970174 L0.518011399,10.1217625 C0.468952476,10.2418306 0.443719995,10.370296 0.443719995,10.5 C0.443719995,11.0522847 0.891435245,11.5 1.44371999,11.5 L8.44949876,11.5 C8.58299911,11.5 8.71514809,11.4732691 8.83815312,11.4213836 C9.34701925,11.2067357 9.58553027,10.6202118 9.37088239,10.1113456 L7.97926794,6.81224264 C7.97219009,6.79531887 7.97219009,6.79531887 7.96531973,6.7783098 L5.87455651,1.55625128 Z" id="Rectangle"></path>
+        </g>
+    </g>
+</svg>

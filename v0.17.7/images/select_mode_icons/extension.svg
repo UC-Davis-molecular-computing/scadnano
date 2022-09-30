@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="14px"
+   height="15px"
+   viewBox="0 0 14 15"
+   version="1.1"
+   id="svg13"
+   sodipodi:docname="extension.svg"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs17" />
+  <sodipodi:namedview
+     id="namedview15"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="22.250293"
+     inkscape:cx="-5.1684713"
+     inkscape:cy="7.4381043"
+     inkscape:window-width="1280"
+     inkscape:window-height="748"
+     inkscape:window-x="-6"
+     inkscape:window-y="-6"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="Group-8-Copy-9" />
+  <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
+  <title
+     id="title2">Group 8 Copy 9@3x</title>
+  <desc
+     id="desc4">Created with Sketch.</desc>
+  <g
+     id="Page-1"
+     stroke="none"
+     stroke-width="1"
+     fill="none"
+     fill-rule="evenodd">
+    <g
+       id="Group-8-Copy-9"
+       transform="translate(0.000000, 1.000000)">
+      <rect
+         id="Rectangle-Copy-6"
+         fill="#ceebbe"
+         transform="rotate(90)"
+         x="2.5423729"
+         y="-14"
+         width="11.457627"
+         height="2"
+         rx="0.81840193"
+         style="stroke-width:0.904656" />
+      <rect
+         id="Rectangle-Copy-5"
+         fill="#429000"
+         x="0"
+         y="11"
+         width="14"
+         height="3"
+         rx="1.5" />
+      <rect
+         id="Rectangle-Copy-5-7"
+         fill="#429000"
+         x="6.4586859"
+         y="2.4576275"
+         width="7.5328393"
+         height="2.142417"
+         rx="0.80708987"
+         style="stroke-width:0.619878" />
+      <rect
+         id="Rectangle"
+         stroke="#000000"
+         stroke-width="0.25"
+         fill="#57BB02"
+         x="0.125"
+         y="11.125"
+         width="2.75"
+         height="2.75"
+         rx="1" />
+      <rect
+         id="Rectangle-Copy-4"
+         fill="#fe69b4"
+         x="0.75288773"
+         y="-1.7355694"
+         width="8.271781"
+         height="2.0646715"
+         rx="1.0339726"
+         transform="matrix(0.85176434,0.5239251,-0.52661413,0.85010444,0,0)"
+         style="stroke-width:0.688769" />
+      <polygon
+         id="Triangle"
+         stroke="#000000"
+         stroke-width="0.25"
+         fill="#429000"
+         transform="matrix(0.42752872,-0.70126327,0.69413546,0.43191884,-0.4303246,0.24385358)"
+         points="3,3 0,3 1.5,0 " />
+    </g>
+  </g>
+</svg>
