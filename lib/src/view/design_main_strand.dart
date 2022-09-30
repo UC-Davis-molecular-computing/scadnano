@@ -991,7 +991,8 @@ PAGEHPLC : Dual PAGE & HPLC
     var items = List<DialogItem>.filled(1, null);
 
     items[name_idx] = DialogText(label: 'name', value: substrand.name ?? '');
-    var dialog = Dialog(title: 'set ${substrand.type_description()} name', items: items);
+    var dialog = Dialog(title: 'set ${substrand.type_description()} name', items: items,
+                        type: DialogType.set_domain_name);
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
