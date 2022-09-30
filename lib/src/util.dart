@@ -874,23 +874,24 @@ GridPosition position3d_to_grid_position(Position3D position, Grid grid, Geometr
 }
 
 Position3D grid_position_to_position3d(GridPosition grid_position, Grid grid, Geometry geometry) {
-  num y, z;
+  num x, y;
+
   if (grid == Grid.square) {
-    z = grid_position.h * geometry.distance_between_helices_nm;
+    x = grid_position.h * geometry.distance_between_helices_nm;
     y = grid_position.v * geometry.distance_between_helices_nm;
   } else if (grid == Grid.hex) {
     Point<num> point = hex_grid_position_to_position2d_diameter_1_circles(grid_position);
-    z = point.x * geometry.distance_between_helices_nm;
+    x = point.x * geometry.distance_between_helices_nm;
     y = point.y * geometry.distance_between_helices_nm;
   } else if (grid == Grid.honeycomb) {
     Point<num> point = honeycomb_grid_position_to_position2d_diameter_1_circles(grid_position);
-    z = point.x * geometry.distance_between_helices_nm;
+    x = point.x * geometry.distance_between_helices_nm;
     y = point.y * geometry.distance_between_helices_nm;
   } else {
     throw ArgumentError(
         'cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
   }
-  return Position3D(x: 0, y: y, z: z);
+  return Position3D(x: x, y: y, z: 0);
 }
 
 Point<num> position3d_to_side_view_svg(Position3D position, bool invert_y, Geometry geometry) => Point<num>(
