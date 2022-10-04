@@ -7,7 +7,7 @@ import 'package:built_value/built_value.dart';
 import 'package:scadnano/src/state/design_side_rotation_data.dart';
 import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/copy_info.dart';
-import '../actions/actions.dart';
+import '../actions/actions.dart' as actions;
 import '../state/local_storage_design_choice.dart';
 
 import 'app_ui_state_storables.dart';
@@ -50,6 +50,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get dna_ends_are_moving;
 
   bool get helix_group_is_moving;
+
+  bool get load_dialog;
 
   bool get slice_bar_is_moving;
 
@@ -113,7 +115,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   /// Otherwise, disable png-caching (if a png would otherwise be used)
   /// until action is dispatched.
   @nullable
-  Action get disable_png_cache_until_action_completes;
+  actions.ExportSvg get export_svg_action_delayed_for_png_cache;
 
   /// PNG image should be used (if available) if false.
   bool get is_zoom_above_threshold;
@@ -162,6 +164,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get show_domain_name_mismatches => storables.show_domain_name_mismatches;
 
+  bool get show_unpaired_insertion_deletions => storables.show_unpaired_insertion_deletions;
+
   bool get show_editor => storables.show_editor;
 
   bool get autofit => storables.autofit;
@@ -192,7 +196,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get show_helices_axis_arrows => storables.show_helices_axis_arrows;
 
-  bool get show_loopout_length => storables.show_loopout_length;
+  bool get show_loopout_extension_length => storables.show_loopout_extension_length;
 
   bool get default_crossover_type_scaffold_for_setting_helix_rolls =>
       storables.default_crossover_type_scaffold_for_setting_helix_rolls;
@@ -211,6 +215,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   int get slice_bar_offset => storables.slice_bar_offset;
 
+  bool get disable_png_caching_dna_sequences => storables.disable_png_caching_dna_sequences;
+
   bool get show_mouseover_data => storables.show_mouseover_data;
 
   static void _initializeBuilder(AppUIStateBuilder b) {
@@ -225,6 +231,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
     b.potential_crossover_is_drawing = false;
     b.dna_ends_are_moving = false;
     b.helix_group_is_moving = false;
+    b.load_dialog = false;
     b.slice_bar_is_moving = false;
     b.changed_since_last_save = false;
     b.side_view_grid_position_mouse_cursor = null;
@@ -234,13 +241,13 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
     b.dialog = null;
     b.strand_color_picker_strand = null;
     b.strand_creation = null;
-    b.helix_change_apply_to_all = false;
+    b.helix_change_apply_to_all = true;
     b.example_designs = DEFAULT_example_designs_builder;
     b.dna_assign_options = DEFAULT_dna_assign_options_builder;
     b.dna_sequence_png_uri = null;
     b.dna_sequence_png_horizontal_offset = 0;
     b.dna_sequence_png_vertical_offset = 0;
-    b.disable_png_cache_until_action_completes = null;
+    b.export_svg_action_delayed_for_png_cache = null;
     b.is_zoom_above_threshold = false;
     b.storables.replace(DEFAULT_AppUIStateStorable);
   }

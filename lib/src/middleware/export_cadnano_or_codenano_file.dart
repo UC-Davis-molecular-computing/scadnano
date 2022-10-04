@@ -26,17 +26,22 @@ export_cadnano_or_codenano_file_middleware(Store<AppState> store, dynamic action
 
   AppState state = store.state;
   if (action is actions.ExportCadnanoFile) {
-    _save_file_cadnano(state);
+    _save_file_cadnano(state, action.whitespace);
   } else if (action is actions.ExportCodenanoFile) {
     _save_file_codenano(state);
   }
 }
 
-_save_file_cadnano(AppState state) async {
+_save_file_cadnano(AppState state, bool whitespace) async {
   try {
     String default_filename = state.ui_state.loaded_filename;
     default_filename = path.setExtension(default_filename, '.json');
-    util.save_file(default_filename, to_cadnano_v2_json(state.design, default_filename));
+    var content = to_cadnano_v2_json(state.design, default_filename);
+    if (!whitespace) {
+      var whitespace_regex = RegExp(r'\s+');
+      content = content.replaceAll(whitespace_regex, '');
+    }
+    util.save_file(default_filename, content);
   } on IllegalCadnanoDesignError catch (e) {
     window.alert('Error exporting file: ${e.cause}');
   }

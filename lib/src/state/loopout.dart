@@ -30,25 +30,23 @@ abstract class Loopout
   /************************ end BuiltValue boilerplate ************************/
 
   factory Loopout({
-    int loopout_length,
+    int loopout_num_bases,
     int prev_domain_idx,
-    int next_domain_idx,
-    bool is_scaffold,
+    bool is_scaffold=false,
     String dna_sequence = null,
     String name,
     Object label,
   }) =>
       Loopout.from((b) => b
-        ..loopout_length = loopout_length
+        ..loopout_num_bases = loopout_num_bases
         ..prev_domain_idx = prev_domain_idx
-        ..next_domain_idx = next_domain_idx
         ..is_scaffold = is_scaffold
         ..dna_sequence = dna_sequence
         ..name = name
         ..label = label
         ..unused_fields = MapBuilder<String, Object>({}));
 
-  int get loopout_length;
+  int get loopout_num_bases;
 
   @nullable
   String get name;
@@ -60,7 +58,8 @@ abstract class Loopout
   // idx's within Strand.substrands (not Strand.domains)
   int get prev_domain_idx;
 
-  int get next_domain_idx;
+  @memoized
+  int get next_domain_idx => prev_domain_idx + 2;
 
   @nullable
   String get dna_sequence;
@@ -74,21 +73,26 @@ abstract class Loopout
 
   bool is_loopout() => true;
 
+  bool is_extension() => false;
+
   @memoized
   SelectModeChoice get select_mode => SelectModeChoice.loopout;
 
   @memoized
   String get id => 'loopout-${prev_domain_idx + 1}-${strand_id}';
 
-  int dna_length() => this.loopout_length;
+  int dna_length() => this.loopout_num_bases;
+
+  @override
+  String type_description() => "loopout";
 
   static LoopoutBuilder from_json(Map<String, dynamic> json_map) {
     var class_name = 'Loopout';
-    int loopout_length = util.mandatory_field(json_map, constants.loopout_key, class_name);
+    int loopout_num_bases = util.mandatory_field(json_map, constants.loopout_key, class_name);
     String name = util.optional_field_with_null_default(json_map, constants.name_key);
     Object label = util.optional_field_with_null_default(json_map, constants.label_key);
     return LoopoutBuilder()
-      ..loopout_length = loopout_length
+      ..loopout_num_bases = loopout_num_bases
       ..name = name
       ..label = label
       ..unused_fields = util.unused_fields_map(json_map, constants.loopout_keys);
@@ -96,7 +100,7 @@ abstract class Loopout
 
   dynamic to_json_serializable({bool suppress_indent = false}) {
     Map<String, Object> json_map = {
-      constants.loopout_key: loopout_length,
+      constants.loopout_key: loopout_num_bases,
     };
     if (name != null) {
       json_map[constants.name_key] = name;

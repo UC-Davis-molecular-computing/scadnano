@@ -12,6 +12,8 @@ import '../app.dart';
 import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 
+const SET_HELIX_TICK_MARKS_SHORT_DESCRIPTION = "set helix tick marks";
+
 List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to_all) {
   Future<void> dialog_helix_set_min_offset() async {
     int min_idx = 0;
@@ -23,9 +25,13 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     items[min_set_by_domain_idx] = DialogCheckbox(label: 'set minimum by existing domains', value: false);
     items[apply_to_all_idx] = DialogCheckbox(label: 'apply to all helices', value: helix_change_apply_to_all);
 
-    var dialog = Dialog(title: 'set helix minimum offset', items: items, disable_when_any_checkboxes_on: {
-      min_idx: [min_set_by_domain_idx],
-    });
+    var dialog = Dialog(
+        title: 'set helix minimum offset',
+        type: DialogType.set_helix_minimum_offset,
+        items: items,
+        disable_when_any_checkboxes_on: {
+          min_idx: [min_set_by_domain_idx],
+        });
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
@@ -65,9 +71,13 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     items[apply_to_all_idx] = DialogCheckbox(label: 'apply to all helices', value: helix_change_apply_to_all);
     items[take_max_of_all_idx] = DialogCheckbox(label: 'give all same max', value: false);
 
-    var dialog = Dialog(title: 'set helix maximum offset', items: items, disable_when_any_checkboxes_on: {
-      max_idx: [max_set_by_domain_idx],
-    });
+    var dialog = Dialog(
+        title: 'set helix maximum offset',
+        type: DialogType.set_helix_maximum_offset,
+        items: items,
+        disable_when_any_checkboxes_on: {
+          max_idx: [max_set_by_domain_idx],
+        });
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
@@ -101,7 +111,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
   }
 
   Future<void> dialog_helix_set_idx() async {
-    var dialog = Dialog(title: 'set helix index', items: [
+    var dialog = Dialog(title: 'set helix index', type: DialogType.set_helix_index, items: [
       DialogInteger(label: 'new index', value: helix.idx),
     ]);
     List<DialogItem> results = await util.dialog(dialog);
@@ -115,7 +125,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
   Future<void> dialog_helix_set_roll() async {
     int helix_idx = helix.idx;
 
-    var dialog = Dialog(title: 'set helix roll (degrees)', items: [
+    var dialog = Dialog(title: 'set helix roll (degrees)', type: DialogType.set_helix_roll_degrees, items: [
       DialogFloat(label: 'roll', value: helix.roll),
     ]);
     List<DialogItem> results = await util.dialog(dialog);
@@ -176,6 +186,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
 
     var dialog = Dialog(
       title: 'set helix tick marks',
+      type: DialogType.set_helix_tick_marks,
       items: items,
       disable_when_any_checkboxes_off: {
         regular_spacing_distance_idx: [regular_spacing_checkbox_idx],
@@ -246,13 +257,13 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
         action = actions.BatchAction([
           actions.HelixMajorTickDistanceChangeAll(major_tick_distance: major_tick_distance),
           actions.HelixMajorTickStartChangeAll(major_tick_start: major_tick_start),
-        ]);
+        ], SET_HELIX_TICK_MARKS_SHORT_DESCRIPTION);
       } else if (use_major_tick_periodic_distances) {
         action = actions.BatchAction([
           actions.HelixMajorTickPeriodicDistancesChangeAll(
               major_tick_periodic_distances: major_tick_periodic_distances.build()),
           actions.HelixMajorTickStartChangeAll(major_tick_start: major_tick_start),
-        ]);
+        ], SET_HELIX_TICK_MARKS_SHORT_DESCRIPTION);
       } else if (use_major_ticks) {
         action = actions.HelixMajorTicksChangeAll(major_ticks: major_ticks.build());
       } else {
@@ -283,20 +294,20 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
           throw AssertionError('should not be reachable');
         }
       }
-      action = actions.BatchAction(all_actions);
+      action = actions.BatchAction(all_actions, SET_HELIX_TICK_MARKS_SHORT_DESCRIPTION);
     } else {
       if (use_major_tick_distance) {
         action = actions.BatchAction([
           actions.HelixMajorTickDistanceChange(
               helix_idx: helix_idx, major_tick_distance: major_tick_distance),
           actions.HelixMajorTickStartChange(helix_idx: helix_idx, major_tick_start: major_tick_start),
-        ]);
+        ], SET_HELIX_TICK_MARKS_SHORT_DESCRIPTION);
       } else if (use_major_tick_periodic_distances) {
         action = actions.BatchAction([
           actions.HelixMajorTickPeriodicDistancesChange(
               helix_idx: helix_idx, major_tick_periodic_distances: major_tick_periodic_distances.build()),
           actions.HelixMajorTickStartChange(helix_idx: helix_idx, major_tick_start: major_tick_start),
-        ]);
+        ], SET_HELIX_TICK_MARKS_SHORT_DESCRIPTION);
       } else if (use_major_ticks) {
         action = actions.HelixMajorTicksChange(helix_idx: helix_idx, major_ticks: major_ticks.build());
       } else {
@@ -309,7 +320,7 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
   Future<void> dialog_helix_set_grid_position() async {
     var grid_position = helix.grid_position ?? GridPosition(0, 0);
 
-    var dialog = Dialog(title: 'set helix grid position', items: [
+    var dialog = Dialog(title: 'set helix grid position', type: DialogType.set_helix_grid_position, items: [
       DialogInteger(label: 'h', value: grid_position.h),
       DialogInteger(label: 'v', value: grid_position.v),
     ]);
@@ -326,7 +337,7 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
   Future<void> dialog_helix_set_position() async {
     var position = helix.position ?? Position3D();
 
-    var dialog = Dialog(title: 'set helix position', items: [
+    var dialog = Dialog(title: 'set helix position', type: DialogType.set_helix_position, items: [
       DialogFloat(label: 'x', value: position.x),
       DialogFloat(label: 'y', value: position.y),
       DialogFloat(label: 'z', value: position.z),
@@ -360,7 +371,7 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
     var existing_group_name = helix.group ?? Position3D();
     other_group_names.remove(existing_group_name);
 
-    var dialog = Dialog(title: 'move selected helices to group', items: [
+    var dialog = Dialog(title: 'move selected helices to group', type: DialogType.move_selected_helices_to_group, items: [
       DialogRadio(options: other_group_names, radio: false, label: 'new group'),
     ]);
 
@@ -439,10 +450,7 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
     ),
     context_menu_item_set_position,
     ContextMenuItem(
-      title: 'set group',
-      on_click: helix_set_group,
-      disabled: app.state.design.groups.length <= 1
-    ),
+        title: 'set group', on_click: helix_set_group, disabled: app.state.design.groups.length <= 1),
   ];
 }
 

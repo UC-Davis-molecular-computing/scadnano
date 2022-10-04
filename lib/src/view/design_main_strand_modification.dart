@@ -4,8 +4,10 @@ import 'dart:math';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 
+import '../state/extension.dart';
 import '../state/context_menu.dart';
 import '../state/dialog.dart';
+import '../state/geometry.dart';
 import '../state/selectable.dart';
 import '../state/address.dart';
 import '../state/modification.dart';
@@ -28,6 +30,8 @@ mixin DesignMainStrandModificationProps on UiProps {
   bool invert_y;
   String transform;
 
+  Geometry geometry;
+
   SelectableModification selectable_modification;
 
   Strand get strand => selectable_modification.strand;
@@ -39,13 +43,25 @@ mixin DesignMainStrandModificationProps on UiProps {
   bool selected;
 
   num helix_svg_position_y;
+
+  Extension ext; // optional; used if mod is on extension
 }
 
 class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStrandModificationProps> {
   @override
   render() {
-    Point<num> pos =
-        props.helix.svg_base_pos(props.address.offset, props.address.forward, props.helix_svg_position_y);
+    Point<num> pos;
+    if (props.ext == null) {
+      pos = props.helix.svg_base_pos(props.address.offset, props.address.forward, props.helix_svg_position_y);
+    } else {
+      var ext = props.ext;
+      var adj_dom = props.ext.adjacent_domain;
+      var adj_helix = props.helix;
+      var adj_helix_svg_y = props.helix_svg_position_y;
+      Point<num> extension_attached_end_svg =
+          util.compute_extension_attached_end_svg(ext, adj_dom, adj_helix, adj_helix_svg_y);
+      pos = util.compute_extension_free_end_svg(extension_attached_end_svg, ext, adj_dom, props.geometry);
+    }
     bool display_connector = props.display_connector;
 
     String classname = constants.css_selector_modification;
@@ -149,7 +165,7 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
         DialogInteger(label: 'connector length', value: props.modification.connector_length);
     // items[id_idx] = DialogText(label: 'id', value: props.modification.id);
 
-    var dialog = Dialog(title: 'edit modification', items: items);
+    var dialog = Dialog(title: 'edit modification', type: DialogType.edit_modification, items: items);
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 

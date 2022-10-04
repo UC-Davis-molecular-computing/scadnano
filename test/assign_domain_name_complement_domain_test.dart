@@ -3,7 +3,7 @@
 import 'dart:convert';
 
 import 'package:scadnano/src/json_serializable.dart';
-import 'package:scadnano/src/reducers/change_loopout_length.dart';
+import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
 import 'package:scadnano/src/reducers/delete_reducer.dart';
 import 'package:scadnano/src/reducers/nick_ligate_join_by_crossover_reducers.dart';
 import 'package:scadnano/src/reducers/assign_domain_names_reducer.dart';
@@ -33,7 +33,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design
-          .strand(0, 0)
+          .draw_strand(0, 0)
           .move(8)
           .with_domain_name("ABC")
           .cross(0)
@@ -69,7 +69,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design
-          .strand(0, 0)
+          .draw_strand(0, 0)
           .move(9)
           .with_domain_name("ABC")
           .cross(0)
@@ -99,7 +99,7 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(8).cross(0).move(-8).commit();
+      design = design.draw_strand(0, 0).move(8).cross(0).move(-8).commit();
 
       var action = actions.AssignDomainNameComplementFromBoundDomains(design.all_domains);
       var state = app_state_from_design(design);
@@ -123,8 +123,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(8).with_domain_name("ABC").commit();
-      design = design.strand(0, 8).move(-8).with_domain_name("XYZ").commit();
+      design = design.draw_strand(0, 0).move(8).with_domain_name("ABC").commit();
+      design = design.draw_strand(0, 8).move(-8).with_domain_name("XYZ").commit();
 
       var action = actions.AssignDomainNameComplementFromBoundDomains(design.all_domains);
       var state = app_state_from_design(design);
@@ -153,8 +153,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(9).with_domain_name("ABC").commit();
-      design = design.strand(0, 8).move(-8).with_domain_name("XYZ").commit();
+      design = design.draw_strand(0, 0).move(9).with_domain_name("ABC").commit();
+      design = design.draw_strand(0, 8).move(-8).with_domain_name("XYZ").commit();
 
       var action = actions.AssignDomainNameComplementFromBoundDomains(design.all_domains);
       var state = app_state_from_design(design);
@@ -177,8 +177,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(8).commit();
-      design = design.strand(0, 8).move(-8).commit();
+      design = design.draw_strand(0, 0).move(8).commit();
+      design = design.draw_strand(0, 8).move(-8).commit();
 
       var action = actions.AssignDomainNameComplementFromBoundDomains(design.all_domains);
       var state = app_state_from_design(design);
@@ -201,8 +201,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(8).commit();
-      design = design.strand(0, 8).move(-8).commit();
+      design = design.draw_strand(0, 0).move(8).commit();
+      design = design.draw_strand(0, 8).move(-8).commit();
 
       var action = actions.AssignDomainNameComplementFromBoundDomains(design.all_domains);
       var state = app_state_from_design(design);
@@ -229,8 +229,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(8).with_domain_name("ABC").commit();
-      design = design.strand(0, 8).move(-8).with_domain_name("XYZ").commit();
+      design = design.draw_strand(0, 0).move(8).with_domain_name("ABC").commit();
+      design = design.draw_strand(0, 8).move(-8).with_domain_name("XYZ").commit();
 
       var action = actions.AssignDomainNameComplementFromBoundDomains([design.all_domains[0]]);
       var state = app_state_from_design(design);
@@ -254,8 +254,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(9).with_domain_name("ABC").commit();
-      design = design.strand(0, 8).move(-8).with_domain_name("XYZ").commit();
+      design = design.draw_strand(0, 0).move(9).with_domain_name("ABC").commit();
+      design = design.draw_strand(0, 8).move(-8).with_domain_name("XYZ").commit();
 
       var action = actions.AssignDomainNameComplementFromBoundDomains([design.all_domains[0]]);
       var state = app_state_from_design(design);
@@ -279,8 +279,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(8).commit();
-      design = design.strand(0, 8).move(-8).commit();
+      design = design.draw_strand(0, 0).move(8).commit();
+      design = design.draw_strand(0, 8).move(-8).commit();
 
       var action = actions.AssignDomainNameComplementFromBoundDomains([design.all_domains[0]]);
       var state = app_state_from_design(design);
@@ -304,8 +304,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(9).commit();
-      design = design.strand(0, 8).move(-8).commit();
+      design = design.draw_strand(0, 0).move(9).commit();
+      design = design.draw_strand(0, 8).move(-8).commit();
 
       var action = actions.AssignDomainNameComplementFromBoundDomains([design.all_domains[0]]);
       var state = app_state_from_design(design);
@@ -331,7 +331,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design
-          .strand(0, 0)
+          .draw_strand(0, 0)
           .move(8)
           .with_domain_name("ABC")
           .cross(0)
@@ -359,7 +359,7 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(8).cross(0).move(-8).with_domain_name("DEF").commit();
+      design = design.draw_strand(0, 0).move(8).cross(0).move(-8).with_domain_name("DEF").commit();
 
       var action = actions.AssignDomainNameComplementFromBoundDomains(design.all_domains);
       var state = app_state_from_design(design);
@@ -382,7 +382,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design
-          .strand(0, 0)
+          .draw_strand(0, 0)
           .move(8)
           .with_domain_name("JKL")
           .cross(0, 4)
@@ -413,7 +413,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design
-          .strand(0, 0)
+          .draw_strand(0, 0)
           .move(8)
           .with_domain_name("ABC")
           .cross(0)
@@ -452,7 +452,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design
-          .strand(0, 0)
+          .draw_strand(0, 0)
           .move(8)
           .with_domain_name("ABC")
           .cross(0)
@@ -482,7 +482,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design
-          .strand(0, 0)
+          .draw_strand(0, 0)
           .move(8)
           .with_domain_name("ABC")
           .cross(0)
@@ -511,7 +511,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design
-          .strand(0, 0)
+          .draw_strand(0, 0)
           .move(8)
           .with_domain_name("ABC")
           .cross(0)
@@ -541,7 +541,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design
-          .strand(0, 0)
+          .draw_strand(0, 0)
           .move(8)
           .with_domain_name("JKL")
           .cross(0)
@@ -568,7 +568,7 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(8).with_domain_name("JKL").cross(0).move(-6).commit();
+      design = design.draw_strand(0, 0).move(8).with_domain_name("JKL").cross(0).move(-6).commit();
 
       var action = actions.AssignDomainNameComplementFromBoundDomains([design.all_domains[1]]);
       var state = app_state_from_design(design);

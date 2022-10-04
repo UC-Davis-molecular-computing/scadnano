@@ -7,7 +7,7 @@ import 'package:scadnano/src/actions/actions.dart';
 import 'package:scadnano/src/json_serializable.dart';
 import 'package:scadnano/src/reducers/app_state_reducer.dart';
 import 'package:scadnano/src/reducers/assign_or_remove_dna_reducer.dart';
-import 'package:scadnano/src/reducers/change_loopout_length.dart';
+import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
 import 'package:scadnano/src/reducers/delete_reducer.dart';
 import 'package:scadnano/src/reducers/nick_ligate_join_by_crossover_reducers.dart';
 import 'package:scadnano/src/reducers/assign_domain_names_reducer.dart';
@@ -53,7 +53,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design
-          .strand(0, 0)
+          .draw_strand(0, 0)
           .move(4)
           .cross(1)
           .move(-4)
@@ -61,7 +61,7 @@ main() {
           .move(4)
           .with_sequence('AAAACCCCGGGG')
           .commit();
-      design = design.strand(3, 0).move(4).with_sequence('TTTT').commit();
+      design = design.draw_strand(3, 0).move(4).with_sequence('TTTT').commit();
       AppState state = app_state_from_design(design);
       Strand strand1 = design.strands[0];
       Strand strand2 = design.strands[1];
@@ -135,7 +135,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design
-          .strand(0, 0)
+          .draw_strand(0, 0)
           .move(4)
           .cross(1)
           .move(-4)
@@ -143,7 +143,7 @@ main() {
           .move(4)
           .with_sequence('AAAACCCCGGGG')
           .commit();
-      design = design.strand(3, 0).move(4).with_sequence('TTTT').commit();
+      design = design.draw_strand(3, 0).move(4).with_sequence('TTTT').commit();
       AppState state = app_state_from_design(design);
       Strand strand1 = design.strands[0];
       Strand strand2 = design.strands[1];
@@ -216,7 +216,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design
-          .strand(0, 0)
+          .draw_strand(0, 0)
           .move(4)
           .loopout(1, 1)
           .move(-4)
@@ -224,7 +224,7 @@ main() {
           .move(4)
           .with_sequence('AAAAGCCCCTGGGG')
           .commit();
-      design = design.strand(3, 0).move(4).with_sequence('TTTT').commit();
+      design = design.draw_strand(3, 0).move(4).with_sequence('TTTT').commit();
       AppState state = app_state_from_design(design);
       Strand strand1 = design.strands[0];
       Strand strand2 = design.strands[1];
@@ -300,7 +300,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design
-          .strand(0, 0)
+          .draw_strand(0, 0)
           .move(4)
           .loopout(1, 1)
           .move(-4)
@@ -308,7 +308,7 @@ main() {
           .move(4)
           .with_sequence('AAAAGCCCCTGGGG')
           .commit();
-      design = design.strand(3, 0).move(4).with_sequence('TTTT').commit();
+      design = design.draw_strand(3, 0).move(4).with_sequence('TTTT').commit();
       AppState state = app_state_from_design(design);
       Strand strand1 = design.strands[0];
       Strand strand2 = design.strands[1];

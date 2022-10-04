@@ -45,8 +45,8 @@ main() {
     setUp(() {
       helices = [for (int helix in all_helices) Helix(idx: helix, max_offset: 40, grid: Grid.square)];
       Design design = Design(helices: helices, grid: Grid.square);
-      design = design.strand(0, 0).move(10).commit();
-      design = design.strand(0, 20).move(10).cross(1).move(-5).commit();
+      design = design.draw_strand(0, 0).move(10).commit();
+      design = design.draw_strand(0, 20).move(10).cross(1).move(-5).commit();
       orig_strand = design.strands[0];
       second_strand = design.strands[1];
       store = store_from_design(design);
@@ -468,7 +468,7 @@ main() {
         'group2': HelixGroup(grid: Grid.square, helices_view_order: [5, 4, 7, 6]),
       };
       Design design = Design(helices: helices, grid: Grid.square, groups: groups);
-      design = design.strand(0, 0).move(10).cross(1).move(-10).commit();
+      design = design.draw_strand(0, 0).move(10).cross(1).move(-10).commit();
       orig_strand = design.strands.first;
       store = store_from_design(design);
     });
@@ -613,7 +613,7 @@ main() {
     setUp(() {
       helices = [for (int helix in all_helices) Helix(idx: helix, max_offset: 40, grid: Grid.square)];
       Design design = Design(helices: helices, grid: Grid.square);
-      design = design.strand(0, 0).move(10).commit();
+      design = design.draw_strand(0, 0).move(10).commit();
       orig_strand = design.strands.first;
       store = store_from_design(design);
       state = store.state;
@@ -881,9 +881,9 @@ main() {
       */
 
       // add strands on all helices
-      Design design = state.design.strand(1, 0).to(10).commit();
-      design = design.strand(2, 0).to(10).commit();
-      design = design.strand(3, 0).to(10).commit();
+      Design design = state.design.draw_strand(1, 0).to(10).commit();
+      design = design.draw_strand(2, 0).to(10).commit();
+      design = design.draw_strand(3, 0).to(10).commit();
       store = store_from_design(design);
       state = store.state;
 
@@ -1023,7 +1023,7 @@ main() {
       expect(state.design.strands.last.first_domain.forward, true);
 
       // undo last manual paste
-      state = test_dispatch(store, actions.Undo());
+      state = test_dispatch(store, actions.Undo(1));
 
       expect(state.design.strands.length, 1);
       expect(state.design.strands.last.first_domain.helix, 0);

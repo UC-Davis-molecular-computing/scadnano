@@ -32,9 +32,11 @@ If you find scadnano useful in a scientific project, please cite its associated 
 * [Assigning DNA](#assigning-dna)
 * [Exporting to cadnano](#exporting-to-cadnano)
 * [How to design structures manually using scadnano](#how-to-design-structures-manually-using-scadnano)
+* [Reset local settings](#reset-local-settings)
 * [Running offline](#running-offline)
 * [Performance tips](#performance-tips)
 * [Contributing](#contributing)
+
 
 ## Overview
 
@@ -69,7 +71,7 @@ Please file bug reports and make feature requests as GitHub repository issues in
 or the
 [Python scripting library](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues).
 
-Early versions of this project didn't have well-defined versions. However, we will try to announce breaking changes (and possibly new features) under the [GitHub releases page](https://github.com/UC-Davis-molecular-computing/scadnano/releases). The version numbers in this web interface repo and the [Python library repo](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/releases) won't always advance at the same time.
+We will try to announce breaking changes (and possibly new features) under the [GitHub releases page](https://github.com/UC-Davis-molecular-computing/scadnano/releases). The version numbers in this web interface repo and the [Python library repo](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/releases) won't always advance at the same time, and sometimes a feature is supported in one before the other.
 
 Following [semantic versioning](https://semver.org/), version numbers are major.minor.patch, i.e., version 0.9.2 has minor version number 9. Prior to version 1.0.0, when a breaking change is made, this will increment the minor version (for example, going from 0.9.4 to 0.10.0). After version 1.0.0, breaking changes will increment the major version.
 
@@ -732,26 +734,32 @@ We have found that the autostaple and autobreak tools are largely unnecessary in
 since scadnano allows one to copy and paste strands (unlike cadnano), 
 encouraging a more free-form method of creating large designs rapidly.
 
-Recursive copy/pasting speeds up this process even further.
-For instance, to create a vertical "column" of 32 staples in a 32-helix rectangle, one would create 2 types of staples (plus some special cases near the top/bottom), copy/paste them to make 4, copy/paste *those* to make 8, then 16, and finally 32 staples. 
-Since most of the design consists of horizontally translated copies of this column it can be created quickly by copying and pasting the whole column.
+Copy/pasting speeds up this process even further.
+For instance, to create a vertical "column" of 32 staples in a 32-helix rectangle, one would create a staple, copy/paste it below, then use the [Autopaste](https://github.com/UC-Davis-molecular-computing/scadnano/issues/580) feature to repeatedly paste more copies below to create a full "column" of staples.
+Then this entire column can be selected, and autopaste can be used to fill in the rest of the design with those staples.
+See the [tutorial](tutorial/tutorial.md) for more details.
 
 A standard DNA origami rectangle, for instance, can be created in about 10 minutes.
-One downside is that a complete novice, who has no idea where staples ought to go, does not have a default push-button way to create an initial design.
+One downside is that a complete novice, who has no idea where staples ought to go or what they should look like, does not have a default push-button way to create an initial design without using autostaple.
 However, numerous example designs are provided to learn what good staple design looks like. 
 
 See the [tutorial](tutorial/tutorial.md) for detailed instructions on creating a 24-helix DNA origami rectangle using the scadnano web interface.
+
+
+## Reset local settings
+You may need to reset the local settings, in particular to remove a locally stored design that is causing a problem loading. For instructions, see the section "Reset local settings" [here](https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/v0.17.1). 
+
 
 
 ## Running offline
 It is possible to run scadnano offline, so that no internet connection is needed.
 To do this, follow the [instructions](CONTRIBUTING.md#making-contributions) for running a local server in the CONTRIBUTING document, which involves three steps:
 
-- [Cloning](CONTRIBUTING.md#cloning) the scadnano repository from GitHub.
+- [Clone](CONTRIBUTING.md#cloning) the scadnano repository from GitHub.
 
-- [Installing](CONTRIBUTING.md#installing-dart) the Dart SDK.
+- [Install](CONTRIBUTING.md#installing-dart) the Dart SDK.
 
-- [Running](CONTRIBUTING.md#running-a-local-server) a local server.
+- [Run](CONTRIBUTING.md#running-a-local-server) a local server.
 
 
 

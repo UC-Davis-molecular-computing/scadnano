@@ -32,20 +32,14 @@ import 'middleware/local_storage.dart';
 import 'util.dart' as util;
 import 'actions/actions.dart' as actions;
 
-//import 'test.dart';
-//import 'constants.dart' as constants;
-
 // global variable for whole program
 App app;
 
-const SCADNANO_PROD = String.fromEnvironment('SCADNANO_PROD');
-// const USE_REDUX_DEV_TOOLS = SCADNANO_PROD != 'true';
-const USE_REDUX_DEV_TOOLS = false;
+const SCADNANO_PROD = bool.fromEnvironment('SCADNANO_PROD');
+const USE_REDUX_DEV_TOOLS = !SCADNANO_PROD;
 
 const RUN_TEST_CODE_INSTEAD_OF_APP = false;
-//const RUN_TEST_CODE_INSTEAD_OF_APP = true;
 
-//const DEBUG_SELECT = true;
 const DEBUG_SELECT = false;
 
 test_stuff() async {
@@ -57,7 +51,7 @@ class App {
   AppState get state => store.state;
   View view;
 
-  Store store;
+  Store<AppState> store;
 
   // for optimization; too slow to store in Model since it's updated 60 times/sec
   Store<SelectionRope> store_selection_rope;
@@ -243,13 +237,13 @@ setup_undo_redo_keyboard_listeners() {
     // ctrl+Z to undo
     if ((event.ctrlKey || event.metaKey) && !event.shiftKey && key == KeyCode.Z && !event.altKey) {
       if (app.state.undo_redo.undo_stack.isNotEmpty) {
-        app.dispatch(actions.Undo());
+        app.dispatch(actions.Undo(1));
       }
     }
     // shift+ctrl+Z to redo
     if ((event.ctrlKey || event.metaKey) && event.shiftKey && key == KeyCode.Z && !event.altKey) {
       if (app.state.undo_redo.redo_stack.isNotEmpty) {
-        app.dispatch(actions.Redo());
+        app.dispatch(actions.Redo(1));
       }
     }
   });

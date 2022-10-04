@@ -15,6 +15,7 @@ import '../util.dart' as util;
 var hline = '*' * 100;
 
 AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
+
   String error_message;
   Design design_new;
 

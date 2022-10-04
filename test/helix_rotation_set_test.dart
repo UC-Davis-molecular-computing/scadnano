@@ -45,7 +45,7 @@ main() {
     //  2  <----+
     setUp(() async {
       var pre_design_vert = Design(grid: Grid.square, num_helices: 3);
-      design_vert = pre_design_vert.strand(0, 5).to(0).cross(1).to(5).cross(2).to(0).commit();
+      design_vert = pre_design_vert.draw_strand(0, 5).to(0).cross(1).to(5).cross(2).to(0).commit();
       state_vert = app_state_from_design(design_vert);
     });
 
@@ -87,7 +87,8 @@ main() {
       int anchor = 0;
       var roll_action_h0 = actions.HelixRollSetAtOther(0, 1, false, anchor);
       var roll_action_h1 = actions.HelixRollSetAtOther(1, 0, true, anchor);
-      var batch_action = actions.BatchAction([roll_action_h0, roll_action_h1]);
+      var batch_action =
+          actions.BatchAction([roll_action_h0, roll_action_h1], "unstrain backbone at crossover");
       var state_after = app_state_reducer(state_vert, batch_action);
 
       expect(state_after.design.helix_rotation_reverse(0, 0), closeTo(180, eps));
@@ -109,7 +110,8 @@ main() {
       int anchor = 5;
       var roll_action_h1 = actions.HelixRollSetAtOther(1, 2, true, anchor);
       var roll_action_h2 = actions.HelixRollSetAtOther(2, 1, false, anchor);
-      var batch_action = actions.BatchAction([roll_action_h1, roll_action_h2]);
+      var batch_action =
+          actions.BatchAction([roll_action_h1, roll_action_h2], "unstrain backbone at crossover");
       var state_after = app_state_reducer(state_vert, batch_action);
 
       expect(state_after.design.helix_rotation_forward(1, 5), closeTo(180, eps));
@@ -139,7 +141,7 @@ main() {
         Helix(idx: 2, grid: Grid.square, geometry: geometry, grid_position: GridPosition(2, 0)),
       ];
       var pre_design_horz = Design(grid: Grid.square, helices: helices);
-      design_horz = pre_design_horz.strand(0, 5).to(0).cross(1).to(5).cross(2).to(0).commit();
+      design_horz = pre_design_horz.draw_strand(0, 5).to(0).cross(1).to(5).cross(2).to(0).commit();
       state_horz = app_state_from_design(design_horz);
     });
 
@@ -179,7 +181,8 @@ main() {
       int anchor = 0;
       var roll_action_h0 = actions.HelixRollSetAtOther(0, 1, false, anchor);
       var roll_action_h1 = actions.HelixRollSetAtOther(1, 0, true, anchor);
-      var batch_action = actions.BatchAction([roll_action_h0, roll_action_h1]);
+      var batch_action =
+          actions.BatchAction([roll_action_h0, roll_action_h1], "unstrain backbone at crossover");
       var state_after = app_state_reducer(state_horz, batch_action);
 
       expect(state_after.design.helix_rotation_reverse(0, 0), closeTo(90, eps));
@@ -199,7 +202,8 @@ main() {
       int anchor = 5;
       var roll_action_h1 = actions.HelixRollSetAtOther(1, 2, true, anchor);
       var roll_action_h2 = actions.HelixRollSetAtOther(2, 1, false, anchor);
-      var batch_action = actions.BatchAction([roll_action_h1, roll_action_h2]);
+      var batch_action =
+          actions.BatchAction([roll_action_h1, roll_action_h2], "unstrain backbone at crossover");
       var state_after = app_state_reducer(state_horz, batch_action);
 
       expect(state_after.design.helix_rotation_forward(1, 5), closeTo(90, eps));
@@ -243,8 +247,8 @@ main() {
             roll: 0),
       ];
       design = Design(grid: Grid.none, helices: helices, geometry: geometry);
-      design = design.strand(1, 5).to(0).cross(0).to(5).commit();
-      design = design.strand(2, 5).to(0).cross(1).to(5).commit();
+      design = design.draw_strand(1, 5).to(0).cross(0).to(5).commit();
+      design = design.draw_strand(2, 5).to(0).cross(1).to(5).commit();
       state = app_state_from_design(design);
     });
 
@@ -283,7 +287,7 @@ main() {
 
       expect(all_actions.length, 6);
 
-      var batch_action = actions.BatchAction(all_actions);
+      var batch_action = actions.BatchAction(all_actions, "set helix coordinates based on crossovers");
       var state_after = app_state_reducer(state, batch_action);
       var design_after = state_after.design;
 

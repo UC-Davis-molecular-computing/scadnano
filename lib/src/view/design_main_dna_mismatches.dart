@@ -9,7 +9,7 @@ import '../state/design.dart';
 import '../state/strand.dart';
 import '../state/domain.dart';
 import 'pure_component.dart';
-import 'design_main_mismatch.dart';
+import 'design_main_warning_star.dart';
 import '../util.dart' as util;
 
 part 'design_main_dna_mismatches.over_react.g.dart';
@@ -49,7 +49,7 @@ class DesignMainDNAMismatchesComponent extends UiComponent2<DesignMainDNAMismatc
             if (!keys.contains(key)) {
               // otherwise, already rendered mismatch for this insertion
               keys.add(key);
-              var mismatch_component = (DesignMainMismatch()
+              var mismatch_component = (DesignMainWarningStar()
                 ..base_svg_pos = base_svg_pos
                 ..geometry = props.design.geometry
                 ..forward = domain.forward

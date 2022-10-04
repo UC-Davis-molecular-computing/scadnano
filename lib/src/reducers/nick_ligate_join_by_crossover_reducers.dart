@@ -1,7 +1,7 @@
 import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/reducers/change_loopout_length.dart';
+import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
 import 'package:scadnano/src/state/linker.dart';
 import 'package:scadnano/src/state/potential_crossover.dart';
 import 'package:tuple/tuple.dart';
@@ -122,7 +122,7 @@ BuiltList<Strand> move_linker_reducer(BuiltList<Strand> strands, AppState state,
           : new_strand_connected_intermediate.domains.length - 1;
       var crossover = new_strand_connected.linkers[crossover_idx];
       var convert_crossover_to_loopout_action =
-          actions.ConvertCrossoverToLoopout(crossover, linker.loopout_length, linker.dna_sequence);
+          actions.ConvertCrossoverToLoopout(crossover, linker.loopout_num_bases, linker.dna_sequence);
       new_strand_connected =
           convert_crossover_to_loopout_reducer(new_strand_connected, convert_crossover_to_loopout_action);
     }
@@ -228,13 +228,8 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
 
   if (strand.circular) {
     var substrands = substrands_after + substrands_before;
-    String dna_sequence = null;
-    if (strand.dna_sequence != null) {
-      dna_sequence = dna_before + dna_after;
-    }
     var strand_new = strand.rebuild((b) => b
       ..substrands.replace(substrands)
-      ..dna_sequence = dna_sequence
       ..circular = false);
     strand_new = strand_new.initialize();
 
@@ -649,7 +644,7 @@ Strand join_two_strands_with_substrands(
 
   //TODO: use properties_from_strand_3p to determine where to get properties
   var color = properties_from_strand_3p ? strand_3p.color : strand_5p.color;
-  var idt = properties_from_strand_3p ?  strand_3p.idt : strand_5p.idt;
+  var idt = properties_from_strand_3p ? strand_3p.idt : strand_5p.idt;
 
   // strand_3p is strand whose 3' end is being joined to the other strand's 5' end
   var dna = null;

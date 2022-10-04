@@ -41,6 +41,7 @@ import 'state/grid.dart';
 import 'state/grid_position.dart';
 import 'state/helix.dart';
 import 'state/loopout.dart';
+import 'state/extension.dart';
 import 'state/design.dart';
 import 'state/mouseover_data.dart';
 import 'constants.dart' as constants;
@@ -873,23 +874,24 @@ GridPosition position3d_to_grid_position(Position3D position, Grid grid, Geometr
 }
 
 Position3D grid_position_to_position3d(GridPosition grid_position, Grid grid, Geometry geometry) {
-  num y, z;
+  num x, y;
+
   if (grid == Grid.square) {
-    z = grid_position.h * geometry.distance_between_helices_nm;
+    x = grid_position.h * geometry.distance_between_helices_nm;
     y = grid_position.v * geometry.distance_between_helices_nm;
   } else if (grid == Grid.hex) {
     Point<num> point = hex_grid_position_to_position2d_diameter_1_circles(grid_position);
-    z = point.x * geometry.distance_between_helices_nm;
+    x = point.x * geometry.distance_between_helices_nm;
     y = point.y * geometry.distance_between_helices_nm;
   } else if (grid == Grid.honeycomb) {
     Point<num> point = honeycomb_grid_position_to_position2d_diameter_1_circles(grid_position);
-    z = point.x * geometry.distance_between_helices_nm;
+    x = point.x * geometry.distance_between_helices_nm;
     y = point.y * geometry.distance_between_helices_nm;
   } else {
     throw ArgumentError(
         'cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
   }
-  return Position3D(x: 0, y: y, z: z);
+  return Position3D(x: x, y: y, z: 0);
 }
 
 Point<num> position3d_to_side_view_svg(Position3D position, bool invert_y, Geometry geometry) => Point<num>(
@@ -1496,10 +1498,11 @@ void svg_to_png_data() {
 /// and the zoom is not above threshold `is_zoom_above_threshold`,
 /// and there is no pending action `disable_png_cache_until_action_completes`.
 bool use_png(String dna_sequence_png_uri, bool is_zoom_above_threshold,
-    actions.Action disable_png_cache_until_action_completes) {
+    actions.ExportSvg export_svg_action_delayed_for_png_cache, bool disable_png_caching_dna_sequences) {
   return dna_sequence_png_uri != null &&
       !is_zoom_above_threshold &&
-      disable_png_cache_until_action_completes == null;
+      export_svg_action_delayed_for_png_cache == null &&
+      !disable_png_caching_dna_sequences;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1542,6 +1545,35 @@ mouse_leave_update_mouseover() {
   if (show_mouseover_data()) {
     app.dispatch(actions.MouseoverDataClear());
   }
+}
+
+Point<num> compute_extension_attached_end_svg(
+    Extension ext, Domain adj_dom, Helix adj_helix, num adj_helix_svg_y) {
+  int end_offset = ext.is_5p ? adj_dom.offset_5p : adj_dom.offset_3p;
+  Point<num> extension_attached_end_svg =
+      adj_helix.svg_base_pos(end_offset, adj_dom.forward, adj_helix_svg_y);
+  return extension_attached_end_svg;
+}
+
+// computes the SVG coordinates of the end of an Extension that is not shared with the adjacent Domain
+Point<num> compute_extension_free_end_svg(
+    Point<num> attached_end_svg, Extension ext, Domain adjacent_domain, Geometry geometry) {
+  num x = attached_end_svg.x;
+  num y = attached_end_svg.y;
+  var angle_radians = ext.display_angle * 2 * pi / 360.0;
+  // convert polar coordinates in Extension to rectangular coordinates, and convert from nm to SVG pixels
+  num x_delta = ext.display_length * cos(angle_radians) * geometry.nm_to_svg_pixels;
+  num y_delta = ext.display_length * sin(angle_radians) * geometry.nm_to_svg_pixels;
+  if (adjacent_domain.forward) {
+    y_delta = -y_delta;
+  }
+  if ((adjacent_domain.forward && ext.is_5p) || (!adjacent_domain.forward && !ext.is_5p)) {
+    x_delta = -x_delta;
+  }
+  x += x_delta;
+  y += y_delta;
+  Point<num> ext_end_svg = Point<num>(x, y);
+  return ext_end_svg;
 }
 
 update_mouseover(SyntheticMouseEvent event_syn, Helix helix, Point<num> helix_svg_position) {

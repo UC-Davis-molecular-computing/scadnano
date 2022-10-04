@@ -8,10 +8,13 @@ import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:scadnano/src/dna_file_type.dart';
 import 'package:scadnano/src/json_serializable.dart';
+import 'package:scadnano/src/middleware/local_storage.dart';
+import 'package:scadnano/src/middleware/system_clipboard.dart';
 import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
+import 'package:scadnano/src/state/undo_redo.dart';
 import '../state/dialog.dart';
 import '../state/example_designs.dart';
 import '../state/export_dna_format.dart';
@@ -25,6 +28,7 @@ import '../view/menu_boolean.dart';
 import '../view/menu_dropdown_item.dart';
 import '../view/menu_dropdown_right.dart';
 import '../view/menu_form_file.dart';
+import 'design.dart';
 
 import '../app.dart';
 import '../actions/actions.dart' as actions;
@@ -48,6 +52,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..show_modifications = state.ui_state.show_modifications
       ..show_mismatches = state.ui_state.show_mismatches
       ..show_domain_name_mismatches = state.ui_state.show_domain_name_mismatches
+      ..show_unpaired_insertion_deletions = state.ui_state.show_unpaired_insertion_deletions
       ..strand_paste_keep_color = state.ui_state.strand_paste_keep_color
       ..zoom_speed = state.ui_state.zoom_speed
       ..autofit = state.ui_state.autofit
@@ -73,16 +78,18 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
       ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
       ..show_helices_axis_arrows = state.ui_state.show_helices_axis_arrows
-      ..show_loopout_length = state.ui_state.show_loopout_length
+      ..show_loopout_extension_length = state.ui_state.show_loopout_extension_length
       ..show_slice_bar = state.ui_state.show_slice_bar
       ..show_mouseover_data = state.ui_state.show_mouseover_data
+      ..disable_png_caching_dna_sequences = state.ui_state.disable_png_caching_dna_sequences
       ..local_storage_design_choice = state.ui_state.local_storage_design_choice
       ..clear_helix_selection_when_loading_new_design =
           state.ui_state.clear_helix_selection_when_loading_new_design
       ..default_crossover_type_scaffold_for_setting_helix_rolls =
           state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls
       ..default_crossover_type_staple_for_setting_helix_rolls =
-          state.ui_state.default_crossover_type_staple_for_setting_helix_rolls);
+          state.ui_state.default_crossover_type_staple_for_setting_helix_rolls
+      ..undo_redo = state.undo_redo);
   },
   // Used for component test.
   forwardRef: true,
@@ -106,6 +113,7 @@ mixin MenuPropsMixin on UiProps {
   bool modification_display_connector;
   bool show_mismatches;
   bool show_domain_name_mismatches;
+  bool show_unpaired_insertion_deletions;
   bool strand_paste_keep_color;
   bool autofit;
   bool only_display_selected_helices;
@@ -124,14 +132,16 @@ mixin MenuPropsMixin on UiProps {
   bool show_helix_components_main_view;
   bool show_grid_coordinates_side_view;
   bool show_helices_axis_arrows;
-  bool show_loopout_length;
+  bool show_loopout_extension_length;
   bool show_slice_bar;
   bool show_mouseover_data;
+  bool disable_png_caching_dna_sequences;
   bool default_crossover_type_scaffold_for_setting_helix_rolls;
   bool default_crossover_type_staple_for_setting_helix_rolls;
   LocalStorageDesignChoice local_storage_design_choice;
   bool clear_helix_selection_when_loading_new_design;
   Geometry geometry;
+  UndoRedo undo_redo;
 }
 
 class MenuProps = UiProps with MenuPropsMixin, ConnectPropsMixin;
@@ -224,6 +234,21 @@ really want to exit without saving.'''
         ..display = 'Import cadnano v2'
         ..key = 'import-cadnano')(),
       DropdownDivider({'key': 'divider-import-cadnano'}),
+      (MenuDropdownItem()
+        ..on_click = ((_) {
+          bool reset = window.confirm('''\
+WARNING! This will reset all local settings stored in your browser, 
+including the current design.
+
+Are you sure you want to continue?''');
+          if (reset) {
+            props.dispatch(actions.ResetLocalStorage());
+          }
+        })
+        ..display = 'Reset local storage'
+        ..tooltip = '''\
+Clear the stored design, reset all local settings, and reload the page.'''
+        ..key = 'reset-local-storage')(),
       file_menu_save_design_local_storage_options(),
       DropdownDivider({'key': 'divide-clear-helix-selection-when-loading-new-design'}),
       (MenuBoolean()
@@ -308,16 +333,14 @@ that occurred between the last save and a browser crash.'''
       },
       ///////////////////////////////////////////////////////////////
       // cut/copy/paste
-      (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.Undo()))
-        ..display = 'Undo'
-        ..keyboard_shortcut = 'Ctrl+Z'
-        ..disabled = props.undo_stack_empty)(),
-      (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.Redo()))
-        ..display = 'Redo'
-        ..keyboard_shortcut = 'Ctrl+Shift+Z'
-        ..disabled = props.redo_stack_empty)(),
+      (MenuDropdownRight()
+        ..title = 'Undo'
+        ..id = "edit_menu_undo-dropdown"
+        ..disabled = props.undo_stack_empty)(undo_dropdowns),
+      (MenuDropdownRight()
+        ..title = 'Redo'
+        ..id = "edit_menu_redo-dropdown"
+        ..disabled = props.redo_stack_empty)(redo_dropdowns),
       DropdownDivider({}),
       (MenuDropdownItem()
         ..on_click = (_) {
@@ -333,6 +356,10 @@ that occurred between the last save and a browser crash.'''
             ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped))
         ..display = 'Paste'
         ..keyboard_shortcut = 'Ctrl+V')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => paste_strands_auto())
+        ..display = 'Autopaste'
+        ..keyboard_shortcut = 'Ctrl+Shift+V')(),
       ///////////////////////////////////////////////////////////////
       // pasted strands keep original color
       DropdownDivider({}),
@@ -486,12 +513,45 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
     );
   }
 
+  List<ReactElement> get undo_dropdowns {
+    return undo_or_redo_dropdowns((i) => actions.Undo(i), props.undo_redo.undo_stack, "Undo");
+  }
+
+  List<ReactElement> get redo_dropdowns {
+    return undo_or_redo_dropdowns((i) => actions.Redo(i), props.undo_redo.redo_stack, "Redo");
+  }
+
+  List<ReactElement> undo_or_redo_dropdowns(ActionFromIntCreator undo_or_redo_action_creator,
+      BuiltList<UndoRedoItem> undo_or_redo_stack, String action_name) {
+    List<ReactElement> dropdowns = [];
+    int num_times = 1;
+    bool most_recent = true;
+    for (var item in undo_or_redo_stack.reversed) {
+      dropdowns
+          .add(undo_or_redo_dropdown(item, undo_or_redo_action_creator, num_times, action_name, most_recent));
+      num_times += 1;
+      most_recent = false;
+    }
+    return dropdowns;
+  }
+
+  ReactElement undo_or_redo_dropdown(UndoRedoItem item, ActionFromIntCreator undo_or_redo_action_creator,
+      int num_times, String action_name, bool is_most_recent) {
+    String most_recent_string = is_most_recent ? " [Most Recent]" : "";
+    return (MenuDropdownItem()
+      ..display = '${action_name} ${item.short_description}${most_recent_string}'
+      ..key = '${action_name.toLowerCase()}-${num_times}'
+      ..on_click = (_) => app.dispatch(undo_or_redo_action_creator(num_times)))();
+  }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // view menu
 
   view_menu() {
     var elts = [
-      view_menu_show_dna(),
+      view_menu_warnings(),
+      // view_menu_show_dna(),
+      view_menu_autofit(),
       view_menu_show_labels(),
       view_menu_mods(),
       view_menu_helices(),
@@ -507,21 +567,49 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
     }, elts);
   }
 
-  ReactElement view_menu_show_dna() {
+  ReactElement view_menu_autofit() {
     return (MenuDropdownRight()
-      ..title = 'DNA sequences'
-      ..id = 'view_menu_show_dna-dropdown'
-      ..key = 'view_menu_show_dna-dropdown'
-      ..className = 'submenu_item')([
-      (MenuBoolean()
-        ..value = props.show_dna
-        ..display = 'Show DNA sequences'
+      ..title = 'Autofit'
+      ..id = 'view_menu_autofit-dropdown'
+      ..key = 'view_menu_autofit-dropdown'
+      ..className = 'submenu-item')([
+      (MenuDropdownItem()
+        ..display = 'Auto-fit current design'
         ..tooltip = '''\
-Show DNA sequences that have been assigned to strands. In a large design, this
-can slow down the performance of panning and zooming navigation, so uncheck it
-to speed up navigation.'''
-        ..onChange = ((_) => props.dispatch(actions.ShowDNASet(!props.show_dna)))
-        ..key = 'show-dna-sequences')(),
+The side and main views will be translated to fit the current design in the window.
+'''
+        ..on_click = (_) {
+          util.fit_and_center();
+          util.dispatch_set_zoom_threshold(true);
+        }
+        ..key = 'autofit-current-design')(),
+      (MenuBoolean()
+        ..value = props.autofit
+        ..display = 'Auto-fit on loading new design'
+        ..tooltip = '''\
+The side and main views will be translated to fit the current design in the window
+whenever loading a new design. Otherwise, after loading the design, you may not 
+be able to see it because it is translated off the screen in the current translation.
+
+You may want to uncheck this when working on a design with the scripting 
+library. In that case, when repeatedly re-running the script to modify the 
+design and then re-loading it, it is preferable to keep the design centered 
+at the same location you had before, in order to be able to see the same part 
+of the design you were looking at before changing the script.
+
+To autofit the current design without reloading, click "Auto-fit current design".'''
+        ..name = 'center-on-load'
+        ..onChange = ((_) => props.dispatch(actions.AutofitSet(autofit: !props.autofit)))
+        ..key = 'autofit-on-loading-new-design')(),
+    ]);
+  }
+
+  ReactElement view_menu_warnings() {
+    return (MenuDropdownRight()
+      ..title = 'Warnings'
+      ..id = 'view_menu_show_warnings'
+      ..key = 'view_menu_show_warnings'
+      ..className = 'submenu_item')([
       (MenuBoolean()
         ..value = props.show_mismatches
         ..display = 'Show DNA base mismatches'
@@ -532,8 +620,48 @@ helix with the opposite orientation.'''
           props.dispatch(actions.ShowMismatchesSet(!props.show_mismatches));
         }
         ..key = 'show-mismatches')(),
+      (MenuBoolean()
+        ..value = props.show_domain_name_mismatches
+        ..display = 'Show domain name mismatches'
+        ..tooltip = '''\
+Show mismatches between domain names assigned to one strand and the strand on the same
+helix with the opposite orientation.'''
+        ..onChange = (_) {
+          props.dispatch(actions.ShowDomainNameMismatchesSet(!props.show_domain_name_mismatches));
+        }
+        ..key = 'show-domain-name-mismatches')(),
+      (MenuBoolean()
+        ..value = props.show_unpaired_insertion_deletions
+        ..display = 'Show unpaired insertion/deletions'
+        ..tooltip = '''\
+Show unpaired deletions and insertions. This is defined to be an insertion/deletion on
+a strand, where another strand is at the same (helix,offset) (in the opposite direction),
+which lacks the insertion/deletion. It does NOT show a warning if there is no other
+strand at the same (helix,offset).'''
+        ..onChange = (_) {
+          props.dispatch(actions.ShowUnpairedInsertionDeletionsSet(!props.show_unpaired_insertion_deletions));
+        }
+        ..key = 'show-unpaired-insertion-deletions')(),
     ]);
   }
+
+//   ReactElement view_menu_show_dna() {
+//     return (MenuDropdownRight()
+//       ..title = 'DNA sequences'
+//       ..id = 'view_menu_show_dna-dropdown'
+//       ..key = 'view_menu_show_dna-dropdown'
+//       ..className = 'submenu_item')([
+//       (MenuBoolean()
+//         ..value = props.show_dna
+//         ..display = 'Show DNA sequences'
+//         ..tooltip = '''\
+// Show DNA sequences that have been assigned to strands. In a large design, this
+// can slow down the performance of panning and zooming navigation, so uncheck it
+// to speed up navigation.'''
+//         ..onChange = ((_) => props.dispatch(actions.ShowDNASet(!props.show_dna)))
+//         ..key = 'show-dna-sequences')(),
+//     ]);
+//   }
 
   ReactElement view_menu_show_labels() {
     return (MenuDropdownRight()
@@ -569,16 +697,6 @@ helix with the opposite orientation.'''
         ..on_new_value =
             ((num font_size) => props.dispatch(actions.DomainNameFontSizeSet(font_size: font_size)))
         ..key = 'domain-name-font-size')(),
-      (MenuBoolean()
-        ..value = props.show_domain_name_mismatches
-        ..display = 'Show domain name mismatches'
-        ..tooltip = '''\
-Show mismatches between domain names assigned to one strand and the strand on the same
-helix with the opposite orientation.'''
-        ..onChange = (_) {
-          props.dispatch(actions.ShowDomainNameMismatchesSet(!props.show_domain_name_mismatches));
-        }
-        ..key = 'show-domain-name-mismatches')(),
     ]);
   }
 
@@ -731,21 +849,14 @@ toggle "Show main view helices".'''
   List<ReactElement> view_menu_misc() {
     return [
       (MenuBoolean()
-        ..value = props.autofit
-        ..display = 'Auto-fit on loading new design'
+        ..value = props.show_dna
+        ..display = 'Show DNA sequences'
         ..tooltip = '''\
-When loading a new design, the side and main views will be translated to show 
-the lowest-index helix in the upper-left. otherwise, after loading the design, 
-you may not be able to see it because it is translated off the screen.
-
-You may want to uncheck this when working on a design with the scripting 
-library. In that case, when repeatedly re-running the script to modify the 
-design and then re-loading it, it is preferable to keep the design centered 
-at the same location you had before, in order to be able to see the same part 
-of the design you were looking at before changing the script.'''
-        ..name = 'center-on-load'
-        ..onChange = ((_) => props.dispatch(actions.AutofitSet(autofit: !props.autofit)))
-        ..key = 'autofit-on-loading-new-design')(),
+Show DNA sequences that have been assigned to strands. In a large design, this
+can slow down the performance of panning and zooming navigation, so uncheck it
+to speed up navigation.'''
+        ..onChange = ((_) => props.dispatch(actions.ShowDNASet(!props.show_dna)))
+        ..key = 'show-dna-sequences')(),
       (MenuBoolean()
         ..value = props.invert_y
         ..display = 'Invert y-axis'
@@ -782,14 +893,14 @@ Blue : Z-axis'''
             .dispatch(actions.ShowAxisArrowsSet(show_helices_axis_arrows: !props.show_helices_axis_arrows)))
         ..key = 'show-helices-axis-arrows')(),
       (MenuBoolean()
-        ..value = props.show_loopout_length
-        ..display = 'Show loopout lengths'
+        ..value = props.show_loopout_extension_length
+        ..display = 'Show loopout/extension lengths'
         ..tooltip = '''\
-When selected, the length of each loopout is displayed next to it.'''
-        ..name = 'show-loopout-length'
-        ..onChange = ((_) =>
-            props.dispatch(actions.ShowLoopoutLengthSet(show_loopout_length: !props.show_loopout_length)))
-        ..key = 'show-loopout-length')(),
+When selected, the length of each loopout and extension is displayed next to it.'''
+        ..name = 'show-loopout-extension-length'
+        ..onChange = ((_) => props.dispatch(
+            actions.ShowLoopoutExtensionLengthSet(show_length: !props.show_loopout_extension_length)))
+        ..key = 'show-loopout-extension-length')(),
       (MenuBoolean()
         ..value = props.show_slice_bar
         ..display = 'Show slice bar'
@@ -817,7 +928,23 @@ In a large design, this can slow down the performance, so uncheck it when not in
         ..onChange = (_) {
           props.dispatch(actions.ShowMouseoverDataSet(!props.show_mouseover_data));
         }
-        ..key = 'show-mouseover-data')()
+        ..key = 'show-mouseover-data')(),
+        (MenuBoolean()
+        ..value = props.disable_png_caching_dna_sequences
+        ..display = 'Disable PNG caching of DNA sequences'
+        ..tooltip = '''\
+DNA sequences are displayed as SVG (scaled vector graphics), which slow down the program
+significantly when zoomed far out on a large design and hundreds or thousands of DNA bases 
+are displayed simultaneously. To prevent this, the image of DNA sequences is converted 
+to a PNG image when zoomed out sufficiently far, which is much faster to display.
+
+Select this option to disable this PNG caching of DNA sequences. This can be useful when 
+debugging, but be warned that it will be very slow to render a large number of DNA bases.'''
+        ..name = 'disable-png-caching-dna-sequences'
+        ..onChange = (_) {
+          props.dispatch(actions.DisablePngCachingDnaSequencesSet(!props.disable_png_caching_dna_sequences));
+        }
+        ..key = 'disable-png-caching-dna-sequences')()
     ];
   }
 
@@ -844,10 +971,31 @@ In a large design, this can slow down the performance, so uncheck it when not in
         ..display = 'DNA sequences')(),
       DropdownDivider({'key': 'divider-not-full-design'}),
       (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile()))
+        ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile(whitespace: true)))
         ..tooltip = "Export design to cadnano (version 2) .json file."
         ..display = 'cadnano v2'
         ..key = 'export-cadnano')(),
+      DropdownItem(
+        {
+          'href': 'https://scadnano-python-package.readthedocs.io/en/latest/#interoperability-cadnano-v2',
+          'target': '_blank',
+          'title': """\
+Read constraints that the scadnano design must obey to exportable to cadnano v2.
+The constraints are the same for the scadnano Python package (described at the 
+linked page) as for the web interface.
+"""
+        },
+        'cadnano v2 export instructions',
+      ),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile(whitespace: false)))
+        ..tooltip = """\
+Export design to cadnano (version 2) .json file with no whitespace or newlines.
+This is necessary to use the cadnano file with CanDo, which causes a confusing error 
+cadnano files that have whitespace. ("Bad .json file format is detected in 
+'structure.json'. Or no dsDNA or strand crossovers exist.")"""
+        ..display = 'cadnano v2 no whitespace'
+        ..key = 'export-cadnano-no-whitespace')(),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.OxdnaExport()))
         ..tooltip = "Export design to oxDNA .dat and .top files, which can be loaded in oxDNA or oxView."
@@ -985,6 +1133,7 @@ the .sc file in a .zip file, then it can be uploaded.'''
       (MenuDropdownRight()
         ..title = "Other versions"
         ..id = "older-version-dropdown"
+        ..disallow_overflow = true
         ..tooltip = '''\
 Older versions of scadnano, as well as the newest development version.
 
@@ -1058,7 +1207,7 @@ However, it may be less stable than the main site.'''
         DialogCheckbox(label: 'column-major order (uncheck for row-major order)', value: true);
     items[idx_strand_order_str] = DialogRadio(label: 'strand part to sort by', options: sort_options);
 
-    var dialog = Dialog(title: 'export DNA sequences', items: items, disable_when_any_checkboxes_off: {
+    var dialog = Dialog(title: 'export DNA sequences', type: DialogType.export_dna_sequences, items: items, disable_when_any_checkboxes_off: {
       idx_column_major: [idx_sort],
       idx_strand_order_str: [idx_sort]
     });
@@ -1088,7 +1237,7 @@ However, it may be less stable than the main site.'''
   }
 
   Future<void> load_example_dialog() async {
-    var dialog = Dialog(title: 'Load example DNA design', items: [
+    var dialog = Dialog(title: 'Load example DNA design', type: DialogType.load_example_dna_design, items: [
       DialogRadio(
         label: 'designs',
         options: props.example_designs.filenames,
@@ -1102,6 +1251,8 @@ However, it may be less stable than the main site.'''
   }
 }
 
+typedef ActionFromIntCreator = actions.Action Function(int);
+
 Future<void> ask_for_autobreak_parameters() async {
   var items = List<DialogItem>.filled(4, null);
   int target_length_idx = 0;
@@ -1113,7 +1264,7 @@ Future<void> ask_for_autobreak_parameters() async {
   items[max_length_idx] = DialogInteger(label: 'max length', value: 60);
   items[min_distance_to_xover_idx] = DialogInteger(label: 'min distance to xover', value: 3);
 
-  var dialog = Dialog(title: 'Choose autobreak parameters', items: items);
+  var dialog = Dialog(title: 'Choose autobreak parameters', type: DialogType.choose_autobreak_parameters, items: items);
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 
@@ -1145,7 +1296,7 @@ Future<void> ask_for_geometry(Geometry geometry) async {
   items[minor_groove_angle_idx] =
       DialogFloat(label: 'minor groove angle (degrees)', value: geometry.minor_groove_angle);
 
-  var dialog = Dialog(title: 'adjust geometric parameters', items: items);
+  var dialog = Dialog(title: 'adjust geometric parameters', type: DialogType.adjust_geometric_parameters, items: items);
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 
@@ -1186,14 +1337,14 @@ request_load_file_from_file_chooser(
 
 scadnano_file_loaded(FileReader file_reader, String filename) {
   var json_model_text = file_reader.result;
-  app.dispatch(actions.LoadDNAFile(content: json_model_text, filename: filename));
+  app.dispatch(actions.PrepareToLoadDNAFile(content: json_model_text, filename: filename));
 }
 
 cadnano_file_loaded(FileReader file_reader, String filename) async {
   try {
     var json_cadnano_text = file_reader.result;
     filename = path.setExtension(filename, '.${constants.default_scadnano_file_extension}');
-    app.dispatch(actions.LoadDNAFile(
+    app.dispatch(actions.PrepareToLoadDNAFile(
         content: json_cadnano_text, filename: filename, dna_file_type: DNAFileType.cadnano_file));
   } on Exception catch (e) {
     window.alert('Error importing file: ${e}');

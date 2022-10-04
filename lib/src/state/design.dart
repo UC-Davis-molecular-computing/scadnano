@@ -23,6 +23,7 @@ import 'linker.dart';
 import 'modification.dart';
 import 'strand.dart';
 import 'domain.dart';
+import 'extension.dart';
 import 'helix.dart';
 import 'grid.dart';
 import '../util.dart' as util;
@@ -150,7 +151,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<int, Helix> helices_in_group(String group_name) =>
       BuiltMap<int, Helix>.from(helices.toMap()..removeWhere((idx, helix) => helix.group != group_name));
 
-  StrandMaker strand(int current_helix, int current_offset) {
+  StrandMaker draw_strand(int current_helix, int current_offset) {
     return StrandMaker(this, current_helix, current_offset);
   }
 
@@ -342,6 +343,17 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   @memoized
+  BuiltMap<String, Extension> get extensions_by_id {
+    var builder = MapBuilder<String, Extension>();
+    for (var strand in strands) {
+      for (var ext in strand.extensions) {
+        builder[ext.id] = ext;
+      }
+    }
+    return builder.build();
+  }
+
+  @memoized
   BuiltMap<String, Crossover> get crossovers_by_id {
     var builder = MapBuilder<String, Crossover>();
     for (var strand in strands) {
@@ -455,6 +467,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     for (var map_small in [
       strands_by_id,
       loopouts_by_id,
+      extensions_by_id,
       crossovers_by_id,
       ends_by_id,
       domains_by_id,
@@ -470,7 +483,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return map.build();
   }
 
-  /// design.strands_overlapping[strand] is a list of all strands that overlap strand, including possibly itself.
+  /// design.strands_overlapping[draw_strand] is a list of all strands that overlap strand, including possibly itself.
   @memoized
   BuiltMap<Strand, BuiltList<Strand>> get strands_overlapping {
     Map<Strand, List<Strand>> map = {};
@@ -504,6 +517,22 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       domain_mismatches_builtmap_builder[domain] = mismatches.build();
     });
     return domain_mismatches_builtmap_builder.build();
+  }
+
+  @memoized
+  BuiltMap<Domain, BuiltList<Address>> get unpaired_insertion_deletion_map {
+    var unpaired_insertion_deletion_map_builder = Map<Domain, List<Address>>();
+    for (Strand strand in this.strands) {
+      for (Domain domain in strand.domains) {
+        unpaired_insertion_deletion_map_builder[domain] =
+            this._find_unpaired_insertion_deletions_on_substrand(domain);
+      }
+    }
+    var unpaired_insertion_deletion_half_built_map = Map<Domain, BuiltList<Address>>();
+    unpaired_insertion_deletion_map_builder.forEach((domain, unpaireds) {
+      unpaired_insertion_deletion_half_built_map[domain] = unpaireds.build();
+    });
+    return unpaired_insertion_deletion_half_built_map.build();
   }
 
   @memoized
@@ -1464,6 +1493,35 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
   }
 
+  List<Address> _find_unpaired_insertion_deletions_on_substrand(Domain substrand) {
+    var unpaireds = List<Address>();
+
+    for (int offset = substrand.start; offset < substrand.end; offset++) {
+      if (substrand.deletions.contains(offset)) {
+        continue;
+      }
+
+      var other_ss = this.other_substrand_at_offset(substrand, offset);
+      if (other_ss == null) {
+        continue;
+      }
+
+      // other_ss has a deletion (and substrand implicitly doesn't since we would have continue'd),
+      if (other_ss.deletions.contains(offset)) {
+        unpaireds.add(new Address(helix_idx: other_ss.helix, offset: offset, forward: other_ss.forward));
+        continue;
+      }
+
+      int length_insertion_substrand = substrand.insertion_offset_to_length[offset];
+      int length_insertion_other_ss = other_ss.insertion_offset_to_length[offset];
+      if (length_insertion_substrand != length_insertion_other_ss) {
+        unpaireds.add(new Address(helix_idx: other_ss.helix, offset: offset, forward: other_ss.forward));
+        continue;
+      }
+    }
+    return unpaireds;
+  }
+
   ListBuilder<Mismatch> _find_mismatches_on_substrand(Domain substrand) {
     var mismatches = ListBuilder<Mismatch>();
 
@@ -1541,6 +1599,14 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var ret = this.domain_mismatches_map[domain];
     if (ret == null) {
       ret = BuiltList<Mismatch>();
+    }
+    return ret;
+  }
+
+  BuiltList<Address> unpaired_insertion_deletion_on_domain(Domain domain) {
+    var ret = this.unpaired_insertion_deletion_map[domain];
+    if (ret == null) {
+      ret = BuiltList<Address>();
     }
     return ret;
   }
@@ -2355,6 +2421,8 @@ class IllegalDesignError implements Exception {
   String cause;
 
   IllegalDesignError(this.cause);
+
+  bool operator ==(Object other) => other is IllegalDesignError;
 }
 
 class IllegalCadnanoDesignError implements IllegalDesignError {

@@ -85,7 +85,7 @@ _restore(Store<AppState> store, Storable storable) {
             '\n\nstack trace:'
             '\n\n${stackTrace}');
       }
-      action = actions.LoadDNAFile(
+      action = actions.PrepareToLoadDNAFile(
           content: json_str,
           filename: storables?.loaded_filename ?? 'default_filename.sc',
           write_local_storage: false);
