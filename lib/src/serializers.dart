@@ -6,6 +6,8 @@ import 'package:built_collection/built_collection.dart';
 import 'package:built_value/standard_json_plugin.dart';
 import 'package:color/color.dart';
 import 'package:scadnano/src/dna_file_type.dart';
+import 'package:scadnano/src/state/potential_extension.dart';
+import 'package:scadnano/src/state/potential_extensions.dart';
 import 'package:scadnano/src/state/undo_redo.dart';
 import 'package:tuple/tuple.dart';
 
@@ -220,6 +222,8 @@ part 'serializers.g.dart';
   PotentialCrossoverCreate,
   PotentialCrossoverMove,
   PotentialCrossoverRemove,
+  PotentialExtension,
+  PotentialExtensions,
   WarnOnExitIfUnsavedSet,
   AssignDNA,
   AssignDNAComplementFromBoundStrands,

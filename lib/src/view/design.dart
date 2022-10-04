@@ -824,12 +824,16 @@ class DesignViewComponent {
                   ..store = app.store_potential_crossover
                   ..context = app.context_potential_crossover)(
                   (ReduxProvider()
-                    ..store = app.store_dna_ends_move
-                    ..context = app.context_dna_ends_move)(
+                    ..store = app.store_potential_extensions
+                    ..context = app.context_potential_extensions)(
                     (ReduxProvider()
-                      ..store = app.store_helix_group_move
-                      ..context = app.context_helix_group_move)(
-                      ConnectedDesignMain()(),
+                      ..store = app.store_dna_ends_move
+                      ..context = app.context_dna_ends_move)(
+                      (ReduxProvider()
+                        ..store = app.store_helix_group_move
+                        ..context = app.context_helix_group_move)(
+                        ConnectedDesignMain()(),
+                      ),
                     ),
                   ),
                 ),
