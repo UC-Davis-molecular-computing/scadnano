@@ -10,6 +10,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/linker.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/modification_type.dart';
+import 'package:scadnano/src/state/potential_extension.dart';
 
 import '../state/address.dart';
 import '../state/context_menu.dart';
@@ -228,7 +229,24 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         // set up drag detection for moving DNA ends
         app.dispatch(actions.DNAEndsMoveStart(offset: dna_end.offset_inclusive, helix: props.helix));
       } else {
-        print('not yet implemented moving free end of an extension');
+        // select end
+        MouseEvent event = event_synthetic.nativeEvent;
+        //On a mac event.button is: 0-left, 1-middle, 2-right.
+        //On chrome mac, only handle_end_click_ligate_or_potential_crossover gets
+        // called on a right or middle click.
+        if (event.button == constants.RIGHT_CLICK_BUTTON || event.button == constants.MIDDLE_CLICK_BUTTON) {
+          return;
+        }
+        // dna_end.handle_selection_mouse_down(event);
+        // set up drag detection for moving DNA ends
+
+        int offset = props.is_5p ? props.domain.offset_5p : props.domain.offset_3p;
+        var start_point_untransformed =
+          props.helix.svg_base_pos(offset, props.domain.forward, props.helix_svg_position.y);
+        var start_point = props.group.transform_point_main_view(start_point_untransformed, props.geometry);
+        app.dispatch(actions.DNAExtensionsMoveStart(potential_extension: PotentialExtension(
+          start_point: start_point, current_point: start_point, extension: props.ext
+        )));
       }
     }
   }
