@@ -221,7 +221,8 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     var dialog = Dialog(
         title: 'set extension display length/angle',
         items: items,
-        type: DialogType.set_extension_display_length_angle);
+        type: DialogType.set_extension_display_length_angle,
+        use_saved_response: false);
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
