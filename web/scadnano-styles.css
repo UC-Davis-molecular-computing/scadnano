@@ -741,24 +741,10 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
     fill: none;
 }
 
-.warning-star-red {
+.warning-star {
     /*stroke: black;*/
     stroke: red;
     fill: red;
-    stroke-width: 0.25;
-}
-
-.warning-star-blue {
-    /*stroke: black;*/
-    stroke: blue;
-    fill: blue;
-    stroke-width: 0.25;
-}
-
-.warning-star-green {
-    /*stroke: black;*/
-    stroke: green;
-    fill: green;
     stroke-width: 0.25;
 }
 

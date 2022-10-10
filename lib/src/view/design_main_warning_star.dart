@@ -40,8 +40,12 @@ class DesignMainWarningStarComponent extends UiComponent2<DesignMainWarningStarP
     }
 
     return (Dom.polygon()
-      ..className = 'warning-star-${props.color}'
+      ..className = 'warning-star'
       ..points = points.join(' ')
+      ..style = {
+        "stroke": "${props.color}",
+        "fill": "${props.color}",
+      }
       ..transform = 'rotate(${rotate_degrees} ${props.base_svg_pos.x} ${props.base_svg_pos.y})')();
   }
 
