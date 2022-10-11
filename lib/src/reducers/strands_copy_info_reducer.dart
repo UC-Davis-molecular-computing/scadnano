@@ -78,6 +78,7 @@ CopyInfo autopaste_initiate_reducer(CopyInfo copy_info, AppState state, actions.
   return copy_info;
 }
 
+/// returns null on JSON decode error
 Tuple2<List<Strand>, List<int>> parse_strands_and_helices_view_order_from_clipboard(
     String clipboard_content) {
   String error_msg = 'no strand info found on system clipboard, so nothing to paste; '

@@ -156,7 +156,7 @@ void put_strand_info_on_clipboard(Store<AppState> store) {
     clipboard.write(clipboard_content);
   }
 }
-BuiltSet<Modification> all_modifications(BuiltList<Strand> strands) {
+BuiltSet<Modification> all_modifications(Iterable<Strand> strands) {
   var mods_5p = BuiltSet<Modification>({
     for (var strand in strands)
       if (strand.modification_5p != null) strand.modification_5p
