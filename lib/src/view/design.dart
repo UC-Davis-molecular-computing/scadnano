@@ -15,6 +15,8 @@ import 'package:scadnano/src/middleware/system_clipboard.dart';
 import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
+import 'package:scadnano/src/state/potential_extension.dart';
+import 'package:scadnano/src/state/potential_extensions.dart';
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:scadnano/src/state/selection_rope.dart';
 import 'package:scadnano/src/view/design_main_arrows.dart';
@@ -1014,6 +1016,14 @@ main_view_pointer_up(MouseEvent event) {
   DNAEndsMove dna_ends_move = app.store_dna_ends_move.state;
   if (dna_ends_move != null) {
     app.dispatch(actions.DNAEndsMoveStop());
+    if (dna_ends_move.is_nontrivial) {
+      app.dispatch(actions.DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
+    }
+  }
+
+  PotentialExtensions potential_extensions = app.store_potential_extensions.state;
+  if (potential_extensions != null) {
+    app.dispatch(actions.DNAExtensionsMoveStop());
     if (dna_ends_move.is_nontrivial) {
       app.dispatch(actions.DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
     }

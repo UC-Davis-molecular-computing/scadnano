@@ -237,16 +237,14 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         if (event.button == constants.RIGHT_CLICK_BUTTON || event.button == constants.MIDDLE_CLICK_BUTTON) {
           return;
         }
-        // dna_end.handle_selection_mouse_down(event);
+        dna_end.handle_selection_mouse_down(event);
         // set up drag detection for moving DNA ends
 
         int offset = props.is_5p ? props.domain.offset_5p : props.domain.offset_3p;
         var start_point_untransformed =
-          props.helix.svg_base_pos(offset, props.domain.forward, props.helix_svg_position.y);
+            props.helix.svg_base_pos(offset, props.domain.forward, props.helix_svg_position.y);
         var start_point = props.group.transform_point_main_view(start_point_untransformed, props.geometry);
-        app.dispatch(actions.DNAExtensionsMoveStart(potential_extension: PotentialExtension(
-          start_point: start_point, current_point: start_point, extension: props.ext
-        )));
+        app.dispatch(actions.DNAExtensionsMoveStart(start_point: start_point));
       }
     }
   }

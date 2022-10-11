@@ -2729,8 +2729,7 @@ abstract class DNAEndsMoveCommit
 abstract class DNAExtensionsMoveStart
     with BuiltJsonSerializable
     implements Action, Built<DNAExtensionsMoveStart, DNAExtensionsMoveStartBuilder> {
-  
-  PotentialExtension get potential_extension;
+  Point<num> get start_point;
 
   /************************ begin BuiltValue boilerplate ************************/
   factory DNAExtensionsMoveStart({PotentialExtension potential_extension}) = _$DNAExtensionsMoveStart._;
@@ -2742,25 +2741,26 @@ abstract class DNAExtensionsMoveStart
 
 abstract class DNAExtensionsMoveSetSelectedExtensions
     with BuiltJsonSerializable
-    implements Action, Built<DNAExtensionsMoveSetSelectedExtensions, DNAExtensionsMoveSetSelectedExtensionsBuilder> {
-  // BuiltList<DNAExtensionsMove> get moves;
-
-  int get original_offset;
-
-  Helix get helix;
+    implements
+        Action,
+        Built<DNAExtensionsMoveSetSelectedExtensions, DNAExtensionsMoveSetSelectedExtensionsBuilder> {
+  //BuiltList<DNAExtensionsMove> get moves;
+  //TODO: finish implementing this
+  Point<num> get original_point;
 
   BuiltSet<Strand> get strands_affected;
 
   /************************ begin BuiltValue boilerplate ************************/
   factory DNAExtensionsMoveSetSelectedExtensions(
-      {// BuiltList<DNAExtensionsMove> moves,
+      { // BuiltList<DNAExtensionsMove> moves,
       int original_offset,
       Helix helix,
       BuiltSet<Strand> strands_affected}) = _$DNAExtensionsMoveSetSelectedExtensions._;
 
   DNAExtensionsMoveSetSelectedExtensions._();
 
-  static Serializer<DNAExtensionsMoveSetSelectedExtensions> get serializer => _$dNAExtensionsMoveSetSelectedExtensionsSerializer;
+  static Serializer<DNAExtensionsMoveSetSelectedExtensions> get serializer =>
+      _$dNAExtensionsMoveSetSelectedExtensionsSerializer;
 }
 
 abstract class DNAExtensionsMoveAdjustOffset
@@ -2773,7 +2773,8 @@ abstract class DNAExtensionsMoveAdjustOffset
 
   DNAExtensionsMoveAdjustOffset._();
 
-  static Serializer<DNAExtensionsMoveAdjustOffset> get serializer => _$dNAExtensionsMoveAdjustOffsetSerializer;
+  static Serializer<DNAExtensionsMoveAdjustOffset> get serializer =>
+      _$dNAExtensionsMoveAdjustOffsetSerializer;
 }
 
 abstract class DNAExtensionsMoveStop
@@ -2793,7 +2794,8 @@ abstract class DNAExtensionsMoveCommit
   // DNAExtensionsMove get dna_ends_move;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory DNAExtensionsMoveCommit(/* { DNAExtensionsMove dna_extensions_move } */) = _$DNAExtensionsMoveCommit._;
+  factory DNAExtensionsMoveCommit(/* { DNAExtensionsMove dna_extensions_move } */) =
+      _$DNAExtensionsMoveCommit._;
 
   DNAExtensionsMoveCommit._();
 
@@ -4061,18 +4063,17 @@ abstract class SliceBarOffsetSet
 
 abstract class DisablePngCachingDnaSequencesSet
     with BuiltJsonSerializable
-    implements
-        Action,
-        Built<DisablePngCachingDnaSequencesSet, DisablePngCachingDnaSequencesSetBuilder> {
+    implements Action, Built<DisablePngCachingDnaSequencesSet, DisablePngCachingDnaSequencesSetBuilder> {
   bool get disable_png_caching_dna_sequences;
 
   /************************ begin BuiltValue boilerplate ************************/
   factory DisablePngCachingDnaSequencesSet(bool disable_png_caching_dna_sequences) =>
-      DisablePngCachingDnaSequencesSet.from((b) => b..disable_png_caching_dna_sequences = disable_png_caching_dna_sequences);
-  
+      DisablePngCachingDnaSequencesSet.from(
+          (b) => b..disable_png_caching_dna_sequences = disable_png_caching_dna_sequences);
+
   factory DisablePngCachingDnaSequencesSet.from(
-          [void Function(DisablePngCachingDnaSequencesSetBuilder) updates]) = _$DisablePngCachingDnaSequencesSet;
-  
+      [void Function(DisablePngCachingDnaSequencesSetBuilder) updates]) = _$DisablePngCachingDnaSequencesSet;
+
   DisablePngCachingDnaSequencesSet._();
 
   static Serializer<DisablePngCachingDnaSequencesSet> get serializer =>
