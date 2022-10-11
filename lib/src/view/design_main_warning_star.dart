@@ -12,6 +12,7 @@ mixin DesignMainWarningStarProps on UiProps {
   Point<num> base_svg_pos;
   bool forward;
   Geometry geometry;
+  String color;
 }
 
 class DesignMainWarningStarComponent extends UiComponent2<DesignMainWarningStarProps> {
@@ -41,6 +42,10 @@ class DesignMainWarningStarComponent extends UiComponent2<DesignMainWarningStarP
     return (Dom.polygon()
       ..className = 'warning-star'
       ..points = points.join(' ')
+      ..style = {
+        "stroke": "${props.color}",
+        "fill": "${props.color}",
+      }
       ..transform = 'rotate(${rotate_degrees} ${props.base_svg_pos.x} ${props.base_svg_pos.y})')();
   }
 
