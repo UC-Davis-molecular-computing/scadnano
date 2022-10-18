@@ -253,7 +253,7 @@ part 'serializers.g.dart';
   DNAEndsMoveCommit,
   DNAExtensionsMoveStart,
   DNAExtensionsMoveSetSelectedExtensions,
-  DNAExtensionsMoveAdjustOffset,
+  DNAExtensionsMoveAdjustPosition,
   DNAExtensionsMoveStop,
   DNAExtensionsMoveCommit,
   // CopySelectedObjectTextToSystemClipboard,

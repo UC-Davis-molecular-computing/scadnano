@@ -2731,8 +2731,10 @@ abstract class DNAExtensionsMoveStart
     implements Action, Built<DNAExtensionsMoveStart, DNAExtensionsMoveStartBuilder> {
   Point<num> get start_point;
 
+  Helix get helix;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory DNAExtensionsMoveStart({Point<num> start_point}) = _$DNAExtensionsMoveStart._;
+  factory DNAExtensionsMoveStart({Point<num> start_point, Helix helix}) = _$DNAExtensionsMoveStart._;
 
   DNAExtensionsMoveStart._();
 
@@ -2744,17 +2746,20 @@ abstract class DNAExtensionsMoveSetSelectedExtensions
     implements
         Action,
         Built<DNAExtensionsMoveSetSelectedExtensions, DNAExtensionsMoveSetSelectedExtensionsBuilder> {
-  BuiltList<DNAExtensionsMove> get moves;
+  BuiltList<DNAExtensionMove> get moves;
   //TODO: finish implementing this
   Point<num> get original_point;
 
   BuiltSet<Strand> get strands_affected;
 
+  Helix get helix;
+
   /************************ begin BuiltValue boilerplate ************************/
   factory DNAExtensionsMoveSetSelectedExtensions(
-      {BuiltList<DNAExtensionsMove> moves,
+      {BuiltList<DNAExtensionMove> moves,
       Point<num> original_point,
-      BuiltSet<Strand> strands_affected}) = _$DNAExtensionsMoveSetSelectedExtensions._;
+      BuiltSet<Strand> strands_affected,
+      Helix helix}) = _$DNAExtensionsMoveSetSelectedExtensions._;
 
   DNAExtensionsMoveSetSelectedExtensions._();
 
@@ -2762,18 +2767,18 @@ abstract class DNAExtensionsMoveSetSelectedExtensions
       _$dNAExtensionsMoveSetSelectedExtensionsSerializer;
 }
 
-abstract class DNAExtensionsMoveAdjustOffset
+abstract class DNAExtensionsMoveAdjustPosition
     with BuiltJsonSerializable
-    implements FastAction, Built<DNAExtensionsMoveAdjustOffset, DNAExtensionsMoveAdjustOffsetBuilder> {
-  int get offset;
+    implements FastAction, Built<DNAExtensionsMoveAdjustPosition, DNAExtensionsMoveAdjustPositionBuilder> {
+  Point<num> get position;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory DNAExtensionsMoveAdjustOffset({int offset}) = _$DNAExtensionsMoveAdjustOffset._;
+  factory DNAExtensionsMoveAdjustPosition({Point<num> position}) = _$DNAExtensionsMoveAdjustPosition._;
 
-  DNAExtensionsMoveAdjustOffset._();
+  DNAExtensionsMoveAdjustPosition._();
 
-  static Serializer<DNAExtensionsMoveAdjustOffset> get serializer =>
-      _$dNAExtensionsMoveAdjustOffsetSerializer;
+  static Serializer<DNAExtensionsMoveAdjustPosition> get serializer =>
+      _$dNAExtensionsMoveAdjustPositionSerializer;
 }
 
 abstract class DNAExtensionsMoveStop
@@ -2790,10 +2795,10 @@ abstract class DNAExtensionsMoveStop
 abstract class DNAExtensionsMoveCommit
     with BuiltJsonSerializable, UndoableAction
     implements Built<DNAExtensionsMoveCommit, DNAExtensionsMoveCommitBuilder> {
-  // DNAExtensionsMove get dna_ends_move;
+  DNAExtensionsMove get dna_extensions_move;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory DNAExtensionsMoveCommit(/* { DNAExtensionsMove dna_extensions_move } */) =
+  factory DNAExtensionsMoveCommit({ DNAExtensionsMove dna_extensions_move }) =
       _$DNAExtensionsMoveCommit._;
 
   DNAExtensionsMoveCommit._();

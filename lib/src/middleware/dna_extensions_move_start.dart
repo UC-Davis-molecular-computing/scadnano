@@ -37,10 +37,12 @@ dna_extensions_move_start_middleware(Store<AppState> store, action, NextDispatch
 
     // important that we dispatch to app, not to store, because the app dispatch will know to route this
     // to the appropriate optimized store for moving DNAEnds
+    // TODO: Check why this is not working
     app.dispatch(actions.DNAExtensionsMoveSetSelectedExtensions(
         original_point: action.start_point,
         moves: moves.toBuiltList(),
-        strands_affected: strands_affected.toBuiltSet()));
+        strands_affected: strands_affected.toBuiltSet(),
+        helix: action.helix));
   } else {
     next(action);
   }

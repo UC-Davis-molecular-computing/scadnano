@@ -297,6 +297,22 @@ class DesignViewComponent {
             }
           }
         }
+        DNAExtensionsMove extensions_move_store = app.store_extensions_move.state;
+        if (moves_store != null) {
+          var group_names = group_names_of_ends(moves_store);
+          if (group_names.length != 1) {
+            var msg = 'Cannot move or copy DNA extensions unless they are all on the same helix group.\n'
+                'The selected ends occupy the following helix groups: ${group_names?.join(", ")}';
+            window.alert(msg);
+          } else {
+            Point<num> old_point = extensions_move_store.current_point;
+            Point<num> point =
+              util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, true, main_view_svg);
+            if (point != old_point) {
+              app.dispatch(actions.DNAExtensionsMoveAdjustPosition(position: point));
+            }
+          }
+        }
       }
 
       // move selected Strands
@@ -825,8 +841,8 @@ class DesignViewComponent {
                   ..store = app.store_potential_crossover
                   ..context = app.context_potential_crossover)(
                   (ReduxProvider()
-                    ..store = app.store_potential_extensions
-                    ..context = app.context_potential_extensions)(
+                    ..store = app.store_extensions_move
+                    ..context = app.context_extensions_move)(
                     (ReduxProvider()
                       ..store = app.store_dna_ends_move
                       ..context = app.context_dna_ends_move)(
@@ -1020,11 +1036,11 @@ main_view_pointer_up(MouseEvent event) {
     }
   }
 
-  DNAExtensionsMove potential_extensions = app.store_potential_extensions.state;
-  if (potential_extensions != null) {
+  DNAExtensionsMove extensions_move = app.store_extensions_move.state;
+  if (extensions_move != null) {
     app.dispatch(actions.DNAExtensionsMoveStop());
-    if (dna_ends_move.is_nontrivial) {
-      app.dispatch(actions.DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
+    if (extensions_move.is_nontrivial) {
+      app.dispatch(actions.DNAExtensionsMoveCommit(dna_extensions_move: extensions_move));
     }
   }
 

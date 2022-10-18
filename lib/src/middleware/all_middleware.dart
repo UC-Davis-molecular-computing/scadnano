@@ -2,6 +2,7 @@ import 'package:redux/redux.dart';
 import 'package:scadnano/src/middleware/system_clipboard.dart';
 
 import '../state/app_state.dart';
+import 'dna_extensions_move_start.dart';
 import 'forbid_create_circular_strand_no_crossovers_middleware.dart';
 import 'helix_group_move_start.dart';
 import 'adjust_grid_position.dart';
@@ -61,6 +62,7 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   helix_hide_all_middleware,
   helix_positions_set_based_on_crossovers_middleware,
   dna_ends_move_start_middleware,
+  dna_extensions_move_start_middleware,
   export_dna_sequences_middleware,
   reselect_moved_dna_ends_middleware,
   reselect_moved_copied_strands_middleware,

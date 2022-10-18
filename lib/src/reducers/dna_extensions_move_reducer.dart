@@ -9,21 +9,21 @@ Reducer<DNAExtensionsMove> optimized_dna_extensions_move_reducer = combineReduce
 
 Reducer<DNAExtensionsMove> dna_extensions_move_reducer = combineReducers([
   TypedReducer<DNAExtensionsMove, actions.DNAExtensionsMoveSetSelectedExtensions>(
-      dna_extensions_move_set_selected_ends_reducer),
-  TypedReducer<DNAExtensionsMove, actions.DNAExtensionsMoveAdjustOffset>(
+      dna_extensions_move_set_selected_extensions_reducer),
+  TypedReducer<DNAExtensionsMove, actions.DNAExtensionsMoveAdjustPosition>(
       dna_extensions_move_adjust_reducer),
   TypedReducer<DNAExtensionsMove, actions.DNAExtensionsMoveStop>(dna_extensions_move_stop_reducer),
 ]);
 
-DNAExtensionsMove dna_ends_move_set_selected_ends_reducer(
+DNAExtensionsMove dna_extensions_move_set_selected_extensions_reducer(
         DNAExtensionsMove _, actions.DNAExtensionsMoveSetSelectedExtensions action) =>
     DNAExtensionsMove(
         moves: action.moves,
-        original_offset: action.original_offset,
-        current_offset: action.original_offset,
-        helix: action.helix);
+        start_point: action.original_point,
+        current_point: action.original_point
+    );
 
-DNAEndsMove dna_ends_move_adjust_reducer(DNAEndsMove move, actions.DNAEndsMoveAdjustOffset action) =>
-    move.rebuild((b) => b..current_offset = action.offset);
+DNAExtensionsMove dna_extensions_move_adjust_reducer(DNAExtensionsMove move, actions.DNAExtensionsMoveAdjustPosition action) =>
+    move.rebuild((b) => b..current_point = action.position);
 
-DNAEndsMove dna_ends_move_stop_reducer(DNAEndsMove move, actions.DNAEndsMoveStop action) => null;
+DNAExtensionsMove dna_extensions_move_stop_reducer(DNAExtensionsMove move, actions.DNAExtensionsMoveStop action) => null;

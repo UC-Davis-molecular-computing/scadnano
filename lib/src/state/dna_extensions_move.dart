@@ -33,12 +33,14 @@ abstract class DNAExtensionsMove
   Point<num> get start_point;
 
   Point<num> get current_point;
+
+  bool get is_nontrivial => start_point != current_point;
 }
 
 abstract class DNAExtensionMove
     with BuiltJsonSerializable
     implements Built<DNAExtensionMove, DNAExtensionMoveBuilder> {
-  factory DNAExtensionMove({DNAEnd dna_end, Extension extension}) = _$DNAExtensionMove._;
+  factory DNAExtensionMove({DNAEnd dna_end}) = _$DNAExtensionMove._;
 
   factory DNAExtensionMove.from([void Function(DNAExtensionMoveBuilder) updates]) = _$DNAExtensionMove;
 
@@ -49,6 +51,4 @@ abstract class DNAExtensionMove
   /************************ end BuiltValue boilerplate ************************/
 
   DNAEnd get dna_end;
-
-  Extension get extension;
 }

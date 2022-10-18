@@ -228,6 +228,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         // set up drag detection for moving DNA ends
         app.dispatch(actions.DNAEndsMoveStart(offset: dna_end.offset_inclusive, helix: props.helix));
       } else {
+        print("in extension select");
         // select end
         MouseEvent event = event_synthetic.nativeEvent;
         //On a mac event.button is: 0-left, 1-middle, 2-right.
@@ -238,12 +239,13 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         }
         dna_end.handle_selection_mouse_down(event);
         // set up drag detection for moving DNA ends
+        Point<num> extension_attached_end_svg = util.compute_extension_attached_end_svg(
+          props.ext, props.ext.adjacent_domain, props.helix, props.helix_svg_position.y);
 
-        int offset = props.is_5p ? props.domain.offset_5p : props.domain.offset_3p;
-        var start_point_untransformed =
-            props.helix.svg_base_pos(offset, props.domain.forward, props.helix_svg_position.y);
-        var start_point = props.group.transform_point_main_view(start_point_untransformed, props.geometry);
-        app.dispatch(actions.DNAExtensionsMoveStart(start_point: start_point));
+        Point<num> pos = util.compute_extension_free_end_svg(
+          extension_attached_end_svg, props.ext, props.ext.adjacent_domain, props.geometry
+        );
+        app.dispatch(actions.DNAExtensionsMoveStart(start_point: pos, helix: props.helix));
       }
     }
   }
