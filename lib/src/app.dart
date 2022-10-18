@@ -11,7 +11,7 @@ import 'package:redux/redux.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:over_react/over_react.dart' as react;
 import 'package:scadnano/src/reducers/potential_extensions_reducer.dart';
-import 'package:scadnano/src/state/potential_extensions.dart';
+import 'package:scadnano/src/state/dna_extensions_move.dart';
 
 import 'middleware/all_middleware.dart';
 import 'middleware/throttle.dart';
@@ -62,7 +62,7 @@ class App {
   var context_selection_box = createContext();
   Store<PotentialCrossover> store_potential_crossover;
   var context_potential_crossover = createContext();
-  Store<PotentialExtensions> store_potential_extensions;
+  Store<DNAExtensionsMove> store_potential_extensions;
   var context_potential_extensions = createContext();
   Store<DNAEndsMove> store_dna_ends_move;
   var context_dna_ends_move = createContext();
@@ -119,7 +119,7 @@ class App {
     store_potential_crossover = Store<PotentialCrossover>(optimized_potential_crossover_reducer,
         initialState: null, middleware: [throttle_middleware]);
 
-    store_potential_extensions = Store<PotentialExtensions>(optimized_potential_extensions_reducer,
+    store_potential_extensions = Store<DNAExtensionsMove>(optimized_potential_extensions_reducer,
         initialState: null, middleware: [throttle_middleware]);
 
     store_dna_ends_move = Store<DNAEndsMove>(optimized_dna_ends_move_reducer,

@@ -10,13 +10,13 @@ import 'package:js/js.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/dna_file_type.dart';
 import 'package:scadnano/src/state/dna_assign_options.dart';
+import 'package:scadnano/src/state/dna_extensions_move.dart';
 import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
 import 'package:scadnano/src/state/idt_fields.dart';
 import 'package:scadnano/src/state/linker.dart';
-import 'package:scadnano/src/state/potential_extension.dart';
 import 'package:scadnano/src/state/substrand.dart';
 import 'package:scadnano/src/util.dart';
 
@@ -2732,7 +2732,7 @@ abstract class DNAExtensionsMoveStart
   Point<num> get start_point;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory DNAExtensionsMoveStart({PotentialExtension potential_extension}) = _$DNAExtensionsMoveStart._;
+  factory DNAExtensionsMoveStart({Point<num> start_point}) = _$DNAExtensionsMoveStart._;
 
   DNAExtensionsMoveStart._();
 
@@ -2744,7 +2744,7 @@ abstract class DNAExtensionsMoveSetSelectedExtensions
     implements
         Action,
         Built<DNAExtensionsMoveSetSelectedExtensions, DNAExtensionsMoveSetSelectedExtensionsBuilder> {
-  //BuiltList<DNAExtensionsMove> get moves;
+  BuiltList<DNAExtensionsMove> get moves;
   //TODO: finish implementing this
   Point<num> get original_point;
 
@@ -2752,9 +2752,8 @@ abstract class DNAExtensionsMoveSetSelectedExtensions
 
   /************************ begin BuiltValue boilerplate ************************/
   factory DNAExtensionsMoveSetSelectedExtensions(
-      { // BuiltList<DNAExtensionsMove> moves,
-      int original_offset,
-      Helix helix,
+      {BuiltList<DNAExtensionsMove> moves,
+      Point<num> original_point,
       BuiltSet<Strand> strands_affected}) = _$DNAExtensionsMoveSetSelectedExtensions._;
 
   DNAExtensionsMoveSetSelectedExtensions._();

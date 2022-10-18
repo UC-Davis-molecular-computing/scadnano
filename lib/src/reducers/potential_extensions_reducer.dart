@@ -1,9 +1,9 @@
 import 'package:redux/redux.dart';
-import '../state/potential_extensions.dart';
+import '../state/dna_extensions_move.dart';
 
 import '../actions/actions.dart' as actions;
 
-Reducer<PotentialExtensions> optimized_potential_extensions_reducer = combineReducers([
+Reducer<DNAExtensionsMove> optimized_potential_extensions_reducer = combineReducers([
   // potential_extensions_reducer,
 ]);
 

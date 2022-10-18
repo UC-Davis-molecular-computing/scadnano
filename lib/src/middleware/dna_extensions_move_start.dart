@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/potential_extension.dart';
+import 'package:scadnano/src/state/dna_extensions_move.dart';
 import '../state/domain.dart';
 import '../state/design.dart';
 import '../state/dna_end.dart';
@@ -21,9 +21,9 @@ import '../state/app_state.dart';
 dna_extensions_move_start_middleware(Store<AppState> store, action, NextDispatcher next) {
   if (action is actions.DNAExtensionsMoveStart) {
     BuiltSet<DNAEnd> selected_ends = store.state.ui_state.selectables_store.selected_dna_ends_on_extensions;
-    List<PotentialExtension> moves = [];
+    List<DNAExtensionMove> moves = [];
     for (var end in selected_ends) {
-      var move = PotentialExtension(dna_end: end);
+      var move = DNAExtensionMove(dna_end: end);
       moves.add(move);
     }
 

@@ -1,23 +1,23 @@
 import 'package:redux/redux.dart';
-import '../state/potential_extensions.dart';
+import '../state/dna_extensions_move.dart';
 
 import '../actions/actions.dart' as actions;
 
-Reducer<PotentialExtensions> optimized_dna_extensions_move_reducer = combineReducers([
+Reducer<DNAExtensionsMove> optimized_dna_extensions_move_reducer = combineReducers([
   dna_extensions_move_reducer,
 ]);
 
-Reducer<PotentialExtensions> dna_extensions_move_reducer = combineReducers([
-  TypedReducer<PotentialExtensions, actions.DNAExtensionsMoveSetSelectedExtensions>(
+Reducer<DNAExtensionsMove> dna_extensions_move_reducer = combineReducers([
+  TypedReducer<DNAExtensionsMove, actions.DNAExtensionsMoveSetSelectedExtensions>(
       dna_extensions_move_set_selected_ends_reducer),
-  TypedReducer<PotentialExtensions, actions.DNAExtensionsMoveAdjustOffset>(
+  TypedReducer<DNAExtensionsMove, actions.DNAExtensionsMoveAdjustOffset>(
       dna_extensions_move_adjust_reducer),
-  TypedReducer<PotentialExtensions, actions.DNAExtensionsMoveStop>(dna_extensions_move_stop_reducer),
+  TypedReducer<DNAExtensionsMove, actions.DNAExtensionsMoveStop>(dna_extensions_move_stop_reducer),
 ]);
 
-PotentialExtensions dna_ends_move_set_selected_ends_reducer(
-        PotentialExtensions _, actions.DNAExtensionsMoveSetSelectedExtensions action) =>
-    PotentialExtensions(
+DNAExtensionsMove dna_ends_move_set_selected_ends_reducer(
+        DNAExtensionsMove _, actions.DNAExtensionsMoveSetSelectedExtensions action) =>
+    DNAExtensionsMove(
         moves: action.moves,
         original_offset: action.original_offset,
         current_offset: action.original_offset,

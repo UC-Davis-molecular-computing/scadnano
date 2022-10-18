@@ -15,8 +15,7 @@ import 'package:scadnano/src/middleware/system_clipboard.dart';
 import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
-import 'package:scadnano/src/state/potential_extension.dart';
-import 'package:scadnano/src/state/potential_extensions.dart';
+import 'package:scadnano/src/state/dna_extensions_move.dart';
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:scadnano/src/state/selection_rope.dart';
 import 'package:scadnano/src/view/design_main_arrows.dart';
@@ -1021,7 +1020,7 @@ main_view_pointer_up(MouseEvent event) {
     }
   }
 
-  PotentialExtensions potential_extensions = app.store_potential_extensions.state;
+  DNAExtensionsMove potential_extensions = app.store_potential_extensions.state;
   if (potential_extensions != null) {
     app.dispatch(actions.DNAExtensionsMoveStop());
     if (dna_ends_move.is_nontrivial) {

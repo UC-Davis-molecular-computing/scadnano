@@ -10,7 +10,6 @@ import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/linker.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/modification_type.dart';
-import 'package:scadnano/src/state/potential_extension.dart';
 
 import '../state/address.dart';
 import '../state/context_menu.dart';
