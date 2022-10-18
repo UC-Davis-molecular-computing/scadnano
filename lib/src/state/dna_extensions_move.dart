@@ -28,7 +28,7 @@ abstract class DNAExtensionsMove
 
   /************************ end BuiltValue boilerplate ************************/
 
-  BuiltList<DNAExtensionMove> get potential_extensions;
+  BuiltList<DNAExtensionMove> get moves;
 
   Point<num> get start_point;
 
@@ -38,21 +38,13 @@ abstract class DNAExtensionsMove
 abstract class DNAExtensionMove
     with BuiltJsonSerializable
     implements Built<DNAExtensionMove, DNAExtensionMoveBuilder> {
+  factory DNAExtensionMove({DNAEnd dna_end, Extension extension}) = _$DNAExtensionMove._;
+
   factory DNAExtensionMove.from([void Function(DNAExtensionMoveBuilder) updates]) = _$DNAExtensionMove;
 
   DNAExtensionMove._();
 
   static Serializer<DNAExtensionMove> get serializer => _$dNAExtensionMoveSerializer;
-
-  factory DNAExtensionMove({Point<num> start_point, Point<num> current_point, Extension extension}) {
-    return DNAExtensionMove.from((b) => b
-      ..start_point = start_point
-      ..current_point = current_point
-      ..extension = extension.toBuilder());
-  }
-
-  @memoized
-  int get hashCode;
 
   /************************ end BuiltValue boilerplate ************************/
 
