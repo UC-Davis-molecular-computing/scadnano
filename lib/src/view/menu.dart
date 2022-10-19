@@ -350,15 +350,40 @@ that occurred between the last save and a browser crash.'''
         }
         ..display = 'Copy'
         ..keyboard_shortcut = 'Ctrl+C'
+        ..tooltip = '''\
+Copy the currently selected strand(s). They can be pasted into this design,
+or into another design in another browser or tab. You can also paste into
+a text document to see a JSON description of the copied strand(s).'''
         ..disabled = !props.enable_copy)(),
       (MenuDropdownItem()
         ..on_click =
             ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped))
         ..display = 'Paste'
+        ..tooltip = '''\
+Paste the previously copied strand(s). They can be pasted into this design,
+or into another design in another browser or tab. You can also paste into
+a text document to see a JSON description of the copied strand(s).
+'''
         ..keyboard_shortcut = 'Ctrl+V')(),
       (MenuDropdownItem()
         ..on_click = ((_) => paste_strands_auto())
         ..display = 'Autopaste'
+        ..tooltip = '''\
+This automatically pastes copied strands to an automatically selected position 
+in the design, which can be faster to create many copies of strand(s) than
+manually selecting each position to paste. First copy some strand(s), then 
+manually paste them using the menu Edit-->Paste or pressing Ctrl+V. Once this
+is done once, by selecting Edit-->Autopaste (or pressing Shift+Ctrl+V), 
+another copy of the same strand(s) are pasted, in the same "direction" as the
+first paste.
+
+For example, if the first paste was one helix down from the the copied strand(s),
+and 10 offset positions to the right, then Autopaste will make the next paste
+also one helix down from the first paste, and 10 offset positions to its right.
+
+You can also Autopaste immediately after copying, without having pasted first,
+with some default direction chosen. Play with it and see!
+'''
         ..keyboard_shortcut = 'Ctrl+Shift+V')(),
       ///////////////////////////////////////////////////////////////
       // pasted strands keep original color
@@ -378,8 +403,7 @@ If unchecked, then a new color is generated.'''
         ..on_click = ((_) => props.dispatch(actions.InlineInsertionsDeletions()))
         ..display = 'Inline insertions/deletions'
         ..disabled = !props.design_has_insertions_or_deletions
-        ..tooltip = ''
-            '''
+        ..tooltip = '''\
 Remove insertions and deletions from the design and replace them with domains
 whose lengths correspond to the true strand length. Also moves major tick 
 marks on helices so that they are adjacent to the same bases as before.''')(),
@@ -392,8 +416,8 @@ marks on helices so that they are adjacent to the same bases as before.''')(),
         ..on_click = ((_) => props.dispatch(actions.JoinStrandsByMultipleCrossovers()))
         ..display = 'Connect selected ends by crossovers'
         ..disabled = props.selected_ends.isEmpty
-        ..tooltip = ''
-            '''Connect selected ends by crossovers. 
+        ..tooltip = '''\
+Connect selected ends by crossovers. 
 
 Ends are connected by crossovers as follows. Within each HelixGroup: 
 
@@ -1165,7 +1189,8 @@ However, it may be less stable than the main site.'''
       ]),
       (MenuDropdownItem()
         ..on_click = ((_) => window.alert(''
-            'scadnano is a program for designing synthetic DNA structures such as DNA origami. '
+            'scadnano version ${constants.CURRENT_VERSION}'
+            '\n\nscadnano is a program for designing synthetic DNA structures such as DNA origami. '
             '\n\nscadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group. '
             'Though similar in design, scadnano is distinct from cadnano (https://cadnano.org), '
             'which is developed and maintained by the Douglas lab (https://bionano.ucsf.edu/) at UCSF.'))

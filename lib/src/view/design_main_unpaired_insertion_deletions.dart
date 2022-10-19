@@ -48,15 +48,18 @@ class DesignMainUnpairedInsertionDeletionsComponent
                 unpaired.offset, domain.forward, props.helix_idx_to_svg_position_y_map[helix.idx]);
 
             bool is_insertion = domain.insertion_offset_to_length[unpaired.offset] != null;
-                
+
             String key = '${base_svg_pos};${domain.forward}';
             if (!keys.contains(key)) {
               // otherwise, already rendered mismatch for this insertion
               keys.add(key);
               var mismatch_component = (DesignMainWarningStar()
-                ..base_svg_pos = base_svg_pos + Point(0, is_insertion ? helix.geometry.base_height_svg * 2 * (unpaired.forward ? 1 : -1) : 0)
+                ..base_svg_pos = base_svg_pos +
+                    Point(0,
+                        is_insertion ? helix.geometry.base_height_svg * 2 * (unpaired.forward ? 1 : -1) : 0)
                 ..geometry = props.design.geometry
                 ..forward = domain.forward
+                ..color = 'green'
                 ..key = key)();
               domain_components.add(mismatch_component);
             }

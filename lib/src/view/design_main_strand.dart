@@ -553,8 +553,7 @@ after:
         label: 'number of bases', value: 5, tooltip: 'number of bases to include in this extension');
 
     var dialog = Dialog(
-      title: 'add extension', items: items, type: DialogType.add_extension, use_saved_response: false
-    );
+        title: 'add extension', items: items, type: DialogType.add_extension, use_saved_response: false);
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
@@ -976,7 +975,8 @@ PAGEHPLC : Dual PAGE & HPLC
     int name_idx = 0;
     var items = List<DialogItem>.filled(1, null);
     items[name_idx] = DialogText(label: 'name', value: props.strand.name ?? '');
-    var dialog = Dialog(title: 'set strand name', type: DialogType.set_strand_name, items: items);
+    var dialog = Dialog(
+        title: 'set strand name', type: DialogType.set_strand_name, items: items, use_saved_response: false);
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
@@ -991,8 +991,11 @@ PAGEHPLC : Dual PAGE & HPLC
     var items = List<DialogItem>.filled(1, null);
 
     items[name_idx] = DialogText(label: 'name', value: substrand.name ?? '');
-    var dialog = Dialog(title: 'set ${substrand.type_description()} name', items: items,
-                        type: DialogType.set_domain_name);
+    var dialog = Dialog(
+        title: 'set ${substrand.type_description()} name',
+        items: items,
+        type: DialogType.set_domain_name,
+        use_saved_response: false);
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
@@ -1098,6 +1101,7 @@ Future<void> ask_for_assign_dna_sequence(Strand strand, DNAAssignOptions options
       title: 'assign DNA sequence',
       type: DialogType.assign_dna_sequence,
       items: items,
+      use_saved_response: false,
       disable_when_any_checkboxes_on: {
         idx_sequence: [idx_use_predefined_dna_sequence]
       },

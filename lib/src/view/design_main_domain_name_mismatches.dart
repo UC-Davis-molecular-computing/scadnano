@@ -49,17 +49,18 @@ class DesignMainDomainNameMismatchesComponent extends UiComponent2<DesignMainDom
         // draw mismatch stars at midpoint of overlap of domains
         int mid = (overlap.item1 + overlap.item2) ~/ 2;
         for (Domain domain in [forward_domain, reverse_domain]) {
-          var base_svg_pos = helix.svg_base_pos(mid, domain.forward, props.helix_idx_to_svg_position_map[helix.idx].y);
+          var base_svg_pos =
+              helix.svg_base_pos(mid, domain.forward, props.helix_idx_to_svg_position_map[helix.idx].y);
           String key = '${domain.helix};${domain.forward};${domain.start};${mid};${domain.end}';
           var mismatch_component = (DesignMainWarningStar()
             ..base_svg_pos = base_svg_pos
             ..geometry = props.design.geometry
             ..forward = domain.forward
+            ..color = 'blue'
             ..key = key)();
           mismatch_components.add(mismatch_component);
         }
       }
-
     }
     return mismatch_components;
   }
