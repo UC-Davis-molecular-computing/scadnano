@@ -1189,7 +1189,8 @@ However, it may be less stable than the main site.'''
       ]),
       (MenuDropdownItem()
         ..on_click = ((_) => window.alert(''
-            'scadnano is a program for designing synthetic DNA structures such as DNA origami. '
+            'scadnano version ${constants.CURRENT_VERSION}'
+            '\n\nscadnano is a program for designing synthetic DNA structures such as DNA origami. '
             '\n\nscadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group. '
             'Though similar in design, scadnano is distinct from cadnano (https://cadnano.org), '
             'which is developed and maintained by the Douglas lab (https://bionano.ucsf.edu/) at UCSF.'))
