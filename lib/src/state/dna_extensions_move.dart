@@ -35,6 +35,18 @@ abstract class DNAExtensionsMove
   Point<num> get current_point;
 
   bool get is_nontrivial => start_point != current_point;
+
+  @memoized
+  BuiltList<DNAEnd> get ends_moving => [for (var end_move in moves) end_move.dna_end].build();
+
+  Point<num> current_point_of(DNAEnd end) {
+    for (DNAExtensionMove move in moves) {
+      if (move.dna_end == end) {
+        return current_point;
+      }
+    }
+    return null;
+  }
 }
 
 abstract class DNAExtensionMove

@@ -10,6 +10,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/linker.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/modification_type.dart';
+import 'package:scadnano/src/view/design_main_strand_dna_extension_moving.dart';
 
 import '../state/address.dart';
 import '../state/context_menu.dart';
@@ -105,6 +106,8 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     EndEitherPrimeProps end_props = (props.is_5p ? End5Prime() : End3Prime());
     EndMovingProps end_moving_props = ConnectedEndMoving();
 
+    ExtensionMovingProps extension_moving_props = ConnectedExtensionMoving();
+
     DNAEnd dna_end;
     int offset;
     Point<num> pos;
@@ -159,11 +162,23 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       ..svg_position_y = props.helix_svg_position.y
       ..key = 'moving-end';
 
+    // draw avatar of moving extension if it is moving
+    extension_moving_props = extension_moving_props
+      ..dna_end = dna_end
+      ..helix = props.helix
+      ..color = props.color
+      ..forward = forward
+      ..is_5p = props.is_5p
+      ..transform = 'rotate(${rotation_degrees})'
+      ..svg_position_y = props.helix_svg_position.y
+      ..key = 'moving-extension';
+
     return (Dom.g()
       ..className = constants.css_selector_end_parent_group
       ..transform = props.transform)(
       end_props(),
       end_moving_props(),
+      extension_moving_props(),
     );
   }
 

@@ -298,8 +298,8 @@ class DesignViewComponent {
           }
         }
         DNAExtensionsMove extensions_move_store = app.store_extensions_move.state;
-        if (moves_store != null) {
-          var group_names = group_names_of_ends(moves_store);
+        if (extensions_move_store != null) {
+          var group_names = group_names_of_extensions(extensions_move_store);
           if (group_names.length != 1) {
             var msg = 'Cannot move or copy DNA extensions unless they are all on the same helix group.\n'
                 'The selected ends occupy the following helix groups: ${group_names?.join(", ")}';
@@ -1021,6 +1021,9 @@ group_names_of_domains(DomainsMove domains_move) =>
     app.state.design.group_names_of_domains(domains_move.domains_moving);
 
 group_names_of_ends(DNAEndsMove ends_move) => app.state.design.group_names_of_ends(ends_move.ends_moving);
+
+group_names_of_extensions(DNAExtensionsMove extensions_move) =>
+    app.state.design.group_names_of_ends(extensions_move.ends_moving);
 
 main_view_pointer_up(MouseEvent event) {
 //  util.set_allow_pan(true);

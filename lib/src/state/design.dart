@@ -223,7 +223,11 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltSet<String> group_names_of_ends(Iterable<DNAEnd> ends) {
     Set<String> names = {};
     for (var end in ends) {
-      int helix_idx = end_to_domain[end].helix;
+      var substrand = end_to_domain[end];
+      if (substrand == null) {
+        substrand = end_to_extension[end].adjacent_domain;
+      }
+      int helix_idx = substrand.helix;
       var helix = helices[helix_idx];
       var name = helix.group;
       names.add(name);
@@ -548,6 +552,17 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   @memoized
+  BuiltMap<DNAEnd, Extension> get end_to_extension {
+    var end_to_extension_builder = MapBuilder<DNAEnd, Extension>();
+    for (var strand in strands) {
+      for (var extension in strand.extensions) {
+        end_to_extension_builder[extension.dnaend_free] = extension;
+      }
+    }
+    return end_to_extension_builder.build();
+  }
+
+  @memoized
   BuiltMap<Substrand, Strand> get substrand_to_strand {
     var substrand_to_strand_builder = MapBuilder<Substrand, Strand>();
     for (var strand in strands) {
@@ -593,6 +608,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   Strand loopout_to_strand(Loopout loopout) => substrand_to_strand[loopout];
 
   Strand end_to_strand(DNAEnd end) => substrand_to_strand[end_to_domain[end]];
+
+  Strand extension_to_strand(DNAEnd end) => substrand_to_strand[end_to_extension[end]];
 
   @memoized
   BuiltList<int> get helix_idxs => helices.keys.toBuiltList();
