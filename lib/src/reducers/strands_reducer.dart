@@ -51,6 +51,8 @@ GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGloba
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.DomainsMoveCommit>(domains_move_commit_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.DNAEndsMoveCommit>(
       strands_dna_ends_move_commit_reducer),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.DNAExtensionsMoveCommit>(
+      strands_dna_extensions_move_commit_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandPartAction>(strands_part_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandCreateCommit>(strand_create),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.DeleteAllSelected>(delete_all_reducer),
@@ -361,6 +363,31 @@ BuiltList<Strand> strands_dna_ends_move_commit_reducer(
     strands_builder[strand_idx] = strand_builder.build().initialize();
   }
 
+  return strands_builder.build();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// move DNA extension
+BuiltList<Strand> strands_dna_extensions_move_commit_reducer(
+    BuiltList<Strand> strands, AppState state, actions.DNAExtensionsMoveCommit action) {
+  var strands_builder = strands.toBuilder();
+  // Set<Strand> strands_affected = {}
+  for (var move in action.dna_extensions_move.moves) {
+    var strand =
+        state.design.substrand_to_strand[state.design.end_to_extension[move.dna_end].adjacent_domain];
+    // strands_affected.add(strand);
+    var extension = state.design.end_to_extension[move.dna_end];
+    int substrand_idx = strand.substrands.indexOf(extension); //TODO: Null reading if not reloaded
+    var substrands_builder = strand.substrands.toBuilder();
+    //TODO: change the 1s
+    Extension ext_new = extension.rebuild((b) => b
+      ..display_length = 1
+      ..display_angle = 1);
+    substrands_builder[substrand_idx] = ext_new;
+    int strand_idx = strands.indexOf(strand);
+    strand = strand.rebuild((s) => s..substrands = substrands_builder);
+    strands_builder[strand_idx] = strand;
+  }
   return strands_builder.build();
 }
 

@@ -307,7 +307,7 @@ class DesignViewComponent {
           } else {
             Point<num> old_point = extensions_move_store.current_point;
             Point<num> point =
-              util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, true, main_view_svg);
+                util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, true, main_view_svg);
             if (point != old_point) {
               app.dispatch(actions.DNAExtensionsMoveAdjustPosition(position: point));
             }
