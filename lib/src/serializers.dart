@@ -174,6 +174,7 @@ part 'serializers.g.dart';
   DeleteAllSelected,
   SelectAll,
   SelectAllSelectable,
+  SelectAllSelectableInHelixGroup,
   Select,
   Loopout,
   ExtensionAdd,

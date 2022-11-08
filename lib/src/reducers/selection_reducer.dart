@@ -29,6 +29,7 @@ GlobalReducer<SelectablesStore, AppState> selectables_store_global_reducer = com
   TypedGlobalReducer<SelectablesStore, AppState, actions.Select>(select_reducer),
   TypedGlobalReducer<SelectablesStore, AppState, actions.SelectOrToggleItems>(select_or_toggle_items_reducer),
   TypedGlobalReducer<SelectablesStore, AppState, actions.SelectAllSelectable>(select_all_selectables_reducer),
+  TypedGlobalReducer<SelectablesStore, AppState, actions.SelectAllSelectableInHelixGroup>(select_all_selectables_in_helix_group_reducer),
 ]);
 
 // is item currently selectable, given all the information about select modes, whether it's part of
@@ -73,13 +74,29 @@ SelectablesStore select_reducer(SelectablesStore selectables_store, AppState sta
 }
 
 SelectablesStore select_all_selectables_reducer(
-    SelectablesStore selectables_store, AppState state, actions.SelectAllSelectable action) {
+  SelectablesStore selectables_store, AppState state, actions.SelectAllSelectable action
+) {
+  return select_all_selectables_helper(selectables_store, state, false);
+}
+
+SelectablesStore select_all_selectables_in_helix_group_reducer(
+  SelectablesStore selectables_store, AppState state, actions.SelectAllSelectableInHelixGroup action
+) {
+  return select_all_selectables_helper(selectables_store, state, true);
+}
+
+SelectablesStore select_all_selectables_helper(
+  SelectablesStore selectables_store, AppState state, bool only_in_helix_group
+) {
   BuiltSet<SelectModeChoice> modes = state.ui_state.select_mode_state.modes;
   bool scaffold_selectable = modes.contains(SelectModeChoice.scaffold);
   bool staple_selectable = modes.contains(SelectModeChoice.staple);
 
   List<Selectable> selected = [];
   for (var strand in state.design.strands) {
+    if (only_in_helix_group &&
+        state.design.group_name_of_strand(strand) != state.ui_state.displayed_group_name
+    ) continue;
     if (!state.design.is_origami ||
         (strand.is_scaffold && scaffold_selectable) ||
         (!strand.is_scaffold && staple_selectable)) {
@@ -96,7 +113,6 @@ SelectablesStore select_all_selectables_reducer(
       if (modes.contains(SelectModeChoice.end_3p_domain)) selected.addAll(strand.ends_3p_not_last);
     }
   }
-
   return selectables_store.select_all(selected);
 }
 

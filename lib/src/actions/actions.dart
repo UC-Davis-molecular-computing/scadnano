@@ -1409,6 +1409,18 @@ abstract class DeleteAllSelected
   String short_description() => "remove all selected items";
 }
 
+// Selects all selectable items in the current helix group.
+abstract class SelectAllSelectableInHelixGroup
+    with BuiltJsonSerializable
+    implements Action, Built<SelectAllSelectableInHelixGroup, SelectAllSelectableInHelixGroupBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SelectAllSelectableInHelixGroup() = _$SelectAllSelectableInHelixGroup;
+
+  SelectAllSelectableInHelixGroup._();
+
+  static Serializer<SelectAllSelectableInHelixGroup> get serializer => _$selectAllSelectableInHelixGroupSerializer;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Helix add/remove
 

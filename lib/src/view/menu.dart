@@ -386,6 +386,20 @@ with some default direction chosen. Play with it and see!
 '''
         ..keyboard_shortcut = 'Ctrl+Shift+V')(),
       ///////////////////////////////////////////////////////////////
+      // select all
+      DropdownDivider({}),
+      (MenuDropdownItem()
+        ..on_click = ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.A, ctrlKey: true).wrapped))
+        ..display = 'Select All'
+        ..tooltip = '''\
+Select all strands in the design.'''
+        ..keyboard_shortcut = 'Ctrl+A')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.SelectAllSelectableInHelixGroup()))
+        ..display = 'Select All in Helix Group'
+        ..tooltip = '''\
+Select all selectable strands in the current helix group.''')(),
+      ///////////////////////////////////////////////////////////////
       // pasted strands keep original color
       DropdownDivider({}),
       (MenuBoolean()
