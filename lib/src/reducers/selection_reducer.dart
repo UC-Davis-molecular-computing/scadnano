@@ -73,8 +73,7 @@ SelectablesStore select_reducer(SelectablesStore selectables_store, AppState sta
 }
 
 SelectablesStore select_all_selectables_reducer(
-  SelectablesStore selectables_store, AppState state, actions.SelectAllSelectable action
-) {
+    SelectablesStore selectables_store, AppState state, actions.SelectAllSelectable action) {
   BuiltSet<SelectModeChoice> modes = state.ui_state.select_mode_state.modes;
   bool scaffold_selectable = modes.contains(SelectModeChoice.scaffold);
   bool staple_selectable = modes.contains(SelectModeChoice.staple);
@@ -82,8 +81,7 @@ SelectablesStore select_all_selectables_reducer(
   List<Selectable> selected = [];
   for (var strand in state.design.strands) {
     if (action.current_helix_group_only &&
-        state.design.group_name_of_strand(strand) != state.ui_state.displayed_group_name
-    ) continue;
+        state.design.group_name_of_strand(strand) != state.ui_state.displayed_group_name) continue;
     if (!state.design.is_origami ||
         (strand.is_scaffold && scaffold_selectable) ||
         (!strand.is_scaffold && staple_selectable)) {
@@ -142,8 +140,9 @@ BuiltSet<int> helix_selections_adjust_reducer(
   bool toggle = action.toggle;
   var selection_box = action.selection_box;
   var all_helices_in_displayed_group = state.design.helices_in_group(state.ui_state.displayed_group_name);
-  List<select.Box> all_bboxes =
-      all_helices_in_displayed_group.values.map((helix) => helix_to_box(helix, state.ui_state.invert_y)).toList();
+  List<select.Box> all_bboxes = all_helices_in_displayed_group.values
+      .map((helix) => helix_to_box(helix, state.ui_state.invert_y))
+      .toList();
   var selection_box_as_box = select.Box.from_selection_box(selection_box);
   List<Helix> helices_overlapping =
       select.enclosure_list(all_helices_in_displayed_group.values, all_bboxes, selection_box_as_box);
