@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:redux/redux.dart';
+import 'package:scadnano/src/middleware/local_storage.dart';
 import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/extension.dart';
 import 'package:scadnano/src/state/loopout.dart';
@@ -373,16 +374,26 @@ BuiltList<Strand> strands_dna_extensions_move_commit_reducer(
   var strands_builder = strands.toBuilder();
   // Set<Strand> strands_affected = {}
   for (var move in action.dna_extensions_move.moves) {
-    var strand =
-        state.design.substrand_to_strand[state.design.end_to_extension[move.dna_end].adjacent_domain];
+    var strand = state.design.substrand_to_strand[state.design.end_to_extension[move.dna_end]];
     // strands_affected.add(strand);
     var extension = state.design.end_to_extension[move.dna_end];
-    int substrand_idx = strand.substrands.indexOf(extension); //TODO: Null reading if not reloaded
+    int substrand_idx = strand.substrands.indexOf(extension);
     var substrands_builder = strand.substrands.toBuilder();
     //TODO: change the 1s
+    var extension_start_point = util.compute_extension_attached_end_svg(
+        extension,
+        extension.adjacent_domain,
+        state.design.helices[extension.adjacent_domain.helix],
+        state.helix_idx_to_svg_position_map[extension.adjacent_domain.helix].y);
+    var length_and_angel = util.compute_extension_length_and_angle_from_point(
+        action.dna_extensions_move.current_point,
+        extension_start_point,
+        extension,
+        extension.adjacent_domain,
+        state.design.geometry);
     Extension ext_new = extension.rebuild((b) => b
-      ..display_length = 1
-      ..display_angle = 1);
+      ..display_length = length_and_angel.item1
+      ..display_angle = length_and_angel.item2);
     substrands_builder[substrand_idx] = ext_new;
     int strand_idx = strands.indexOf(strand);
     strand = strand.rebuild((s) => s..substrands = substrands_builder);

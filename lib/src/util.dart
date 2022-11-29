@@ -1576,6 +1576,25 @@ Point<num> compute_extension_free_end_svg(
   return ext_end_svg;
 }
 
+Tuple2<double, double> compute_extension_length_and_angle_from_point(Point<num> current_mouse_point,
+    Point<num> attached_end_svg, Extension ext, Domain adjacent_domain, Geometry geometry) {
+  num new_x = current_mouse_point.x;
+  num new_y = current_mouse_point.y;
+  num old_x = attached_end_svg.x;
+  num old_y = attached_end_svg.y;
+  num x_delta = new_x - old_x;
+  num y_delta = new_y - old_y;
+  double display_length = sqrt(x_delta * x_delta + y_delta * y_delta) * geometry.svg_pixels_to_nm;
+  var angle_radians = atan2(y_delta, x_delta);
+  if (adjacent_domain.forward) {
+    angle_radians = -angle_radians;
+  }
+  if ((adjacent_domain.forward && ext.is_5p) || (!adjacent_domain.forward && !ext.is_5p)) {
+    angle_radians = pi - angle_radians;
+  }
+  return Tuple2(display_length, angle_radians * 180 / pi);
+}
+
 update_mouseover(SyntheticMouseEvent event_syn, Helix helix, Point<num> helix_svg_position) {
   if (show_mouseover_data()) {
     MouseEvent event = event_syn.nativeEvent;
