@@ -212,7 +212,16 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   String group_name_of_domain(Domain domain) => group_name_of_helix_idx(domain.helix);
 
-  String group_name_of_strand(Strand strand) => group_name_of_domain(strand.first_domain);
+  // if the strand is in multiple groups, return null; otherwise return the group name
+  String group_name_of_strand(Strand strand) {
+    String first_group_name = group_name_of_domain(strand.first_domain);
+    for (var domain in strand.domains) {
+      if (first_group_name != group_name_of_domain(domain)) {
+        return null;
+      }
+    }
+    return first_group_name;
+  }
 
   BuiltSet<String> group_names_of_domains(Iterable<Domain> domains) {
     var helix_idxs_of_domains = {for (var domain in domains) domain.helix};

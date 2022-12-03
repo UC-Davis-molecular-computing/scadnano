@@ -1382,10 +1382,19 @@ abstract class SelectAll with BuiltJsonSerializable implements Action, Built<Sel
 abstract class SelectAllSelectable
     with BuiltJsonSerializable
     implements Action, Built<SelectAllSelectable, SelectAllSelectableBuilder> {
+
+  bool get current_helix_group_only;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory SelectAllSelectable() = _$SelectAllSelectable;
+  factory SelectAllSelectable({bool current_helix_group_only = false}) {
+    return SelectAllSelectable.from((b) => b
+      ..current_helix_group_only = current_helix_group_only);
+  }
 
   SelectAllSelectable._();
+
+  factory SelectAllSelectable.from([void Function(SelectAllSelectableBuilder) updates]) =
+      _$SelectAllSelectable;
 
   static Serializer<SelectAllSelectable> get serializer => _$selectAllSelectableSerializer;
 }

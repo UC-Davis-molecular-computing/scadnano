@@ -6,6 +6,7 @@ import 'dart:math';
 import 'dart:convert';
 import 'dart:html';
 
+import 'package:scadnano/src/json_serializable.dart';
 import 'package:scadnano/src/state/group.dart';
 import 'package:test/test.dart';
 import 'package:built_collection/built_collection.dart';
@@ -4516,6 +4517,76 @@ main() {
       PotentialCrossover expectedPotentialCrossover = null;
       potentialCrossoverState = optimized_potential_crossover_reducer(potentialCrossoverState, action);
       expect(potentialCrossoverState, expectedPotentialCrossover);
+    });
+  });
+
+  group('Select all in helix group test', () {
+
+    /* 0       8
+       |-------|
+
+    0  [------->    default_group
+
+    1  [------->    Group 2
+    */
+    test('SelectWholeStrandsInOneHelixGroup', () {
+      var helices = [
+        Helix(idx: 0, max_offset: 100, grid: Grid.square),
+        Helix(idx: 1, max_offset: 100, grid: Grid.square, group: "Group 2"),
+      ];
+      var design = Design(helices: helices, grid: Grid.square);
+
+      design = design
+          .draw_strand(0, 0)
+          .move(9)
+          .commit()
+          .draw_strand(1, 0)
+          .move(9)
+          .commit();
+      var default_group_strand = design.strands.first;
+      var action = SelectAllSelectable(current_helix_group_only: true);
+      var state = app_state_from_design(design);
+      var selectables_store =
+          select_all_selectables_reducer(state.ui_state.selectables_store, state, action);
+      expect(selectables_store.selected_strands.length, 1);
+      expect(selectables_store.selected_strands.first, default_group_strand);
+    });
+
+    /* 0       8
+       |-------|
+
+    0  [-------> [-------\    default_group
+                         |
+                         |
+    1  [------->         |    Group 2
+                 <-------/
+    */
+    test('SelectWholeStrandsInTwoHelixGroups', () {
+      var helices = [
+        Helix(idx: 0, max_offset: 100, grid: Grid.square),
+        Helix(idx: 1, max_offset: 100, grid: Grid.square, group: "Group 2"),
+      ];
+      var design = Design(helices: helices, grid: Grid.square);
+
+      design = design
+          .draw_strand(0, 0)
+          .move(9)
+          .commit()
+          .draw_strand(1, 0)
+          .move(9)
+          .commit()
+          .draw_strand(0, 10)
+          .move(9)
+          .cross(1)
+          .move(-9)
+          .commit();
+      var default_group_strand = design.strands.first;
+      var action = SelectAllSelectable(current_helix_group_only: true);
+      var state = app_state_from_design(design);
+      var selectables_store =
+          select_all_selectables_reducer(state.ui_state.selectables_store, state, action);
+      expect(selectables_store.selected_strands.length, 1);
+      expect(selectables_store.selected_strands.first, default_group_strand);
     });
   });
 

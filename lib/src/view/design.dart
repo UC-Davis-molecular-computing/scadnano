@@ -611,10 +611,10 @@ class DesignViewComponent {
       paste_strands_auto();
     }
 
-    // Ctrl+A for select all
+    // Ctrl+A for select all, Ctrl+Shift+A for current helix group only
     if ((ev.ctrlKey || ev.metaKey) && key == KeyCode.A && edit_mode_is_select_or_rope_select()) {
       ev.preventDefault();
-      app.dispatch(actions.SelectAllSelectable());
+      app.dispatch(actions.SelectAllSelectable(current_helix_group_only: ev.shiftKey));
     }
 
     if (key == EditModeChoice.pencil.key_code()) {
