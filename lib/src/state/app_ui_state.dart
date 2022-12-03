@@ -154,6 +154,10 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get show_strand_names => storables.show_strand_names;
 
+  bool get show_base_pair_lines => storables.show_base_pair_lines;
+
+  bool get show_base_pair_lines_with_mismatches => storables.show_base_pair_lines_with_mismatches;
+
   num get domain_name_font_size => storables.domain_name_font_size;
 
   num get strand_name_font_size => storables.strand_name_font_size;

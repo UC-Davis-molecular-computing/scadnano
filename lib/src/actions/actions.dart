@@ -3944,6 +3944,40 @@ abstract class SetExportSvgActionDelayedForPngCache
       _$setExportSvgActionDelayedForPngCacheSerializer;
 }
 
+abstract class ShowBasePairLinesSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowBasePairLinesSet, ShowBasePairLinesSetBuilder> {
+  bool get show_base_pair_lines;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowBasePairLinesSet({bool show_base_pair_lines}) = _$ShowBasePairLinesSet._;
+
+  ShowBasePairLinesSet._();
+
+  static Serializer<ShowBasePairLinesSet> get serializer => _$showBasePairLinesSetSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class ShowBasePairLinesWithMismatchesSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowBasePairLinesWithMismatchesSet, ShowBasePairLinesWithMismatchesSetBuilder> {
+  bool get show_base_pair_lines_with_mismatches;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowBasePairLinesWithMismatchesSet({bool show_base_pair_lines_with_mismatches}) =
+      _$ShowBasePairLinesWithMismatchesSet._;
+
+  ShowBasePairLinesWithMismatchesSet._();
+
+  static Serializer<ShowBasePairLinesWithMismatchesSet> get serializer =>
+      _$showBasePairLinesWithMismatchesSetSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // slice bar
 
@@ -3980,18 +4014,17 @@ abstract class SliceBarOffsetSet
 
 abstract class DisablePngCachingDnaSequencesSet
     with BuiltJsonSerializable
-    implements
-        Action,
-        Built<DisablePngCachingDnaSequencesSet, DisablePngCachingDnaSequencesSetBuilder> {
+    implements Action, Built<DisablePngCachingDnaSequencesSet, DisablePngCachingDnaSequencesSetBuilder> {
   bool get disable_png_caching_dna_sequences;
 
   /************************ begin BuiltValue boilerplate ************************/
   factory DisablePngCachingDnaSequencesSet(bool disable_png_caching_dna_sequences) =>
-      DisablePngCachingDnaSequencesSet.from((b) => b..disable_png_caching_dna_sequences = disable_png_caching_dna_sequences);
-  
+      DisablePngCachingDnaSequencesSet.from(
+          (b) => b..disable_png_caching_dna_sequences = disable_png_caching_dna_sequences);
+
   factory DisablePngCachingDnaSequencesSet.from(
-          [void Function(DisablePngCachingDnaSequencesSetBuilder) updates]) = _$DisablePngCachingDnaSequencesSet;
-  
+      [void Function(DisablePngCachingDnaSequencesSetBuilder) updates]) = _$DisablePngCachingDnaSequencesSet;
+
   DisablePngCachingDnaSequencesSet._();
 
   static Serializer<DisablePngCachingDnaSequencesSet> get serializer =>

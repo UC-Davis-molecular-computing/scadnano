@@ -30,6 +30,10 @@ abstract class AppUIStateStorables
 
   bool get show_strand_names;
 
+  bool get show_base_pair_lines;
+
+  bool get show_base_pair_lines_with_mismatches;
+
   num get domain_name_font_size;
 
   num get strand_name_font_size;
@@ -117,6 +121,8 @@ abstract class AppUIStateStorables
     b.show_dna = false;
     b.show_domain_names = false;
     b.show_strand_names = false;
+    b.show_base_pair_lines = false;
+    b.show_base_pair_lines_with_mismatches = false;
     b.domain_name_font_size = constants.default_domain_name_font_size;
     b.strand_name_font_size = constants.default_strand_name_font_size;
     b.show_modifications = true;
