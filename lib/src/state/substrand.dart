@@ -1,3 +1,5 @@
+import 'package:color/color.dart';
+
 import '../json_serializable.dart';
 import 'strand_part.dart';
 
@@ -23,4 +25,6 @@ abstract class Substrand implements JSONSerializable, StrandPart {
   String type_description();
 
   String get id;
+
+  Color get color;
 }

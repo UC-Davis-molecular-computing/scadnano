@@ -1,6 +1,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/built_value.dart';
+import 'package:color/color.dart';
 
 import '../serializers.dart';
 import '../state/select_mode.dart';
@@ -34,14 +35,16 @@ abstract class Loopout
     int prev_domain_idx,
     bool is_scaffold=false,
     String dna_sequence = null,
-    String name,
-    Object label,
+    Color color = null,
+    String name = null,
+    Object label = null,
   }) =>
       Loopout.from((b) => b
         ..loopout_num_bases = loopout_num_bases
         ..prev_domain_idx = prev_domain_idx
         ..is_scaffold = is_scaffold
         ..dna_sequence = dna_sequence
+        ..color = color
         ..name = name
         ..label = label
         ..unused_fields = MapBuilder<String, Object>({}));
@@ -63,6 +66,9 @@ abstract class Loopout
 
   @nullable
   String get dna_sequence;
+
+  @nullable
+  Color get color;
 
   @nullable
   String get strand_id;
@@ -91,10 +97,14 @@ abstract class Loopout
     int loopout_num_bases = util.mandatory_field(json_map, constants.loopout_key, class_name);
     String name = util.optional_field_with_null_default(json_map, constants.name_key);
     Object label = util.optional_field_with_null_default(json_map, constants.label_key);
+    Color color = json_map.containsKey(constants.color_key)
+        ? util.parse_json_color(json_map[constants.color_key])
+        : null;
     return LoopoutBuilder()
       ..loopout_num_bases = loopout_num_bases
       ..name = name
       ..label = label
+      ..color = color
       ..unused_fields = util.unused_fields_map(json_map, constants.loopout_keys);
   }
 
@@ -104,6 +114,9 @@ abstract class Loopout
     };
     if (name != null) {
       json_map[constants.name_key] = name;
+    }
+    if (this.color != null) {
+      json_map[constants.color_key] = color.toHexColor().toCssString();
     }
     if (label != null) {
       json_map[constants.label_key] = label;

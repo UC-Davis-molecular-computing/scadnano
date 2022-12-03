@@ -1417,6 +1417,28 @@ bool reverse_complementary(String seq1, String seq2, {bool allow_wildcard = fals
   return true;
 }
 
+Color parse_json_color(Object json_obj) {
+  try {
+    if (json_obj is Map) {
+      int r = json_obj['r'];
+      int g = json_obj['g'];
+      int b = json_obj['b'];
+      return RgbColor(r, g, b);
+    } else if (json_obj is String) {
+      return HexColor(json_obj);
+    } else if (json_obj is int) {
+      String hex_str = color_decimal_int_to_hex(json_obj);
+      return HexColor(hex_str);
+    } else {
+      throw ArgumentError.value('JSON object representing color must be a Map, String, or int, '
+          'but instead it is a ${json_obj.runtimeType}:\n${json_obj}');
+    }
+  } on Exception {
+    print("WARNING: I couldn't understand the color specification ${json_obj}, so I'm substituting black.");
+    return RgbColor.name('black');
+  }
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // unit testing utilities
 

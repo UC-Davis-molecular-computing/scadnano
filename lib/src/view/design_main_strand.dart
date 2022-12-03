@@ -422,7 +422,7 @@ assigned, assign the complementary DNA sequence to this strand.
         on_click: set_scaffold,
       ),
       ContextMenuItem(
-          title: 'set color',
+          title: 'set strand color',
           on_click: () => app.dispatch(actions.StrandColorPickerShow(strand: props.strand))),
       ContextMenuItem(
           title: 'edit name',

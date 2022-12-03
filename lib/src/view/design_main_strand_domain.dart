@@ -33,7 +33,7 @@ UiFactory<DesignMainDomainProps> DesignMainDomain = _$DesignMainDomain;
 @Props()
 mixin DesignMainDomainPropsMixin on UiProps {
   Domain domain;
-  Color color;
+  Color strand_color;
 
   Helix helix;
   String strand_tooltip;
@@ -76,6 +76,8 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
       classname += ' ' + constants.css_selector_scaffold;
     }
 
+    var color = domain.color ?? props.strand_color;
+
     return (Dom.line()
       ..className = classname
       ..onClick = _handle_click_for_nick_insertion_deletion
@@ -90,7 +92,7 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
       ..onMouseMove = ((event) => util.update_mouseover(event, props.helix, props.helix_svg_position))
       ..onPointerDown = handle_click_down
       ..onPointerUp = handle_click_up
-      ..stroke = props.color.toHexColor().toCssString()
+      ..stroke = color.toHexColor().toCssString()
       ..transform = props.transform
       ..x1 = '${start_svg.x}'
       ..y1 = '${start_svg.y}'
