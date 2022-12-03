@@ -22,6 +22,7 @@ import 'design_main_domain_name_mismatches.dart';
 import 'design_main_loopout_extension_lengths.dart';
 import 'design_main_strand_creating.dart';
 import 'design_main_dna_mismatches.dart';
+import 'design_main_base_pair_lines.dart';
 import 'design_main_helices.dart';
 import 'design_main_potential_vertical_crossovers.dart';
 import 'design_main_strands.dart';
@@ -63,6 +64,8 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..show_domain_name_mismatches = state.ui_state.show_domain_name_mismatches
         ..show_unpaired_insertion_deletions = state.ui_state.show_unpaired_insertion_deletions
         ..show_dna = state.ui_state.show_dna
+        ..show_base_pair_lines = state.ui_state.show_base_pair_lines
+        ..show_base_pair_lines_with_mismatches = state.ui_state.show_base_pair_lines_with_mismatches
         ..show_domain_names = state.ui_state.show_domain_names
         ..show_strand_names = state.ui_state.show_strand_names
         ..show_helix_circles = state.ui_state.show_helix_circles_main_view
@@ -104,6 +107,8 @@ mixin DesignMainPropsMixin on UiProps {
   bool show_domain_name_mismatches;
   bool show_unpaired_insertion_deletions;
   bool show_dna;
+  bool show_base_pair_lines;
+  bool show_base_pair_lines_with_mismatches;
   bool show_domain_names;
   bool show_strand_names;
   num domain_label_font_size;
@@ -173,6 +178,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
           ..invert_y = props.invert_y
           ..key = 'helices')(),
+
       if (props.show_mismatches)
         (DesignMainDNAMismatches()
           ..design = props.design
@@ -181,6 +187,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..helix_idx_to_svg_position_y_map = props.helix_idx_to_svg_position_map
               .map((helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y))
           ..key = 'mismatches')(),
+
       if (props.show_domain_name_mismatches)
         (DesignMainDomainNameMismatches()
           ..design = props.design
@@ -188,6 +195,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
           ..key = 'domain-name-mismatches')(),
+
       if (props.show_unpaired_insertion_deletions)
         (DesignMainUnpairedInsertionDeletions()
           ..design = props.design
@@ -196,7 +204,19 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..helix_idx_to_svg_position_y_map = props.helix_idx_to_svg_position_map
               .map((helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y))
           ..key = 'unpaired-insertion-deletions')(),
+
+      if (props.show_base_pair_lines)
+        (DesignMainBasePairLines()
+          ..with_mismatches = props.show_base_pair_lines_with_mismatches
+          ..design = props.design
+          ..only_display_selected_helices = props.only_display_selected_helices
+          ..side_selected_helix_idxs = props.side_selected_helix_idxs
+          ..helix_idx_to_svg_position_y_map = props.helix_idx_to_svg_position_map
+              .map((helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y))
+          ..key = 'base-pair-lines')(),
+
       (ConnectedDesignMainStrands()..key = 'strands')(),
+
       // after strands so can click when crossover overlaps potential crossover
       if (props.edit_modes.contains(EditModeChoice.pencil) && !props.drawing_potential_crossover)
         (DesignMainPotentialVerticalCrossovers()
@@ -209,6 +229,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..helix_idx_to_svg_position_y_map = props.helix_idx_to_svg_position_map
               .map((helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y))
           ..key = 'potential-vertical-crossovers')(),
+
       if (props.strand_creation != null)
         (DesignMainStrandCreating()
           ..helix = props.strand_creation.helix
@@ -223,6 +244,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..geometry = props.design.geometry
           ..svg_position_y = props.helix_idx_to_svg_position_map[props.strand_creation.helix.idx].y
           ..key = 'strand-creating')(),
+
       if (props.show_dna)
         (DesignMainDNASequences()
           ..helices = props.design.helices
@@ -239,12 +261,14 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
           ..disable_png_caching_dna_sequences = props.disable_png_caching_dna_sequences
           ..key = 'dna-sequences')(),
+
       if (props.show_loopout_extension_length)
         (DesignMainLoopoutExtensionLengths()
           ..geometry = props.design.geometry
           ..strands = props.design.strands
           ..show_length = props.show_loopout_extension_length
           ..key = 'loopout-extension-length')(),
+
       // slice_bar_offset null means displayed helix group has no helices, so omit slice bar
       if (props.show_slice_bar && props.slice_bar_offset != null)
         (DesignMainSliceBar()
@@ -258,9 +282,11 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..displayed_group_name = props.displayed_group_name
           ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
           ..key = 'slice-bar')(),
+
       (ConnectedPotentialCrossoverView()
         ..id = 'potential-crossover-main'
         ..key = 'potential-crossover')(),
+
       (ConnectedSelectionBoxView()
         //FIXME: this makes the DesignMain React component not a pure function of AppState,
         // but currently no way around it since zoom is defined outside of React by the svg-pan-zoom library
@@ -268,11 +294,13 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..is_main = true
         ..id = 'selection-box-main'
         ..key = 'selection-box')(),
+
       (ConnectedSelectionRopeView()
         ..stroke_width_getter = (() => 2.0 / util.current_zoom_main_js())
         ..is_main = true
         ..id = 'selection-rope-main'
         ..key = 'selection-rope')(),
+
       if (props.helix_group_is_moving)
         (ConnectedHelixGroupMoving()
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
@@ -280,7 +308,9 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..show_helix_circles = props.show_helix_circles
           ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
           ..key = 'helix-group-moving')(),
+
       (ConnectedDesignMainStrandsMoving()..key = 'strands-moving')(),
+
       (ConnectedDesignMainDomainsMoving()..key = 'domains-moving')(),
     ]);
 

@@ -75,6 +75,8 @@ part 'serializers.g.dart';
   StrandNameSet,
   SubstrandNameSet,
   DomainNameMismatch,
+  ShowBasePairLinesSet,
+  ShowBasePairLinesWithMismatchesSet,
   ShowDomainNameMismatchesSet,
   ShowUnpairedInsertionDeletionsSet,
   ModificationEdit,

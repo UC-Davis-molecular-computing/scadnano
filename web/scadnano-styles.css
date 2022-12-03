@@ -629,6 +629,12 @@ label+select {
     fill: none;
 }
 
+.base-pair-line {
+    stroke-width: 2;
+    stroke-linecap: square;
+    fill: none;
+}
+
 .disallowed {
     stroke: lightgray;
 }

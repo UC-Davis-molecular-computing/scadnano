@@ -58,6 +58,8 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..autofit = state.ui_state.autofit
       ..only_display_selected_helices = state.ui_state.only_display_selected_helices
 //    ..grid = state.design?.grid
+      ..show_base_pair_lines = state.ui_state.show_base_pair_lines
+      ..show_base_pair_lines_with_mismatches = state.ui_state.show_base_pair_lines_with_mismatches
       ..example_designs = state.ui_state.example_designs
       ..design_has_insertions_or_deletions = state.design?.has_insertions_or_deletions == true
       ..undo_stack_empty = state.undo_redo.undo_stack.isEmpty
@@ -122,6 +124,8 @@ mixin MenuPropsMixin on UiProps {
   bool undo_stack_empty;
   bool redo_stack_empty;
   bool enable_copy;
+  bool show_base_pair_lines;
+  bool show_base_pair_lines_with_mismatches;
   bool display_of_major_ticks_offsets;
   bool display_base_offsets_of_major_ticks_only_first_helix;
   bool display_major_tick_widths;
@@ -595,6 +599,7 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
       view_menu_mods(),
       view_menu_helices(),
       view_menu_display_major_ticks_options(),
+      view_menu_base_pairs(),
       DropdownDivider({'key': 'divider-major-tick-widths'}),
       ...view_menu_zoom_speed(),
       DropdownDivider({'key': 'divider-zoom_speed'}),
@@ -872,6 +877,33 @@ toggle "Show main view helices".'''
     ]);
   }
 
+  ReactElement view_menu_base_pairs() {
+    return (MenuDropdownRight()
+      ..title = 'Base pairs'
+      ..id = 'view_menu_base_pairs'
+      ..key = 'view_menu_base_pairs-dropdown'
+      ..className = 'submenu_item')([
+      (MenuBoolean()
+        ..value = props.show_base_pair_lines
+        ..display = 'Base pair lines'
+        ..tooltip = 'Draw vertical lines between pairs of bases at the same offset on the same helix.'
+        ..onChange = ((_) =>
+            props.dispatch(actions.ShowBasePairLinesSet(show_base_pair_lines: !props.show_base_pair_lines)))
+        ..key = 'base_pair_lines')(),
+      (MenuBoolean()
+        ..value = props.show_base_pair_lines_with_mismatches
+        ..hide = !props.show_base_pair_lines
+        ..display = '... even if bases mismatch'
+        ..tooltip = '''\
+Lines are drawn between all pairs of bases at the same offset on the same helix, 
+regardless of whether the bases are complementary. If unchecked then lines are 
+only shown between pairs of complementary bases.'''
+        ..onChange = ((_) => props.dispatch(actions.ShowBasePairLinesWithMismatchesSet(
+            show_base_pair_lines_with_mismatches: !props.show_base_pair_lines_with_mismatches)))
+        ..key = 'base_pair_lines_mismatches')(),
+    ]);
+  }
+
   List<ReactElement> view_menu_zoom_speed() {
     return [
       (MenuNumber()
@@ -889,7 +921,7 @@ toggle "Show main view helices".'''
     return [
       (MenuBoolean()
         ..value = props.show_dna
-        ..display = 'Show DNA sequences'
+        ..display = 'DNA sequences'
         ..tooltip = '''\
 Show DNA sequences that have been assigned to strands. In a large design, this
 can slow down the performance of panning and zooming navigation, so uncheck it
@@ -921,7 +953,7 @@ Shows grid coordinates in the side view under the helix index.'''
         ..key = 'show-grid-coordinates-side-view')(),
       (MenuBoolean()
         ..value = props.show_helices_axis_arrows
-        ..display = 'Show axis arrows'
+        ..display = 'Axis arrows'
         ..tooltip = '''\
 Show axis arrows in side and main view
 Red : X-axis
@@ -933,7 +965,7 @@ Blue : Z-axis'''
         ..key = 'show-helices-axis-arrows')(),
       (MenuBoolean()
         ..value = props.show_loopout_extension_length
-        ..display = 'Show loopout/extension lengths'
+        ..display = 'Loopout/extension lengths'
         ..tooltip = '''\
 When selected, the length of each loopout and extension is displayed next to it.'''
         ..name = 'show-loopout-extension-length'
@@ -942,7 +974,7 @@ When selected, the length of each loopout and extension is displayed next to it.
         ..key = 'show-loopout-extension-length')(),
       (MenuBoolean()
         ..value = props.show_slice_bar
-        ..display = 'Show slice bar'
+        ..display = 'Slice bar'
         ..tooltip = '''\
 When selected, a slicebar is displayed, which users can drag and move to
 display the DNA backbone angle of all helices at a particular offset.
@@ -954,7 +986,7 @@ display the DNA backbone angle of all helices at a particular offset.
         ..key = 'show-slice-bar')(),
       (MenuBoolean()
         ..value = props.show_mouseover_data
-        ..display = 'Display strand and helix details in footer'
+        ..display = 'Strand and helix details in footer'
         ..tooltip = '''\
 When selected, the footer will display details about the design based
 on where the cursor is located. If the cursor is on a helix, the helix

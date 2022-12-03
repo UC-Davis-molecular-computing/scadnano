@@ -2,6 +2,7 @@
 library util;
 
 import 'dart:html';
+import 'dart:collection';
 import 'dart:js' as js;
 import 'dart:math';
 import 'dart:async';
@@ -1368,6 +1369,52 @@ String wc_base(String base) {
       return 'a';
   }
   return base;
+}
+
+var set_equality = SetEquality();
+
+/// Indicates if `base1` and `base2` are complementary DNA bases.
+bool bases_complementary(String base1, String base2, {bool allow_wildcard = false, bool allow_null = false}) {
+  if (allow_null && (base1 == null || base2 == null)) {
+    return true;
+  } else if (!allow_null && (base1 == null || base2 == null)) {
+    return false;
+  }
+
+  if (allow_wildcard && (base1 == constants.DNA_BASE_WILDCARD || base2 == constants.DNA_BASE_WILDCARD)) {
+    return true;
+  }
+
+  if (base1.length != 1 || base2.length != 1) {
+    throw ArgumentError('base1 and base2 must each be a single character: '
+        'base1 = ${base1}, base2 = ${base2}');
+  }
+  base1 = base1.toUpperCase();
+  base2 = base2.toUpperCase();
+
+  return set_equality.equals({base1, base2}, {'A', 'T'}) || set_equality.equals({base1, base2}, {'C', 'G'});
+}
+
+/// Indicates if `seq1` and `seq2` are reverse complementary DNA sequences.
+bool reverse_complementary(String seq1, String seq2, {bool allow_wildcard = false, bool allow_null = false}) {
+  if (allow_null && (seq1 == null || seq2 == null)) {
+    return true;
+  } else if (!allow_null && (seq1 == null || seq2 == null)) {
+    return false;
+  }
+
+  if (seq1.length != seq2.length) {
+    return false;
+  }
+  for (int i = 0, j = seq2.length - 1; i < seq1.length; i++, j--) {
+    var b1 = seq1[i];
+    var b2 = seq2[j];
+    if (!bases_complementary(b1, b2, allow_wildcard: allow_wildcard, allow_null: allow_null)) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
