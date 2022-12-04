@@ -3638,6 +3638,7 @@ abstract class StrandOrSubstrandColorSet
   @nullable
   Substrand get substrand;
 
+  @nullable
   Color get color;
 
   /************************ begin BuiltValue boilerplate ************************/
