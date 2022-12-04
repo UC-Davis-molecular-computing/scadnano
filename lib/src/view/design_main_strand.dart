@@ -422,13 +422,22 @@ assigned, assign the complementary DNA sequence to this strand.
         on_click: set_scaffold,
       ),
       ContextMenuItem(
-          title: 'set strand color',
-          on_click: () =>
-              app.dispatch(actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: null))),
-      ContextMenuItem(
-          title: 'set domain color',
-          on_click: () => app.dispatch(
-              actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: substrand))),
+          title: 'color',
+          nested: [
+            ContextMenuItem(
+                title: 'set strand color',
+                on_click: () => app.dispatch(
+                    actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: null))),
+            ContextMenuItem(
+                title: 'set domain color',
+                on_click: () => app.dispatch(
+                    actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: substrand))),
+            if (substrand.color != null)
+              ContextMenuItem(
+                  title: 'remove domain color',
+                  on_click: () => app.dispatch(actions.StrandOrSubstrandColorSet(
+                      strand: props.strand, substrand: substrand, color: null))),
+          ].build()),
       ContextMenuItem(
           title: 'edit name',
           nested: [
