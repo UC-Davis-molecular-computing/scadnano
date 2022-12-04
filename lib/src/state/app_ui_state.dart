@@ -24,6 +24,7 @@ import 'select_mode_state.dart';
 import 'edit_mode.dart';
 import 'selectable.dart';
 import 'strand.dart';
+import 'substrand.dart';
 import 'strand_creation.dart';
 import 'strands_move.dart';
 import 'selection_rope.dart';
@@ -86,7 +87,10 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   Dialog get dialog;
 
   @nullable // null indicates that strand color picker is not being used
-  Strand get strand_color_picker_strand;
+  Strand get color_picker_strand;
+
+  @nullable // null indicates that strand color picker is not being used
+  Substrand get color_picker_substrand;
 
   @nullable
   StrandCreation get strand_creation;
@@ -153,6 +157,10 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get show_domain_names => storables.show_domain_names;
 
   bool get show_strand_names => storables.show_strand_names;
+
+  bool get show_base_pair_lines => storables.show_base_pair_lines;
+
+  bool get show_base_pair_lines_with_mismatches => storables.show_base_pair_lines_with_mismatches;
 
   num get domain_name_font_size => storables.domain_name_font_size;
 
@@ -239,7 +247,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
     b.strands_move = null;
     b.context_menu = null;
     b.dialog = null;
-    b.strand_color_picker_strand = null;
+    b.color_picker_strand = null;
+    b.color_picker_substrand = null;
     b.strand_creation = null;
     b.helix_change_apply_to_all = true;
     b.example_designs = DEFAULT_example_designs_builder;

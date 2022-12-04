@@ -1382,10 +1382,17 @@ abstract class SelectAll with BuiltJsonSerializable implements Action, Built<Sel
 abstract class SelectAllSelectable
     with BuiltJsonSerializable
     implements Action, Built<SelectAllSelectable, SelectAllSelectableBuilder> {
+  bool get current_helix_group_only;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory SelectAllSelectable() = _$SelectAllSelectable;
+  factory SelectAllSelectable({bool current_helix_group_only = false}) {
+    return SelectAllSelectable.from((b) => b..current_helix_group_only = current_helix_group_only);
+  }
 
   SelectAllSelectable._();
+
+  factory SelectAllSelectable.from([void Function(SelectAllSelectableBuilder) updates]) =
+      _$SelectAllSelectable;
 
   static Serializer<SelectAllSelectable> get serializer => _$selectAllSelectableSerializer;
 }
@@ -3557,33 +3564,39 @@ abstract class ContextMenuHide
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// strand color picker
+// color pickers
 
-abstract class StrandColorPickerShow
+abstract class StrandOrSubstrandColorPickerShow
     with BuiltJsonSerializable
-    implements Action, Built<StrandColorPickerShow, StrandColorPickerShowBuilder> {
+    implements Action, Built<StrandOrSubstrandColorPickerShow, StrandOrSubstrandColorPickerShowBuilder> {
   Strand get strand;
 
+  @nullable
+  Substrand get substrand;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandColorPickerShow({Strand strand}) = _$StrandColorPickerShow._;
+  factory StrandOrSubstrandColorPickerShow({Strand strand, Substrand substrand}) =
+      _$StrandOrSubstrandColorPickerShow._;
 
-  StrandColorPickerShow._();
+  StrandOrSubstrandColorPickerShow._();
 
-  static Serializer<StrandColorPickerShow> get serializer => _$strandColorPickerShowSerializer;
+  static Serializer<StrandOrSubstrandColorPickerShow> get serializer =>
+      _$strandOrSubstrandColorPickerShowSerializer;
 }
 
-abstract class StrandColorPickerHide
+abstract class StrandOrSubstrandColorPickerHide
     with BuiltJsonSerializable
-    implements Action, Built<StrandColorPickerHide, StrandColorPickerHideBuilder> {
+    implements Action, Built<StrandOrSubstrandColorPickerHide, StrandOrSubstrandColorPickerHideBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandColorPickerHide() => StrandColorPickerHide.from((b) => b);
+  factory StrandOrSubstrandColorPickerHide() => StrandOrSubstrandColorPickerHide.from((b) => b);
 
-  factory StrandColorPickerHide.from([void Function(StrandColorPickerHideBuilder) updates]) =
-      _$StrandColorPickerHide;
+  factory StrandOrSubstrandColorPickerHide.from(
+      [void Function(StrandOrSubstrandColorPickerHideBuilder) updates]) = _$StrandOrSubstrandColorPickerHide;
 
-  StrandColorPickerHide._();
+  StrandOrSubstrandColorPickerHide._();
 
-  static Serializer<StrandColorPickerHide> get serializer => _$strandColorPickerHideSerializer;
+  static Serializer<StrandOrSubstrandColorPickerHide> get serializer =>
+      _$strandOrSubstrandColorPickerHideSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3617,22 +3630,26 @@ abstract class ScaffoldSet
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Strand color set
 
-abstract class StrandColorSet
+abstract class StrandOrSubstrandColorSet
     with BuiltJsonSerializable, UndoableAction
-    implements SingleStrandAction, Built<StrandColorSet, StrandColorSetBuilder> {
+    implements SingleStrandAction, Built<StrandOrSubstrandColorSet, StrandOrSubstrandColorSetBuilder> {
   Strand get strand;
+
+  @nullable
+  Substrand get substrand;
 
   Color get color;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandColorSet({Strand strand, Color color}) = _$StrandColorSet._;
+  factory StrandOrSubstrandColorSet({Strand strand, Substrand substrand, Color color}) =
+      _$StrandOrSubstrandColorSet._;
 
-  StrandColorSet._();
+  StrandOrSubstrandColorSet._();
 
-  static Serializer<StrandColorSet> get serializer => _$strandColorSetSerializer;
+  static Serializer<StrandOrSubstrandColorSet> get serializer => _$strandOrSubstrandColorSetSerializer;
 
   @override
-  String short_description() => "set strand color";
+  String short_description() => "set strand or substrand color";
 }
 
 abstract class StrandPasteKeepColorSet
@@ -3944,6 +3961,40 @@ abstract class SetExportSvgActionDelayedForPngCache
       _$setExportSvgActionDelayedForPngCacheSerializer;
 }
 
+abstract class ShowBasePairLinesSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowBasePairLinesSet, ShowBasePairLinesSetBuilder> {
+  bool get show_base_pair_lines;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowBasePairLinesSet({bool show_base_pair_lines}) = _$ShowBasePairLinesSet._;
+
+  ShowBasePairLinesSet._();
+
+  static Serializer<ShowBasePairLinesSet> get serializer => _$showBasePairLinesSetSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class ShowBasePairLinesWithMismatchesSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowBasePairLinesWithMismatchesSet, ShowBasePairLinesWithMismatchesSetBuilder> {
+  bool get show_base_pair_lines_with_mismatches;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowBasePairLinesWithMismatchesSet({bool show_base_pair_lines_with_mismatches}) =
+      _$ShowBasePairLinesWithMismatchesSet._;
+
+  ShowBasePairLinesWithMismatchesSet._();
+
+  static Serializer<ShowBasePairLinesWithMismatchesSet> get serializer =>
+      _$showBasePairLinesWithMismatchesSetSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // slice bar
 
@@ -3980,18 +4031,17 @@ abstract class SliceBarOffsetSet
 
 abstract class DisablePngCachingDnaSequencesSet
     with BuiltJsonSerializable
-    implements
-        Action,
-        Built<DisablePngCachingDnaSequencesSet, DisablePngCachingDnaSequencesSetBuilder> {
+    implements Action, Built<DisablePngCachingDnaSequencesSet, DisablePngCachingDnaSequencesSetBuilder> {
   bool get disable_png_caching_dna_sequences;
 
   /************************ begin BuiltValue boilerplate ************************/
   factory DisablePngCachingDnaSequencesSet(bool disable_png_caching_dna_sequences) =>
-      DisablePngCachingDnaSequencesSet.from((b) => b..disable_png_caching_dna_sequences = disable_png_caching_dna_sequences);
-  
+      DisablePngCachingDnaSequencesSet.from(
+          (b) => b..disable_png_caching_dna_sequences = disable_png_caching_dna_sequences);
+
   factory DisablePngCachingDnaSequencesSet.from(
-          [void Function(DisablePngCachingDnaSequencesSetBuilder) updates]) = _$DisablePngCachingDnaSequencesSet;
-  
+      [void Function(DisablePngCachingDnaSequencesSetBuilder) updates]) = _$DisablePngCachingDnaSequencesSet;
+
   DisablePngCachingDnaSequencesSet._();
 
   static Serializer<DisablePngCachingDnaSequencesSet> get serializer =>

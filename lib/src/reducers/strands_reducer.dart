@@ -510,7 +510,7 @@ BuiltList<Strand> strands_single_strand_reducer(
 
 Reducer<Strand> single_strand_reducer = combineReducers([
   TypedReducer<Strand, actions.ScaffoldSet>(scaffold_set_reducer),
-  TypedReducer<Strand, actions.StrandColorSet>(strand_color_set_reducer),
+  TypedReducer<Strand, actions.StrandOrSubstrandColorSet>(strand_or_substrand_color_set_reducer),
   TypedReducer<Strand, actions.ModificationAdd>(modification_add_reducer),
   TypedReducer<Strand, actions.ExtensionAdd>(extension_add_reducer),
   TypedReducer<Strand, actions.ModificationRemove>(modification_remove_reducer),
@@ -627,8 +627,30 @@ Strand scaffold_set_reducer(Strand strand, actions.ScaffoldSet action) {
   return strand;
 }
 
-Strand strand_color_set_reducer(Strand strand, actions.StrandColorSet action) =>
-    strand.rebuild((b) => b..color = action.color);
+Strand strand_or_substrand_color_set_reducer(Strand strand, actions.StrandOrSubstrandColorSet action) {
+  if (action.substrand == null) {
+    strand = strand.rebuild((b) => b..color = action.color);
+  } else {
+    int substrand_idx = strand.substrands.indexOf(action.substrand);
+
+    // we do the same thing no matter if it's Domain, Loopout, or Extension, but need to cast to call rebuild
+    Substrand substrand = action.substrand;
+    if (substrand is Domain) {
+      substrand = (substrand as Domain).rebuild((b) => b..color = action.color);
+    } else if (substrand is Loopout) {
+      substrand = (substrand as Loopout).rebuild((b) => b..color = action.color);
+    } else if (substrand is Extension) {
+      substrand = (substrand as Extension).rebuild((b) => b..color = action.color);
+    } else {
+      throw AssertionError('substrand must be Domain, Loopout, or Extension');
+    }
+
+    var substrands = strand.substrands.toList();
+    substrands[substrand_idx] = substrand;
+    strand = strand.rebuild((s) => s..substrands.replace(substrands));
+  }
+  return strand;
+}
 
 BuiltList<Strand> modifications_5p_edit_reducer(
     BuiltList<Strand> strands, AppState state, actions.Modifications5PrimeEdit action) {

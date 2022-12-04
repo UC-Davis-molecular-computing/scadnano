@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+import 'package:color/color.dart';
 import 'package:tuple/tuple.dart';
 import 'package:built_collection/built_collection.dart';
 
@@ -58,6 +59,9 @@ abstract class Extension
   String get dna_sequence;
 
   @nullable
+  Color get color;
+
+  @nullable
   String get strand_id;
 
   bool get is_scaffold;
@@ -74,6 +78,7 @@ abstract class Extension
       String name = null,
       String dna_sequence = null,
       bool is_scaffold = false,
+      Color color = null,
       Domain adjacent_domain = null,
       Map<String, dynamic> unused_fields = null}) {
     if (unused_fields == null) {
@@ -87,6 +92,7 @@ abstract class Extension
       ..name = name
       ..label = label
       ..dna_sequence = dna_sequence
+      ..color = color
       ..is_scaffold = is_scaffold
       ..adjacent_domain = adjacent_domain?.toBuilder()
       ..unused_fields.replace(unused_fields));
@@ -103,6 +109,9 @@ abstract class Extension
     if (name != null) {
       json_map[constants.name_key] = name;
     }
+    if (this.color != null) {
+      json_map[constants.color_key] = color.toHexColor().toCssString();
+    }
     if (label != null) {
       json_map[constants.label_key] = label;
     }
@@ -110,7 +119,7 @@ abstract class Extension
     //     json_map[constants.dna_sequence_key] = dna_sequence;
     // }
     json_map.addAll(unused_fields.toMap());
-    return json_map;
+    return suppress_indent ? NoIndent(json_map) : json_map;
   }
 
   static Extension from_json(Map<String, dynamic> json_map) {
@@ -125,6 +134,10 @@ abstract class Extension
 
     String dna_sequence = util.optional_field_with_null_default(json_map, constants.dna_sequence_key);
 
+    Color color = json_map.containsKey(constants.color_key)
+        ? util.parse_json_color(json_map[constants.color_key])
+        : null;
+
     var unused_fields = util.unused_fields_map(json_map, constants.extension_keys);
 
     return Extension(
@@ -136,6 +149,7 @@ abstract class Extension
         name: name,
         label: label,
         dna_sequence: dna_sequence,
+        color: color,
         unused_fields: unused_fields.build().toMap());
   }
 

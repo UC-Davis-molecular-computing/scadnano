@@ -40,7 +40,7 @@ mixin DesignMainExtensionPropsMixin on UiProps {
   Domain adjacent_domain;
   Helix adjacent_helix;
 
-  Color color;
+  Color strand_color;
 
   Strand strand;
   String strand_tooltip;
@@ -91,6 +91,8 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
       right_svg = swap;
     }
 
+    var color = ext.color ?? props.strand_color;
+
     // This is just a straight line, but for some reason, for displaying the extension name,
     // it only works to attach a textPath to it if it is a path, not a line.
     // So we use Dom.path() instead of Dom.line()
@@ -100,7 +102,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
       ..className = classname
       ..onPointerDown = handle_click_down
       ..onPointerUp = handle_click_up
-      ..stroke = props.color.toHexColor().toCssString()
+      ..stroke = color.toHexColor().toCssString()
       ..transform = props.transform
       ..d = path_d
       ..id = id
@@ -166,6 +168,11 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
         ContextMenuItem(
           title: 'set extension name',
           on_click: set_extension_name,
+        ),
+        ContextMenuItem(
+          title: 'set extension color',
+          on_click: () =>
+              app.dispatch(actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: props.ext)),
         ),
         if (props.ext.name != null)
           ContextMenuItem(
