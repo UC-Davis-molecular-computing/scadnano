@@ -7214,19 +7214,19 @@ main() {
     test('StrandColorPickerShow', () {
       AppState initial_state = app_state_from_design(two_helices_design);
       Strand strand = two_helices_design.strands.first;
-      AppState final_state = app_state_reducer(initial_state, StrandColorPickerShow(strand: strand));
+      AppState final_state = app_state_reducer(initial_state, StrandOrSubstrandColorPickerShow(strand: strand));
 
-      expect(final_state.ui_state.strand_color_picker_strand, strand);
+      expect(final_state.ui_state.color_picker_strand, strand);
     });
 
     test('StrandColorPickerHide', () {
       Strand strand = two_helices_design.strands.first;
       AppState initial_state = app_state_from_design(two_helices_design)
-          .rebuild((b) => b..ui_state.strand_color_picker_strand = strand.toBuilder());
+          .rebuild((b) => b..ui_state.color_picker_strand = strand.toBuilder());
 
-      AppState final_state = app_state_reducer(initial_state, StrandColorPickerHide());
+      AppState final_state = app_state_reducer(initial_state, StrandOrSubstrandColorPickerHide());
 
-      expect(final_state.ui_state.strand_color_picker_strand, null);
+      expect(final_state.ui_state.color_picker_strand, null);
     });
   });
 

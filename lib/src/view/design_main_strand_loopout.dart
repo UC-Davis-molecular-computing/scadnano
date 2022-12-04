@@ -162,6 +162,11 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
           title: 'set loopout name',
           on_click: set_loopout_name,
         ),
+        ContextMenuItem(
+          title: 'set loopout color',
+          on_click: () =>
+              app.dispatch(actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: props.loopout)),
+        ),
         if (props.loopout.name != null)
           ContextMenuItem(
               title: 'remove loopout name',

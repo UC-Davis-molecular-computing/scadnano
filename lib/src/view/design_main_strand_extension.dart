@@ -169,6 +169,11 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
           title: 'set extension name',
           on_click: set_extension_name,
         ),
+        ContextMenuItem(
+          title: 'set extension color',
+          on_click: () =>
+              app.dispatch(actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: props.ext)),
+        ),
         if (props.ext.name != null)
           ContextMenuItem(
               title: 'remove extension name',

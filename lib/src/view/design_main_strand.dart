@@ -123,7 +123,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       ..id = props.strand.id
       ..onPointerDown = handle_click_down
       ..onPointerUp = handle_click_up
-//      ..onContextMenu = strand_content_menu // this is handled when clicking on domain
+//      ..onContextMenu = strand_context_menu // this is handled when clicking on domain
       ..className = classname)([
       (DesignMainStrandPaths()
         ..strand = props.strand
@@ -423,7 +423,12 @@ assigned, assign the complementary DNA sequence to this strand.
       ),
       ContextMenuItem(
           title: 'set strand color',
-          on_click: () => app.dispatch(actions.StrandColorPickerShow(strand: props.strand))),
+          on_click: () =>
+              app.dispatch(actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: null))),
+      ContextMenuItem(
+          title: 'set domain color',
+          on_click: () => app.dispatch(
+              actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: substrand))),
       ContextMenuItem(
           title: 'edit name',
           nested: [
@@ -1032,8 +1037,12 @@ StrandActionCreator remove_dna_strand_action_creator(bool remove_complements, bo
     ((Strand strand) =>
         actions.RemoveDNA(strand: strand, remove_complements: remove_complements, remove_all: remove_all));
 
-StrandActionCreator color_set_strand_action_creator(String color_hex) =>
-    ((Strand strand) => actions.StrandColorSet(strand: strand, color: Color.hex(color_hex)));
+StrandActionCreator color_set_strand_action_creator(String color_hex) => ((Strand strand) =>
+    actions.StrandOrSubstrandColorSet(strand: strand, substrand: null, color: Color.hex(color_hex)));
+
+StrandActionCreator color_set_substrand_action_creator(Substrand substrand, String color_hex) =>
+    ((Strand strand) =>
+        actions.StrandOrSubstrandColorSet(strand: strand, substrand: substrand, color: Color.hex(color_hex)));
 
 String tooltip_text(Strand strand) =>
     "Strand:\n" +

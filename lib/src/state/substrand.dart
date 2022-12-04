@@ -27,4 +27,6 @@ abstract class Substrand implements JSONSerializable, StrandPart {
   String get id;
 
   Color get color;
+
+  toBuilder();
 }
