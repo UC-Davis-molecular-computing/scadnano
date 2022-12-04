@@ -33,7 +33,7 @@ UiFactory<DesignMainLoopoutProps> DesignMainLoopout = _$DesignMainLoopout;
 mixin DesignMainLoopoutPropsMixin on UiProps {
   Loopout loopout;
   Strand strand;
-  Color color;
+  Color strand_color;
 
   Domain prev_domain;
   Domain next_domain;
@@ -66,8 +66,6 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
 
   @override
   render() {
-    Color color = props.color;
-
     var classname = constants.css_selector_loopout;
     if (props.selected) {
       classname += ' ' + constants.css_selector_selected;
@@ -100,6 +98,8 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     } else {
       path_description = loopout_path_description_between_groups();
     }
+
+    var color = props.loopout.color ?? props.strand_color;
 
     var path_props = Dom.path()
       ..className = classname
@@ -161,6 +161,11 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
         ContextMenuItem(
           title: 'set loopout name',
           on_click: set_loopout_name,
+        ),
+        ContextMenuItem(
+          title: 'set loopout color',
+          on_click: () =>
+              app.dispatch(actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: props.loopout)),
         ),
         if (props.loopout.name != null)
           ContextMenuItem(

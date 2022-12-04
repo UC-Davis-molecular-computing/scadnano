@@ -42,7 +42,7 @@ mixin DesignMainDNAEndPropsMixin on UiProps {
   Strand strand;
   Domain domain;
   Extension ext;
-  Color color;
+  Color strand_color;
   bool is_5p;
   bool is_scaffold;
   bool is_on_extension;
@@ -111,6 +111,8 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     bool forward;
     double rotation_degrees = 0;
 
+    var color = props.strand_color;
+
     if (!props.is_on_extension) {
       //XXX: need to listen to onPointerDown instead of onMouseDown for when draggable is enabled,
       // which it is when Shift or Ctrl (or Meta) keys are pressed
@@ -119,6 +121,9 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       dna_end = props.is_5p ? props.domain.dnaend_5p : props.domain.dnaend_3p;
       offset = props.is_5p ? props.domain.offset_5p : props.domain.offset_3p;
       pos = props.helix.svg_base_pos(offset, props.domain.forward, props.helix_svg_position.y);
+      if (props.domain.color != null) {
+        color = props.domain.color;
+      }
     } else {
       // is on extension
       forward = props.ext.adjacent_domain.forward;
@@ -131,7 +136,12 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
           extension_attached_end_svg, props.ext, props.ext.adjacent_domain, props.geometry);
 
       rotation_degrees = props.ext.compute_rotation();
+      if (props.ext.color != null) {
+        color = props.ext.color;
+      }
     }
+
+
 
     end_props = end_props
       ..on_pointer_down = handle_end_click_select_and_or_move_start
@@ -141,7 +151,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       ..on_mouse_leave = handle_on_mouse_leave
       ..on_mouse_move = handle_on_mouse_move
       ..pos = pos
-      ..color = props.color
+      ..color = color
       ..classname = classname
       ..forward = forward
       ..transform = 'rotate(${rotation_degrees})'
@@ -152,7 +162,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     end_moving_props = end_moving_props
       ..dna_end = dna_end
       ..helix = props.helix
-      ..color = props.color
+      ..color = color
       ..forward = forward
       ..is_5p = props.is_5p
       ..transform = 'rotate(${rotation_degrees})'
@@ -262,7 +272,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       var address = Address(helix_idx: props.helix.idx, offset: offset, forward: props.domain.forward);
       var potential_crossover = PotentialCrossover(
         address: address,
-        color: props.color.toHexColor().toCssString(),
+        color: props.strand_color.toHexColor().toCssString(),
         dna_end_first_click: dna_end,
         start_point: start_point,
         current_point: start_point,
@@ -313,7 +323,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       var address = Address(helix_idx: other_helix_idx, offset: other_offset, forward: other_domain.forward);
       var potential_crossover = PotentialCrossover(
         address: address,
-        color: props.color.toHexColor().toCssString(),
+        color: props.strand_color.toHexColor().toCssString(),
         dna_end_first_click: other_end,
         start_point: start_point,
         current_point: start_point,

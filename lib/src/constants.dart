@@ -349,6 +349,7 @@ final domain_keys = [
       insertions_key,
       label_key,
       name_key,
+      color_key,
     ] +
     legacy_forward_keys;
 
@@ -358,6 +359,7 @@ const loopout_keys = [
   loopout_key,
   label_key,
   name_key,
+  color_key,
 ];
 
 // Extension keys
@@ -372,6 +374,7 @@ const extension_keys = [
   display_angle_key,
   label_key,
   name_key,
+  color_key,
 ];
 ////////////////////////////////////////////////////
 /// svg-png-caching constants

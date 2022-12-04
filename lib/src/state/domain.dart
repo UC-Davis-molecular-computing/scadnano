@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+import 'package:color/color.dart';
 import 'package:tuple/tuple.dart';
 import 'package:built_collection/built_collection.dart';
 
@@ -74,8 +75,9 @@ abstract class Domain
       int end,
       Iterable<int> deletions,
       Iterable<Insertion> insertions,
-      String dna_sequence,
       String strand_id,
+      String dna_sequence = null,
+      Color color = null,
       bool is_scaffold = false,
       String name = null,
       Object label = null,
@@ -97,6 +99,7 @@ abstract class Domain
       ..name = name
       ..label = label
       ..dna_sequence = dna_sequence
+      ..color = color
       ..strand_id = strand_id
       ..is_first = is_first
       ..is_last = is_last
@@ -132,6 +135,9 @@ abstract class Domain
   // properties below here not stored in JSON, but computed from containing Strand
   @nullable
   String get dna_sequence;
+
+  @nullable
+  Color get color;
 
   @nullable
   String get strand_id;
@@ -230,7 +236,9 @@ abstract class Domain
           .insertions
           .map((insertion) => insertion.to_json_serializable(suppress_indent: suppress_indent)));
     }
-
+    if (this.color != null) {
+      json_map[constants.color_key] = color.toHexColor().toCssString();
+    }
     if (label != null) {
       json_map[constants.label_key] = label;
     }
@@ -249,6 +257,10 @@ abstract class Domain
     var end = util.mandatory_field(json_map, constants.end_key, class_name);
     var deletions = List<int>.from(util.optional_field(json_map, constants.deletions_key, []));
     var insertions = parse_json_insertions(util.optional_field(json_map, constants.insertions_key, []));
+
+    Color color = json_map.containsKey(constants.color_key)
+        ? util.parse_json_color(json_map[constants.color_key])
+        : null;
 
     String name = util.optional_field_with_null_default(json_map, constants.name_key);
     Object label = util.optional_field_with_null_default(json_map, constants.label_key);
@@ -307,6 +319,7 @@ abstract class Domain
       ..end = end
       ..deletions.replace(deletions)
       ..insertions.replace(insertions)
+      ..color = color
       ..name = name
       ..label = label
       ..unused_fields = unused_fields;
