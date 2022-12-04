@@ -68,9 +68,9 @@ abstract class DesignSideRotationData
           num_domains_found++;
           Strand strand = design.substrand_to_strand[domain];
           if (domain.forward) {
-            color_forward = strand.color;
+            color_forward = domain.color ?? strand.color;
           } else {
-            color_reverse = strand.color;
+            color_reverse = domain.color ?? strand.color;
           }
         }
         if (num_domains_found >= 2) {
