@@ -62,8 +62,8 @@ abstract class DNAExtensionMove
       {DNAEnd dna_end,
       Color color,
       Point<num> original_position,
-      Extension extension,
-      Point<num> attached_end_position}
+      Point<num> attached_end_position,
+      Extension extension}
   ) = _$DNAExtensionMove._;
 
   factory DNAExtensionMove.from(
@@ -82,7 +82,7 @@ abstract class DNAExtensionMove
 
   Point<num> get original_position;
 
-  Extension get extension;
-
   Point<num> get attached_end_position;
+  
+  Extension get extension;
 }

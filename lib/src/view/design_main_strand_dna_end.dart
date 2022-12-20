@@ -243,7 +243,6 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         // set up drag detection for moving DNA ends
         app.dispatch(actions.DNAEndsMoveStart(offset: dna_end.offset_inclusive, helix: props.helix));
       } else {
-        print("in extension select");
         // select end
         MouseEvent event = event_synthetic.nativeEvent;
         //On a mac event.button is: 0-left, 1-middle, 2-right.

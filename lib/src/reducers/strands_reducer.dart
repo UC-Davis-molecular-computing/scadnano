@@ -372,28 +372,29 @@ BuiltList<Strand> strands_dna_ends_move_commit_reducer(
 BuiltList<Strand> strands_dna_extensions_move_commit_reducer(
     BuiltList<Strand> strands, AppState state, actions.DNAExtensionsMoveCommit action) {
   var strands_builder = strands.toBuilder();
-  // Set<Strand> strands_affected = {}
+  
   for (var move in action.dna_extensions_move.moves) {
     var strand = state.design.substrand_to_strand[state.design.end_to_extension[move.dna_end]];
+
     int strand_idx = strands.indexOf(strand);
     strand = strands_builder[strand_idx];
+
     var extension = state.design.end_to_extension[move.dna_end];
     int substrand_idx = strand.substrands.indexOf(extension);
     var substrands_builder = strand.substrands.toBuilder();
-    var extension_start_point = util.compute_extension_attached_end_svg(
-        extension,
-        extension.adjacent_domain,
-        state.design.helices[extension.adjacent_domain.helix],
-        state.helix_idx_to_svg_position_map[extension.adjacent_domain.helix].y);
+    var extension_start_point = move.attached_end_position;
+
     var length_and_angle = util.compute_extension_length_and_angle_from_point(
         action.dna_extensions_move.current_point_of(move.dna_end),
         extension_start_point,
         extension,
         extension.adjacent_domain,
         state.design.geometry);
+
     Extension ext_new = extension.rebuild((b) => b
       ..display_length = length_and_angle.item1
       ..display_angle = length_and_angle.item2);
+
     substrands_builder[substrand_idx] = ext_new;
     strand = strand.rebuild((s) => s..substrands = substrands_builder);
     strands_builder[strand_idx] = strand;
@@ -601,6 +602,7 @@ Strand extension_add_reducer(Strand strand, actions.ExtensionAdd action) {
   } else {
     adjacent_domain = substrands.last;
   }
+  print(adjacent_domain.is_first);
   Extension ext = Extension(
       num_bases: action.num_bases,
       is_5p: action.is_5p,

@@ -413,6 +413,10 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         builder[domain.dnaend_start.id] = domain.dnaend_start;
         builder[domain.dnaend_end.id] = domain.dnaend_end;
       }
+
+      for (var ext in strand.extensions) {
+        builder[ext.dnaend_free.id] = ext.dnaend_free;
+      }
     }
     return builder.build();
   }
@@ -609,7 +613,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   Strand end_to_strand(DNAEnd end) => substrand_to_strand[end_to_domain[end]];
 
-  Strand extension_to_strand(DNAEnd end) => substrand_to_strand[end_to_extension[end]];
+  Strand extension_end_to_strand(DNAEnd end) => substrand_to_strand[end_to_extension[end]];
 
   @memoized
   BuiltList<int> get helix_idxs => helices.keys.toBuiltList();

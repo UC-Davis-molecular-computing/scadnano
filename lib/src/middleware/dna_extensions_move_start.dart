@@ -42,19 +42,19 @@ dna_extensions_move_start_middleware(
           extension,
           extension.adjacent_domain,
           design.geometry);
-      var color = design.extension_to_strand(end).color;
+      var color = design.extension_end_to_strand(end).color;
       var move = DNAExtensionMove(
           dna_end: end,
           color: color,
           original_position: extension_end_point,
-          extension: extension,
-          attached_end_position: extension_start_point);
+          attached_end_position: extension_start_point,
+          extension: extension);
       moves.add(move);
     }
 
     Set<Strand> strands_affected = {};
     for (var move in moves) {
-      Strand strand = design.extension_to_strand(move.dna_end);
+      Strand strand = design.extension_end_to_strand(move.dna_end);
       strands_affected.add(strand);
     }
     next(action);
