@@ -14,20 +14,44 @@ import '../actions/actions.dart' as actions;
 import '../app.dart';
 import '../state/app_state.dart';
 
+import '../util.dart' as util;
+
 // This is needed to gather the list of selected ends and package them into an action to start the moving
 // of selected ends. It is needed because the click on the DNAEnd that triggers the DNAEndsMoveStart action
 // does not have access to the list of all selected ends. It is middleware instead of a reducer because
 // it triggers a new action to be dispatched.
-dna_extensions_move_start_middleware(Store<AppState> store, action, NextDispatcher next) {
+dna_extensions_move_start_middleware(
+    Store<AppState> store, action, NextDispatcher next) {
   if (action is actions.DNAExtensionsMoveStart) {
-    BuiltSet<DNAEnd> selected_ends = store.state.ui_state.selectables_store.selected_dna_ends_on_extensions;
+    BuiltSet<DNAEnd> selected_ends =
+        store.state.ui_state.selectables_store.selected_dna_ends_on_extensions;
     List<DNAExtensionMove> moves = [];
+    Design design = store.state.design;
     for (var end in selected_ends) {
-      var move = DNAExtensionMove(dna_end: end);
+      var extension = design.end_to_extension[end];
+      var extension_start_point = util.compute_extension_attached_end_svg(
+          extension,
+          extension.adjacent_domain,
+          design.helices[extension.adjacent_domain.helix],
+          store
+              .state
+              .helix_idx_to_svg_position_map[extension.adjacent_domain.helix]
+              .y);
+      var extension_end_point = util.compute_extension_free_end_svg(
+          extension_start_point,
+          extension,
+          extension.adjacent_domain,
+          design.geometry);
+      var color = design.extension_to_strand(end).color;
+      var move = DNAExtensionMove(
+          dna_end: end,
+          color: color,
+          original_position: extension_end_point,
+          extension: extension,
+          attached_end_position: extension_start_point);
       moves.add(move);
     }
 
-    Design design = store.state.design;
     Set<Strand> strands_affected = {};
     for (var move in moves) {
       Strand strand = design.extension_to_strand(move.dna_end);
