@@ -114,6 +114,8 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     bool forward;
     double rotation_degrees = 0;
 
+    Point<num> extension_attached_end_svg;
+
     if (!props.is_on_extension) {
       //XXX: need to listen to onPointerDown instead of onMouseDown for when draggable is enabled,
       // which it is when Shift or Ctrl (or Meta) keys are pressed
@@ -127,9 +129,9 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       forward = props.ext.adjacent_domain.forward;
       dna_end = props.ext.dnaend_free;
 
-      Point<num> extension_attached_end_svg = util.compute_extension_attached_end_svg(
-          props.ext, props.ext.adjacent_domain, props.helix, props.helix_svg_position.y);
-
+      extension_attached_end_svg = util.compute_extension_attached_end_svg(
+        props.ext, props.ext.adjacent_domain, props.helix, props.helix_svg_position.y
+      );
       pos = util.compute_extension_free_end_svg(
           extension_attached_end_svg, props.ext, props.ext.adjacent_domain, props.geometry);
 
@@ -165,6 +167,9 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     // draw avatar of moving extension if it is moving
     extension_moving_props = extension_moving_props
       ..dna_end = dna_end
+      ..ext = props.ext
+      ..geometry = props.geometry
+      ..attached_end_svg = extension_attached_end_svg
       ..helix = props.helix
       ..color = props.color
       ..forward = forward

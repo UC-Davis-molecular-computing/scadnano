@@ -169,23 +169,6 @@ abstract class Extension
       is_on_extension: true,
       substrand_id: id);
 
-  double compute_rotation() {
-    var radians = display_angle * 2 * pi / 360.0;
-    // convert to rectangular coordinates to make reflection easier
-    num x = cos(radians);
-    num y = sin(radians);
-    // honestly I don't quite understand why the following rules work,
-    // but I played with it until they looked right.
-    y = -y;
-    if (!adjacent_domain.forward) {
-      x = -x;
-    }
-    if ((adjacent_domain.forward && is_5p) || (!adjacent_domain.forward && !is_5p)) {
-      x = -x;
-    }
-    // convert back from rectangular coordinates to radians
-    var reflected_radians = atan2(y, x);
-    var degrees = reflected_radians * 360.0 / (2 * pi);
-    return degrees;
-  }
+  double compute_rotation() =>
+    util.compute_end_rotation(display_angle, adjacent_domain.forward, is_5p);
 }
