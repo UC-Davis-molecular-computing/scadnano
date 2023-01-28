@@ -1,6 +1,6 @@
 // @dart=2.9
 
-import 'package:scadnano/src/reducers/change_loopout_length.dart';
+import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
 import 'package:scadnano/src/reducers/delete_reducer.dart';
 import 'package:scadnano/src/reducers/nick_ligate_join_by_crossover_reducers.dart';
 import 'package:scadnano/src/state/domain.dart';
@@ -73,12 +73,12 @@ main() {
     setUp(() {
       helices = [for (int i = 0; i < 3; i++) Helix(idx: i, max_offset: 100, grid: Grid.square)];
       design = Design(helices: helices, grid: Grid.square);
-      design = design.strand(0, 0).move(10).cross(1).move(-10).commit();
-      design = design.strand(0, 15).move(5).cross(1).move(-10).cross(0).move(5).commit();
-      design = design.strand(0, 20).move(10).commit();
-      design = design.strand(1, 30).move(-10).commit();
-      design = design.strand(0, 30).move(10).loopout(1, 5).move(-10).cross(2).move(10).as_circular().commit();
-      design = design.strand(0, 40).move(10).cross(1).move(-10).as_circular().commit();
+      design = design.draw_strand(0, 0).move(10).cross(1).move(-10).commit();
+      design = design.draw_strand(0, 15).move(5).cross(1).move(-10).cross(0).move(5).commit();
+      design = design.draw_strand(0, 20).move(10).commit();
+      design = design.draw_strand(1, 30).move(-10).commit();
+      design = design.draw_strand(0, 30).move(10).loopout(1, 5).move(-10).cross(2).move(10).as_circular().commit();
+      design = design.draw_strand(0, 40).move(10).cross(1).move(-10).as_circular().commit();
       num_strands = design.strands.length;
     });
     /*
@@ -149,7 +149,7 @@ main() {
       Loopout loopout = strand.substrands[1] as Loopout;
       Domain d1 = strand.substrands[2] as Domain;
 
-      expect(loopout.loopout_length, 5);
+      expect(loopout.loopout_num_bases, 5);
 
       expect(d0.helix, 0);
       expect(d0.forward, true);
@@ -195,7 +195,7 @@ main() {
       Loopout loopout = strand.substrands[1] as Loopout;
       Domain d1 = strand.substrands[2] as Domain;
 
-      expect(loopout.loopout_length, 5);
+      expect(loopout.loopout_num_bases, 5);
 
       expect(d0.helix, 1);
       expect(d0.forward, false);
@@ -572,7 +572,7 @@ main() {
       var loopout = strand.substrands[1] as Loopout;
       var d1 = strand.substrands[2] as Domain;
 
-      expect(loopout.loopout_length, 5);
+      expect(loopout.loopout_num_bases, 5);
 
       expect(d0.helix, 0);
       expect(d0.forward, true);
@@ -686,7 +686,7 @@ main() {
       var loopout = strand.substrands[2] as Loopout;
       var d2 = strand.substrands[3] as Domain;
 
-      expect(loopout.loopout_length, 5);
+      expect(loopout.loopout_num_bases, 5);
 
       expect(d0.helix, 2);
       expect(d0.forward, true);
@@ -837,7 +837,7 @@ main() {
       Domain d2 = strand.substrands[3];
       Domain d3 = strand.substrands[4];
 
-      expect(loopout.loopout_length, 5);
+      expect(loopout.loopout_num_bases, 5);
 
       expect(d0.helix, 0);
       expect(d0.forward, true);
@@ -899,7 +899,7 @@ main() {
       Loopout loopout = strand.substrands[3];
       Domain d3 = strand.substrands[4];
 
-      expect(loopout.loopout_length, 5);
+      expect(loopout.loopout_num_bases, 5);
 
       expect(d0.helix, 1);
       expect(d0.forward, false);
@@ -961,7 +961,7 @@ main() {
       Domain d2 = strand.substrands[3];
       Domain d3 = strand.substrands[4];
 
-      expect(loopout.loopout_length, 5);
+      expect(loopout.loopout_num_bases, 5);
 
       expect(d0.helix, 2);
       expect(d0.forward, true);
@@ -1035,7 +1035,7 @@ main() {
       */
       helices = [for (int i = 0; i < 2; i++) Helix(idx: i, max_offset: 100, grid: Grid.square)];
       design = Design(helices: helices, grid: Grid.square);
-      design = design.strand(0, 5).move(5).loopout(1, 5).move(-10).cross(0).move(5).commit();
+      design = design.draw_strand(0, 5).move(5).loopout(1, 5).move(-10).cross(0).move(5).commit();
       num_strands = design.strands.length;
 
       // expectations before change
@@ -1059,7 +1059,7 @@ main() {
       Loopout loopout = strand.substrands[1] as Loopout;
       Domain d1 = strand.substrands[2] as Domain;
 
-      expect(loopout.loopout_length, 5);
+      expect(loopout.loopout_num_bases, 5);
 
       expect(d0.helix, 0);
       expect(d0.forward, true);
@@ -1088,7 +1088,7 @@ main() {
       */
       helices = [for (int i = 0; i < 2; i++) Helix(idx: i, max_offset: 100, grid: Grid.square)];
       design = Design(helices: helices, grid: Grid.square);
-      design = design.strand(1, 5).move(-5).cross(0).move(10).loopout(1, 5).move(-5).commit();
+      design = design.draw_strand(1, 5).move(-5).cross(0).move(10).loopout(1, 5).move(-5).commit();
       num_strands = design.strands.length;
 
       // expectations before change
@@ -1114,7 +1114,7 @@ main() {
       Loopout loopout = strand.substrands[1] as Loopout;
       Domain d1 = strand.substrands[2] as Domain;
 
-      expect(loopout.loopout_length, 5);
+      expect(loopout.loopout_num_bases, 5);
 
       expect(d0.helix, 0);
       expect(d0.forward, true);

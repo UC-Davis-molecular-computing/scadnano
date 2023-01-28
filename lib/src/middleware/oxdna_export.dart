@@ -5,6 +5,7 @@ import 'package:path/path.dart' as path;
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/domain.dart';
+import 'package:scadnano/src/state/extension.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/loopout.dart';
@@ -330,9 +331,10 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand> strands_
   };
 
   for (var strand in strands_to_export) {
-    List<Tuple2<OxdnaStrand, bool>> dom_strands = [];
-    for (var domain in strand.substrands) {
-      var dom_strand = OxdnaStrand();
+    List<Tuple2<OxdnaStrand, bool>> strand_domains = [];
+    for (int ss_idx=0; ss_idx<strand.substrands.length; ss_idx++) {
+      var domain = strand.substrands[ss_idx];
+      var ox_strand = OxdnaStrand();
       String seq = domain.dna_sequence;
       if (seq == null) {
         seq = 'T' * domain.dna_length();
@@ -375,42 +377,51 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand> strands_
             if (insertions.containsKey(offset)) {
               int num = insertions[offset];
               for (int i = 0; i < num; i++) {
-                var r = origin +
+                var cen = origin +
                     forward * (offset + mod - num + i) * geometry.rise_per_base_pair * NM_TO_OX_UNITS;
-                var b = normal.rotate(step_rot * (offset + mod - num + i), forward);
-                var n = domain.forward ? -forward : forward;
-                var nuc = OxdnaNucleotide(r, b, n, seq[index]);
-                dom_strand.nucleotides.add(nuc);
+                var norm = normal.rotate(step_rot * (offset + mod - num + i), forward);
+                var forw = domain.forward ? -forward : forward;
+                var nuc = OxdnaNucleotide(cen, norm, forw, seq[index]);
+                ox_strand.nucleotides.add(nuc);
                 index += 1;
               }
             }
 
-            var r = origin + forward * (offset + mod) * geometry.rise_per_base_pair * NM_TO_OX_UNITS;
-            var b = normal.rotate(step_rot * (offset + mod), forward);
-            var n = domain.forward ? -forward : forward;
-            var nuc = OxdnaNucleotide(r, b, n, seq[index]);
-            dom_strand.nucleotides.add(nuc);
+            var cen = origin + forward * (offset + mod) * geometry.rise_per_base_pair * NM_TO_OX_UNITS;
+            var norm = normal.rotate(step_rot * (offset + mod), forward);
+            var forw = domain.forward ? -forward : forward;
+            var nuc = OxdnaNucleotide(cen, norm, forw, seq[index]);
+            ox_strand.nucleotides.add(nuc);
             index += 1;
           }
         }
 
         // strands are stored from 5' to 3' end
         if (!domain.forward) {
-          dom_strand.nucleotides = List<OxdnaNucleotide>.from(dom_strand.nucleotides.reversed);
+          ox_strand.nucleotides = List<OxdnaNucleotide>.from(ox_strand.nucleotides.reversed);
         }
-        dom_strands.add(Tuple2<OxdnaStrand, bool>(dom_strand, false));
+        strand_domains.add(Tuple2<OxdnaStrand, bool>(ox_strand, false));
         // because we need to know the positions of nucleotides before and after the loopout
         // we temporarily store domain strands with a boolean that is true if it's a loopout
         // handle loopouts
       } else if (domain is Loopout) {
-        // we place the loopout nucleotides at temporary nonsense positions and orientations
-        // these will be updated later, for now we just need the base
         for (int i = 0; i < domain.dna_length(); i++) {
           String base = seq[i];
-          var nuc = OxdnaNucleotide(OxdnaVector(0, 0, 0), OxdnaVector(0, -1, 0), OxdnaVector(0, 0, 1), base);
-          dom_strand.nucleotides.add(nuc);
+          // we place the loopout nucleotides at temporary nonsense positions and orientations
+          // these will be updated later, for now we just need the base
+          var center = OxdnaVector(0, 0, 0);
+          var normal = OxdnaVector(0, -1, 0);
+          var forward = OxdnaVector(0, 0, 1);
+          var nuc = OxdnaNucleotide(center, normal, forward, base);
+          ox_strand.nucleotides.add(nuc);
         }
-        dom_strands.add(Tuple2<OxdnaStrand, bool>(dom_strand, true));
+        strand_domains.add(Tuple2<OxdnaStrand, bool>(ox_strand, true));
+      } else if (domain is Extension) {
+        bool is_5p = ss_idx == 0;
+        var nucleotides = _compute_extension_nucleotides(
+            design: design, strand: strand, is_5p: is_5p, helix_vectors: helix_vectors, mod_map: mod_map);
+        ox_strand.nucleotides.addAll(nucleotides);
+        strand_domains.add(Tuple2<OxdnaStrand, bool>(ox_strand, false));
       } else {
         throw AssertionError('unreachable');
       }
@@ -418,25 +429,25 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand> strands_
 
     var sstrand = OxdnaStrand();
     // process loopouts and join strands
-    for (int i = 0; i < dom_strands.length; i++) {
-      var dstrand_is_loopout = dom_strands[i];
+    for (int i = 0; i < strand_domains.length; i++) {
+      var dstrand_is_loopout = strand_domains[i];
       var dstrand = dstrand_is_loopout.item1;
       var is_loopout = dstrand_is_loopout.item2;
       if (is_loopout) {
-        var prev_nuc = dom_strands[i - 1].item1.nucleotides.last;
-        var next_nuc = dom_strands[i + 1].item1.nucleotides.first;
+        var prev_nuc = strand_domains[i - 1].item1.nucleotides.last;
+        var next_nuc = strand_domains[i + 1].item1.nucleotides.first;
 
         int strand_length = dstrand.nucleotides.length;
 
         // now we position loopouts relative to the previous and next strand
         // for now we use a linear interpolation
         var forward = next_nuc.center - prev_nuc.center;
-        var normal = (prev_nuc.forward + next_nuc.forward) * 0.5;
+        var normal = get_normal_vector_to(forward);
 
         for (int loopout_idx = 0; loopout_idx < strand_length; loopout_idx++) {
           OxdnaVector pos = prev_nuc.center + forward * ((loopout_idx + 1) / (strand_length + 1));
           var old_nuc = dstrand.nucleotides[loopout_idx];
-          var new_nuc = OxdnaNucleotide(pos, normal, forward.normalize(), old_nuc.base);
+          var new_nuc = OxdnaNucleotide(pos, normal.normalize(), forward.normalize(), old_nuc.base);
           dstrand.nucleotides[loopout_idx] = new_nuc;
         }
       }
@@ -446,4 +457,73 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand> strands_
   }
 
   return system;
+}
+
+List<OxdnaNucleotide> _compute_extension_nucleotides(
+    {Design design,
+    Strand strand,
+    bool is_5p,
+    Map<int, Tuple3<OxdnaVector, OxdnaVector, OxdnaVector>> helix_vectors,
+    Map<int, List<int>> mod_map}) {
+  var geometry = design.geometry;
+  var step_rot = -360 / geometry.bases_per_turn;
+
+  var adj_dom = is_5p ? strand.domains.first : strand.domains.last;
+  var adj_helix = design.helices[adj_dom.helix];
+  var offset = is_5p ? adj_dom.offset_5p : adj_dom.offset_3p; // offset of attached end of domain
+
+  var origin_forward_normal = helix_vectors[adj_dom.helix];
+  var origin_ = origin_forward_normal.item1;
+  var forward = origin_forward_normal.item2;
+  var normal = origin_forward_normal.item3;
+
+  if (!adj_dom.forward) {
+    normal = normal.rotate(-geometry.minor_groove_angle, forward);
+  }
+  // oxDNA will rotate our backbone vector by +- _GROOVE_GAMMA (20 degrees)
+  // we apply the opposite rotation so that we get the expected vector from scadnano in oxDNA
+  var groove_gamma_correction = adj_dom.forward ? _GROOVE_GAMMA : -_GROOVE_GAMMA;
+  normal = normal.rotate(groove_gamma_correction, forward).normalize();
+
+  // rotate normal by angle about the forward vector to get vector pointing at backbone at attached_offset
+  var mod = mod_map[adj_dom.helix][offset - adj_helix.min_offset];
+  var cen = origin_ + forward * (offset + mod) * geometry.rise_per_base_pair * NM_TO_OX_UNITS;
+  var norm = normal.rotate(step_rot * (offset + mod), forward);
+  // note oxDNA n vector points 3' to 5' opposite of scadnano forward vector
+  var forw = adj_dom.forward ? -forward : forward;
+  var ext = is_5p ? strand.substrands.first : strand.substrands.last;
+
+  var seq = ext.dna_sequence;
+  if (seq == null) {
+    seq = 'T' * ext.dna_length();
+  }
+  assert(seq.length == ext.dna_length());
+  if (is_5p) {
+    seq = seq.split('').reversed.join('');
+  }
+
+  var new_forw = norm;
+  var new_norm = forw;
+  List<OxdnaNucleotide> nucs = [];
+  for (int i = 0; i < seq.length; i++) {
+    String base = seq[i];
+    cen += norm;
+    var nuc = OxdnaNucleotide(cen, new_norm, new_forw, base);
+    nucs.add(nuc);
+  }
+
+  if (is_5p) {
+    nucs = List<OxdnaNucleotide>.from(nucs.reversed);
+  }
+
+  return nucs;
+}
+
+OxdnaVector get_normal_vector_to(OxdnaVector vec) {
+  var unit = OxdnaVector(1, 0, 0);
+  var normalized_vec = vec.normalize();
+  if (1 - normalized_vec.dot(unit).abs() < 0.001) {
+    unit = OxdnaVector(0, 1, 0);
+  }
+  return unit.cross(vec);
 }

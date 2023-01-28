@@ -10,6 +10,7 @@ import 'crossover.dart';
 import 'domain.dart';
 import 'address.dart';
 import 'loopout.dart';
+import 'extension.dart';
 import 'dna_end.dart';
 import 'modification.dart';
 import 'select_mode.dart';
@@ -44,10 +45,22 @@ abstract class SelectablesStore
       BuiltSet<Loopout>.from(selected_items.where((s) => s is Loopout));
 
   @memoized
+  BuiltSet<Extension> get selected_extensions =>
+      BuiltSet<Extension>.from(selected_items.where((s) => s is Extension));
+
+  @memoized
   BuiltSet<Domain> get selected_domains => BuiltSet<Domain>.from(selected_items.where((s) => s is Domain));
 
   @memoized
   BuiltSet<DNAEnd> get selected_dna_ends => BuiltSet<DNAEnd>.from(selected_items.where((s) => s is DNAEnd));
+
+  @memoized
+  BuiltSet<DNAEnd> get selected_dna_ends_on_domains =>
+      BuiltSet<DNAEnd>.from(selected_dna_ends.where((end) => !end.is_on_extension));
+
+  @memoized
+  BuiltSet<DNAEnd> get selected_dna_ends_on_extensions =>
+      BuiltSet<DNAEnd>.from(selected_dna_ends.where((end) => end.is_on_extension));
 
   @memoized
   BuiltSet<SelectableDeletion> get selected_deletions =>
@@ -133,6 +146,11 @@ abstract class SelectablesStore
   BuiltSet<Loopout> selected_loopouts_in_strand(Strand strand) => {
         for (var loopout in strand.loopouts)
           if (selected_loopouts.contains(loopout)) loopout
+      }.build();
+
+  BuiltSet<Extension> selected_extensions_in_strand(Strand strand) => {
+        for (var ext in strand.extensions)
+          if (selected_extensions.contains(ext)) ext
       }.build();
 
   BuiltSet<Domain> selected_domains_in_strand(Strand strand) => {
@@ -482,6 +500,11 @@ bool loopout_selectable(Loopout loopout) =>
     edit_mode_is_select_or_rope_select() &&
     select_modes().contains(SelectModeChoice.loopout) &&
     origami_type_selectable(loopout);
+
+bool extension_selectable(Extension ext) =>
+    edit_mode_is_select_or_rope_select() &&
+    select_modes().contains(SelectModeChoice.extension_) &&
+    origami_type_selectable(ext);
 
 bool deletion_selectable(SelectableDeletion deletion) =>
     edit_mode_is_select_or_rope_select() &&

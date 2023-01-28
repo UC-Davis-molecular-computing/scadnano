@@ -16,7 +16,8 @@ abstract class DNAEnd with SelectableMixin, BuiltJsonSerializable implements Bui
           bool substrand_is_first,
           bool substrand_is_last,
           String substrand_id,
-          bool is_scaffold}) =>
+          bool is_scaffold,
+          bool is_on_extension}) =>
       DNAEnd.from((b) => b
         ..offset = offset
         ..is_5p = is_5p
@@ -24,7 +25,9 @@ abstract class DNAEnd with SelectableMixin, BuiltJsonSerializable implements Bui
         ..substrand_is_first = substrand_is_first
         ..substrand_is_last = substrand_is_last
         ..substrand_id = substrand_id
-        ..is_scaffold = is_scaffold);
+        ..is_scaffold = is_scaffold
+        ..is_on_extension = is_on_extension
+      );
 
   factory DNAEnd.from([void Function(DNAEndBuilder) updates]) = _$DNAEnd;
 
@@ -37,6 +40,8 @@ abstract class DNAEnd with SelectableMixin, BuiltJsonSerializable implements Bui
 
   /************************ end BuiltValue boilerplate ************************/
 
+  // null if an extension free end
+  @nullable
   int get offset;
 
   // offset is exclusive if this is an end (right side); offset_inclusive is always the exact offset
@@ -48,6 +53,8 @@ abstract class DNAEnd with SelectableMixin, BuiltJsonSerializable implements Bui
   bool get is_3p => !is_5p;
 
   bool get is_start;
+
+  bool get is_on_extension;
 
   bool get substrand_is_first;
 

@@ -43,6 +43,7 @@ import 'state/grid.dart';
 import 'state/helix.dart';
 import 'state/idt_fields.dart';
 import 'state/loopout.dart';
+import 'state/extension.dart';
 import 'state/mouseover_data.dart';
 import 'state/position3d.dart';
 import 'state/select_mode.dart';
@@ -59,6 +60,8 @@ import 'state/domain_name_mismatch.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  LoadingDialogHide,
+  LoadingDialogShow,
   ResetLocalStorage,
   DNAAssignOptions,
   MoveHelicesToGroup,
@@ -72,7 +75,10 @@ part 'serializers.g.dart';
   StrandNameSet,
   SubstrandNameSet,
   DomainNameMismatch,
+  ShowBasePairLinesSet,
+  ShowBasePairLinesWithMismatchesSet,
   ShowDomainNameMismatchesSet,
+  ShowUnpairedInsertionDeletionsSet,
   ModificationEdit,
   ModificationConnectorLengthSet,
   Modifications5PrimeEdit,
@@ -80,7 +86,7 @@ part 'serializers.g.dart';
   ModificationsInternalEdit,
   ModificationRemove,
   ModificationAdd,
-  ShowLoopoutLengthSet,
+  ShowLoopoutExtensionLengthSet,
   HelixGroupMove,
   HelixGroupMoveStart,
   HelixGroupMoveCreate,
@@ -112,6 +118,7 @@ part 'serializers.g.dart';
   ShowMismatchesSet,
   SetShowEditor,
   SaveDNAFile,
+  PrepareToLoadDNAFile,
   LoadDNAFile,
   DNAFileType,
   ExportCadnanoFile,
@@ -132,6 +139,7 @@ part 'serializers.g.dart';
   DesignSideRotationData,
   Helix,
   HelixGroup,
+  Extension,
   Domain,
   Strand,
   Geometry,
@@ -171,6 +179,10 @@ part 'serializers.g.dart';
   SelectAllSelectable,
   Select,
   Loopout,
+  ExtensionAdd,
+  ExtensionDisplayLengthAngleSet,
+  ExtensionNumBasesChange,
+  ExtensionsNumBasesChange,
   LoopoutLengthChange,
   LoopoutsLengthChange,
   ConvertCrossoverToLoopout,
@@ -279,10 +291,11 @@ part 'serializers.g.dart';
   DialogShow,
   DialogHide,
   DialogLink,
+  DialogType,
   StrandOrder,
-  StrandColorSet,
-  StrandColorPickerShow,
-  StrandColorPickerHide,
+  StrandOrSubstrandColorSet,
+  StrandOrSubstrandColorPickerShow,
+  StrandOrSubstrandColorPickerHide,
   StrandPasteKeepColorSet,
   ExampleDesigns,
   ExampleDesignsLoad,
@@ -298,7 +311,7 @@ part 'serializers.g.dart';
   SelectableModification3Prime,
   SelectableModificationInternal,
   LoadDnaSequenceImageUri,
-  SetDisablePngCacheUntilActionCompletes,
+  SetExportSvgActionDelayedForPngCache,
   SetIsZoomAboveThreshold,
   DNASequencePredefined,
   SetOnlyDisplaySelectedHelices,
@@ -316,6 +329,7 @@ part 'serializers.g.dart';
   SetDisplayMajorTickWidths,
   SetDisplayMajorTickWidthsAllHelices,
   SliceBarOffsetSet,
+  DisablePngCachingDnaSequencesSet,
   SliceBarMoveStart,
   SliceBarMoveStop,
   ShowSliceBarSet,
@@ -346,8 +360,7 @@ Serializers standard_serializers = (serializers.toBuilder()
             const FullType(int),
             const FullType(BuiltList, const [const FullType(String)])
           ]),
-          () => new MapBuilder<int, BuiltList<String>>())
-      )
+          () => new MapBuilder<int, BuiltList<String>>()))
     .build();
 
 //Serializers standard_serializers2 = (serializers.toBuilder()..addPlugin(new StandardJsonPlugin())).build();

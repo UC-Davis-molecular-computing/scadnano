@@ -90,7 +90,7 @@ main() {
     test('test_2_staple_2_helix_origami_extremely_simple', () {
       List<Helix> helices = [Helix(idx: 0, max_offset: 32, grid: Grid.square), Helix(idx: 1, max_offset: 32, grid: Grid.square)];
       Design design = Design(helices:helices, grid:Grid.square);
-      design = design.strand(0, 0).move(32).as_scaffold().commit();
+      design = design.draw_strand(0, 0).move(32).as_scaffold().commit();
 
       String output_json = to_cadnano_v2_json(design);
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
@@ -99,7 +99,7 @@ main() {
     test('test_2_staple_2_helix_origami_extremely_simple_2', () {
       List<Helix> helices = [Helix(idx: 0, max_offset: 32, grid: Grid.square), Helix(idx: 1, max_offset: 32, grid: Grid.square)];
       Design design = Design(helices:helices, grid:Grid.square);
-      design = design.strand(0, 0).move(32).cross(1).move(-32).as_scaffold().commit();
+      design = design.draw_strand(0, 0).move(32).cross(1).move(-32).as_scaffold().commit();
 
       String output_json = to_cadnano_v2_json(design);
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
@@ -114,13 +114,13 @@ main() {
       Design design = Design(helices: helices, grid: Grid.square);
 
       // left staple
-      design = design.strand(1, 0).move(16).cross(0).move(-16).commit();
+      design = design.draw_strand(1, 0).move(16).cross(0).move(-16).commit();
 
       // right staple
-      design = design.strand(0, 32).move(-16).cross(1).move(16).commit();
+      design = design.draw_strand(0, 32).move(-16).cross(1).move(16).commit();
 
       // scaffold
-      design = design.strand(1, 16)
+      design = design.draw_strand(1, 16)
         .move(-16)
         .cross(0)
         .move(32)
@@ -209,7 +209,7 @@ main() {
       ];
       Design design = Design(helices: helices, grid: Grid.square);
 
-      design.strand(1,0).move(8).cross(0).move(-8).as_circular().commit();
+      design.draw_strand(1,0).move(8).cross(0).move(-8).as_circular().commit();
       String output_json = to_cadnano_v2_json(design);
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
       expect(output_design.helices.length, 2);
@@ -251,7 +251,7 @@ main() {
         Helix(idx: 1, max_offset: 32, grid: Grid.square),
       ];
       Design design = Design(helices: helices, grid: Grid.square);
-      design = design.strand(1, 0).move(32).as_scaffold().commit();
+      design = design.draw_strand(1, 0).move(32).as_scaffold().commit();
 
       try {
         to_cadnano_v2_json(design);
@@ -271,13 +271,13 @@ main() {
       Design design = Design(helices: helices, grid: Grid.square);
 
       // left staple
-      design = design.strand(1, 8).move(16).cross(0).move(-16).commit();
+      design = design.draw_strand(1, 8).move(16).cross(0).move(-16).commit();
 
       // right staple
-      design = design.strand(0, 40).move(-16).cross(1).move(16).commit();
+      design = design.draw_strand(0, 40).move(-16).cross(1).move(16).commit();
 
       // scaffold
-      design = design.strand(1, 24)
+      design = design.draw_strand(1, 24)
         .move(-16)
         .cross(0)
         .move(32)

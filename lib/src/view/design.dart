@@ -31,6 +31,7 @@ import '../state/app_state.dart';
 import '../app.dart';
 import 'design_context_menu.dart';
 import 'design_dialog_form.dart';
+import 'design_loading_dialog.dart';
 import 'design_main_error_boundary.dart';
 import 'design_side_arrows.dart';
 import 'menu_side.dart';
@@ -78,6 +79,7 @@ class DesignViewComponent {
 
   DivElement context_menu_container = DivElement()..attributes = {'id': 'context-menu-container'};
   DivElement dialog_form_container = DivElement()..attributes = {'class': 'dialog-form-container'};
+  DivElement dialog_loading_container = DivElement()..attributes = {'class': 'dialog-loading-container'};
   DivElement strand_color_picker_container = DivElement()
     ..attributes = {'id': 'strand-color-picker-container'};
 
@@ -153,6 +155,7 @@ class DesignViewComponent {
     this.root_element.children.add(design_above_footer_pane);
     this.root_element.children.add(this.context_menu_container);
     this.root_element.children.add(this.dialog_form_container);
+    this.root_element.children.add(this.dialog_loading_container);
     this.root_element.children.add(this.strand_color_picker_container);
     this.root_element.children.add(this.footer_separator);
     this.root_element.children.add(this.footer_element);
@@ -203,10 +206,10 @@ class DesignViewComponent {
         }
       }
       // put away strand color picker if click occurred anywhere outside of it
-      if (app.state.ui_state.strand_color_picker_strand != null) {
+      if (app.state.ui_state.color_picker_strand != null) {
         var strand_color_picker_elt = querySelector('#strand-color-picker');
         if (strand_color_picker_elt != null && !strand_color_picker_elt.contains(target)) {
-          app.dispatch(actions.StrandColorPickerHide());
+          app.dispatch(actions.StrandOrSubstrandColorPickerHide());
         }
       }
     });
@@ -608,10 +611,10 @@ class DesignViewComponent {
       paste_strands_auto();
     }
 
-    // Ctrl+A for select all
+    // Ctrl+A for select all, Ctrl+Shift+A for current helix group only
     if ((ev.ctrlKey || ev.metaKey) && key == KeyCode.A && edit_mode_is_select_or_rope_select()) {
       ev.preventDefault();
-      app.dispatch(actions.SelectAllSelectable());
+      app.dispatch(actions.SelectAllSelectable(current_helix_group_only: ev.shiftKey));
     }
 
     if (key == EditModeChoice.pencil.key_code()) {
@@ -700,12 +703,24 @@ class DesignViewComponent {
     }
   }
 
+  render_loading_dialog() {
+    react_dom.render(
+      over_react_components.ErrorBoundary()(
+        (ReduxProvider()..store = app.store)(
+          ConnectedLoadingDialog()(),
+        ),
+      ),
+      this.dialog_loading_container,
+    );
+  }
+
   render(AppState state) {
     if (state.has_error) {
       if (!root_element.children.contains(this.error_message_pane)) {
         this.root_element.children.clear();
         this.root_element.children.add(this.error_message_pane);
         this.root_element.children.add(this.dialog_form_container);
+        this.root_element.children.add(this.dialog_loading_container);
         this.root_element.children.add(this.strand_color_picker_container);
       }
       this.error_message_component.render(state.error_message);
@@ -717,6 +732,15 @@ class DesignViewComponent {
           ),
         ),
         this.dialog_form_container,
+      );
+
+      react_dom.render(
+        over_react_components.ErrorBoundary()(
+          (ReduxProvider()..store = app.store)(
+            ConnectedLoadingDialog()(),
+          ),
+        ),
+        this.dialog_loading_container,
       );
     } else {
 //      var react_svg_pan_zoom_side = UncontrolledReactSVGPanZoom(
@@ -753,6 +777,7 @@ class DesignViewComponent {
         this.root_element.children.add(this.footer_separator);
         this.root_element.children.add(this.footer_element);
         this.root_element.children.add(this.dialog_form_container);
+        this.root_element.children.add(this.dialog_loading_container);
         this.root_element.children.add(this.strand_color_picker_container);
         this.root_element.children.add(this.context_menu_container);
       }
@@ -865,10 +890,20 @@ class DesignViewComponent {
         this.dialog_form_container,
       );
 
+      // loading dialog
+      react_dom.render(
+        over_react_components.ErrorBoundary()(
+          (ReduxProvider()..store = app.store)(
+            ConnectedLoadingDialog()(),
+          ),
+        ),
+        this.dialog_loading_container,
+      );
+
       react_dom.render(
           over_react_components.ErrorBoundary()(
             (ReduxProvider()..store = app.store)(
-              ConnectedStrandColorPicker()(),
+              ConnectedStrandOrSubstrandColorPicker()(),
             ),
           ),
           this.strand_color_picker_container);
@@ -889,34 +924,6 @@ class DesignViewComponent {
       var action = actions.PotentialCrossoverMove(point: point);
       app.dispatch(actions.ThrottledActionFast(action, 1 / 60.0));
     }
-  }
-
-  copy_selected_strands() {
-    // do nothing if no strands are selected
-    if (app.state.ui_state.selectables_store.selected_strands.isEmpty) return;
-    app.dispatch(actions.CopySelectedStrands());
-  }
-
-  paste_strands_manually() {
-    // it was much easier to handle the asynchronous read (seems to be the only way to read the clipboard)
-    // here than to handle it in middleware;
-    // unit testing especially seemed to be very difficult with all the asynchronous calls
-    clipboard.read().then((String content) {
-      if (content != null && content.isNotEmpty) {
-        app.dispatch(actions.ManualPasteInitiate(clipboard_content: content));
-      }
-    });
-  }
-
-  paste_strands_auto() {
-    // it was much easier to handle the asynchronous read (seems to be the only way to read the clipboard)
-    // here than to handle it in middleware;
-    // unit testing especially seemed to be very difficult with all the asynchronous calls
-    clipboard.read().then((String content) {
-      if (content != null && content.isNotEmpty) {
-        app.dispatch(actions.AutoPasteInitiate(clipboard_content: content));
-      }
-    });
   }
 
   side_view_mouse_leave_update_mouseover() {
@@ -956,6 +963,34 @@ class DesignViewComponent {
       }
     }
   }
+}
+
+copy_selected_strands() {
+  // do nothing if no strands are selected
+  if (app.state.ui_state.selectables_store.selected_strands.isEmpty) return;
+  app.dispatch(actions.CopySelectedStrands());
+}
+
+paste_strands_manually() {
+  // it was much easier to handle the asynchronous read (seems to be the only way to read the clipboard)
+  // here than to handle it in middleware;
+  // unit testing especially seemed to be very difficult with all the asynchronous calls
+  clipboard.read().then((String content) {
+    if (content != null && content.isNotEmpty) {
+      app.dispatch(actions.ManualPasteInitiate(clipboard_content: content));
+    }
+  });
+}
+
+paste_strands_auto() {
+  // it was much easier to handle the asynchronous read (seems to be the only way to read the clipboard)
+  // here than to handle it in middleware;
+  // unit testing especially seemed to be very difficult with all the asynchronous calls
+  clipboard.read().then((String content) {
+    if (content != null && content.isNotEmpty) {
+      app.dispatch(actions.AutoPasteInitiate(clipboard_content: content));
+    }
+  });
 }
 
 group_names_of_strands(StrandsMove strands_move) =>

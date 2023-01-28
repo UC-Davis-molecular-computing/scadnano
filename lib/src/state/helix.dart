@@ -56,6 +56,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     bool invert_y = false,
     Position3D position = null,
     Point<num> svg_position = null,
+    Iterable<int> major_tick_periodic_distances = null,
     String group = constants.default_group_name,
   }) {
     if (grid == null) {
@@ -70,6 +71,9 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     if (grid_position == null && grid != Grid.none) {
       grid_position = GridPosition(0, idx);
     }
+    if (major_tick_periodic_distances == null) {
+      major_tick_periodic_distances = [];
+    }
     return Helix.from((b) => b
       ..idx = idx
       ..geometry = geometry?.toBuilder()
@@ -81,6 +85,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
       ..min_offset = min_offset
       ..max_offset = max_offset
       ..major_tick_start = major_tick_start
+      ..major_tick_periodic_distances.replace(major_tick_periodic_distances)
       ..unused_fields.replace({}));
   }
 
@@ -365,7 +370,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   /// They are used in reverse order to determine precedence. (e.g., [Helix.major_ticks]
   /// overrides [Helix.major_tick_distance].
   @memoized
-  List<int> get calculate_major_ticks {
+  BuiltList<int> get calculate_major_ticks {
     List<int> ticks = [];
     if (has_major_ticks) {
       var sorted_ticks = major_ticks.toList();
@@ -387,6 +392,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
         ticks = [for (int tick = major_tick_start; tick <= max_offset; tick += distance) tick];
       }
     }
-    return ticks;
+    return ticks.build();
   }
 }

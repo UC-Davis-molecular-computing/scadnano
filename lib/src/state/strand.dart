@@ -6,6 +6,7 @@ import 'package:react/react.dart';
 import 'package:tuple/tuple.dart';
 
 import 'address.dart';
+import 'helix.dart';
 import 'linker.dart';
 import 'modification.dart';
 import '../serializers.dart';
@@ -20,6 +21,7 @@ import '../util.dart' as util;
 import 'design.dart';
 import 'domain.dart';
 import 'loopout.dart';
+import 'extension.dart';
 import 'substrand.dart';
 import 'unused_fields.dart';
 
@@ -61,7 +63,6 @@ abstract class Strand
       ..color = color
       ..circular = circular
       ..substrands.replace(substrands)
-      ..dna_sequence = dna_sequence
       ..idt = idt?.toBuilder()
       ..modification_5p = modification_5p?.toBuilder()
       ..modification_3p = modification_3p?.toBuilder()
@@ -71,6 +72,10 @@ abstract class Strand
       ..label = label
       ..unused_fields = MapBuilder<String, Object>({}));
 
+    if (dna_sequence != null) {
+      strand = strand.set_dna_sequence(dna_sequence);
+    }
+
     strand = strand.initialize();
     return strand;
   }
@@ -78,8 +83,16 @@ abstract class Strand
   //FIXME: remove prev_ and next_ from Loopout so they don't need to be recalculated
 
   static void _finalizeBuilder(StrandBuilder builder) {
-    Domain first_ss = builder.substrands.first;
-    String id = id_from_data(first_ss.helix, first_ss.offset_5p, first_ss.forward);
+    Substrand first_ss = builder.substrands.first;
+    Domain first_dom;
+    if (first_ss is Domain) {
+      first_dom = first_ss;
+    } else {
+      assert(first_ss is Extension);
+      assert(builder.substrands.length > 1);
+      first_dom = builder.substrands[1];
+    }
+    String id = id_from_data(first_dom.helix, first_dom.offset_5p, first_dom.forward);
     // ensure Loopouts have appropriate prev and next indices for adjacent Domains
     // (not necessary for Crossovers since they are lazily evaluated,
     // but Loopout objects are created prior to creating the Strand)
@@ -87,9 +100,7 @@ abstract class Strand
       var substrand = builder.substrands[i];
       if (substrand is Loopout) {
         if (substrand.prev_domain_idx != i - 1 || substrand.next_domain_idx != i + 1) {
-          var loopout = substrand.rebuild((b) => b
-            ..prev_domain_idx = i - 1
-            ..next_domain_idx = i + 1);
+          var loopout = substrand.rebuild((b) => b..prev_domain_idx = i - 1);
           builder.substrands[i] = loopout;
         }
       }
@@ -98,52 +109,147 @@ abstract class Strand
         builder.substrands[i] = substrand.rebuild((b) => b..strand_id = id);
       } else if (substrand is Loopout) {
         builder.substrands[i] = substrand.rebuild((b) => b..strand_id = id);
+      } else if (substrand is Extension) {
+        builder.substrands[i] = substrand.rebuild((b) => b..strand_id = id);
+      } else {
+        throw AssertionError('substrand ${i} should be Domain, Loopout, or Extension, but is ${substrand}');
       }
     }
   }
 
-  /// Sets up data such as DNA sequence and part strand_id's
-  /// FIXME: remove duplicated code between initialize() and _finalizeBuilder
   Strand initialize() {
     Strand strand = this;
 
-    if (dna_sequence != null) {
-      strand = strand.set_dna_sequence(dna_sequence);
-    }
-
-    String id = strand.id;
-    int idx = 0;
-    bool updated = false;
-    var substrands_new = strand.substrands.toBuilder();
-    for (var ss in strand.substrands) {
-      if (ss is Loopout) {
-        var loopout = ss.rebuild((l) => l
-          ..is_scaffold = is_scaffold
-          ..strand_id = id
-          ..prev_domain_idx = idx - 1
-          ..next_domain_idx = idx + 1);
-        substrands_new[idx] = loopout;
-        updated = true;
-      } else if (ss is Domain) {
-        bool is_first = idx == 0;
-        bool is_last = idx == strand.substrands.length - 1;
-        var domain = ss.rebuild((l) => l
-          ..strand_id = id
-          ..is_first = is_first
-          ..is_last = is_last
-          ..is_scaffold = is_scaffold);
-        substrands_new[idx] = domain;
-        updated = true;
-      }
-      idx++;
-    }
-    if (updated) {
-      strand = strand.rebuild((s) => s..substrands = substrands_new);
-    }
+    // important these are in this order, because each Extension stores its adjacent domain,
+    // and if the domain is assigned ?'s as DNA sequence, they need to be updated in
+    // the field Extension.adjacent_domain
+    strand = _rebuild_substrands_with_new_dna_sequences_based_on_strand(strand);
+    strand = _rebuild_substrands_with_new_fields_based_on_strand(strand);
 
     _ensure_loopouts_legal();
+    _ensure_extensions_legal();
 
     return strand;
+  }
+
+  /// Sets up data such as DNA sequence and part strand_id's
+  /// FIXME: remove duplicated code between initialize() and _finalizeBuilder
+  Strand _rebuild_substrands_with_new_fields_based_on_strand(Strand strand) {
+    int idx = 0;
+    var substrands_new = strand.substrands.toBuilder();
+    bool is_5p = true;
+    for (var ss in strand.substrands) {
+      var new_ss;
+      if (ss is Loopout) {
+        new_ss = _rebuild_loopout_with_new_fields_based_on_strand(ss, idx, strand);
+      } else if (ss is Domain) {
+        new_ss = _rebuild_domain_with_new_fields_based_on_strand(ss, idx, strand);
+      } else if (ss is Extension) {
+        new_ss = _rebuild_extension_with_new_fields_based_on_strand(ss, is_5p, strand);
+      }
+      assert(new_ss != null);
+      substrands_new[idx] = new_ss;
+      idx++;
+      is_5p = false;
+    }
+    return strand.rebuild((s) => s..substrands = substrands_new);
+  }
+
+  _rebuild_domain_with_new_fields_based_on_strand(Domain domain, int idx, Strand strand) {
+    bool is_first = idx == 0;
+    bool is_last = idx == strand.substrands.length - 1;
+    return domain.rebuild((b) => b
+      ..strand_id = strand.id
+      ..is_first = is_first
+      ..is_last = is_last
+      ..is_scaffold = is_scaffold);
+  }
+
+  _rebuild_loopout_with_new_fields_based_on_strand(Loopout loopout, int idx, Strand strand) {
+    return loopout.rebuild((b) => b
+      ..is_scaffold = is_scaffold
+      ..strand_id = strand.id
+      ..prev_domain_idx = idx - 1);
+  }
+
+  _rebuild_extension_with_new_fields_based_on_strand(Extension ext, bool is_5p, Strand strand) {
+    Domain adjacent_domain = is_5p? strand.first_domain: strand.last_domain;
+    return ext.rebuild((b) => b
+      ..is_scaffold = is_scaffold
+      ..strand_id = strand.id
+      ..adjacent_domain.replace(adjacent_domain)
+      ..is_5p = is_5p);
+  }
+
+  Strand _rebuild_substrands_with_new_dna_sequences_based_on_strand(Strand strand) {
+    bool strand_has_sequence = _at_least_one_substrand_has_dna_sequence(strand);
+    if (!strand_has_sequence) {
+      return strand;
+    }
+    List<Substrand> new_substrands = [];
+    for (var substrand in strand.substrands) {
+      new_substrands.add(_rebuild_substrand_with_dna_sequence_to_match_its_length(substrand));
+    }
+    return strand.rebuild((b) => b.substrands.replace(new_substrands));
+  }
+
+  bool _at_least_one_substrand_has_dna_sequence(Strand strand) {
+    return strand.substrands.any((ss) => ss.dna_sequence != null);
+  }
+
+  Substrand _rebuild_substrand_with_dna_sequence_to_match_its_length(Substrand substrand) {
+    String old_sequence = substrand.dna_sequence == null ? '' : substrand.dna_sequence;
+    return substrand
+        .set_dna_sequence(_trim_or_pad_sequence_to_desired_length(old_sequence, substrand.dna_length()));
+  }
+
+  _ensure_extensions_legal() {
+    check_at_least_one_domain();
+    check_only_at_ends();
+    check_not_adjacent_to_loopout();
+  }
+
+  check_at_least_one_domain() {
+    for (var ss in substrands) {
+      if (ss is Domain) {
+        return;
+      }
+    }
+    throw StrandError(this, 'strand must have at least one domain; here are all substrands:\n${substrands}');
+  }
+
+  check_only_at_ends() {
+    for (int i = 1; i < substrands.length - 1; i++) {
+      if (substrands[i] is Extension) {
+        throw StrandError(
+            this,
+            "Extension must be at 5' or 3' end, but there is an Extension at index "
+            "${i}: ${substrands[i]}");
+      }
+    }
+  }
+
+  check_not_adjacent_to_loopout() {
+    if (substrands[0] is Extension) {
+      assert(substrands.length > 1);
+      if (substrands[1] is Loopout) {
+        throw StrandError(
+            this,
+            'cannot have Extension adjacent to Loopout, but first substrand is '
+            'Extension: ${substrands[0]}\n and second substrand is Loopout: ${substrands[1]}');
+      }
+    }
+    if (substrands.last is Extension) {
+      assert(substrands.length > 1);
+      int second_last_idx = substrands.length - 2;
+      if (substrands[second_last_idx] is Loopout) {
+        throw StrandError(
+            this,
+            'cannot have Extension adjacent to Loopout, but last substrand is '
+            'Extension: ${substrands.last}\n and second-to-last substrand is Loopout: '
+            '${substrands[second_last_idx]}');
+      }
+    }
   }
 
   _ensure_loopouts_legal() {
@@ -170,16 +276,25 @@ abstract class Strand
 
   check_loopouts_length() {
     for (var loopout in loopouts) {
-      if (loopout.loopout_length <= 0) {
-        throw StrandError(this, 'loopout length must be positive but is ${loopout.loopout_length}');
+      if (loopout.loopout_num_bases <= 0) {
+        throw StrandError(this, 'loopout length must be positive but is ${loopout.loopout_num_bases}');
       }
     }
   }
 
   BuiltList<Substrand> get substrands;
 
-  @nullable
-  String get dna_sequence;
+  @memoized
+  String get dna_sequence {
+    String sequence = "";
+    for (Substrand s in this.substrands) {
+      if (s.dna_sequence == null) {
+        return null;
+      }
+      sequence += s.dna_sequence;
+    }
+    return sequence;
+  }
 
   @nullable
   IDTFields get idt;
@@ -255,6 +370,12 @@ abstract class Strand
   }
 
   @memoized
+  bool get has_5p_extension => substrands.first is Extension;
+
+  @memoized
+  bool get has_3p_extension => substrands.last is Extension;
+
+  @memoized
   Address get address_5p => first_domain.address_5p;
 
   @memoized
@@ -322,7 +443,7 @@ abstract class Strand
     for (int i = 0; i < substrands.length; i++) {
       var substrand = substrands[i];
       if (substrand is Domain) {
-        // TODO: support displaying mods on loopouts eventually
+        // TODO: support displaying mods on loopouts and extensions
         BuiltMap<int, ModificationInternal> mods_on_ss = internal_modifications_on_substrand_absolute_idx[i];
         for (int dna_idx in mods_on_ss.keys) {
           var mod = mods_on_ss[dna_idx];
@@ -450,7 +571,7 @@ abstract class Strand
       if (substrands[i] is Domain) {
         if (substrands[i + 1] is Domain) {
           linkers.add(Crossover(i, i + 1, id, is_scaffold));
-        } else {
+        } else if (substrands[i + 1] is Loopout) {
           var loopout = substrands[i + 1];
           assert(loopout is Loopout);
           if (loopout is Loopout) {
@@ -477,6 +598,12 @@ abstract class Strand
   BuiltList<Loopout> get loopouts => BuiltList<Loopout>.from([
         for (var linker in linkers)
           if (linker is Loopout) linker
+      ]);
+
+  @memoized
+  BuiltList<Extension> get extensions => BuiltList<Extension>.from([
+        if (substrands.first is Extension) substrands.first,
+        if (substrands.last is Extension) substrands.last,
       ]);
 
   @memoized
@@ -581,21 +708,12 @@ abstract class Strand
       start_idx_ss = end_idx_ss;
     }
 
-    return rebuild((strand) => strand
-      ..substrands.replace(substrands_new)
-      ..dna_sequence = null);
+    return rebuild((strand) => strand..substrands.replace(substrands_new));
   }
 
   /// Sets DNA sequence of strand (but does not assign complement to any Strands bound to it).
   Strand set_dna_sequence(String dna_sequence_new) {
-    // truncate dna_sequence_new if too long; pad with ?'s if to short
-    int seq_len = dna_sequence_new.length;
-    int dna_len_strand = this.dna_length;
-    if (seq_len > dna_len_strand) {
-      dna_sequence_new = dna_sequence_new.substring(0, dna_len_strand);
-    } else if (seq_len < dna_len_strand) {
-      dna_sequence_new = dna_sequence_new + (constants.DNA_BASE_WILDCARD * (dna_len_strand - seq_len));
-    }
+    dna_sequence_new = _trim_or_pad_sequence_to_desired_length(dna_sequence_new, this.dna_length);
 
     int start_idx_ss = 0;
     List<Substrand> substrands_new = [];
@@ -608,13 +726,22 @@ abstract class Strand
       start_idx_ss = end_idx_ss;
     }
 
-    return rebuild((strand) => strand
-      ..substrands.replace(substrands_new)
-      ..dna_sequence = dna_sequence_new);
+    return rebuild((strand) => strand..substrands.replace(substrands_new));
+  }
+
+  String _trim_or_pad_sequence_to_desired_length(String dna_sequence_new, int desired_length) {
+    // truncate dna_sequence_new if too long; pad with ?'s if to short
+    int seq_len = dna_sequence_new.length;
+    if (seq_len > desired_length) {
+      dna_sequence_new = dna_sequence_new.substring(0, desired_length);
+    } else if (seq_len < desired_length) {
+      dna_sequence_new = dna_sequence_new + (constants.DNA_BASE_WILDCARD * (desired_length - seq_len));
+    }
+    return dna_sequence_new;
   }
 
   static Strand from_json(Map<String, dynamic> json_map) {
-    var substrand_jsons = util.mandatory_field(json_map, constants.substrands_key, 'Strand',
+    List<dynamic> substrand_jsons = util.mandatory_field(json_map, constants.substrands_key, 'Strand',
         legacy_keys: constants.legacy_substrands_keys);
 
     bool is_scaffold = util.optional_field(json_map, constants.is_scaffold_key, false);
@@ -622,27 +749,55 @@ abstract class Strand
 
     // need to parse all Domains before Loopouts,
     // because prev and next Domains need to be referenced by Loopouts
-    // Also, no DNA sequence parsing yet because we want all the lengths of Substrands calculated before assigning.
+    // Also, no DNA sequence parsing yet because we want all the lengths of Substrands calculated
+    // before assigning.
     Map<int, Domain> domains = {};
-    int start_idx_ss = 0;
-    for (int i = 0; i < substrand_jsons.length; i++) {
+    int num_substrands = substrand_jsons.length;
+    // we'll fill in Domains and Extensions in this loop, then calculate Loopouts later
+    var substrands = List<Substrand>.filled(num_substrands, null);
+    int start_dna_idx_ss = 0; // help identify dna_length of each substrand
+    for (int i = 0; i < num_substrands; i++) {
       var substrand_json = substrand_jsons[i];
-
-      int end_idx_ss;
-      if (!substrand_json.containsKey(constants.loopout_key)) {
+      int end_dna_idx_ss;
+      if (substrand_json.containsKey(constants.loopout_key)) {
+        // Loopout
+        int loopout_length = substrand_json[constants.loopout_key];
+        end_dna_idx_ss = start_dna_idx_ss + loopout_length;
+        if (i == 0 || i == num_substrands - 1) {
+          throw IllegalDesignError("found loopout ${substrand_json} at index ${i} in substrand list. "
+              "cannot have loopouts at the beginning (index 0) or end (index ${num_substrands - 1}).\n"
+              "substrands JSON list: ${substrand_jsons}");
+        }
+      } else if (substrand_json.containsKey(constants.extension_key)) {
+        // Extension
+        var ext = Extension.from_json(substrand_json);
+        bool is_5p = (i == 0);
+        ext = ext.rebuild((b) => b..is_5p = is_5p);
+        substrands[i] = ext;
+        end_dna_idx_ss = start_dna_idx_ss + ext.num_bases;
+        if (0 < i && i < num_substrands - 1) {
+          throw IllegalDesignError("found extension ${ext} at index ${i} in substrand list. "
+              "can only have extension at beginning (index 0) or end (index ${num_substrands - 1}).\n"
+              "substrands JSON list: ${substrand_jsons}");
+        }
+      } else if (substrand_json.containsKey(constants.helix_idx_key)) {
+        // Domain
         DomainBuilder ssb = Domain.from_json(substrand_json);
         ssb.is_first = (i == 0);
         ssb.is_last = (i == substrand_jsons.length - 1);
         int num_insertions = Domain.num_insertions_in_list(ssb.insertions.build());
         int dna_length = ssb.end - ssb.start + num_insertions - ssb.deletions.length;
         ssb.is_scaffold = is_scaffold;
-        end_idx_ss = start_idx_ss + dna_length;
-        domains[i] = ssb.build();
+        end_dna_idx_ss = start_dna_idx_ss + dna_length;
+        domains[i] = substrands[i] = ssb.build();
       } else {
-        int loopout_length = substrand_json[constants.loopout_key];
-        end_idx_ss = start_idx_ss + loopout_length;
+        throw IllegalDesignError('unrecognized substrand; does not have any of these keys:\n'
+            '${constants.extension_key} for an Extension, '
+            '${constants.loopout_key} for a Loopout, or'
+            '${constants.helix_idx_key} for a Domain.\n'
+            'JSON: ${substrand_json}');
       }
-      start_idx_ss = end_idx_ss;
+      start_dna_idx_ss = end_dna_idx_ss;
     }
 
     // parse Loopouts now that we have all the Domains
@@ -652,20 +807,31 @@ abstract class Strand
       if (substrand_json.containsKey(constants.loopout_key)) {
         LoopoutBuilder lb = Loopout.from_json(substrand_json);
         lb.prev_domain_idx = i - 1;
-        lb.next_domain_idx = i + 1;
         lb.is_scaffold = is_scaffold;
         loopouts[i] = lb.build();
       }
     }
 
-    List<Substrand> substrands = [];
-    for (int i = 0; i < substrand_jsons.length; i++) {
-      if (domains.containsKey(i)) {
-        substrands.add(domains[i]);
-      } else if (loopouts.containsKey(i)) {
-        substrands.add(loopouts[i]);
-      } else {
-        throw AssertionError('one of domains or loopouts must contain index i=${i}');
+    // insert Loopouts into appropriate positions in the List substrands
+    for (int i in loopouts.keys) {
+      substrands[i] = loopouts[i];
+    }
+
+    // go through extensions and set adjacent domains and adjacent helices
+    for (int i = 0; i < substrands.length; i++) {
+      if (substrands[i] is Extension) {
+        Extension ext = substrands[i];
+        Domain adjacent_domain = ext.is_5p ? substrands[i + 1] as Domain : substrands[i - 1] as Domain;
+        ext = ext.rebuild(
+            (b) => b..adjacent_domain.replace(adjacent_domain));
+        substrands[i] = ext;
+      }
+    }
+
+    for (int i = 0; i < num_substrands; i++) {
+      if (substrands[i] == null) {
+        throw AssertionError('should not have any null entries in substrands but ${i} is null:\n'
+            'substrands = ${substrands}');
       }
     }
 
@@ -673,10 +839,9 @@ abstract class Strand
     //XXX: important to do this check after setting substrands so dna_length() is well-defined
     var dna_sequence = util.optional_field_with_null_default(json_map, constants.dna_sequence_key,
         legacy_keys: constants.legacy_dna_sequence_keys);
-//    var dna_sequence = json_map.containsKey(constants.dna_sequence_key) ? json_map[constants.dna_sequence_key] : null;
 
-    var color = json_map.containsKey(constants.color_key)
-        ? parse_json_color(json_map[constants.color_key])
+    Color color = json_map.containsKey(constants.color_key)
+        ? util.parse_json_color(json_map[constants.color_key])
         : DEFAULT_STRAND_COLOR;
 
     String name = util.optional_field_with_null_default(json_map, constants.name_key);
@@ -829,27 +994,5 @@ abstract class Strand
     String id =
         '${first_domain.helix}[${first_domain.offset_5p}]${last_domain.helix}[${last_domain.offset_3p}]';
     return is_scaffold ? 'SCAF$id}' : 'ST$id';
-  }
-}
-
-Color parse_json_color(Object json_obj) {
-  try {
-    if (json_obj is Map) {
-      int r = json_obj['r'];
-      int g = json_obj['g'];
-      int b = json_obj['b'];
-      return RgbColor(r, g, b);
-    } else if (json_obj is String) {
-      return HexColor(json_obj);
-    } else if (json_obj is int) {
-      String hex_str = util.color_decimal_int_to_hex(json_obj);
-      return HexColor(hex_str);
-    } else {
-      throw ArgumentError.value('JSON object representing color must be a Map or String, but instead it is a '
-          '${json_obj.runtimeType}:\n${json_obj}');
-    }
-  } on Exception {
-    print("WARNING: I couldn't understand the color specification ${json_obj}, so I'm substituting black.");
-    return RgbColor.name('black');
   }
 }

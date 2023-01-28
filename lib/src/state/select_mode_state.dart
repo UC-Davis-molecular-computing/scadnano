@@ -45,6 +45,9 @@ abstract class SelectModeState implements Built<SelectModeState, SelectModeState
   bool get domains_selectable => modes.contains(SelectModeChoice.domain);
 
   @memoized
+  bool get extensions_selectable => modes.contains(SelectModeChoice.extension_);
+
+  @memoized
   bool get deletions_selectable => modes.contains(SelectModeChoice.deletion);
 
   @memoized

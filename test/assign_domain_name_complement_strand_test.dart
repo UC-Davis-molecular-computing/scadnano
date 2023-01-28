@@ -3,7 +3,7 @@
 import 'dart:convert';
 
 import 'package:scadnano/src/json_serializable.dart';
-import 'package:scadnano/src/reducers/change_loopout_length.dart';
+import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
 import 'package:scadnano/src/reducers/delete_reducer.dart';
 import 'package:scadnano/src/reducers/nick_ligate_join_by_crossover_reducers.dart';
 import 'package:scadnano/src/reducers/assign_domain_names_reducer.dart';
@@ -44,11 +44,11 @@ main() {
       ];
       design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(1, 16).move(-16).cross(0).move(32).loopout(1, 3).move(-16).with_domain_name("DEF*").as_scaffold().commit();
-      design = design.strand(1, 0).move(16).with_domain_name("ABC").cross(0).move(-16).commit();
-      design = design.strand(0, 32).move(-16).with_domain_name("GHI").cross(1).move(16).commit();
-      design = design.strand(0, 40).move(10).commit();
-      design = design.strand(0, 50).move(-10).with_domain_name("JKL").commit();
+      design = design.draw_strand(1, 16).move(-16).cross(0).move(32).loopout(1, 3).move(-16).with_domain_name("DEF*").as_scaffold().commit();
+      design = design.draw_strand(1, 0).move(16).with_domain_name("ABC").cross(0).move(-16).commit();
+      design = design.draw_strand(0, 32).move(-16).with_domain_name("GHI").cross(1).move(16).commit();
+      design = design.draw_strand(0, 40).move(10).commit();
+      design = design.draw_strand(0, 50).move(-10).with_domain_name("JKL").commit();
     });
 
     /* 0              16               32      40       50  
@@ -226,10 +226,10 @@ main() {
       helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(0, 0).move(8).with_domain_name("ABC").cross(0).move(-8).cross(0).as_circular().commit();
-      design = design.strand(0, 8).move(8).cross(0).move(-8).with_domain_name("DEF").commit();
-      design = design.strand(0, 24).move(-8).with_domain_name("GHI").cross(0).move(8).commit();
-      design = design.strand(0, 25).move(8).cross(0, 29).move(-3).with_domain_name("JKL*").cross(0,25).as_circular().commit();
+      design = design.draw_strand(0, 0).move(8).with_domain_name("ABC").cross(0).move(-8).cross(0).as_circular().commit();
+      design = design.draw_strand(0, 8).move(8).cross(0).move(-8).with_domain_name("DEF").commit();
+      design = design.draw_strand(0, 24).move(-8).with_domain_name("GHI").cross(0).move(8).commit();
+      design = design.draw_strand(0, 25).move(8).cross(0, 29).move(-3).with_domain_name("JKL*").cross(0,25).as_circular().commit();
     });
 
     /* 0       8       16      24      32
@@ -316,7 +316,7 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
-      design = design.strand(0, 0).move(8).with_domain_name("ABC").cross(0).move(-8).with_domain_name("XYZ").commit();
+      design = design.draw_strand(0, 0).move(8).with_domain_name("ABC").cross(0).move(-8).with_domain_name("XYZ").commit();
       
       var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
       var state = app_state_from_design(design);
@@ -339,7 +339,7 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
-      design = design.strand(0, 0).move(9).with_domain_name("ABC").cross(0).move(-8).with_domain_name("XYZ").commit();
+      design = design.draw_strand(0, 0).move(9).with_domain_name("ABC").cross(0).move(-8).with_domain_name("XYZ").commit();
       
       var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
       var state = app_state_from_design(design);
@@ -362,7 +362,7 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
-      design = design.strand(0, 0).move(8).cross(0).move(-8).commit();
+      design = design.draw_strand(0, 0).move(8).cross(0).move(-8).commit();
       
       var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
       var state = app_state_from_design(design);
@@ -385,8 +385,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
-      design = design.strand(0, 0).move(8).with_domain_name("ABC").commit();
-      design = design.strand(0, 8).move(-8).with_domain_name("XYZ").commit();
+      design = design.draw_strand(0, 0).move(8).with_domain_name("ABC").commit();
+      design = design.draw_strand(0, 8).move(-8).with_domain_name("XYZ").commit();
       
       var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
       var state = app_state_from_design(design);
@@ -409,8 +409,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
-      design = design.strand(0, 0).move(9).with_domain_name("ABC").commit();
-      design = design.strand(0, 8).move(-8).with_domain_name("XYZ").commit();
+      design = design.draw_strand(0, 0).move(9).with_domain_name("ABC").commit();
+      design = design.draw_strand(0, 8).move(-8).with_domain_name("XYZ").commit();
       
       var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
       var state = app_state_from_design(design);
@@ -432,8 +432,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
-      design = design.strand(0, 0).move(8).commit();
-      design = design.strand(0, 8).move(-8).commit();
+      design = design.draw_strand(0, 0).move(8).commit();
+      design = design.draw_strand(0, 8).move(-8).commit();
       
       var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
       var state = app_state_from_design(design);
@@ -455,8 +455,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
-      design = design.strand(0, 0).move(8).commit();
-      design = design.strand(0, 8).move(-8).commit();
+      design = design.draw_strand(0, 0).move(8).commit();
+      design = design.draw_strand(0, 8).move(-8).commit();
       
       var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
       var state = app_state_from_design(design);
@@ -482,8 +482,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
-      design = design.strand(0, 0).move(8).with_domain_name("ABC").commit();
-      design = design.strand(0, 8).move(-8).with_domain_name("XYZ").commit();
+      design = design.draw_strand(0, 0).move(8).with_domain_name("ABC").commit();
+      design = design.draw_strand(0, 8).move(-8).with_domain_name("XYZ").commit();
       
       var action = actions.AssignDomainNameComplementFromBoundStrands([design.strands[0]]);
       var state = app_state_from_design(design);
@@ -506,8 +506,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
-      design = design.strand(0, 0).move(9).with_domain_name("ABC").commit();
-      design = design.strand(0, 8).move(-8).with_domain_name("XYZ").commit();
+      design = design.draw_strand(0, 0).move(9).with_domain_name("ABC").commit();
+      design = design.draw_strand(0, 8).move(-8).with_domain_name("XYZ").commit();
       
       var action = actions.AssignDomainNameComplementFromBoundStrands([design.strands[0]]);
       var state = app_state_from_design(design);
@@ -530,8 +530,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
-      design = design.strand(0, 0).move(8).commit();
-      design = design.strand(0, 8).move(-8).commit();
+      design = design.draw_strand(0, 0).move(8).commit();
+      design = design.draw_strand(0, 8).move(-8).commit();
       
       var action = actions.AssignDomainNameComplementFromBoundStrands([design.strands[0]]);
       var state = app_state_from_design(design);
@@ -554,8 +554,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
-      design = design.strand(0, 0).move(9).commit();
-      design = design.strand(0, 8).move(-8).commit();
+      design = design.draw_strand(0, 0).move(9).commit();
+      design = design.draw_strand(0, 8).move(-8).commit();
       
       var action = actions.AssignDomainNameComplementFromBoundStrands([design.strands[0]]);
       var state = app_state_from_design(design);
@@ -591,10 +591,10 @@ main() {
       ];
       design = Design(helices: helices, grid: Grid.square);
 
-      design = design.strand(1, 16).move(-16).cross(0).move(32).loopout(1, 3).move(-16).with_domain_name("DEF*").as_scaffold().commit();
-      design = design.strand(1, 0).move(16).with_domain_name("ABC").cross(0).move(-16).commit();
-      design = design.strand(0, 32).move(-16).with_domain_name("GHI").cross(1).move(16).commit();
-      design = design.strand(0, 40).move(10).cross(0).move(-10).with_domain_name("JKL").as_circular().commit();
+      design = design.draw_strand(1, 16).move(-16).cross(0).move(32).loopout(1, 3).move(-16).with_domain_name("DEF*").as_scaffold().commit();
+      design = design.draw_strand(1, 0).move(16).with_domain_name("ABC").cross(0).move(-16).commit();
+      design = design.draw_strand(0, 32).move(-16).with_domain_name("GHI").cross(1).move(16).commit();
+      design = design.draw_strand(0, 40).move(10).cross(0).move(-10).with_domain_name("JKL").as_circular().commit();
 
       var all_overlapping_strands = design.strands_overlapping;
       
@@ -621,8 +621,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
-      design = design.strand(0, 0).move(9).commit();
-      design = design.strand(0, 8).move(-8).commit();
+      design = design.draw_strand(0, 0).move(9).commit();
+      design = design.draw_strand(0, 8).move(-8).commit();
 
       var all_overlapping_strands = design.strands_overlapping;
       
@@ -642,7 +642,7 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
-      design = design.strand(0, 0).move(8).cross(0, 6).move(-6).as_circular().commit();
+      design = design.draw_strand(0, 0).move(8).cross(0, 6).move(-6).as_circular().commit();
 
       var all_overlapping_strands = design.strands_overlapping;
       
@@ -659,8 +659,8 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
-      design = design.strand(0, 0).move(8).cross(0, 3).move(-3).as_circular().commit();
-      design = design.strand(0,8).move(-5).commit();
+      design = design.draw_strand(0, 0).move(8).cross(0, 3).move(-3).as_circular().commit();
+      design = design.draw_strand(0,8).move(-5).commit();
 
       var all_overlapping_strands = design.strands_overlapping;
       

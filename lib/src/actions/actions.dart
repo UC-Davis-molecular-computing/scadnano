@@ -34,6 +34,7 @@ import '../state/grid.dart';
 import '../state/helix.dart';
 import '../state/local_storage_design_choice.dart';
 import '../state/loopout.dart';
+import '../state/extension.dart';
 import '../state/modification.dart';
 import '../state/position3d.dart';
 import '../state/potential_crossover.dart';
@@ -159,6 +160,7 @@ abstract class BatchAction
     with BuiltJsonSerializable, UndoableAction
     implements Built<BatchAction, BatchActionBuilder> {
   BuiltList<UndoableAction> get actions;
+
   String get short_description_value;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -257,7 +259,6 @@ abstract class LocalStorageDesignChoiceSet
 abstract class ResetLocalStorage
     with BuiltJsonSerializable
     implements Action, Built<ResetLocalStorage, ResetLocalStorageBuilder> {
-
   /************************ begin BuiltValue boilerplate ************************/
   factory ResetLocalStorage() = _$ResetLocalStorage._;
 
@@ -625,6 +626,26 @@ abstract class ShowDomainNameMismatchesSet
   static Serializer<ShowDomainNameMismatchesSet> get serializer => _$showDomainNameMismatchesSetSerializer;
 }
 
+abstract class ShowUnpairedInsertionDeletionsSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowUnpairedInsertionDeletionsSet, ShowUnpairedInsertionDeletionsSetBuilder> {
+  bool get show_unpaired_insertion_deletions;
+
+  factory ShowUnpairedInsertionDeletionsSet(bool show_unpaired_insertion_deletions) =>
+      ShowUnpairedInsertionDeletionsSet.from(
+          (b) => b..show_unpaired_insertion_deletions = show_unpaired_insertion_deletions);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowUnpairedInsertionDeletionsSet.from(
+          [void Function(ShowUnpairedInsertionDeletionsSetBuilder) updates]) =
+      _$ShowUnpairedInsertionDeletionsSet;
+
+  ShowUnpairedInsertionDeletionsSet._();
+
+  static Serializer<ShowUnpairedInsertionDeletionsSet> get serializer =>
+      _$showUnpairedInsertionDeletionsSetSerializer;
+}
+
 abstract class SetShowEditor
     with BuiltJsonSerializable
     implements Action, Built<SetShowEditor, SetShowEditorBuilder> {
@@ -771,6 +792,31 @@ abstract class WarnOnExitIfUnsavedSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// loading DNA files
+
+abstract class LoadingDialogShow
+    with BuiltJsonSerializable
+    implements Action, Built<LoadingDialogShow, LoadingDialogShowBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory LoadingDialogShow() = _$LoadingDialogShow._;
+
+  LoadingDialogShow._();
+
+  static Serializer<LoadingDialogShow> get serializer => _$loadingDialogShowSerializer;
+}
+
+abstract class LoadingDialogHide
+    with BuiltJsonSerializable
+    implements Action, Built<LoadingDialogHide, LoadingDialogHideBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory LoadingDialogHide() = _$LoadingDialogHide._;
+
+  LoadingDialogHide._();
+
+  static Serializer<LoadingDialogHide> get serializer => _$loadingDialogHideSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Save/load files
 
 abstract class SaveDNAFile
@@ -821,6 +867,44 @@ abstract class LoadDNAFile
   static Serializer<LoadDNAFile> get serializer => _$loadDNAFileSerializer;
 }
 
+abstract class PrepareToLoadDNAFile
+    with BuiltJsonSerializable, DesignChangingAction
+    implements Action, Built<PrepareToLoadDNAFile, PrepareToLoadDNAFileBuilder> {
+  String get content;
+
+  bool get write_local_storage;
+
+  bool get unit_testing;
+
+  DNAFileType get dna_file_type;
+
+  // set to null when getting file from another source such as localStorage
+  @nullable
+  String get filename;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory PrepareToLoadDNAFile(
+      {String content,
+      String filename,
+      bool write_local_storage = true,
+      bool unit_testing = false,
+      DNAFileType dna_file_type = DNAFileType.scadnano_file}) {
+    return PrepareToLoadDNAFile.from((b) => b
+      ..content = content
+      ..filename = filename
+      ..write_local_storage = write_local_storage
+      ..unit_testing = unit_testing
+      ..dna_file_type = dna_file_type);
+  }
+
+  factory PrepareToLoadDNAFile.from([void Function(PrepareToLoadDNAFileBuilder) updates]) =
+      _$PrepareToLoadDNAFile;
+
+  PrepareToLoadDNAFile._();
+
+  static Serializer<PrepareToLoadDNAFile> get serializer => _$prepareToLoadDNAFileSerializer;
+}
+
 abstract class NewDesignSet
     with BuiltJsonSerializable, UndoableAction
     implements Action, Built<NewDesignSet, NewDesignSetBuilder> {
@@ -848,8 +932,15 @@ abstract class NewDesignSet
 abstract class ExportCadnanoFile
     with BuiltJsonSerializable
     implements Action, Built<ExportCadnanoFile, ExportCadnanoFileBuilder> {
+  bool get whitespace;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory ExportCadnanoFile([void Function(ExportCadnanoFileBuilder) updates]) = _$ExportCadnanoFile;
+  @memoized
+  int get hashCode;
+
+  factory ExportCadnanoFile({bool whitespace}) = _$ExportCadnanoFile._;
+
+  factory ExportCadnanoFile.from([void Function(ExportCadnanoFileBuilder) updates]) = _$ExportCadnanoFile;
 
   ExportCadnanoFile._();
 
@@ -1291,10 +1382,17 @@ abstract class SelectAll with BuiltJsonSerializable implements Action, Built<Sel
 abstract class SelectAllSelectable
     with BuiltJsonSerializable
     implements Action, Built<SelectAllSelectable, SelectAllSelectableBuilder> {
+  bool get current_helix_group_only;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory SelectAllSelectable() = _$SelectAllSelectable;
+  factory SelectAllSelectable({bool current_helix_group_only = false}) {
+    return SelectAllSelectable.from((b) => b..current_helix_group_only = current_helix_group_only);
+  }
 
   SelectAllSelectable._();
+
+  factory SelectAllSelectable.from([void Function(SelectAllSelectableBuilder) updates]) =
+      _$SelectAllSelectable;
 
   static Serializer<SelectAllSelectable> get serializer => _$selectAllSelectableSerializer;
 }
@@ -1852,22 +1950,131 @@ abstract class StrandPartAction extends Action {
   StrandPart get strand_part;
 }
 
+abstract class ExtensionDisplayLengthAngleSet
+    with BuiltJsonSerializable, UndoableAction
+    implements
+        StrandPartAction,
+        Built<ExtensionDisplayLengthAngleSet, ExtensionDisplayLengthAngleSetBuilder> {
+  Extension get ext;
+
+  num get display_length;
+
+  num get display_angle;
+
+  StrandPart get strand_part => ext;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExtensionDisplayLengthAngleSet({Extension ext, num display_length, num display_angle}) =>
+      ExtensionDisplayLengthAngleSet.from((b) => b
+        ..ext.replace(ext)
+        ..display_length = display_length
+        ..display_angle = display_angle);
+
+  factory ExtensionDisplayLengthAngleSet.from(
+      [void Function(ExtensionDisplayLengthAngleSetBuilder) updates]) = _$ExtensionDisplayLengthAngleSet;
+
+  ExtensionDisplayLengthAngleSet._();
+
+  static Serializer<ExtensionDisplayLengthAngleSet> get serializer =>
+      _$extensionDisplayLengthAngleSetSerializer;
+
+  @override
+  String short_description() => "change extension display length/angle";
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// loopout length change
+// add extension to strand
+
+abstract class ExtensionAdd
+    with BuiltJsonSerializable, UndoableAction
+    implements SingleStrandAction, Built<ExtensionAdd, ExtensionAddBuilder> {
+  Strand get strand;
+
+  bool get is_5p;
+
+  int get num_bases;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExtensionAdd({Strand strand, bool is_5p, int num_bases}) => ExtensionAdd.from((b) => b
+    ..strand.replace(strand)
+    ..is_5p = is_5p
+    ..num_bases = num_bases);
+
+  factory ExtensionAdd.from([void Function(ExtensionAddBuilder) updates]) = _$ExtensionAdd;
+
+  ExtensionAdd._();
+
+  static Serializer<ExtensionAdd> get serializer => _$extensionAddSerializer;
+
+  @override
+  String short_description() => "add extension to strand";
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// loopout/extension length change
+
+abstract class ExtensionNumBasesChange
+    with BuiltJsonSerializable, UndoableAction
+    implements StrandPartAction, Built<ExtensionNumBasesChange, ExtensionNumBasesChangeBuilder> {
+  Extension get ext;
+
+  int get num_bases;
+
+  StrandPart get strand_part => ext;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExtensionNumBasesChange(Extension ext, int num_bases) => ExtensionNumBasesChange.from((b) => b
+    ..ext.replace(ext)
+    ..num_bases = num_bases);
+
+  factory ExtensionNumBasesChange.from([void Function(ExtensionNumBasesChangeBuilder) updates]) =
+      _$ExtensionNumBasesChange;
+
+  ExtensionNumBasesChange._();
+
+  static Serializer<ExtensionNumBasesChange> get serializer => _$extensionNumBasesChangeSerializer;
+
+  @override
+  String short_description() => "change extension number of bases";
+}
+
+abstract class ExtensionsNumBasesChange
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<ExtensionsNumBasesChange, ExtensionsNumBasesChangeBuilder> {
+  BuiltList<Extension> get extensions;
+
+  int get num_bases;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExtensionsNumBasesChange(Iterable<Extension> extensions, int num_bases) =>
+      ExtensionsNumBasesChange.from((b) => b
+        ..extensions.replace(extensions)
+        ..num_bases = num_bases);
+
+  factory ExtensionsNumBasesChange.from([void Function(ExtensionsNumBasesChangeBuilder) updates]) =
+      _$ExtensionsNumBasesChange;
+
+  ExtensionsNumBasesChange._();
+
+  static Serializer<ExtensionsNumBasesChange> get serializer => _$extensionsNumBasesChangeSerializer;
+
+  @override
+  String short_description() => "change extensions number of bases";
+}
 
 abstract class LoopoutLengthChange
     with BuiltJsonSerializable, UndoableAction
     implements StrandPartAction, Built<LoopoutLengthChange, LoopoutLengthChangeBuilder> {
   Loopout get loopout;
 
-  int get length;
+  int get num_bases;
 
   StrandPart get strand_part => loopout;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory LoopoutLengthChange(Loopout loopout, int length) => LoopoutLengthChange.from((b) => b
+  factory LoopoutLengthChange(Loopout loopout, int num_bases) => LoopoutLengthChange.from((b) => b
     ..loopout.replace(loopout)
-    ..length = length);
+    ..num_bases = num_bases);
 
   factory LoopoutLengthChange.from([void Function(LoopoutLengthChangeBuilder) updates]) =
       _$LoopoutLengthChange;
@@ -3375,41 +3582,50 @@ abstract class ContextMenuHide
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// strand color picker
+// color pickers
 
-abstract class StrandColorPickerShow
+abstract class StrandOrSubstrandColorPickerShow
     with BuiltJsonSerializable
-    implements Action, Built<StrandColorPickerShow, StrandColorPickerShowBuilder> {
+    implements Action, Built<StrandOrSubstrandColorPickerShow, StrandOrSubstrandColorPickerShowBuilder> {
   Strand get strand;
 
+  @nullable
+  Substrand get substrand;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandColorPickerShow({Strand strand}) = _$StrandColorPickerShow._;
+  factory StrandOrSubstrandColorPickerShow({Strand strand, Substrand substrand}) =
+      _$StrandOrSubstrandColorPickerShow._;
 
-  StrandColorPickerShow._();
+  StrandOrSubstrandColorPickerShow._();
 
-  static Serializer<StrandColorPickerShow> get serializer => _$strandColorPickerShowSerializer;
+  static Serializer<StrandOrSubstrandColorPickerShow> get serializer =>
+      _$strandOrSubstrandColorPickerShowSerializer;
 }
 
-abstract class StrandColorPickerHide
+abstract class StrandOrSubstrandColorPickerHide
     with BuiltJsonSerializable
-    implements Action, Built<StrandColorPickerHide, StrandColorPickerHideBuilder> {
+    implements Action, Built<StrandOrSubstrandColorPickerHide, StrandOrSubstrandColorPickerHideBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandColorPickerHide() => StrandColorPickerHide.from((b) => b);
+  factory StrandOrSubstrandColorPickerHide() => StrandOrSubstrandColorPickerHide.from((b) => b);
 
-  factory StrandColorPickerHide.from([void Function(StrandColorPickerHideBuilder) updates]) =
-      _$StrandColorPickerHide;
+  factory StrandOrSubstrandColorPickerHide.from(
+      [void Function(StrandOrSubstrandColorPickerHideBuilder) updates]) = _$StrandOrSubstrandColorPickerHide;
 
-  StrandColorPickerHide._();
+  StrandOrSubstrandColorPickerHide._();
 
-  static Serializer<StrandColorPickerHide> get serializer => _$strandColorPickerHideSerializer;
+  static Serializer<StrandOrSubstrandColorPickerHide> get serializer =>
+      _$strandOrSubstrandColorPickerHideSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// scaffold set/unset
+// abstract supertype of actions that operate on a single strand
 
 abstract class SingleStrandAction implements Action {
   Strand get strand;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// scaffold set/unset
 
 abstract class ScaffoldSet
     with BuiltJsonSerializable, UndoableAction
@@ -3432,22 +3648,27 @@ abstract class ScaffoldSet
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Strand color set
 
-abstract class StrandColorSet
+abstract class StrandOrSubstrandColorSet
     with BuiltJsonSerializable, UndoableAction
-    implements SingleStrandAction, Built<StrandColorSet, StrandColorSetBuilder> {
+    implements SingleStrandAction, Built<StrandOrSubstrandColorSet, StrandOrSubstrandColorSetBuilder> {
   Strand get strand;
 
+  @nullable
+  Substrand get substrand;
+
+  @nullable
   Color get color;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandColorSet({Strand strand, Color color}) = _$StrandColorSet._;
+  factory StrandOrSubstrandColorSet({Strand strand, Substrand substrand, Color color}) =
+      _$StrandOrSubstrandColorSet._;
 
-  StrandColorSet._();
+  StrandOrSubstrandColorSet._();
 
-  static Serializer<StrandColorSet> get serializer => _$strandColorSetSerializer;
+  static Serializer<StrandOrSubstrandColorSet> get serializer => _$strandOrSubstrandColorSetSerializer;
 
   @override
-  String short_description() => "set strand color";
+  String short_description() => "set strand or substrand color";
 }
 
 abstract class StrandPasteKeepColorSet
@@ -3674,19 +3895,20 @@ abstract class ShowAxisArrowsSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// show or hide grid coordinates in side view
+// show or hide loopout and extension lengths displayed next to the substrand
 
-abstract class ShowLoopoutLengthSet
+abstract class ShowLoopoutExtensionLengthSet
     with BuiltJsonSerializable
-    implements Built<ShowLoopoutLengthSet, ShowLoopoutLengthSetBuilder> {
-  bool get show_loopout_length;
+    implements Built<ShowLoopoutExtensionLengthSet, ShowLoopoutExtensionLengthSetBuilder> {
+  bool get show_length;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ShowLoopoutLengthSet({bool show_loopout_length}) = _$ShowLoopoutLengthSet._;
+  factory ShowLoopoutExtensionLengthSet({bool show_length}) = _$ShowLoopoutExtensionLengthSet._;
 
-  ShowLoopoutLengthSet._();
+  ShowLoopoutExtensionLengthSet._();
 
-  static Serializer<ShowLoopoutLengthSet> get serializer => _$showLoopoutLengthSetSerializer;
+  static Serializer<ShowLoopoutExtensionLengthSet> get serializer =>
+      _$showLoopoutExtensionLengthSetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3735,27 +3957,61 @@ abstract class SetIsZoomAboveThreshold
   static Serializer<SetIsZoomAboveThreshold> get serializer => _$setIsZoomAboveThresholdSerializer;
 }
 
-abstract class SetDisablePngCacheUntilActionCompletes
+abstract class SetExportSvgActionDelayedForPngCache
     with BuiltJsonSerializable
     implements
         Action,
-        Built<SetDisablePngCacheUntilActionCompletes, SetDisablePngCacheUntilActionCompletesBuilder> {
+        Built<SetExportSvgActionDelayedForPngCache, SetExportSvgActionDelayedForPngCacheBuilder> {
   @nullable
-  Action get disable_png_cache_until_action_completes;
+  Action get export_svg_action_delayed_for_png_cache;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SetDisablePngCacheUntilActionCompletes(Action disable_png_cache_until_action_completes) =>
-      SetDisablePngCacheUntilActionCompletes.from(
-          (b) => b..disable_png_cache_until_action_completes = disable_png_cache_until_action_completes);
+  factory SetExportSvgActionDelayedForPngCache(Action export_svg_action_delayed_for_png_cache) =>
+      SetExportSvgActionDelayedForPngCache.from(
+          (b) => b..export_svg_action_delayed_for_png_cache = export_svg_action_delayed_for_png_cache);
 
-  factory SetDisablePngCacheUntilActionCompletes.from(
-          [void Function(SetDisablePngCacheUntilActionCompletesBuilder) updates]) =
-      _$SetDisablePngCacheUntilActionCompletes;
+  factory SetExportSvgActionDelayedForPngCache.from(
+          [void Function(SetExportSvgActionDelayedForPngCacheBuilder) updates]) =
+      _$SetExportSvgActionDelayedForPngCache;
 
-  SetDisablePngCacheUntilActionCompletes._();
+  SetExportSvgActionDelayedForPngCache._();
 
-  static Serializer<SetDisablePngCacheUntilActionCompletes> get serializer =>
-      _$setDisablePngCacheUntilActionCompletesSerializer;
+  static Serializer<SetExportSvgActionDelayedForPngCache> get serializer =>
+      _$setExportSvgActionDelayedForPngCacheSerializer;
+}
+
+abstract class ShowBasePairLinesSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowBasePairLinesSet, ShowBasePairLinesSetBuilder> {
+  bool get show_base_pair_lines;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowBasePairLinesSet({bool show_base_pair_lines}) = _$ShowBasePairLinesSet._;
+
+  ShowBasePairLinesSet._();
+
+  static Serializer<ShowBasePairLinesSet> get serializer => _$showBasePairLinesSetSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class ShowBasePairLinesWithMismatchesSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowBasePairLinesWithMismatchesSet, ShowBasePairLinesWithMismatchesSetBuilder> {
+  bool get show_base_pair_lines_with_mismatches;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowBasePairLinesWithMismatchesSet({bool show_base_pair_lines_with_mismatches}) =
+      _$ShowBasePairLinesWithMismatchesSet._;
+
+  ShowBasePairLinesWithMismatchesSet._();
+
+  static Serializer<ShowBasePairLinesWithMismatchesSet> get serializer =>
+      _$showBasePairLinesWithMismatchesSetSerializer;
+
+  @memoized
+  int get hashCode;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3790,6 +4046,25 @@ abstract class SliceBarOffsetSet
   SliceBarOffsetSet._();
 
   static Serializer<SliceBarOffsetSet> get serializer => _$sliceBarOffsetSetSerializer;
+}
+
+abstract class DisablePngCachingDnaSequencesSet
+    with BuiltJsonSerializable
+    implements Action, Built<DisablePngCachingDnaSequencesSet, DisablePngCachingDnaSequencesSetBuilder> {
+  bool get disable_png_caching_dna_sequences;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DisablePngCachingDnaSequencesSet(bool disable_png_caching_dna_sequences) =>
+      DisablePngCachingDnaSequencesSet.from(
+          (b) => b..disable_png_caching_dna_sequences = disable_png_caching_dna_sequences);
+
+  factory DisablePngCachingDnaSequencesSet.from(
+      [void Function(DisablePngCachingDnaSequencesSetBuilder) updates]) = _$DisablePngCachingDnaSequencesSet;
+
+  DisablePngCachingDnaSequencesSet._();
+
+  static Serializer<DisablePngCachingDnaSequencesSet> get serializer =>
+      _$disablePngCachingDnaSequencesSetSerializer;
 }
 
 abstract class SliceBarMoveStart

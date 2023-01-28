@@ -4,6 +4,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/domains_move.dart';
+import 'package:scadnano/src/state/extension.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/selectable.dart';
@@ -24,7 +25,7 @@ import '../state/substrand.dart';
 import '../state/strand.dart';
 import '../actions/actions.dart' as actions;
 import 'assign_or_remove_dna_reducer.dart';
-import 'change_loopout_length.dart';
+import 'change_loopout_ext_properties.dart';
 import 'delete_reducer.dart';
 import 'insertion_deletion_reducer.dart';
 import 'nick_ligate_join_by_crossover_reducers.dart';
@@ -64,6 +65,8 @@ GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGloba
       convert_crossovers_to_loopouts_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.LoopoutsLengthChange>(
       loopouts_length_change_reducer),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.ExtensionsNumBasesChange>(
+      extensions_num_bases_change_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.InsertionsLengthChange>(
       insertions_length_change_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.Modifications5PrimeEdit>(
@@ -105,6 +108,8 @@ BuiltList<Strand> strands_part_reducer(
 Reducer<Strand> strand_part_reducer = combineReducers([
   TypedReducer<Strand, actions.ConvertCrossoverToLoopout>(convert_crossover_to_loopout_reducer),
   TypedReducer<Strand, actions.LoopoutLengthChange>(loopout_length_change_reducer),
+  TypedReducer<Strand, actions.ExtensionNumBasesChange>(extension_num_bases_change_reducer),
+  TypedReducer<Strand, actions.ExtensionDisplayLengthAngleSet>(extension_display_length_angle_change_reducer),
   TypedReducer<Strand, actions.InsertionOrDeletionAction>(insertion_deletion_reducer),
   TypedReducer<Strand, actions.SubstrandNameSet>(substrand_name_set_reducer),
 ]);
@@ -112,14 +117,16 @@ Reducer<Strand> strand_part_reducer = combineReducers([
 Strand substrand_name_set_reducer(Strand strand, actions.SubstrandNameSet action) {
   int substrand_idx = strand.substrands.indexOf(action.substrand);
 
-  // we do the same thing no matter if its Domain or Loopout, but need to cast to call rebuild
+  // we do the same thing no matter if its Domain, Loopout, or Extension, but need to cast to call rebuild
   Substrand substrand = action.substrand;
   if (substrand is Domain) {
     substrand = (substrand as Domain).rebuild((b) => b..name = action.name);
   } else if (substrand is Loopout) {
     substrand = (substrand as Loopout).rebuild((b) => b..name = action.name);
+  } else if (substrand is Extension) {
+    substrand = (substrand as Extension).rebuild((b) => b..name = action.name);
   } else {
-    throw AssertionError('substrand must either be Domain or Loopout');
+    throw AssertionError('substrand must be Domain, Loopout, or Extension');
   }
 
   var substrands = strand.substrands.toList();
@@ -414,8 +421,8 @@ Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop
     }
     substrands[i] = new_substrand;
   }
-  return Tuple2<Strand, List<InsertionDeletionRecord>>(
-      strand.rebuild((b) => b..substrands.replace(substrands)), records);
+  strand = strand.rebuild((b) => b..substrands.replace(substrands));
+  return Tuple2<Strand, List<InsertionDeletionRecord>>(strand, records);
 }
 
 List<int> get_remaining_deletions(Domain substrand, int new_offset, DNAEnd dnaend) => substrand.deletions
@@ -503,8 +510,9 @@ BuiltList<Strand> strands_single_strand_reducer(
 
 Reducer<Strand> single_strand_reducer = combineReducers([
   TypedReducer<Strand, actions.ScaffoldSet>(scaffold_set_reducer),
-  TypedReducer<Strand, actions.StrandColorSet>(strand_color_set_reducer),
+  TypedReducer<Strand, actions.StrandOrSubstrandColorSet>(strand_or_substrand_color_set_reducer),
   TypedReducer<Strand, actions.ModificationAdd>(modification_add_reducer),
+  TypedReducer<Strand, actions.ExtensionAdd>(extension_add_reducer),
   TypedReducer<Strand, actions.ModificationRemove>(modification_remove_reducer),
   TypedReducer<Strand, actions.ModificationEdit>(modification_edit_reducer),
   TypedReducer<Strand, actions.StrandNameSet>(strand_name_set_reducer),
@@ -519,6 +527,7 @@ Strand idt_fields_remove_reducer(Strand strand, actions.IDTFieldsRemove action) 
   Strand strand_with_new_idt_fields = strand.rebuild((m) => m.idt = null);
   return strand_with_new_idt_fields;
 }
+
 Strand plate_well_idt_fields_remove_reducer(Strand strand, actions.PlateWellIDTFieldsRemove action) {
   if (strand.idt != null) {
     Strand strand_with_new_idt_fields;
@@ -526,7 +535,7 @@ Strand plate_well_idt_fields_remove_reducer(Strand strand, actions.PlateWellIDTF
       ..plate = null
       ..well = null);
     return strand_with_new_idt_fields;
-  }else{
+  } else {
     return strand;
   }
 }
@@ -546,6 +555,28 @@ Strand scale_purification_idt_fields_assign_reducer(
 
 Strand strand_name_set_reducer(Strand strand, actions.StrandNameSet action) =>
     strand.rebuild((b) => b..name = action.name);
+
+Strand extension_add_reducer(Strand strand, actions.ExtensionAdd action) {
+  var substrands = strand.substrands.toList();
+  Domain adjacent_domain;
+  if (action.is_5p) {
+    adjacent_domain = substrands.first;
+  } else {
+    adjacent_domain = substrands.last;
+  }
+  Extension ext = Extension(
+      num_bases: action.num_bases,
+      is_5p: action.is_5p,
+      adjacent_domain: adjacent_domain,
+      is_scaffold: strand.is_scaffold);
+  if (action.is_5p) {
+    substrands.insert(0, ext);
+  } else {
+    substrands.add(ext);
+  }
+  strand = strand.rebuild((b) => b..substrands.replace(substrands));
+  return strand;
+}
 
 Strand modification_add_reducer(Strand strand, actions.ModificationAdd action) {
   Strand strand_with_new_modification;
@@ -596,8 +627,30 @@ Strand scaffold_set_reducer(Strand strand, actions.ScaffoldSet action) {
   return strand;
 }
 
-Strand strand_color_set_reducer(Strand strand, actions.StrandColorSet action) =>
-    strand.rebuild((b) => b..color = action.color);
+Strand strand_or_substrand_color_set_reducer(Strand strand, actions.StrandOrSubstrandColorSet action) {
+  if (action.substrand == null) {
+    strand = strand.rebuild((b) => b..color = action.color);
+  } else {
+    int substrand_idx = strand.substrands.indexOf(action.substrand);
+
+    // we do the same thing no matter if it's Domain, Loopout, or Extension, but need to cast to call rebuild
+    Substrand substrand = action.substrand;
+    if (substrand is Domain) {
+      substrand = (substrand as Domain).rebuild((b) => b..color = action.color);
+    } else if (substrand is Loopout) {
+      substrand = (substrand as Loopout).rebuild((b) => b..color = action.color);
+    } else if (substrand is Extension) {
+      substrand = (substrand as Extension).rebuild((b) => b..color = action.color);
+    } else {
+      throw AssertionError('substrand must be Domain, Loopout, or Extension');
+    }
+
+    var substrands = strand.substrands.toList();
+    substrands[substrand_idx] = substrand;
+    strand = strand.rebuild((s) => s..substrands.replace(substrands));
+  }
+  return strand;
+}
 
 BuiltList<Strand> modifications_5p_edit_reducer(
     BuiltList<Strand> strands, AppState state, actions.Modifications5PrimeEdit action) {

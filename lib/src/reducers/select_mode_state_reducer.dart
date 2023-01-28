@@ -26,11 +26,17 @@ SelectModeState toggle_select_mode_reducer(SelectModeState state, actions.Select
       new_state = new_state.remove_mode(SelectModeChoice.strand);
       if (mode == SelectModeChoice.crossover || mode == SelectModeChoice.loopout) {
         new_state = new_state.remove_modes(SelectModeChoice.ends.toList() +
-            [SelectModeChoice.domain, SelectModeChoice.deletion, SelectModeChoice.insertion]);
+            [
+              SelectModeChoice.domain,
+              SelectModeChoice.deletion,
+              SelectModeChoice.insertion,
+              SelectModeChoice.extension_,
+            ]);
       } else if (SelectModeChoice.ends.contains(mode)) {
         new_state = new_state.remove_modes([
           SelectModeChoice.crossover,
           SelectModeChoice.loopout,
+          SelectModeChoice.extension_,
           SelectModeChoice.domain,
           SelectModeChoice.deletion,
           SelectModeChoice.insertion,
@@ -41,6 +47,17 @@ SelectModeState toggle_select_mode_reducer(SelectModeState state, actions.Select
             [
               SelectModeChoice.crossover,
               SelectModeChoice.loopout,
+              SelectModeChoice.extension_,
+              SelectModeChoice.deletion,
+              SelectModeChoice.insertion,
+              SelectModeChoice.modification,
+            ]);
+      }else if (mode == SelectModeChoice.extension_) {
+        new_state = new_state.remove_modes(SelectModeChoice.ends.toList() +
+            [
+              SelectModeChoice.crossover,
+              SelectModeChoice.loopout,
+              SelectModeChoice.domain,
               SelectModeChoice.deletion,
               SelectModeChoice.insertion,
               SelectModeChoice.modification,
@@ -50,6 +67,7 @@ SelectModeState toggle_select_mode_reducer(SelectModeState state, actions.Select
             [
               SelectModeChoice.crossover,
               SelectModeChoice.loopout,
+              SelectModeChoice.extension_,
               SelectModeChoice.domain,
               SelectModeChoice.modification,
             ]);
@@ -58,6 +76,7 @@ SelectModeState toggle_select_mode_reducer(SelectModeState state, actions.Select
             [
               SelectModeChoice.crossover,
               SelectModeChoice.loopout,
+              SelectModeChoice.extension_,
               SelectModeChoice.domain,
               SelectModeChoice.deletion,
               SelectModeChoice.insertion,

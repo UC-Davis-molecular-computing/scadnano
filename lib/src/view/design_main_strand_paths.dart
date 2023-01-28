@@ -3,9 +3,10 @@ import 'dart:math';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/modification_type.dart';
-import 'package:scadnano/src/view/transform_by_helix_group.dart';
+import 'package:scadnano/src/state/substrand.dart';
 
+import '../state/modification_type.dart';
+import 'transform_by_helix_group.dart';
 import '../state/group.dart';
 import '../state/context_menu.dart';
 import '../state/dna_end.dart';
@@ -16,11 +17,13 @@ import '../state/strand.dart';
 import '../state/domain.dart';
 import '../state/crossover.dart';
 import '../state/loopout.dart';
+import '../state/extension.dart';
 import '../state/address.dart';
 import '../util.dart' as util;
 import 'design_main_strand_dna_end.dart';
 import 'design_main_strand_domain.dart';
 import 'design_main_strand_loopout.dart';
+import 'design_main_strand_extension.dart';
 import 'design_main_strand_crossover.dart';
 import 'pure_component.dart';
 
@@ -35,6 +38,7 @@ mixin DesignMainStrandPathsPropsMixin on UiProps {
   BuiltSet<DNAEnd> selected_ends_in_strand;
   BuiltSet<Crossover> selected_crossovers_in_strand;
   BuiltSet<Loopout> selected_loopouts_in_strand;
+  BuiltSet<Extension> selected_extensions_in_strand;
   BuiltSet<Domain> selected_domains_in_strand;
 
   BuiltMap<int, Helix> helices;
@@ -48,7 +52,7 @@ mixin DesignMainStrandPathsPropsMixin on UiProps {
   bool origami_type_is_selectable;
   String strand_tooltip;
   bool only_display_selected_helices;
-  List<ContextMenuItem> Function(Strand strand, {Domain domain, Address address, ModificationType type})
+  List<ContextMenuItem> Function(Strand strand, {Substrand substrand, Address address, ModificationType type})
       context_menu_strand;
   BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
 }
@@ -64,6 +68,10 @@ bool should_draw_loopout(int prev_helix_idx, int next_helix_idx, BuiltSet<int> s
         bool only_display_selected_helices) =>
     should_draw_domain(prev_helix_idx, side_selected_helix_idxs, only_display_selected_helices) &&
     should_draw_domain(next_helix_idx, side_selected_helix_idxs, only_display_selected_helices);
+
+bool should_draw_extension(
+        int adj_helix_idx, BuiltSet<int> side_selected_helix_idxs, bool only_display_selected_helices) =>
+    should_draw_domain(adj_helix_idx, side_selected_helix_idxs, only_display_selected_helices);
 
 class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsProps>
     with PureComponent, TransformByHelixGroup<DesignMainStrandPathsProps> {
@@ -99,9 +107,8 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..strand = props.strand
             ..transform = transform_of_helix(domain.helix)
             ..context_menu_strand = props.context_menu_strand
-            ..color = strand.color
+            ..strand_color = strand.color
             ..selected = props.selected_domains_in_strand.contains(domain)
-            ..dna_sequence = strand.dna_sequence_in(domain)
             ..helix = helix
             ..helices = {helix.idx: helix}.build()
             ..groups = {helix.group: props.groups[helix.group]}.build()
@@ -120,9 +127,10 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
               bool end_selected = props.selected_ends_in_strand.contains(end);
               ends.add((DesignMainDNAEnd()
                 ..domain = domain
+                ..is_on_extension = false
                 ..is_5p = is_5p
                 ..transform = transform_of_helix(domain.helix)
-                ..color = strand.color
+                ..strand_color = strand.color
                 ..helix = helix
                 ..group = props.groups[helix.group]
                 ..geometry = props.geometry
@@ -144,8 +152,6 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
         Domain prev_dom = strand.substrands[i - 1];
         Helix prev_helix = props.helices[prev_dom.helix];
         Helix next_helix = props.helices[next_dom.helix];
-//        bool draw_next_dom = should_draw_domain(
-//            next_dom.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
         bool should = should_draw_loopout(prev_dom.helix, next_dom.helix, props.side_selected_helix_idxs,
             props.only_display_selected_helices);
         if (should) {
@@ -156,7 +162,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..helices = props.helices
             ..groups = props.groups
             ..geometry = props.geometry
-            ..color = strand.color
+            ..strand_color = strand.color
             ..selected = props.selected_loopouts_in_strand.contains(loopout)
             ..prev_domain = prev_dom
             ..next_domain = next_dom
@@ -165,6 +171,52 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..prev_helix_svg_position_y = props.helix_idx_to_svg_position_map[prev_helix.idx].y
             ..next_helix_svg_position_y = props.helix_idx_to_svg_position_map[next_helix.idx].y
             ..key = "loopout-$i")());
+        }
+      } else if (substrand is Extension) {
+        Extension ext = substrand;
+        var is_5p_str = ext.is_5p ? "5'" : "3'";
+        int adj_i = i == 0 ? 1 : i - 1;
+        Domain adj_dom = strand.substrands[adj_i];
+        Helix adj_helix = props.helices[adj_dom.helix];
+        bool should = should_draw_extension(
+            adj_dom.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
+        if (should) {
+          paths.add((DesignMainExtension()
+            ..ext = ext
+            ..strand = strand
+            ..helices = props.helices
+            ..groups = props.groups
+            ..geometry = props.geometry
+            ..strand_color = strand.color
+            ..transform = transform_of_helix(adj_helix.idx)
+            ..selected = props.selected_extensions_in_strand.contains(ext)
+            ..adjacent_domain = adj_dom
+            ..adjacent_helix = adj_helix
+            ..strand_tooltip = props.strand_tooltip
+            ..adjacent_helix_svg_position = props.helix_idx_to_svg_position_map[adj_helix.idx]
+            ..key = "extension-${is_5p_str}-$i")());
+          DNAEnd end = ext.dnaend_free;
+          String key = ext.is_5p
+              ? "5'-end-$i${ext.is_5p ? '-ext-is_first' : ''}"
+              : "3'-end-$i${!ext.is_5p ? '-ext-is_last' : ''}";
+          bool end_selected = props.selected_ends_in_strand.contains(end);
+          ends.add((DesignMainDNAEnd()
+            ..ext = ext
+            ..is_on_extension = true
+            ..is_5p = ext.is_5p
+            ..transform = transform_of_helix(ext.adjacent_domain.helix)
+            ..strand_color = strand.color
+            ..helix = adj_helix
+            ..group = props.groups[adj_helix.group]
+            ..geometry = props.geometry
+            ..is_scaffold = props.strand.is_scaffold
+            ..selected = end_selected
+            ..strand = strand
+            ..context_menu_strand = props.context_menu_strand
+            ..moving_this_dna_end = props.moving_dna_ends && end_selected
+            ..drawing_potential_crossover = props.drawing_potential_crossover
+            ..helix_svg_position = props.helix_idx_to_svg_position_map[adj_helix.idx]
+            ..key = key)());
         }
       }
     }
@@ -201,17 +253,25 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
 
 // transform svg_base_pos according to helix groups, and return absolute SVG path that can be
 // drawn untransformed to go between helix groups
-String crossover_path_description_between_groups(Domain prev_domain, Domain next_domain,
-    BuiltMap<int, Helix> helices, Geometry geometry, BuiltMap<String, HelixGroup> groups, num prev_helix_svg_position_y, num next_helix_svg_position_y) {
+String crossover_path_description_between_groups(
+    Domain prev_domain,
+    Domain next_domain,
+    BuiltMap<int, Helix> helices,
+    Geometry geometry,
+    BuiltMap<String, HelixGroup> groups,
+    num prev_helix_svg_position_y,
+    num next_helix_svg_position_y) {
   var prev_helix = helices[prev_domain.helix];
   var next_helix = helices[next_domain.helix];
   var prev_group = groups[prev_helix.group];
   var next_group = groups[next_helix.group];
 
-  var start_svg = prev_helix.svg_base_pos(prev_domain.offset_3p, prev_domain.forward, prev_helix_svg_position_y);
+  var start_svg =
+      prev_helix.svg_base_pos(prev_domain.offset_3p, prev_domain.forward, prev_helix_svg_position_y);
   start_svg = prev_group.transform_point_main_view(start_svg, geometry);
 
-  var end_svg = next_helix.svg_base_pos(next_domain.offset_5p, next_domain.forward, next_helix_svg_position_y);
+  var end_svg =
+      next_helix.svg_base_pos(next_domain.offset_5p, next_domain.forward, next_helix_svg_position_y);
   end_svg = next_group.transform_point_main_view(end_svg, geometry);
 
   var vector_start_to_end = end_svg - start_svg;
@@ -230,21 +290,29 @@ String crossover_path_description_between_groups(Domain prev_domain, Domain next
 // treat svg_base_pos as though helix group has position = origin; let component calling this function
 // do the transform based on its access to the group position
 String crossover_path_description_within_group(
-    Domain prev_domain, Domain next_domain, BuiltMap<int, Helix> helices, Geometry geometry, num prev_helix_svg_position_y, num next_helix_svg_position_y) {
+    Domain prev_domain,
+    Domain next_domain,
+    BuiltMap<int, Helix> helices,
+    Geometry geometry,
+    num prev_helix_svg_position_y,
+    num next_helix_svg_position_y) {
   var prev_helix = helices[prev_domain.helix];
   var next_helix = helices[next_domain.helix];
-  var start_svg = prev_helix.svg_base_pos(prev_domain.offset_3p, prev_domain.forward, prev_helix_svg_position_y);
-  var control =
-      control_point_for_crossover_bezier_curve(prev_domain, next_domain, helices, prev_helix_svg_position_y, next_helix_svg_position_y, geometry: geometry);
-  var end_svg = next_helix.svg_base_pos(next_domain.offset_5p, next_domain.forward, next_helix_svg_position_y);
+  var start_svg =
+      prev_helix.svg_base_pos(prev_domain.offset_3p, prev_domain.forward, prev_helix_svg_position_y);
+  var control = control_point_for_crossover_bezier_curve(
+      prev_domain, next_domain, helices, prev_helix_svg_position_y, next_helix_svg_position_y,
+      geometry: geometry);
+  var end_svg =
+      next_helix.svg_base_pos(next_domain.offset_5p, next_domain.forward, next_helix_svg_position_y);
 
   var path = 'M ${start_svg.x} ${start_svg.y} Q ${control.x} ${control.y} ${end_svg.x} ${end_svg.y}';
 
   return path;
 }
 
-Point<num> control_point_for_crossover_bezier_curve(
-    Domain from_ss, Domain to_ss, BuiltMap<int, Helix> helices, num from_helix_svg_position_y, num to_helix_svg_position_y,
+Point<num> control_point_for_crossover_bezier_curve(Domain from_ss, Domain to_ss,
+    BuiltMap<int, Helix> helices, num from_helix_svg_position_y, num to_helix_svg_position_y,
     {int delta = 0, Geometry geometry}) {
   var from_helix = helices[from_ss.helix];
   var to_helix = helices[to_ss.helix];
@@ -253,7 +321,8 @@ Point<num> control_point_for_crossover_bezier_curve(
   var helix_distance_normalized =
       ((from_helix_svg_position_y - to_helix_svg_position_y) / geometry.distance_between_helices_svg).abs();
 
-  var start_pos = from_helix.svg_base_pos(from_ss.offset_3p + delta, from_ss.forward, from_helix_svg_position_y);
+  var start_pos =
+      from_helix.svg_base_pos(from_ss.offset_3p + delta, from_ss.forward, from_helix_svg_position_y);
   var end_pos = to_helix.svg_base_pos(to_ss.offset_5p + delta, to_ss.forward, to_helix_svg_position_y);
   bool from_strand_below = from_helix_svg_position_y > to_helix_svg_position_y;
   num midX = (start_pos.x + end_pos.x) / 2;
