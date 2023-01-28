@@ -51,8 +51,6 @@ mixin ExtensionMovingProps on UiProps {
 
   Point<num> current_point;
   bool render;
-  num svg_position_y;
-  String transform;
 }
 
 
@@ -81,10 +79,8 @@ class ExtensionMovingComponent extends UiComponent2<ExtensionMovingProps> {
     var display_angle = util.compute_extension_length_and_angle_from_point(
         pos, props.attached_end_svg, props.ext, props.ext.adjacent_domain, props.geometry);
     var rotation_degrees = util.compute_end_rotation(display_angle.item2, props.forward, props.is_5p);
-    if (props.transform != null) {
-      // https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-center-in-svg
-      end_props = end_props..transform = "rotate($rotation_degrees)";
-    }
+    // https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-center-in-svg
+    end_props = end_props..transform = "rotate($rotation_degrees)";
     return end_props();
   }
 }

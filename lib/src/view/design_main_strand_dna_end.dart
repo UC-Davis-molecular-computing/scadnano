@@ -174,8 +174,6 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       ..color = props.color
       ..forward = forward
       ..is_5p = props.is_5p
-      ..transform = 'rotate(${rotation_degrees})'
-      ..svg_position_y = props.helix_svg_position.y
       ..key = 'moving-extension';
 
     return (Dom.g()
