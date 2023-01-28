@@ -107,7 +107,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..strand = props.strand
             ..transform = transform_of_helix(domain.helix)
             ..context_menu_strand = props.context_menu_strand
-            ..color = strand.color
+            ..strand_color = strand.color
             ..selected = props.selected_domains_in_strand.contains(domain)
             ..helix = helix
             ..helices = {helix.idx: helix}.build()
@@ -130,7 +130,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
                 ..is_on_extension = false
                 ..is_5p = is_5p
                 ..transform = transform_of_helix(domain.helix)
-                ..color = strand.color
+                ..strand_color = strand.color
                 ..helix = helix
                 ..group = props.groups[helix.group]
                 ..geometry = props.geometry
@@ -162,7 +162,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..helices = props.helices
             ..groups = props.groups
             ..geometry = props.geometry
-            ..color = strand.color
+            ..strand_color = strand.color
             ..selected = props.selected_loopouts_in_strand.contains(loopout)
             ..prev_domain = prev_dom
             ..next_domain = next_dom
@@ -187,7 +187,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..helices = props.helices
             ..groups = props.groups
             ..geometry = props.geometry
-            ..color = strand.color
+            ..strand_color = strand.color
             ..transform = transform_of_helix(adj_helix.idx)
             ..selected = props.selected_extensions_in_strand.contains(ext)
             ..adjacent_domain = adj_dom
@@ -205,7 +205,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..is_on_extension = true
             ..is_5p = ext.is_5p
             ..transform = transform_of_helix(ext.adjacent_domain.helix)
-            ..color = strand.color
+            ..strand_color = strand.color
             ..helix = adj_helix
             ..group = props.groups[adj_helix.group]
             ..geometry = props.geometry

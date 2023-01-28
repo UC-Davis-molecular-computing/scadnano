@@ -8,11 +8,14 @@ import 'state/grid.dart';
 
 // WARNING: Do not modify line below, except for the version string
 //          (and also add new version string to scadnano_versions_to_link).
-const String CURRENT_VERSION = "0.17.8";
+const String CURRENT_VERSION = "0.17.11";
 const String INITIAL_VERSION = "0.1.0";
 
 // scadnano versions that we deploy so that older versions can be used.
 final scadnano_older_versions_to_link =[
+  "0.17.10",
+  "0.17.9",
+  "0.17.8",
   "0.17.7",
   "0.17.6",
   "0.17.5",
@@ -348,6 +351,7 @@ final domain_keys = [
       insertions_key,
       label_key,
       name_key,
+      color_key,
     ] +
     legacy_forward_keys;
 
@@ -357,6 +361,7 @@ const loopout_keys = [
   loopout_key,
   label_key,
   name_key,
+  color_key,
 ];
 
 // Extension keys
@@ -371,6 +376,7 @@ const extension_keys = [
   display_angle_key,
   label_key,
   name_key,
+  color_key,
 ];
 ////////////////////////////////////////////////////
 /// svg-png-caching constants
@@ -404,6 +410,7 @@ const css_selector_strand = 'strand';
 const css_selector_scaffold = 'scaffold';
 const css_selector_staple = 'staple';
 const css_selector_domain = 'domain-line';
+const css_selector_base_pair_line = 'base-pair-line';
 const css_selector_extension = 'extension-line';
 const css_selector_crossover = 'crossover-curve';
 const css_selector_loopout = 'loopout-curve';

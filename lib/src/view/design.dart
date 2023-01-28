@@ -207,10 +207,10 @@ class DesignViewComponent {
         }
       }
       // put away strand color picker if click occurred anywhere outside of it
-      if (app.state.ui_state.strand_color_picker_strand != null) {
+      if (app.state.ui_state.color_picker_strand != null) {
         var strand_color_picker_elt = querySelector('#strand-color-picker');
         if (strand_color_picker_elt != null && !strand_color_picker_elt.contains(target)) {
-          app.dispatch(actions.StrandColorPickerHide());
+          app.dispatch(actions.StrandOrSubstrandColorPickerHide());
         }
       }
     });
@@ -628,10 +628,10 @@ class DesignViewComponent {
       paste_strands_auto();
     }
 
-    // Ctrl+A for select all
+    // Ctrl+A for select all, Ctrl+Shift+A for current helix group only
     if ((ev.ctrlKey || ev.metaKey) && key == KeyCode.A && edit_mode_is_select_or_rope_select()) {
       ev.preventDefault();
-      app.dispatch(actions.SelectAllSelectable());
+      app.dispatch(actions.SelectAllSelectable(current_helix_group_only: ev.shiftKey));
     }
 
     if (key == EditModeChoice.pencil.key_code()) {
@@ -924,7 +924,7 @@ class DesignViewComponent {
       react_dom.render(
           over_react_components.ErrorBoundary()(
             (ReduxProvider()..store = app.store)(
-              ConnectedStrandColorPicker()(),
+              ConnectedStrandOrSubstrandColorPicker()(),
             ),
           ),
           this.strand_color_picker_container);

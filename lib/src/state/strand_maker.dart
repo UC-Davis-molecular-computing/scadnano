@@ -28,6 +28,9 @@ class StrandMaker {
   bool is_scaffold = false;
   bool contains_extension = false;
   String loopout_dna_sequence = null;
+  String loopout_name = null;
+  Object loopout_label = null;
+  Color loopout_color = null;
 
   StrandMaker(
     Design design,
@@ -69,10 +72,16 @@ class StrandMaker {
         prev_domain_idx: substrands.length - 1,
         is_scaffold: is_scaffold,
         dna_sequence: loopout_dna_sequence,
+        name: loopout_name,
+        label: loopout_label,
+        color: loopout_color,
       );
       this.substrands.add(loopout);
       this.loopout_length = null;
       this.loopout_dna_sequence = null;
+      this.loopout_name = null;
+      this.loopout_label = null;
+      this.loopout_color = null;
     }
 
     if (this._most_recently_added_substrand_is_extension_3p()) {
@@ -279,6 +288,10 @@ class StrandMaker {
   }
 
   StrandMaker with_domain_label(Object label) {
+    if (most_recently_added_substrand_is_loopout()) {
+      this.loopout_label = label;
+      return this;
+    }
     int idx_last = this.substrands.length - 1;
     Substrand substrand = this.substrands[idx_last];
     Substrand new_substrand;
@@ -296,6 +309,10 @@ class StrandMaker {
   }
 
   StrandMaker with_domain_name(String name) {
+    if (most_recently_added_substrand_is_loopout()) {
+      this.loopout_name = name;
+      return this;
+    }
     int idx_last = this.substrands.length - 1;
     Substrand substrand = this.substrands[idx_last];
     Substrand new_substrand;
@@ -305,6 +322,27 @@ class StrandMaker {
       new_substrand = substrand.rebuild((b) => b..name = name);
     } else if (substrand is Extension) {
       new_substrand = substrand.rebuild((b) => b..name = name);
+    } else {
+      throw AssertionError('substrand should be Domain, Loopout, or Extension, but is ${substrand}');
+    }
+    substrands[idx_last] = new_substrand;
+    return this;
+  }
+
+  StrandMaker with_domain_color(Color color) {
+    if (most_recently_added_substrand_is_loopout()) {
+      this.loopout_color = color;
+      return this;
+    }
+    int idx_last = this.substrands.length - 1;
+    Substrand substrand = this.substrands[idx_last];
+    Substrand new_substrand;
+    if (substrand is Domain) {
+      new_substrand = substrand.rebuild((b) => b..color = color);
+    } else if (substrand is Loopout) {
+      new_substrand = substrand.rebuild((b) => b..color = color);
+    } else if (substrand is Extension) {
+      new_substrand = substrand.rebuild((b) => b..color = color);
     } else {
       throw AssertionError('substrand should be Domain, Loopout, or Extension, but is ${substrand}');
     }

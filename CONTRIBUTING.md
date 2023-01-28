@@ -22,6 +22,7 @@ or post questions as issues on the [issues page](https://github.com/UC-Davis-mol
   - [Making contributions](#making-contributions)
     - [Cloning](#cloning)
     - [Installing Dart](#installing-dart)
+    - [Installing `webdev`](#installing-webdev)
     - [Running a Local Server](#running-a-local-server)
     - [Running Tests](#running-tests)
     - [Building](#building)
@@ -315,11 +316,18 @@ pub get
 
 ```
 
+### Installing `webdev`
+
+This project uses an older version of the `webdev` tool, not the latest version, to build and serve the web app. Install it with:
+
+```
+
+pub global activate webdev 2.5.9
+
+```
+
 ### Running a Local Server
 
-To run a local server to test the application, use the
-[`webdev`](https://dart.dev/tools/webdev) tool. This tool can
-be installed by following instructions [here](https://dart.dev/tools/webdev#setupv).
 Run
 
 ```

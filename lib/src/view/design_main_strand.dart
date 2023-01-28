@@ -123,7 +123,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       ..id = props.strand.id
       ..onPointerDown = handle_click_down
       ..onPointerUp = handle_click_up
-//      ..onContextMenu = strand_content_menu // this is handled when clicking on domain
+//      ..onContextMenu = strand_context_menu // this is handled when clicking on domain
       ..className = classname)([
       (DesignMainStrandPaths()
         ..strand = props.strand
@@ -422,8 +422,22 @@ assigned, assign the complementary DNA sequence to this strand.
         on_click: set_scaffold,
       ),
       ContextMenuItem(
-          title: 'set color',
-          on_click: () => app.dispatch(actions.StrandColorPickerShow(strand: props.strand))),
+          title: 'color',
+          nested: [
+            ContextMenuItem(
+                title: 'set strand color',
+                on_click: () => app.dispatch(
+                    actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: null))),
+            ContextMenuItem(
+                title: 'set domain color',
+                on_click: () => app.dispatch(
+                    actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: substrand))),
+            if (substrand.color != null)
+              ContextMenuItem(
+                  title: 'remove domain color',
+                  on_click: () => app.dispatch(actions.StrandOrSubstrandColorSet(
+                      strand: props.strand, substrand: substrand, color: null))),
+          ].build()),
       ContextMenuItem(
           title: 'edit name',
           nested: [
@@ -553,8 +567,7 @@ after:
         label: 'number of bases', value: 5, tooltip: 'number of bases to include in this extension');
 
     var dialog = Dialog(
-      title: 'add extension', items: items, type: DialogType.add_extension, use_saved_response: false
-    );
+        title: 'add extension', items: items, type: DialogType.add_extension, use_saved_response: false);
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
@@ -976,7 +989,8 @@ PAGEHPLC : Dual PAGE & HPLC
     int name_idx = 0;
     var items = List<DialogItem>.filled(1, null);
     items[name_idx] = DialogText(label: 'name', value: props.strand.name ?? '');
-    var dialog = Dialog(title: 'set strand name', type: DialogType.set_strand_name, items: items);
+    var dialog = Dialog(
+        title: 'set strand name', type: DialogType.set_strand_name, items: items, use_saved_response: false);
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
@@ -991,8 +1005,11 @@ PAGEHPLC : Dual PAGE & HPLC
     var items = List<DialogItem>.filled(1, null);
 
     items[name_idx] = DialogText(label: 'name', value: substrand.name ?? '');
-    var dialog = Dialog(title: 'set ${substrand.type_description()} name', items: items,
-                        type: DialogType.set_domain_name);
+    var dialog = Dialog(
+        title: 'set ${substrand.type_description()} name',
+        items: items,
+        type: DialogType.set_domain_name,
+        use_saved_response: false);
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
@@ -1029,8 +1046,12 @@ StrandActionCreator remove_dna_strand_action_creator(bool remove_complements, bo
     ((Strand strand) =>
         actions.RemoveDNA(strand: strand, remove_complements: remove_complements, remove_all: remove_all));
 
-StrandActionCreator color_set_strand_action_creator(String color_hex) =>
-    ((Strand strand) => actions.StrandColorSet(strand: strand, color: Color.hex(color_hex)));
+StrandActionCreator color_set_strand_action_creator(String color_hex) => ((Strand strand) =>
+    actions.StrandOrSubstrandColorSet(strand: strand, substrand: null, color: Color.hex(color_hex)));
+
+StrandActionCreator color_set_substrand_action_creator(Substrand substrand, String color_hex) =>
+    ((Strand strand) =>
+        actions.StrandOrSubstrandColorSet(strand: strand, substrand: substrand, color: Color.hex(color_hex)));
 
 String tooltip_text(Strand strand) =>
     "Strand:\n" +
@@ -1098,6 +1119,7 @@ Future<void> ask_for_assign_dna_sequence(Strand strand, DNAAssignOptions options
       title: 'assign DNA sequence',
       type: DialogType.assign_dna_sequence,
       items: items,
+      use_saved_response: false,
       disable_when_any_checkboxes_on: {
         idx_sequence: [idx_use_predefined_dna_sequence]
       },

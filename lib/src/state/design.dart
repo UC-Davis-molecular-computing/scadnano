@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:tuple/tuple.dart';
 import 'package:collection/collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
@@ -212,7 +213,16 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   String group_name_of_domain(Domain domain) => group_name_of_helix_idx(domain.helix);
 
-  String group_name_of_strand(Strand strand) => group_name_of_domain(strand.first_domain);
+  // if the strand is in multiple groups, return null; otherwise return the group name
+  String group_name_of_strand(Strand strand) {
+    String first_group_name = group_name_of_domain(strand.first_domain);
+    for (var domain in strand.domains) {
+      if (first_group_name != group_name_of_domain(domain)) {
+        return null;
+      }
+    }
+    return first_group_name;
+  }
 
   BuiltSet<String> group_names_of_domains(Iterable<Domain> domains) {
     var helix_idxs_of_domains = {for (var domain in domains) domain.helix};
@@ -1934,6 +1944,110 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
             '${groups.keys.join(", ")}');
       }
     }
+  }
+
+  /// maps each helix_idx to a list of offsets where there is a complementary base pair on each strand
+  @memoized
+  BuiltMap<int, BuiltList<int>> get base_pairs => this._base_pairs(false);
+
+  /// maps each helix_idx to a list of offsets where there is a base on each strand,
+  /// NOT necessarily complementary
+  @memoized
+  BuiltMap<int, BuiltList<int>> get base_pairs_with_mismatches => this._base_pairs(true);
+
+  BuiltMap<int, BuiltList<int>> _base_pairs(bool allow_mismatches) {
+    var base_pairs = Map<int, BuiltList<int>>();
+    for (int idx in this.helices.keys) {
+      List<int> offsets = [];
+      List<Tuple2<Domain, Domain>> overlapping_domains = find_overlapping_domains_on_helix(idx);
+      for (var domain_pair in overlapping_domains) {
+        Domain dom1 = domain_pair.item1;
+        Domain dom2 = domain_pair.item2;
+        var start_and_end = dom1.compute_overlap(dom2);
+        int start = start_and_end.item1;
+        int end = start_and_end.item2;
+        for (int offset = start; offset < end; offset++) {
+          if (dom1.deletions.contains(offset) || dom2.deletions.contains(offset)) {
+            continue;
+          }
+          var seq1 = dom1.dna_sequence_in(offset, offset);
+          var seq2 = dom2.dna_sequence_in(offset, offset);
+          // we use reverse_complementary instead of base_complementary here to allow for insertions
+          // that may give a larger DNA sequence than length 1 at a given offset
+          if (allow_mismatches ||
+              util.reverse_complementary(seq1, seq2, allow_wildcard: true, allow_null: true)) {
+            offsets.add(offset);
+          }
+        }
+      }
+      if (offsets.isNotEmpty) {
+        base_pairs[idx] = offsets.build();
+      }
+    }
+
+    return base_pairs.build();
+  }
+
+  List<Tuple2<Domain, Domain>> find_overlapping_domains_on_helix(int helix_idx) {
+    // compute list of pairs of domains that overlap on Helix `helix`
+    List<Domain> forward_domains = domains_on_helix(helix_idx, forward: true);
+    List<Domain> reverse_domains_list = domains_on_helix(helix_idx, forward: false);
+    forward_domains.sort((Domain d1, Domain d2) => d1.start - d2.start);
+    reverse_domains_list.sort((Domain d1, Domain d2) => d1.start - d2.start);
+
+    if (forward_domains.isEmpty || reverse_domains_list.isEmpty) {
+      return [];
+    }
+
+    // need to be efficient to remove the front element repeatedly
+    var reverse_domains = Queue<Domain>.from(reverse_domains_list);
+
+    List<Tuple2<Domain, Domain>> overlapping_domains = [];
+
+    for (var forward_domain in forward_domains) {
+      var reverse_domain = reverse_domains.first;
+
+      // remove each reverse_domain that strictly precedes forward domain
+      // they cannot overlap forward_domain nor any domain following it in the list forward_domains
+      while (reverse_domain.end <= forward_domain.start && reverse_domains.isNotEmpty) {
+        reverse_domains.removeFirst();
+        if (reverse_domains.isNotEmpty) {
+          reverse_domain = reverse_domains.first;
+        } else {
+          // if all reverse domains are gone, we're done
+          return overlapping_domains;
+        }
+      }
+
+      // otherwise we may have found an overlapping reverse_domain, OR forward_domain could precede it
+      // if forward_domain precedes reverse_domain, next inner loop is skipped,
+      // and we go to next forward_domain in the outer loop
+
+      // add each reverse_domain that overlaps forward_domain
+      while (forward_domain.overlaps(reverse_domain)) {
+        overlapping_domains.add(Tuple2<Domain, Domain>(forward_domain, reverse_domain));
+
+        if (reverse_domain.end <= forward_domain.end) {
+          // [-----f_dom--->[--next_f_dom-->
+          //    [--r_dom--->
+          // reverse_domain can't overlap *next* forward_domain, so safe to remove
+          reverse_domains.removeFirst();
+          if (reverse_domains.isNotEmpty) {
+            reverse_domain = reverse_domains.first;
+          } else {
+            break;
+          }
+        } else {
+          // [---f_dom--->   [---next_f_dom-->
+          //       [----r_dom->[--next_r_dom---->
+          //  reverse_domain possibly overlaps next forward_domain, so keep it in queue
+          //  but this is last reverse_domain overlapping current forward_domain, so safe to break loop
+          break;
+        }
+      }
+    }
+
+    return overlapping_domains;
   }
 
   num yaw_of_helix(Helix helix) {

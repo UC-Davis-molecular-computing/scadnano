@@ -58,6 +58,8 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..autofit = state.ui_state.autofit
       ..only_display_selected_helices = state.ui_state.only_display_selected_helices
 //    ..grid = state.design?.grid
+      ..show_base_pair_lines = state.ui_state.show_base_pair_lines
+      ..show_base_pair_lines_with_mismatches = state.ui_state.show_base_pair_lines_with_mismatches
       ..example_designs = state.ui_state.example_designs
       ..design_has_insertions_or_deletions = state.design?.has_insertions_or_deletions == true
       ..undo_stack_empty = state.undo_redo.undo_stack.isEmpty
@@ -122,6 +124,8 @@ mixin MenuPropsMixin on UiProps {
   bool undo_stack_empty;
   bool redo_stack_empty;
   bool enable_copy;
+  bool show_base_pair_lines;
+  bool show_base_pair_lines_with_mismatches;
   bool display_of_major_ticks_offsets;
   bool display_base_offsets_of_major_ticks_only_first_helix;
   bool display_major_tick_widths;
@@ -350,16 +354,56 @@ that occurred between the last save and a browser crash.'''
         }
         ..display = 'Copy'
         ..keyboard_shortcut = 'Ctrl+C'
+        ..tooltip = '''\
+Copy the currently selected strand(s). They can be pasted into this design,
+or into another design in another browser or tab. You can also paste into
+a text document to see a JSON description of the copied strand(s).'''
         ..disabled = !props.enable_copy)(),
       (MenuDropdownItem()
         ..on_click =
             ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped))
         ..display = 'Paste'
+        ..tooltip = '''\
+Paste the previously copied strand(s). They can be pasted into this design,
+or into another design in another browser or tab. You can also paste into
+a text document to see a JSON description of the copied strand(s).
+'''
         ..keyboard_shortcut = 'Ctrl+V')(),
       (MenuDropdownItem()
         ..on_click = ((_) => paste_strands_auto())
         ..display = 'Autopaste'
+        ..tooltip = '''\
+This automatically pastes copied strands to an automatically selected position 
+in the design, which can be faster to create many copies of strand(s) than
+manually selecting each position to paste. First copy some strand(s), then 
+manually paste them using the menu Edit-->Paste or pressing Ctrl+V. Once this
+is done once, by selecting Edit-->Autopaste (or pressing Shift+Ctrl+V), 
+another copy of the same strand(s) are pasted, in the same "direction" as the
+first paste.
+
+For example, if the first paste was one helix down from the the copied strand(s),
+and 10 offset positions to the right, then Autopaste will make the next paste
+also one helix down from the first paste, and 10 offset positions to its right.
+
+You can also Autopaste immediately after copying, without having pasted first,
+with some default direction chosen. Play with it and see!
+'''
         ..keyboard_shortcut = 'Ctrl+Shift+V')(),
+      ///////////////////////////////////////////////////////////////
+      // select all
+      DropdownDivider({}),
+      (MenuDropdownItem()
+        ..on_click = ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.A, ctrlKey: true).wrapped))
+        ..display = 'Select All'
+        ..tooltip = '''\
+Select all strands in the design.'''
+        ..keyboard_shortcut = 'Ctrl+A')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.SelectAllSelectable(current_helix_group_only: true)))
+        ..display = 'Select All in Helix Group'
+        ..tooltip = '''\
+Select all selectable strands in the current helix group.'''
+        ..keyboard_shortcut = 'Ctrl+Shift+A')(),
       ///////////////////////////////////////////////////////////////
       // pasted strands keep original color
       DropdownDivider({}),
@@ -378,8 +422,7 @@ If unchecked, then a new color is generated.'''
         ..on_click = ((_) => props.dispatch(actions.InlineInsertionsDeletions()))
         ..display = 'Inline insertions/deletions'
         ..disabled = !props.design_has_insertions_or_deletions
-        ..tooltip = ''
-            '''
+        ..tooltip = '''\
 Remove insertions and deletions from the design and replace them with domains
 whose lengths correspond to the true strand length. Also moves major tick 
 marks on helices so that they are adjacent to the same bases as before.''')(),
@@ -392,8 +435,8 @@ marks on helices so that they are adjacent to the same bases as before.''')(),
         ..on_click = ((_) => props.dispatch(actions.JoinStrandsByMultipleCrossovers()))
         ..display = 'Connect selected ends by crossovers'
         ..disabled = props.selected_ends.isEmpty
-        ..tooltip = ''
-            '''Connect selected ends by crossovers. 
+        ..tooltip = '''\
+Connect selected ends by crossovers. 
 
 Ends are connected by crossovers as follows. Within each HelixGroup: 
 
@@ -556,6 +599,7 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
       view_menu_mods(),
       view_menu_helices(),
       view_menu_display_major_ticks_options(),
+      view_menu_base_pairs(),
       DropdownDivider({'key': 'divider-major-tick-widths'}),
       ...view_menu_zoom_speed(),
       DropdownDivider({'key': 'divider-zoom_speed'}),
@@ -833,6 +877,33 @@ toggle "Show main view helices".'''
     ]);
   }
 
+  ReactElement view_menu_base_pairs() {
+    return (MenuDropdownRight()
+      ..title = 'Base pairs'
+      ..id = 'view_menu_base_pairs'
+      ..key = 'view_menu_base_pairs-dropdown'
+      ..className = 'submenu_item')([
+      (MenuBoolean()
+        ..value = props.show_base_pair_lines
+        ..display = 'Base pair lines'
+        ..tooltip = 'Draw vertical lines between pairs of bases at the same offset on the same helix.'
+        ..onChange = ((_) =>
+            props.dispatch(actions.ShowBasePairLinesSet(show_base_pair_lines: !props.show_base_pair_lines)))
+        ..key = 'base_pair_lines')(),
+      (MenuBoolean()
+        ..value = props.show_base_pair_lines_with_mismatches
+        ..hide = !props.show_base_pair_lines
+        ..display = '... even if bases mismatch'
+        ..tooltip = '''\
+Lines are drawn between all pairs of bases at the same offset on the same helix, 
+regardless of whether the bases are complementary. If unchecked then lines are 
+only shown between pairs of complementary bases.'''
+        ..onChange = ((_) => props.dispatch(actions.ShowBasePairLinesWithMismatchesSet(
+            show_base_pair_lines_with_mismatches: !props.show_base_pair_lines_with_mismatches)))
+        ..key = 'base_pair_lines_mismatches')(),
+    ]);
+  }
+
   List<ReactElement> view_menu_zoom_speed() {
     return [
       (MenuNumber()
@@ -850,7 +921,7 @@ toggle "Show main view helices".'''
     return [
       (MenuBoolean()
         ..value = props.show_dna
-        ..display = 'Show DNA sequences'
+        ..display = 'DNA sequences'
         ..tooltip = '''\
 Show DNA sequences that have been assigned to strands. In a large design, this
 can slow down the performance of panning and zooming navigation, so uncheck it
@@ -882,7 +953,7 @@ Shows grid coordinates in the side view under the helix index.'''
         ..key = 'show-grid-coordinates-side-view')(),
       (MenuBoolean()
         ..value = props.show_helices_axis_arrows
-        ..display = 'Show axis arrows'
+        ..display = 'Axis arrows'
         ..tooltip = '''\
 Show axis arrows in side and main view
 Red : X-axis
@@ -894,7 +965,7 @@ Blue : Z-axis'''
         ..key = 'show-helices-axis-arrows')(),
       (MenuBoolean()
         ..value = props.show_loopout_extension_length
-        ..display = 'Show loopout/extension lengths'
+        ..display = 'Loopout/extension lengths'
         ..tooltip = '''\
 When selected, the length of each loopout and extension is displayed next to it.'''
         ..name = 'show-loopout-extension-length'
@@ -903,7 +974,7 @@ When selected, the length of each loopout and extension is displayed next to it.
         ..key = 'show-loopout-extension-length')(),
       (MenuBoolean()
         ..value = props.show_slice_bar
-        ..display = 'Show slice bar'
+        ..display = 'Slice bar'
         ..tooltip = '''\
 When selected, a slicebar is displayed, which users can drag and move to
 display the DNA backbone angle of all helices at a particular offset.
@@ -915,7 +986,7 @@ display the DNA backbone angle of all helices at a particular offset.
         ..key = 'show-slice-bar')(),
       (MenuBoolean()
         ..value = props.show_mouseover_data
-        ..display = 'Display strand and helix details in footer'
+        ..display = 'Strand and helix details in footer'
         ..tooltip = '''\
 When selected, the footer will display details about the design based
 on where the cursor is located. If the cursor is on a helix, the helix
@@ -1165,7 +1236,8 @@ However, it may be less stable than the main site.'''
       ]),
       (MenuDropdownItem()
         ..on_click = ((_) => window.alert(''
-            'scadnano is a program for designing synthetic DNA structures such as DNA origami. '
+            'scadnano version ${constants.CURRENT_VERSION}'
+            '\n\nscadnano is a program for designing synthetic DNA structures such as DNA origami. '
             '\n\nscadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group. '
             'Though similar in design, scadnano is distinct from cadnano (https://cadnano.org), '
             'which is developed and maintained by the Douglas lab (https://bionano.ucsf.edu/) at UCSF.'))

@@ -840,8 +840,8 @@ abstract class Strand
     var dna_sequence = util.optional_field_with_null_default(json_map, constants.dna_sequence_key,
         legacy_keys: constants.legacy_dna_sequence_keys);
 
-    var color = json_map.containsKey(constants.color_key)
-        ? parse_json_color(json_map[constants.color_key])
+    Color color = json_map.containsKey(constants.color_key)
+        ? util.parse_json_color(json_map[constants.color_key])
         : DEFAULT_STRAND_COLOR;
 
     String name = util.optional_field_with_null_default(json_map, constants.name_key);
@@ -994,27 +994,5 @@ abstract class Strand
     String id =
         '${first_domain.helix}[${first_domain.offset_5p}]${last_domain.helix}[${last_domain.offset_3p}]';
     return is_scaffold ? 'SCAF$id}' : 'ST$id';
-  }
-}
-
-Color parse_json_color(Object json_obj) {
-  try {
-    if (json_obj is Map) {
-      int r = json_obj['r'];
-      int g = json_obj['g'];
-      int b = json_obj['b'];
-      return RgbColor(r, g, b);
-    } else if (json_obj is String) {
-      return HexColor(json_obj);
-    } else if (json_obj is int) {
-      String hex_str = util.color_decimal_int_to_hex(json_obj);
-      return HexColor(hex_str);
-    } else {
-      throw ArgumentError.value('JSON object representing color must be a Map or String, but instead it is a '
-          '${json_obj.runtimeType}:\n${json_obj}');
-    }
-  } on Exception {
-    print("WARNING: I couldn't understand the color specification ${json_obj}, so I'm substituting black.");
-    return RgbColor.name('black');
   }
 }
