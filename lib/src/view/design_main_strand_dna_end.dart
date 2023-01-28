@@ -180,7 +180,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       ..geometry = props.geometry
       ..attached_end_svg = extension_attached_end_svg
       ..helix = props.helix
-      ..color = props.color
+      ..color = color
       ..forward = forward
       ..is_5p = props.is_5p
       ..key = 'moving-extension';
