@@ -2748,13 +2748,13 @@ abstract class DNAExtensionsMoveStart
   static Serializer<DNAExtensionsMoveStart> get serializer => _$dNAExtensionsMoveStartSerializer;
 }
 
-abstract class DNAExtensionsMoveSetSelectedExtensions
+abstract class DNAExtensionsMoveSetSelectedExtensionEnds
     with BuiltJsonSerializable
     implements
         Action,
-        Built<DNAExtensionsMoveSetSelectedExtensions, DNAExtensionsMoveSetSelectedExtensionsBuilder> {
+        Built<DNAExtensionsMoveSetSelectedExtensionEnds, DNAExtensionsMoveSetSelectedExtensionEndsBuilder> {
   BuiltList<DNAExtensionMove> get moves;
-  //TODO: finish implementing this
+
   Point<num> get original_point;
 
   BuiltSet<Strand> get strands_affected;
@@ -2762,16 +2762,16 @@ abstract class DNAExtensionsMoveSetSelectedExtensions
   Helix get helix;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory DNAExtensionsMoveSetSelectedExtensions(
+  factory DNAExtensionsMoveSetSelectedExtensionEnds(
       {BuiltList<DNAExtensionMove> moves,
       Point<num> original_point,
       BuiltSet<Strand> strands_affected,
-      Helix helix}) = _$DNAExtensionsMoveSetSelectedExtensions._;
+      Helix helix}) = _$DNAExtensionsMoveSetSelectedExtensionEnds._;
 
-  DNAExtensionsMoveSetSelectedExtensions._();
+  DNAExtensionsMoveSetSelectedExtensionEnds._();
 
-  static Serializer<DNAExtensionsMoveSetSelectedExtensions> get serializer =>
-      _$dNAExtensionsMoveSetSelectedExtensionsSerializer;
+  static Serializer<DNAExtensionsMoveSetSelectedExtensionEnds> get serializer =>
+      _$dNAExtensionsMoveSetSelectedExtensionEndsSerializer;
 }
 
 abstract class DNAExtensionsMoveAdjustPosition

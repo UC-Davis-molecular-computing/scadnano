@@ -11,7 +11,7 @@ import '../state/address.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
 
-reselect_moved_dna_extensions_middleware(Store<AppState> store, action, NextDispatcher next) {
+reselect_moved_dna_extension_ends_middleware(Store<AppState> store, action, NextDispatcher next) {
   if (action is actions.DNAExtensionsMoveCommit && action.dna_extensions_move.moves.length > 1) {
     // only reselect if there is more than 1 selected, otherwise this builds up many selected items
     // as the user repeatedly clicks on one at a time

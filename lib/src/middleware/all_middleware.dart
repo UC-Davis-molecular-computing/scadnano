@@ -25,7 +25,7 @@ import 'periodic_save_design_local_storage.dart';
 import 'reselect_moved_dna_ends.dart';
 import 'reselect_moved_copied_strands.dart';
 
-import 'reselect_moved_dna_extensions.dart';
+import 'reselect_moved_dna_extension_ends.dart';
 import 'reset_local_storage.dart';
 import 'reselect_moved_domains.dart';
 import 'save_file.dart';
@@ -66,7 +66,7 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   dna_extensions_move_start_middleware,
   export_dna_sequences_middleware,
   reselect_moved_dna_ends_middleware,
-  reselect_moved_dna_extensions_middleware,
+  reselect_moved_dna_extension_ends_middleware,
   reselect_moved_copied_strands_middleware,
   reselect_moved_domains_middleware,
   selections_intersect_box_compute_middleware,
