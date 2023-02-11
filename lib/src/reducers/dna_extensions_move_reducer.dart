@@ -8,7 +8,7 @@ Reducer<DNAExtensionsMove> optimized_dna_extensions_move_reducer = combineReduce
 ]);
 
 Reducer<DNAExtensionsMove> dna_extensions_move_reducer = combineReducers([
-  TypedReducer<DNAExtensionsMove, actions.DNAExtensionsMoveSetSelectedExtensions>(
+  TypedReducer<DNAExtensionsMove, actions.DNAExtensionsMoveSetSelectedExtensionEnds>(
       dna_extensions_move_set_selected_extension_ends_reducer),
   TypedReducer<DNAExtensionsMove, actions.DNAExtensionsMoveAdjustPosition>(
       dna_extensions_move_adjust_reducer),
@@ -16,7 +16,7 @@ Reducer<DNAExtensionsMove> dna_extensions_move_reducer = combineReducers([
 ]);
 
 DNAExtensionsMove dna_extensions_move_set_selected_extension_ends_reducer(
-        DNAExtensionsMove _, actions.DNAExtensionsMoveSetSelectedExtensions action) =>
+        DNAExtensionsMove _, actions.DNAExtensionsMoveSetSelectedExtensionEnds action) =>
     DNAExtensionsMove(
         moves: action.moves,
         start_point: action.original_point,

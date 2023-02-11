@@ -7,6 +7,7 @@ import 'package:react/react.dart' as react;
 import 'package:scadnano/src/state/dna_extensions_move.dart';
 import 'package:scadnano/src/state/extension.dart';
 import 'package:scadnano/src/state/geometry.dart';
+import 'package:scadnano/src/state/group.dart';
 import '../state/dna_end.dart';
 
 import '../state/dna_ends_move.dart';
@@ -18,32 +19,33 @@ import '5p_end.dart';
 
 import '../util.dart' as util;
 
-part 'design_main_strand_dna_extension_moving.over_react.g.dart';
+part 'design_main_strand_dna_extension_end_moving.over_react.g.dart';
 
 typedef PointerDownHandler = void Function(react.SyntheticPointerEvent);
 typedef MouseUpHandler = void Function(react.SyntheticMouseEvent);
 
-UiFactory<ExtensionMovingProps> ConnectedExtensionMoving = connect<DNAExtensionsMove, ExtensionMovingProps>(
+UiFactory<ExtensionEndMovingProps> ConnectedExtensionEndMoving = connect<DNAExtensionsMove, ExtensionEndMovingProps>(
   mapStateToPropsWithOwnProps: (dna_extensions_move, props) {
     Point<num> current_point = dna_extensions_move?.current_point_of(props.dna_end);
     if (current_point == null) {
-      return ExtensionMoving()..render = false;
+      return ExtensionEndMoving()..render = false;
     }
-    return ExtensionMoving()..current_point = current_point;
+    return ExtensionEndMoving()..current_point = current_point;
   },
   context: app.context_extensions_move,
-)(ExtensionMoving);
+)(ExtensionEndMoving);
 
 
-UiFactory<ExtensionMovingProps> ExtensionMoving = _$ExtensionMoving;
+UiFactory<ExtensionEndMovingProps> ExtensionEndMoving = _$ExtensionEndMoving;
 
 
-mixin ExtensionMovingProps on UiProps {
+mixin ExtensionEndMovingProps on UiProps {
   DNAEnd dna_end;
   Extension ext;
   Geometry geometry;
   Point<num> attached_end_svg;
   Helix helix;
+  HelixGroup group;
   Color color;
   bool forward;
   bool is_5p;
@@ -54,7 +56,7 @@ mixin ExtensionMovingProps on UiProps {
 }
 
 
-class ExtensionMovingComponent extends UiComponent2<ExtensionMovingProps> {
+class ExtensionEndMovingComponent extends UiComponent2<ExtensionEndMovingProps> {
   @override
   get defaultProps => (newProps()
     ..render = true
@@ -65,7 +67,11 @@ class ExtensionMovingComponent extends UiComponent2<ExtensionMovingProps> {
     if (!props.render) {
       return null;
     }
-    Point<num> pos = props.current_point;
+
+    // current_point is in canvas coordinate space, so subtract it with helix group position
+    // to get helix group coordinate space (since translation transform is already applied to DesignMainDNAEndComponent))
+    Point<num> pos = props.current_point - props.group.translation(props.geometry);
+
     EndEitherPrimeProps end_props = (props.is_5p ? End5Prime() : End3Prime());
     String classname = (props.is_5p ? 'five-prime-end-moving' : 'three-prime-end-moving') +
         (props.allowable ? '' : ' disallowed-end');

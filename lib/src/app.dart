@@ -175,7 +175,7 @@ class App {
       store_dna_ends_move.dispatch(action);
     }
 
-    if (underlying_action is actions.DNAExtensionsMoveSetSelectedExtensions ||
+    if (underlying_action is actions.DNAExtensionsMoveSetSelectedExtensionEnds ||
         underlying_action is actions.DNAExtensionsMoveAdjustPosition ||
         underlying_action is actions.DNAExtensionsMoveStop) {
       store_extensions_move.dispatch(action);

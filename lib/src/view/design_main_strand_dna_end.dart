@@ -10,7 +10,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/linker.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/modification_type.dart';
-import 'package:scadnano/src/view/design_main_strand_dna_extension_moving.dart';
+import 'package:scadnano/src/view/design_main_strand_dna_extension_end_moving.dart';
 
 import '../state/address.dart';
 import '../state/context_menu.dart';
@@ -106,7 +106,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     EndEitherPrimeProps end_props = (props.is_5p ? End5Prime() : End3Prime());
     EndMovingProps end_moving_props = ConnectedEndMoving();
 
-    ExtensionMovingProps extension_moving_props = ConnectedExtensionMoving();
+    ExtensionEndMovingProps extension_end_moving_props = ConnectedExtensionEndMoving();
 
     DNAEnd dna_end;
     int offset;
@@ -174,12 +174,13 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       ..key = 'moving-end';
 
     // draw avatar of moving extension if it is moving
-    extension_moving_props = extension_moving_props
+    extension_end_moving_props = extension_end_moving_props
       ..dna_end = dna_end
       ..ext = props.ext
       ..geometry = props.geometry
       ..attached_end_svg = extension_attached_end_svg
       ..helix = props.helix
+      ..group = props.group
       ..color = color
       ..forward = forward
       ..is_5p = props.is_5p
@@ -190,7 +191,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       ..transform = props.transform)(
       end_props(),
       end_moving_props(),
-      extension_moving_props(),
+      extension_end_moving_props(),
     );
   }
 
@@ -267,6 +268,10 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         // set up drag detection for moving DNA ends
         Point<num> extension_attached_end_svg = util.compute_extension_attached_end_svg(
           props.ext, props.ext.adjacent_domain, props.helix, props.helix_svg_position.y);
+
+        // extension_start_point is in helix group coordinate space, so add it with helix group position
+        // to get canvas coordinate space
+        extension_attached_end_svg += props.group.translation(props.geometry);
 
         Point<num> pos = util.compute_extension_free_end_svg(
           extension_attached_end_svg, props.ext, props.ext.adjacent_domain, props.geometry

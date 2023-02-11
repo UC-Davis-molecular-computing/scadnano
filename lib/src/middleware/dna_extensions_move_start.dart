@@ -29,14 +29,20 @@ dna_extensions_move_start_middleware(
     Design design = store.state.design;
     for (var end in selected_ends) {
       var extension = design.end_to_extension[end];
+      var helix = design.helices[extension.adjacent_domain.helix];
       var extension_start_point = util.compute_extension_attached_end_svg(
           extension,
           extension.adjacent_domain,
-          design.helices[extension.adjacent_domain.helix],
+          helix,
           store
               .state
               .helix_idx_to_svg_position_map[extension.adjacent_domain.helix]
               .y);
+
+      // extension_start_point is in helix group coordinate space, so add it with helix group position
+      // to get canvas coordinate space
+      extension_start_point += design.groups[helix.group].translation(design.geometry);
+
       var extension_end_point = util.compute_extension_free_end_svg(
           extension_start_point,
           extension,
@@ -61,7 +67,7 @@ dna_extensions_move_start_middleware(
 
     // important that we dispatch to app, not to store, because the app dispatch will know to route this
     // to the appropriate optimized store for moving DNAEnds
-    app.dispatch(actions.DNAExtensionsMoveSetSelectedExtensions(
+    app.dispatch(actions.DNAExtensionsMoveSetSelectedExtensionEnds(
         original_point: action.start_point,
         moves: moves.toBuiltList(),
         strands_affected: strands_affected.toBuiltSet(),

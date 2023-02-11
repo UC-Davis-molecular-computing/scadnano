@@ -254,7 +254,7 @@ part 'serializers.g.dart';
   DNAEndsMoveAdjustOffset,
   DNAEndsMoveCommit,
   DNAExtensionsMoveStart,
-  DNAExtensionsMoveSetSelectedExtensions,
+  DNAExtensionsMoveSetSelectedExtensionEnds,
   DNAExtensionsMoveAdjustPosition,
   DNAExtensionsMoveStop,
   DNAExtensionsMoveCommit,
