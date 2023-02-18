@@ -10,6 +10,7 @@ import 'package:js/js.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/dna_file_type.dart';
 import 'package:scadnano/src/state/dna_assign_options.dart';
+import 'package:scadnano/src/state/dna_extensions_move.dart';
 import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
@@ -2727,6 +2728,92 @@ abstract class DNAEndsMoveCommit
 
   @override
   String short_description() => "move DNA ends";
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// dna extensions move
+
+abstract class DNAExtensionsMoveStart
+    with BuiltJsonSerializable
+    implements Action, Built<DNAExtensionsMoveStart, DNAExtensionsMoveStartBuilder> {
+  Point<num> get start_point;
+
+  Helix get helix;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DNAExtensionsMoveStart({Point<num> start_point, Helix helix}) = _$DNAExtensionsMoveStart._;
+
+  DNAExtensionsMoveStart._();
+
+  static Serializer<DNAExtensionsMoveStart> get serializer => _$dNAExtensionsMoveStartSerializer;
+}
+
+abstract class DNAExtensionsMoveSetSelectedExtensionEnds
+    with BuiltJsonSerializable
+    implements
+        Action,
+        Built<DNAExtensionsMoveSetSelectedExtensionEnds, DNAExtensionsMoveSetSelectedExtensionEndsBuilder> {
+  BuiltList<DNAExtensionMove> get moves;
+
+  Point<num> get original_point;
+
+  BuiltSet<Strand> get strands_affected;
+
+  Helix get helix;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DNAExtensionsMoveSetSelectedExtensionEnds(
+      {BuiltList<DNAExtensionMove> moves,
+      Point<num> original_point,
+      BuiltSet<Strand> strands_affected,
+      Helix helix}) = _$DNAExtensionsMoveSetSelectedExtensionEnds._;
+
+  DNAExtensionsMoveSetSelectedExtensionEnds._();
+
+  static Serializer<DNAExtensionsMoveSetSelectedExtensionEnds> get serializer =>
+      _$dNAExtensionsMoveSetSelectedExtensionEndsSerializer;
+}
+
+abstract class DNAExtensionsMoveAdjustPosition
+    with BuiltJsonSerializable
+    implements FastAction, Built<DNAExtensionsMoveAdjustPosition, DNAExtensionsMoveAdjustPositionBuilder> {
+  Point<num> get position;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DNAExtensionsMoveAdjustPosition({Point<num> position}) = _$DNAExtensionsMoveAdjustPosition._;
+
+  DNAExtensionsMoveAdjustPosition._();
+
+  static Serializer<DNAExtensionsMoveAdjustPosition> get serializer =>
+      _$dNAExtensionsMoveAdjustPositionSerializer;
+}
+
+abstract class DNAExtensionsMoveStop
+    with BuiltJsonSerializable
+    implements Action, Built<DNAExtensionsMoveStop, DNAExtensionsMoveStopBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DNAExtensionsMoveStop() = _$DNAExtensionsMoveStop._;
+
+  DNAExtensionsMoveStop._();
+
+  static Serializer<DNAExtensionsMoveStop> get serializer => _$dNAExtensionsMoveStopSerializer;
+}
+
+abstract class DNAExtensionsMoveCommit
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<DNAExtensionsMoveCommit, DNAExtensionsMoveCommitBuilder> {
+  DNAExtensionsMove get dna_extensions_move;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DNAExtensionsMoveCommit({ DNAExtensionsMove dna_extensions_move }) =
+      _$DNAExtensionsMoveCommit._;
+
+  DNAExtensionsMoveCommit._();
+
+  static Serializer<DNAExtensionsMoveCommit> get serializer => _$dNAExtensionsMoveCommitSerializer;
+
+  @override
+  String short_description() => "move DNA extensions";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

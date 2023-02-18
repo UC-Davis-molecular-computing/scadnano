@@ -8,6 +8,7 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:react/react_client/react_interop.dart';
 import 'package:scadnano/src/view/design_main_unpaired_insertion_deletions.dart';
 import 'package:scadnano/src/view/design_main_slice_bar.dart';
+import 'package:scadnano/src/view/potential_extensions_view.dart';
 
 import '../state/selection_rope.dart';
 import 'design_main_domains_moving.dart';
@@ -286,7 +287,9 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
       (ConnectedPotentialCrossoverView()
         ..id = 'potential-crossover-main'
         ..key = 'potential-crossover')(),
-
+      (ConnectedPotentialExtensionsView()
+        ..id = 'potential-extensions-main'
+        ..key = 'potential-extensions')(),
       (ConnectedSelectionBoxView()
         //FIXME: this makes the DesignMain React component not a pure function of AppState,
         // but currently no way around it since zoom is defined outside of React by the svg-pan-zoom library

@@ -92,10 +92,28 @@ SelectablesStore select_all_selectables_reducer(
       if (modes.contains(SelectModeChoice.deletion)) selected.addAll(strand.selectable_deletions);
       if (modes.contains(SelectModeChoice.insertion)) selected.addAll(strand.selectable_insertions);
       if (modes.contains(SelectModeChoice.modification)) selected.addAll(strand.selectable_modifications);
-      if (modes.contains(SelectModeChoice.end_5p_strand)) selected.add(strand.dnaend_5p);
-      if (modes.contains(SelectModeChoice.end_3p_strand)) selected.add(strand.dnaend_3p);
-      if (modes.contains(SelectModeChoice.end_5p_domain)) selected.addAll(strand.ends_5p_not_first);
-      if (modes.contains(SelectModeChoice.end_3p_domain)) selected.addAll(strand.ends_3p_not_last);
+      if (modes.contains(SelectModeChoice.end_5p_strand)) selected.addAll([
+        for (var ext in strand.extensions)
+          if (ext.is_5p)
+            ext.dnaend_free,
+        for (var domain in strand.domains)
+          if (domain.is_first)
+            domain.dnaend_5p
+      ]);
+      if (modes.contains(SelectModeChoice.end_3p_strand)) selected.addAll([
+        for (var ext in strand.extensions)
+          if (!ext.is_5p)
+            ext.dnaend_free,
+        for (var domain in strand.domains)
+          if (domain.is_last)
+            domain.dnaend_3p
+      ]);
+      if (modes.contains(SelectModeChoice.end_5p_domain)) selected.addAll(
+        strand.domains.where((domain) => !domain.is_first).map((domain) => domain.dnaend_5p)
+      );
+      if (modes.contains(SelectModeChoice.end_3p_domain)) selected.addAll(
+        strand.domains.where((domain) => !domain.is_last).map((domain) => domain.dnaend_3p)
+      );
     }
   }
   return selectables_store.select_all(selected);

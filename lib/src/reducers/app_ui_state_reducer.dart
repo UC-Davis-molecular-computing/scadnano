@@ -113,6 +113,8 @@ Reducer<bool> drawing_potential_crossover_reducer = combineReducers([
 Reducer<bool> moving_dna_ends_reducer = combineReducers([
   TypedReducer<bool, actions.DNAEndsMoveStart>(dna_ends_move_start_app_ui_state_reducer),
   TypedReducer<bool, actions.DNAEndsMoveStop>(dna_ends_move_stop_app_ui_state_reducer),
+  TypedReducer<bool, actions.DNAExtensionsMoveStart>(dna_extensions_move_start_app_ui_state_reducer),
+  TypedReducer<bool, actions.DNAExtensionsMoveStop>(dna_extensions_move_stop_app_ui_state_reducer),
 ]);
 
 Reducer<bool> slice_bar_is_moving_reducer = combineReducers([
@@ -138,6 +140,10 @@ bool potential_crossover_remove_app_ui_state_reducer(bool _, actions.PotentialCr
 bool dna_ends_move_start_app_ui_state_reducer(bool _, actions.DNAEndsMoveStart action) => true;
 
 bool dna_ends_move_stop_app_ui_state_reducer(bool _, actions.DNAEndsMoveStop action) => false;
+
+bool dna_extensions_move_start_app_ui_state_reducer(bool _, actions.DNAExtensionsMoveStart action) => true;
+
+bool dna_extensions_move_stop_app_ui_state_reducer(bool _, actions.DNAExtensionsMoveStop action) => false;
 
 bool slice_bar_move_start_app_ui_state_reducer(bool _, actions.SliceBarMoveStart action) => true;
 

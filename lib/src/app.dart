@@ -10,6 +10,8 @@ import 'package:platform_detect/platform_detect.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:over_react/over_react.dart' as react;
+import 'package:scadnano/src/reducers/dna_extensions_move_reducer.dart';
+import 'package:scadnano/src/state/dna_extensions_move.dart';
 
 import 'middleware/all_middleware.dart';
 import 'middleware/throttle.dart';
@@ -60,6 +62,8 @@ class App {
   var context_selection_box = createContext();
   Store<PotentialCrossover> store_potential_crossover;
   var context_potential_crossover = createContext();
+  Store<DNAExtensionsMove> store_extensions_move;
+  var context_extensions_move = createContext();
   Store<DNAEndsMove> store_dna_ends_move;
   var context_dna_ends_move = createContext();
   Store<HelixGroupMove> store_helix_group_move;
@@ -115,6 +119,9 @@ class App {
     store_potential_crossover = Store<PotentialCrossover>(optimized_potential_crossover_reducer,
         initialState: null, middleware: [throttle_middleware]);
 
+    store_extensions_move = Store<DNAExtensionsMove>(optimized_dna_extensions_move_reducer,
+        initialState: null, middleware: [throttle_middleware]);
+
     store_dna_ends_move = Store<DNAEndsMove>(optimized_dna_ends_move_reducer,
         initialState: null, middleware: [throttle_middleware]);
 
@@ -166,6 +173,12 @@ class App {
         underlying_action is actions.DNAEndsMoveAdjustOffset ||
         underlying_action is actions.DNAEndsMoveStop) {
       store_dna_ends_move.dispatch(action);
+    }
+
+    if (underlying_action is actions.DNAExtensionsMoveSetSelectedExtensionEnds ||
+        underlying_action is actions.DNAExtensionsMoveAdjustPosition ||
+        underlying_action is actions.DNAExtensionsMoveStop) {
+      store_extensions_move.dispatch(action);
     }
 
     if (underlying_action is actions.HelixGroupMoveCreate ||
