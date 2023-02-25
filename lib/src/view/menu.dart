@@ -84,6 +84,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..show_slice_bar = state.ui_state.show_slice_bar
       ..show_mouseover_data = state.ui_state.show_mouseover_data
       ..disable_png_caching_dna_sequences = state.ui_state.disable_png_caching_dna_sequences
+      ..display_reverse_DNA_right_side_up = state.ui_state.display_reverse_DNA_right_side_up
       ..local_storage_design_choice = state.ui_state.local_storage_design_choice
       ..clear_helix_selection_when_loading_new_design =
           state.ui_state.clear_helix_selection_when_loading_new_design
@@ -140,6 +141,7 @@ mixin MenuPropsMixin on UiProps {
   bool show_slice_bar;
   bool show_mouseover_data;
   bool disable_png_caching_dna_sequences;
+  bool display_reverse_DNA_right_side_up;
   bool default_crossover_type_scaffold_for_setting_helix_rolls;
   bool default_crossover_type_staple_for_setting_helix_rolls;
   LocalStorageDesignChoice local_storage_design_choice;
@@ -1015,7 +1017,18 @@ debugging, but be warned that it will be very slow to render a large number of D
         ..onChange = (_) {
           props.dispatch(actions.DisablePngCachingDnaSequencesSet(!props.disable_png_caching_dna_sequences));
         }
-        ..key = 'disable-png-caching-dna-sequences')()
+        ..key = 'disable-png-caching-dna-sequences')(),
+
+        (MenuBoolean()
+        ..value = props.disable_png_caching_dna_sequences
+        ..display = 'Display reverse DNA right-side up'
+        ..tooltip = '''\
+Displays reverse DNA right-side up'''
+        ..name = 'display-reverse-DNA-right-side-up'
+        ..onChange = (_) {
+          props.dispatch(actions.DisablePngCachingDnaSequencesSet(!props.disable_png_caching_dna_sequences));
+        }
+        ..key = 'display-reverse-DNA-right-side-up') ()
     ];
   }
 
