@@ -25,6 +25,7 @@ mixin DesignMainDNASequencePropsMixin on UiProps {
   Strand strand;
   BuiltSet<int> side_selected_helix_idxs;
   bool only_display_selected_helices;
+  bool display_reverse_DNA_right_side_up;
 
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
@@ -90,7 +91,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
   static const classname_dna_sequence = 'dna-seq';
 
   ReactElement _dna_sequence_on_domain(Domain domain) {
-    var seq_to_draw = domain.dna_sequence_deletions_insertions_to_spaces();
+    var seq_to_draw = domain.dna_sequence_deletions_insertions_to_spaces(reverse : props.display_reverse_DNA_right_side_up);
 
     var rotate_degrees = 0;
     int offset = domain.offset_5p;
@@ -103,7 +104,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     // this is needed to make complementary DNA bases line up more nicely (still not perfect)
     var x_adjust = -props.geometry.base_width_svg * 0.32;
     if (!domain.forward) {
-      rotate_degrees = 180;
+      rotate_degrees = 0;
     }
     var dy = -props.geometry.base_height_svg * 0.25;
     var text_length = props.geometry.base_width_svg * (domain.visual_length - 0.342);
@@ -113,8 +114,8 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       ..key = id
       ..id = id
       ..className = classname_dna_sequence
-      ..x = '${pos.x + x_adjust}'
-      ..y = '${pos.y}'
+      ..x = '${pos.x - x_adjust - text_length}'
+      ..y = '${pos.y + props.geometry.base_height_svg}'
       ..textLength = '$text_length'
       ..transform = 'rotate(${rotate_degrees} ${rotate_x} ${rotate_y})'
       ..dy = '$dy')(seq_to_draw);

@@ -413,7 +413,7 @@ abstract class Domain
   /// For insertions, all bases corresponding to the insertion
   /// (including the first one that would be represented even if there were no insertion)
   /// are replaced with a single space.
-  String dna_sequence_deletions_insertions_to_spaces() {
+  String dna_sequence_deletions_insertions_to_spaces({bool reverse = false}) {
     String seq = this.dna_sequence;
     List<int> codeunits = [];
 
@@ -447,8 +447,8 @@ abstract class Domain
         offset += forward;
       }
     }
-
-    var seq_modified = String.fromCharCodes(codeunits);
+    
+    var seq_modified = String.fromCharCodes(reverse ? codeunits.reversed : codeunits);
     return seq_modified;
   }
 

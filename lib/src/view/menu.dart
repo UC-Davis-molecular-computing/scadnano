@@ -1020,13 +1020,13 @@ debugging, but be warned that it will be very slow to render a large number of D
         ..key = 'disable-png-caching-dna-sequences')(),
 
         (MenuBoolean()
-        ..value = props.disable_png_caching_dna_sequences
+        ..value = props.display_reverse_DNA_right_side_up
         ..display = 'Display reverse DNA right-side up'
         ..tooltip = '''\
 Displays reverse DNA right-side up'''
         ..name = 'display-reverse-DNA-right-side-up'
         ..onChange = (_) {
-          props.dispatch(actions.DisablePngCachingDnaSequencesSet(!props.disable_png_caching_dna_sequences));
+          props.dispatch(actions.DisplayReverseDNARightSideUpSet(!props.display_reverse_DNA_right_side_up));
         }
         ..key = 'display-reverse-DNA-right-side-up') ()
     ];

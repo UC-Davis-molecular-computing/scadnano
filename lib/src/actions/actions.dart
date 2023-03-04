@@ -4136,6 +4136,26 @@ abstract class DisablePngCachingDnaSequencesSet
       _$disablePngCachingDnaSequencesSetSerializer;
 }
 
+abstract class DisplayReverseDNARightSideUpSet
+    with BuiltJsonSerializable
+    implements Action, Built<DisplayReverseDNARightSideUpSet, DisplayReverseDNARightSideUpSetBuilder> {
+  bool get display_reverse_DNA_right_side_up;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DisplayReverseDNARightSideUpSet(bool display_reverse_DNA_right_side_up) =>
+      DisplayReverseDNARightSideUpSet.from(
+          (b) => b..display_reverse_DNA_right_side_up = display_reverse_DNA_right_side_up);
+
+  factory DisplayReverseDNARightSideUpSet.from(
+      [void Function(DisplayReverseDNARightSideUpSetBuilder) updates]) = _$DisplayReverseDNARightSideUpSet;
+
+  DisplayReverseDNARightSideUpSet._();
+
+  static Serializer<DisplayReverseDNARightSideUpSet> get serializer =>
+      _$displayReverseDNARightSideUpSetSerializer;
+}
+
+
 abstract class SliceBarMoveStart
     with BuiltJsonSerializable
     implements Action, Built<SliceBarMoveStart, SliceBarMoveStartBuilder> {
