@@ -190,6 +190,10 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
             event, props.helices.values, props.groups, props.geometry, props.helix_idx_to_svg_position_map);
         HelixGroup group = app.state.design.group_of_strand(props.strand);
         var helices_view_order_inverse = group.helices_view_order_inverse;
+        print("select start");
+        print(group);
+        print(address);
+        print(group);
         app.dispatch(actions.StrandsMoveStartSelectedStrands(
             address: address, copy: false, original_helices_view_order_inverse: helices_view_order_inverse));
       }

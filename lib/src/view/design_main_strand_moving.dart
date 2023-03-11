@@ -46,6 +46,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
     with PureComponent, TransformByHelixGroup<DesignMainStrandMovingProps> {
   @override
   render() {
+    print("in design mand strand moving component");
     if (props.strand.substrands.length == 0) {
       return null;
     }
@@ -71,7 +72,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
     if (first_helix_moved == null || last_helix_moved == null) {
       return null;
     }
-    var strand_lines_single_path =_draw_strand_lines_single_path(strand_moved);
+    var strand_lines_single_path = _draw_strand_lines_single_path(strand_moved);
     if (strand_lines_single_path == null) {
       return null;
     }
@@ -135,8 +136,12 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
           }
           helix_svg_position_y = props.helix_idx_to_svg_position_map[helix.idx].y;
           start_svg = helix.svg_base_pos(domain.offset_5p, domain.forward, helix_svg_position_y);
-          var control = control_point_for_crossover_bezier_curve(old_domain, domain, props.helices,
-              props.helix_idx_to_svg_position_map[old_domain.helix].y, props.helix_idx_to_svg_position_map[domain.helix].y,
+          var control = control_point_for_crossover_bezier_curve(
+              old_domain,
+              domain,
+              props.helices,
+              props.helix_idx_to_svg_position_map[old_domain.helix].y,
+              props.helix_idx_to_svg_position_map[domain.helix].y,
               geometry: props.geometry);
           var crossover_path_desc = 'Q ${control.x} ${control.y} ${start_svg.x} ${start_svg.y}';
           path_cmds.add(crossover_path_desc);
@@ -150,8 +155,8 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
         var next_helix = props.helices[next_domain.helix];
         var prev_helix_svg_position_y = props.helix_idx_to_svg_position_map[prev_domain.helix].y;
         var next_helix_svg_position_y = props.helix_idx_to_svg_position_map[next_domain.helix].y;
-        var loopout_path_desc = loopout_path_description_within_group(
-            prev_helix, next_helix, prev_domain, next_domain, loopout, false, false, prev_helix_svg_position_y, next_helix_svg_position_y);
+        var loopout_path_desc = loopout_path_description_within_group(prev_helix, next_helix, prev_domain,
+            next_domain, loopout, false, false, prev_helix_svg_position_y, next_helix_svg_position_y);
         path_cmds.add(loopout_path_desc);
         helix = props.helices[next_domain.helix]; // need to update this for next domain line to be draw
       }
