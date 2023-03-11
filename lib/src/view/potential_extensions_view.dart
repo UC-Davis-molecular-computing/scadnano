@@ -33,6 +33,8 @@ class PotentialExtensionsViewComponent extends UiComponent2<PotentialExtensionsV
       return null;
     }
 
+    // potential_extensions.moves.map returns an iterable. Need to be casted into a Dom object.
+    // Similar issue as #655
     return (Dom.g())(potential_extensions.moves.map((move) => (Dom.line()
       ..x1 = '${move.attached_end_position.x}'
       ..y1 = '${move.attached_end_position.y}'
