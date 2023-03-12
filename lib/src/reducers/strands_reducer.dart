@@ -372,7 +372,7 @@ BuiltList<Strand> strands_dna_ends_move_commit_reducer(
 BuiltList<Strand> strands_dna_extensions_move_commit_reducer(
     BuiltList<Strand> strands, AppState state, actions.DNAExtensionsMoveCommit action) {
   var strands_builder = strands.toBuilder();
-  
+
   for (var move in action.dna_extensions_move.moves) {
     var strand = state.design.substrand_to_strand[state.design.end_to_extension[move.dna_end]];
 
@@ -602,7 +602,7 @@ Strand extension_add_reducer(Strand strand, actions.ExtensionAdd action) {
   } else {
     adjacent_domain = substrands.last;
   }
-  print(adjacent_domain.is_first);
+
   Extension ext = Extension(
       num_bases: action.num_bases,
       is_5p: action.is_5p,
