@@ -397,7 +397,7 @@ const num ZOOM_THRESHOLD = 0.5;
 
 /////////////////////////////////////////////////////////////
 // Backend
-const backend_url = 'https://os-interactive.ie/scadnano-backend/';
+const backend_url = 'https://scadnano-backend.onrender.com/';
 const export_url = backend_url + 'scadnano_to_cadnano_v2';
 const import_url = backend_url + 'cadnano_v2_to_scadnano';
 const autostaple_url = backend_url + 'autostaple';
