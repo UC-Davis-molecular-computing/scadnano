@@ -98,6 +98,7 @@ class ExportDNAFormat extends EnumClass {
 
   static Serializer<ExportDNAFormat> get serializer => _$exportDNAFormatSerializer;
 
+  static const ExportDNAFormat cando_compatible_csv = _$cando_compatible_csv;
   static const ExportDNAFormat csv = _$csv;
   static const ExportDNAFormat idt_bulk = _$idt_bulk;
   static const ExportDNAFormat idt_plates96 = _$idt_plates96;
@@ -109,6 +110,8 @@ class ExportDNAFormat extends EnumClass {
 
   String extension() {
     switch (this) {
+      case cando_compatible_csv:
+        return 'csv';
       case csv:
         return 'csv';
       case idt_bulk:
@@ -121,6 +124,7 @@ class ExportDNAFormat extends EnumClass {
   }
 
   static const Map<ExportDNAFormat, String> _toString_map = {
+    cando_compatible_csv: 'CanDo-compatible CSV (.csv)',
     csv: 'CSV (.csv)',
     idt_bulk: 'IDT Bulk (.txt)',
     idt_plates96: 'IDT 96-well plate(s) (.xlsx)',
@@ -142,6 +146,8 @@ class ExportDNAFormat extends EnumClass {
 
   bool text_file() {
     switch (this) {
+      case cando_compatible_csv:
+        return true;
       case csv:
         return true;
       case idt_bulk:
@@ -155,6 +161,8 @@ class ExportDNAFormat extends EnumClass {
 
   util.BlobType blob_type() {
     switch (this) {
+      case cando_compatible_csv:
+        return util.BlobType.text;
       case csv:
         return util.BlobType.text;
       case idt_bulk:
@@ -182,6 +190,8 @@ class ExportDNAFormat extends EnumClass {
 
     try {
       switch (this) {
+        case cando_compatible_csv:
+          return cando_compatible_csv_export(strands_sorted);
         case csv:
           return csv_export(strands_sorted);
         case idt_bulk:
@@ -208,6 +218,30 @@ class ExportDNAException implements Exception {
   String cause;
 
   ExportDNAException(this.cause);
+}
+
+String cando_compatible_csv_export(Iterable<Strand> strands) {
+  StringBuffer buf = StringBuffer();
+  buf.writeln('Start,End,Sequence,Length,Color');
+  for (var strand in strands) {
+    // If the export name contains 'SCAF', then it's a scaffold strand, so we do not export it for cando.
+    if (strand.idt_export_name().contains('SCAF')) {
+      continue;
+    }
+    // Remove the characters 'ST' from the start of the export name as cando doesn't understand them.
+    var cando_strand = strand.idt_export_name().replaceAll(RegExp(r'^ST'), '');
+    // Split the export name into the start and end positions.
+    RegExp cando_split_regex = RegExp(r'\d+\[\d+\]');
+    List<String> cando_split_name = cando_split_regex.allMatches(cando_strand).map((match) => match.group(0)).toList();
+    if (cando_split_name.length != 2) {
+      throw ExportDNAException('Invalid strand name: ${strand.idt_export_name()}');
+    }
+    var cando_strand_end = cando_split_name[1];
+    var cando_strand_start = cando_split_name[0];
+    // Write the strand to the CSV file.
+    buf.writeln('${cando_strand_start},${cando_strand_end},${strand.dna_sequence},${strand.dna_sequence.length},${strand.color}');
+  }
+  return buf.toString();
 }
 
 String csv_export(Iterable<Strand> strands) {
