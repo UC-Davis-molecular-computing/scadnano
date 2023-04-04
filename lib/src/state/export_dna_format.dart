@@ -232,7 +232,7 @@ String cando_compatible_csv_export(Iterable<Strand> strands) {
     var cando_strand_end = cando_split_name[1];
     var cando_strand_start = cando_split_name[0];
     // Write the strand to the CSV file.
-    buf.writeln('${cando_strand_start},${cando_strand_end},${idt_sequence_null_aware(strand)},${idt_sequence_null_aware(strand).length},${strand.color.toHexColor().toCssString()}');
+    buf.writeln('${cando_strand_start},${cando_strand_end},${idt_sequence_null_aware(strand)},${idt_sequence_null_aware(strand).length},${strand.color.toHexColor().toCssString().toUpperCase()}');
   }
   return buf.toString();
 }
