@@ -1042,7 +1042,7 @@ debugging, but be warned that it will be very slow to render a large number of D
         ..display = 'DNA sequences')(),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.ExportCanDoDNA(export_dna_format: ExportDNAFormat.cando)))
-        ..tooltip = "Export DNA sequences of strands as a CSV for use with CanDo."
+        ..tooltip = "Export DNA sequences of strands as a CSV for use with CanDo's Atomic Model processing."
         ..display = 'CanDo DNA Sequences')(),      
       DropdownDivider({'key': 'divider-not-full-design'}),
       (MenuDropdownItem()
