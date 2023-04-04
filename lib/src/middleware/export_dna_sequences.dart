@@ -10,6 +10,51 @@ export_dna_sequences_middleware(Store<AppState> store, action, NextDispatcher ne
   next(action);
 
   AppState state = store.state;
+
+
+if (action is actions.ExportCanDoDNA) {
+    List<Strand> strands;
+      strands = state.design.strands.toList();
+      strands.removeWhere((strand) => strand.is_scaffold);
+
+    String filename = 'cando_sequences.csv';
+    util.BlobType blob_type = util.BlobType.text;
+
+    try {
+      var result = action.export_dna_format.export(strands);
+      // See export comments for why we have this stupid special case
+      if (result is Future<List<int>>) {
+        result.then((response) {
+          List<int> content = response;
+          util.save_file(filename, content, blob_type: blob_type);
+        }).catchError((e, stackTrace) {
+          var cause = "";
+          if (has_cause(e)) {
+            cause = e.cause;
+          } else if (has_message(e)) {
+            cause = e.message;
+          }
+          var msg = cause + '\n\n' + stackTrace.toString();
+          store.dispatch(actions.ErrorMessageSet(msg));
+          app.view.design_view.render(store.state);
+        });
+      } else {
+        String content = result;
+        util.save_file(filename, content, blob_type: blob_type);
+      }
+      // .then((content) => util.save_file(filename, content, blob_type: blob_type))
+    } catch (e, stackTrace) {
+      var cause = "";
+      if (has_cause(e)) {
+        cause = e.cause;
+      } else if (has_message(e)) {
+        cause = e.message;
+      }
+      var msg = cause + '\n\n' + stackTrace.toString();
+      store.dispatch(actions.ErrorMessageSet(msg));
+      app.view.design_view.render(store.state);
+    }
+  }
   if (action is actions.ExportDNA) {
     List<Strand> strands;
     if (action.include_only_selected_strands) {

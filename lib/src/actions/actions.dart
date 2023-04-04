@@ -1923,6 +1923,25 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
   static Serializer<ExportDNA> get serializer => _$exportDNASerializer;
 }
 
+
+abstract class ExportCanDoDNA with BuiltJsonSerializable implements Action, Built<ExportCanDoDNA, ExportCanDoDNABuilder> {
+  ExportDNAFormat get export_dna_format;
+  factory ExportCanDoDNA(
+  {
+   ExportDNAFormat export_dna_format,
+  }) {
+    return ExportCanDoDNA.from((b) => b
+    ..export_dna_format = export_dna_format);
+  }
+
+  factory ExportCanDoDNA.from([void Function(ExportCanDoDNABuilder) updates]) = _$ExportCanDoDNA;
+
+  ExportCanDoDNA._();
+
+  static Serializer<ExportCanDoDNA> get serializer => _$exportCanDoDNASerializer;
+}
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Export SVG
 

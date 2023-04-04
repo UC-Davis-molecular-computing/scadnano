@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'dart:math';
 
 import 'package:built_value/built_value.dart';
+import 'package:color/color.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/view/menu_form_file.dart';
@@ -98,7 +99,7 @@ class ExportDNAFormat extends EnumClass {
 
   static Serializer<ExportDNAFormat> get serializer => _$exportDNAFormatSerializer;
 
-  static const ExportDNAFormat cando_compatible_csv = _$cando_compatible_csv;
+  static const ExportDNAFormat cando = _$cando;
   static const ExportDNAFormat csv = _$csv;
   static const ExportDNAFormat idt_bulk = _$idt_bulk;
   static const ExportDNAFormat idt_plates96 = _$idt_plates96;
@@ -110,8 +111,6 @@ class ExportDNAFormat extends EnumClass {
 
   String extension() {
     switch (this) {
-      case cando_compatible_csv:
-        return 'csv';
       case csv:
         return 'csv';
       case idt_bulk:
@@ -124,7 +123,7 @@ class ExportDNAFormat extends EnumClass {
   }
 
   static const Map<ExportDNAFormat, String> _toString_map = {
-    cando_compatible_csv: 'CanDo-compatible CSV (.csv)',
+    // The CanDo format is deliberatly missing here as it has its own seperate item in the 'Export' dropdown.
     csv: 'CSV (.csv)',
     idt_bulk: 'IDT Bulk (.txt)',
     idt_plates96: 'IDT 96-well plate(s) (.xlsx)',
@@ -146,8 +145,6 @@ class ExportDNAFormat extends EnumClass {
 
   bool text_file() {
     switch (this) {
-      case cando_compatible_csv:
-        return true;
       case csv:
         return true;
       case idt_bulk:
@@ -161,8 +158,6 @@ class ExportDNAFormat extends EnumClass {
 
   util.BlobType blob_type() {
     switch (this) {
-      case cando_compatible_csv:
-        return util.BlobType.text;
       case csv:
         return util.BlobType.text;
       case idt_bulk:
@@ -173,8 +168,6 @@ class ExportDNAFormat extends EnumClass {
     }
     throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
   }
-
-
   /// Output object (String if text file; Future<List<int>> if binary) representing list of Strands
   /// I couldn't see a way to export Excel files synchronously, since they require loading an
   /// existing Excel file from a local resource using an HttpRequest, which is asynchronous.
@@ -190,7 +183,7 @@ class ExportDNAFormat extends EnumClass {
 
     try {
       switch (this) {
-        case cando_compatible_csv:
+        case cando:
           return cando_compatible_csv_export(strands_sorted);
         case csv:
           return csv_export(strands_sorted);
@@ -239,7 +232,7 @@ String cando_compatible_csv_export(Iterable<Strand> strands) {
     var cando_strand_end = cando_split_name[1];
     var cando_strand_start = cando_split_name[0];
     // Write the strand to the CSV file.
-    buf.writeln('${cando_strand_start},${cando_strand_end},${strand.dna_sequence},${strand.dna_sequence.length},${strand.color}');
+    buf.writeln('${cando_strand_start},${cando_strand_end},${idt_sequence_null_aware(strand)},${idt_sequence_null_aware(strand).length},${strand.color.toHexColor().toCssString()}');
   }
   return buf.toString();
 }

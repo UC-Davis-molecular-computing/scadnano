@@ -1040,6 +1040,10 @@ debugging, but be warned that it will be very slow to render a large number of D
         ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna))
         ..tooltip = "Export DNA sequences of strands to a file."
         ..display = 'DNA sequences')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.ExportCanDoDNA(export_dna_format: ExportDNAFormat.cando)))
+        ..tooltip = "Export DNA sequences of strands as a CSV for use with CanDo."
+        ..display = 'CanDo DNA Sequences')(),      
       DropdownDivider({'key': 'divider-not-full-design'}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile(whitespace: true)))
@@ -1260,6 +1264,12 @@ However, it may be less stable than the main site.'''
 
   Future<void> export_dna() async {
     List<String> export_options = ExportDNAFormat.values.map((v) => v.toString()).toList();
+    // Delete items from export_options that are empty
+    for (var option in export_options) {
+      if (option == null) {
+        export_options.remove(option);
+      }
+    }
     List<String> sort_options = StrandOrder.values.map((v) => v.toString()).toList();
 
     int idx_include_scaffold = 0;
