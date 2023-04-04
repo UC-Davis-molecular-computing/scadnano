@@ -1,4 +1,5 @@
 import 'package:redux/redux.dart';
+import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 
 import '../app.dart';
 import '../state/strand.dart';
@@ -21,7 +22,8 @@ if (action is actions.ExportCanDoDNA) {
     util.BlobType blob_type = util.BlobType.text;
 
     try {
-      var result = action.export_dna_format.export(strands);
+      var result = action.export_dna_format
+        .export(strands, strand_order: StrandOrder.fromString("5'"), column_major: true);
       // See export comments for why we have this stupid special case
       if (result is Future<List<int>>) {
         result.then((response) {
