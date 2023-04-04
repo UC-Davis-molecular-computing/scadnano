@@ -1,0 +1,25 @@
+{
+  "version": "0.0.1",
+  "grid": "square",
+  "helices": [
+    {"max_bases": 25, "grid_position": [0, 0]},
+    {"max_bases": 25, "grid_position": [0, 1]}
+  ],
+  "strands": [
+    {
+      "color": {"r": 247, "g": 147, "b": 30},
+      "substrands": [
+        {"forward": false, "start": 0, "end": 5},
+        {"helix": 0, "forward": true, "start": 0, "end": 15},
+        {"helix": 0, "forward": false, "start": 5, "end": 15}
+      ]
+    },
+    {
+      "color": {"r": 87, "g": 187, "b": 0},
+      "substrands": [
+        {"helix": 0, "forward": true, "start": 10, "end": 20},
+        {"helix": 0, "forward": false, "start": 10, "end": 20}
+      ]
+    }
+  ]
+}
