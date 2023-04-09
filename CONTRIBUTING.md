@@ -370,7 +370,6 @@ You may also find the [React Developer Tools](https://chrome.google.com/webstore
 and [Redux DevTools](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd?hl=en)
 extensions helpful for debugging and profiling.
 
-
 ### Running Tests
 
 Unit tests are contained in the [test](test/) directory.
@@ -406,6 +405,17 @@ webdev serve --release
 
 (TODO): Add common errors here.
 
+## Running in Docker
+
+This guide will help you run scadnano inside of Docker - this is useful for running in environments where tools like `apt` are not available for maximum ease of development. It can also be used to run scadnano without connection to the internet, but `run-docker.sh` needs to be run at least once with an internet connection before going offline. This is experimental and has only been tested on Linux.
+
+### Installing Docker
+
+If you want to run scadnano using Docker, you first need to have docker installed. If the command `docker run --rm hello-world` does not work, Docker is not installed. You can install Docker using [Docker's guide](https://docs.docker.com/engine/install/) for installing Docker Engine. For Linux users, setting up Docker to not require sudo is a good step - see [Docker's post-install guide.](https://docs.docker.com/engine/install/linux-postinstall/).
+
+### Clone and run using Docker
+
+First, [clone this repository](#cloning) to a directory, then run `./run_docker.sh`. This might take a minute, but eventually, http://localhost:8080 should give you a local version of scadnano! Changes made to the code will apply to the website automatically.
 
 ## General recipe for adding features
 As described above, the use of React and Redux is intended to reduce the number of bugs, by a clean separation of
