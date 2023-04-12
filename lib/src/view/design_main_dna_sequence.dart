@@ -106,6 +106,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     var dy, x, y;
     var text_length = props.geometry.base_width_svg * (domain.visual_length - 0.342);
 
+    //extension, loopout, 
    
     if (domain.forward) {
       //rotation and displacement for forward text
@@ -145,7 +146,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
   }
 
   ReactElement _dna_sequence_on_insertion(Domain domain, int offset, int length) {
-    var subseq = domain.dna_sequence_in(offset, offset);
+    var subseq = domain.dna_sequence_in(offset, offset, reverse : props.display_reverse_DNA_right_side_up && !domain.forward);
     //XXX: path_length appears to return different results depending on the computer (probably resolution??)
     // don't rely on it. This caused Firefox for example to render different on the same version.
 //    num path_length = insertion_path_elt.getTotalLength();
@@ -173,6 +174,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       ..style = style_map);
     return (Dom.text()
       ..key = 'textelt-${util.id_insertion(domain, offset)}'
+      ..dominantBaseline = 'hanging'
       ..dy = dy)(text_path_props(subseq));
   }
 

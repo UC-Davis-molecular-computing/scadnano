@@ -459,7 +459,7 @@ abstract class Domain
   ///  unlike other parts of this API where the right endpoint is exclusive.
   ///  This is to make the notion well-defined when one of the endpoints is on an offset with a
   ///  deletion or insertion.
-  String dna_sequence_in(int offset_low, int offset_high) {
+  String dna_sequence_in(int offset_low, int offset_high, {bool reverse = false}) {
     if (dna_sequence == null) {
       return null;
     }
@@ -491,6 +491,9 @@ abstract class Domain
     }
 
     String subseq = dna_sequence.substring(str_idx_low, str_idx_high + 1);
+    if (reverse) {
+      subseq = subseq.split('').reversed.join();
+    }
     return subseq;
   }
 
