@@ -46,7 +46,6 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
     with PureComponent, TransformByHelixGroup<DesignMainStrandMovingProps> {
   @override
   render() {
-    print("in design mand strand moving component");
     if (props.strand.substrands.length == 0) {
       return null;
     }
