@@ -1,7 +1,7 @@
 import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/reducers/change_loopout_length.dart';
+import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
 import 'package:scadnano/src/state/linker.dart';
 import 'package:scadnano/src/state/potential_crossover.dart';
 import 'package:tuple/tuple.dart';
@@ -122,7 +122,7 @@ BuiltList<Strand> move_linker_reducer(BuiltList<Strand> strands, AppState state,
           : new_strand_connected_intermediate.domains.length - 1;
       var crossover = new_strand_connected.linkers[crossover_idx];
       var convert_crossover_to_loopout_action =
-          actions.ConvertCrossoverToLoopout(crossover, linker.loopout_length, linker.dna_sequence);
+          actions.ConvertCrossoverToLoopout(crossover, linker.loopout_num_bases, linker.dna_sequence);
       new_strand_connected =
           convert_crossover_to_loopout_reducer(new_strand_connected, convert_crossover_to_loopout_action);
     }

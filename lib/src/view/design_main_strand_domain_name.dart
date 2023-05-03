@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:meta/meta.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/substrand.dart';
 
 import '../state/strand.dart';
 import '../state/address.dart';
@@ -38,7 +39,7 @@ mixin DesignMainStrandDomainNamePropsMixin on UiProps {
   Point<num> helix_svg_position;
 
   List<ContextMenuItem> Function(Strand strand,
-      {@required Domain domain,
+      {@required Substrand substrand,
       @required Address address,
       @required ModificationType type}) context_menu_strand;
 }
@@ -98,11 +99,12 @@ class DesignMainStrandDomainNameComponent extends UiComponent2<DesignMainStrandD
     if (!event.shiftKey) {
       event.preventDefault();
       event.stopPropagation();
-      Address address = util.find_closest_address(event, [props.helix], props.helix_groups,
-          props.geometry, {props.helix.idx: props.helix_svg_position}.build());
+      Address address = util.find_closest_address(event, [props.helix], props.helix_groups, props.geometry,
+          {props.helix.idx: props.helix_svg_position}.build());
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
-              items: props.context_menu_strand(props.strand, domain: props.domain, address: address).build(),
+              items:
+                  props.context_menu_strand(props.strand, substrand: props.domain, address: address).build(),
               position: event.page)));
     }
   }

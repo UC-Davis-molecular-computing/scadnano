@@ -295,7 +295,7 @@
         // svg-png-caching
 
         function on_zoom(newZoom) {
-            if (newZoom < 1 && svg_cache_callback) {
+            if (newZoom < zoom_threshold && svg_cache_callback) {
                 svg_cache_callback();
             }
         }

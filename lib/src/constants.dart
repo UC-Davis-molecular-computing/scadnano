@@ -8,11 +8,21 @@ import 'state/grid.dart';
 
 // WARNING: Do not modify line below, except for the version string
 //          (and also add new version string to scadnano_versions_to_link).
-const String CURRENT_VERSION = "0.17.4";
+const String CURRENT_VERSION = "0.17.14";
 const String INITIAL_VERSION = "0.1.0";
 
 // scadnano versions that we deploy so that older versions can be used.
 final scadnano_older_versions_to_link =[
+  "0.17.13",
+  "0.17.12",
+  "0.17.11",
+  "0.17.10",
+  "0.17.9",
+  "0.17.8",
+  "0.17.7",
+  "0.17.6",
+  "0.17.5",
+  "0.17.4",
   // "0.17.3", // accidentally skipped this version
   "0.17.2",
   "0.17.1",
@@ -77,7 +87,7 @@ const default_max_offset = 64;
 final default_geometry = Geometry();
 
 const scadnano_css_stylesheet_name_no_ext = r'scadnano-styles';
-const scadnano_css_stylesheet_name = r'scadnano-styles.css';
+const scadnano_css_stylesheet_name = '${scadnano_css_stylesheet_name_no_ext}.css';
 
 const NUM_DIGITS_PRECISION_POSITION_DISPLAYED = 2;
 
@@ -163,6 +173,10 @@ const default_roll = 0.0;
 const default_pitch = 0.0;
 const default_yaw = 0.0;
 //const default_helix_rotation_anchor = 0;
+
+// for extensions
+const default_display_angle = 35.0;
+const default_display_length = 1.5;
 
 const default_side_pane_width = '8%';
 
@@ -340,6 +354,7 @@ final domain_keys = [
       insertions_key,
       label_key,
       name_key,
+      color_key,
     ] +
     legacy_forward_keys;
 
@@ -349,8 +364,23 @@ const loopout_keys = [
   loopout_key,
   label_key,
   name_key,
+  color_key,
 ];
 
+// Extension keys
+const extension_key = 'extension_num_bases';
+const is_5p_key = 'is_5p';
+const display_length_key = 'display_length';
+const display_angle_key = 'display_angle';
+const extension_keys = [
+  extension_key,
+  is_5p_key,
+  display_length_key,
+  display_angle_key,
+  label_key,
+  name_key,
+  color_key,
+];
 ////////////////////////////////////////////////////
 /// svg-png-caching constants
 
@@ -366,11 +396,11 @@ const int DNA_SEQUENCE_VERTICAL_OFFSET = 50;
 const int DNA_SEQUENCE_HORIZONTAL_OFFSET = 50;
 
 // Zoom threshold used for caching the svg as png.
-const num ZOOM_THRESHOLD = 1;
+const num ZOOM_THRESHOLD = 0.5;
 
 /////////////////////////////////////////////////////////////
 // Backend
-const backend_url = 'https://os-interactive.ie/scadnano-backend/';
+const backend_url = 'https://scadnano-backend.onrender.com/';
 const export_url = backend_url + 'scadnano_to_cadnano_v2';
 const import_url = backend_url + 'cadnano_v2_to_scadnano';
 const autostaple_url = backend_url + 'autostaple';
@@ -383,6 +413,8 @@ const css_selector_strand = 'strand';
 const css_selector_scaffold = 'scaffold';
 const css_selector_staple = 'staple';
 const css_selector_domain = 'domain-line';
+const css_selector_base_pair_line = 'base-pair-line';
+const css_selector_extension = 'extension-line';
 const css_selector_crossover = 'crossover-curve';
 const css_selector_loopout = 'loopout-curve';
 const css_selector_end_5p_strand = 'five-prime-end-first-substrand';
@@ -390,7 +422,7 @@ const css_selector_end_3p_strand = 'three-prime-end-last-substrand';
 const css_selector_end_5p_domain = 'five-prime-end';
 const css_selector_end_3p_domain = 'three-prime-end';
 const css_selector_end_parent_group = 'dna-ends';
-const css_selector_loopout_length = 'loopout-length';
+const css_selector_loopout_extension_length = 'loopout-extension-length';
 
 const css_selector_domain_name = 'domain-name';
 const css_selector_strand_name = 'strand-name';
@@ -398,6 +430,8 @@ const css_selector_domain_name_text = 'domain-name-text';
 const css_selector_strand_name_text = 'strand-name-text';
 const css_selector_loopout_name = 'loopout-name';
 const css_selector_loopout_name_text = 'loopout-name-text';
+const css_selector_extension_name = 'extension-name';
+const css_selector_extension_name_text = 'extension-name-text';
 
 const css_selector_domain_moving = 'domain-line-moving';
 const css_selector_disallowed = 'disallowed';

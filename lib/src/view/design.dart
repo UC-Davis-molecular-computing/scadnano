@@ -15,6 +15,7 @@ import 'package:scadnano/src/middleware/system_clipboard.dart';
 import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
+import 'package:scadnano/src/state/dna_extensions_move.dart';
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:scadnano/src/state/selection_rope.dart';
 import 'package:scadnano/src/view/design_main_arrows.dart';
@@ -206,10 +207,10 @@ class DesignViewComponent {
         }
       }
       // put away strand color picker if click occurred anywhere outside of it
-      if (app.state.ui_state.strand_color_picker_strand != null) {
+      if (app.state.ui_state.color_picker_strand != null) {
         var strand_color_picker_elt = querySelector('#strand-color-picker');
         if (strand_color_picker_elt != null && !strand_color_picker_elt.contains(target)) {
-          app.dispatch(actions.StrandColorPickerHide());
+          app.dispatch(actions.StrandOrSubstrandColorPickerHide());
         }
       }
     });
@@ -293,6 +294,22 @@ class DesignViewComponent {
             int old_offset = moves_store.current_offset;
             if (offset != old_offset) {
               app.dispatch(actions.DNAEndsMoveAdjustOffset(offset: offset));
+            }
+          }
+        }
+        DNAExtensionsMove extensions_move_store = app.store_extensions_move.state;
+        if (extensions_move_store != null) {
+          var group_names = group_names_of_extensions(extensions_move_store);
+          if (group_names.length != 1) {
+            var msg = 'Cannot move or copy DNA extensions unless they are all on the same helix group.\n'
+                'The selected ends occupy the following helix groups: ${group_names?.join(", ")}';
+            window.alert(msg);
+          } else {
+            Point<num> old_point = extensions_move_store.current_point;
+            Point<num> point =
+                util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, true, main_view_svg);
+            if (point != old_point) {
+              app.dispatch(actions.DNAExtensionsMoveAdjustPosition(position: point));
             }
           }
         }
@@ -611,10 +628,10 @@ class DesignViewComponent {
       paste_strands_auto();
     }
 
-    // Ctrl+A for select all
+    // Ctrl+A for select all, Ctrl+Shift+A for current helix group only
     if ((ev.ctrlKey || ev.metaKey) && key == KeyCode.A && edit_mode_is_select_or_rope_select()) {
       ev.preventDefault();
-      app.dispatch(actions.SelectAllSelectable());
+      app.dispatch(actions.SelectAllSelectable(current_helix_group_only: ev.shiftKey));
     }
 
     if (key == EditModeChoice.pencil.key_code()) {
@@ -824,12 +841,16 @@ class DesignViewComponent {
                   ..store = app.store_potential_crossover
                   ..context = app.context_potential_crossover)(
                   (ReduxProvider()
-                    ..store = app.store_dna_ends_move
-                    ..context = app.context_dna_ends_move)(
+                    ..store = app.store_extensions_move
+                    ..context = app.context_extensions_move)(
                     (ReduxProvider()
-                      ..store = app.store_helix_group_move
-                      ..context = app.context_helix_group_move)(
-                      ConnectedDesignMain()(),
+                      ..store = app.store_dna_ends_move
+                      ..context = app.context_dna_ends_move)(
+                      (ReduxProvider()
+                        ..store = app.store_helix_group_move
+                        ..context = app.context_helix_group_move)(
+                        ConnectedDesignMain()(),
+                      ),
                     ),
                   ),
                 ),
@@ -903,7 +924,7 @@ class DesignViewComponent {
       react_dom.render(
           over_react_components.ErrorBoundary()(
             (ReduxProvider()..store = app.store)(
-              ConnectedStrandColorPicker()(),
+              ConnectedStrandOrSubstrandColorPicker()(),
             ),
           ),
           this.strand_color_picker_container);
@@ -1001,6 +1022,9 @@ group_names_of_domains(DomainsMove domains_move) =>
 
 group_names_of_ends(DNAEndsMove ends_move) => app.state.design.group_names_of_ends(ends_move.ends_moving);
 
+group_names_of_extensions(DNAExtensionsMove extensions_move) =>
+    app.state.design.group_names_of_ends(extensions_move.ends_moving);
+
 main_view_pointer_up(MouseEvent event) {
 //  util.set_allow_pan(true);
   if (app.state.ui_state.slice_bar_is_moving) {
@@ -1012,6 +1036,14 @@ main_view_pointer_up(MouseEvent event) {
     app.dispatch(actions.DNAEndsMoveStop());
     if (dna_ends_move.is_nontrivial) {
       app.dispatch(actions.DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
+    }
+  }
+
+  DNAExtensionsMove extensions_move = app.store_extensions_move.state;
+  if (extensions_move != null) {
+    app.dispatch(actions.DNAExtensionsMoveStop());
+    if (extensions_move.is_nontrivial) {
+      app.dispatch(actions.DNAExtensionsMoveCommit(dna_extensions_move: extensions_move));
     }
   }
 

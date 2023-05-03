@@ -6,6 +6,7 @@ import 'dart:math';
 import 'dart:convert';
 import 'dart:html';
 
+import 'package:scadnano/src/json_serializable.dart';
 import 'package:scadnano/src/state/group.dart';
 import 'package:test/test.dart';
 import 'package:built_collection/built_collection.dart';
@@ -4519,6 +4520,76 @@ main() {
     });
   });
 
+  group('Select all in helix group test', () {
+
+    /* 0       8
+       |-------|
+
+    0  [------->    default_group
+
+    1  [------->    Group 2
+    */
+    test('SelectWholeStrandsInOneHelixGroup', () {
+      var helices = [
+        Helix(idx: 0, max_offset: 100, grid: Grid.square),
+        Helix(idx: 1, max_offset: 100, grid: Grid.square, group: "Group 2"),
+      ];
+      var design = Design(helices: helices, grid: Grid.square);
+
+      design = design
+          .draw_strand(0, 0)
+          .move(9)
+          .commit()
+          .draw_strand(1, 0)
+          .move(9)
+          .commit();
+      var default_group_strand = design.strands.first;
+      var action = SelectAllSelectable(current_helix_group_only: true);
+      var state = app_state_from_design(design);
+      var selectables_store =
+          select_all_selectables_reducer(state.ui_state.selectables_store, state, action);
+      expect(selectables_store.selected_strands.length, 1);
+      expect(selectables_store.selected_strands.first, default_group_strand);
+    });
+
+    /* 0       8
+       |-------|
+
+    0  [-------> [-------\    default_group
+                         |
+                         |
+    1  [------->         |    Group 2
+                 <-------/
+    */
+    test('SelectWholeStrandsInTwoHelixGroups', () {
+      var helices = [
+        Helix(idx: 0, max_offset: 100, grid: Grid.square),
+        Helix(idx: 1, max_offset: 100, grid: Grid.square, group: "Group 2"),
+      ];
+      var design = Design(helices: helices, grid: Grid.square);
+
+      design = design
+          .draw_strand(0, 0)
+          .move(9)
+          .commit()
+          .draw_strand(1, 0)
+          .move(9)
+          .commit()
+          .draw_strand(0, 10)
+          .move(9)
+          .cross(1)
+          .move(-9)
+          .commit();
+      var default_group_strand = design.strands.first;
+      var action = SelectAllSelectable(current_helix_group_only: true);
+      var state = app_state_from_design(design);
+      var selectables_store =
+          select_all_selectables_reducer(state.ui_state.selectables_store, state, action);
+      expect(selectables_store.selected_strands.length, 1);
+      expect(selectables_store.selected_strands.first, default_group_strand);
+    });
+  });
+
   group('Strands move test: ', () {
     //   0                  16                       32
     //
@@ -5553,12 +5624,12 @@ main() {
 
       Action action = ExportSvg(type: ExportSvgType.main);
 
-      AppState new_state = app_state_reducer(old_state, SetDisablePngCacheUntilActionCompletes(action));
+      AppState new_state = app_state_reducer(old_state, SetExportSvgActionDelayedForPngCache(action));
 
-      expect(new_state.ui_state.disable_png_cache_until_action_completes, action);
+      expect(new_state.ui_state.export_svg_action_delayed_for_png_cache, action);
 
-      new_state = app_state_reducer(new_state, SetDisablePngCacheUntilActionCompletes(null));
-      expect(new_state.ui_state.disable_png_cache_until_action_completes, null);
+      new_state = app_state_reducer(new_state, SetExportSvgActionDelayedForPngCache(null));
+      expect(new_state.ui_state.export_svg_action_delayed_for_png_cache, null);
     });
   });
 
@@ -7143,19 +7214,19 @@ main() {
     test('StrandColorPickerShow', () {
       AppState initial_state = app_state_from_design(two_helices_design);
       Strand strand = two_helices_design.strands.first;
-      AppState final_state = app_state_reducer(initial_state, StrandColorPickerShow(strand: strand));
+      AppState final_state = app_state_reducer(initial_state, StrandOrSubstrandColorPickerShow(strand: strand));
 
-      expect(final_state.ui_state.strand_color_picker_strand, strand);
+      expect(final_state.ui_state.color_picker_strand, strand);
     });
 
     test('StrandColorPickerHide', () {
       Strand strand = two_helices_design.strands.first;
       AppState initial_state = app_state_from_design(two_helices_design)
-          .rebuild((b) => b..ui_state.strand_color_picker_strand = strand.toBuilder());
+          .rebuild((b) => b..ui_state.color_picker_strand = strand.toBuilder());
 
-      AppState final_state = app_state_reducer(initial_state, StrandColorPickerHide());
+      AppState final_state = app_state_reducer(initial_state, StrandOrSubstrandColorPickerHide());
 
-      expect(final_state.ui_state.strand_color_picker_strand, null);
+      expect(final_state.ui_state.color_picker_strand, null);
     });
   });
 

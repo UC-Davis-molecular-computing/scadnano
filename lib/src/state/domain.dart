@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+import 'package:color/color.dart';
 import 'package:tuple/tuple.dart';
 import 'package:built_collection/built_collection.dart';
 
@@ -74,9 +75,10 @@ abstract class Domain
       int end,
       Iterable<int> deletions,
       Iterable<Insertion> insertions,
-      String dna_sequence,
       String strand_id,
-      bool is_scaffold,
+      String dna_sequence = null,
+      Color color = null,
+      bool is_scaffold = false,
       String name = null,
       Object label = null,
       bool is_first = false,
@@ -97,6 +99,7 @@ abstract class Domain
       ..name = name
       ..label = label
       ..dna_sequence = dna_sequence
+      ..color = color
       ..strand_id = strand_id
       ..is_first = is_first
       ..is_last = is_last
@@ -134,6 +137,9 @@ abstract class Domain
   String get dna_sequence;
 
   @nullable
+  Color get color;
+
+  @nullable
   String get strand_id;
 
   @memoized
@@ -154,6 +160,7 @@ abstract class Domain
       is_scaffold: is_scaffold,
       substrand_is_first: is_first,
       substrand_is_last: is_last,
+      is_on_extension: false,
       substrand_id: id);
 
   @memoized
@@ -164,6 +171,7 @@ abstract class Domain
       is_scaffold: is_scaffold,
       substrand_is_first: is_first,
       substrand_is_last: is_last,
+      is_on_extension: false,
       substrand_id: id);
 
   @memoized
@@ -187,6 +195,8 @@ abstract class Domain
   bool is_domain() => true;
 
   bool is_loopout() => false;
+
+  bool is_extension() => false;
 
   DNAEnd get dnaend_5p => forward ? dnaend_start : dnaend_end;
 
@@ -226,7 +236,9 @@ abstract class Domain
           .insertions
           .map((insertion) => insertion.to_json_serializable(suppress_indent: suppress_indent)));
     }
-
+    if (this.color != null) {
+      json_map[constants.color_key] = color.toHexColor().toCssString();
+    }
     if (label != null) {
       json_map[constants.label_key] = label;
     }
@@ -237,7 +249,7 @@ abstract class Domain
   }
 
   static DomainBuilder from_json(Map<String, dynamic> json_map) {
-    var class_name = 'Substrand';
+    var class_name = 'Domain';
     var forward = util.mandatory_field(json_map, constants.forward_key, class_name,
         legacy_keys: constants.legacy_forward_keys);
     var helix = util.mandatory_field(json_map, constants.helix_idx_key, class_name);
@@ -245,6 +257,10 @@ abstract class Domain
     var end = util.mandatory_field(json_map, constants.end_key, class_name);
     var deletions = List<int>.from(util.optional_field(json_map, constants.deletions_key, []));
     var insertions = parse_json_insertions(util.optional_field(json_map, constants.insertions_key, []));
+
+    Color color = json_map.containsKey(constants.color_key)
+        ? util.parse_json_color(json_map[constants.color_key])
+        : null;
 
     String name = util.optional_field_with_null_default(json_map, constants.name_key);
     Object label = util.optional_field_with_null_default(json_map, constants.label_key);
@@ -303,6 +319,7 @@ abstract class Domain
       ..end = end
       ..deletions.replace(deletions)
       ..insertions.replace(insertions)
+      ..color = color
       ..name = name
       ..label = label
       ..unused_fields = unused_fields;

@@ -30,6 +30,10 @@ abstract class AppUIStateStorables
 
   bool get show_strand_names;
 
+  bool get show_base_pair_lines;
+
+  bool get show_base_pair_lines_with_mismatches;
+
   num get domain_name_font_size;
 
   num get strand_name_font_size;
@@ -90,7 +94,7 @@ abstract class AppUIStateStorables
 
   bool get show_helices_axis_arrows;
 
-  bool get show_loopout_length;
+  bool get show_loopout_extension_length;
 
   bool get default_crossover_type_scaffold_for_setting_helix_rolls;
 
@@ -105,6 +109,8 @@ abstract class AppUIStateStorables
   @nullable
   int get slice_bar_offset;
 
+  bool get disable_png_caching_dna_sequences;
+
   static void _initializeBuilder(AppUIStateStorablesBuilder b) {
     // This ensures that even if these keys are not in localStorage (e.g., due to upgrading),
     // then they will be populated with a default value instead of raising an exception.
@@ -115,6 +121,8 @@ abstract class AppUIStateStorables
     b.show_dna = false;
     b.show_domain_names = false;
     b.show_strand_names = false;
+    b.show_base_pair_lines = false;
+    b.show_base_pair_lines_with_mismatches = false;
     b.domain_name_font_size = constants.default_domain_name_font_size;
     b.strand_name_font_size = constants.default_strand_name_font_size;
     b.show_modifications = true;
@@ -142,12 +150,13 @@ abstract class AppUIStateStorables
     b.show_edit_mode_menu = true;
     b.show_grid_coordinates_side_view = false;
     b.show_helices_axis_arrows = true;
-    b.show_loopout_length = false;
+    b.show_loopout_extension_length = false;
     b.default_crossover_type_scaffold_for_setting_helix_rolls = true;
     b.default_crossover_type_staple_for_setting_helix_rolls = true;
     b.displayed_group_name = constants.default_group_name;
     b.show_slice_bar = false;
     b.slice_bar_offset = null;
+    b.disable_png_caching_dna_sequences = false;
     b.local_storage_design_choice = LocalStorageDesignChoice().toBuilder();
     b.clear_helix_selection_when_loading_new_design = false;
     b.show_mouseover_data = false;

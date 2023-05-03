@@ -7,7 +7,7 @@ import 'package:built_value/built_value.dart';
 import 'package:scadnano/src/state/design_side_rotation_data.dart';
 import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/copy_info.dart';
-import '../actions/actions.dart';
+import '../actions/actions.dart' as actions;
 import '../state/local_storage_design_choice.dart';
 
 import 'app_ui_state_storables.dart';
@@ -24,6 +24,7 @@ import 'select_mode_state.dart';
 import 'edit_mode.dart';
 import 'selectable.dart';
 import 'strand.dart';
+import 'substrand.dart';
 import 'strand_creation.dart';
 import 'strands_move.dart';
 import 'selection_rope.dart';
@@ -86,7 +87,10 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   Dialog get dialog;
 
   @nullable // null indicates that strand color picker is not being used
-  Strand get strand_color_picker_strand;
+  Strand get color_picker_strand;
+
+  @nullable // null indicates that strand color picker is not being used
+  Substrand get color_picker_substrand;
 
   @nullable
   StrandCreation get strand_creation;
@@ -115,7 +119,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   /// Otherwise, disable png-caching (if a png would otherwise be used)
   /// until action is dispatched.
   @nullable
-  Action get disable_png_cache_until_action_completes;
+  actions.ExportSvg get export_svg_action_delayed_for_png_cache;
 
   /// PNG image should be used (if available) if false.
   bool get is_zoom_above_threshold;
@@ -153,6 +157,10 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get show_domain_names => storables.show_domain_names;
 
   bool get show_strand_names => storables.show_strand_names;
+
+  bool get show_base_pair_lines => storables.show_base_pair_lines;
+
+  bool get show_base_pair_lines_with_mismatches => storables.show_base_pair_lines_with_mismatches;
 
   num get domain_name_font_size => storables.domain_name_font_size;
 
@@ -196,7 +204,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get show_helices_axis_arrows => storables.show_helices_axis_arrows;
 
-  bool get show_loopout_length => storables.show_loopout_length;
+  bool get show_loopout_extension_length => storables.show_loopout_extension_length;
 
   bool get default_crossover_type_scaffold_for_setting_helix_rolls =>
       storables.default_crossover_type_scaffold_for_setting_helix_rolls;
@@ -214,6 +222,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get show_slice_bar => storables.show_slice_bar;
 
   int get slice_bar_offset => storables.slice_bar_offset;
+
+  bool get disable_png_caching_dna_sequences => storables.disable_png_caching_dna_sequences;
 
   bool get show_mouseover_data => storables.show_mouseover_data;
 
@@ -237,7 +247,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
     b.strands_move = null;
     b.context_menu = null;
     b.dialog = null;
-    b.strand_color_picker_strand = null;
+    b.color_picker_strand = null;
+    b.color_picker_substrand = null;
     b.strand_creation = null;
     b.helix_change_apply_to_all = true;
     b.example_designs = DEFAULT_example_designs_builder;
@@ -245,7 +256,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
     b.dna_sequence_png_uri = null;
     b.dna_sequence_png_horizontal_offset = 0;
     b.dna_sequence_png_vertical_offset = 0;
-    b.disable_png_cache_until_action_completes = null;
+    b.export_svg_action_delayed_for_png_cache = null;
     b.is_zoom_above_threshold = false;
     b.storables.replace(DEFAULT_AppUIStateStorable);
   }

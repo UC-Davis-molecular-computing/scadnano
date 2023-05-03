@@ -18,6 +18,7 @@ class SelectModeChoice extends EnumClass {
   static const SelectModeChoice domain = _$domain;
   static const SelectModeChoice crossover = _$crossover;
   static const SelectModeChoice loopout = _$loopout;
+  static const SelectModeChoice extension_ = _$extension_; // extension is reserved keyword
   static const SelectModeChoice strand = _$strand;
   static const SelectModeChoice insertion = _$insertion;
   static const SelectModeChoice deletion = _$deletion;
@@ -67,6 +68,8 @@ class SelectModeChoice extends EnumClass {
         return 'images/select_mode_icons/crossover.svg';
       case loopout:
         return 'images/select_mode_icons/loopout.svg';
+      case extension_:
+        return 'images/select_mode_icons/extension.svg';
       case deletion:
         return 'images/select_mode_icons/del.svg';
       case insertion:
@@ -189,6 +192,15 @@ picking "convert to loopout" (or
 "change loopout length" if a loopout;
 changing to length 0 converts it to a
 crossover).''';
+      case extension_:
+        return '''\
+extension: An extension is a single-stranded
+portion of a strand that is not on a
+Helix (like a domain) and does not connect
+two domains. It is like a loopout but on
+the end of a strand, useful for modeling
+toeholds for DNA strand displacement, 
+for instance.''';
       case deletion:
         return '''deletion: Deletions can be selected and
 deleted in batch by pressing the Delete
@@ -252,6 +264,8 @@ strand, 5' domain, 3' domain.''';
         return constants.css_selector_crossover;
       case loopout:
         return constants.css_selector_loopout;
+      case extension_:
+        return constants.css_selector_extension;
       case deletion:
         return constants.css_selector_deletion;
       case insertion:
@@ -284,6 +298,7 @@ strand, 5' domain, 3' domain.''';
     end_3p_domain,
     crossover,
     loopout,
+    extension_,
     insertion,
     deletion,
     modification,
