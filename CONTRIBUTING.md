@@ -240,23 +240,23 @@ git checkout dev
 
 ### Installing Dart
 
-This project requires using Dart version **2.13.4**, not the latest version. Click on a dropdown below for installation instructions for your operating system.
+This project requires using Dart version **2.13**, not the latest version. Click on a dropdown below for installation instructions for your operating system.
 
 <!--TODO: Find a way to use code blocks with syntax highlighting inside <details>-->
 
 <details><summary><strong>Windows</strong></summary>
 First, install <a href="https://chocolatey.org/install">Chocolatey</a> if you haven't already. If <code>choco help</code> shows a help menu for using Chocolatey, then you've set it up correctly.
 
-Then, install Dart 2.13.4:
+Then, install Dart 2.13:
 
 <pre>
-choco install dart-sdk --version 2.13.4
+choco install dart-sdk --version 2.13
 </pre>
 
 To stop Chocolatey from automatically updating Dart to the latest version, pin it:
 
 <pre>
-choco pin --name="'dart-sdk'" --version="'2.13.4'"
+choco pin --name="'dart-sdk'" --version="'2.13'"
 </pre>
 
 </details>
@@ -264,16 +264,16 @@ choco pin --name="'dart-sdk'" --version="'2.13.4'"
 <details><summary><strong>macOS</strong></summary>
 First, install <a href="https://brew.sh/">Homebrew</a> if you haven't already. If <code>brew -v</code> shows some version numbers, then you've set it up correctly.
 
-Then, install Dart 2.13.4:
+Then, install Dart 2.13:
 
 <pre>
-brew install dart@2.13.4
+brew install dart@2.13
 </pre>
 
 To stop Homebrew from automatically updating Dart to the latest version, pin it:
 
 <pre>
-brew pin dart@2.13.4
+brew pin dart@2.13
 </pre>
 
 If running `dart` in a terminal now does not work, you may need to follow <a href="https://docs.brew.sh/FAQ#my-mac-apps-dont-find-homebrew-utilities">these instructions</a>.
@@ -289,17 +289,17 @@ wget -qO- https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo gpg --dea
 echo 'deb [signed-by=/usr/share/keyrings/dart.gpg arch=amd64] https://storage.googleapis.com/download.dartlang.org/linux/debian stable main' | sudo tee /etc/apt/sources.list.d/dart_stable.list
 </pre>
 
-Then, install Dart 2.13.4:
+Then, install Dart 2.13:
 
 <pre>
 sudo apt-get update
-sudo apt-get install dart=2.13.4-1
+sudo apt-get install dart=2.13
 </pre>
 
 To stop apt from automatically updating Dart to the latest version, hold it:
 
 <pre>
-sudo apt-mark hold dart=2.13.4-1
+sudo apt-mark hold dart=2.13
 </pre>
 
 </details>
