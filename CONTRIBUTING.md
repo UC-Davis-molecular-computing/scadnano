@@ -29,7 +29,7 @@ or post questions as issues on the [issues page](https://github.com/UC-Davis-mol
     - [Troubleshooting](#troubleshooting)
   - [General recipe for adding features](#general-recipe-for-adding-features)
   - [Pushing to the repository dev branch and documenting changes (done on all updates)](#pushing-to-the-repository-dev-branch-and-documenting-changes-done-on-all-updates)
-  - [Pushing to the repository master branch and documenting changes (done less frequently)](#pushing-to-the-repository-master-branch-and-documenting-changes-done-less-frequently)
+  - [Pushing to the repository main branch and documenting changes (done less frequently)](#pushing-to-the-repository-main-branch-and-documenting-changes-done-less-frequently)
   - [Styleguide](#styleguide)
 
 ## What should I know before I get started?
@@ -197,7 +197,7 @@ We get into more detail below.
 
    The key idea is that the code that detects the user interaction, or other asynchronous event, does not simply reach into the state and change it. (Indeed, this is not possible, since the state is immutable.) Instead, this is where Redux comes in.
 
-   Redux uses the [Command pattern](https://en.wikipedia.org/wiki/Command_pattern) to make changes to the state. The event handling code, rather than modifying the state, creates an _Action_ object describing the change that is supposed to happen. This object is given to Redux, by calling a method called `dispatch` on the Redux store, which stores the state. The method `dispatch` in turn calls the _reducer_ implementing the update logic. The reducer is a function that takes as input the old state and the action, and returns the new state. Redux then substitutes this new state object for the old one, and then the Redux (through the React/Redux bindings, primarily through a function called [connect](https://github.com/Workiva/over_react/blob/master/doc/over_react_redux_documentation.md#connect)) goes about conferring with React about which parts of the view now need to be updated. This part is the most difficult to implement correctly in a GUI program, and the fact that it is handled automatically by the React/Redux bindings is our main motivation for using React and Redux.
+   Redux uses the [Command pattern](https://en.wikipedia.org/wiki/Command_pattern) to make changes to the state. The event handling code, rather than modifying the state, creates an _Action_ object describing the change that is supposed to happen. This object is given to Redux, by calling a method called `dispatch` on the Redux store, which stores the state. The method `dispatch` in turn calls the _reducer_ implementing the update logic. The reducer is a function that takes as input the old state and the action, and returns the new state. Redux then substitutes this new state object for the old one, and then the Redux (through the React/Redux bindings, primarily through a function called [connect](https://github.com/Workiva/over_react/blob/main/doc/over_react_redux_documentation.md#connect)) goes about conferring with React about which parts of the view now need to be updated. This part is the most difficult to implement correctly in a GUI program, and the fact that it is handled automatically by the React/Redux bindings is our main motivation for using React and Redux.
 
    Actions, like the objects of the state, are themselves immutable instances of built_value.
 
@@ -389,7 +389,7 @@ unit tests is an [ongoing issue](https://github.com/UC-Davis-molecular-computing
 
 Building isn't necessary for the most part since the repository
 has a [Github Action](https://github.com/UC-Davis-molecular-computing/scadnano/actions?query=workflow%3A%22github+pages%22) that automatically builds and deploys changes
-in the master branch.
+in the main branch.
 
 Nevertheless, you may find it useful to build with the production
 compiler `dart2js` for profiling purposes or debugging some
@@ -582,7 +582,7 @@ For any more significant change that is made (e.g., closing an issue, adding a n
 
 1. If there is not already a GitHub issue describing the desired change, make one. Make sure that its title is a self-contained description, and that it describes the change we would like to make to the software. For example, *"problem with loading gridless design"* is a bad title. A better title is *"fix problem where loading gridless design with negative x coordinates throws exception"*.
 
-2. Make a new branch specifically for the issue. Base this branch off of `dev` (**WARNING**: in GitHub desktop, the default is to base it off of `master`, so switch that). The title of the issue (with appropriate hyphenation) is a good name for the branch. (In GitHub Desktop, if you paste the title of the issue, it automatically adds the hyphens.) A good branch name is simply the issue title, preceded by the issue number, e.g., "issue-101-fix-problem-where-loading-gridless-design-with-negative-x-coordinates-throws-exception", although abbreviating the issue title is good if it is long, e.g., "issue-101-gridless-design-negative-x-coordinates".
+2. Make a new branch specifically for the issue. Base this branch off of `dev` (**WARNING**: in GitHub desktop, the default is to base it off of `main`, so switch that). The title of the issue (with appropriate hyphenation) is a good name for the branch. (In GitHub Desktop, if you paste the title of the issue, it automatically adds the hyphens.) A good branch name is simply the issue title, preceded by the issue number, e.g., "issue-101-fix-problem-where-loading-gridless-design-with-negative-x-coordinates-throws-exception", although abbreviating the issue title is good if it is long, e.g., "issue-101-gridless-design-negative-x-coordinates".
 
 3. If it is about fixing a bug, *first* add tests to reproduce the bug before working on fixing it. (This is so-called [test-driven development](https://www.google.com/search?q=test-driven+development))
 
@@ -594,7 +594,7 @@ For any more significant change that is made (e.g., closing an issue, adding a n
 
 7. Commit the changes. In the commit message, reference the issue using the phrase "fixes #123" (for bug fixes) or "closes #123" (for new features) (see [here](https://docs.github.com/en/enterprise/2.16/user/github/managing-your-work-on-github/closing-issues-using-keywords)). Also, in the commit message, describe the issue that was fixed (one easy way is to copy the title of the issue); this message will show up in automatically generated release notes, so this is part of the official documentation of what changed.
 
-8. Create a pull request (PR). **WARNING:** by default, it will want to merge into the `master` branch. Change the destination branch to `dev`. Fill in the automatically provided template.
+8. Create a pull request (PR). **WARNING:** by default, it will want to merge into the `main` branch. Change the destination branch to `dev`. Fill in the automatically provided template.
 
 9. Wait for all checks to complete (see next section), and then merge the changes from the new branch into `dev`. This will typically require someone else to review the code first and possibly request changes.
 
@@ -602,11 +602,11 @@ For any more significant change that is made (e.g., closing an issue, adding a n
 
 11. Locally, remember to switch back to the `dev` branch and pull it. (Although you added those changes locally, they revert back once you switch to your local `dev` branch, which needs to be synced with the remote repo for you to see the changes that were just merged from the now-deleted temporary branch.)
 
-## Pushing to the repository master branch and documenting changes (done less frequently)
+## Pushing to the repository main branch and documenting changes (done less frequently)
 
-Less frequently, pull requests (abbreviated PR) can be made from `dev` to `master`, but make sure that `dev` is working before merging to `master` as all changes to `master` are automatically built and deployed to https://scadnano.org.
+Less frequently, pull requests (abbreviated PR) can be made from `dev` to `main`, but make sure that `dev` is working before merging to `main` as all changes to `main` are automatically built and deployed to https://scadnano.org.
 
-**WARNING:** Always wait for the checks to complete. This is important 1) to ensure that unit tests pass, and 2) to ensure that the deployment to github pages on the dev branch does not get clobbered by the deployment on the master branch. Both deploy to the gh-pages branch, so we never want two of these actions running at once. They will look like this when incomplete:
+**WARNING:** Always wait for the checks to complete. This is important 1) to ensure that unit tests pass, and 2) to ensure that the deployment to github pages on the dev branch does not get clobbered by the deployment on the main branch. Both deploy to the gh-pages branch, so we never want two of these actions running at once. They will look like this when incomplete:
 
 ![](images/github-CI-checks-incomplete.png)
 
@@ -614,7 +614,7 @@ and like this when complete:
 
 ![](images/github-CI-checks-complete.png)
 
-We have an automated release system (through a GitHub action) that automatically creates release notes when changes are merged into the master branch.
+We have an automated release system (through a GitHub action) that automatically creates release notes when changes are merged into the main branch.
 
 Although the GitHub web interface abbreviates long commit messages, the full commit message is included for each commit in a PR.
 
@@ -633,8 +633,8 @@ So the steps are:
 1. If necessary, follow the instructions above to merge changes from a temporary branch to the `dev` branch. There will typically be several of these. Despite GitHub's suggestions to keep commit messages short and put longer text in descriptions, because only the commit message is included in the release notes, it's okay to put more detail in the message (but very long stuff should go in the description, or possibly documentation such as the README.md file).
 
     One of the changes committed should change the version number. We follow [semantic versioning](https://semver.org/). This is a string of the form `"MAJOR.MINOR.PATCH"`, e.g., `"0.9.3"`
-    - For the web interface repo scadnano, this is located at the top of the file https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/lib/src/constants.dart
-    - For the Python library repo scadnano-python-package, this is located in two places: the bottom of the file https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/scadnano/_version.py (as `__version__ = "0.9.3"` or something similar) and the near the top of the file https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/scadnano/scadnano.py (as `__version__ = "0.9.3"` or something similar). This latter one is only there for users who do not install from PyPI, and who simply download the file scadnano.py to put it in a directory with their script).
+    - For the web interface repo scadnano, this is located at the top of the file https://github.com/UC-Davis-molecular-computing/scadnano/blob/main/lib/src/constants.dart
+    - For the Python library repo scadnano-python-package, this is located in two places: the bottom of the file https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/main/scadnano/_version.py (as `__version__ = "0.9.3"` or something similar) and the near the top of the file https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/main/scadnano/scadnano.py (as `__version__ = "0.9.3"` or something similar). This latter one is only there for users who do not install from PyPI, and who simply download the file scadnano.py to put it in a directory with their script).
 
     The PATCH version numbers are not always synced between the two repos, but, they should stay synced on MAJOR and MINOR versions. **Note:** right now this isn't quite true since MINOR versions deal with backwards-compatible feature additions, and some features are supported on one but not the other; e.g., modifications can be made in the Python package but not the web interface, and calculating helix rolls/positions from crossovers can be done in the web interface but not the Python package. But post-version-1.0.0, the major and minor versions of the  should be enforced.
 
@@ -642,13 +642,13 @@ So the steps are:
 
 4. In the Python repo, ensure that the documentation is generated without errors. From the subfolder `doc`, run the command `make html`, ensure there are no errors, and inspect the documentation it generates in the folder `build`.
 
-5. Create a PR to merge changes from dev into master.
+5. Create a PR to merge changes from dev into main.
 
 6. One the PR is reviewed and approved, do the merge.
 
 7. Once the PR changes are merged, a release will be automatically created here: https://github.com/UC-Davis-molecular-computing/scadnano/releases or https://github.com/UC-Davis-molecular-computing/scadnano-python-package/releases. It will have a title that is a placerholder, which is a reminder to change its title and tag. Each commit will be documented, with the commit message (but not description) included in the release notes.
 
-8. Change *both* the title *and* tag to the version number with a `v` prepended, e.g., `v0.9.3`. It is imperative to change the tag before the next merge into master, or else the release (which defaults to the tag `latest`) will be overwritten.
+8. Change *both* the title *and* tag to the version number with a `v` prepended, e.g., `v0.9.3`. It is imperative to change the tag before the next merge into main, or else the release (which defaults to the tag `latest`) will be overwritten.
 
 
 
