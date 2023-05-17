@@ -602,6 +602,7 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
       view_menu_helices(),
       view_menu_display_major_ticks_options(),
       view_menu_base_pairs(),
+      view_menu_dna(),
       DropdownDivider({'key': 'divider-major-tick-widths'}),
       ...view_menu_zoom_speed(),
       DropdownDivider({'key': 'divider-zoom_speed'}),
@@ -906,6 +907,37 @@ only shown between pairs of complementary bases.'''
     ]);
   }
 
+  ReactElement view_menu_dna() {
+    return (
+      MenuDropdownRight()
+      ..title = 'DNA'
+      ..id = 'view_menu_dna'
+      ..key = 'view_menu_dna-dropdown'
+      ..className = 'submenu_item')([
+        (MenuBoolean()
+        ..value = props.show_dna
+        ..display = 'DNA sequences'
+        ..tooltip = '''\
+Show DNA sequences that have been assigned to strands. In a large design, this
+can slow down the performance of panning and zooming navigation, so uncheck it
+to speed up navigation.'''
+        ..onChange = ((_) => props.dispatch(actions.ShowDNASet(!props.show_dna)))
+        ..key = 'show-dna-sequences')() ,
+
+        (MenuBoolean()
+          ..value = props.display_reverse_DNA_right_side_up
+          ..display = 'Display reverse DNA right-side up'
+          ..tooltip = '''\
+  Displays reverse DNA right-side up'''
+          ..name = 'display-reverse-DNA-right-side-up'
+          ..hide = !props.show_dna
+          ..onChange = (_) {
+            props.dispatch(actions.DisplayReverseDNARightSideUpSet(!props.display_reverse_DNA_right_side_up));
+          }
+          ..key = 'display-reverse-DNA-right-side-up') ()
+    ]);
+  }
+
   List<ReactElement> view_menu_zoom_speed() {
     return [
       (MenuNumber()
@@ -921,15 +953,6 @@ only shown between pairs of complementary bases.'''
 
   List<ReactElement> view_menu_misc() {
     return [
-      (MenuBoolean()
-        ..value = props.show_dna
-        ..display = 'DNA sequences'
-        ..tooltip = '''\
-Show DNA sequences that have been assigned to strands. In a large design, this
-can slow down the performance of panning and zooming navigation, so uncheck it
-to speed up navigation.'''
-        ..onChange = ((_) => props.dispatch(actions.ShowDNASet(!props.show_dna)))
-        ..key = 'show-dna-sequences')(),
       (MenuBoolean()
         ..value = props.invert_y
         ..display = 'Invert y-axis'
@@ -1019,16 +1042,7 @@ debugging, but be warned that it will be very slow to render a large number of D
         }
         ..key = 'disable-png-caching-dna-sequences')(),
 
-        (MenuBoolean()
-        ..value = props.display_reverse_DNA_right_side_up
-        ..display = 'Display reverse DNA right-side up'
-        ..tooltip = '''\
-Displays reverse DNA right-side up'''
-        ..name = 'display-reverse-DNA-right-side-up'
-        ..onChange = (_) {
-          props.dispatch(actions.DisplayReverseDNARightSideUpSet(!props.display_reverse_DNA_right_side_up));
-        }
-        ..key = 'display-reverse-DNA-right-side-up') ()
+        
     ];
   }
 
