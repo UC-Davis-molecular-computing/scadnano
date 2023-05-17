@@ -74,6 +74,7 @@ mixin DesignMainStrandPropsMixin on UiProps {
   bool show_modifications;
   bool show_domain_names;
   bool show_strand_names;
+  bool display_reverse_DNA_right_side_up;
   num domain_name_font_size;
   num strand_name_font_size;
   num modification_font_size;
@@ -271,6 +272,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
             ..color = props.strand.color
             ..transform = transform_of_helix(domain.helix)
             ..svg_position_y = props.helix_idx_to_svg_position_map[helix.idx].y
+            ..display_reverse_DNA_right_side_up = props.display_reverse_DNA_right_side_up
             ..key = util.id_insertion(domain, selectable_insertion.insertion.offset))());
         }
       }

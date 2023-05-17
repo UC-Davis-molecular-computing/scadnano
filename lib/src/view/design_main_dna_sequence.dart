@@ -172,9 +172,10 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       ..xlinkHref = '#${util.id_insertion(domain, offset)}'
       ..startOffset = start_offset
       ..style = style_map);
+      
     return (Dom.text()
       ..key = 'textelt-${util.id_insertion(domain, offset)}'
-      ..dominantBaseline = 'hanging'
+      
       ..dy = dy)(text_path_props(subseq));
   }
 
