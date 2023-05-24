@@ -1764,12 +1764,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   bool overlap(Domain domain, int offset, int start) {
-    print("here " + offset.toString());
-    print("domain1: " + start.toString() + "   " + offset.toString());
-    print("domain2: " + domain.start.toString() + "   " + domain.end.toString());
-
-    int overlap_start = max(domain.start, start);
-    int overlap_end = min(domain.end, offset);
+    int overlap_start = max(min(domain.start, domain.end), min(start, offset));
+    int overlap_end = min(max(domain.start, domain.end), max(start, offset));
     if (overlap_start >= overlap_end) {
       return false;
     }
