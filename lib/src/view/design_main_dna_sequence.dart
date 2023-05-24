@@ -146,7 +146,10 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
   }
 
   ReactElement _dna_sequence_on_insertion(Domain domain, int offset, int length) {
-    var subseq = domain.dna_sequence_in(offset, offset, reverse : props.display_reverse_DNA_right_side_up && !domain.forward);
+
+    var reverse_right_side_up = props.display_reverse_DNA_right_side_up && !domain.forward;
+
+    var subseq = domain.dna_sequence_in(offset, offset, reverse : reverse_right_side_up);
     //XXX: path_length appears to return different results depending on the computer (probably resolution??)
     // don't rely on it. This caused Firefox for example to render different on the same version.
 //    num path_length = insertion_path_elt.getTotalLength();
@@ -165,6 +168,10 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       style_map = {'fontSize': '${font_size}px'};
     }
 
+    if (reverse_right_side_up) {
+      style_map['dominantBaseline'] = 'hanging';
+    }
+
     SvgProps text_path_props = (Dom.textPath()
       ..className = classname_dna_sequence + '-insertion'
       //XXX: xlink:href is deprecated, but this is needed for exporting SVG, due to a bug in Inkscape
@@ -175,7 +182,6 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       
     return (Dom.text()
       ..key = 'textelt-${util.id_insertion(domain, offset)}'
-      
       ..dy = dy)(text_path_props(subseq));
   }
 
