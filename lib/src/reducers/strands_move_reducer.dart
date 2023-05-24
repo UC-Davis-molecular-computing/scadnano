@@ -54,7 +54,6 @@ StrandsMove strands_move_start_selected_strands_reducer(
 
 StrandsMove strands_move_stop_reducer(StrandsMove strands_move, actions.StrandsMoveStop action) => null;
 
-
 // - in_bounds checks whether the strand is in a legal address given the helices, but allows it to overlap
 // other strands
 // - is_allowable checks whether the strand overlaps other strands
