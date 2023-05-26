@@ -928,7 +928,7 @@ to speed up navigation.'''
           ..value = props.display_reverse_DNA_right_side_up
           ..display = 'Display reverse DNA right-side up'
           ..tooltip = '''\
-  Displays reverse DNA right-side up'''
+  Displays DNA right-side up on reverse strands.'''
           ..name = 'display-reverse-DNA-right-side-up'
           ..hide = !props.show_dna
           ..onChange = (_) {
