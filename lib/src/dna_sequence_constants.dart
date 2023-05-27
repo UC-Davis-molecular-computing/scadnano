@@ -8,14 +8,14 @@ class DNASequencePredefined extends EnumClass {
   const DNASequencePredefined._(String name) : super(name);
 
   static const DNASequencePredefined M13p7249 = _$M13p7249;
-  static const DNASequencePredefined M13p7650 = _$M13p7650;
+  static const DNASequencePredefined M13p7560 = _$M13p7560;
   static const DNASequencePredefined M13p8064 = _$M13p8064;
   static const DNASequencePredefined M13p8634 = _$M13p8634;
 
   //XXX: change this if we change the variants
   static BuiltList<String> get display_names => [
         'M13 (p7249, standard variant)',
-        'M13 (p7650)',
+        'M13 (p7560)',
         'M13 (p8064)',
         'M13 (p8634)',
       ].toBuiltList();
@@ -46,7 +46,7 @@ class DNASequencePredefined extends EnumClass {
   String get sequence {
     if (this == M13p7249) {
       return _m13_p7249;
-    } else if (this == M13p7650) {
+    } else if (this == M13p7560) {
       return _m13_p7560;
     } else if (this == M13p8064) {
       return _m13_p8064;
