@@ -1752,11 +1752,11 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   /// Return [Domain] at [address], INCLUSIVE, or null if there is none.
-  Domain domain_on_helix_at(Address address, [StrandCreation strand = null]) {
+  Domain domain_on_helix_at(Address address, [StrandCreation strand_creation = null]) {
     for (var domain in this.helix_idx_to_domains[address.helix_idx]) {
       if (domain.contains_offset(address.offset) && domain.forward == address.forward) {
         return domain;
-      } else if(strand !=null && overlap(domain, address.offset, strand.start)){
+      } else if(strand_creation != null && overlap(domain, address.offset, strand_creation.start)){
         return domain;
       }
     }
