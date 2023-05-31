@@ -97,8 +97,8 @@ BuiltMap<String, HelixGroup> move_helices_to_group_groups_reducer(
   return groups.build();
 }
 
-Design duplicate_group_groups_reducer(Design design, AppState state, actions.GroupDuplicate action) {
-  var groups = state.design.groups.toMap();
+Design duplicate_group_groups_reducer(Design design, actions.GroupDuplicate action) {
+  var groups = design.groups.toMap();
   var group_original = groups[action.groupToDuplicate];
   var new_group_name = action.name;
 

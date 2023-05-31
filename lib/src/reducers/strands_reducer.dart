@@ -78,6 +78,8 @@ GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGloba
       modifications_3p_edit_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.ModificationsInternalEdit>(
       modifications_int_edit_reducer),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.GroupDuplicate>(
+    duplicate_group_strands_reducer),
 ]);
 
 BuiltList<Strand> replace_strands_reducer(BuiltList<Strand> strands, actions.ReplaceStrands action) {
@@ -754,4 +756,16 @@ BuiltList<Strand> modifications_int_edit_reducer(
   }
 
   return new_strands.build();
+}
+
+BuiltList<Strand> duplicate_group_strands_reducer(
+    BuiltList<Strand> strands, AppState state, actions.GroupDuplicate action) {
+
+  // TODO implement issue 705
+
+  // duplicate all these strands and set domain helices to group helices
+  var strands_to_duplicate = state.design.strands_by_group_name(action.groupToDuplicate);
+  // var group_original = groups[action.groupToDuplicate];
+
+  return strands;
 }

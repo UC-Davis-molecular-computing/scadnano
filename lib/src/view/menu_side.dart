@@ -287,6 +287,8 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
     } while (props.groups.containsKey(name));
 
     return name;
+  }
+
   Future<void> ask_new_helix_indices_for_current_group() async {
     var group = props.groups[props.displayed_group_name];
     var existing_grid = group.grid;

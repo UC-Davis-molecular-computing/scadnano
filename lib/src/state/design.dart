@@ -207,6 +207,15 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return helix.group;
   }
 
+  BuiltSet<Strand> strands_by_group_name(String group_name) {
+    Set<Strand> group_strands;
+    for (var strand in strands ) {
+      // TODO implement issue 705
+    }
+
+    return group_strands;
+  }
+
   HelixGroup group_of_domain(Domain domain) => group_of_helix_idx(domain.helix);
 
   HelixGroup group_of_strand(Strand strand) => group_of_domain(strand.first_domain);
