@@ -51,7 +51,7 @@ main() {
           .commit();
 
       var design_json = design.to_json_serializable();
-      print(design_json);
+      // print(design_json);
       design = Design.from_json(design_json);
       expect(design.strands.length, 1);
       var strand = design.strands[0];
@@ -83,7 +83,7 @@ main() {
           .commit();
 
       var design_json = design.to_json_serializable();
-      print(design_json);
+      // print(design_json);
       design = Design.from_json(design_json);
       expect(design.strands.length, 1);
       var strand = design.strands[0];

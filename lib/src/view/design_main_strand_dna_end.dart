@@ -10,6 +10,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/linker.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/modification_type.dart';
+import 'package:scadnano/src/view/design_main_strand_dna_extension_end_moving.dart';
 
 import '../state/address.dart';
 import '../state/context_menu.dart';
@@ -105,12 +106,15 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     EndEitherPrimeProps end_props = (props.is_5p ? End5Prime() : End3Prime());
     EndMovingProps end_moving_props = ConnectedEndMoving();
 
+    ExtensionEndMovingProps extension_end_moving_props = ConnectedExtensionEndMoving();
+
     DNAEnd dna_end;
     int offset;
     Point<num> pos;
     bool forward;
     double rotation_degrees = 0;
 
+    Point<num> extension_attached_end_svg;
     var color = props.strand_color;
 
     if (!props.is_on_extension) {
@@ -129,9 +133,9 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       forward = props.ext.adjacent_domain.forward;
       dna_end = props.ext.dnaend_free;
 
-      Point<num> extension_attached_end_svg = util.compute_extension_attached_end_svg(
-          props.ext, props.ext.adjacent_domain, props.helix, props.helix_svg_position.y);
-
+      extension_attached_end_svg = util.compute_extension_attached_end_svg(
+        props.ext, props.ext.adjacent_domain, props.helix, props.helix_svg_position.y
+      );
       pos = util.compute_extension_free_end_svg(
           extension_attached_end_svg, props.ext, props.ext.adjacent_domain, props.geometry);
 
@@ -169,11 +173,25 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       ..svg_position_y = props.helix_svg_position.y
       ..key = 'moving-end';
 
+    // draw avatar of moving extension if it is moving
+    extension_end_moving_props = extension_end_moving_props
+      ..dna_end = dna_end
+      ..ext = props.ext
+      ..geometry = props.geometry
+      ..attached_end_svg = extension_attached_end_svg
+      ..helix = props.helix
+      ..group = props.group
+      ..color = color
+      ..forward = forward
+      ..is_5p = props.is_5p
+      ..key = 'moving-extension';
+
     return (Dom.g()
       ..className = constants.css_selector_end_parent_group
       ..transform = props.transform)(
       end_props(),
       end_moving_props(),
+      extension_end_moving_props(),
     );
   }
 
@@ -238,7 +256,27 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         // set up drag detection for moving DNA ends
         app.dispatch(actions.DNAEndsMoveStart(offset: dna_end.offset_inclusive, helix: props.helix));
       } else {
-        print('not yet implemented moving free end of an extension');
+        // select end
+        MouseEvent event = event_synthetic.nativeEvent;
+        //On a mac event.button is: 0-left, 1-middle, 2-right.
+        //On chrome mac, only handle_end_click_ligate_or_potential_crossover gets
+        // called on a right or middle click.
+        if (event.button == constants.RIGHT_CLICK_BUTTON || event.button == constants.MIDDLE_CLICK_BUTTON) {
+          return;
+        }
+        dna_end.handle_selection_mouse_down(event);
+        // set up drag detection for moving DNA ends
+        Point<num> extension_attached_end_svg = util.compute_extension_attached_end_svg(
+          props.ext, props.ext.adjacent_domain, props.helix, props.helix_svg_position.y);
+
+        // extension_start_point is in helix group coordinate space, so add it with helix group position
+        // to get canvas coordinate space
+        extension_attached_end_svg += props.group.translation(props.geometry);
+
+        Point<num> pos = util.compute_extension_free_end_svg(
+          extension_attached_end_svg, props.ext, props.ext.adjacent_domain, props.geometry
+        );
+        app.dispatch(actions.DNAExtensionsMoveStart(start_point: pos, helix: props.helix));
       }
     }
   }

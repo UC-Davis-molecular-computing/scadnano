@@ -38,7 +38,7 @@ class PotentialCrossoverViewComponent extends UiComponent2<PotentialCrossoverVie
       ..y1 = '${potential_crossover.start_point.y}'
       ..x2 = '${potential_crossover.current_point.x}'
       ..y2 = '${potential_crossover.current_point.y}'
-      ..className = 'potential-crossover'
+      ..className = 'potential-segment'
       ..stroke = potential_crossover.color
       ..id = props.id)();
   }

@@ -135,7 +135,9 @@ abstract class SelectablesStore
   BuiltSet<DNAEnd> selected_ends_in_strand(Strand strand) => {
         for (var domain in strand.domains)
           for (var end in [domain.dnaend_5p, domain.dnaend_3p])
-            if (selected_dna_ends.contains(end)) end
+            if (selected_dna_ends.contains(end)) end,
+        for (var ext in strand.extensions)
+          if (selected_dna_ends.contains(ext.dnaend_free)) ext.dnaend_free
       }.build();
 
   BuiltSet<Crossover> selected_crossovers_in_strand(Strand strand) => {
