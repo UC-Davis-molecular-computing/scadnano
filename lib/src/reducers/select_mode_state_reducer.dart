@@ -52,7 +52,7 @@ SelectModeState toggle_select_mode_reducer(SelectModeState state, actions.Select
               SelectModeChoice.insertion,
               SelectModeChoice.modification,
             ]);
-      }else if (mode == SelectModeChoice.extension_) {
+      } else if (mode == SelectModeChoice.extension_) {
         new_state = new_state.remove_modes(SelectModeChoice.ends.toList() +
             [
               SelectModeChoice.crossover,

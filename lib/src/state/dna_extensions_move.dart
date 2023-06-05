@@ -20,13 +20,11 @@ abstract class DNAExtensionsMove
       Point<num> start_point,
       Point<num> current_point}) = _$DNAExtensionsMove._;
 
-  factory DNAExtensionsMove.from(
-      [void Function(DNAExtensionsMoveBuilder) updates]) = _$DNAExtensionsMove;
+  factory DNAExtensionsMove.from([void Function(DNAExtensionsMoveBuilder) updates]) = _$DNAExtensionsMove;
 
   DNAExtensionsMove._();
 
-  static Serializer<DNAExtensionsMove> get serializer =>
-      _$dNAExtensionsMoveSerializer;
+  static Serializer<DNAExtensionsMove> get serializer => _$dNAExtensionsMoveSerializer;
 
   @memoized
   int get hashCode;
@@ -42,8 +40,7 @@ abstract class DNAExtensionsMove
   bool get is_nontrivial => start_point != current_point;
 
   @memoized
-  BuiltList<DNAEnd> get ends_moving =>
-      [for (var end_move in moves) end_move.dna_end].build();
+  BuiltList<DNAEnd> get ends_moving => [for (var end_move in moves) end_move.dna_end].build();
 
   Point<num> current_point_of(DNAEnd end) {
     for (DNAExtensionMove move in moves) {
@@ -63,16 +60,13 @@ abstract class DNAExtensionMove
       Color color,
       Point<num> original_position,
       Point<num> attached_end_position,
-      Extension extension}
-  ) = _$DNAExtensionMove._;
+      Extension extension}) = _$DNAExtensionMove._;
 
-  factory DNAExtensionMove.from(
-      [void Function(DNAExtensionMoveBuilder) updates]) = _$DNAExtensionMove;
+  factory DNAExtensionMove.from([void Function(DNAExtensionMoveBuilder) updates]) = _$DNAExtensionMove;
 
   DNAExtensionMove._();
 
-  static Serializer<DNAExtensionMove> get serializer =>
-      _$dNAExtensionMoveSerializer;
+  static Serializer<DNAExtensionMove> get serializer => _$dNAExtensionMoveSerializer;
 
   /************************ end BuiltValue boilerplate ************************/
 
@@ -83,6 +77,6 @@ abstract class DNAExtensionMove
   Point<num> get original_position;
 
   Point<num> get attached_end_position;
-  
+
   Extension get extension;
 }

@@ -13,17 +13,17 @@ export_dna_sequences_middleware(Store<AppState> store, action, NextDispatcher ne
   AppState state = store.state;
 
 // Export CSV DNA for CanDo.
-if (action is actions.ExportCanDoDNA) {
+  if (action is actions.ExportCanDoDNA) {
     List<Strand> strands;
-      strands = state.design.strands.toList();
-      strands.removeWhere((strand) => strand.is_scaffold);
+    strands = state.design.strands.toList();
+    strands.removeWhere((strand) => strand.is_scaffold);
 
     String filename = 'cando_sequences.csv';
     util.BlobType blob_type = util.BlobType.text;
 
     try {
-      var result = action.export_dna_format
-        .export(strands, strand_order: StrandOrder.five_prime, column_major: true);
+      var result =
+          action.export_dna_format.export(strands, strand_order: StrandOrder.five_prime, column_major: true);
       // See export comments for why we have this stupid special case
       if (result is Future<List<int>>) {
         result.then((response) {
@@ -66,7 +66,6 @@ if (action is actions.ExportCanDoDNA) {
     } else {
       strands = state.design.strands.toList();
     }
-
 
     if (!action.include_scaffold) {
       strands.removeWhere((strand) => strand.is_scaffold);

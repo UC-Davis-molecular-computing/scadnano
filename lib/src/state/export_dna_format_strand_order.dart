@@ -10,7 +10,6 @@ import '../util.dart' as util;
 
 part 'export_dna_format_strand_order.g.dart';
 
-
 class StrandOrder extends EnumClass {
   const StrandOrder._(String name) : super(name);
 

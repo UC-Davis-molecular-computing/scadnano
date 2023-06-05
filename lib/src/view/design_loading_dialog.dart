@@ -27,8 +27,6 @@ class DesignLoadingDialogComponent extends UiComponent2<DesignLoadingDialogProps
     if (props.show == false) {
       return null;
     }
-    return (Dom.div()
-      ..className = 'dialog-form-form dialog-design-loading')(
-        Dom.span()('Loading...'));
+    return (Dom.div()..className = 'dialog-form-form dialog-design-loading')(Dom.span()('Loading...'));
   }
 }

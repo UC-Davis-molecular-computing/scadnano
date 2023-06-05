@@ -19,8 +19,7 @@ group_remove_middleware(Store<AppState> store, dynamic action, NextDispatcher ne
         return;
       }
     }
-    var helices_remove_action =
-        actions.BatchAction(
+    var helices_remove_action = actions.BatchAction(
         [for (int idx in helix_idxs_in_group) actions.HelixRemove(idx)]..add(action), "remove group");
     store.dispatch(helices_remove_action);
   } else {

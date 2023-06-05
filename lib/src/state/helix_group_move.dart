@@ -73,5 +73,5 @@ abstract class HelixGroupMove
   BuiltList<int> get helix_idxs_in_group => [for (var helix in helices.values) helix.idx].build();
 
   @memoized
-  Geometry get geometry => helices.isNotEmpty? helices.values.first.geometry: null;
+  Geometry get geometry => helices.isNotEmpty ? helices.values.first.geometry : null;
 }

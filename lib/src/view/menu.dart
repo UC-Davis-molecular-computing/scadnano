@@ -393,7 +393,8 @@ with some default direction chosen. Play with it and see!
       // select all
       DropdownDivider({}),
       (MenuDropdownItem()
-        ..on_click = ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.A, ctrlKey: true).wrapped))
+        ..on_click =
+            ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.A, ctrlKey: true).wrapped))
         ..display = 'Select All'
         ..tooltip = '''\
 Select all strands in the design.'''
@@ -1000,7 +1001,7 @@ In a large design, this can slow down the performance, so uncheck it when not in
           props.dispatch(actions.ShowMouseoverDataSet(!props.show_mouseover_data));
         }
         ..key = 'show-mouseover-data')(),
-        (MenuBoolean()
+      (MenuBoolean()
         ..value = props.disable_png_caching_dna_sequences
         ..display = 'Disable PNG caching of DNA sequences'
         ..tooltip = '''\
@@ -1291,10 +1292,14 @@ However, it may be less stable than the main site.'''
         DialogCheckbox(label: 'column-major order (uncheck for row-major order)', value: true);
     items[idx_strand_order_str] = DialogRadio(label: 'strand part to sort by', options: sort_options);
 
-    var dialog = Dialog(title: 'export DNA sequences', type: DialogType.export_dna_sequences, items: items, disable_when_any_checkboxes_off: {
-      idx_column_major: [idx_sort],
-      idx_strand_order_str: [idx_sort]
-    });
+    var dialog = Dialog(
+        title: 'export DNA sequences',
+        type: DialogType.export_dna_sequences,
+        items: items,
+        disable_when_any_checkboxes_off: {
+          idx_column_major: [idx_sort],
+          idx_strand_order_str: [idx_sort]
+        });
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
@@ -1348,7 +1353,8 @@ Future<void> ask_for_autobreak_parameters() async {
   items[max_length_idx] = DialogInteger(label: 'max length', value: 60);
   items[min_distance_to_xover_idx] = DialogInteger(label: 'min distance to xover', value: 3);
 
-  var dialog = Dialog(title: 'Choose autobreak parameters', type: DialogType.choose_autobreak_parameters, items: items);
+  var dialog = Dialog(
+      title: 'Choose autobreak parameters', type: DialogType.choose_autobreak_parameters, items: items);
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 
@@ -1380,7 +1386,8 @@ Future<void> ask_for_geometry(Geometry geometry) async {
   items[minor_groove_angle_idx] =
       DialogFloat(label: 'minor groove angle (degrees)', value: geometry.minor_groove_angle);
 
-  var dialog = Dialog(title: 'adjust geometric parameters', type: DialogType.adjust_geometric_parameters, items: items);
+  var dialog = Dialog(
+      title: 'adjust geometric parameters', type: DialogType.adjust_geometric_parameters, items: items);
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 

@@ -1617,24 +1617,24 @@ mouse_leave_update_mouseover() {
 }
 
 double compute_end_rotation(double display_angle, bool forward, bool is_5p) {
-    var radians = display_angle * 2 * pi / 360.0;
-    // convert to rectangular coordinates to make reflection easier
-    num x = cos(radians);
-    num y = sin(radians);
-    // honestly I don't quite understand why the following rules work,
-    // but I played with it until they looked right.
-    y = -y;
-    if (!forward) {
-      x = -x;
-    }
-    if ((forward && is_5p) || (!forward && !is_5p)) {
-      x = -x;
-    }
-    // convert back from rectangular coordinates to radians
-    var reflected_radians = atan2(y, x);
-    var degrees = reflected_radians * 360.0 / (2 * pi);
-    return degrees;
+  var radians = display_angle * 2 * pi / 360.0;
+  // convert to rectangular coordinates to make reflection easier
+  num x = cos(radians);
+  num y = sin(radians);
+  // honestly I don't quite understand why the following rules work,
+  // but I played with it until they looked right.
+  y = -y;
+  if (!forward) {
+    x = -x;
   }
+  if ((forward && is_5p) || (!forward && !is_5p)) {
+    x = -x;
+  }
+  // convert back from rectangular coordinates to radians
+  var reflected_radians = atan2(y, x);
+  var degrees = reflected_radians * 360.0 / (2 * pi);
+  return degrees;
+}
 
 Point<num> compute_extension_attached_end_svg(
     Extension ext, Domain adj_dom, Helix adj_helix, num adj_helix_svg_y) {

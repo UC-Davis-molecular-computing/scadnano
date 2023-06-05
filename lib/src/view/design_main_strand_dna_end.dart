@@ -134,8 +134,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       dna_end = props.ext.dnaend_free;
 
       extension_attached_end_svg = util.compute_extension_attached_end_svg(
-        props.ext, props.ext.adjacent_domain, props.helix, props.helix_svg_position.y
-      );
+          props.ext, props.ext.adjacent_domain, props.helix, props.helix_svg_position.y);
       pos = util.compute_extension_free_end_svg(
           extension_attached_end_svg, props.ext, props.ext.adjacent_domain, props.geometry);
 
@@ -144,8 +143,6 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         color = props.ext.color;
       }
     }
-
-
 
     end_props = end_props
       ..on_pointer_down = handle_end_click_select_and_or_move_start
@@ -267,15 +264,14 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         dna_end.handle_selection_mouse_down(event);
         // set up drag detection for moving DNA ends
         Point<num> extension_attached_end_svg = util.compute_extension_attached_end_svg(
-          props.ext, props.ext.adjacent_domain, props.helix, props.helix_svg_position.y);
+            props.ext, props.ext.adjacent_domain, props.helix, props.helix_svg_position.y);
 
         // extension_start_point is in helix group coordinate space, so add it with helix group position
         // to get canvas coordinate space
         extension_attached_end_svg += props.group.translation(props.geometry);
 
         Point<num> pos = util.compute_extension_free_end_svg(
-          extension_attached_end_svg, props.ext, props.ext.adjacent_domain, props.geometry
-        );
+            extension_attached_end_svg, props.ext, props.ext.adjacent_domain, props.geometry);
         app.dispatch(actions.DNAExtensionsMoveStart(start_point: pos, helix: props.helix));
       }
     }

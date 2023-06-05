@@ -10,8 +10,7 @@ import '../actions/actions.dart' as actions;
 
 part 'design_dialog_form.over_react.g.dart';
 
-UiFactory<DesignDialogFormProps> ConnectedDesignDialogForm =
-    connect<AppState, DesignDialogFormProps>(
+UiFactory<DesignDialogFormProps> ConnectedDesignDialogForm = connect<AppState, DesignDialogFormProps>(
   mapStateToProps: (state) {
     return DesignDialogForm()..dialog = state.ui_state.dialog;
   },
@@ -25,15 +24,13 @@ mixin DesignDialogFormProps on UiProps {
 
 @State()
 mixin DesignDialogFormState on UiState {
-  BuiltList<DialogItem>
-      current_responses; // these are UPDATED as user changes form inputs
+  BuiltList<DialogItem> current_responses; // these are UPDATED as user changes form inputs
   DialogType dialog_type;
   BuiltMap<DialogType, BuiltList<DialogItem>> saved_responses;
 }
 
-class DesignDialogFormComponent
-    extends UiStatefulComponent2<DesignDialogFormProps, DesignDialogFormState> with PureComponent {
-      
+class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormProps, DesignDialogFormState>
+    with PureComponent {
   @override
   Map get initialState => (newState()
     ..current_responses = null
@@ -56,10 +53,10 @@ class DesignDialogFormComponent
         assert(new_props.dialog.process_saved_response != null);
         var dialog_type = new_props.dialog.type;
         return newState()
-          ..current_responses = prev_state.saved_responses.containsKey(dialog_type)
-            && new_props.dialog.use_saved_response
-              ? new_props.dialog.process_saved_response(prev_state.saved_responses[dialog_type])
-              : new_props.dialog.items
+          ..current_responses =
+              prev_state.saved_responses.containsKey(dialog_type) && new_props.dialog.use_saved_response
+                  ? new_props.dialog.process_saved_response(prev_state.saved_responses[dialog_type])
+                  : new_props.dialog.items
           ..dialog_type = new_props.dialog.type
           ..saved_responses = prev_state.saved_responses;
       } else {
@@ -104,8 +101,7 @@ class DesignDialogFormComponent
       bool disabled = false;
 
       // disable if radio button in disable_when_any_radio_button_selected to which this has forbidden value
-      if (props.dialog.disable_when_any_radio_button_selected
-          .containsKey(component_idx)) {
+      if (props.dialog.disable_when_any_radio_button_selected.containsKey(component_idx)) {
         BuiltMap<int, BuiltList<String>> radio_idx_maps =
             props.dialog.disable_when_any_radio_button_selected[component_idx];
         for (int radio_idx in radio_idx_maps.keys) {
@@ -120,10 +116,8 @@ class DesignDialogFormComponent
       }
 
       // disable if checkbox in disable_when_any_checkboxes_off to which this maps is false
-      if (props.dialog.disable_when_any_checkboxes_off
-          .containsKey(component_idx)) {
-        BuiltList<int> check_idxs =
-            props.dialog.disable_when_any_checkboxes_off[component_idx];
+      if (props.dialog.disable_when_any_checkboxes_off.containsKey(component_idx)) {
+        BuiltList<int> check_idxs = props.dialog.disable_when_any_checkboxes_off[component_idx];
         for (int check_idx in check_idxs) {
           DialogCheckbox check = state.current_responses[check_idx];
           if (check.value == false) {
@@ -134,10 +128,8 @@ class DesignDialogFormComponent
       }
 
       // disable if checkbox in disable_when_any_checkboxes_on to which this maps is true
-      if (props.dialog.disable_when_any_checkboxes_on
-          .containsKey(component_idx)) {
-        BuiltList<int> check_idxs =
-            props.dialog.disable_when_any_checkboxes_on[component_idx];
+      if (props.dialog.disable_when_any_checkboxes_on.containsKey(component_idx)) {
+        BuiltList<int> check_idxs = props.dialog.disable_when_any_checkboxes_on[component_idx];
         for (int check_idx in check_idxs) {
           DialogCheckbox check = state.current_responses[check_idx];
           if (check.value == true) {
@@ -205,19 +197,16 @@ class DesignDialogFormComponent
             var new_responses = state.current_responses.toBuilder();
             bool new_checked = e.target.checked;
             DialogCheckbox response = state.current_responses[dialog_item_idx];
-            new_responses[dialog_item_idx] =
-                response.rebuild((b) => b.value = new_checked);
+            new_responses[dialog_item_idx] = response.rebuild((b) => b.value = new_checked);
 
             // see if this is mutually exclusive with any checkbox that's checked; if so, uncheck it
-            for (var mutually_exclusive_group
-                in props.dialog.mutually_exclusive_checkbox_groups) {
+            for (var mutually_exclusive_group in props.dialog.mutually_exclusive_checkbox_groups) {
               if (mutually_exclusive_group.contains(dialog_item_idx)) {
                 for (int other_idx in mutually_exclusive_group) {
                   if (other_idx != dialog_item_idx) {
                     DialogCheckbox other_response = state.current_responses[other_idx];
                     if (other_response.value == true) {
-                      new_responses[other_idx] =
-                          other_response.rebuild((b) => b.value = false);
+                      new_responses[other_idx] = other_response.rebuild((b) => b.value = false);
                     }
                   }
                 }
@@ -241,8 +230,7 @@ class DesignDialogFormComponent
             var new_responses = state.current_responses.toBuilder();
             String new_value = e.target.value;
             DialogText response = state.current_responses[dialog_item_idx];
-            new_responses[dialog_item_idx] =
-                response.rebuild((b) => b.value = new_value);
+            new_responses[dialog_item_idx] = response.rebuild((b) => b.value = new_value);
             setState(newState()..current_responses = new_responses.build());
           })(),
       );
@@ -260,8 +248,7 @@ class DesignDialogFormComponent
             var new_responses = state.current_responses.toBuilder();
             String new_value = e.target.value;
             DialogTextArea response = state.current_responses[dialog_item_idx];
-            new_responses[dialog_item_idx] =
-                response.rebuild((b) => b.value = new_value);
+            new_responses[dialog_item_idx] = response.rebuild((b) => b.value = new_value);
             setState(newState()..current_responses = new_responses.build());
           })(),
       );
@@ -279,8 +266,7 @@ class DesignDialogFormComponent
             num new_value = int.tryParse(e.target.value);
             if (new_value == null) return;
             DialogInteger response = state.current_responses[dialog_item_idx];
-            new_responses[dialog_item_idx] =
-                response.rebuild((b) => b.value = new_value);
+            new_responses[dialog_item_idx] = response.rebuild((b) => b.value = new_value);
             setState(newState()..current_responses = new_responses.build());
           })(),
       );
@@ -299,8 +285,7 @@ class DesignDialogFormComponent
             num new_value = double.tryParse(e.target.value);
             if (new_value == null) return;
             DialogFloat response = state.current_responses[dialog_item_idx];
-            new_responses[dialog_item_idx] =
-                response.rebuild((b) => b.value = new_value);
+            new_responses[dialog_item_idx] = response.rebuild((b) => b.value = new_value);
             setState(newState()..current_responses = new_responses.build());
           })(),
       );
@@ -323,16 +308,14 @@ class DesignDialogFormComponent
             int selected_radio_idx = item.options.indexOf(selected_title);
             DialogRadio response = state.current_responses[dialog_item_idx];
             var new_responses = state.current_responses.toBuilder();
-            new_responses[dialog_item_idx] =
-                response.rebuild((b) => b.selected_idx = selected_radio_idx);
+            new_responses[dialog_item_idx] = response.rebuild((b) => b.selected_idx = selected_radio_idx);
             setState(newState()..current_responses = new_responses.build());
           }
           ..key = '$radio_idx')());
         components.add((Dom.label()..key = 'label-$radio_idx')(option));
         radio_idx++;
       }
-      return (Dom.div()
-        ..className = 'radio-left')('${item.label}: ', components);
+      return (Dom.div()..className = 'radio-left')('${item.label}: ', components);
     } else if (item is DialogRadio && !item.radio) {
       int radio_idx = 0;
       List<ReactElement> components = [];
@@ -349,8 +332,7 @@ class DesignDialogFormComponent
             int selected_radio_idx = item.options.indexOf(selected_title);
             DialogRadio response = state.current_responses[dialog_item_idx];
             var new_responses = state.current_responses.toBuilder();
-            new_responses[dialog_item_idx] =
-                response.rebuild((b) => b.selected_idx = selected_radio_idx);
+            new_responses[dialog_item_idx] = response.rebuild((b) => b.selected_idx = selected_radio_idx);
             setState(newState()..current_responses = new_responses.build());
           }
           ..key = '$radio_idx')(option));
@@ -369,21 +351,16 @@ class DesignDialogFormComponent
               int selected_radio_idx = item.options.indexOf(selected_title);
               DialogRadio response = state.current_responses[dialog_item_idx];
               var new_responses = state.current_responses.toBuilder();
-              new_responses[dialog_item_idx] =
-                  response.rebuild((b) => b.selected_idx = selected_radio_idx);
+              new_responses[dialog_item_idx] = response.rebuild((b) => b.selected_idx = selected_radio_idx);
               setState(newState()..current_responses = new_responses.build());
             })('${item.label}: ', components));
     } else if (item is DialogLink) {
       return (Dom.a()
         ..href = item.link
         ..target = '_blank')(item.label);
+    } else if (item is DialogLabel) {
+      return (Dom.span()..title = item.tooltip)(item.label);
     }
-    else if (item is DialogLabel) {
-      return (Dom.span()
-        ..title = item.tooltip
-        )(item.label);
-    }
-
 
     return null;
   }

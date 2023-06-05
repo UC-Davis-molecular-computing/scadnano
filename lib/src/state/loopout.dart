@@ -33,7 +33,7 @@ abstract class Loopout
   factory Loopout({
     int loopout_num_bases,
     int prev_domain_idx,
-    bool is_scaffold=false,
+    bool is_scaffold = false,
     String dna_sequence = null,
     Color color = null,
     String name = null,

@@ -3,7 +3,6 @@ library react_dnd;
 
 import 'package:js/js.dart';
 
-
 //@JS('ReactDnD_DndProvider')
 //external get DndProvider;
 //
@@ -24,7 +23,6 @@ external get HTML5Backend;
 
 //var DndProvider = ReactJsComponentFactoryProxy(ReactDnD_DndProvider);
 var DndProvider = null;
-
 
 //@JS()
 //external ReactDnD_DndContext(dynamic obj);
@@ -56,4 +54,3 @@ var DndProvider = null;
 //
 //@JS()
 //external ReactDnDHTML5Backend_getEmptyImage(dynamic obj);
-

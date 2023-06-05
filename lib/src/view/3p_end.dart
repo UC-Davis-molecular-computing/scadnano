@@ -7,9 +7,7 @@ import '5p_end.dart';
 
 part '3p_end.over_react.g.dart';
 
-
 UiFactory<End3PrimeProps> End3Prime = _$End3Prime;
-
 
 mixin End3PrimeProps on UiProps implements EndEitherPrimeProps {
   PointerDownUpHandler on_pointer_down;
@@ -25,7 +23,6 @@ mixin End3PrimeProps on UiProps implements EndEitherPrimeProps {
   String id;
   String transform;
 }
-
 
 class End3PrimeComponent extends UiComponent2<End3PrimeProps> {
   @override
@@ -49,7 +46,7 @@ class End3PrimeComponent extends UiComponent2<End3PrimeProps> {
       ..onPointerDown = props.on_pointer_down
       ..onPointerUp = props.on_pointer_up
       ..onMouseUp = props.on_mouse_up
-      ..onMouseEnter  = props.on_mouse_enter
+      ..onMouseEnter = props.on_mouse_enter
       ..onMouseLeave = props.on_mouse_leave
       ..onMouseMove = props.on_mouse_move
       ..className = props.classname
