@@ -387,6 +387,7 @@ straightforward to make, adding React components and Redux middleware
 unit tests is an [ongoing issue](https://github.com/UC-Davis-molecular-computing/scadnano/issues/32).
 
 ### Formatting Dart code
+This step is done so that Pull Requests will only show "substantial semantic" changes and not minor whitespace changes. It will also be useful in helping to review code changes more quickly by focusing only on changes that actually affect the code logic.
 
 Before making a Pull Request, all the dart code must be formatted using one of the below given options. If this step is not done, the formatting check for the Pull Request will fail.
 
@@ -408,7 +409,7 @@ Click on the “Open Settings (JSON)” option to open the settings.json file in
 ```
 At this point, your VS Code editor should have been set up to automatically format Dart code when you hit Save (Ctrl/Cmd + S).
 
-- **IntelliJ IDEA:**
+- **IntelliJ IDEA (a.k.a. WebStorm):**
 1. Download and install IntelliJ IDEA from [here](https://www.jetbrains.com/idea/download/) if not already installed.
 2. Open the scadnano project on the editor.
 3. Shortcut for Preferences: (Windows) Ctrl + Alt + , or  (MacOS) Cmd + ,
