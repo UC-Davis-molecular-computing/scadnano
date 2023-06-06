@@ -29,6 +29,7 @@ import 'helix.dart';
 import 'grid.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
+import 'strand_creation.dart';
 import 'substrand.dart';
 import 'unused_fields.dart';
 import 'domain_name_mismatch.dart';
@@ -1751,13 +1752,24 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   /// Return [Domain] at [address], INCLUSIVE, or null if there is none.
-  Domain domain_on_helix_at(Address address) {
+  Domain domain_on_helix_at(Address address, [StrandCreation strand_creation = null]) {
     for (var domain in this.helix_idx_to_domains[address.helix_idx]) {
       if (domain.contains_offset(address.offset) && domain.forward == address.forward) {
+        return domain;
+      } else if(strand_creation != null && overlap(domain, address.offset, strand_creation.start)){
         return domain;
       }
     }
     return null;
+  }
+
+  bool overlap(Domain domain, int offset, int start) {
+    int overlap_start = max(min(domain.start, domain.end), min(start, offset));
+    int overlap_end = min(max(domain.start, domain.end), max(start, offset));
+    if (overlap_start >= overlap_end) {
+      return false;
+    }
+    return true;
   }
 
   /// Return list of Substrands overlapping `substrand`.
@@ -1883,7 +1895,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 //    return view_orders.toBuiltList();
 //  }
 
-  bool is_occupied(Address address) => domain_on_helix_at(address) != null;
+  bool is_occupied(Address address, [StrandCreation strand_creation]) => domain_on_helix_at(address, strand_creation) != null;
 
   @memoized
   int max_offset_of_strands_at(int helix_idx) {
