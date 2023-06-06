@@ -25,6 +25,7 @@ or post questions as issues on the [issues page](https://github.com/UC-Davis-mol
     - [Installing `webdev`](#installing-webdev)
     - [Running a Local Server](#running-a-local-server)
     - [Running Tests](#running-tests)
+    - [Formatting Dart code](#formatting-dart-code)
     - [Building](#building)
     - [Troubleshooting](#troubleshooting)
   - [General recipe for adding features](#general-recipe-for-adding-features)
@@ -384,6 +385,61 @@ tests for [Redux reducers](test/reducer_test.dart) and a few tests for
 [React components](test/components). While Redux reducers tests are fairly
 straightforward to make, adding React components and Redux middleware
 unit tests is an [ongoing issue](https://github.com/UC-Davis-molecular-computing/scadnano/issues/32).
+
+### Formatting Dart code
+This step is done so that Pull Requests will only show "substantial semantic" changes and not minor whitespace changes. It will also be useful in helping to review code changes more quickly by focusing only on changes that actually affect the code logic.
+
+Before making a Pull Request, all the dart code must be formatted using one of the below given options. If this step is not done, the formatting check for the Pull Request will fail.
+
+- **VS Code:**
+1. Download and install VS Code from [here](https://code.visualstudio.com/download) if not already installed.
+2. Go to extensions and install (if not already installed) the Dart extension Dart-Code.dart-code for VS Code:
+Install the extension and ensure it is enabled (should automatically be enabled on installation)
+3.	Open settings.json:
+In your VS Code, go to Preferences (Windows: File -> Preferences, MacOS: Code -> Preferences) -> Settings (Shortcut: Ctrl + , / Cmd + ,)
+Click on the “Open Settings (JSON)” option to open the settings.json file in the editor. This option is generally in the top right corner in VS Code.
+4. Append or modify the following lines inside the JSON in the settings.json file and save the file:
+```
+"dart.lineLength": 110,
+"[dart]": {
+  "editor.defaultFormatter": "Dart-Code.dart-code",
+  "editor.formatOnSave": true,
+  "editor.rulers": [110],
+}
+```
+At this point, your VS Code editor should have been set up to automatically format Dart code when you hit Save (Ctrl/Cmd + S).
+
+- **IntelliJ IDEA (a.k.a. WebStorm):**
+1. Download and install IntelliJ IDEA from [here](https://www.jetbrains.com/idea/download/) if not already installed.
+2. Open the scadnano project on the editor.
+3. Shortcut for Preferences: (Windows) Ctrl + Alt + , or  (MacOS) Cmd + ,
+4. Navigate to Preferences -> Plugins. Search and install the Dart Plugin. (You might have to point the plugin to the already installed Dart SDK v2.13)
+5. Navigate to Preferences -> Editor -> Code Style -> Dart and change the line length to 110.
+6. Navigate to Preferences -> Tools -> Actions on Save and check the Reformat code option.
+
+At this point, your IntelliJ IDEA editor should have been set up to automatically format Dart code when you hit Save (Ctrl/Cmd + S).
+
+To test that either of the two options above are working:
+
+1. Open any Dart file and make formatting changes only such as adding/removing spaces and tabs, adding unnecessary new lines, etc. without changing the logical part of the code.
+2. Hit save to visually see the formatting changes being done automatically.
+3. To ensure that the file is in the required format for making the Pull Request, open a terminal / command prompt and run the following command:
+Warning: It is assumed that dart (v 2.13) is already installed and can be run from the terminal using ‘dart’ command.
+```
+dart format -l 110 path_to_your_dart_file/filename.dart
+```
+You should see something like that printed on the terminal:
+```
+Formatted 1 file (0 changed) in 0.32 seconds.
+```
+Note that the important part is that no files were changed (‘0 changed’ in brackets). This means that the files are in the correct format as expected for the Pull Request.
+
+- **To run from the terminal / command prompt directly without the editor setup:** (Note: This will have to be run every time before a Pull Request is made and will not be automatic)
+1. Run the command from the root directory of the repository:
+```
+dart format -l 110 .
+```
+Warning: The dot in the end is part of the command
 
 ### Building
 

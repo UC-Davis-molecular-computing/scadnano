@@ -4521,7 +4521,6 @@ main() {
   });
 
   group('Select all in helix group test', () {
-
     /* 0       8
        |-------|
 
@@ -4536,18 +4535,11 @@ main() {
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design
-          .draw_strand(0, 0)
-          .move(9)
-          .commit()
-          .draw_strand(1, 0)
-          .move(9)
-          .commit();
+      design = design.draw_strand(0, 0).move(9).commit().draw_strand(1, 0).move(9).commit();
       var default_group_strand = design.strands.first;
       var action = SelectAllSelectable(current_helix_group_only: true);
       var state = app_state_from_design(design);
-      var selectables_store =
-          select_all_selectables_reducer(state.ui_state.selectables_store, state, action);
+      var selectables_store = select_all_selectables_reducer(state.ui_state.selectables_store, state, action);
       expect(selectables_store.selected_strands.length, 1);
       expect(selectables_store.selected_strands.first, default_group_strand);
     });
@@ -4583,8 +4575,7 @@ main() {
       var default_group_strand = design.strands.first;
       var action = SelectAllSelectable(current_helix_group_only: true);
       var state = app_state_from_design(design);
-      var selectables_store =
-          select_all_selectables_reducer(state.ui_state.selectables_store, state, action);
+      var selectables_store = select_all_selectables_reducer(state.ui_state.selectables_store, state, action);
       expect(selectables_store.selected_strands.length, 1);
       expect(selectables_store.selected_strands.first, default_group_strand);
     });
@@ -7214,7 +7205,8 @@ main() {
     test('StrandColorPickerShow', () {
       AppState initial_state = app_state_from_design(two_helices_design);
       Strand strand = two_helices_design.strands.first;
-      AppState final_state = app_state_reducer(initial_state, StrandOrSubstrandColorPickerShow(strand: strand));
+      AppState final_state =
+          app_state_reducer(initial_state, StrandOrSubstrandColorPickerShow(strand: strand));
 
       expect(final_state.ui_state.color_picker_strand, strand);
     });

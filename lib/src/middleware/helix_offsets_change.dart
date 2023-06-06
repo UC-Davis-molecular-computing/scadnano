@@ -50,12 +50,12 @@ helix_change_offsets_middleware(Store<AppState> store, dynamic action, NextDispa
   next(action);
 }
 
-
 String message_too_small(int helix_idx, int proposed_offset, int offset_of_strand) {
   return 'Cannot set minimum offset to ${proposed_offset} on helix $helix_idx '
       'because there is a strand on that helix with offset ${offset_of_strand}. '
       'Please choose a smaller minimum offset or delete the strand.';
 }
+
 String message_too_large(int helix_idx, int proposed_offset, int offset_of_strand) {
   return 'Cannot set maximum offset to ${proposed_offset} on helix $helix_idx '
       'because there is a strand on that helix with offset ${offset_of_strand}. '

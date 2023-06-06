@@ -140,7 +140,7 @@ void expect_undo_redo_equal(UndoRedo actual, UndoRedo matcher) {
   expect_stack_equal(actual.redo_stack, matcher.redo_stack);
 }
 
-Store<AppState> store_from_design(Design design, {bool initialize_app_instance=false}) {
+Store<AppState> store_from_design(Design design, {bool initialize_app_instance = false}) {
   var state = app_state_from_design(design);
   var store = Store<AppState>(app_state_reducer, initialState: state, middleware: all_middleware);
   if (initialize_app_instance) {
@@ -148,7 +148,6 @@ Store<AppState> store_from_design(Design design, {bool initialize_app_instance=f
   }
   return store;
 }
-
 
 void sleep_in_browser(Duration duration) {
   var ms = duration.inMilliseconds;

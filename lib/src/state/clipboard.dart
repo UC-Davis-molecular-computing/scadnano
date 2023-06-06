@@ -42,7 +42,6 @@ Then you will be able to paste from the clipboard.
   }
 }
 
-
 class CLIClipboard implements Clipboard {
   String content = '';
 

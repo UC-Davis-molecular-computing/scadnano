@@ -35,59 +35,48 @@ import 'mouseover_datas_reducer.dart';
 // ui state local reducer
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-AppUIState ui_state_local_reducer(AppUIState ui_state, action) =>
-    ui_state.rebuild((u) =>
-    u
-      ..storables.replace(app_ui_state_storable_local_reducer(ui_state.storables, action))
-      ..changed_since_last_save = changed_since_last_save_reducer(ui_state.changed_since_last_save, action)
-      ..last_mod_5p = TypedReducer<Modification5Prime, actions.ModificationAdd>(
-          last_mod_5p_modification_add_reducer)(
+AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebuild((u) => u
+  ..storables.replace(app_ui_state_storable_local_reducer(ui_state.storables, action))
+  ..changed_since_last_save = changed_since_last_save_reducer(ui_state.changed_since_last_save, action)
+  ..last_mod_5p = TypedReducer<Modification5Prime, actions.ModificationAdd>(last_mod_5p_modification_add_reducer)(
           ui_state.last_mod_5p, action)
+      ?.toBuilder()
+  ..last_mod_3p =
+      TypedReducer<Modification3Prime, actions.ModificationAdd>(last_mod_3p_modification_add_reducer)(
+              ui_state.last_mod_3p, action)
           ?.toBuilder()
-      ..last_mod_3p = TypedReducer<Modification3Prime, actions.ModificationAdd>(
-          last_mod_3p_modification_add_reducer)(
-          ui_state.last_mod_3p, action)
-          ?.toBuilder()
-      ..last_mod_int =
+  ..last_mod_int =
       TypedReducer<ModificationInternal, actions.ModificationAdd>(last_mod_int_modification_add_reducer)(
-          ui_state.last_mod_int, action)
+              ui_state.last_mod_int, action)
           ?.toBuilder()
-      ..selection_rope = optimized_selection_rope_reducer(ui_state.selection_rope, action)?.toBuilder()
-      ..potential_crossover_is_drawing =
+  ..selection_rope = optimized_selection_rope_reducer(ui_state.selection_rope, action)?.toBuilder()
+  ..potential_crossover_is_drawing =
       drawing_potential_crossover_reducer(ui_state.potential_crossover_is_drawing, action)
-      ..dna_ends_are_moving = moving_dna_ends_reducer(ui_state.dna_ends_are_moving, action)
-      ..slice_bar_is_moving = slice_bar_is_moving_reducer(ui_state.slice_bar_is_moving, action)
-      ..helix_group_is_moving = helix_group_is_moving_reducer(ui_state.helix_group_is_moving, action)
-      ..load_dialog = load_dialog_reducer(ui_state.load_dialog, action)
-      ..strands_move = strands_move_local_reducer(ui_state.strands_move, action)?.toBuilder()
-      ..domains_move = domains_move_local_reducer(ui_state.domains_move, action)?.toBuilder()
-      ..side_view_grid_position_mouse_cursor =
+  ..dna_ends_are_moving = moving_dna_ends_reducer(ui_state.dna_ends_are_moving, action)
+  ..slice_bar_is_moving = slice_bar_is_moving_reducer(ui_state.slice_bar_is_moving, action)
+  ..helix_group_is_moving = helix_group_is_moving_reducer(ui_state.helix_group_is_moving, action)
+  ..load_dialog = load_dialog_reducer(ui_state.load_dialog, action)
+  ..strands_move = strands_move_local_reducer(ui_state.strands_move, action)?.toBuilder()
+  ..domains_move = domains_move_local_reducer(ui_state.domains_move, action)?.toBuilder()
+  ..side_view_grid_position_mouse_cursor =
       side_view_mouse_grid_pos_reducer(ui_state.side_view_grid_position_mouse_cursor, action)?.toBuilder()
-      ..side_view_position_mouse_cursor =
+  ..side_view_position_mouse_cursor =
       side_view_position_mouse_cursor_reducer(ui_state.side_view_position_mouse_cursor, action)
-      ..context_menu = context_menu_reducer(ui_state.context_menu, action)?.toBuilder()
-      ..dialog = dialog_reducer(ui_state.dialog, action)?.toBuilder()
-      ..color_picker_strand =
-      color_picker_strand_reducer(ui_state.color_picker_strand, action)?.toBuilder()
-      ..color_picker_substrand =
+  ..context_menu = context_menu_reducer(ui_state.context_menu, action)?.toBuilder()
+  ..dialog = dialog_reducer(ui_state.dialog, action)?.toBuilder()
+  ..color_picker_strand = color_picker_strand_reducer(ui_state.color_picker_strand, action)?.toBuilder()
+  ..color_picker_substrand =
       color_picker_substrand_reducer(ui_state.color_picker_substrand, action) //?.toBuilder()
-      ..helix_change_apply_to_all = helix_change_apply_to_all_reducer(
-          ui_state.helix_change_apply_to_all, action)
-      ..example_designs.replace(
-          TypedReducer<ExampleDesigns, actions.ExampleDesignsLoad>(example_designs_idx_set_reducer)(
-              ui_state.example_designs, action))
-      ..dna_assign_options.replace(
-          TypedReducer<DNAAssignOptions, actions.AssignDNA>(dna_assign_options_reducer)(
-              ui_state.dna_assign_options, action))
-      ..mouseover_datas.replace(mouseover_data_reducer(ui_state.mouseover_datas, action))
-      ..dna_sequence_png_uri = dna_sequence_png_uri_reducer(ui_state.dna_sequence_png_uri, action)
-      ..dna_sequence_png_horizontal_offset = dna_sequence_horizontal_offset_reducer(
-          ui_state.dna_sequence_png_horizontal_offset, action)
-      ..dna_sequence_png_vertical_offset = dna_sequence_vertical_offset_reducer(
-          ui_state.dna_sequence_png_vertical_offset, action)
-      ..export_svg_action_delayed_for_png_cache = export_svg_action_delayed_for_png_cache_reducer(
-          ui_state.export_svg_action_delayed_for_png_cache, action)?.toBuilder()
-      ..is_zoom_above_threshold = is_zoom_above_threshold_reducer(ui_state.is_zoom_above_threshold, action));
+  ..helix_change_apply_to_all = helix_change_apply_to_all_reducer(ui_state.helix_change_apply_to_all, action)
+  ..example_designs.replace(
+      TypedReducer<ExampleDesigns, actions.ExampleDesignsLoad>(example_designs_idx_set_reducer)(ui_state.example_designs, action))
+  ..dna_assign_options.replace(TypedReducer<DNAAssignOptions, actions.AssignDNA>(dna_assign_options_reducer)(ui_state.dna_assign_options, action))
+  ..mouseover_datas.replace(mouseover_data_reducer(ui_state.mouseover_datas, action))
+  ..dna_sequence_png_uri = dna_sequence_png_uri_reducer(ui_state.dna_sequence_png_uri, action)
+  ..dna_sequence_png_horizontal_offset = dna_sequence_horizontal_offset_reducer(ui_state.dna_sequence_png_horizontal_offset, action)
+  ..dna_sequence_png_vertical_offset = dna_sequence_vertical_offset_reducer(ui_state.dna_sequence_png_vertical_offset, action)
+  ..export_svg_action_delayed_for_png_cache = export_svg_action_delayed_for_png_cache_reducer(ui_state.export_svg_action_delayed_for_png_cache, action)?.toBuilder()
+  ..is_zoom_above_threshold = is_zoom_above_threshold_reducer(ui_state.is_zoom_above_threshold, action));
 
 bool helix_change_apply_to_all_reducer(bool helix_change_apply_to_all, action) {
   if (action is actions.HelixMajorTickDistanceChange ||
@@ -219,19 +208,18 @@ bool disable_png_caching_dna_sequences_reducer(bool _, actions.DisablePngCaching
 bool display_base_offsets_of_major_ticks_reducer(bool _, actions.DisplayMajorTicksOffsetsSet action) =>
     action.show;
 
-bool display_base_offsets_of_major_ticks_only_first_helix_reducer(bool _,
-    actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix action) =>
+bool display_base_offsets_of_major_ticks_only_first_helix_reducer(
+        bool _, actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix action) =>
     action.show;
 
-bool display_major_tick_widths_all_helices_reducer(bool _,
-    actions.SetDisplayMajorTickWidthsAllHelices action) =>
+bool display_major_tick_widths_all_helices_reducer(
+        bool _, actions.SetDisplayMajorTickWidthsAllHelices action) =>
     action.show;
 
-bool show_base_pair_lines_reducer(bool _, actions.ShowBasePairLinesSet action) =>
-    action.show_base_pair_lines;
+bool show_base_pair_lines_reducer(bool _, actions.ShowBasePairLinesSet action) => action.show_base_pair_lines;
 
-bool show_base_pair_lines_with_mismatches_reducer(bool _,
-    actions.ShowBasePairLinesWithMismatchesSet action) =>
+bool show_base_pair_lines_with_mismatches_reducer(
+        bool _, actions.ShowBasePairLinesWithMismatchesSet action) =>
     action.show_base_pair_lines_with_mismatches;
 
 bool display_major_tick_widths_reducer(bool _, actions.SetDisplayMajorTickWidths action) => action.show;
@@ -247,12 +235,12 @@ bool show_mouseover_data_set_reducer(bool _, actions.ShowMouseoverDataSet action
 bool only_display_selected_helices_reducer(bool _, actions.SetOnlyDisplaySelectedHelices action) =>
     action.only_display_selected_helices;
 
-bool default_crossover_type_scaffold_for_setting_helix_rolls_reducer(bool _,
-    actions.DefaultCrossoverTypeForSettingHelixRollsSet action) =>
+bool default_crossover_type_scaffold_for_setting_helix_rolls_reducer(
+        bool _, actions.DefaultCrossoverTypeForSettingHelixRollsSet action) =>
     action.scaffold;
 
-bool default_crossover_type_staple_for_setting_helix_rolls_reducer(bool _,
-    actions.DefaultCrossoverTypeForSettingHelixRollsSet action) =>
+bool default_crossover_type_staple_for_setting_helix_rolls_reducer(
+        bool _, actions.DefaultCrossoverTypeForSettingHelixRollsSet action) =>
     action.staple;
 
 DNAAssignOptions dna_assign_options_reducer(DNAAssignOptions _, actions.AssignDNA action) =>
@@ -272,16 +260,16 @@ Reducer<bool> changed_since_last_save_reducer = combineReducers([
   TypedReducer<bool, actions.SaveDNAFile>(changed_since_last_save_just_saved_reducer),
 ]);
 
-LocalStorageDesignChoice local_storage_design_choice_reducer(LocalStorageDesignChoice _,
-    actions.LocalStorageDesignChoiceSet action) =>
+LocalStorageDesignChoice local_storage_design_choice_reducer(
+        LocalStorageDesignChoice _, actions.LocalStorageDesignChoiceSet action) =>
     action.choice.period_seconds > 0 ? action.choice : action.choice.change_period(1);
 
-bool clear_helix_selection_when_loading_new_design_set_reducer(bool _,
-    actions.ClearHelixSelectionWhenLoadingNewDesignSet action) =>
+bool clear_helix_selection_when_loading_new_design_set_reducer(
+        bool _, actions.ClearHelixSelectionWhenLoadingNewDesignSet action) =>
     action.clear;
 
-bool changed_since_last_save_undoable_action_reducer(bool changed_since_last_save,
-    actions.UndoableAction action) =>
+bool changed_since_last_save_undoable_action_reducer(
+        bool changed_since_last_save, actions.UndoableAction action) =>
     true;
 
 bool changed_since_last_save_just_saved_reducer(bool changed_since_last_save, actions.SaveDNAFile action) =>
@@ -291,15 +279,15 @@ Reducer<BuiltList<MouseoverData>> mouseover_data_reducer = combineReducers([
   TypedReducer<BuiltList<MouseoverData>, actions.MouseoverDataClear>(mouseover_data_clear_reducer),
 ]);
 
-ExampleDesigns example_designs_idx_set_reducer(ExampleDesigns example_designs,
-    actions.ExampleDesignsLoad action) =>
+ExampleDesigns example_designs_idx_set_reducer(
+        ExampleDesigns example_designs, actions.ExampleDesignsLoad action) =>
     example_designs.rebuild((b) => b..selected_idx = action.selected_idx);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // storables global reducer
 
-AppUIStateStorables app_ui_state_storable_global_reducer(AppUIStateStorables storables, AppState state,
-    action) {
+AppUIStateStorables app_ui_state_storable_global_reducer(
+    AppUIStateStorables storables, AppState state, action) {
   // forgot why we made special case for this, but it seems appropriate since it's updating the whole
   // storables object and not just slices
   if (action is actions.SetAppUIStateStorable) {
@@ -311,9 +299,7 @@ AppUIStateStorables app_ui_state_storable_global_reducer(AppUIStateStorables sto
     // It's possible the the slice bar being set is not valid.
     int slice_bar_offset = 0;
     if (state.design != null) {
-      var helices_in_first_group = state.design
-          .helices_in_group(state.design.groups.keys.first)
-          .values;
+      var helices_in_first_group = state.design.helices_in_group(state.design.groups.keys.first).values;
       if (helices_in_first_group.isNotEmpty) {
         slice_bar_offset =
             bounded_offset_in_helices_group(storables.slice_bar_offset, helices_in_first_group);
@@ -323,13 +309,12 @@ AppUIStateStorables app_ui_state_storable_global_reducer(AppUIStateStorables sto
     return storables;
   }
 
-  return storables.rebuild((b) =>
-  b
+  return storables.rebuild((b) => b
     ..side_selected_helix_idxs
         .replace(side_selected_helices_global_reducer(storables.side_selected_helix_idxs, state, action))
     ..displayed_group_name =
-    TypedGlobalReducer<String, AppState, actions.GroupRemove>(displayed_group_name_group_remove_reducer)(
-        storables.displayed_group_name, state, action)
+        TypedGlobalReducer<String, AppState, actions.GroupRemove>(displayed_group_name_group_remove_reducer)(
+            storables.displayed_group_name, state, action)
     ..slice_bar_offset = slice_bar_offset_global_reducer(storables.slice_bar_offset, state, action));
 }
 
@@ -354,52 +339,41 @@ GlobalReducer<int, AppState> slice_bar_offset_global_reducer = combineGlobalRedu
 int slice_bar_offset_show_slice_bar_set_reducer(int offset, AppState state, actions.ShowSliceBarSet action) {
   if (action.show) {
     return bounded_offset_in_helices_group(
-        offset, state.design
-        .helices_in_group(state.ui_state.displayed_group_name)
-        .values);
+        offset, state.design.helices_in_group(state.ui_state.displayed_group_name).values);
   } else {
     // Don't change slice bar position if user hides it. Saves value for when next time user wants to display.
     return offset;
   }
 }
 
-int slice_bar_offset_group_displayed_change_reducer(int offset, AppState state,
-    actions.GroupDisplayedChange action) {
-  return bounded_offset_in_helices_group(offset, state.design
-      .helices_in_group(action.group_name)
-      .values);
+int slice_bar_offset_group_displayed_change_reducer(
+    int offset, AppState state, actions.GroupDisplayedChange action) {
+  return bounded_offset_in_helices_group(offset, state.design.helices_in_group(action.group_name).values);
 }
 
 int slice_bar_offset_group_remove_reducer(int offset, AppState state, actions.GroupRemove action) {
   String new_group_name = displayed_group_name_group_remove_reducer(null, state, action);
-  return bounded_offset_in_helices_group(offset, state.design
-      .helices_in_group(new_group_name)
-      .values);
+  return bounded_offset_in_helices_group(offset, state.design.helices_in_group(new_group_name).values);
 }
 
-int slice_bar_offset_helix_offset_change_reducer(int offset, AppState state,
-    actions.HelixOffsetChange action) {
+int slice_bar_offset_helix_offset_change_reducer(
+    int offset, AppState state, actions.HelixOffsetChange action) {
   var new_design = design_global_reducer(state.design, state, action);
   return bounded_offset_in_helices_group(
-      offset, new_design
-      .helices_in_group(state.ui_state.displayed_group_name)
-      .values);
+      offset, new_design.helices_in_group(state.ui_state.displayed_group_name).values);
 }
 
-int slice_bar_offset_helix_offset_change_all_reducer(int offset, AppState state,
-    actions.HelixOffsetChangeAll action) {
+int slice_bar_offset_helix_offset_change_all_reducer(
+    int offset, AppState state, actions.HelixOffsetChangeAll action) {
   var new_design = design_global_reducer(state.design, state, action);
   return bounded_offset_in_helices_group(
-      offset, new_design
-      .helices_in_group(state.ui_state.displayed_group_name)
-      .values);
+      offset, new_design.helices_in_group(state.ui_state.displayed_group_name).values);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // storables local reducer
 AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables storables, action) {
-  return storables.rebuild((b) =>
-  b
+  return storables.rebuild((b) => b
     ..side_selected_helix_idxs
         .replace(side_selected_helices_reducer(storables.side_selected_helix_idxs, action))
     ..displayed_group_name = displayed_group_name_reducer(storables.displayed_group_name, action)
@@ -417,86 +391,48 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..show_modifications = TypedReducer<bool, actions.ShowModificationsSet>(show_modifications_reducer)(
         storables.show_modifications, action)
     ..modification_display_connector =
-    TypedReducer<bool, actions.SetModificationDisplayConnector>(modification_display_connector_reducer)(
-        storables.modification_display_connector, action)
-    ..modification_font_size = TypedReducer<num, actions.ModificationFontSizeSet>(
-        modification_font_size_reducer)(
+        TypedReducer<bool, actions.SetModificationDisplayConnector>(modification_display_connector_reducer)(
+            storables.modification_display_connector, action)
+    ..modification_font_size = TypedReducer<num, actions.ModificationFontSizeSet>(modification_font_size_reducer)(
         storables.modification_font_size, action)
     ..zoom_speed = TypedReducer<num, actions.ZoomSpeedSet>(zoom_speed_reducer)(storables.zoom_speed, action)
-    ..major_tick_offset_font_size = TypedReducer<num, actions.MajorTickOffsetFontSizeSet>(
-        major_tick_offset_font_size_reducer)(
+    ..major_tick_offset_font_size = TypedReducer<num, actions.MajorTickOffsetFontSizeSet>(major_tick_offset_font_size_reducer)(
         storables.major_tick_offset_font_size, action)
-    ..major_tick_width_font_size = TypedReducer<num, actions.MajorTickWidthFontSizeSet>(
-        major_tick_width_font_size_reducer)(
+    ..major_tick_width_font_size = TypedReducer<num, actions.MajorTickWidthFontSizeSet>(major_tick_width_font_size_reducer)(
         storables.major_tick_width_font_size, action)
     ..show_mismatches = TypedReducer<bool, actions.ShowMismatchesSet>(show_mismatches_reducer)(
         storables.show_mismatches, action)
     ..show_domain_name_mismatches =
-    TypedReducer<bool, actions.ShowDomainNameMismatchesSet>(show_domain_name_mismatches_reducer)(
-        storables.show_domain_name_mismatches, action)
+        TypedReducer<bool, actions.ShowDomainNameMismatchesSet>(show_domain_name_mismatches_reducer)(
+            storables.show_domain_name_mismatches, action)
     ..show_unpaired_insertion_deletions =
-    TypedReducer<bool, actions.ShowUnpairedInsertionDeletionsSet>(show_unpaired_insertion_deletions_reducer)(
-        storables.show_unpaired_insertion_deletions, action)
+        TypedReducer<bool, actions.ShowUnpairedInsertionDeletionsSet>(show_unpaired_insertion_deletions_reducer)(storables.show_unpaired_insertion_deletions, action)
     ..invert_y = TypedReducer<bool, actions.InvertYSet>(invert_y_reducer)(storables.invert_y, action)
-    ..warn_on_exit_if_unsaved = TypedReducer<bool, actions.WarnOnExitIfUnsavedSet>(
-        warn_on_exit_if_unsaved_reducer)(storables.warn_on_exit_if_unsaved, action)
-    ..show_helix_circles_main_view = TypedReducer<bool, actions.ShowHelixCirclesMainViewSet>(
-        show_helix_circles_main_view_reducer)(storables.show_helix_circles_main_view, action)
-    ..show_helix_components_main_view = TypedReducer<bool, actions.ShowHelixComponentsMainViewSet>(
-        show_helix_components_main_view_reducer)(storables.show_helix_components_main_view, action)
-    ..show_edit_mode_menu = TypedReducer<bool, actions.ShowEditMenuToggle>(show_edit_mode_menu_reducer)(
-        storables.show_edit_mode_menu, action)
-    ..show_grid_coordinates_side_view = TypedReducer<bool, actions.ShowGridCoordinatesSideViewSet>(
-        show_grid_coordinates_side_view_reducer)(storables.show_grid_coordinates_side_view, action)
-    ..show_helices_axis_arrows = TypedReducer<bool, actions.ShowAxisArrowsSet>(
-        show_helices_axis_arrows_reducer)(storables.show_helices_axis_arrows, action)
-    ..show_loopout_extension_length = TypedReducer<bool, actions.ShowLoopoutExtensionLengthSet>(
-        show_loopout_extension_length_reducer)(storables.show_loopout_extension_length, action)
-    ..show_slice_bar = TypedReducer<bool, actions.ShowSliceBarSet>(show_slice_bar_reducer)(
-        storables.show_slice_bar, action)
-    ..slice_bar_offset = TypedReducer<int, actions.SliceBarOffsetSet>(slice_bar_offset_set_reducer)(
-        storables.slice_bar_offset, action)
-    ..disable_png_caching_dna_sequences = TypedReducer<bool, actions.DisablePngCachingDnaSequencesSet>(
-        disable_png_caching_dna_sequences_reducer)(storables.disable_png_caching_dna_sequences, action)
-    ..local_storage_design_choice = TypedReducer<LocalStorageDesignChoice,
-        actions.LocalStorageDesignChoiceSet>(local_storage_design_choice_reducer)(
-        storables.local_storage_design_choice, action).toBuilder()
-    ..clear_helix_selection_when_loading_new_design = TypedReducer<bool,
-        actions.ClearHelixSelectionWhenLoadingNewDesignSet>(
-        clear_helix_selection_when_loading_new_design_set_reducer)(
-        storables.clear_helix_selection_when_loading_new_design, action)
-    ..strand_paste_keep_color = TypedReducer<bool, actions.StrandPasteKeepColorSet>(
-        strand_paste_keep_color_reducer)(storables.strand_paste_keep_color, action)
+    ..warn_on_exit_if_unsaved = TypedReducer<bool, actions.WarnOnExitIfUnsavedSet>(warn_on_exit_if_unsaved_reducer)(storables.warn_on_exit_if_unsaved, action)
+    ..show_helix_circles_main_view = TypedReducer<bool, actions.ShowHelixCirclesMainViewSet>(show_helix_circles_main_view_reducer)(storables.show_helix_circles_main_view, action)
+    ..show_helix_components_main_view = TypedReducer<bool, actions.ShowHelixComponentsMainViewSet>(show_helix_components_main_view_reducer)(storables.show_helix_components_main_view, action)
+    ..show_edit_mode_menu = TypedReducer<bool, actions.ShowEditMenuToggle>(show_edit_mode_menu_reducer)(storables.show_edit_mode_menu, action)
+    ..show_grid_coordinates_side_view = TypedReducer<bool, actions.ShowGridCoordinatesSideViewSet>(show_grid_coordinates_side_view_reducer)(storables.show_grid_coordinates_side_view, action)
+    ..show_helices_axis_arrows = TypedReducer<bool, actions.ShowAxisArrowsSet>(show_helices_axis_arrows_reducer)(storables.show_helices_axis_arrows, action)
+    ..show_loopout_extension_length = TypedReducer<bool, actions.ShowLoopoutExtensionLengthSet>(show_loopout_extension_length_reducer)(storables.show_loopout_extension_length, action)
+    ..show_slice_bar = TypedReducer<bool, actions.ShowSliceBarSet>(show_slice_bar_reducer)(storables.show_slice_bar, action)
+    ..slice_bar_offset = TypedReducer<int, actions.SliceBarOffsetSet>(slice_bar_offset_set_reducer)(storables.slice_bar_offset, action)
+    ..disable_png_caching_dna_sequences = TypedReducer<bool, actions.DisablePngCachingDnaSequencesSet>(disable_png_caching_dna_sequences_reducer)(storables.disable_png_caching_dna_sequences, action)
+    ..local_storage_design_choice = TypedReducer<LocalStorageDesignChoice, actions.LocalStorageDesignChoiceSet>(local_storage_design_choice_reducer)(storables.local_storage_design_choice, action).toBuilder()
+    ..clear_helix_selection_when_loading_new_design = TypedReducer<bool, actions.ClearHelixSelectionWhenLoadingNewDesignSet>(clear_helix_selection_when_loading_new_design_set_reducer)(storables.clear_helix_selection_when_loading_new_design, action)
+    ..strand_paste_keep_color = TypedReducer<bool, actions.StrandPasteKeepColorSet>(strand_paste_keep_color_reducer)(storables.strand_paste_keep_color, action)
     ..autofit = TypedReducer<bool, actions.AutofitSet>(center_on_load_reducer)(storables.autofit, action)
-    ..show_editor = TypedReducer<bool, actions.SetShowEditor>(show_editor_reducer)(
-        storables.show_editor, action)
-    ..display_base_offsets_of_major_ticks = TypedReducer<bool, actions.DisplayMajorTicksOffsetsSet>(
-        display_base_offsets_of_major_ticks_reducer)(storables.display_base_offsets_of_major_ticks, action)
-    ..display_base_offsets_of_major_ticks_only_first_helix = TypedReducer<bool,
-        actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix>(
-        display_base_offsets_of_major_ticks_only_first_helix_reducer)(
-        storables.display_base_offsets_of_major_ticks_only_first_helix, action)
-    ..display_major_tick_widths = TypedReducer<bool, actions.SetDisplayMajorTickWidths>(
-        display_major_tick_widths_reducer)(storables.display_major_tick_widths, action)
-    ..display_major_tick_widths_all_helices = TypedReducer<bool, actions.SetDisplayMajorTickWidthsAllHelices>(
-        display_major_tick_widths_all_helices_reducer)(
-        storables.display_major_tick_widths_all_helices, action)
-    ..show_base_pair_lines = TypedReducer<bool, actions.ShowBasePairLinesSet>(show_base_pair_lines_reducer)(
-        storables.show_base_pair_lines, action)
-    ..show_base_pair_lines_with_mismatches = TypedReducer<bool, actions.ShowBasePairLinesWithMismatchesSet>(
-        show_base_pair_lines_with_mismatches_reducer)(storables.show_base_pair_lines_with_mismatches, action)
-    ..only_display_selected_helices = TypedReducer<bool, actions.SetOnlyDisplaySelectedHelices>(
-        only_display_selected_helices_reducer)(storables.only_display_selected_helices, action)
-    ..default_crossover_type_scaffold_for_setting_helix_rolls = TypedReducer<bool,
-        actions.DefaultCrossoverTypeForSettingHelixRollsSet>(
-        default_crossover_type_scaffold_for_setting_helix_rolls_reducer)(
-        storables.default_crossover_type_scaffold_for_setting_helix_rolls, action)
-    ..default_crossover_type_staple_for_setting_helix_rolls = TypedReducer<bool,
-        actions.DefaultCrossoverTypeForSettingHelixRollsSet>(
-        default_crossover_type_staple_for_setting_helix_rolls_reducer)(
-        storables.default_crossover_type_staple_for_setting_helix_rolls, action)
-    ..show_mouseover_data = TypedReducer<bool, actions.ShowMouseoverDataSet>(show_mouseover_data_set_reducer)(
-        storables.show_mouseover_data, action));
+    ..show_editor = TypedReducer<bool, actions.SetShowEditor>(show_editor_reducer)(storables.show_editor, action)
+    ..display_base_offsets_of_major_ticks = TypedReducer<bool, actions.DisplayMajorTicksOffsetsSet>(display_base_offsets_of_major_ticks_reducer)(storables.display_base_offsets_of_major_ticks, action)
+    ..display_base_offsets_of_major_ticks_only_first_helix = TypedReducer<bool, actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix>(display_base_offsets_of_major_ticks_only_first_helix_reducer)(storables.display_base_offsets_of_major_ticks_only_first_helix, action)
+    ..display_major_tick_widths = TypedReducer<bool, actions.SetDisplayMajorTickWidths>(display_major_tick_widths_reducer)(storables.display_major_tick_widths, action)
+    ..display_major_tick_widths_all_helices = TypedReducer<bool, actions.SetDisplayMajorTickWidthsAllHelices>(display_major_tick_widths_all_helices_reducer)(storables.display_major_tick_widths_all_helices, action)
+    ..show_base_pair_lines = TypedReducer<bool, actions.ShowBasePairLinesSet>(show_base_pair_lines_reducer)(storables.show_base_pair_lines, action)
+    ..show_base_pair_lines_with_mismatches = TypedReducer<bool, actions.ShowBasePairLinesWithMismatchesSet>(show_base_pair_lines_with_mismatches_reducer)(storables.show_base_pair_lines_with_mismatches, action)
+    ..only_display_selected_helices = TypedReducer<bool, actions.SetOnlyDisplaySelectedHelices>(only_display_selected_helices_reducer)(storables.only_display_selected_helices, action)
+    ..default_crossover_type_scaffold_for_setting_helix_rolls = TypedReducer<bool, actions.DefaultCrossoverTypeForSettingHelixRollsSet>(default_crossover_type_scaffold_for_setting_helix_rolls_reducer)(storables.default_crossover_type_scaffold_for_setting_helix_rolls, action)
+    ..default_crossover_type_staple_for_setting_helix_rolls = TypedReducer<bool, actions.DefaultCrossoverTypeForSettingHelixRollsSet>(default_crossover_type_staple_for_setting_helix_rolls_reducer)(storables.default_crossover_type_staple_for_setting_helix_rolls, action)
+    ..show_mouseover_data = TypedReducer<bool, actions.ShowMouseoverDataSet>(show_mouseover_data_set_reducer)(storables.show_mouseover_data, action));
 }
 
 Reducer<String> displayed_group_name_reducer = combineReducers([
@@ -510,16 +446,16 @@ String displayed_group_name_change_displayed_group_reducer(String _, actions.Gro
 String displayed_group_name_change_name_reducer(String displayed_group_name, actions.GroupChange action) =>
     displayed_group_name == action.old_name ? action.new_name : displayed_group_name;
 
-Modification5Prime last_mod_5p_modification_add_reducer(Modification5Prime modification,
-    actions.ModificationAdd action) =>
+Modification5Prime last_mod_5p_modification_add_reducer(
+        Modification5Prime modification, actions.ModificationAdd action) =>
     action.modification is Modification5Prime ? action.modification : modification;
 
-Modification3Prime last_mod_3p_modification_add_reducer(Modification3Prime modification,
-    actions.ModificationAdd action) =>
+Modification3Prime last_mod_3p_modification_add_reducer(
+        Modification3Prime modification, actions.ModificationAdd action) =>
     action.modification is Modification3Prime ? action.modification : modification;
 
-ModificationInternal last_mod_int_modification_add_reducer(ModificationInternal modification,
-    actions.ModificationAdd action) =>
+ModificationInternal last_mod_int_modification_add_reducer(
+        ModificationInternal modification, actions.ModificationAdd action) =>
     action.modification is ModificationInternal ? action.modification : modification;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -549,8 +485,8 @@ Reducer<num> dna_sequence_vertical_offset_reducer = combineReducers([
   TypedReducer<num, actions.LoadDnaSequenceImageUri>(load_dna_sequence_png_vertical_offset),
 ]);
 
-actions.ExportSvg set_export_svg_action_delayed_for_png_cache(actions.ExportSvg _,
-    actions.SetExportSvgActionDelayedForPngCache action) {
+actions.ExportSvg set_export_svg_action_delayed_for_png_cache(
+    actions.ExportSvg _, actions.SetExportSvgActionDelayedForPngCache action) {
   return action.export_svg_action_delayed_for_png_cache;
 }
 
@@ -565,7 +501,7 @@ bool set_is_zoom_above_threshold(bool _, actions.SetIsZoomAboveThreshold action)
 }
 
 Reducer<bool> is_zoom_above_threshold_reducer =
-combineReducers([TypedReducer<bool, actions.SetIsZoomAboveThreshold>(set_is_zoom_above_threshold)]);
+    combineReducers([TypedReducer<bool, actions.SetIsZoomAboveThreshold>(set_is_zoom_above_threshold)]);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // side view mouse position/grid position reducers
@@ -575,12 +511,12 @@ Reducer<GridPosition> side_view_mouse_grid_pos_reducer = combineReducers([
   TypedReducer<GridPosition, actions.MouseGridPositionSideClear>(side_view_mouse_grid_pos_clear_reducer),
 ]);
 
-GridPosition side_view_mouse_grid_pos_update_reducer(GridPosition _,
-    actions.MouseGridPositionSideUpdate action) =>
+GridPosition side_view_mouse_grid_pos_update_reducer(
+        GridPosition _, actions.MouseGridPositionSideUpdate action) =>
     action.grid_position;
 
-GridPosition side_view_mouse_grid_pos_clear_reducer(GridPosition _,
-    actions.MouseGridPositionSideClear action) =>
+GridPosition side_view_mouse_grid_pos_clear_reducer(
+        GridPosition _, actions.MouseGridPositionSideClear action) =>
     null;
 
 Reducer<Point<num>> side_view_position_mouse_cursor_reducer = combineReducers([
@@ -622,16 +558,14 @@ Substrand color_picker_substrand_hide_reducer(Substrand _, actions.StrandOrSubst
 // ui state global reducer
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-AppUIState ui_state_global_reducer(AppUIState ui_state, AppState state, action) =>
-    ui_state.rebuild((u) =>
-    u
-      ..storables.replace(app_ui_state_storable_global_reducer(ui_state.storables, state, action))
-      ..selectables_store.replace(selectables_store_reducer(ui_state.selectables_store, state, action))
-      ..mouseover_datas.replace(mouseover_datas_global_reducer(ui_state.mouseover_datas, state, action))
-      ..strands_move = strands_move_global_reducer(ui_state.strands_move, state, action)?.toBuilder()
-      ..domains_move = domains_move_global_reducer(ui_state.domains_move, state, action)?.toBuilder()
-      ..strand_creation = strand_creation_global_reducer(ui_state.strand_creation, state, action)?.toBuilder()
-      ..copy_info = copy_info_global_reducer(ui_state.copy_info, state, action)?.toBuilder());
+AppUIState ui_state_global_reducer(AppUIState ui_state, AppState state, action) => ui_state.rebuild((u) => u
+  ..storables.replace(app_ui_state_storable_global_reducer(ui_state.storables, state, action))
+  ..selectables_store.replace(selectables_store_reducer(ui_state.selectables_store, state, action))
+  ..mouseover_datas.replace(mouseover_datas_global_reducer(ui_state.mouseover_datas, state, action))
+  ..strands_move = strands_move_global_reducer(ui_state.strands_move, state, action)?.toBuilder()
+  ..domains_move = domains_move_global_reducer(ui_state.domains_move, state, action)?.toBuilder()
+  ..strand_creation = strand_creation_global_reducer(ui_state.strand_creation, state, action)?.toBuilder()
+  ..copy_info = copy_info_global_reducer(ui_state.copy_info, state, action)?.toBuilder());
 
 GlobalReducer<BuiltList<MouseoverData>, AppState> mouseover_datas_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.HelixRollSetAtOther>(

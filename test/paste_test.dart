@@ -415,8 +415,6 @@ main() {
 
       expect(state.design.strands.length, 0);
 
-
-
       // autopaste to helix 0, offset 0
       var autopaste_action =
           actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
@@ -668,7 +666,7 @@ main() {
       // simulate Ctrl+V; view/design.dart handle the async aspect of reading from the clipboard,
       // we need to synchronously mock it here for unit testing
       var manual_paste_initiate_action =
-      actions.ManualPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
+          actions.ManualPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
       state = test_dispatch(store, manual_paste_initiate_action);
       copy_info = state.ui_state.copy_info;
 
@@ -689,7 +687,7 @@ main() {
 
       // autopaste to helix 2
       var autopaste_action_2 =
-      actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
+          actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
       state = test_dispatch(store, autopaste_action_2);
       copy_info = state.ui_state.copy_info;
       expect(state.design.strands.length, 3);
@@ -699,7 +697,7 @@ main() {
 
       // autopaste to helix 3
       var autopaste_action_3 =
-      actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
+          actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
       state = test_dispatch(store, autopaste_action_3);
       copy_info = state.ui_state.copy_info;
       expect(state.design.strands.length, 4);
@@ -709,7 +707,7 @@ main() {
 
       // attempted autopaste to helix 4; should do nothing
       var autopaste_action_4 =
-      actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
+          actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
       state = test_dispatch(store, autopaste_action_4);
       copy_info = state.ui_state.copy_info;
       expect(state.design.strands.length, 4);

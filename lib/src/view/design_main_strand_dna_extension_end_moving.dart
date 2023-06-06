@@ -24,7 +24,8 @@ part 'design_main_strand_dna_extension_end_moving.over_react.g.dart';
 typedef PointerDownHandler = void Function(react.SyntheticPointerEvent);
 typedef MouseUpHandler = void Function(react.SyntheticMouseEvent);
 
-UiFactory<ExtensionEndMovingProps> ConnectedExtensionEndMoving = connect<DNAExtensionsMove, ExtensionEndMovingProps>(
+UiFactory<ExtensionEndMovingProps> ConnectedExtensionEndMoving =
+    connect<DNAExtensionsMove, ExtensionEndMovingProps>(
   mapStateToPropsWithOwnProps: (dna_extensions_move, props) {
     Point<num> current_point = dna_extensions_move?.current_point_of(props.dna_end);
     if (current_point == null) {
@@ -35,9 +36,7 @@ UiFactory<ExtensionEndMovingProps> ConnectedExtensionEndMoving = connect<DNAExte
   context: app.context_extensions_move,
 )(ExtensionEndMoving);
 
-
 UiFactory<ExtensionEndMovingProps> ExtensionEndMoving = _$ExtensionEndMoving;
-
 
 mixin ExtensionEndMovingProps on UiProps {
   DNAEnd dna_end;
@@ -54,7 +53,6 @@ mixin ExtensionEndMovingProps on UiProps {
   Point<num> current_point;
   bool render;
 }
-
 
 class ExtensionEndMovingComponent extends UiComponent2<ExtensionEndMovingProps> {
   @override

@@ -72,7 +72,7 @@ main() {
       expect(design.helices[3].group, "First");
       expect(design.helices[4].group, "First");
     });
-    
+
     test('move_helices__to_self_group', () {
       List<Helix> helices = [];
       //Create 2 groups
@@ -103,9 +103,8 @@ main() {
       expect(design.helices[7].group, "Second");
       expect(design.helices[8].group, "Second");
       expect(design.helices[9].group, "Second");
-
     });
-    
+
     test('move_helices__from_multiple_groups__to_same_group', () {
       List<Helix> helices = [];
       //Create 2 groups
@@ -120,16 +119,18 @@ main() {
       }
       var design = Design(helices: helices, grid: Grid.square);
       var state = app_state_from_design(design);
-      state =
-          app_state_reducer(state, MoveHelicesToGroup(helix_idxs: [0, 1, 2, 5, 6].build(), group_name: "Third"));
+      state = app_state_reducer(
+          state, MoveHelicesToGroup(helix_idxs: [0, 1, 2, 5, 6].build(), group_name: "Third"));
       design = state.design;
 
       expect(design.groups["First"].helices_view_order.toList(), [3, 4]);
       expect(design.groups["Second"].helices_view_order.toList(), [7, 8, 9]);
-      expect(design.groups["Third"].helices_view_order.toList(), anyOf([
-        [10, 11, 12, 13, 14,  0, 1, 2,  5, 6], 
-        [10, 11, 12, 13, 14,  5, 6,     0, 1, 2],
-      ]));
+      expect(
+          design.groups["Third"].helices_view_order.toList(),
+          anyOf([
+            [10, 11, 12, 13, 14, 0, 1, 2, 5, 6],
+            [10, 11, 12, 13, 14, 5, 6, 0, 1, 2],
+          ]));
 
       expect(design.helices[0].group, "Third");
       expect(design.helices[1].group, "Third");
@@ -148,9 +149,8 @@ main() {
       expect(design.helices[12].group, "Third");
       expect(design.helices[13].group, "Third");
       expect(design.helices[14].group, "Third");
-
     });
-    
+
     test('move_helices__from_multiple_groups__to_self_group', () {
       List<Helix> helices = [];
       //Create 2 groups
@@ -163,8 +163,8 @@ main() {
       }
       var design = Design(helices: helices, grid: Grid.square);
       var state = app_state_from_design(design);
-      state =
-          app_state_reducer(state, MoveHelicesToGroup(helix_idxs: [0, 1, 2, 5, 6].build(), group_name: "First"));
+      state = app_state_reducer(
+          state, MoveHelicesToGroup(helix_idxs: [0, 1, 2, 5, 6].build(), group_name: "First"));
       design = state.design;
 
       expect(design.groups["First"].helices_view_order.toList(), [0, 1, 2, 3, 4, 5, 6]);
@@ -181,7 +181,6 @@ main() {
       expect(design.helices[7].group, "Second");
       expect(design.helices[8].group, "Second");
       expect(design.helices[9].group, "Second");
-
     });
 
     test('remove_2_helices__different_groups__helix_idx_in_numerical_order', () {

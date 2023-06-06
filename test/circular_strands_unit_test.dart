@@ -77,7 +77,8 @@ main() {
       design = design.draw_strand(0, 15).move(5).cross(1).move(-10).cross(0).move(5).commit();
       design = design.draw_strand(0, 20).move(10).commit();
       design = design.draw_strand(1, 30).move(-10).commit();
-      design = design.draw_strand(0, 30).move(10).loopout(1, 5).move(-10).cross(2).move(10).as_circular().commit();
+      design =
+          design.draw_strand(0, 30).move(10).loopout(1, 5).move(-10).cross(2).move(10).as_circular().commit();
       design = design.draw_strand(0, 40).move(10).cross(1).move(-10).as_circular().commit();
       num_strands = design.strands.length;
     });

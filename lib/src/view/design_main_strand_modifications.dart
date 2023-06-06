@@ -138,6 +138,4 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
   }
 }
 
-bool mod_5p_is_in_extension(Strand strand) {
-
-}
+bool mod_5p_is_in_extension(Strand strand) {}

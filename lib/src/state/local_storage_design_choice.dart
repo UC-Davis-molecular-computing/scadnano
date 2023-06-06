@@ -31,7 +31,7 @@ abstract class LocalStorageDesignChoice
     implements Built<LocalStorageDesignChoice, LocalStorageDesignChoiceBuilder> {
   factory LocalStorageDesignChoice(
           [LocalStorageDesignOption option = LocalStorageDesignOption.on_edit,
-            int period_seconds = _default_period]) =>
+          int period_seconds = _default_period]) =>
       LocalStorageDesignChoice.from((b) => b
         ..option = option
         ..period_seconds = period_seconds);

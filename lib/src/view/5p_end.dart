@@ -51,7 +51,7 @@ class End5PrimeComponent extends UiComponent2<End5PrimeProps> {
       ..onPointerDown = props.on_pointer_down
       ..onPointerUp = props.on_pointer_up
       ..onMouseUp = props.on_mouse_up
-      ..onMouseEnter  = props.on_mouse_enter
+      ..onMouseEnter = props.on_mouse_enter
       ..onMouseLeave = props.on_mouse_leave
       ..onMouseMove = props.on_mouse_move
       ..className = props.classname

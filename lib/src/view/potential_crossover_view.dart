@@ -1,4 +1,3 @@
-
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/over_react.dart';
 
@@ -15,15 +14,12 @@ UiFactory<PotentialCrossoverViewProps> ConnectedPotentialCrossoverView =
   context: app.context_potential_crossover,
 )(PotentialCrossoverView);
 
-
 UiFactory<PotentialCrossoverViewProps> PotentialCrossoverView = _$PotentialCrossoverView;
-
 
 mixin PotentialCrossoverViewProps on UiProps {
   PotentialCrossover potential_crossover;
   String id;
 }
-
 
 class PotentialCrossoverViewComponent extends UiComponent2<PotentialCrossoverViewProps> {
   @override

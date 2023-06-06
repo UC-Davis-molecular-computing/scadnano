@@ -135,15 +135,15 @@ BuiltList<Strand> move_linker_reducer(BuiltList<Strand> strands, AppState state,
       linker_seq = linker.dna_sequence ?? constants.DNA_BASE_WILDCARD * linker.dna_length();
     }
     // add wildcards to strands with no DNA sequences
-    String strand_to_dna_sequence = strand_to.dna_sequence ?? constants.DNA_BASE_WILDCARD * strand_to.dna_length;
-    String new_strand_connected_dna_sequence = new_strand_connected_intermediate.dna_sequence ?? constants.DNA_BASE_WILDCARD * new_strand_connected_intermediate.dna_length;
+    String strand_to_dna_sequence =
+        strand_to.dna_sequence ?? constants.DNA_BASE_WILDCARD * strand_to.dna_length;
+    String new_strand_connected_dna_sequence = new_strand_connected_intermediate.dna_sequence ??
+        constants.DNA_BASE_WILDCARD * new_strand_connected_intermediate.dna_length;
     String new_strand_connected_seq;
     if (end_fixed.is_5p) {
-      new_strand_connected_seq =
-          strand_to_dna_sequence + linker_seq + new_strand_connected_dna_sequence;
+      new_strand_connected_seq = strand_to_dna_sequence + linker_seq + new_strand_connected_dna_sequence;
     } else {
-      new_strand_connected_seq =
-          new_strand_connected_dna_sequence + linker_seq + strand_to_dna_sequence;
+      new_strand_connected_seq = new_strand_connected_dna_sequence + linker_seq + strand_to_dna_sequence;
     }
     new_strand_connected = new_strand_connected.set_dna_sequence(new_strand_connected_seq);
     // not necessary to assign DNA to new_strand_disconnected since that strand was created by
