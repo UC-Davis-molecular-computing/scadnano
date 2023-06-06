@@ -49,6 +49,7 @@ class DesignFooterComponent extends UiComponent2<DesignFooterProps> {
         int domain_length = mouseover_data.domain.dna_length();
         var strand = props.strand_first_mouseover_data;
         text += (', ' +
+            'strand DNA index: ${mouseover_data.strand_idx}, ' +
             'domain length: ${domain_length}, ' +
             'strand length: ${strand.dna_length}, ' +
             (strand.name != null ? 'strand name: ${strand.name} ' : ''));

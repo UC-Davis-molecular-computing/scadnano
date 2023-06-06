@@ -2319,6 +2319,26 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
     return to_return;
   }
+
+  /// Returns idx on strand (starting from 5' end) of the base at the given address.
+  int idx_on_strand(Address address) {
+    var domain = this.domain_on_helix_at(address);
+    if (domain == null) {
+      throw ArgumentError("no strand in Design at address ${address}");
+    }
+    var strand = this.substrand_to_strand[domain];
+    int strand_idx = 0;
+    for (var substrand in strand.substrands) {
+      if (domain == substrand) {
+        int domain_idx = domain.substrand_offset_to_substrand_dna_idx(address.offset, address.forward);
+        strand_idx += domain_idx;
+        break;
+      } else {
+        strand_idx += substrand.dna_length();
+      }
+    }
+    return strand_idx;
+  }
 }
 
 Map<String, HelixGroup> _calculate_groups_from_helix_builder(
