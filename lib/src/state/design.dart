@@ -208,12 +208,15 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   BuiltSet<Strand> strands_by_group_name(String group_name) {
-    Set<Strand> group_strands;
+    Set<Strand> group_strands = {};
     for (var strand in strands ) {
       // TODO implement issue 705
+      if(group_name_of_strand(strand) == group_name){
+        group_strands.add(strand);
+      }
     }
 
-    return group_strands;
+    return group_strands.build();
   }
 
   HelixGroup group_of_domain(Domain domain) => group_of_helix_idx(domain.helix);

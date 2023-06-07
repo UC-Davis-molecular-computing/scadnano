@@ -107,19 +107,19 @@ Design duplicate_group_groups_reducer(Design design, actions.GroupDuplicate acti
   Map<int, Helix> new_helices = design.helices.toMap();
 
   int num_helices = design.helices.length;
-  int helix_idx;
+  int helix_idx_offset;
   List<int> new_helices_view_order = [];
 
   if (num_helices > 0) {
-    helix_idx = design.helices.keys.max + 1;
+    helix_idx_offset = design.helices.keys.max + 1;
   } else {
-    helix_idx = 0;
+    helix_idx_offset = 0;
   }
-
+  helix_idx_offset -= helices_original.keys.min;
   List<int> new_idx = helices_original.keys.toList();
 
   for (int i = 0; i < new_idx.length; i++) {
-    new_idx[i] += helix_idx;
+    new_idx[i] += helix_idx_offset;
   }
   int j = 0;
   for (var helix in helices_original.values) {

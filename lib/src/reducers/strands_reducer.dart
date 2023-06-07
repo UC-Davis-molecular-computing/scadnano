@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
@@ -11,6 +12,7 @@ import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:tuple/tuple.dart';
 
+import '../json_serializable.dart';
 import 'assign_domain_names_reducer.dart';
 import 'strands_move_reducer.dart' as strands_move_reducer;
 import 'domains_move_reducer.dart' as domains_move_reducer;
@@ -32,6 +34,7 @@ import 'insertion_deletion_reducer.dart';
 import 'nick_ligate_join_by_crossover_reducers.dart';
 import 'util_reducer.dart';
 import '../util.dart' as util;
+import '../extension_methods.dart';
 
 Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([
   TypedReducer<BuiltList<Strand>, actions.AssignDNA>(assign_dna_reducer),
@@ -764,8 +767,30 @@ BuiltList<Strand> duplicate_group_strands_reducer(
   // TODO implement issue 705
 
   // duplicate all these strands and set domain helices to group helices
+  int helix_idx_offset;
+  int num_helices = state.design.helices.length;
   var strands_to_duplicate = state.design.strands_by_group_name(action.groupToDuplicate);
+  var helices_original = state.design.helices_in_group(action.groupToDuplicate);
   // var group_original = groups[action.groupToDuplicate];
-
-  return strands;
+  var new_strands = strands.toList();
+  if (num_helices > 0) {
+    helix_idx_offset = state.design.helices.keys.max + 1;
+  } else {
+    helix_idx_offset = 0;
+  }
+  helix_idx_offset -= helices_original.keys.min;
+  for (var strand in strands_to_duplicate) {
+    var strand_json = jsonDecode(json_encode(strand));
+    var strand_copy = Strand.from_json(strand_json);
+    var substrands_copy = strand_copy.substrands.toList();
+    for (var substrand in substrands_copy) {
+      if (substrand is Domain) {
+        var idx = substrands_copy.indexOf(substrand);
+        substrands_copy[idx] = substrand.rebuild((b) => b..helix += helix_idx_offset);
+      }
+    }
+    strand_copy = strand_copy.rebuild((b) => b..substrands.replace(substrands_copy));
+    new_strands.add(strand_copy);
+  }
+  return new_strands.build();
 }
