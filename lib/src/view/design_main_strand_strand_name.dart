@@ -108,7 +108,8 @@ class DesignMainStrandStrandNameComponent extends UiComponent2<DesignMainStrandS
           {props.helix.idx: props.helix_svg_position}.build());
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
-              items: props.context_menu_strand(props.strand, substrand: props.domain, address: address).build(),
+              items:
+                  props.context_menu_strand(props.strand, substrand: props.domain, address: address).build(),
               position: event.page)));
     }
   }

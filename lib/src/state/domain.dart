@@ -341,7 +341,7 @@ abstract class Domain
   int get offset_5p => this.forward ? this.start : this.end - 1;
 
   /// 3' end, INCLUSIVE
-  @memoized 
+  @memoized
   int get offset_3p => this.forward ? this.end - 1 : this.start;
 
   int dna_length() => (this.end - this.start) - this.deletions.length + this.num_insertions;
@@ -545,7 +545,7 @@ abstract class Domain
     return num;
   }
 
-  bool  overlaps(Domain other) {
+  bool overlaps(Domain other) {
     return (this.helix == other.helix &&
         this.forward == (!other.forward) &&
         this.compute_overlap(other) != null);

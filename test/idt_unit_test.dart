@@ -236,5 +236,4 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
     var strand = design.strands[0];
     expect(strand.name, 'staple1 strand level');
   });
-
 }

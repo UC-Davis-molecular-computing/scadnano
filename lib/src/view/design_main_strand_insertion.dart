@@ -56,7 +56,8 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       classname += ' ' + constants.css_selector_scaffold;
     }
 
-    Point<num> pos = props.helix.svg_base_pos(props.insertion.offset, props.domain.forward, props.svg_position_y);
+    Point<num> pos =
+        props.helix.svg_base_pos(props.insertion.offset, props.domain.forward, props.svg_position_y);
     ReactElement insertion_background = _insertion_background(pos);
     ReactElement insertion_path = _insertion_path();
     ReactElement text_num_insertions = _text_number_of_insertions(pos);

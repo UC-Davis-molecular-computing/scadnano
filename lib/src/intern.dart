@@ -1,4 +1,3 @@
-
 Set _cache = {};
 
 V intern<V>(V value) {

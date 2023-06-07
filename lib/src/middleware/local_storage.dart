@@ -53,8 +53,7 @@ restore(Store<AppState> store, Storable storable) {
   try {
     _restore(store, storable);
   } catch (e, stackTrace) {
-    var error_message =
-    'ERROR: loading ${storable} from localStorage, encountered this error:'
+    var error_message = 'ERROR: loading ${storable} from localStorage, encountered this error:'
         '\n${e.toString()}'
         '\n\nstack trace:'
         '\n\n${stackTrace}';

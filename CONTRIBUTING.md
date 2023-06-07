@@ -25,11 +25,12 @@ or post questions as issues on the [issues page](https://github.com/UC-Davis-mol
     - [Installing `webdev`](#installing-webdev)
     - [Running a Local Server](#running-a-local-server)
     - [Running Tests](#running-tests)
+    - [Formatting Dart code](#formatting-dart-code)
     - [Building](#building)
     - [Troubleshooting](#troubleshooting)
   - [General recipe for adding features](#general-recipe-for-adding-features)
   - [Pushing to the repository dev branch and documenting changes (done on all updates)](#pushing-to-the-repository-dev-branch-and-documenting-changes-done-on-all-updates)
-  - [Pushing to the repository master branch and documenting changes (done less frequently)](#pushing-to-the-repository-master-branch-and-documenting-changes-done-less-frequently)
+  - [Pushing to the repository main branch and documenting changes (done less frequently)](#pushing-to-the-repository-main-branch-and-documenting-changes-done-less-frequently)
   - [Styleguide](#styleguide)
 
 ## What should I know before I get started?
@@ -197,7 +198,7 @@ We get into more detail below.
 
    The key idea is that the code that detects the user interaction, or other asynchronous event, does not simply reach into the state and change it. (Indeed, this is not possible, since the state is immutable.) Instead, this is where Redux comes in.
 
-   Redux uses the [Command pattern](https://en.wikipedia.org/wiki/Command_pattern) to make changes to the state. The event handling code, rather than modifying the state, creates an _Action_ object describing the change that is supposed to happen. This object is given to Redux, by calling a method called `dispatch` on the Redux store, which stores the state. The method `dispatch` in turn calls the _reducer_ implementing the update logic. The reducer is a function that takes as input the old state and the action, and returns the new state. Redux then substitutes this new state object for the old one, and then the Redux (through the React/Redux bindings, primarily through a function called [connect](https://github.com/Workiva/over_react/blob/master/doc/over_react_redux_documentation.md#connect)) goes about conferring with React about which parts of the view now need to be updated. This part is the most difficult to implement correctly in a GUI program, and the fact that it is handled automatically by the React/Redux bindings is our main motivation for using React and Redux.
+   Redux uses the [Command pattern](https://en.wikipedia.org/wiki/Command_pattern) to make changes to the state. The event handling code, rather than modifying the state, creates an _Action_ object describing the change that is supposed to happen. This object is given to Redux, by calling a method called `dispatch` on the Redux store, which stores the state. The method `dispatch` in turn calls the _reducer_ implementing the update logic. The reducer is a function that takes as input the old state and the action, and returns the new state. Redux then substitutes this new state object for the old one, and then the Redux (through the React/Redux bindings, primarily through a function called [connect](https://github.com/Workiva/over_react/blob/main/doc/over_react_redux_documentation.md#connect)) goes about conferring with React about which parts of the view now need to be updated. This part is the most difficult to implement correctly in a GUI program, and the fact that it is handled automatically by the React/Redux bindings is our main motivation for using React and Redux.
 
    Actions, like the objects of the state, are themselves immutable instances of built_value.
 
@@ -240,23 +241,23 @@ git checkout dev
 
 ### Installing Dart
 
-This project requires using Dart version **2.13.4**, not the latest version. Click on a dropdown below for installation instructions for your operating system.
+This project requires using Dart version **2.13**, not the latest version. Click on a dropdown below for installation instructions for your operating system.
 
 <!--TODO: Find a way to use code blocks with syntax highlighting inside <details>-->
 
 <details><summary><strong>Windows</strong></summary>
 First, install <a href="https://chocolatey.org/install">Chocolatey</a> if you haven't already. If <code>choco help</code> shows a help menu for using Chocolatey, then you've set it up correctly.
 
-Then, install Dart 2.13.4:
+Then, install Dart 2.13:
 
 <pre>
-choco install dart-sdk --version 2.13.4
+choco install dart-sdk --version 2.13
 </pre>
 
 To stop Chocolatey from automatically updating Dart to the latest version, pin it:
 
 <pre>
-choco pin --name="'dart-sdk'" --version="'2.13.4'"
+choco pin --name="'dart-sdk'" --version="'2.13'"
 </pre>
 
 </details>
@@ -264,16 +265,16 @@ choco pin --name="'dart-sdk'" --version="'2.13.4'"
 <details><summary><strong>macOS</strong></summary>
 First, install <a href="https://brew.sh/">Homebrew</a> if you haven't already. If <code>brew -v</code> shows some version numbers, then you've set it up correctly.
 
-Then, install Dart 2.13.4:
+Then, install Dart 2.13:
 
 <pre>
-brew install dart@2.13.4
+brew install dart@2.13
 </pre>
 
 To stop Homebrew from automatically updating Dart to the latest version, pin it:
 
 <pre>
-brew pin dart@2.13.4
+brew pin dart@2.13
 </pre>
 
 If running `dart` in a terminal now does not work, you may need to follow <a href="https://docs.brew.sh/FAQ#my-mac-apps-dont-find-homebrew-utilities">these instructions</a>.
@@ -289,17 +290,17 @@ wget -qO- https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo gpg --dea
 echo 'deb [signed-by=/usr/share/keyrings/dart.gpg arch=amd64] https://storage.googleapis.com/download.dartlang.org/linux/debian stable main' | sudo tee /etc/apt/sources.list.d/dart_stable.list
 </pre>
 
-Then, install Dart 2.13.4:
+Then, install Dart 2.13:
 
 <pre>
 sudo apt-get update
-sudo apt-get install dart=2.13.4-1
+sudo apt-get install dart=2.13
 </pre>
 
 To stop apt from automatically updating Dart to the latest version, hold it:
 
 <pre>
-sudo apt-mark hold dart=2.13.4-1
+sudo apt-mark hold dart=2.13
 </pre>
 
 </details>
@@ -370,7 +371,6 @@ You may also find the [React Developer Tools](https://chrome.google.com/webstore
 and [Redux DevTools](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd?hl=en)
 extensions helpful for debugging and profiling.
 
-
 ### Running Tests
 
 Unit tests are contained in the [test](test/) directory.
@@ -386,11 +386,66 @@ tests for [Redux reducers](test/reducer_test.dart) and a few tests for
 straightforward to make, adding React components and Redux middleware
 unit tests is an [ongoing issue](https://github.com/UC-Davis-molecular-computing/scadnano/issues/32).
 
+### Formatting Dart code
+This step is done so that Pull Requests will only show "substantial semantic" changes and not minor whitespace changes. It will also be useful in helping to review code changes more quickly by focusing only on changes that actually affect the code logic.
+
+Before making a Pull Request, all the dart code must be formatted using one of the below given options. If this step is not done, the formatting check for the Pull Request will fail.
+
+- **VS Code:**
+1. Download and install VS Code from [here](https://code.visualstudio.com/download) if not already installed.
+2. Go to extensions and install (if not already installed) the Dart extension Dart-Code.dart-code for VS Code:
+Install the extension and ensure it is enabled (should automatically be enabled on installation)
+3.	Open settings.json:
+In your VS Code, go to Preferences (Windows: File -> Preferences, MacOS: Code -> Preferences) -> Settings (Shortcut: Ctrl + , / Cmd + ,)
+Click on the “Open Settings (JSON)” option to open the settings.json file in the editor. This option is generally in the top right corner in VS Code.
+4. Append or modify the following lines inside the JSON in the settings.json file and save the file:
+```
+"dart.lineLength": 110,
+"[dart]": {
+  "editor.defaultFormatter": "Dart-Code.dart-code",
+  "editor.formatOnSave": true,
+  "editor.rulers": [110],
+}
+```
+At this point, your VS Code editor should have been set up to automatically format Dart code when you hit Save (Ctrl/Cmd + S).
+
+- **IntelliJ IDEA (a.k.a. WebStorm):**
+1. Download and install IntelliJ IDEA from [here](https://www.jetbrains.com/idea/download/) if not already installed.
+2. Open the scadnano project on the editor.
+3. Shortcut for Preferences: (Windows) Ctrl + Alt + , or  (MacOS) Cmd + ,
+4. Navigate to Preferences -> Plugins. Search and install the Dart Plugin. (You might have to point the plugin to the already installed Dart SDK v2.13)
+5. Navigate to Preferences -> Editor -> Code Style -> Dart and change the line length to 110.
+6. Navigate to Preferences -> Tools -> Actions on Save and check the Reformat code option.
+
+At this point, your IntelliJ IDEA editor should have been set up to automatically format Dart code when you hit Save (Ctrl/Cmd + S).
+
+To test that either of the two options above are working:
+
+1. Open any Dart file and make formatting changes only such as adding/removing spaces and tabs, adding unnecessary new lines, etc. without changing the logical part of the code.
+2. Hit save to visually see the formatting changes being done automatically.
+3. To ensure that the file is in the required format for making the Pull Request, open a terminal / command prompt and run the following command:
+Warning: It is assumed that dart (v 2.13) is already installed and can be run from the terminal using ‘dart’ command.
+```
+dart format -l 110 path_to_your_dart_file/filename.dart
+```
+You should see something like that printed on the terminal:
+```
+Formatted 1 file (0 changed) in 0.32 seconds.
+```
+Note that the important part is that no files were changed (‘0 changed’ in brackets). This means that the files are in the correct format as expected for the Pull Request.
+
+- **To run from the terminal / command prompt directly without the editor setup:** (Note: This will have to be run every time before a Pull Request is made and will not be automatic)
+1. Run the command from the root directory of the repository:
+```
+dart format -l 110 .
+```
+Warning: The dot in the end is part of the command
+
 ### Building
 
 Building isn't necessary for the most part since the repository
 has a [Github Action](https://github.com/UC-Davis-molecular-computing/scadnano/actions?query=workflow%3A%22github+pages%22) that automatically builds and deploys changes
-in the master branch.
+in the main branch.
 
 Nevertheless, you may find it useful to build with the production
 compiler `dart2js` for profiling purposes or debugging some
@@ -406,6 +461,17 @@ webdev serve --release
 
 (TODO): Add common errors here.
 
+## Running in Docker
+
+This guide will help you run scadnano inside of Docker - this is useful for running in environments where tools like `apt` are not available for maximum ease of development. It can also be used to run scadnano without connection to the internet, but `run-docker.sh` needs to be run at least once with an internet connection before going offline. This is experimental and has only been tested on Linux.
+
+### Installing Docker
+
+If you want to run scadnano using Docker, you first need to have docker installed. If the command `docker run --rm hello-world` does not work, Docker is not installed. You can install Docker using [Docker's guide](https://docs.docker.com/engine/install/) for installing Docker Engine. For Linux users, setting up Docker to not require sudo is a good step - see [Docker's post-install guide.](https://docs.docker.com/engine/install/linux-postinstall/).
+
+### Clone and run using Docker
+
+First, [clone this repository](#cloning) to a directory, then run `./run_docker.sh`. This might take a minute, but eventually, http://localhost:8080 should give you a local version of scadnano! Changes made to the code will apply to the website automatically.
 
 ## General recipe for adding features
 As described above, the use of React and Redux is intended to reduce the number of bugs, by a clean separation of
@@ -516,13 +582,13 @@ Most of the steps below are about how to change the code. Before and after are s
     The way the scadnano data is stored, it is necessary to called `strand = strand.initialize();` whenever creating a new strand. Any reducer listed in `strand_part_reducer` in reducers/strands_reducer.dart will have this done automatically, but in general, be conservative and, before putting a new strand in a design (including one that is the result of modifying an existing strand), replace it with `strand.initialize()`.
 
 8. **if necessary, add view code to display the new state**:
-    If this involved adding a new piece of state, then it may influence the view in some way. (Not always; some features/new actions influence only side-effects, such as saving to localStorage, implemented by middleware, so in such cases you could skip this step.) Pass the information through the React component hierarchy, starting at the [connected component](https://github.com/Workiva/over_react/blob/master/doc/over_react_redux_documentation.md#connect) above the view component(s) that need to be altered to display it properly. Be sure to follow React rules about passing the [minimal amount of state necessary](https://reactjs.org/docs/thinking-in-react.html#step-3-identify-the-minimal-but-complete-representation-of-ui-state) to draw the view. For instance, if you need only a single `Strand`, don't pass the list of all strands in. If you only need the DNA sequence of the `Strand`, don't pass the whole `Strand`, just pass its DNA sequence.
+    If this involved adding a new piece of state, then it may influence the view in some way. (Not always; some features/new actions influence only side-effects, such as saving to localStorage, implemented by middleware, so in such cases you could skip this step.) Pass the information through the React component hierarchy, starting at the [connected component](https://github.com/Workiva/over_react/blob/master/doc/over_react_redux_documentation.md#connect) above the view component(s) that need to be altered to display it properly. Be sure to follow React rules about passing the [minimal amount of state necessary](https://react.dev/learn/thinking-in-react#step-3-find-the-minimal-but-complete-representation-of-ui-state) to draw the view. For instance, if you need only a single `Strand`, don't pass the list of all strands in. If you only need the DNA sequence of the `Strand`, don't pass the whole `Strand`, just pass its DNA sequence.
 
     In our example, the components (starting from the bottom) that need the `modification_font_size` property are
 
     `DesignMainStrandModificationDomain` &rarr; `DesignMainStrandModifications` &rarr; `DesignMainStrand` &rarr; `DesignMainStrands` &rarr; `DesignMain`
 
-    Since DesignMain is a connected component, at the top of the file we can see how `DesignMainStrandsProps.modification_font_size` is set to equal `state.ui_state.modification_font_size` from the State. From there it propagates down to the component that needs it.
+    Since DesignMain is a connected component, at the top of the file we can see how `DesignMainPropsMixin.modification_font_size` is set to equal `state.ui_state.modification_font_size` from the State. From there it propagates down to the component that needs it.
 
     The React-Redux bindings suggest using many connected components, putting them farther down in the View tree, to avoid the need to pass so many props through intermediate React components that don't need them. For example, note that none of `DesignMain`, `DesignMainStrands`, `DesignMainStrand`, or `DesignMainStrandModifications` need the font size; they only have it for the purpose of getting it from the connected `DesignMain` (which gets it directly from the state through the function `mapStateToProps`) down to `DesignMainStrandModificationDomain`, which needs it directly. This is known as [prop drilling](https://medium.com/@jeromefranco/how-to-avoid-prop-drilling-in-react-7e3a9f3c8674) in React, and using many connected components further down in the view tree is advised as a way to avoid it.
 
@@ -572,7 +638,7 @@ For any more significant change that is made (e.g., closing an issue, adding a n
 
 1. If there is not already a GitHub issue describing the desired change, make one. Make sure that its title is a self-contained description, and that it describes the change we would like to make to the software. For example, *"problem with loading gridless design"* is a bad title. A better title is *"fix problem where loading gridless design with negative x coordinates throws exception"*.
 
-2. Make a new branch specifically for the issue. Base this branch off of `dev` (**WARNING**: in GitHub desktop, the default is to base it off of `master`, so switch that). The title of the issue (with appropriate hyphenation) is a good name for the branch. (In GitHub Desktop, if you paste the title of the issue, it automatically adds the hyphens.) A good branch name is simply the issue title, preceded by the issue number, e.g., "issue-101-fix-problem-where-loading-gridless-design-with-negative-x-coordinates-throws-exception", although abbreviating the issue title is good if it is long, e.g., "issue-101-gridless-design-negative-x-coordinates".
+2. Make a new branch specifically for the issue. Base this branch off of `dev` (**WARNING**: in GitHub desktop, the default is to base it off of `main`, so switch that). The title of the issue (with appropriate hyphenation) is a good name for the branch. (In GitHub Desktop, if you paste the title of the issue, it automatically adds the hyphens.) A good branch name is simply the issue title, preceded by the issue number, e.g., "issue-101-fix-problem-where-loading-gridless-design-with-negative-x-coordinates-throws-exception", although abbreviating the issue title is good if it is long, e.g., "issue-101-gridless-design-negative-x-coordinates".
 
 3. If it is about fixing a bug, *first* add tests to reproduce the bug before working on fixing it. (This is so-called [test-driven development](https://www.google.com/search?q=test-driven+development))
 
@@ -584,7 +650,7 @@ For any more significant change that is made (e.g., closing an issue, adding a n
 
 7. Commit the changes. In the commit message, reference the issue using the phrase "fixes #123" (for bug fixes) or "closes #123" (for new features) (see [here](https://docs.github.com/en/enterprise/2.16/user/github/managing-your-work-on-github/closing-issues-using-keywords)). Also, in the commit message, describe the issue that was fixed (one easy way is to copy the title of the issue); this message will show up in automatically generated release notes, so this is part of the official documentation of what changed.
 
-8. Create a pull request (PR). **WARNING:** by default, it will want to merge into the `master` branch. Change the destination branch to `dev`. Fill in the automatically provided template.
+8. Create a pull request (PR). **WARNING:** by default, it will want to merge into the `main` branch. Change the destination branch to `dev`. Fill in the automatically provided template.
 
 9. Wait for all checks to complete (see next section), and then merge the changes from the new branch into `dev`. This will typically require someone else to review the code first and possibly request changes.
 
@@ -592,11 +658,11 @@ For any more significant change that is made (e.g., closing an issue, adding a n
 
 11. Locally, remember to switch back to the `dev` branch and pull it. (Although you added those changes locally, they revert back once you switch to your local `dev` branch, which needs to be synced with the remote repo for you to see the changes that were just merged from the now-deleted temporary branch.)
 
-## Pushing to the repository master branch and documenting changes (done less frequently)
+## Pushing to the repository main branch and documenting changes (done less frequently)
 
-Less frequently, pull requests (abbreviated PR) can be made from `dev` to `master`, but make sure that `dev` is working before merging to `master` as all changes to `master` are automatically built and deployed to https://scadnano.org.
+Less frequently, pull requests (abbreviated PR) can be made from `dev` to `main`, but make sure that `dev` is working before merging to `main` as all changes to `main` are automatically built and deployed to https://scadnano.org.
 
-**WARNING:** Always wait for the checks to complete. This is important 1) to ensure that unit tests pass, and 2) to ensure that the deployment to github pages on the dev branch does not get clobbered by the deployment on the master branch. Both deploy to the gh-pages branch, so we never want two of these actions running at once. They will look like this when incomplete:
+**WARNING:** Always wait for the checks to complete. This is important 1) to ensure that unit tests pass, and 2) to ensure that the deployment to github pages on the dev branch does not get clobbered by the deployment on the main branch. Both deploy to the gh-pages branch, so we never want two of these actions running at once. They will look like this when incomplete:
 
 ![](images/github-CI-checks-incomplete.png)
 
@@ -604,7 +670,7 @@ and like this when complete:
 
 ![](images/github-CI-checks-complete.png)
 
-We have an automated release system (through a GitHub action) that automatically creates release notes when changes are merged into the master branch.
+We have an automated release system (through a GitHub action) that automatically creates release notes when changes are merged into the main branch.
 
 Although the GitHub web interface abbreviates long commit messages, the full commit message is included for each commit in a PR.
 
@@ -623,8 +689,8 @@ So the steps are:
 1. If necessary, follow the instructions above to merge changes from a temporary branch to the `dev` branch. There will typically be several of these. Despite GitHub's suggestions to keep commit messages short and put longer text in descriptions, because only the commit message is included in the release notes, it's okay to put more detail in the message (but very long stuff should go in the description, or possibly documentation such as the README.md file).
 
     One of the changes committed should change the version number. We follow [semantic versioning](https://semver.org/). This is a string of the form `"MAJOR.MINOR.PATCH"`, e.g., `"0.9.3"`
-    - For the web interface repo scadnano, this is located at the top of the file https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/lib/src/constants.dart
-    - For the Python library repo scadnano-python-package, this is located in two places: the bottom of the file https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/scadnano/_version.py (as `__version__ = "0.9.3"` or something similar) and the near the top of the file https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/scadnano/scadnano.py (as `__version__ = "0.9.3"` or something similar). This latter one is only there for users who do not install from PyPI, and who simply download the file scadnano.py to put it in a directory with their script).
+    - For the web interface repo scadnano, this is located at the top of the file https://github.com/UC-Davis-molecular-computing/scadnano/blob/main/lib/src/constants.dart
+    - For the Python library repo scadnano-python-package, this is located in two places: the bottom of the file https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/main/scadnano/_version.py (as `__version__ = "0.9.3"` or something similar) and the near the top of the file https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/main/scadnano/scadnano.py (as `__version__ = "0.9.3"` or something similar). This latter one is only there for users who do not install from PyPI, and who simply download the file scadnano.py to put it in a directory with their script).
 
     The PATCH version numbers are not always synced between the two repos, but, they should stay synced on MAJOR and MINOR versions. **Note:** right now this isn't quite true since MINOR versions deal with backwards-compatible feature additions, and some features are supported on one but not the other; e.g., modifications can be made in the Python package but not the web interface, and calculating helix rolls/positions from crossovers can be done in the web interface but not the Python package. But post-version-1.0.0, the major and minor versions of the  should be enforced.
 
@@ -632,13 +698,13 @@ So the steps are:
 
 4. In the Python repo, ensure that the documentation is generated without errors. From the subfolder `doc`, run the command `make html`, ensure there are no errors, and inspect the documentation it generates in the folder `build`.
 
-5. Create a PR to merge changes from dev into master.
+5. Create a PR to merge changes from dev into main.
 
 6. One the PR is reviewed and approved, do the merge.
 
 7. Once the PR changes are merged, a release will be automatically created here: https://github.com/UC-Davis-molecular-computing/scadnano/releases or https://github.com/UC-Davis-molecular-computing/scadnano-python-package/releases. It will have a title that is a placerholder, which is a reminder to change its title and tag. Each commit will be documented, with the commit message (but not description) included in the release notes.
 
-8. Change *both* the title *and* tag to the version number with a `v` prepended, e.g., `v0.9.3`. It is imperative to change the tag before the next merge into master, or else the release (which defaults to the tag `latest`) will be overwritten.
+8. Change *both* the title *and* tag to the version number with a `v` prepended, e.g., `v0.9.3`. It is imperative to change the tag before the next merge into main, or else the release (which defaults to the tag `latest`) will be overwritten.
 
 
 

@@ -1064,8 +1064,10 @@ main() {
           .move(-3)
           .add_deletion(1, 4)
           .commit();
-      design = design.draw_strand(1, 0).move(3).add_deletion(1, 1).cross(0).move(-3).add_deletion(0, 1).commit();
-      design = design.draw_strand(0, 6).move(-3).add_deletion(0, 4).cross(1).move(3).add_deletion(1, 4).commit();
+      design =
+          design.draw_strand(1, 0).move(3).add_deletion(1, 1).cross(0).move(-3).add_deletion(0, 1).commit();
+      design =
+          design.draw_strand(0, 6).move(-3).add_deletion(0, 4).cross(1).move(3).add_deletion(1, 4).commit();
 
       AppState state = app_state_from_design(design);
       Strand strand = design.strands.first;
@@ -1184,8 +1186,12 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design =
-          design.draw_strand(0, 0).move(16).add_insertion(0, 8, 3).with_sequence('AACGTATCGCGATGCATCC').commit();
+      design = design
+          .draw_strand(0, 0)
+          .move(16)
+          .add_insertion(0, 8, 3)
+          .with_sequence('AACGTATCGCGATGCATCC')
+          .commit();
       design = design.draw_strand(0, 16).move(-16).add_insertion(0, 8, 3).commit();
 
       var action = actions.AssignDNAComplementFromBoundStrands([design.strands[1]]);
@@ -1212,7 +1218,8 @@ main() {
 
       design = design.draw_strand(0, 0).move(16).add_insertion(0, 8, 3).commit();
       design = design.draw_strand(0, 5).move(-5).with_sequence("ACGTT").commit();
-      design = design.draw_strand(0, 16).move(-11).add_insertion(0, 8, 3).with_sequence('GGATGCATCGCGAT').commit();
+      design =
+          design.draw_strand(0, 16).move(-11).add_insertion(0, 8, 3).with_sequence('GGATGCATCGCGAT').commit();
 
       var action = actions.AssignDNAComplementFromBoundStrands([design.strands[0]]);
       var state = app_state_from_design(design);

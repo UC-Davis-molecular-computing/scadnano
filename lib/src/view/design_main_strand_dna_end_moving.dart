@@ -29,9 +29,7 @@ UiFactory<EndMovingProps> ConnectedEndMoving = connect<DNAEndsMove, EndMovingPro
   context: app.context_dna_ends_move,
 )(EndMoving);
 
-
 UiFactory<EndMovingProps> EndMoving = _$EndMoving;
-
 
 mixin EndMovingProps on UiProps {
   DNAEnd dna_end;
@@ -46,7 +44,6 @@ mixin EndMovingProps on UiProps {
   num svg_position_y;
   String transform;
 }
-
 
 class EndMovingComponent extends UiComponent2<EndMovingProps> {
   @override

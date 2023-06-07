@@ -90,7 +90,7 @@ void handle_autopaste_initiate(Store<AppState> store, actions.AutoPasteInitiate 
 bool paste_is_impossible_from_clipboard(String clipboard_content, bool in_browser) {
   var strands_and_helices_view_order = parse_strands_and_helices_view_order_from_clipboard(clipboard_content);
   if (strands_and_helices_view_order == null) return true;
-  
+
   List<Strand> strands = strands_and_helices_view_order.item1;
   List<int> helices_view_order = strands_and_helices_view_order.item2;
 
@@ -156,6 +156,7 @@ void put_strand_info_on_clipboard(Store<AppState> store) {
     clipboard.write(clipboard_content);
   }
 }
+
 BuiltSet<Modification> all_modifications(Iterable<Strand> strands) {
   var mods_5p = BuiltSet<Modification>({
     for (var strand in strands)

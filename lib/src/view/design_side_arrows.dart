@@ -42,13 +42,13 @@ class DesignMainArrowsComponent extends UiComponent2<DesignSideArrowsProps> {
     num svg_center_x = props.invert_y ? mag + circle_rad + arrow_padding : circle_rad + arrow_padding,
         svg_center_y = props.invert_y ? mag + circle_rad + arrow_padding : circle_rad + arrow_padding;
 
-    num font_width = 12, font_height = 17;    // arbitrary dimensions found through web inspector
+    num font_width = 12, font_height = 17; // arbitrary dimensions found through web inspector
 
 //RGB XYZ
     if (props.show_helices_axis_arrows == true) {
       return (Dom.g()
-      ..className = 'arrow-group'
-      ..transform = 'translate($svg_center_x, $svg_center_y)')(
+        ..className = 'arrow-group'
+        ..transform = 'translate($svg_center_x, $svg_center_y)')(
         Dom.svgTitle()("⦻ - Into the screen"),
         //inward arrow (Z-axis)
         (Dom.path()

@@ -9,11 +9,10 @@ import '../actions/actions.dart' as actions;
 import '../state/grid_position.dart';
 import '../state/helix.dart';
 
-
 /// Disallows converting all crossovers on a circular strand to loopouts, since then the first
 /// substrand would necessarily be a loopout, currently disallowed.
-forbid_create_circular_strand_no_crossovers_middleware(Store<AppState> store, dynamic action,
-    NextDispatcher next) {
+forbid_create_circular_strand_no_crossovers_middleware(
+    Store<AppState> store, dynamic action, NextDispatcher next) {
   Design design = store.state.design;
 
   var msg_generic = """\
@@ -63,7 +62,6 @@ ${msg_generic}""";
       }
     }
   } else if (action is actions.Ligate) {
-
     var dna_end = action.dna_end;
     var strand = design.end_to_strand(dna_end);
 

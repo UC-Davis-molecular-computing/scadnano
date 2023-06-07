@@ -183,6 +183,5 @@ abstract class Extension
       is_on_extension: true,
       substrand_id: id);
 
-  double compute_rotation() =>
-    util.compute_end_rotation(display_angle, adjacent_domain.forward, is_5p);
+  double compute_rotation() => util.compute_end_rotation(display_angle, adjacent_domain.forward, is_5p);
 }

@@ -10,7 +10,6 @@ import 'package:scadnano/src/constants.dart' as constants;
 
 import 'utils.dart';
 
-
 main() {
   initializeComponentTests();
   group('helices_positions_set_based_on_crossovers', () {
@@ -18,7 +17,8 @@ main() {
       // I wrote this when 0.5 was the default gap
       Design helices_angle_design = design_from_string("""
         {
-          "version": "${constants.CURRENT_VERSION}",""" + r"""
+          "version": "${constants.CURRENT_VERSION}",""" +
+          r"""
           "grid": "none",
           "geometry": {
             "helix_radius": 1.0,
@@ -201,7 +201,8 @@ main() {
 
       Design expected_design = design_from_string("""
         {
-          "version": "${constants.CURRENT_VERSION}",""" + r"""
+          "version": "${constants.CURRENT_VERSION}",""" +
+          r"""
           "grid": "none",
           "geometry": {
             "helix_radius": 1.0,

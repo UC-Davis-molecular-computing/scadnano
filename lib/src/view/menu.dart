@@ -395,7 +395,8 @@ with some default direction chosen. Play with it and see!
       // select all
       DropdownDivider({}),
       (MenuDropdownItem()
-        ..on_click = ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.A, ctrlKey: true).wrapped))
+        ..on_click =
+            ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.A, ctrlKey: true).wrapped))
         ..display = 'Select All'
         ..tooltip = '''\
 Select all strands in the design.'''
@@ -1025,7 +1026,7 @@ In a large design, this can slow down the performance, so uncheck it when not in
           props.dispatch(actions.ShowMouseoverDataSet(!props.show_mouseover_data));
         }
         ..key = 'show-mouseover-data')(),
-        (MenuBoolean()
+      (MenuBoolean()
         ..value = props.disable_png_caching_dna_sequences
         ..display = 'Disable PNG caching of DNA sequences'
         ..tooltip = '''\
@@ -1067,6 +1068,11 @@ debugging, but be warned that it will be very slow to render a large number of D
         ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna))
         ..tooltip = "Export DNA sequences of strands to a file."
         ..display = 'DNA sequences')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.ExportCanDoDNA(export_dna_format: ExportDNAFormat.cando)))
+        ..tooltip = "Export design's DNA sequences as a CSV in the same way as cadnano v2.\n"
+            "This is useful, for example, with CanDo's atomic model generator."
+        ..display = 'DNA sequences (cadnano v2 format)')(),
       DropdownDivider({'key': 'divider-not-full-design'}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile(whitespace: true)))
@@ -1289,6 +1295,13 @@ However, it may be less stable than the main site.'''
     List<String> export_options = ExportDNAFormat.values.map((v) => v.toString()).toList();
     List<String> sort_options = StrandOrder.values.map((v) => v.toString()).toList();
 
+    // This is needed to hide the cando export option from the menu, as it has a separate button due to how specific CanDo is with CSV format.
+    for (var option in export_options) {
+      if (option == "CANDO") {
+        export_options.remove(option);
+      }
+    }
+
     int idx_include_scaffold = 0;
     int idx_include_only_selected_strands = 1;
     int idx_format_str = 2;
@@ -1306,10 +1319,14 @@ However, it may be less stable than the main site.'''
         DialogCheckbox(label: 'column-major order (uncheck for row-major order)', value: true);
     items[idx_strand_order_str] = DialogRadio(label: 'strand part to sort by', options: sort_options);
 
-    var dialog = Dialog(title: 'export DNA sequences', type: DialogType.export_dna_sequences, items: items, disable_when_any_checkboxes_off: {
-      idx_column_major: [idx_sort],
-      idx_strand_order_str: [idx_sort]
-    });
+    var dialog = Dialog(
+        title: 'export DNA sequences',
+        type: DialogType.export_dna_sequences,
+        items: items,
+        disable_when_any_checkboxes_off: {
+          idx_column_major: [idx_sort],
+          idx_strand_order_str: [idx_sort]
+        });
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
@@ -1363,7 +1380,8 @@ Future<void> ask_for_autobreak_parameters() async {
   items[max_length_idx] = DialogInteger(label: 'max length', value: 60);
   items[min_distance_to_xover_idx] = DialogInteger(label: 'min distance to xover', value: 3);
 
-  var dialog = Dialog(title: 'Choose autobreak parameters', type: DialogType.choose_autobreak_parameters, items: items);
+  var dialog = Dialog(
+      title: 'Choose autobreak parameters', type: DialogType.choose_autobreak_parameters, items: items);
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 
@@ -1395,7 +1413,8 @@ Future<void> ask_for_geometry(Geometry geometry) async {
   items[minor_groove_angle_idx] =
       DialogFloat(label: 'minor groove angle (degrees)', value: geometry.minor_groove_angle);
 
-  var dialog = Dialog(title: 'adjust geometric parameters', type: DialogType.adjust_geometric_parameters, items: items);
+  var dialog = Dialog(
+      title: 'adjust geometric parameters', type: DialogType.adjust_geometric_parameters, items: items);
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 

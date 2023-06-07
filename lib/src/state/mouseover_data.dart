@@ -3,6 +3,7 @@ import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
 
 import '../serializers.dart';
+import 'address.dart';
 import 'design.dart';
 import 'helix.dart';
 import 'domain.dart';
@@ -52,6 +53,8 @@ abstract class MouseoverData
 
   double get minor_groove_angle;
 
+  int get strand_idx;
+
   @nullable
   Domain get domain;
 
@@ -71,10 +74,13 @@ abstract class MouseoverData
       Helix helix = design.helices[helix_idx];
       double roll_forward = design.helix_rotation_forward(helix.idx, offset);
       int num_domains_found = 0;
+      int strand_idx = -1;
       for (Domain domain in design.domains_on_helix(helix_idx)) {
         if (domain.contains_offset(offset)) {
           if (domain.forward == forward) {
             domain_in_direction = domain;
+            strand_idx =
+                design.idx_on_strand(Address(helix_idx: helix_idx, offset: offset, forward: forward));
           }
           num_domains_found++;
           Strand strand = design.substrand_to_strand[domain];
@@ -89,19 +95,20 @@ abstract class MouseoverData
         }
       }
       double minor_groove_angle = design.geometry.minor_groove_angle;
-      mouseover_datas_builder.add(MouseoverData(helix, offset, domain_in_direction, color_forward,
+      mouseover_datas_builder.add(MouseoverData(helix, offset, strand_idx, domain_in_direction, color_forward,
           color_reverse, roll_forward, minor_groove_angle));
     }
     return mouseover_datas_builder;
   }
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory MouseoverData(Helix helix, int offset, Domain domain, Color color_forward, Color color_reverse,
-          double roll_forward, double minor_groove_angle) =>
+  factory MouseoverData(Helix helix, int offset, int strand_idx, Domain domain, Color color_forward,
+          Color color_reverse, double roll_forward, double minor_groove_angle) =>
       MouseoverData.from((b) => b
         ..helix.replace(helix)
         ..domain = domain?.toBuilder()
         ..offset = offset
+        ..strand_idx = strand_idx
         ..color_forward = color_forward
         ..color_reverse = color_reverse
         ..roll_forward = roll_forward

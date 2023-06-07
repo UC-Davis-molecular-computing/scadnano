@@ -341,6 +341,5 @@ main() {
       var base_pairs = design.base_pairs;
       expect(base_pairs.length, 0);
     });
-
   });
 }

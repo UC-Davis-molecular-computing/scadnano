@@ -20,11 +20,9 @@ import '../util.dart' as util;
 // of selected ends. It is needed because the click on the DNAEnd that triggers the DNAEndsMoveStart action
 // does not have access to the list of all selected ends. It is middleware instead of a reducer because
 // it triggers a new action to be dispatched.
-dna_extensions_move_start_middleware(
-    Store<AppState> store, action, NextDispatcher next) {
+dna_extensions_move_start_middleware(Store<AppState> store, action, NextDispatcher next) {
   if (action is actions.DNAExtensionsMoveStart) {
-    BuiltSet<DNAEnd> selected_ends =
-        store.state.ui_state.selectables_store.selected_dna_ends_on_extensions;
+    BuiltSet<DNAEnd> selected_ends = store.state.ui_state.selectables_store.selected_dna_ends_on_extensions;
     List<DNAExtensionMove> moves = [];
     Design design = store.state.design;
     for (var end in selected_ends) {
@@ -34,20 +32,14 @@ dna_extensions_move_start_middleware(
           extension,
           extension.adjacent_domain,
           helix,
-          store
-              .state
-              .helix_idx_to_svg_position_map[extension.adjacent_domain.helix]
-              .y);
+          store.state.helix_idx_to_svg_position_map[extension.adjacent_domain.helix].y);
 
       // extension_start_point is in helix group coordinate space, so add it with helix group position
       // to get canvas coordinate space
       extension_start_point += design.groups[helix.group].translation(design.geometry);
 
       var extension_end_point = util.compute_extension_free_end_svg(
-          extension_start_point,
-          extension,
-          extension.adjacent_domain,
-          design.geometry);
+          extension_start_point, extension, extension.adjacent_domain, design.geometry);
       var color = design.extension_end_to_strand(end).color;
       var move = DNAExtensionMove(
           dna_end: end,

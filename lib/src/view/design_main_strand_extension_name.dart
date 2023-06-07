@@ -46,7 +46,7 @@ class DesignMainStrandExtensionNameComponent extends UiComponent2<DesignMainStra
       ..startOffset = start_offset
       ..style = style_map);
     var dom = props.ext.adjacent_domain;
-    var adj_dom_offset = props.ext.is_5p? dom.offset_5p: dom.offset_3p;
+    var adj_dom_offset = props.ext.is_5p ? dom.offset_5p : dom.offset_3p;
     return (Dom.text()
       ..key = 'extension-text-H${props.ext.adjacent_domain.helix},${adj_dom_offset}'
       ..dy = '$dy')(text_path_props(props.ext.name));

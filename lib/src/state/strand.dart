@@ -173,7 +173,7 @@ abstract class Strand
   }
 
   _rebuild_extension_with_new_fields_based_on_strand(Extension ext, bool is_5p, Strand strand) {
-    Domain adjacent_domain = is_5p? strand.first_domain: strand.last_domain;
+    Domain adjacent_domain = is_5p ? strand.first_domain : strand.last_domain;
     return ext.rebuild((b) => b
       ..is_scaffold = is_scaffold
       ..strand_id = strand.id
@@ -822,8 +822,7 @@ abstract class Strand
       if (substrands[i] is Extension) {
         Extension ext = substrands[i];
         Domain adjacent_domain = ext.is_5p ? substrands[i + 1] as Domain : substrands[i - 1] as Domain;
-        ext = ext.rebuild(
-            (b) => b..adjacent_domain.replace(adjacent_domain));
+        ext = ext.rebuild((b) => b..adjacent_domain.replace(adjacent_domain));
         substrands[i] = ext;
       }
     }
