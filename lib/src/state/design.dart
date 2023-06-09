@@ -2048,6 +2048,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
           if (reverse_domains.isNotEmpty) {
             reverse_domain = reverse_domains.first;
           } else {
+            // no more reverse domains to process, so we can exit
             return overlapping_domains;
           }
         } else {
