@@ -371,9 +371,12 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
     var existing_group_name = helix.group ?? Position3D();
     other_group_names.remove(existing_group_name);
 
-    var dialog = Dialog(title: 'move selected helices to group', type: DialogType.move_selected_helices_to_group, items: [
-      DialogRadio(options: other_group_names, radio: false, label: 'new group'),
-    ]);
+    var dialog = Dialog(
+        title: 'move selected helices to group',
+        type: DialogType.move_selected_helices_to_group,
+        items: [
+          DialogRadio(options: other_group_names, radio: false, label: 'new group'),
+        ]);
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;

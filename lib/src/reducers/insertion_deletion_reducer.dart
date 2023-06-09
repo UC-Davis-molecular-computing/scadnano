@@ -39,7 +39,6 @@ Strand insertion_deletion_reducer(Strand strand, actions.InsertionOrDeletionActi
   return strand.rebuild((b) => b..substrands.replace(substrands));
 }
 
-
 Reducer<Domain> insertion_deletion_domain_reducer = combineReducers([
   TypedReducer<Domain, actions.InsertionAdd>(insertion_add_reducer),
   TypedReducer<Domain, actions.InsertionRemove>(insertion_remove_reducer),
@@ -92,7 +91,7 @@ BuiltList<Strand> insertions_length_change_reducer(
   assert(action.insertions.length == action.domains.length);
 
   Map<String, Map<Domain, List<Insertion>>> insertions_on_strand_id_domain = {};
-  for (int i=0; i<action.insertions.length; i++) {
+  for (int i = 0; i < action.insertions.length; i++) {
     Insertion insertion = action.insertions[i];
     Domain domain = action.domains[i];
 
@@ -121,7 +120,7 @@ BuiltList<Strand> insertions_length_change_reducer(
       List<Insertion> existing_insertions = domain.insertions.toList();
       for (Insertion insertion in insertions_to_change) {
         int idx = existing_insertions.indexOf(insertion);
-        Insertion new_insertion = insertion.rebuild((b) => b..length=action.length);
+        Insertion new_insertion = insertion.rebuild((b) => b..length = action.length);
         existing_insertions[idx] = new_insertion;
       }
       Domain new_domain = domain.rebuild((b) => b..insertions.replace(existing_insertions));

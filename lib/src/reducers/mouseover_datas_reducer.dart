@@ -19,8 +19,6 @@ BuiltList<MouseoverData> mouseover_data_clear_reducer(_, actions.MouseoverDataCl
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // mouseover_data global reducer
 
-
-
 // BuiltList<MouseoverData> mouseover_data_group_displayed_change_reducer(_, AppState state, actions.GroupDisplayedChange action) {
 //   var offset = state.ui_state.storables.slice_bar_offset;
 //   var group_name = action.group_name;

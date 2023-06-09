@@ -174,7 +174,6 @@ class ExportDNAFormat extends EnumClass {
     throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
   }
 
-
   /// Output object (String if text file; Future<List<int>> if binary) representing list of Strands
   /// I couldn't see a way to export Excel files synchronously, since they require loading an
   /// existing Excel file from a local resource using an HttpRequest, which is asynchronous.
@@ -233,14 +232,16 @@ String cando_compatible_csv_export(Iterable<Strand> strands) {
     var cando_strand = strand.idt_export_name().replaceAll(RegExp(r'^ST'), '');
     // Split the export name into the start and end positions.
     RegExp cando_split_regex = RegExp(r'\d+\[\d+\]');
-    List<String> cando_split_name = cando_split_regex.allMatches(cando_strand).map((match) => match.group(0)).toList();
+    List<String> cando_split_name =
+        cando_split_regex.allMatches(cando_strand).map((match) => match.group(0)).toList();
     if (cando_split_name.length != 2) {
       throw ExportDNAException('Invalid strand name: ${strand.idt_export_name()}');
     }
     var cando_strand_end = cando_split_name[1];
     var cando_strand_start = cando_split_name[0];
     // Write the strand to the CSV file.
-    buf.writeln('${cando_strand_start},${cando_strand_end},${idt_sequence_null_aware(strand)},${idt_sequence_null_aware(strand).length},${strand.color.toHexColor().toCssString().toUpperCase()}');
+    buf.writeln(
+        '${cando_strand_start},${cando_strand_end},${idt_sequence_null_aware(strand)},${idt_sequence_null_aware(strand).length},${strand.color.toHexColor().toCssString().toUpperCase()}');
   }
   return buf.toString();
 }
@@ -253,8 +254,8 @@ String csv_export(Iterable<Strand> strands) {
 String idt_sequence_null_aware(Strand strand) => strand.idt_dna_sequence ?? '*****NONE*****';
 
 String idt_bulk_export(Iterable<Strand> strands, {String scale = '25nm', String purification = 'STD'}) {
-  var lines = strands
-      .map((strand) => '${strand.idt_export_name()},${idt_sequence_null_aware(strand)},${scale},${purification}');
+  var lines = strands.map(
+      (strand) => '${strand.idt_export_name()},${idt_sequence_null_aware(strand)},${scale},${purification}');
   return lines.join('\n');
 }
 

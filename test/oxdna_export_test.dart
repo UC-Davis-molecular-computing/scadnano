@@ -344,9 +344,18 @@ main() {
         helix 2   +------->
       */
       var helix_builders = [
-        HelixBuilder()..idx= 0..grid_position=GridPosition(1, 1).toBuilder()..max_offset=8,
-        HelixBuilder()..idx= 1..grid_position=GridPosition(0, 1).toBuilder()..max_offset=8,
-        HelixBuilder()..idx= 2..grid_position=GridPosition(0, 2).toBuilder()..max_offset=8,
+        HelixBuilder()
+          ..idx = 0
+          ..grid_position = GridPosition(1, 1).toBuilder()
+          ..max_offset = 8,
+        HelixBuilder()
+          ..idx = 1
+          ..grid_position = GridPosition(0, 1).toBuilder()
+          ..max_offset = 8,
+        HelixBuilder()
+          ..idx = 2
+          ..grid_position = GridPosition(0, 2).toBuilder()
+          ..max_offset = 8,
       ];
       var design = Design(helix_builders: helix_builders, grid: Grid.honeycomb);
       design = design.draw_strand(0, 0).to(8).cross(1).move(-8).cross(2).to(8).commit();

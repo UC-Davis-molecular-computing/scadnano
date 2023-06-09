@@ -1926,14 +1926,14 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Export CanDo CSV DNA
 
-abstract class ExportCanDoDNA with BuiltJsonSerializable implements Action, Built<ExportCanDoDNA, ExportCanDoDNABuilder> {
+abstract class ExportCanDoDNA
+    with BuiltJsonSerializable
+    implements Action, Built<ExportCanDoDNA, ExportCanDoDNABuilder> {
   ExportDNAFormat get export_dna_format;
-  factory ExportCanDoDNA(
-  {
-   ExportDNAFormat export_dna_format,
+  factory ExportCanDoDNA({
+    ExportDNAFormat export_dna_format,
   }) {
-    return ExportCanDoDNA.from((b) => b
-    ..export_dna_format = export_dna_format);
+    return ExportCanDoDNA.from((b) => b..export_dna_format = export_dna_format);
   }
 
   factory ExportCanDoDNA.from([void Function(ExportCanDoDNABuilder) updates]) = _$ExportCanDoDNA;
@@ -1942,7 +1942,6 @@ abstract class ExportCanDoDNA with BuiltJsonSerializable implements Action, Buil
 
   static Serializer<ExportCanDoDNA> get serializer => _$exportCanDoDNASerializer;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Export SVG
@@ -2826,8 +2825,7 @@ abstract class DNAExtensionsMoveCommit
   DNAExtensionsMove get dna_extensions_move;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory DNAExtensionsMoveCommit({ DNAExtensionsMove dna_extensions_move }) =
-      _$DNAExtensionsMoveCommit._;
+  factory DNAExtensionsMoveCommit({DNAExtensionsMove dna_extensions_move}) = _$DNAExtensionsMoveCommit._;
 
   DNAExtensionsMoveCommit._();
 

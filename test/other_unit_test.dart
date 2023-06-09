@@ -77,7 +77,10 @@ main() {
     <--x---]
 */
   test('duplicate_deletions_in_design_removed', () {
-    var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square),Helix(idx: 1, max_offset: 100, grid: Grid.square) ];
+    var helices = [
+      Helix(idx: 0, max_offset: 100, grid: Grid.square),
+      Helix(idx: 1, max_offset: 100, grid: Grid.square)
+    ];
     var design = Design(helices: helices, grid: Grid.square);
     design = design.draw_strand(0, 0).move(8).commit();
     design = design.draw_strand(1, 8).move(-8).add_deletion(1, 4).commit();
@@ -96,7 +99,10 @@ main() {
     <--X---]
 */
   test('duplicate_inseritons_in_design_removed', () {
-    var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square),Helix(idx: 1, max_offset: 100, grid: Grid.square) ];
+    var helices = [
+      Helix(idx: 0, max_offset: 100, grid: Grid.square),
+      Helix(idx: 1, max_offset: 100, grid: Grid.square)
+    ];
     var design = Design(helices: helices, grid: Grid.square);
     design = design.draw_strand(0, 0).move(8).commit();
     design = design.draw_strand(1, 8).move(-8).add_insertion(1, 4, 1).commit();
@@ -223,13 +229,12 @@ main() {
     // ensure x and z are swapped after reading in
     //TODO: test for swapping x and z positions in versions < 0.9.0 temporarily disabled until
     // codenano/scadnano versions are aligned
-   expect(design.helices[0].position3d.x, 30);
-   expect(design.helices[0].position3d.y, 60);
-   expect(design.helices[0].position3d.z, 10);
-   expect(design.helices[1].position3d.x, 50);
-   expect(design.helices[1].position3d.y, 80);
-   expect(design.helices[1].position3d.z, 20);
-
+    expect(design.helices[0].position3d.x, 30);
+    expect(design.helices[0].position3d.y, 60);
+    expect(design.helices[0].position3d.z, 10);
+    expect(design.helices[1].position3d.x, 50);
+    expect(design.helices[1].position3d.y, 80);
+    expect(design.helices[1].position3d.z, 20);
   });
 
   group('strand_maker_tests', () {

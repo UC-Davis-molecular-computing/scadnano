@@ -44,9 +44,7 @@ const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 
 const DEBUG_SELECT = false;
 
-test_stuff() async {
-
-}
+test_stuff() async {}
 
 /// One instance of this class contains the global variables needed by all parts of the app.
 class App {

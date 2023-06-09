@@ -103,7 +103,7 @@ Tuple2<List<Strand>, List<int>> parse_strands_and_helices_view_order_from_clipbo
   if (helices_view_order_json != null) {
     helices_view_order = [for (int idx in helices_view_order_json) idx];
   }
-  
+
   Map mod_jsons = clipboard_json[constants.design_modifications_key][0];
   Map<String, Modification> mods = {};
   for (var mod_key in mod_jsons.keys) {
@@ -119,7 +119,7 @@ Tuple2<List<Strand>, List<int>> parse_strands_and_helices_view_order_from_clipbo
     }
     mods[mod_key] = mod;
   }
-  
+
   // try to interpret JSON list as list of Strands
   List strand_jsons = clipboard_json[constants.strands_key];
   List<Strand> strands = [];
@@ -136,7 +136,7 @@ Tuple2<List<Strand>, List<int>> parse_strands_and_helices_view_order_from_clipbo
     }
 
     Map<int, ModificationInternal> modifications_int = {};
-    
+
     if (strand_json[constants.modifications_int_key] != null) {
       Map mod_json = strand_json[constants.modifications_int_key];
       for (var mod_ind in mod_json.keys) {
@@ -145,10 +145,12 @@ Tuple2<List<Strand>, List<int>> parse_strands_and_helices_view_order_from_clipbo
     }
 
     strand = strand.rebuild((m) => m
-      ..modification_5p = (mods[strand_json[constants.modification_5p_key]] as Modification5Prime)?.toBuilder()
-      ..modification_3p = (mods[strand_json[constants.modification_3p_key]] as Modification3Prime)?.toBuilder()
+      ..modification_5p =
+          (mods[strand_json[constants.modification_5p_key]] as Modification5Prime)?.toBuilder()
+      ..modification_3p =
+          (mods[strand_json[constants.modification_3p_key]] as Modification3Prime)?.toBuilder()
       ..modifications_int.replace(modifications_int));
-    
+
     strands.add(strand);
   }
 

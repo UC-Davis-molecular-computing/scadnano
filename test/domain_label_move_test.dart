@@ -382,7 +382,7 @@ main() {
 
       //Commit the Move
       state = app_state_reducer(state, StrandsMoveCommit(strands_move: strandsMove, autopaste: false));
-     /* 0       8 
+      /* 0       8 
        |-------|--|
            ABC        
     0    [------\

@@ -33,7 +33,6 @@ class DesignMainStrandDeletionProps = UiProps with DesignMainStrandDeletionProps
 @Component2()
 class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDeletionProps>
     with PureComponent {
-
   @override
   render() {
     Geometry geometry = props.helix.geometry;

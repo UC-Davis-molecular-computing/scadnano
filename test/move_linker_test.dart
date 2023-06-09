@@ -110,7 +110,6 @@ main() {
       expect(state.design.strands[1].dna_sequence, "GGGG");
     });
 
-
     test('move-2nd-crossover-in-2-crossover-strand-5p-end-fixed', () {
       /*
           0   4     0   4
@@ -192,7 +191,6 @@ main() {
       expect(state.design.strands[0].dna_sequence, "TTTTGGGG");
     });
   });
-
 
   group('move loopout: ', () {
     test('move-2nd-loopout-in-2-loopout-strand', () {
@@ -360,7 +358,5 @@ main() {
       expect(state.design.strands[1].dna_sequence, "AAAAGCCCC");
       expect(state.design.strands[0].dna_sequence, "TTTTTGGGG");
     });
-
   });
-
 }
