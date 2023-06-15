@@ -397,7 +397,8 @@ class DesignViewComponent {
         var new_address = Address(
             helix_idx: strand_creation.helix.idx, offset: new_offset, forward: strand_creation.forward);
         if (old_offset != new_offset &&
-            !app.state.design.is_occupied(new_address, strand_creation) && // can't draw strand over existing strand
+            !app.state.design
+                .is_occupied(new_address, strand_creation) && // can't draw strand over existing strand
             new_offset != strand_creation.original_offset && // can't put start and end at same offset
             strand_creation.helix.min_offset <= new_offset && // can't go off end of helix
             new_offset < strand_creation.helix.max_offset) {
