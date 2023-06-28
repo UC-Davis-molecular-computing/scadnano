@@ -43,6 +43,7 @@ ${util.stack_trace_message_bug_report(stack_trace)}''';
         '\n* error type:    ${error.runtimeType}'
         '\n* error message: ${error.toString()}'
         '\n$hline'
+        '\n\nIf the file is imported from cadnano, use the import cadnano v2 option.'
         '\n\nThat file\'s contents are printed below.'
         '${util.stack_trace_message_bug_report(stack_trace)}'
         '\n\nThe file ${action.filename} has this content:\n\n${action.content}';
