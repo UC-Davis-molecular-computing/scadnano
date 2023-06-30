@@ -43,7 +43,8 @@ ${util.stack_trace_message_bug_report(stack_trace)}''';
         '\n* error type:    ${error.runtimeType}'
         '\n* error message: ${error.toString()}'
         '\n$hline'
-        '\n\nIf the file is imported from cadnano, use the import cadnano v2 option.'
+        '\nIf the file is imported from cadnano, use the opton of importing cadnano v2.'
+        '\nImporting a .json file is not allowed when selecting the "Open" option. Use a file with the .sc extension.'
         '\n\nThat file\'s contents are printed below.'
         '${util.stack_trace_message_bug_report(stack_trace)}'
         '\n\nThe file ${action.filename} has this content:\n\n${action.content}';
