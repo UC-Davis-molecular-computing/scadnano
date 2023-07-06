@@ -1,9 +1,9 @@
 import 'dart:convert';
+import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/dna_file_type.dart';
 import '../state/selectable.dart';
-import 'dart:html';
 
 import '../state/design.dart';
 import '../actions/actions.dart' as actions;
