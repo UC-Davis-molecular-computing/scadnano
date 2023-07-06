@@ -233,7 +233,7 @@ really want to exit without saving.'''
       DropdownDivider({'key': 'divider-save'}),
       (MenuFormFile()
         ..id = 'import-cadnano-form-file'
-        ..accept = '.json'
+        ..accept = '.sc'
         ..onChange = ((e) => request_load_file_from_file_chooser(e.target, cadnano_file_loaded))
         ..display = 'Import cadnano v2'
         ..key = 'import-cadnano')(),
