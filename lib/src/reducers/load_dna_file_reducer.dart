@@ -1,5 +1,4 @@
 import 'dart:convert';
-//import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/dna_file_type.dart';
