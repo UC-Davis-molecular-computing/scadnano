@@ -56,8 +56,7 @@ class DesignFooterComponent extends UiComponent2<DesignFooterProps> {
             (domain?.name != null ? 'domain name: ${domain.name}, ' : '') +
             (domain?.label != null ? 'domain label: ${domain.label}, ' : '') +
             (strand.name != null ? 'strand name: ${strand.name}, ' : '') +
-            (strand.label != null ? 'strand label: ${strand.label} ' : '')
-        );
+            (strand.label != null ? 'strand label: ${strand.label} ' : ''));
         ;
       }
     } else {
