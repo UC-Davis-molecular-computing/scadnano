@@ -23,6 +23,7 @@ import '../state/extension.dart';
 import '../util.dart' as util;
 import '../state/selectable.dart';
 import 'design_main_strand_dna_end.dart';
+import 'design_main_strand.dart' as design_main_strand;
 import 'pure_component.dart';
 import '../state/context_menu.dart';
 import '../actions/actions.dart' as actions;
@@ -174,13 +175,21 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
               title: 'remove extension name',
               on_click: () => app.dispatch(actions.SubstrandNameSet(name: null, substrand: props.ext))),
         ContextMenuItem(
+          title: 'set extension label',
+          on_click: set_extension_label,
+        ),
+        if (props.ext.label != null)
+          ContextMenuItem(
+              title: 'remove extension label',
+              on_click: () => app.dispatch(actions.SubstrandLabelSet(label: null, substrand: props.ext))),
+        ContextMenuItem(
           title: 'set extension color',
           on_click: () => app
               .dispatch(actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: props.ext)),
         ),
         if (props.ext.color != null)
           ContextMenuItem(
-              title: 'remove loopout color',
+              title: 'remove extension color',
               on_click: () => app.dispatch(actions.StrandOrSubstrandColorSet(
                   strand: props.strand, substrand: props.ext, color: null))),
       ];
@@ -204,6 +213,12 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
   }
 
   set_extension_name() => app.disable_keyboard_shortcuts_while(ask_for_extension_name);
+
+  set_extension_label() => app.disable_keyboard_shortcuts_while(() => design_main_strand.ask_for_label(
+        props.strand,
+        props.ext,
+        app.state.ui_state.selectables_store.selected_substrands,
+      ));
 
   Future<void> ask_for_extension_name() async {
     int name_idx = 0;
