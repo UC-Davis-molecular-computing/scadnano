@@ -371,7 +371,7 @@ abstract class SelectModesSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Strand/domain/loopout names
+// Strand/domain/loopout names/labels
 
 // used to set or remove (set name=null to remove)
 abstract class StrandNameSet
@@ -397,7 +397,30 @@ abstract class StrandNameSet
 }
 
 // used to set or remove (set name=null to remove)
-// used for both Domains and Loopouts
+abstract class StrandLabelSet
+    with BuiltJsonSerializable, UndoableAction
+    implements SingleStrandAction, Built<StrandLabelSet, StrandLabelSetBuilder> {
+  @nullable
+  Object get label;
+
+  Strand get strand;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandLabelSet({Object label, Strand strand}) = _$StrandLabelSet._;
+
+  StrandLabelSet._();
+
+  static Serializer<StrandLabelSet> get serializer => _$strandLabelSetSerializer;
+
+  @memoized
+  int get hashCode;
+
+  @override
+  String short_description() => "set strand label";
+}
+
+// used to set or remove (set name=null to remove)
+// used for Domains, Loopouts, and Extensions
 abstract class SubstrandNameSet
     with BuiltJsonSerializable, UndoableAction
     implements StrandPartAction, Built<SubstrandNameSet, SubstrandNameSetBuilder> {
@@ -420,6 +443,32 @@ abstract class SubstrandNameSet
 
   @override
   String short_description() => "set ${substrand.type_description()} name";
+}
+
+// used to set or remove (set name=null to remove)
+// used for Domains, Loopouts, and Extensions
+abstract class SubstrandLabelSet
+    with BuiltJsonSerializable, UndoableAction
+    implements StrandPartAction, Built<SubstrandLabelSet, SubstrandLabelSetBuilder> {
+  @nullable
+  Object get label;
+
+  Substrand get substrand;
+
+  StrandPart get strand_part => substrand;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SubstrandLabelSet({Object label, Substrand substrand}) = _$SubstrandLabelSet._;
+
+  SubstrandLabelSet._();
+
+  static Serializer<SubstrandLabelSet> get serializer => _$substrandLabelSetSerializer;
+
+  @memoized
+  int get hashCode;
+
+  @override
+  String short_description() => "set ${substrand.type_description()} label";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

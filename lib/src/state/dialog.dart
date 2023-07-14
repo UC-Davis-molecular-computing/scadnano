@@ -29,7 +29,9 @@ class DialogType extends EnumClass {
   static const DialogType assign_plate_well = _$assign_plate_well;
   static const DialogType add_modification = _$add_modification;
   static const DialogType set_strand_name = _$set_strand_name;
+  static const DialogType set_strand_label = _$set_strand_label;
   static const DialogType set_domain_name = _$set_domain_name;
+  static const DialogType set_substrand_label = _$set_substrand_label;
   static const DialogType assign_dna_sequence = _$assign_dna_sequence;
   static const DialogType remove_dna_sequence = _$remove_dna_sequence;
   static const DialogType edit_modification = _$edit_modification;

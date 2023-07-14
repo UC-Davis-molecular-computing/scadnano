@@ -75,6 +75,8 @@ part 'serializers.g.dart';
   ScalePurificationIDTFieldsAssign,
   StrandNameSet,
   SubstrandNameSet,
+  StrandLabelSet,
+  SubstrandLabelSet,
   DomainNameMismatch,
   ShowBasePairLinesSet,
   ShowBasePairLinesWithMismatchesSet,

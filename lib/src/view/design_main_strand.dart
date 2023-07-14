@@ -261,8 +261,14 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
   set_strand_name() => app.disable_keyboard_shortcuts_while(ask_for_strand_name);
 
+  set_strand_label() => app.disable_keyboard_shortcuts_while(
+      () => ask_for_label(props.strand, null, app.state.ui_state.selectables_store.selected_strands));
+
   set_substrand_name(Substrand substrand) =>
       app.disable_keyboard_shortcuts_while(() => ask_for_substrand_name(substrand));
+
+  set_substrand_label(Substrand substrand) => app.disable_keyboard_shortcuts_while(
+      () => ask_for_label(props.strand, substrand, app.state.ui_state.selectables_store.selected_substrands));
 
   ReactElement _insertions() {
     List<ReactElement> paths = [];
@@ -472,6 +478,26 @@ feature for individual domains, set select mode to domain.
               ContextMenuItem(
                   title: 'remove domain name',
                   on_click: () => app.dispatch(actions.SubstrandNameSet(name: null, substrand: substrand))),
+          ].build()),
+      ContextMenuItem(
+          title: 'edit label',
+          nested: [
+            ContextMenuItem(
+              title: 'set strand label',
+              on_click: set_strand_label,
+            ),
+            if (props.strand.label != null)
+              ContextMenuItem(
+                  title: 'remove strand label',
+                  on_click: () => app.dispatch(actions.StrandLabelSet(label: null, strand: props.strand))),
+            ContextMenuItem(
+              title: 'set domain label',
+              on_click: () => set_substrand_label(substrand),
+            ),
+            if (substrand.label != null)
+              ContextMenuItem(
+                  title: 'remove domain label',
+                  on_click: () => app.dispatch(actions.SubstrandLabelSet(label: null, substrand: substrand))),
           ].build()),
       ContextMenuItem(
           title: 'reflect',
@@ -1026,6 +1052,83 @@ PAGEHPLC : Dual PAGE & HPLC
   }
 }
 
+Future<void> ask_for_label(Strand strand, Substrand substrand, BuiltSet<Strand> selected_strands) async {
+  String part_name = 'strand';
+  if (substrand != null) {
+    part_name = substrand.type_description();
+  }
+
+  int parse_json_idx = 0;
+  int label_idx = 1;
+  var items = List<DialogItem>.filled(2, null);
+
+  String existing_label_string = '';
+  if (substrand == null && strand.label != null) {
+    if (strand.label is String) {
+      existing_label_string = strand.label;
+    } else {
+      existing_label_string = jsonEncode(strand.label);
+    }
+  } else if (substrand != null && substrand.label != null) {
+    if (substrand.label is String) {
+      existing_label_string = substrand.label;
+    } else {
+      existing_label_string = jsonEncode(substrand.label);
+    }
+  }
+
+  items[parse_json_idx] = DialogCheckbox(label: 'JSON?', value: false);
+  items[label_idx] = DialogTextArea(
+      label: 'label',
+      value: existing_label_string,
+      cols: 80,
+      rows: 6,
+      tooltip: "Enter the ${part_name} label here. It can either be a string, "
+          "or select JSON? for more structured data.");
+
+  var dialog = Dialog(
+      title: 'set ${part_name} label',
+      type: substrand == null ? DialogType.set_strand_label : DialogType.set_substrand_label,
+      items: items,
+      use_saved_response: false);
+
+  List<DialogItem> results = await util.dialog(dialog);
+  if (results == null) return;
+
+  String label_string = (results[label_idx] as DialogTextArea).value;
+  bool parse_json = (results[parse_json_idx] as DialogCheckbox).value;
+
+  Object label;
+  if (parse_json) {
+    try {
+      label = jsonDecode(label_string);
+    } catch (e) {
+      window.alert("""\
+You selected the "JSON" option, but the text you entered is not valid JSON.
+If you want the label to be a simple string, uncheck the JSON? checkbox.
+Here is the error message when attempting to parse your JSON:
+
+${e}\
+""");
+      return;
+    }
+  } else {
+    label = label_string;
+  }
+
+  actions.UndoableAction action;
+  if (substrand == null) {
+    action = batch_if_multiple_selected(
+        label_set_strand_action_creator(label), strand, selected_strands, "set strand label");
+  } else {
+    action = actions.SubstrandLabelSet(label: label, substrand: substrand);
+    // action = batch_if_multiple_selected(
+    //     label_set_strand_action_creator(label), props.strand, selected_strands, "set domain label");
+  }
+
+  app.dispatch(action);
+}
+
 actions.UndoableAction batch_if_multiple_selected(StrandActionCreator action_creator, Strand strand,
     BuiltSet<Strand> selected_strands, String short_description) {
   actions.Action action;
@@ -1058,6 +1161,12 @@ StrandActionCreator color_set_strand_action_creator(String color_hex) => ((Stran
 StrandActionCreator color_set_substrand_action_creator(Substrand substrand, String color_hex) =>
     ((Strand strand) =>
         actions.StrandOrSubstrandColorSet(strand: strand, substrand: substrand, color: Color.hex(color_hex)));
+
+StrandActionCreator label_set_strand_action_creator(Object label) =>
+    ((Strand strand) => actions.StrandLabelSet(strand: strand, label: label));
+
+StrandActionCreator label_set_substrand_action_creator(Substrand substrand, Object label) =>
+    ((Strand strand) => actions.SubstrandLabelSet(substrand: substrand, label: label));
 
 String tooltip_text(Strand strand) =>
     "Strand:\n" +
