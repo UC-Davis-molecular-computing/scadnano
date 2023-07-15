@@ -92,9 +92,6 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
       return null;
     }
 
-    // var dialog = props.dialog;
-    // print(dialog);
-
     int component_idx = 0;
     List<ReactElement> components = [];
     for (var item in state.current_responses) {
@@ -187,12 +184,11 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
 
   ReactElement dialog_for(DialogItem item, int dialog_item_idx, bool disabled) {
     if (item is DialogCheckbox) {
-      return Dom.label()(
+      return (Dom.label()..title = item.tooltip ?? "")(
         (Dom.input()
           ..type = 'checkbox'
           ..disabled = disabled
           ..checked = item.value
-          ..title = item.tooltip ?? ""
           ..onChange = (SyntheticFormEvent e) {
             var new_responses = state.current_responses.toBuilder();
             bool new_checked = e.target.checked;
@@ -217,13 +213,12 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         item.label,
       );
     } else if (item is DialogText) {
-      return Dom.label()(
+      return (Dom.label()..title = item.tooltip ?? "")(
         '${item.label}: ',
         (Dom.input()
           ..type = 'text'
           ..disabled = disabled
           ..value = item.value
-          ..title = item.tooltip ?? ""
           ..size = item.size
 //          ..width = '${item.size}ch'
           ..onChange = (SyntheticFormEvent e) {
@@ -235,13 +230,12 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
           })(),
       );
     } else if (item is DialogTextArea) {
-      return Dom.label()(
+      return (Dom.label()..title = item.tooltip ?? "")(
         '${item.label}: ',
         (Dom.textarea()
           ..form = 'dialog-form-form'
           ..disabled = disabled
           ..value = item.value
-          ..title = item.tooltip ?? ""
           ..rows = item.rows
           ..cols = item.cols
           ..onChange = (SyntheticFormEvent e) {
@@ -253,12 +247,11 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
           })(),
       );
     } else if (item is DialogInteger) {
-      return Dom.label()(
+      return (Dom.label()..title = item.tooltip ?? "")(
         '${item.label}: ',
         (Dom.input()
           ..type = 'number'
           ..disabled = disabled
-          ..title = item.tooltip ?? ""
           ..pattern = r'-?\d+' // allow to type integers
           ..value = item.value
           ..onChange = (SyntheticFormEvent e) {
@@ -271,12 +264,11 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
           })(),
       );
     } else if (item is DialogFloat) {
-      return Dom.label()(
+      return (Dom.label()..title = item.tooltip ?? "")(
         '${item.label}: ',
         (Dom.input()
           ..type = 'number'
           ..disabled = disabled
-          ..title = item.tooltip ?? ""
           ..pattern = r'[+-]?(\d*[.])?\d+' // allow to type floating numbers
           ..value = item.value
           ..step = 'any'
@@ -293,13 +285,14 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
       // can be either radio buttons or drop-down select, depending on value of DialogRadio.radio
       int radio_idx = 0;
       List<ReactElement> components = [];
-      for (var option in item.options) {
+      for (int i = 0; i < item.options.length; i++) {
+        var option = item.options[i];
+        var option_tooltip = item.option_tooltips[i];
         components.add((Dom.br()..key = 'br-$radio_idx')());
         components.add((Dom.input()
           ..type = 'radio'
           ..id = 'radio-${item.label}-${radio_idx}'
           ..disabled = disabled
-          ..title = item.tooltip ?? ""
           ..name = item.label
           ..checked = (item.selected_idx == radio_idx)
           ..value = option
@@ -312,20 +305,27 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
             setState(newState()..current_responses = new_responses.build());
           }
           ..key = '$radio_idx')());
-        components.add((Dom.label()..key = 'label-$radio_idx')(option));
+        components.add((Dom.label()
+          ..key = 'label-$radio_idx'
+          ..title = option_tooltip ?? "")(option));
         radio_idx++;
       }
-      return (Dom.div()..className = 'radio-left')('${item.label}: ', components);
+      // return (Dom.div()..className = 'radio-left')('${item.label}: ', components);
+      return (Dom.div()
+        ..className = 'radio-left')(((Dom.label()..title = item.tooltip)('${item.label}:')), components);
     } else if (item is DialogRadio && !item.radio) {
       int radio_idx = 0;
       List<ReactElement> components = [];
-      for (var option in item.options) {
+      for (int i = 0; i < item.options.length; i++) {
+        var option = item.options[i];
+        var option_tooltip = item.option_tooltips[i];
         // components.add((Dom.br()..key = 'br-$radio_idx')());
         components.add((Dom.option()
           // ..type = 'select'
           ..id = 'radio-${radio_idx}'
           ..disabled = disabled
           ..name = item.label
+          ..title = option_tooltip
           ..value = option
           ..onChange = (SyntheticFormEvent e) {
             var selected_title = e.target.value;
@@ -339,12 +339,12 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         // components.add((Dom.label()..key = 'label-$radio_idx')(option));
         radio_idx++;
       }
-      return Dom.div()(
-          (Dom.label()('${item.label}:')),
+      return (Dom.div())(
+          ((Dom.label()..title = item.tooltip)('${item.label}:')),
           (Dom.select()
             ..className = 'radio-left'
             ..disabled = disabled
-            ..title = item.tooltip ?? ""
+            // ..title = item.tooltip ?? ""
             ..value = item.options[item.selected_idx]
             ..onChange = (SyntheticFormEvent e) {
               var selected_title = e.target.value;

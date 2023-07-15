@@ -6,15 +6,16 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/dna_file_type.dart';
-import 'package:scadnano/src/json_serializable.dart';
-import 'package:scadnano/src/middleware/local_storage.dart';
-import 'package:scadnano/src/middleware/system_clipboard.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
-import 'package:scadnano/src/state/geometry.dart';
-import 'package:scadnano/src/state/undo_redo.dart';
+import '../dna_file_type.dart';
+import '../json_serializable.dart';
+import '../middleware/local_storage.dart';
+import '../middleware/system_clipboard.dart';
+import '../state/design.dart';
+import '../state/dna_end.dart';
+import '../state/export_dna_format_strand_order.dart';
+import '../state/geometry.dart';
+import '../state/undo_redo.dart';
+import '../middleware/export_dna_sequences.dart' as export_dna_sequences;
 import '../state/dialog.dart';
 import '../state/example_designs.dart';
 import '../state/export_dna_format.dart';
@@ -1038,11 +1039,11 @@ debugging, but be warned that it will be very slow to render a large number of D
         ..tooltip = "Export SVG figure of main view (design shown in center of screen)."
         ..display = 'SVG main view')(),
       (MenuDropdownItem()
-        ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna))
+        ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna_sequences.export_dna))
         ..tooltip = "Export DNA sequences of strands to a file."
         ..display = 'DNA sequences')(),
       (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.ExportCanDoDNA(export_dna_format: ExportDNAFormat.cando)))
+        ..on_click = ((_) => props.dispatch(actions.ExportCanDoDNA()))
         ..tooltip = "Export design's DNA sequences as a CSV in the same way as cadnano v2.\n"
             "This is useful, for example, with CanDo's atomic model generator."
         ..display = 'DNA sequences (cadnano v2 format)')(),
@@ -1263,67 +1264,6 @@ However, it may be less stable than the main site.'''
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // helper methods
-
-  Future<void> export_dna() async {
-    List<String> export_options = ExportDNAFormat.values.map((v) => v.toString()).toList();
-    List<String> sort_options = StrandOrder.values.map((v) => v.toString()).toList();
-
-    // This is needed to hide the cando export option from the menu, as it has a separate button due to how specific CanDo is with CSV format.
-    for (var option in export_options) {
-      if (option == "CANDO") {
-        export_options.remove(option);
-      }
-    }
-
-    int idx_include_scaffold = 0;
-    int idx_include_only_selected_strands = 1;
-    int idx_format_str = 2;
-    int idx_sort = 3;
-    int idx_column_major = 4;
-    int idx_strand_order_str = 5;
-
-    List<DialogItem> items = [null, null, null, null, null, null];
-    items[idx_include_scaffold] = DialogCheckbox(label: 'include scaffold', value: false);
-    items[idx_include_only_selected_strands] =
-        DialogCheckbox(label: 'include only selected strands', value: false);
-    items[idx_format_str] = DialogRadio(label: 'designs', options: export_options);
-    items[idx_sort] = DialogCheckbox(label: 'sort strands', value: false);
-    items[idx_column_major] =
-        DialogCheckbox(label: 'column-major order (uncheck for row-major order)', value: true);
-    items[idx_strand_order_str] = DialogRadio(label: 'strand part to sort by', options: sort_options);
-
-    var dialog = Dialog(
-        title: 'export DNA sequences',
-        type: DialogType.export_dna_sequences,
-        items: items,
-        disable_when_any_checkboxes_off: {
-          idx_column_major: [idx_sort],
-          idx_strand_order_str: [idx_sort]
-        });
-
-    List<DialogItem> results = await util.dialog(dialog);
-    if (results == null) return;
-
-    bool include_scaffold = (results[idx_include_scaffold] as DialogCheckbox).value;
-    bool include_only_selected_strands = (results[idx_include_only_selected_strands] as DialogCheckbox).value;
-    String format_str = (results[idx_format_str] as DialogRadio).value;
-    bool sort = (results[idx_sort] as DialogCheckbox).value;
-    StrandOrder strand_order = null;
-    bool column_major = true;
-    if (sort) {
-      column_major = (results[idx_column_major] as DialogCheckbox).value;
-      String strand_order_str = (results[idx_strand_order_str] as DialogRadio).value;
-      strand_order = StrandOrder.fromString(strand_order_str);
-    }
-    ExportDNAFormat format = ExportDNAFormat.fromString(format_str);
-
-    props.dispatch(actions.ExportDNA(
-        include_scaffold: include_scaffold,
-        include_only_selected_strands: include_only_selected_strands,
-        export_dna_format: format,
-        strand_order: strand_order,
-        column_major: column_major));
-  }
 
   Future<void> load_example_dialog() async {
     var dialog = Dialog(title: 'Load example DNA design', type: DialogType.load_example_dna_design, items: [
