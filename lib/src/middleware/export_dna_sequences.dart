@@ -1,4 +1,5 @@
 import 'package:redux/redux.dart';
+import 'package:scadnano/src/state/dialog.dart';
 import 'package:scadnano/src/state/export_dna_format.dart';
 import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 
@@ -115,6 +116,112 @@ export_dna_sequences_middleware(Store<AppState> store, action, NextDispatcher ne
       app.view.design_view.render(store.state);
     }
   }
+}
+
+// called from view/menu.dart but makes more sense to keep the code here
+Future<void> export_dna() async {
+  List<String> export_options = ExportDNAFormat.values.map((v) => v.toString()).toList();
+  List<String> sort_options = StrandOrder.values.map((v) => v.toString()).toList();
+
+  int idx_include_scaffold = 0;
+  int idx_include_only_selected_strands = 1;
+  int idx_format_str = 2;
+  int idx_column_major_plate = 3;
+  int idx_sort = 4;
+  int idx_column_major_strand = 5;
+  int idx_strand_order_str = 6;
+
+  List<DialogItem> items = List<DialogItem>.filled(7, null);
+  items[idx_include_scaffold] = DialogCheckbox(label: 'include scaffold', value: false);
+  items[idx_include_only_selected_strands] =
+      DialogCheckbox(label: 'include only selected strands', value: false);
+  items[idx_format_str] = DialogRadio(
+    label: 'export format',
+    options: export_options,
+    radio: false,
+    option_tooltips: ExportDNAFormat.tooltips,
+  );
+  items[idx_column_major_plate] = DialogCheckbox(
+      label: 'column-major well order (uncheck for row-major order)', value: true, tooltip: """\
+For exporting to plates, this customizes the order in which wells are enumerated.
+Column-major order is A1, B1, C1, ... Row-major order is A1, A2, A3, ... 
+Note that this is distinct from the notion of "sort strands", which helps specify the 
+order in which strands are processed (as opposed to order of wells in a plate).
+""");
+  items[idx_sort] = DialogCheckbox(label: 'sort strands', value: false, tooltip: """\
+By default strands are exported in the order they are stored in the .sc file.
+Checking this box allows some customization of the order in which strands are processed.
+(See "column-major" box below for description.) Note that for exporting plates, 
+this is distinct from the order in which wells are enumerated when putting strands 
+into the plate. That can be customized by selecting "column-major well order" below.
+""");
+  items[idx_column_major_strand] = DialogCheckbox(
+      label: 'column-major strand order (uncheck for row-major order)', value: true, tooltip: """\
+When checked, strands are processed in column-major "visual order" by their 5' ends. 
+Column-major means sort first by offset, then by helix index. For example, if
+the 5' addresses are (0,5), meaning helix 0 at offset 5, 
+then (0,10), (0,15), (1,5), (1,10), (1,15), (2,5), (2,10), (2,15),
+then that is row-major order. Column-major order would be
+(0,5), (1,5), (2,5), (0,10), (1,10), (2,10), (0,15), (1,15), (2,15).
+Finally, instead of using the addresses of 5' ends, other strand "parts" can be
+used to sort; see options under "strand part to sort by".
+""");
+  items[idx_strand_order_str] = DialogRadio(
+    label: 'strand part to sort by',
+    options: sort_options,
+    tooltip: """\
+When sorting strands by their "address" (helix index and offset), this indicates
+which part of the strand to use as the address.
+""",
+    option_tooltips: StrandOrder.sort_option_tooltips,
+    radio: false,
+  );
+
+  var dialog = Dialog(
+      title: 'export DNA sequences',
+      type: DialogType.export_dna_sequences,
+      items: items,
+      disable_when_any_checkboxes_off: {
+        idx_column_major_strand: [idx_sort],
+        idx_strand_order_str: [idx_sort],
+      },
+      disable_when_any_radio_button_selected: {
+        idx_column_major_plate: {
+          idx_format_str: [
+            // need to use toString() to get the exact string value displayed for later comparison
+            // using ExportDNAFormat.name instead will return a different string (e.g. 'csv' vs
+            // 'CSV (.csv)') than displayed in the radio button
+            ExportDNAFormat.csv.toString(),
+            ExportDNAFormat.idt_bulk.toString(),
+          ]
+        },
+      });
+
+  List<DialogItem> results = await util.dialog(dialog);
+  if (results == null) return;
+
+  bool include_scaffold = (results[idx_include_scaffold] as DialogCheckbox).value;
+  bool include_only_selected_strands = (results[idx_include_only_selected_strands] as DialogCheckbox).value;
+  String format_str = (results[idx_format_str] as DialogRadio).value;
+  bool sort = (results[idx_sort] as DialogCheckbox).value;
+  StrandOrder strand_order = null;
+  bool column_major_strand = true;
+  if (sort) {
+    column_major_strand = (results[idx_column_major_strand] as DialogCheckbox).value;
+    String strand_order_str = (results[idx_strand_order_str] as DialogRadio).value;
+    strand_order = StrandOrder.fromString(strand_order_str);
+  }
+  bool column_major_plate = (results[idx_column_major_plate] as DialogCheckbox).value;
+  ExportDNAFormat format = ExportDNAFormat.fromString(format_str);
+
+  app.dispatch(actions.ExportDNA(
+    include_scaffold: include_scaffold,
+    include_only_selected_strands: include_only_selected_strands,
+    export_dna_format: format,
+    strand_order: strand_order,
+    column_major_strand: column_major_strand,
+    column_major_plate: column_major_plate,
+  ));
 }
 
 String cando_compatible_csv_export(Iterable<Strand> strands) {

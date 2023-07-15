@@ -94,14 +94,29 @@ StrandComparison strands_comparison_function(StrandOrder strand_order, bool colu
 
 /// Format of exported DNA sequences
 class ExportDNAFormat extends EnumClass {
+  static const tooltips = [
+    """\
+Format for IDT's "bulk input" webpage when specifying strands
+in individual test tubes.
+""",
+    """\
+Excel file formatted for IDT's plate upload webpage for 96-well plates.
+""",
+    """\
+Excel file formatted for IDT's plate upload webpage for 384-well plates.
+""",
+    """\
+Simple CSV (comma-separated value) format. Not a format used by any biotech company.""",
+  ];
+
   const ExportDNAFormat._(String name) : super(name);
 
   static Serializer<ExportDNAFormat> get serializer => _$exportDNAFormatSerializer;
 
-  static const ExportDNAFormat csv = _$csv;
   static const ExportDNAFormat idt_bulk = _$idt_bulk;
   static const ExportDNAFormat idt_plates96 = _$idt_plates96;
   static const ExportDNAFormat idt_plates384 = _$idt_plates384;
+  static const ExportDNAFormat csv = _$csv;
 
   static BuiltSet<ExportDNAFormat> get values => _$values;
 

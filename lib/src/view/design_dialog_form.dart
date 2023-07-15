@@ -285,13 +285,14 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
       // can be either radio buttons or drop-down select, depending on value of DialogRadio.radio
       int radio_idx = 0;
       List<ReactElement> components = [];
-      for (var option in item.options) {
+      for (int i = 0; i < item.options.length; i++) {
+        var option = item.options[i];
+        var option_tooltip = item.option_tooltips[i];
         components.add((Dom.br()..key = 'br-$radio_idx')());
         components.add((Dom.input()
           ..type = 'radio'
           ..id = 'radio-${item.label}-${radio_idx}'
           ..disabled = disabled
-          ..title = item.tooltip ?? ""
           ..name = item.label
           ..checked = (item.selected_idx == radio_idx)
           ..value = option
@@ -304,20 +305,27 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
             setState(newState()..current_responses = new_responses.build());
           }
           ..key = '$radio_idx')());
-        components.add((Dom.label()..key = 'label-$radio_idx')(option));
+        components.add((Dom.label()
+          ..key = 'label-$radio_idx'
+          ..title = option_tooltip ?? "")(option));
         radio_idx++;
       }
-      return (Dom.div()..className = 'radio-left')('${item.label}: ', components);
+      // return (Dom.div()..className = 'radio-left')('${item.label}: ', components);
+      return (Dom.div()
+        ..className = 'radio-left')(((Dom.label()..title = item.tooltip)('${item.label}:')), components);
     } else if (item is DialogRadio && !item.radio) {
       int radio_idx = 0;
       List<ReactElement> components = [];
-      for (var option in item.options) {
+      for (int i = 0; i < item.options.length; i++) {
+        var option = item.options[i];
+        var option_tooltip = item.option_tooltips[i];
         // components.add((Dom.br()..key = 'br-$radio_idx')());
         components.add((Dom.option()
           // ..type = 'select'
           ..id = 'radio-${radio_idx}'
           ..disabled = disabled
           ..name = item.label
+          ..title = option_tooltip
           ..value = option
           ..onChange = (SyntheticFormEvent e) {
             var selected_title = e.target.value;
@@ -331,12 +339,12 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         // components.add((Dom.label()..key = 'label-$radio_idx')(option));
         radio_idx++;
       }
-      return Dom.div()(
-          (Dom.label()('${item.label}:')),
+      return (Dom.div())(
+          ((Dom.label()..title = item.tooltip)('${item.label}:')),
           (Dom.select()
             ..className = 'radio-left'
             ..disabled = disabled
-            ..title = item.tooltip ?? ""
+            // ..title = item.tooltip ?? ""
             ..value = item.options[item.selected_idx]
             ..onChange = (SyntheticFormEvent e) {
               var selected_title = e.target.value;
