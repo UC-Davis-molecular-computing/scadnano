@@ -98,7 +98,6 @@ class ExportDNAFormat extends EnumClass {
 
   static Serializer<ExportDNAFormat> get serializer => _$exportDNAFormatSerializer;
 
-  static const ExportDNAFormat cando = _$cando;
   static const ExportDNAFormat csv = _$csv;
   static const ExportDNAFormat idt_bulk = _$idt_bulk;
   static const ExportDNAFormat idt_plates96 = _$idt_plates96;
@@ -110,8 +109,6 @@ class ExportDNAFormat extends EnumClass {
 
   String extension() {
     switch (this) {
-      case cando: // This is not used.
-        return 'csv';
       case csv:
         return 'csv';
       case idt_bulk:
@@ -124,7 +121,6 @@ class ExportDNAFormat extends EnumClass {
   }
 
   static const Map<ExportDNAFormat, String> _toString_map = {
-    cando: 'CANDO', // This should not appear in the 'DNA Sequences' UI - see 1271 of lib/src/view/menu.dart
     csv: 'CSV (.csv)',
     idt_bulk: 'IDT Bulk (.txt)',
     idt_plates96: 'IDT 96-well plate(s) (.xlsx)',
@@ -146,8 +142,6 @@ class ExportDNAFormat extends EnumClass {
 
   bool text_file() {
     switch (this) {
-      case cando: // This is not used.
-        return true;
       case csv:
         return true;
       case idt_bulk:
@@ -161,8 +155,6 @@ class ExportDNAFormat extends EnumClass {
 
   util.BlobType blob_type() {
     switch (this) {
-      case cando: // This is not used.
-        return util.BlobType.text;
       case csv:
         return util.BlobType.text;
       case idt_bulk:
@@ -180,25 +172,28 @@ class ExportDNAFormat extends EnumClass {
   /// So export returns a Future<List<int>> if calling idt_plates_export and a String (with text file
   /// contents) otherwise. The caller needs to check the return type, or the type of this,
   /// to determine whether to use the return value directly or to wait for it asynchronously.
-  export(Iterable<Strand> strands, {StrandOrder strand_order = null, bool column_major = true}) {
+  export(
+    Iterable<Strand> strands, {
+    StrandOrder strand_order = null,
+    bool column_major_strand = true,
+    bool column_major_plate = true,
+  }) {
     List<Strand> strands_sorted = strands.toList();
     if (strand_order != null) {
-      StrandComparison compare = strands_comparison_function(strand_order, column_major);
+      StrandComparison compare = strands_comparison_function(strand_order, column_major_strand);
       strands_sorted.sort(compare);
     }
 
     try {
       switch (this) {
-        case cando:
-          return cando_compatible_csv_export(strands_sorted);
         case csv:
           return csv_export(strands_sorted);
         case idt_bulk:
           return idt_bulk_export(strands_sorted);
         case idt_plates96:
-          return idt_plates_export(strands_sorted, PlateType.wells96);
+          return idt_plates_export(strands_sorted, PlateType.wells96, column_major_plate);
         case idt_plates384:
-          return idt_plates_export(strands_sorted, PlateType.wells384);
+          return idt_plates_export(strands_sorted, PlateType.wells384, column_major_plate);
       }
     } on ExportDNAException catch (e) {
       throw e;
@@ -219,33 +214,6 @@ class ExportDNAException implements Exception {
   ExportDNAException(this.cause);
 }
 
-String cando_compatible_csv_export(Iterable<Strand> strands) {
-  StringBuffer buf = StringBuffer();
-  // Write the CSV header
-  buf.writeln('Start,End,Sequence,Length,Color');
-  for (var strand in strands) {
-    // If the export name contains 'SCAF', then it's a scaffold strand, so we do not export it for cando.
-    if (strand.idt_export_name().contains('SCAF')) {
-      continue;
-    }
-    // Remove the characters 'ST' from the start of the export name as cando doesn't understand them.
-    var cando_strand = strand.idt_export_name().replaceAll(RegExp(r'^ST'), '');
-    // Split the export name into the start and end positions.
-    RegExp cando_split_regex = RegExp(r'\d+\[\d+\]');
-    List<String> cando_split_name =
-        cando_split_regex.allMatches(cando_strand).map((match) => match.group(0)).toList();
-    if (cando_split_name.length != 2) {
-      throw ExportDNAException('Invalid strand name: ${strand.idt_export_name()}');
-    }
-    var cando_strand_end = cando_split_name[1];
-    var cando_strand_start = cando_split_name[0];
-    // Write the strand to the CSV file.
-    buf.writeln(
-        '${cando_strand_start},${cando_strand_end},${idt_sequence_null_aware(strand)},${idt_sequence_null_aware(strand).length},${strand.color.toHexColor().toCssString().toUpperCase()}');
-  }
-  return buf.toString();
-}
-
 String csv_export(Iterable<Strand> strands) {
   var lines = strands.map((strand) => '${strand.idt_export_name()},${idt_sequence_null_aware(strand)}');
   return lines.join('\n');
@@ -259,7 +227,8 @@ String idt_bulk_export(Iterable<Strand> strands, {String scale = '25nm', String 
   return lines.join('\n');
 }
 
-Future<List<int>> idt_plates_export(Iterable<Strand> strands, PlateType plate_type) async {
+Future<List<int>> idt_plates_export(
+    Iterable<Strand> strands, PlateType plate_type, bool column_major_plate) async {
   var plate_coord = _PlateCoordinate(plate_type);
   int plate = 1;
   int excel_row = 1;
@@ -309,7 +278,7 @@ Future<List<int>> idt_plates_export(Iterable<Strand> strands, PlateType plate_ty
         num_strands_remaining == min_strands_per_plate) {
       plate_coord.advance_to_next_plate();
     } else {
-      plate_coord.increment();
+      plate_coord.increment(column_major_plate);
     }
 
     if (plate != plate_coord.plate) {
@@ -387,14 +356,26 @@ class _PlateCoordinate {
 
   _PlateCoordinate(this.plate_type);
 
-  increment() {
-    row_idx++;
-    if (row_idx == rows_of(plate_type).length) {
-      row_idx = 0;
+  increment(bool column_major) {
+    if (column_major) {
+      row_idx++;
+      if (row_idx == rows_of(plate_type).length) {
+        row_idx = 0;
+        col_idx++;
+        if (col_idx == cols_of(plate_type).length) {
+          col_idx = 0;
+          plate++;
+        }
+      }
+    } else {
       col_idx++;
       if (col_idx == cols_of(plate_type).length) {
         col_idx = 0;
-        plate++;
+        row_idx++;
+        if (row_idx == rows_of(plate_type).length) {
+          row_idx = 0;
+          plate++;
+        }
       }
     }
   }

@@ -92,9 +92,6 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
       return null;
     }
 
-    // var dialog = props.dialog;
-    // print(dialog);
-
     int component_idx = 0;
     List<ReactElement> components = [];
     for (var item in state.current_responses) {

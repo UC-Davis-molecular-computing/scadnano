@@ -1948,21 +1948,26 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
   @nullable
   StrandOrder get strand_order;
 
-  bool get column_major;
+  bool get column_major_strand;
+
+  bool get column_major_plate;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ExportDNA(
-      {bool include_scaffold,
-      bool include_only_selected_strands,
-      ExportDNAFormat export_dna_format,
-      StrandOrder strand_order = null,
-      bool column_major = true}) {
+  factory ExportDNA({
+    bool include_scaffold,
+    bool include_only_selected_strands,
+    ExportDNAFormat export_dna_format,
+    StrandOrder strand_order = null,
+    bool column_major_strand = true,
+    bool column_major_plate = true,
+  }) {
     return ExportDNA.from((b) => b
       ..include_scaffold = include_scaffold
       ..include_only_selected_strands = include_only_selected_strands
       ..export_dna_format = export_dna_format
       ..strand_order = strand_order
-      ..column_major = column_major);
+      ..column_major_strand = column_major_strand
+      ..column_major_plate = column_major_plate);
   }
 
   factory ExportDNA.from([void Function(ExportDNABuilder) updates]) = _$ExportDNA;
@@ -1978,11 +1983,8 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
 abstract class ExportCanDoDNA
     with BuiltJsonSerializable
     implements Action, Built<ExportCanDoDNA, ExportCanDoDNABuilder> {
-  ExportDNAFormat get export_dna_format;
-  factory ExportCanDoDNA({
-    ExportDNAFormat export_dna_format,
-  }) {
-    return ExportCanDoDNA.from((b) => b..export_dna_format = export_dna_format);
+  factory ExportCanDoDNA() {
+    return ExportCanDoDNA.from((b) => b);
   }
 
   factory ExportCanDoDNA.from([void Function(ExportCanDoDNABuilder) updates]) = _$ExportCanDoDNA;

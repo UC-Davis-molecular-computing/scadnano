@@ -1042,7 +1042,7 @@ debugging, but be warned that it will be very slow to render a large number of D
         ..tooltip = "Export DNA sequences of strands to a file."
         ..display = 'DNA sequences')(),
       (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.ExportCanDoDNA(export_dna_format: ExportDNAFormat.cando)))
+        ..on_click = ((_) => props.dispatch(actions.ExportCanDoDNA()))
         ..tooltip = "Export design's DNA sequences as a CSV in the same way as cadnano v2.\n"
             "This is useful, for example, with CanDo's atomic model generator."
         ..display = 'DNA sequences (cadnano v2 format)')(),
@@ -1268,28 +1268,44 @@ However, it may be less stable than the main site.'''
     List<String> export_options = ExportDNAFormat.values.map((v) => v.toString()).toList();
     List<String> sort_options = StrandOrder.values.map((v) => v.toString()).toList();
 
-    // This is needed to hide the cando export option from the menu, as it has a separate button due to how specific CanDo is with CSV format.
-    for (var option in export_options) {
-      if (option == "CANDO") {
-        export_options.remove(option);
-      }
-    }
-
     int idx_include_scaffold = 0;
     int idx_include_only_selected_strands = 1;
     int idx_format_str = 2;
-    int idx_sort = 3;
-    int idx_column_major = 4;
-    int idx_strand_order_str = 5;
+    int idx_column_major_plate = 3;
+    int idx_sort = 4;
+    int idx_column_major_strand = 5;
+    int idx_strand_order_str = 6;
 
-    List<DialogItem> items = [null, null, null, null, null, null];
+    List<DialogItem> items = List<DialogItem>.filled(7, null);
     items[idx_include_scaffold] = DialogCheckbox(label: 'include scaffold', value: false);
     items[idx_include_only_selected_strands] =
         DialogCheckbox(label: 'include only selected strands', value: false);
-    items[idx_format_str] = DialogRadio(label: 'designs', options: export_options);
-    items[idx_sort] = DialogCheckbox(label: 'sort strands', value: false);
-    items[idx_column_major] =
-        DialogCheckbox(label: 'column-major order (uncheck for row-major order)', value: true);
+    items[idx_format_str] = DialogRadio(label: 'export format', options: export_options);
+    items[idx_column_major_plate] = DialogCheckbox(
+        label: 'column-major well order (uncheck for row-major order)', value: true, tooltip: """\
+For exporting to plates, this customizes the order in which wells are enumerated.
+Column-major order is A1, B1, C1, ... Row-major order is A1, A2, A3, ... 
+Note that this is distinct from the notion of "sort strands", which helps specify the 
+order in which strands are processed (as opposed to order of wells in a plate).
+""");
+    items[idx_sort] = DialogCheckbox(label: 'sort strands', value: false, tooltip: """\
+By default strands are exported in the order they are stored in the .sc file.
+Checking this box allows some customization of the order in which strands are processed.
+(See "column-major" box below for description.) Note that for exporting plates, 
+this is distinct from the order in which wells are enumerated when putting strands 
+into the plate. That can be customized by selecting "column-major well order" below.
+""");
+    items[idx_column_major_strand] = DialogCheckbox(
+        label: 'column-major strand order (uncheck for row-major order)', value: true, tooltip: """\
+When checked, strands are processed in column-major "visual order" by their 5' ends. 
+Column-major means sort first by offset, then by helix index. For example, if
+the 5' addresses are (0,5), meaning helix 0 at offset 5, 
+then (0,10), (0,15), (1,5), (1,10), (1,15), (2,5), (2,10), (2,15),
+then that is row-major order. Column-major order would be
+(0,5), (1,5), (2,5), (0,10), (1,10), (2,10), (0,15), (1,15), (2,15).
+Finally, instead of using the addresses of 5' ends, other strand "parts" can be
+used to sort; see options under "strand part to sort by".
+""");
     items[idx_strand_order_str] = DialogRadio(label: 'strand part to sort by', options: sort_options);
 
     var dialog = Dialog(
@@ -1297,8 +1313,19 @@ However, it may be less stable than the main site.'''
         type: DialogType.export_dna_sequences,
         items: items,
         disable_when_any_checkboxes_off: {
-          idx_column_major: [idx_sort],
-          idx_strand_order_str: [idx_sort]
+          idx_column_major_strand: [idx_sort],
+          idx_strand_order_str: [idx_sort],
+        },
+        disable_when_any_radio_button_selected: {
+          idx_column_major_plate: {
+            idx_format_str: [
+              // need to use toString() to get the exact string value displayed for later comparison
+              // using ExportDNAFormat.name instead will return a different string (e.g. 'csv' vs
+              // 'CSV (.csv)') than displayed in the radio button
+              ExportDNAFormat.csv.toString(),
+              ExportDNAFormat.idt_bulk.toString(),
+            ]
+          },
         });
 
     List<DialogItem> results = await util.dialog(dialog);
@@ -1309,20 +1336,23 @@ However, it may be less stable than the main site.'''
     String format_str = (results[idx_format_str] as DialogRadio).value;
     bool sort = (results[idx_sort] as DialogCheckbox).value;
     StrandOrder strand_order = null;
-    bool column_major = true;
+    bool column_major_strand = true;
     if (sort) {
-      column_major = (results[idx_column_major] as DialogCheckbox).value;
+      column_major_strand = (results[idx_column_major_strand] as DialogCheckbox).value;
       String strand_order_str = (results[idx_strand_order_str] as DialogRadio).value;
       strand_order = StrandOrder.fromString(strand_order_str);
     }
+    bool column_major_plate = (results[idx_column_major_plate] as DialogCheckbox).value;
     ExportDNAFormat format = ExportDNAFormat.fromString(format_str);
 
     props.dispatch(actions.ExportDNA(
-        include_scaffold: include_scaffold,
-        include_only_selected_strands: include_only_selected_strands,
-        export_dna_format: format,
-        strand_order: strand_order,
-        column_major: column_major));
+      include_scaffold: include_scaffold,
+      include_only_selected_strands: include_only_selected_strands,
+      export_dna_format: format,
+      strand_order: strand_order,
+      column_major_strand: column_major_strand,
+      column_major_plate: column_major_plate,
+    ));
   }
 
   Future<void> load_example_dialog() async {
