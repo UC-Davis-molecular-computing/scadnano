@@ -184,12 +184,11 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
 
   ReactElement dialog_for(DialogItem item, int dialog_item_idx, bool disabled) {
     if (item is DialogCheckbox) {
-      return Dom.label()(
+      return (Dom.label()..title = item.tooltip ?? "")(
         (Dom.input()
           ..type = 'checkbox'
           ..disabled = disabled
           ..checked = item.value
-          ..title = item.tooltip ?? ""
           ..onChange = (SyntheticFormEvent e) {
             var new_responses = state.current_responses.toBuilder();
             bool new_checked = e.target.checked;
@@ -214,13 +213,12 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         item.label,
       );
     } else if (item is DialogText) {
-      return Dom.label()(
+      return (Dom.label()..title = item.tooltip ?? "")(
         '${item.label}: ',
         (Dom.input()
           ..type = 'text'
           ..disabled = disabled
           ..value = item.value
-          ..title = item.tooltip ?? ""
           ..size = item.size
 //          ..width = '${item.size}ch'
           ..onChange = (SyntheticFormEvent e) {
@@ -232,13 +230,12 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
           })(),
       );
     } else if (item is DialogTextArea) {
-      return Dom.label()(
+      return (Dom.label()..title = item.tooltip ?? "")(
         '${item.label}: ',
         (Dom.textarea()
           ..form = 'dialog-form-form'
           ..disabled = disabled
           ..value = item.value
-          ..title = item.tooltip ?? ""
           ..rows = item.rows
           ..cols = item.cols
           ..onChange = (SyntheticFormEvent e) {
@@ -250,12 +247,11 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
           })(),
       );
     } else if (item is DialogInteger) {
-      return Dom.label()(
+      return (Dom.label()..title = item.tooltip ?? "")(
         '${item.label}: ',
         (Dom.input()
           ..type = 'number'
           ..disabled = disabled
-          ..title = item.tooltip ?? ""
           ..pattern = r'-?\d+' // allow to type integers
           ..value = item.value
           ..onChange = (SyntheticFormEvent e) {
@@ -268,12 +264,11 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
           })(),
       );
     } else if (item is DialogFloat) {
-      return Dom.label()(
+      return (Dom.label()..title = item.tooltip ?? "")(
         '${item.label}: ',
         (Dom.input()
           ..type = 'number'
           ..disabled = disabled
-          ..title = item.tooltip ?? ""
           ..pattern = r'[+-]?(\d*[.])?\d+' // allow to type floating numbers
           ..value = item.value
           ..step = 'any'
