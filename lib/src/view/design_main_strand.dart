@@ -1092,8 +1092,8 @@ Future<void> ask_for_label(Strand strand, Substrand substrand, BuiltSet<Strand> 
   items[label_idx] = DialogTextArea(
       label: 'label',
       value: existing_label_string,
-      cols: 80,
-      rows: 6,
+      cols: 40,
+      rows: 8,
       tooltip: "Enter the ${part_name} label here. It can either be a string, "
           "or select JSON? for more structured data.");
 
