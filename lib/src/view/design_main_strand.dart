@@ -7,13 +7,13 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
-import 'package:scadnano/src/state/idt_fields.dart';
-import 'package:scadnano/src/state/modification_type.dart';
-import 'package:scadnano/src/state/substrand.dart';
 
 import 'design_main_strand_and_domain_names.dart';
 import 'design_main_strand_dna_end.dart';
 import 'transform_by_helix_group.dart';
+import '../state/idt_fields.dart';
+import '../state/modification_type.dart';
+import '../state/substrand.dart';
 import '../state/modification.dart';
 import '../state/address.dart';
 import '../state/geometry.dart';
@@ -74,8 +74,10 @@ mixin DesignMainStrandPropsMixin on UiProps {
   bool show_modifications;
   bool show_domain_names;
   bool show_strand_names;
-  num domain_name_font_size;
+  bool show_strand_labels;
   num strand_name_font_size;
+  num strand_label_font_size;
+  num domain_name_font_size;
   num modification_font_size;
   bool invert_y;
   BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
