@@ -533,6 +533,22 @@ abstract class ShowStrandNamesSet
   static Serializer<ShowStrandNamesSet> get serializer => _$showStrandNamesSetSerializer;
 }
 
+abstract class ShowStrandLabelsSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowStrandLabelsSet, ShowStrandLabelsSetBuilder> {
+  bool get show;
+
+  factory ShowStrandLabelsSet(bool show) => ShowStrandLabelsSet.from((b) => b..show = show);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowStrandLabelsSet.from([void Function(ShowStrandLabelsSetBuilder) updates]) =
+      _$ShowStrandLabelsSet;
+
+  ShowStrandLabelsSet._();
+
+  static Serializer<ShowStrandLabelsSet> get serializer => _$showStrandLabelsSetSerializer;
+}
+
 abstract class ShowModificationsSet
     with BuiltJsonSerializable
     implements Action, Built<ShowModificationsSet, ShowModificationsSetBuilder> {
@@ -573,6 +589,19 @@ abstract class StrandNameFontSizeSet
   StrandNameFontSizeSet._();
 
   static Serializer<StrandNameFontSizeSet> get serializer => _$strandNameFontSizeSetSerializer;
+}
+
+abstract class StrandLabelFontSizeSet
+    with BuiltJsonSerializable
+    implements Action, Built<StrandLabelFontSizeSet, StrandLabelFontSizeSetBuilder> {
+  num get font_size;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandLabelFontSizeSet({num font_size}) = _$StrandLabelFontSizeSet._;
+
+  StrandLabelFontSizeSet._();
+
+  static Serializer<StrandLabelFontSizeSet> get serializer => _$strandLabelFontSizeSetSerializer;
 }
 
 abstract class ModificationFontSizeSet

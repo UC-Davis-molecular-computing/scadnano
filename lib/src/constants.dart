@@ -120,6 +120,7 @@ const Grid default_grid = Grid.none;
 const default_modification_font_size = 12;
 const default_domain_name_font_size = 10;
 const default_strand_name_font_size = 16;
+const default_strand_label_font_size = 16;
 const default_major_tick_offset_font_size = 12;
 const default_major_tick_width_font_size = 8;
 
