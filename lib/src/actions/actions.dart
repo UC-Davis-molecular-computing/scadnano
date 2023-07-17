@@ -549,6 +549,22 @@ abstract class ShowStrandLabelsSet
   static Serializer<ShowStrandLabelsSet> get serializer => _$showStrandLabelsSetSerializer;
 }
 
+abstract class ShowDomainLabelsSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowDomainLabelsSet, ShowDomainLabelsSetBuilder> {
+  bool get show;
+
+  factory ShowDomainLabelsSet(bool show) => ShowDomainLabelsSet.from((b) => b..show = show);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowDomainLabelsSet.from([void Function(ShowDomainLabelsSetBuilder) updates]) =
+      _$ShowDomainLabelsSet;
+
+  ShowDomainLabelsSet._();
+
+  static Serializer<ShowDomainLabelsSet> get serializer => _$showDomainLabelsSetSerializer;
+}
+
 abstract class ShowModificationsSet
     with BuiltJsonSerializable
     implements Action, Built<ShowModificationsSet, ShowModificationsSetBuilder> {
@@ -576,6 +592,19 @@ abstract class DomainNameFontSizeSet
   DomainNameFontSizeSet._();
 
   static Serializer<DomainNameFontSizeSet> get serializer => _$domainNameFontSizeSetSerializer;
+}
+
+abstract class DomainLabelFontSizeSet
+    with BuiltJsonSerializable
+    implements Action, Built<DomainLabelFontSizeSet, DomainLabelFontSizeSetBuilder> {
+  num get font_size;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DomainLabelFontSizeSet({num font_size}) = _$DomainLabelFontSizeSet._;
+
+  DomainLabelFontSizeSet._();
+
+  static Serializer<DomainLabelFontSizeSet> get serializer => _$domainLabelFontSizeSetSerializer;
 }
 
 abstract class StrandNameFontSizeSet

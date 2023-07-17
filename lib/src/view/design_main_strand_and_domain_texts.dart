@@ -42,9 +42,11 @@ mixin DesignMainStrandAndDomainTextsPropsMixin on UiProps {
   bool show_strand_names;
   bool show_strand_labels;
   bool show_domain_names;
+  bool show_domain_labels;
   int strand_name_font_size;
   int strand_label_font_size;
   int domain_name_font_size;
+  int domain_label_font_size;
 
   BuiltMap<int, Point<num>> helix_idx_to_svg_position;
 
@@ -88,6 +90,15 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
       }
     }
 
+    if (props.show_domain_labels) {
+      List<ReactElement> domain_label_components = _draw_domain_labels();
+      if (domain_label_components.isNotEmpty) {
+        text_components.add((Dom.g()
+          ..className = 'domain-labels'
+          ..key = 'domain-labels')(domain_label_components));
+      }
+    }
+
     if (text_components.isEmpty) {
       return null;
     }
@@ -115,6 +126,7 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
       int num_stacked = 0;
       if (props.show_dna) num_stacked++;
       if (props.show_domain_names) num_stacked++;
+      if (props.show_domain_labels) num_stacked++;
       strand_name_component = (DesignMainStrandDomainText()
         ..strand = props.strand
         ..domain = domain_5p
@@ -133,7 +145,6 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
     }
     return strand_name_component;
   }
-
 
   ReactElement _draw_strand_label() {
     if (props.strand.label == null) {
@@ -156,6 +167,7 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
       if (props.show_dna) num_stacked++;
       if (props.show_strand_names) num_stacked++;
       if (props.show_domain_names) num_stacked++;
+      if (props.show_domain_labels) num_stacked++;
       strand_label_component = (DesignMainStrandDomainText()
         ..strand = props.strand
         ..domain = domain_5p
@@ -237,6 +249,77 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
             ..className = constants.css_selector_extension_name
             ..key = "extension-name-$i")());
         }
+      } else {
+        throw AssertionError('substrand must be Domain, Loopout, or Extension');
+      }
+      i++;
+    }
+    return names;
+  }
+
+  List<ReactElement> _draw_domain_labels() {
+    List<ReactElement> names = [];
+    int i = 0;
+    for (var substrand in props.strand.substrands) {
+      if (substrand is Domain) {
+        Domain domain = substrand;
+        bool draw_domain = should_draw_domain(
+            domain.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
+        if (draw_domain && domain.label != null) {
+          Helix helix = props.helices[substrand.helix];
+          var helix_svg_position = props.helix_idx_to_svg_position[substrand.helix];
+          int num_stacked = 0;
+          if (props.show_dna) num_stacked++;
+          if (props.show_domain_names) num_stacked++;
+          names.add((DesignMainStrandDomainText()
+            ..strand = props.strand
+            ..domain = substrand
+            ..text = domain.label
+            ..num_stacked = num_stacked
+            ..css_selector_text = constants.css_selector_domain_label_text
+            ..helix = helix
+            ..helix_groups = props.groups
+            ..geometry = props.geometry
+            ..font_size = props.domain_name_font_size
+            ..transform = transform_of_helix(domain.helix)
+            ..helix_svg_position = helix_svg_position
+            ..context_menu_strand = props.context_menu_strand
+            ..className = constants.css_selector_domain_label
+            ..key = "domain-name-$i")());
+        }
+      } else if (substrand is Loopout) {
+        // Loopout loopout = substrand;
+        // Domain prev_domain = (props.strand.substrands[i - 1] as Domain);
+        // Domain next_domain = (props.strand.substrands[i + 1] as Domain);
+        // int prev_helix_idx = prev_domain.helix;
+        // int next_helix_idx = next_domain.helix;
+        // bool draw_loopout = should_draw_loopout(prev_helix_idx, next_helix_idx,
+        //     props.side_selected_helix_idxs, props.only_display_selected_helices);
+        // if (draw_loopout && loopout.name != null) {
+        //   names.add((DesignMainStrandLoopoutName()
+        //     ..loopout = loopout
+        //     ..prev_domain = prev_domain
+        //     ..next_domain = next_domain
+        //     ..geometry = props.geometry
+        //     ..font_size = props.domain_name_font_size
+        //     ..show_dna = props.show_dna
+        //     ..className = constants.css_selector_loopout_name
+        //     ..key = "loopout-label-$i")());
+        // }
+      } else if (substrand is Extension) {
+        // Extension ext = substrand;
+        // int adj_helix_idx = ext.adjacent_domain.helix;
+        // bool draw_loopout = should_draw_extension(
+        //     adj_helix_idx, props.side_selected_helix_idxs, props.only_display_selected_helices);
+        // if (draw_loopout && ext.name != null) {
+        //   names.add((DesignMainStrandExtensionName()
+        //     ..ext = ext
+        //     ..geometry = props.geometry
+        //     ..font_size = props.domain_name_font_size
+        //     ..show_dna = props.show_dna
+        //     ..className = constants.css_selector_extension_name
+        //     ..key = "extension-label-$i")());
+        // }
       } else {
         throw AssertionError('substrand must be Domain, Loopout, or Extension');
       }

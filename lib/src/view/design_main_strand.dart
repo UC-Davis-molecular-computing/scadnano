@@ -72,12 +72,14 @@ mixin DesignMainStrandPropsMixin on UiProps {
   bool modification_display_connector;
   bool show_dna;
   bool show_modifications;
-  bool show_domain_names;
   bool show_strand_names;
   bool show_strand_labels;
+  bool show_domain_names;
+  bool show_domain_labels;
   num strand_name_font_size;
   num strand_label_font_size;
   num domain_name_font_size;
+  num domain_label_font_size;
   num modification_font_size;
   bool invert_y;
   BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
@@ -160,9 +162,11 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..show_strand_names = props.show_strand_names
           ..show_strand_labels = props.show_strand_labels
           ..show_domain_names = props.show_domain_names
+          ..show_domain_labels = props.show_domain_labels
           ..strand_name_font_size = props.strand_name_font_size
           ..strand_label_font_size = props.strand_label_font_size
           ..domain_name_font_size = props.domain_name_font_size
+          ..domain_label_font_size = props.domain_label_font_size
           ..context_menu_strand = context_menu_strand
           ..helix_idx_to_svg_position = helix_idx_to_svg_position_y_map_on_strand
           ..key = 'domain-names')(),

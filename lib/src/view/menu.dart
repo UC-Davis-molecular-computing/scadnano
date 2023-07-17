@@ -46,12 +46,14 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..no_grid_is_none =
           state.design == null ? false : state.design.groups.values.every((group) => group.grid != Grid.none)
       ..show_dna = state.ui_state.show_dna
-      ..show_domain_names = state.ui_state.show_domain_names
       ..show_strand_names = state.ui_state.show_strand_names
       ..show_strand_labels = state.ui_state.show_strand_labels
-      ..domain_name_font_size = state.ui_state.domain_name_font_size
+      ..show_domain_names = state.ui_state.show_domain_names
+      ..show_domain_labels = state.ui_state.show_domain_labels
       ..strand_name_font_size = state.ui_state.strand_name_font_size
       ..strand_label_font_size = state.ui_state.strand_label_font_size
+      ..domain_name_font_size = state.ui_state.domain_name_font_size
+      ..domain_label_font_size = state.ui_state.domain_label_font_size
       ..show_modifications = state.ui_state.show_modifications
       ..show_mismatches = state.ui_state.show_mismatches
       ..show_domain_name_mismatches = state.ui_state.show_domain_name_mismatches
@@ -109,9 +111,11 @@ mixin MenuPropsMixin on UiProps {
   bool show_strand_names;
   bool show_strand_labels;
   bool show_domain_names;
+  bool show_domain_labels;
   num strand_name_font_size;
   num strand_label_font_size;
   num domain_name_font_size;
+  num domain_label_font_size;
   num zoom_speed;
   bool show_modifications;
   num modification_font_size;
@@ -743,6 +747,20 @@ strand at the same (helix,offset).'''
         ..on_new_value =
             ((num font_size) => props.dispatch(actions.DomainNameFontSizeSet(font_size: font_size)))
         ..key = 'domain-name-font-size')(),
+      (MenuBoolean()
+        ..value = props.show_domain_labels
+        ..display = 'Show domain labels'
+        ..tooltip = "Show domain labels near 5' domain of strand."
+        ..onChange = ((_) => props.dispatch(actions.ShowDomainLabelsSet(!props.show_domain_labels)))
+        ..key = 'show-domain-label')(),
+      (MenuNumber()
+        ..display = 'domain label font size'
+        ..default_value = props.domain_label_font_size
+        ..hide = !props.show_domain_labels
+        ..tooltip = 'Adjust the font size of domain labels.'
+        ..on_new_value =
+            ((num font_size) => props.dispatch(actions.DomainLabelFontSizeSet(font_size: font_size)))
+        ..key = 'domain-label-font-size')(),
     ]);
   }
 

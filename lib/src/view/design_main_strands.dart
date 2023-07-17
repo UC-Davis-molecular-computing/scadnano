@@ -36,9 +36,11 @@ UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands =
     ..show_strand_names = state.ui_state.show_strand_names
     ..show_strand_labels = state.ui_state.show_strand_labels
     ..show_domain_names = state.ui_state.show_domain_names
+    ..show_domain_labels = state.ui_state.show_domain_labels
     ..strand_name_font_size = state.ui_state.strand_name_font_size
     ..strand_label_font_size = state.ui_state.strand_label_font_size
     ..domain_name_font_size = state.ui_state.domain_name_font_size
+    ..domain_label_font_size = state.ui_state.domain_label_font_size
     ..helix_idx_to_svg_position_map = state.helix_idx_to_svg_position_map
     ..geometry = state.design.geometry;
 })(DesignMainStrands);
@@ -56,9 +58,11 @@ mixin DesignMainStrandsProps on UiProps {
   bool show_strand_names;
   bool show_strand_labels;
   bool show_domain_names;
+  bool show_domain_labels;
   num strand_name_font_size;
   num strand_label_font_size;
   num domain_name_font_size;
+  num domain_label_font_size;
   num modification_font_size;
   bool drawing_potential_crossover;
   bool moving_dna_ends;
@@ -115,9 +119,11 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> wi
         ..show_strand_names = props.show_strand_names
         ..show_strand_labels = props.show_strand_labels
         ..show_domain_names = props.show_domain_names
+        ..show_domain_labels = props.show_domain_labels
         ..strand_name_font_size = props.strand_name_font_size
         ..strand_label_font_size = props.strand_label_font_size
         ..domain_name_font_size = props.domain_name_font_size
+        ..domain_label_font_size = props.domain_label_font_size
         ..modification_font_size = props.modification_font_size
         ..modification_display_connector = props.modification_display_connector
         ..geometry = props.geometry
