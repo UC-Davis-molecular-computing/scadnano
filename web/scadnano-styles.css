@@ -542,7 +542,9 @@ label+select {
 }
 
 .domain-name-text,
-.strand-name-text {
+.strand-name-text,
+.strand-label-text,
+.domain-label-text {
     text-anchor: middle;
 }
 

@@ -8,7 +8,7 @@ import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
 
-import 'design_main_strand_and_domain_names.dart';
+import 'design_main_strand_and_domain_texts.dart';
 import 'design_main_strand_dna_end.dart';
 import 'transform_by_helix_group.dart';
 import '../state/idt_fields.dart';
@@ -149,7 +149,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       _insertions(),
       _deletions(),
       if (props.show_domain_names || props.show_strand_names)
-        (DesignMainStrandAndDomainNames() // shows both domain and strand names
+        (DesignMainStrandAndDomainTexts() // shows both domain and strand names
           ..strand = props.strand
           ..helices = props.helices
           ..groups = props.groups
@@ -157,12 +157,14 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..show_dna = props.show_dna
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..only_display_selected_helices = props.only_display_selected_helices
-          ..show_domain_names = props.show_domain_names
           ..show_strand_names = props.show_strand_names
+          ..show_strand_labels = props.show_strand_labels
+          ..show_domain_names = props.show_domain_names
+          ..strand_name_font_size = props.strand_name_font_size
+          ..strand_label_font_size = props.strand_label_font_size
+          ..domain_name_font_size = props.domain_name_font_size
           ..context_menu_strand = context_menu_strand
           ..helix_idx_to_svg_position = helix_idx_to_svg_position_y_map_on_strand
-          ..domain_name_font_size = props.domain_name_font_size
-          ..strand_name_font_size = props.strand_name_font_size
           ..key = 'domain-names')(),
       if (props.show_modifications)
         (DesignMainStrandModifications()
