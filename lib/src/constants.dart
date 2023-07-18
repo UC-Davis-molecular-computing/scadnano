@@ -8,41 +8,42 @@ import 'state/grid.dart';
 
 // WARNING: Do not modify line below, except for the version string
 //          (and also add new version string to scadnano_versions_to_link).
-const String CURRENT_VERSION = "0.17.14";
+const String CURRENT_VERSION = "0.18.0";
 const String INITIAL_VERSION = "0.1.0";
 
 // scadnano versions that we deploy so that older versions can be used.
 final scadnano_older_versions_to_link = [
-  "0.17.13",
-  "0.17.12",
-  "0.17.11",
-  "0.17.10",
-  "0.17.9",
-  "0.17.8",
-  "0.17.7",
-  "0.17.6",
-  "0.17.5",
-  "0.17.4",
-  // "0.17.3", // accidentally skipped this version
-  "0.17.2",
-  "0.17.1",
-  "0.17.0",
+  "0.17.14",
+  // "0.17.13",
+  // "0.17.12",
+  // "0.17.11",
+  // "0.17.10",
+  // "0.17.9",
+  // "0.17.8",
+  // "0.17.7",
+  // "0.17.6",
+  // "0.17.5",
+  // "0.17.4",
+  // // "0.17.3", // accidentally skipped this version
+  // "0.17.2",
+  // "0.17.1",
+  // "0.17.0",
   "0.16.3",
-  "0.16.2",
-  "0.16.1",
-  "0.16.0",
+  // "0.16.2",
+  // "0.16.1",
+  // "0.16.0",
   "0.15.3",
-  "0.15.2",
-  "0.15.1",
-  "0.15.0",
+  // "0.15.2",
+  // "0.15.1",
+  // "0.15.0",
   "0.14.0",
   "0.13.4",
-  "0.13.3",
-  "0.13.2",
-  "0.13.1",
-  "0.13.0",
+  // "0.13.3",
+  // "0.13.2",
+  // "0.13.1",
+  // "0.13.0",
   "0.12.2",
-  "0.12.1",
+  // "0.12.1",
 ];
 final scadnano_versions_to_link = [CURRENT_VERSION] + scadnano_older_versions_to_link;
 
