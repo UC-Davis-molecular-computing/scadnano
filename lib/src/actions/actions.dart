@@ -401,12 +401,12 @@ abstract class StrandLabelSet
     with BuiltJsonSerializable, UndoableAction
     implements SingleStrandAction, Built<StrandLabelSet, StrandLabelSetBuilder> {
   @nullable
-  Object get label;
+  String get label;
 
   Strand get strand;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandLabelSet({Object label, Strand strand}) = _$StrandLabelSet._;
+  factory StrandLabelSet({String label, Strand strand}) = _$StrandLabelSet._;
 
   StrandLabelSet._();
 
@@ -451,14 +451,14 @@ abstract class SubstrandLabelSet
     with BuiltJsonSerializable, UndoableAction
     implements StrandPartAction, Built<SubstrandLabelSet, SubstrandLabelSetBuilder> {
   @nullable
-  Object get label;
+  String get label;
 
   Substrand get substrand;
 
   StrandPart get strand_part => substrand;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SubstrandLabelSet({Object label, Substrand substrand}) = _$SubstrandLabelSet._;
+  factory SubstrandLabelSet({String label, Substrand substrand}) = _$SubstrandLabelSet._;
 
   SubstrandLabelSet._();
 

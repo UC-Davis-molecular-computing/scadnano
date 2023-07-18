@@ -20,7 +20,7 @@ abstract class Substrand implements JSONSerializable, StrandPart {
 
   String get name;
 
-  Object get label;
+  String get label;
 
   String type_description();
 

@@ -20,7 +20,7 @@ class StrandMaker {
   String dna_sequence = null;
   bool circular = false;
   String name = null;
-  Object label = null;
+  String label = null;
   Modification5Prime modification_5p = null;
   Modification3Prime modification_3p = null;
   int current_helix, current_offset, loopout_length;
@@ -282,12 +282,12 @@ class StrandMaker {
     return this;
   }
 
-  StrandMaker with_label(Object label) {
+  StrandMaker with_label(String label) {
     this.label = label;
     return this;
   }
 
-  StrandMaker with_domain_label(Object label) {
+  StrandMaker with_domain_label(String label) {
     if (most_recently_added_substrand_is_loopout()) {
       this.loopout_label = label;
       return this;

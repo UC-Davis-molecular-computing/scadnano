@@ -1069,33 +1069,22 @@ Future<void> ask_for_label(Strand strand, Substrand substrand, BuiltSet<Strand> 
     part_name = substrand.type_description();
   }
 
-  int parse_json_idx = 0;
-  int label_idx = 1;
-  var items = List<DialogItem>.filled(2, null);
+  int label_idx = 0;
+  var items = List<DialogItem>.filled(1, null);
 
-  String existing_label_string = '';
+  String existing_label = '';
   if (substrand == null && strand.label != null) {
-    if (strand.label is String) {
-      existing_label_string = strand.label;
-    } else {
-      existing_label_string = jsonEncode(strand.label);
-    }
+    existing_label = strand.label;
   } else if (substrand != null && substrand.label != null) {
-    if (substrand.label is String) {
-      existing_label_string = substrand.label;
-    } else {
-      existing_label_string = jsonEncode(substrand.label);
-    }
+    existing_label = substrand.label;
   }
 
-  items[parse_json_idx] = DialogCheckbox(label: 'JSON?', value: false);
   items[label_idx] = DialogTextArea(
       label: 'label',
-      value: existing_label_string,
+      value: existing_label,
       cols: 40,
       rows: 8,
-      tooltip: "Enter the ${part_name} label here. It can either be a string, "
-          "or select JSON? for more structured data.");
+      tooltip: "Enter the ${part_name} label here.");
 
   var dialog = Dialog(
       title: 'set ${part_name} label',
@@ -1106,26 +1095,7 @@ Future<void> ask_for_label(Strand strand, Substrand substrand, BuiltSet<Strand> 
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 
-  String label_string = (results[label_idx] as DialogTextArea).value;
-  bool parse_json = (results[parse_json_idx] as DialogCheckbox).value;
-
-  Object label;
-  if (parse_json) {
-    try {
-      label = jsonDecode(label_string);
-    } catch (e) {
-      window.alert("""\
-You selected the "JSON" option, but the text you entered is not valid JSON.
-If you want the label to be a simple string, uncheck the JSON? checkbox.
-Here is the error message when attempting to parse your JSON:
-
-${e}\
-""");
-      return;
-    }
-  } else {
-    label = label_string;
-  }
+  String label = (results[label_idx] as DialogTextArea).value;
 
   actions.UndoableAction action;
   if (substrand == null) {
@@ -1173,10 +1143,10 @@ StrandActionCreator color_set_substrand_action_creator(Substrand substrand, Stri
     ((Strand strand) =>
         actions.StrandOrSubstrandColorSet(strand: strand, substrand: substrand, color: Color.hex(color_hex)));
 
-StrandActionCreator label_set_strand_action_creator(Object label) =>
+StrandActionCreator label_set_strand_action_creator(String label) =>
     ((Strand strand) => actions.StrandLabelSet(strand: strand, label: label));
 
-StrandActionCreator label_set_substrand_action_creator(Substrand substrand, Object label) =>
+StrandActionCreator label_set_substrand_action_creator(Substrand substrand, String label) =>
     ((Strand strand) => actions.SubstrandLabelSet(substrand: substrand, label: label));
 
 String tooltip_text(Strand strand) =>

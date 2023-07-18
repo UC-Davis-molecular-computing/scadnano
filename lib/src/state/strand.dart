@@ -53,7 +53,7 @@ abstract class Strand
     Modification3Prime modification_3p = null,
     Map<int, ModificationInternal> modifications_int = const {},
     String name = null,
-    Object label = null,
+    String label = null,
   }) {
     if (color == null) {
       color = is_scaffold ? util.scaffold_color : util.color_cycler.next();
@@ -321,8 +321,7 @@ abstract class Strand
   String get name;
 
   @nullable
-  @BuiltValueField(serialize: false)
-  Object get label;
+  String get label;
 
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
 
@@ -845,7 +844,7 @@ abstract class Strand
 
     String name = util.optional_field_with_null_default(json_map, constants.name_key);
 
-    Object label = util.optional_field_with_null_default(json_map, constants.label_key);
+    String label = util.optional_field_with_null_default(json_map, constants.label_key);
 
     var unused_fields = util.unused_fields_map(json_map, constants.strand_keys);
 
