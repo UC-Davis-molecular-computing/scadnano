@@ -5,7 +5,7 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
-  run_unit_tests:
+  check_formatting:
     if: github.event.pull_request.draft == false
 
     runs-on: ubuntu-22.04
@@ -33,5 +33,5 @@ jobs:
     if: github.event.pull_request.draft == true
     runs-on: ubuntu-18.04
     steps:
-    - name: Fails in order to indicate that pull request needs to be marked as ready to review and unit tests workflow needs to pass.
+    - name: Fails in order to indicate that pull request needs to be marked as ready to review and formatting workflow needs to pass.
       run: exit 1
