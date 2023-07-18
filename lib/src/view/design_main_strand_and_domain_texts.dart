@@ -61,7 +61,10 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
     with PureComponent, TransformByHelixGroup<DesignMainStrandAndDomainTextsProps> {
   @override
   render() {
-    if (!(props.show_domain_names || props.show_strand_names)) {
+    if (!(props.show_domain_names ||
+        props.show_strand_names ||
+        props.show_strand_labels ||
+        props.show_domain_labels)) {
       return null;
     }
 
@@ -285,7 +288,7 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
             ..helix_svg_position = helix_svg_position
             ..context_menu_strand = props.context_menu_strand
             ..className = constants.css_selector_domain_label
-            ..key = "domain-name-$i")());
+            ..key = "domain-label-$i")());
         }
       } else if (substrand is Loopout) {
         // Loopout loopout = substrand;

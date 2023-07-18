@@ -150,7 +150,10 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..only_display_selected_helices = props.only_display_selected_helices)(),
       _insertions(),
       _deletions(),
-      if (props.show_domain_names || props.show_strand_names)
+      if (props.show_domain_names ||
+          props.show_strand_names ||
+          props.show_strand_labels ||
+          props.show_domain_labels)
         (DesignMainStrandAndDomainTexts() // shows both domain and strand names
           ..strand = props.strand
           ..helices = props.helices
@@ -169,7 +172,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..domain_label_font_size = props.domain_label_font_size
           ..context_menu_strand = context_menu_strand
           ..helix_idx_to_svg_position = helix_idx_to_svg_position_y_map_on_strand
-          ..key = 'domain-names')(),
+          ..key = 'names-and-labels')(),
       if (props.show_modifications)
         (DesignMainStrandModifications()
           ..strand = props.strand
