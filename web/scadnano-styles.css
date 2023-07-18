@@ -15,7 +15,7 @@ input[type=checkbox] {
     margin-right: 4px;
 }
 
-label+select {
+label + select {
     margin-left: 4px;
 }
 
@@ -267,7 +267,7 @@ label+select {
     top: 0;
 }
 
-.has-submenu:hover>.context-menu {
+.has-submenu:hover > .context-menu {
     visibility: visible;
 }
 
@@ -283,7 +283,7 @@ label+select {
     pointer-events: none;
 }
 
-.has-submenu>.context-menu-item::after {
+.has-submenu > .context-menu-item::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -296,7 +296,7 @@ label+select {
 }
 
 .context-menu-item:hover,
-.has-submenu:hover>.context-menu-item {
+.has-submenu:hover > .context-menu-item {
     color: white;
     background: #284570;
     border-radius: 2px;
@@ -452,7 +452,7 @@ label+select {
     border-top: 1px solid black;
 }
 
-.mode-button>img {
+.mode-button > img {
     width: 25px;
     pointer-events: none;
 }
@@ -541,12 +541,30 @@ label+select {
     cursor: crosshair;
 }
 
-.domain-name-text,
-.strand-name-text,
-.strand-label-text,
-.domain-label-text {
+.domain-name,
+.strand-name,
+.strand-label,
+.domain-label {
     text-anchor: middle;
 }
+
+.loopout-name,
+.extension-name,
+.loopout-label,
+.extension-label {
+    text-anchor: middle;
+    pointer-events: none;
+    dominant-baseline: ideographic;
+    text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
+    0.7px -0.7px 0 #fff,
+    -0.7px 0.7px 0 #fff,
+    0.7px 0.7px 0 #fff;
+    text-rendering: optimizeSpeed;
+    /* doesn't seem to do much to improve rendering speed */
+    white-space: pre;
+    /* needed to display multiple space symbols in a row */
+}
+
 
 .selection-box,
 .selection-rope {
@@ -783,15 +801,10 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
 .modification-text {
     text-anchor: middle;
     font-weight: bold;
-    text-shadow:
-        /*-1px -1px 0 #fff,*/
-        /*1px -1px 0 #fff,*/
-        /*-1px 1px 0 #fff,*/
-        /*1px 1px 0 #fff;*/
-        -0.7px -0.7px 0 #fff,
-        0.7px -0.7px 0 #fff,
-        -0.7px 0.7px 0 #fff,
-        0.7px 0.7px 0 #fff;
+    text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
+    0.7px -0.7px 0 #fff,
+    -0.7px 0.7px 0 #fff,
+    0.7px 0.7px 0 #fff;
 }
 
 .dna-seq {
@@ -801,15 +814,10 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
     text-anchor: start;
     pointer-events: none;
     dominant-baseline: ideographic;
-    text-shadow:
-        /*-1px -1px 0 #fff,*/
-        /*1px -1px 0 #fff,*/
-        /*-1px 1px 0 #fff,*/
-        /*1px 1px 0 #fff;*/
-        -0.7px -0.7px 0 #fff,
-        0.7px -0.7px 0 #fff,
-        -0.7px 0.7px 0 #fff,
-        0.7px 0.7px 0 #fff;
+    text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
+    0.7px -0.7px 0 #fff,
+    -0.7px 0.7px 0 #fff,
+    0.7px 0.7px 0 #fff;
     text-rendering: optimizeSpeed;
     /* doesn't seem to do much to improve rendering speed */
     white-space: pre;
@@ -824,11 +832,10 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
     font-weight: bold;
     text-anchor: middle;
     pointer-events: none;
-    text-shadow:
-        -0.7px -0.7px 0 #fff,
-        0.7px -0.7px 0 #fff,
-        -0.7px 0.7px 0 #fff,
-        0.7px 0.7px 0 #fff;
+    text-shadow: -0.7px -0.7px 0 #fff,
+    0.7px -0.7px 0 #fff,
+    -0.7px 0.7px 0 #fff,
+    0.7px 0.7px 0 #fff;
     text-rendering: optimizeSpeed;
     /* doesn't seem to do much to improve rendering speed */
     white-space: pre;
@@ -843,26 +850,6 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
 .dna-seq-loopout,
 .dna-seq-extension {
     dominant-baseline: ideographic;
-}
-
-.loopout-name,
-.extension-name {
-    text-anchor: middle;
-    pointer-events: none;
-    dominant-baseline: ideographic;
-    text-shadow:
-        /*-1px -1px 0 #fff,*/
-        /*1px -1px 0 #fff,*/
-        /*-1px 1px 0 #fff,*/
-        /*1px 1px 0 #fff;*/
-        -0.7px -0.7px 0 #fff,
-        0.7px -0.7px 0 #fff,
-        -0.7px 0.7px 0 #fff,
-        0.7px 0.7px 0 #fff;
-    text-rendering: optimizeSpeed;
-    /* doesn't seem to do much to improve rendering speed */
-    white-space: pre;
-    /* needed to display multiple space symbols in a row */
 }
 
 /* next is needed so that we can rotate ends on extensions
@@ -951,12 +938,12 @@ https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-cen
 }
 
 /* File checkmarks appear on one line */
-#file-nav-dropdown+.dropdown-menu label {
+#file-nav-dropdown + .dropdown-menu label {
     white-space: nowrap;
 }
 
 /* View checkmarks appear on one line */
-#view-nav-dropdown+.dropdown-menu label {
+#view-nav-dropdown + .dropdown-menu label {
     white-space: nowrap;
 }
 
@@ -1014,7 +1001,7 @@ https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-cen
 ************************************************/
 
 /* Style dropdown item of selected grid as well as newly clicked on grid */
-#grid-nav-dropdown+.dropdown-menu .dropdown-item.disabled,
+#grid-nav-dropdown + .dropdown-menu .dropdown-item.disabled,
 .dropdown-item:active {
     color: #fff;
     text-decoration: none;
@@ -1027,7 +1014,7 @@ https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-cen
 }
 
 /* Styles the label like a DropdownItem */
-.form-file-dropdown .custom-file-input+.custom-file-label {
+.form-file-dropdown .custom-file-input + .custom-file-label {
     display: block;
     width: 100%;
     padding: .25rem 1.5rem;
@@ -1043,14 +1030,14 @@ https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-cen
 }
 
 /* Styles the label like a DropdownItem (on hover) */
-.form-file-dropdown .custom-file-input+.custom-file-label:hover {
+.form-file-dropdown .custom-file-input + .custom-file-label:hover {
     color: #16181b;
     text-decoration: none;
     background-color: #f8f9fa;
 }
 
 /* Hides the data-browse psuedo-element. */
-.form-file-dropdown .custom-file-input+.custom-file-label::after {
+.form-file-dropdown .custom-file-input + .custom-file-label::after {
     content: none;
 }
 

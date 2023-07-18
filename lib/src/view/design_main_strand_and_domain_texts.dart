@@ -135,7 +135,7 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
         ..domain = domain_5p
         ..text = props.strand.name
         ..num_stacked = num_stacked
-        ..css_selector_text = constants.css_selector_strand_name_text
+        ..css_selector_text = constants.css_selector_strand_name
         ..font_size = props.strand_name_font_size
         ..helix = helix
         ..helix_groups = props.groups
@@ -143,7 +143,6 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
         ..transform = transform_of_helix(domain_5p.helix)
         ..helix_svg_position = helix_svg_position
         ..context_menu_strand = props.context_menu_strand
-        ..className = constants.css_selector_strand_name
         ..key = "strand-name")();
     }
     return strand_name_component;
@@ -176,7 +175,7 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
         ..domain = domain_5p
         ..text = props.strand.label
         ..num_stacked = num_stacked
-        ..css_selector_text = constants.css_selector_strand_label_text
+        ..css_selector_text = constants.css_selector_strand_label
         ..font_size = props.strand_label_font_size
         ..helix = helix
         ..helix_groups = props.groups
@@ -184,7 +183,6 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
         ..transform = transform_of_helix(domain_5p.helix)
         ..helix_svg_position = helix_svg_position
         ..context_menu_strand = props.context_menu_strand
-        ..className = constants.css_selector_strand_label
         ..key = "strand-label")();
     }
     return strand_label_component;
@@ -208,7 +206,7 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
             ..domain = substrand
             ..text = domain.name
             ..num_stacked = num_stacked
-            ..css_selector_text = constants.css_selector_domain_name_text
+            ..css_selector_text = constants.css_selector_domain_name
             ..helix = helix
             ..helix_groups = props.groups
             ..geometry = props.geometry
@@ -216,7 +214,6 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
             ..transform = transform_of_helix(domain.helix)
             ..helix_svg_position = helix_svg_position
             ..context_menu_strand = props.context_menu_strand
-            ..className = constants.css_selector_domain_name
             ..key = "domain-name-$i")());
         }
       } else if (substrand is Loopout) {
@@ -227,15 +224,18 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
         int next_helix_idx = next_domain.helix;
         bool draw_loopout = should_draw_loopout(prev_helix_idx, next_helix_idx,
             props.side_selected_helix_idxs, props.only_display_selected_helices);
+        int num_stacked = 0;
+        if (props.show_dna) num_stacked++;
         if (draw_loopout && loopout.name != null) {
-          names.add((DesignMainStrandLoopoutName()
+          names.add((DesignMainStrandLoopoutText()
             ..loopout = loopout
+            ..text = loopout.name
+            ..num_stacked = num_stacked
             ..prev_domain = prev_domain
             ..next_domain = next_domain
             ..geometry = props.geometry
             ..font_size = props.domain_name_font_size
-            ..show_dna = props.show_dna
-            ..className = constants.css_selector_loopout_name
+            ..css_selector_text = constants.css_selector_loopout_name
             ..key = "loopout-name-$i")());
         }
       } else if (substrand is Extension) {
@@ -243,13 +243,16 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
         int adj_helix_idx = ext.adjacent_domain.helix;
         bool draw_loopout = should_draw_extension(
             adj_helix_idx, props.side_selected_helix_idxs, props.only_display_selected_helices);
+        int num_stacked = 0;
+        if (props.show_dna) num_stacked++;
         if (draw_loopout && ext.name != null) {
-          names.add((DesignMainStrandExtensionName()
+          names.add((DesignMainStrandExtensionText()
             ..ext = ext
+            ..text = ext.name
+            ..num_stacked = num_stacked
             ..geometry = props.geometry
             ..font_size = props.domain_name_font_size
-            ..show_dna = props.show_dna
-            ..className = constants.css_selector_extension_name
+            ..css_selector_text = constants.css_selector_loopout_label
             ..key = "extension-name-$i")());
         }
       } else {
@@ -279,7 +282,7 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
             ..domain = substrand
             ..text = domain.label
             ..num_stacked = num_stacked
-            ..css_selector_text = constants.css_selector_domain_label_text
+            ..css_selector_text = constants.css_selector_domain_label
             ..helix = helix
             ..helix_groups = props.groups
             ..geometry = props.geometry
@@ -291,38 +294,46 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
             ..key = "domain-label-$i")());
         }
       } else if (substrand is Loopout) {
-        // Loopout loopout = substrand;
-        // Domain prev_domain = (props.strand.substrands[i - 1] as Domain);
-        // Domain next_domain = (props.strand.substrands[i + 1] as Domain);
-        // int prev_helix_idx = prev_domain.helix;
-        // int next_helix_idx = next_domain.helix;
-        // bool draw_loopout = should_draw_loopout(prev_helix_idx, next_helix_idx,
-        //     props.side_selected_helix_idxs, props.only_display_selected_helices);
-        // if (draw_loopout && loopout.name != null) {
-        //   names.add((DesignMainStrandLoopoutName()
-        //     ..loopout = loopout
-        //     ..prev_domain = prev_domain
-        //     ..next_domain = next_domain
-        //     ..geometry = props.geometry
-        //     ..font_size = props.domain_name_font_size
-        //     ..show_dna = props.show_dna
-        //     ..className = constants.css_selector_loopout_name
-        //     ..key = "loopout-label-$i")());
-        // }
+        Loopout loopout = substrand;
+        Domain prev_domain = (props.strand.substrands[i - 1] as Domain);
+        Domain next_domain = (props.strand.substrands[i + 1] as Domain);
+        int prev_helix_idx = prev_domain.helix;
+        int next_helix_idx = next_domain.helix;
+        bool draw_loopout = should_draw_loopout(prev_helix_idx, next_helix_idx,
+            props.side_selected_helix_idxs, props.only_display_selected_helices);
+        int num_stacked = 0;
+        if (props.show_dna) num_stacked++;
+        if (props.show_domain_names) num_stacked++;
+        if (draw_loopout && loopout.label != null) {
+          names.add((DesignMainStrandLoopoutText()
+            ..loopout = loopout
+            ..num_stacked = num_stacked
+            ..prev_domain = prev_domain
+            ..next_domain = next_domain
+            ..geometry = props.geometry
+            ..font_size = props.domain_name_font_size
+            ..text = loopout.label
+            ..css_selector_text = constants.css_selector_loopout_label
+            ..key = "loopout-label-$i")());
+        }
       } else if (substrand is Extension) {
-        // Extension ext = substrand;
-        // int adj_helix_idx = ext.adjacent_domain.helix;
-        // bool draw_loopout = should_draw_extension(
-        //     adj_helix_idx, props.side_selected_helix_idxs, props.only_display_selected_helices);
-        // if (draw_loopout && ext.name != null) {
-        //   names.add((DesignMainStrandExtensionName()
-        //     ..ext = ext
-        //     ..geometry = props.geometry
-        //     ..font_size = props.domain_name_font_size
-        //     ..show_dna = props.show_dna
-        //     ..className = constants.css_selector_extension_name
-        //     ..key = "extension-label-$i")());
-        // }
+        Extension ext = substrand;
+        int adj_helix_idx = ext.adjacent_domain.helix;
+        bool draw_loopout = should_draw_extension(
+            adj_helix_idx, props.side_selected_helix_idxs, props.only_display_selected_helices);
+        int num_stacked = 0;
+        if (props.show_dna) num_stacked++;
+        if (props.show_domain_names) num_stacked++;
+        if (draw_loopout && ext.label != null) {
+          names.add((DesignMainStrandExtensionText()
+            ..ext = ext
+            ..num_stacked = num_stacked
+            ..geometry = props.geometry
+            ..font_size = props.domain_name_font_size
+            ..text = ext.label
+            ..css_selector_text = constants.css_selector_extension_label
+            ..key = "extension-label-$i")());
+        }
       } else {
         throw AssertionError('substrand must be Domain, Loopout, or Extension');
       }
