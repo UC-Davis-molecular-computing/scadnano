@@ -148,9 +148,13 @@ bool load_dialog_show_app_ui_state_reducer(bool _, actions.LoadingDialogShow act
 
 bool load_dialog_hide_app_ui_state_reducer(bool _, actions.LoadingDialogHide action) => false;
 
+bool show_strand_names_reducer(bool _, actions.ShowStrandNamesSet action) => action.show;
+
+bool show_strand_labels_reducer(bool _, actions.ShowStrandLabelsSet action) => action.show;
+
 bool show_domain_names_reducer(bool _, actions.ShowDomainNamesSet action) => action.show;
 
-bool show_strand_names_reducer(bool _, actions.ShowStrandNamesSet action) => action.show;
+bool show_domain_labels_reducer(bool _, actions.ShowDomainLabelsSet action) => action.show;
 
 bool show_modifications_reducer(bool _, actions.ShowModificationsSet action) => action.show;
 
@@ -161,9 +165,13 @@ num modification_font_size_reducer(num _, actions.ModificationFontSizeSet action
 
 num zoom_speed_reducer(num _, actions.ZoomSpeedSet action) => action.speed;
 
+num strand_name_font_size_reducer(num _, actions.StrandNameFontSizeSet action) => action.font_size;
+
 num domain_name_font_size_reducer(num _, actions.DomainNameFontSizeSet action) => action.font_size;
 
-num strand_name_font_size_reducer(num _, actions.StrandNameFontSizeSet action) => action.font_size;
+num strand_label_font_size_reducer(num _, actions.StrandLabelFontSizeSet action) => action.font_size;
+
+num domain_label_font_size_reducer(num _, actions.DomainLabelFontSizeSet action) => action.font_size;
 
 num major_tick_offset_font_size_reducer(num _, actions.MajorTickOffsetFontSizeSet action) => action.font_size;
 
@@ -380,14 +388,22 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..select_mode_state.replace(select_mode_state_reducer(storables.select_mode_state, action))
     ..edit_modes.replace(edit_modes_reducer(storables.edit_modes, action))
     ..show_dna = TypedReducer<bool, actions.ShowDNASet>(show_dna_reducer)(storables.show_dna, action)
+    ..show_strand_names = TypedReducer<bool, actions.ShowStrandNamesSet>(show_strand_names_reducer)(
+        storables.show_strand_names, action)
+    ..show_strand_labels = TypedReducer<bool, actions.ShowStrandLabelsSet>(show_strand_labels_reducer)(
+        storables.show_strand_labels, action)
+    ..strand_name_font_size = TypedReducer<num, actions.StrandNameFontSizeSet>(strand_name_font_size_reducer)(
+        storables.strand_name_font_size, action)
+    ..strand_label_font_size = TypedReducer<num, actions.StrandLabelFontSizeSet>(strand_label_font_size_reducer)(
+        storables.strand_label_font_size, action)
     ..show_domain_names = TypedReducer<bool, actions.ShowDomainNamesSet>(show_domain_names_reducer)(
         storables.show_domain_names, action)
     ..domain_name_font_size = TypedReducer<num, actions.DomainNameFontSizeSet>(domain_name_font_size_reducer)(
         storables.domain_name_font_size, action)
-    ..show_strand_names = TypedReducer<bool, actions.ShowStrandNamesSet>(show_strand_names_reducer)(
-        storables.show_strand_names, action)
-    ..strand_name_font_size = TypedReducer<num, actions.StrandNameFontSizeSet>(strand_name_font_size_reducer)(
-        storables.strand_name_font_size, action)
+    ..show_domain_labels = TypedReducer<bool, actions.ShowDomainLabelsSet>(show_domain_labels_reducer)(
+        storables.show_domain_labels, action)
+    ..domain_label_font_size = TypedReducer<num, actions.DomainLabelFontSizeSet>(domain_label_font_size_reducer)(
+        storables.domain_label_font_size, action)
     ..show_modifications = TypedReducer<bool, actions.ShowModificationsSet>(show_modifications_reducer)(
         storables.show_modifications, action)
     ..modification_display_connector =
@@ -396,17 +412,14 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..modification_font_size = TypedReducer<num, actions.ModificationFontSizeSet>(modification_font_size_reducer)(
         storables.modification_font_size, action)
     ..zoom_speed = TypedReducer<num, actions.ZoomSpeedSet>(zoom_speed_reducer)(storables.zoom_speed, action)
-    ..major_tick_offset_font_size = TypedReducer<num, actions.MajorTickOffsetFontSizeSet>(major_tick_offset_font_size_reducer)(
-        storables.major_tick_offset_font_size, action)
-    ..major_tick_width_font_size = TypedReducer<num, actions.MajorTickWidthFontSizeSet>(major_tick_width_font_size_reducer)(
-        storables.major_tick_width_font_size, action)
-    ..show_mismatches = TypedReducer<bool, actions.ShowMismatchesSet>(show_mismatches_reducer)(
-        storables.show_mismatches, action)
-    ..show_domain_name_mismatches =
-        TypedReducer<bool, actions.ShowDomainNameMismatchesSet>(show_domain_name_mismatches_reducer)(
-            storables.show_domain_name_mismatches, action)
-    ..show_unpaired_insertion_deletions =
-        TypedReducer<bool, actions.ShowUnpairedInsertionDeletionsSet>(show_unpaired_insertion_deletions_reducer)(storables.show_unpaired_insertion_deletions, action)
+    ..major_tick_offset_font_size =
+        TypedReducer<num, actions.MajorTickOffsetFontSizeSet>(major_tick_offset_font_size_reducer)(
+            storables.major_tick_offset_font_size, action)
+    ..major_tick_width_font_size =
+        TypedReducer<num, actions.MajorTickWidthFontSizeSet>(major_tick_width_font_size_reducer)(storables.major_tick_width_font_size, action)
+    ..show_mismatches = TypedReducer<bool, actions.ShowMismatchesSet>(show_mismatches_reducer)(storables.show_mismatches, action)
+    ..show_domain_name_mismatches = TypedReducer<bool, actions.ShowDomainNameMismatchesSet>(show_domain_name_mismatches_reducer)(storables.show_domain_name_mismatches, action)
+    ..show_unpaired_insertion_deletions = TypedReducer<bool, actions.ShowUnpairedInsertionDeletionsSet>(show_unpaired_insertion_deletions_reducer)(storables.show_unpaired_insertion_deletions, action)
     ..invert_y = TypedReducer<bool, actions.InvertYSet>(invert_y_reducer)(storables.invert_y, action)
     ..warn_on_exit_if_unsaved = TypedReducer<bool, actions.WarnOnExitIfUnsavedSet>(warn_on_exit_if_unsaved_reducer)(storables.warn_on_exit_if_unsaved, action)
     ..show_helix_circles_main_view = TypedReducer<bool, actions.ShowHelixCirclesMainViewSet>(show_helix_circles_main_view_reducer)(storables.show_helix_circles_main_view, action)

@@ -7,13 +7,13 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
-import 'package:scadnano/src/state/idt_fields.dart';
-import 'package:scadnano/src/state/modification_type.dart';
-import 'package:scadnano/src/state/substrand.dart';
 
-import 'design_main_strand_and_domain_names.dart';
+import 'design_main_strand_and_domain_texts.dart';
 import 'design_main_strand_dna_end.dart';
 import 'transform_by_helix_group.dart';
+import '../state/idt_fields.dart';
+import '../state/modification_type.dart';
+import '../state/substrand.dart';
 import '../state/modification.dart';
 import '../state/address.dart';
 import '../state/geometry.dart';
@@ -72,10 +72,14 @@ mixin DesignMainStrandPropsMixin on UiProps {
   bool modification_display_connector;
   bool show_dna;
   bool show_modifications;
-  bool show_domain_names;
   bool show_strand_names;
-  num domain_name_font_size;
+  bool show_strand_labels;
+  bool show_domain_names;
+  bool show_domain_labels;
   num strand_name_font_size;
+  num strand_label_font_size;
+  num domain_name_font_size;
+  num domain_label_font_size;
   num modification_font_size;
   bool invert_y;
   BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
@@ -146,8 +150,11 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..only_display_selected_helices = props.only_display_selected_helices)(),
       _insertions(),
       _deletions(),
-      if (props.show_domain_names || props.show_strand_names)
-        (DesignMainStrandAndDomainNames() // shows both domain and strand names
+      if (props.show_domain_names ||
+          props.show_strand_names ||
+          props.show_strand_labels ||
+          props.show_domain_labels)
+        (DesignMainStrandAndDomainTexts() // shows both domain and strand names
           ..strand = props.strand
           ..helices = props.helices
           ..groups = props.groups
@@ -155,13 +162,17 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..show_dna = props.show_dna
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..only_display_selected_helices = props.only_display_selected_helices
-          ..show_domain_names = props.show_domain_names
           ..show_strand_names = props.show_strand_names
+          ..show_strand_labels = props.show_strand_labels
+          ..show_domain_names = props.show_domain_names
+          ..show_domain_labels = props.show_domain_labels
+          ..strand_name_font_size = props.strand_name_font_size
+          ..strand_label_font_size = props.strand_label_font_size
+          ..domain_name_font_size = props.domain_name_font_size
+          ..domain_label_font_size = props.domain_label_font_size
           ..context_menu_strand = context_menu_strand
           ..helix_idx_to_svg_position = helix_idx_to_svg_position_y_map_on_strand
-          ..domain_name_font_size = props.domain_name_font_size
-          ..strand_name_font_size = props.strand_name_font_size
-          ..key = 'domain-names')(),
+          ..key = 'names-and-labels')(),
       if (props.show_modifications)
         (DesignMainStrandModifications()
           ..strand = props.strand
@@ -1175,7 +1186,7 @@ String tooltip_text(Strand strand) =>
     (!strand.circular ? "" : "    circular\n") +
     "    5' end=${tooltip_end(strand.first_domain, strand.dnaend_5p)}\n" +
     "    3' end=${tooltip_end(strand.last_domain, strand.dnaend_3p)}\n" +
-    (strand.label == null ? "" : "    label: ${strand.label.toString()}\n") +
+    (strand.label == null ? "" : "    label=${strand.label.toString()}\n") +
     (strand.idt == null ? "" : "    idt info=\n${strand.idt.tooltip()}");
 
 String tooltip_end(Domain ss, DNAEnd end) => "(helix=${ss.helix}, offset=${end.offset_inclusive})";

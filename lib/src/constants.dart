@@ -118,8 +118,10 @@ const Grid default_grid = Grid.none;
 //const Grid default_grid = Grid.square;
 
 const default_modification_font_size = 12;
-const default_domain_name_font_size = 10;
 const default_strand_name_font_size = 16;
+const default_strand_label_font_size = 16;
+const default_domain_name_font_size = 10;
+const default_domain_label_font_size = 10;
 const default_major_tick_offset_font_size = 12;
 const default_major_tick_width_font_size = 8;
 
@@ -424,14 +426,14 @@ const css_selector_end_3p_domain = 'three-prime-end';
 const css_selector_end_parent_group = 'dna-ends';
 const css_selector_loopout_extension_length = 'loopout-extension-length';
 
-const css_selector_domain_name = 'domain-name';
 const css_selector_strand_name = 'strand-name';
-const css_selector_domain_name_text = 'domain-name-text';
-const css_selector_strand_name_text = 'strand-name-text';
+const css_selector_strand_label = 'strand-label';
+const css_selector_domain_name = 'domain-name';
+const css_selector_domain_label = 'domain-label';
 const css_selector_loopout_name = 'loopout-name';
-const css_selector_loopout_name_text = 'loopout-name-text';
+const css_selector_loopout_label = 'loopout-label';
 const css_selector_extension_name = 'extension-name';
-const css_selector_extension_name_text = 'extension-name-text';
+const css_selector_extension_label = 'extension-label';
 
 const css_selector_domain_moving = 'domain-line-moving';
 const css_selector_disallowed = 'disallowed';

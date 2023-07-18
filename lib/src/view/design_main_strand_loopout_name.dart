@@ -9,29 +9,29 @@ import '../constants.dart' as constants;
 
 part 'design_main_strand_loopout_name.over_react.g.dart';
 
-UiFactory<DesignMainStrandLoopoutNameProps> DesignMainStrandLoopoutName = _$DesignMainStrandLoopoutName;
+UiFactory<DesignMainStrandLoopoutTextProps> DesignMainStrandLoopoutText = _$DesignMainStrandLoopoutText;
 
-mixin DesignMainStrandLoopoutNamePropsMixin on UiProps {
+mixin DesignMainStrandLoopoutTextPropsMixin on UiProps {
   Loopout loopout;
   Geometry geometry;
   Domain prev_domain;
   Domain next_domain;
+  String text;
+  String css_selector_text;
+  int num_stacked;
 
   int font_size;
-  bool show_dna;
 }
 
-class DesignMainStrandLoopoutNameProps = UiProps with DesignMainStrandLoopoutNamePropsMixin;
+class DesignMainStrandLoopoutTextProps = UiProps with DesignMainStrandLoopoutTextPropsMixin;
 
-class DesignMainStrandLoopoutNameComponent extends UiComponent2<DesignMainStrandLoopoutNameProps>
+class DesignMainStrandLoopoutTextComponent extends UiComponent2<DesignMainStrandLoopoutTextProps>
     with PureComponent {
   @override
   render() {
     var start_offset = '50%';
     var dy = -0.1 * props.geometry.base_height_svg;
-    if (props.show_dna) {
-      dy -= props.geometry.base_height_svg;
-    }
+    dy -= props.geometry.base_height_svg * props.num_stacked;
 
     num letter_spacing = 0.0;
     num font_size = props.font_size;
@@ -44,7 +44,7 @@ class DesignMainStrandLoopoutNameComponent extends UiComponent2<DesignMainStrand
     }
 
     SvgProps text_path_props = (Dom.textPath()
-      ..className = constants.css_selector_loopout_name
+      ..className = props.css_selector_text
       ..xlinkHref = '#${props.loopout.id}'
       ..startOffset = start_offset
       ..style = style_map);
@@ -52,6 +52,6 @@ class DesignMainStrandLoopoutNameComponent extends UiComponent2<DesignMainStrand
       ..key = 'loopout-text-'
           'H${props.prev_domain.helix},${props.prev_domain.offset_3p}-'
           'H${props.next_domain.helix},${props.next_domain.offset_5p}'
-      ..dy = '$dy')(text_path_props(props.loopout.name));
+      ..dy = '$dy')(text_path_props(props.text));
   }
 }

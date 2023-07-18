@@ -20,20 +20,22 @@ import '../constants.dart' as constants;
 import '../util.dart' as util;
 import '../actions/actions.dart' as actions;
 
-part 'design_main_strand_strand_name.over_react.g.dart';
+part 'design_main_strand_domain_text.over_react.g.dart';
 
-UiFactory<DesignMainStrandStrandNameProps> DesignMainStrandStrandName = _$DesignMainStrandStrandName;
+// general component for "text to a domain" (e.g, strand name, domain name, strand label)
+UiFactory<DesignMainStrandDomainTextProps> DesignMainStrandDomainText = _$DesignMainStrandDomainText;
 
-mixin DesignMainStrandStrandNamePropsMixin on UiProps {
+mixin DesignMainStrandDomainTextPropsMixin on UiProps {
   Strand strand;
   Domain domain; // domain next to which we draw strand name
   Helix helix;
   Geometry geometry;
   BuiltMap<String, HelixGroup> helix_groups;
+  String text;
+  String css_selector_text;
 
   int font_size;
-  bool show_dna;
-  bool show_domain_names;
+  int num_stacked;
   String transform;
   Point<num> helix_svg_position;
 
@@ -43,9 +45,9 @@ mixin DesignMainStrandStrandNamePropsMixin on UiProps {
       @required ModificationType type}) context_menu_strand;
 }
 
-class DesignMainStrandStrandNameProps = UiProps with DesignMainStrandStrandNamePropsMixin;
+class DesignMainStrandDomainTextProps = UiProps with DesignMainStrandDomainTextPropsMixin;
 
-class DesignMainStrandStrandNameComponent extends UiComponent2<DesignMainStrandStrandNameProps>
+class DesignMainStrandDomainTextComponent extends UiComponent2<DesignMainStrandDomainTextProps>
     with PureComponent {
   @override
   render() {
@@ -58,13 +60,7 @@ class DesignMainStrandStrandNameComponent extends UiComponent2<DesignMainStrandS
     String baseline = props.domain.forward ? 'baseline' : 'hanging';
 
     // offset depends on whether we are showing DNA and/or domain names, so they don't overlap
-    num y_offset = 0;
-    if (props.show_dna) {
-      y_offset += props.helix.geometry.base_height_svg;
-    }
-    if (props.show_domain_names) {
-      y_offset += props.helix.geometry.base_height_svg;
-    }
+    num y_offset = props.num_stacked * props.helix.geometry.base_height_svg;
 
     var dy = props.geometry.base_height_svg * 0.7 + y_offset;
     if (props.domain.forward) {
@@ -75,11 +71,11 @@ class DesignMainStrandStrandNameComponent extends UiComponent2<DesignMainStrandS
       ..x = '${mid_svg.x}'
       ..y = '${mid_svg.y}'
       ..dy = '${dy}'
+      ..id = id()
       ..transform = props.transform
       ..fontSize = props.font_size
       ..dominantBaseline = baseline
-      ..id = id()
-      ..className = constants.css_selector_strand_name_text)(props.strand.name);
+      ..className = props.css_selector_text)(props.text);
   }
 
   String id() => props.strand.id + '_name';

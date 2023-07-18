@@ -46,10 +46,14 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..no_grid_is_none =
           state.design == null ? false : state.design.groups.values.every((group) => group.grid != Grid.none)
       ..show_dna = state.ui_state.show_dna
-      ..show_domain_names = state.ui_state.show_domain_names
       ..show_strand_names = state.ui_state.show_strand_names
-      ..domain_name_font_size = state.ui_state.domain_name_font_size
+      ..show_strand_labels = state.ui_state.show_strand_labels
+      ..show_domain_names = state.ui_state.show_domain_names
+      ..show_domain_labels = state.ui_state.show_domain_labels
       ..strand_name_font_size = state.ui_state.strand_name_font_size
+      ..strand_label_font_size = state.ui_state.strand_label_font_size
+      ..domain_name_font_size = state.ui_state.domain_name_font_size
+      ..domain_label_font_size = state.ui_state.domain_label_font_size
       ..show_modifications = state.ui_state.show_modifications
       ..show_mismatches = state.ui_state.show_mismatches
       ..show_domain_name_mismatches = state.ui_state.show_domain_name_mismatches
@@ -104,10 +108,14 @@ mixin MenuPropsMixin on UiProps {
   BuiltSet<DNAEnd> selected_ends;
   bool no_grid_is_none;
   bool show_dna;
-  bool show_domain_names;
   bool show_strand_names;
-  num domain_name_font_size;
+  bool show_strand_labels;
+  bool show_domain_names;
+  bool show_domain_labels;
   num strand_name_font_size;
+  num strand_label_font_size;
+  num domain_name_font_size;
+  num domain_label_font_size;
   num zoom_speed;
   bool show_modifications;
   num modification_font_size;
@@ -691,27 +699,9 @@ strand at the same (helix,offset).'''
     ]);
   }
 
-//   ReactElement view_menu_show_dna() {
-//     return (MenuDropdownRight()
-//       ..title = 'DNA sequences'
-//       ..id = 'view_menu_show_dna-dropdown'
-//       ..key = 'view_menu_show_dna-dropdown'
-//       ..className = 'submenu_item')([
-//       (MenuBoolean()
-//         ..value = props.show_dna
-//         ..display = 'Show DNA sequences'
-//         ..tooltip = '''\
-// Show DNA sequences that have been assigned to strands. In a large design, this
-// can slow down the performance of panning and zooming navigation, so uncheck it
-// to speed up navigation.'''
-//         ..onChange = ((_) => props.dispatch(actions.ShowDNASet(!props.show_dna)))
-//         ..key = 'show-dna-sequences')(),
-//     ]);
-//   }
-
   ReactElement view_menu_show_labels() {
     return (MenuDropdownRight()
-      ..title = 'Strand/domain names'
+      ..title = 'Strand/domain names/labels'
       ..id = 'view_menu_show_labels-dropdown'
       ..key = 'view_menu_show_labels-dropdown'
       ..className = 'submenu_item')([
@@ -725,10 +715,24 @@ strand at the same (helix,offset).'''
         ..display = 'strand name font size'
         ..default_value = props.strand_name_font_size
         ..hide = !props.show_strand_names
-        ..tooltip = 'Adjust to change the font size of strand name.'
+        ..tooltip = 'Adjust the font size of strand names.'
         ..on_new_value =
             ((num font_size) => props.dispatch(actions.StrandNameFontSizeSet(font_size: font_size)))
         ..key = 'strand-name-font-size')(),
+      (MenuBoolean()
+        ..value = props.show_strand_labels
+        ..display = 'Show strand labels'
+        ..tooltip = "Show strand labels near 5' domain of strand."
+        ..onChange = ((_) => props.dispatch(actions.ShowStrandLabelsSet(!props.show_strand_labels)))
+        ..key = 'show-strand-label')(),
+      (MenuNumber()
+        ..display = 'strand label font size'
+        ..default_value = props.strand_label_font_size
+        ..hide = !props.show_strand_labels
+        ..tooltip = 'Adjust the font size of strand labels.'
+        ..on_new_value =
+            ((num font_size) => props.dispatch(actions.StrandLabelFontSizeSet(font_size: font_size)))
+        ..key = 'strand-label-font-size')(),
       (MenuBoolean()
         ..value = props.show_domain_names
         ..display = 'Show domain names'
@@ -739,10 +743,24 @@ strand at the same (helix,offset).'''
         ..display = 'domain name font size'
         ..default_value = props.domain_name_font_size
         ..hide = !props.show_domain_names
-        ..tooltip = 'Adjust to change the font size of domain and loopout name.'
+        ..tooltip = 'Adjust the font size of domain/loopout/extension names.'
         ..on_new_value =
             ((num font_size) => props.dispatch(actions.DomainNameFontSizeSet(font_size: font_size)))
         ..key = 'domain-name-font-size')(),
+      (MenuBoolean()
+        ..value = props.show_domain_labels
+        ..display = 'Show domain labels'
+        ..tooltip = "Show domain labels near 5' domain of strand."
+        ..onChange = ((_) => props.dispatch(actions.ShowDomainLabelsSet(!props.show_domain_labels)))
+        ..key = 'show-domain-label')(),
+      (MenuNumber()
+        ..display = 'domain label font size'
+        ..default_value = props.domain_label_font_size
+        ..hide = !props.show_domain_labels
+        ..tooltip = 'Adjust the font size of domain labels.'
+        ..on_new_value =
+            ((num font_size) => props.dispatch(actions.DomainLabelFontSizeSet(font_size: font_size)))
+        ..key = 'domain-label-font-size')(),
     ]);
   }
 
