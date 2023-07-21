@@ -11,9 +11,10 @@ assign_dna_middleware(Store<AppState> store, action, NextDispatcher next) {
       action.assign_complements &&
       action.disable_change_sequence_bound_strand) {
     // This pops up the error to the user if they try to change the DNA sequence of a bound strand
-    // through assigning DNA to a strand it is bound to.
+    // through assigning DNA to a strand it is bound to,
+    // or other errors such as unpaired deletions/insertions.
     try {
-      assign_dna_reducer(store.state.design.strands, action);
+      assign_dna_reducer(store.state.design.strands, store.state, action);
     } on ArgumentError catch (e) {
       window.alert(e.message);
       return;

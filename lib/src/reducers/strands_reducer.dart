@@ -34,13 +34,13 @@ import 'util_reducer.dart';
 import '../util.dart' as util;
 
 Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([
-  TypedReducer<BuiltList<Strand>, actions.AssignDNA>(assign_dna_reducer),
   TypedReducer<BuiltList<Strand>, actions.RemoveDNA>(remove_dna_reducer),
   TypedReducer<BuiltList<Strand>, actions.ReplaceStrands>(replace_strands_reducer),
   TypedReducer<BuiltList<Strand>, actions.SingleStrandAction>(strands_single_strand_reducer),
 ]);
 
 GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGlobalReducers([
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.AssignDNA>(assign_dna_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.AssignDomainNameComplementFromBoundStrands>(//
       assign_domain_name_complement_from_bound_strands_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.AssignDomainNameComplementFromBoundDomains>(//
