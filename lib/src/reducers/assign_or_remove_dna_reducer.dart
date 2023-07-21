@@ -148,26 +148,27 @@ String compute_dna_complement_from(Strand strand_to, Strand strand_from, bool er
     if (substrand_to is Loopout || substrand_to is Extension) {
       substrand_to_dna_sequence = constants.DNA_BASE_WILDCARD * substrand_to.dna_length();
     } else if (substrand_to is Domain) {
-      int helix_idx = substrand_to.helix;
+      Domain domain_to = substrand_to;
+      int helix_idx = domain_to.helix;
       List<Domain> domains_on_helix_from = strand_from.domains_on_helix[helix_idx]?.toList() ?? [];
       List<Tuple2<Tuple2<int, int>, Domain>> overlaps = [];
       for (var domain_from in domains_on_helix_from) {
-        if (substrand_to != domain_from && substrand_to.overlaps(domain_from)) {
-          Tuple2<int, int> overlap = substrand_to.compute_overlap(domain_from);
+        if (domain_to != domain_from && domain_to.overlaps(domain_from)) {
+          Tuple2<int, int> overlap = domain_to.compute_overlap(domain_from);
           overlaps.add(Tuple2<Tuple2<int, int>, Domain>(overlap, domain_from));
         }
       }
       overlaps.sort(compare_overlap);
 
       List<String> substrand_complement_builder = [];
-      int start_idx = substrand_to.start;
+      int start_idx = domain_to.start;
       // repeatedly insert wildcards into gaps, then reverse WC complement
       for (var overlap in overlaps) {
         int overlap_left = overlap.item1.item1;
         int overlap_right = overlap.item1.item2;
         Domain substrand_from = overlap.item2;
         // wildcards = DNA_base_wildcard * (overlap_left - start_idx)
-        int num_wildcard_bases = substrand_to.dna_length_in(start_idx, overlap_left - 1);
+        int num_wildcard_bases = domain_to.dna_length_in(start_idx, overlap_left - 1);
         String wildcards = constants.DNA_BASE_WILDCARD * num_wildcard_bases;
 
         String other_seq = substrand_from.dna_sequence_in(overlap_left, overlap_right - 1);
@@ -178,14 +179,14 @@ String compute_dna_complement_from(Strand strand_to, Strand strand_from, bool er
       }
       // last wildcard for gap between last overlap and end
       // last_wildcards = DNA_base_wildcard * (substrand_to.end - start_idx)
-      int last_num_wildcard_bases = substrand_to.dna_length_in(start_idx, substrand_to.end - 1);
+      int last_num_wildcard_bases = domain_to.dna_length_in(start_idx, domain_to.end - 1);
       String last_wildcards = constants.DNA_BASE_WILDCARD * last_num_wildcard_bases;
 
       substrand_complement_builder.add(last_wildcards);
 
       // If pointing left, each individual overlap sequence was reverse orientation in wc(),
       // but not the list of all of them put together until now.
-      if (!substrand_to.forward) {
+      if (!domain_to.forward) {
         substrand_complement_builder = substrand_complement_builder.reversed.toList();
       }
 
