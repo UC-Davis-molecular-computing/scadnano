@@ -155,8 +155,9 @@ String compute_dna_complement_from(
       if (unpaired_addresses.isNotEmpty) {
         var first_unpaired_address = unpaired_addresses.first;
         var err_msg = "I cannot assign DNA complements when there is an unpaired deletion or insertion, "
-            "but I found one at this address: helix idx=${first_unpaired_address.helix_idx}, "
-            "offset=${first_unpaired_address.offset}";
+            "but I found one at this address:\n"
+            "helix idx=${first_unpaired_address.helix_idx}, offset=${first_unpaired_address.offset}\n"
+            "To view all of them in the design, go to View-->Show unpaired deletions/insertions.";
         throw ArgumentError(err_msg);
       }
 
