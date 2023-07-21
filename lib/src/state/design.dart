@@ -543,7 +543,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     for (Strand strand in this.strands) {
       for (Domain domain in strand.domains) {
         unpaired_insertion_deletion_map_builder[domain] =
-            this._find_unpaired_insertion_deletions_on_domain(domain);
+            this.find_unpaired_insertion_deletions_on_domain(domain, false);
       }
     }
     var unpaired_insertion_deletion_half_built_map = Map<Domain, BuiltList<Address>>();
@@ -1524,21 +1524,24 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
   }
 
-  List<Address> _find_unpaired_insertion_deletions_on_domain(Domain domain) {
+  List<Address> find_unpaired_insertion_deletions_on_domain(Domain domain, bool include_other_domain) {
+    // if include_other_domain is true, then unmatched insertions/deletions on domains bound to this
+    // one are included; otherwise only insertions/deletions on `domain` that are not on the bound
+    // domain are included
     var unpaireds = <Address>[];
 
     for (int offset = domain.start; offset < domain.end; offset++) {
-      if (domain.deletions.contains(offset)) {
-        continue;
-      }
-
       var other_dom = this.other_domain_at_offset(domain, offset);
       if (other_dom == null) {
         continue;
       }
 
-      // other_dom has a deletion (and domain implicitly doesn't since we would have continue'd),
-      if (other_dom.deletions.contains(offset)) {
+      if (domain.deletions.contains(offset) && !other_dom.deletions.contains(offset)) {
+        unpaireds.add(new Address(helix_idx: domain.helix, offset: offset, forward: domain.forward));
+        continue;
+      } else if (include_other_domain &&
+          other_dom.deletions.contains(offset) &&
+          !domain.deletions.contains(offset)) {
         unpaireds.add(new Address(helix_idx: other_dom.helix, offset: offset, forward: other_dom.forward));
         continue;
       }

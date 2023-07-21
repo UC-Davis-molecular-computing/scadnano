@@ -48,7 +48,7 @@ BuiltList<Strand> assign_dna_reducer_complement_from_bound_strands(
     bool strand_changed = false;
     for (var strand_with_dna in state.design.strands_overlapping[strand_to_assign]) {
       if (strand_with_dna.dna_sequence != null) {
-        String new_dna = compute_dna_complement_from(strand_to_assign, strand_with_dna, false);
+        String new_dna = compute_dna_complement_from(state.design, strand_to_assign, strand_with_dna, false);
         strand_to_assign = strand_to_assign.set_dna_sequence(new_dna);
         strand_changed = true;
       }
@@ -60,7 +60,7 @@ BuiltList<Strand> assign_dna_reducer_complement_from_bound_strands(
   return all_strands.build();
 }
 
-BuiltList<Strand> assign_dna_reducer(BuiltList<Strand> strands, actions.AssignDNA action) {
+BuiltList<Strand> assign_dna_reducer(BuiltList<Strand> strands, AppState state, actions.AssignDNA action) {
   Strand strand = action.strand;
   int strand_idx = strands.indexOf(strand); // need index before we start changing strand
 
@@ -87,8 +87,8 @@ BuiltList<Strand> assign_dna_reducer(BuiltList<Strand> strands, actions.AssignDN
         continue;
       }
       if (other_strand.overlaps(strand)) {
-        String new_dna = compute_dna_complement_from(
-            other_strand, strand_with_new_sequence, action.disable_change_sequence_bound_strand);
+        String new_dna = compute_dna_complement_from(state.design, other_strand, strand_with_new_sequence,
+            action.disable_change_sequence_bound_strand);
         if (new_dna != other_strand.dna_sequence) {
           strands_builder[i] = other_strand.set_dna_sequence(new_dna);
         }
@@ -126,7 +126,8 @@ int compare_overlap(Tuple2<Tuple2<int, int>, Domain> o1, Tuple2<Tuple2<int, int>
 /// with an assigned DNA sequence where they overlap. In this case no error checking
 /// about sequence complementarity is done. This can be used to intentionally assign *mismatching*
 /// DNA sequences to :any:`Strand`'s that are bound on a :any:`Helix`.
-String compute_dna_complement_from(Strand strand_to, Strand strand_from, bool error_on_change) {
+String compute_dna_complement_from(
+    Design design, Strand strand_to, Strand strand_from, bool error_on_change) {
   bool already_assigned = strand_to.dna_sequence != null;
 
   // put DNA sequences to assign to substrands in List, one position per substrand
@@ -149,6 +150,16 @@ String compute_dna_complement_from(Strand strand_to, Strand strand_from, bool er
       substrand_to_dna_sequence = constants.DNA_BASE_WILDCARD * substrand_to.dna_length();
     } else if (substrand_to is Domain) {
       Domain domain_to = substrand_to;
+
+      var unpaired_addresses = design.find_unpaired_insertion_deletions_on_domain(domain_to, true);
+      if (unpaired_addresses.isNotEmpty) {
+        var first_unpaired_address = unpaired_addresses.first;
+        var err_msg = "I cannot assign DNA complements when there is an unpaired deletion or insertion, "
+            "but I found one at this address: helix idx=${first_unpaired_address.helix_idx}, "
+            "offset=${first_unpaired_address.offset}";
+        throw ArgumentError(err_msg);
+      }
+
       int helix_idx = domain_to.helix;
       List<Domain> domains_on_helix_from = strand_from.domains_on_helix[helix_idx]?.toList() ?? [];
       List<Tuple2<Tuple2<int, int>, Domain>> overlaps = [];
