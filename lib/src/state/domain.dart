@@ -412,7 +412,7 @@ abstract class Domain
   /// For insertions, all bases corresponding to the insertion
   /// (including the first one that would be represented even if there were no insertion)
   /// are replaced with a single space.
-  String dna_sequence_deletions_insertions_to_spaces() {
+  String dna_sequence_deletions_insertions_to_spaces({bool reverse = false}) {
     String seq = this.dna_sequence;
     List<int> codeunits = [];
 
@@ -447,7 +447,7 @@ abstract class Domain
       }
     }
 
-    var seq_modified = String.fromCharCodes(codeunits);
+    var seq_modified = String.fromCharCodes(reverse ? codeunits.reversed : codeunits);
     return seq_modified;
   }
 
@@ -458,7 +458,7 @@ abstract class Domain
   ///  unlike other parts of this API where the right endpoint is exclusive.
   ///  This is to make the notion well-defined when one of the endpoints is on an offset with a
   ///  deletion or insertion.
-  String dna_sequence_in(int offset_low, int offset_high) {
+  String dna_sequence_in(int offset_low, int offset_high, {bool reverse = false}) {
     if (dna_sequence == null) {
       return null;
     }
@@ -490,6 +490,9 @@ abstract class Domain
     }
 
     String subseq = dna_sequence.substring(str_idx_low, str_idx_high + 1);
+    if (reverse) {
+      subseq = subseq.split('').reversed.join();
+    }
     return subseq;
   }
 

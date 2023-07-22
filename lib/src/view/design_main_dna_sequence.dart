@@ -25,6 +25,7 @@ mixin DesignMainDNASequencePropsMixin on UiProps {
   Strand strand;
   BuiltSet<int> side_selected_helix_idxs;
   bool only_display_selected_helices;
+  bool display_reverse_DNA_right_side_up;
 
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
@@ -90,7 +91,8 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
   static const classname_dna_sequence = 'dna-seq';
 
   ReactElement _dna_sequence_on_domain(Domain domain) {
-    var seq_to_draw = domain.dna_sequence_deletions_insertions_to_spaces();
+    var seq_to_draw = domain.dna_sequence_deletions_insertions_to_spaces(
+        reverse: props.display_reverse_DNA_right_side_up && !domain.forward);
 
     var rotate_degrees = 0;
     int offset = domain.offset_5p;
@@ -102,26 +104,50 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
 
     // this is needed to make complementary DNA bases line up more nicely (still not perfect)
     var x_adjust = -props.geometry.base_width_svg * 0.32;
-    if (!domain.forward) {
-      rotate_degrees = 180;
-    }
-    var dy = -props.geometry.base_height_svg * 0.25;
+    var dy, x, y;
     var text_length = props.geometry.base_width_svg * (domain.visual_length - 0.342);
+
+    //extension, loopout,
+
+    if (domain.forward) {
+      //rotation and displacement for forward text
+      rotate_degrees = 0;
+      dy = -props.geometry.base_height_svg * 0.25;
+      x = pos.x + x_adjust;
+      y = pos.y;
+    } else {
+      if (props.display_reverse_DNA_right_side_up) {
+        rotate_degrees = 0;
+        //displacement for reverse text
+        dy = props.geometry.base_height_svg * 0.75;
+        x = pos.x - x_adjust - text_length;
+        y = pos.y + props.geometry.base_height_svg;
+      } else {
+        rotate_degrees = 180;
+        //displacement for reverse text if option not enabled
+        dy = -props.geometry.base_height_svg * 0.25;
+        x = pos.x + x_adjust;
+        y = pos.y;
+      }
+    }
+
     var id = 'dna-${util.id_domain(domain)}';
 
     return (Dom.text()
       ..key = id
       ..id = id
       ..className = classname_dna_sequence
-      ..x = '${pos.x + x_adjust}'
-      ..y = '${pos.y}'
+      ..x = '$x'
+      ..y = '$y'
       ..textLength = '$text_length'
       ..transform = 'rotate(${rotate_degrees} ${rotate_x} ${rotate_y})'
       ..dy = '$dy')(seq_to_draw);
   }
 
   ReactElement _dna_sequence_on_insertion(Domain domain, int offset, int length) {
-    var subseq = domain.dna_sequence_in(offset, offset);
+    var reverse_right_side_up = props.display_reverse_DNA_right_side_up && !domain.forward;
+
+    var subseq = domain.dna_sequence_in(offset, offset, reverse: reverse_right_side_up);
     //XXX: path_length appears to return different results depending on the computer (probably resolution??)
     // don't rely on it. This caused Firefox for example to render different on the same version.
 //    num path_length = insertion_path_elt.getTotalLength();
@@ -140,6 +166,10 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       style_map = {'fontSize': '${font_size}px'};
     }
 
+    if (reverse_right_side_up) {
+      style_map['dominantBaseline'] = 'hanging';
+    }
+
     SvgProps text_path_props = (Dom.textPath()
       ..className = classname_dna_sequence + '-insertion'
       //XXX: xlink:href is deprecated, but this is needed for exporting SVG, due to a bug in Inkscape
@@ -147,6 +177,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       ..xlinkHref = '#${util.id_insertion(domain, offset)}'
       ..startOffset = start_offset
       ..style = style_map);
+
     return (Dom.text()
       ..key = 'textelt-${util.id_insertion(domain, offset)}'
       ..dy = dy)(text_path_props(subseq));

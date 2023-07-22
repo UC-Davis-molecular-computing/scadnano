@@ -33,6 +33,7 @@ mixin DesignMainDNASequencesProps on UiProps {
   bool only_display_selected_helices;
   BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
   bool disable_png_caching_dna_sequences;
+  bool display_reverse_DNA_right_side_up;
 }
 
 class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequencesProps> with PureComponent {
@@ -79,6 +80,7 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
               ..side_selected_helix_idxs = props.side_selected_helix_idxs
               ..key = strand.toString()
               ..only_display_selected_helices = props.only_display_selected_helices
+              ..display_reverse_DNA_right_side_up = props.display_reverse_DNA_right_side_up
               ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
               ..className = 'strand-dna-sequence-elts')()
       ]);
