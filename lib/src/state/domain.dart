@@ -80,7 +80,7 @@ abstract class Domain
       Color color = null,
       bool is_scaffold = false,
       String name = null,
-      Object label = null,
+      String label = null,
       bool is_first = false,
       bool is_last = false}) {
     if (deletions == null) {
@@ -129,8 +129,7 @@ abstract class Domain
   String get name;
 
   @nullable
-  @BuiltValueField(serialize: false)
-  Object get label;
+  String get label;
 
   // properties below here not stored in JSON, but computed from containing Strand
   @nullable
@@ -263,7 +262,7 @@ abstract class Domain
         : null;
 
     String name = util.optional_field_with_null_default(json_map, constants.name_key);
-    Object label = util.optional_field_with_null_default(json_map, constants.label_key);
+    String label = util.optional_field_with_null_default(json_map, constants.label_key);
 
     var unused_fields = util.unused_fields_map(json_map, constants.domain_keys);
 

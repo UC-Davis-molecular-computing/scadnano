@@ -1,11 +1,11 @@
-name: Dart CI
+name: Dart Formatting
 
 on:  
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
-  run_unit_tests:
+  check_formatting:
     if: github.event.pull_request.draft == false
 
     runs-on: ubuntu-22.04
@@ -26,12 +26,12 @@ jobs:
     - uses: actions/checkout@v1
     - name: Install dependencies
       run: PATH="$PATH:/usr/lib/dart/bin" pub get
-    - name: Run tests
-      run: PATH="$PATH:/usr/lib/dart/bin" pub run build_runner test
-
+    - name: Verify formatting
+      run: dart format -l 110 --output=none --set-exit-if-changed .
+      
   fail_if_pull_request_is_draft:
     if: github.event.pull_request.draft == true
     runs-on: ubuntu-18.04
     steps:
-    - name: Fails in order to indicate that pull request needs to be marked as ready to review and unit tests workflow needs to pass.
+    - name: Fails in order to indicate that pull request needs to be marked as ready to review and formatting workflow needs to pass.
       run: exit 1

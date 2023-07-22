@@ -29,7 +29,9 @@ class DialogType extends EnumClass {
   static const DialogType assign_plate_well = _$assign_plate_well;
   static const DialogType add_modification = _$add_modification;
   static const DialogType set_strand_name = _$set_strand_name;
+  static const DialogType set_strand_label = _$set_strand_label;
   static const DialogType set_domain_name = _$set_domain_name;
+  static const DialogType set_substrand_label = _$set_substrand_label;
   static const DialogType assign_dna_sequence = _$assign_dna_sequence;
   static const DialogType remove_dna_sequence = _$remove_dna_sequence;
   static const DialogType edit_modification = _$edit_modification;
@@ -343,13 +345,33 @@ abstract class DialogRadio
   /************************ end BuiltValue boilerplate ************************/
 
   factory DialogRadio(
-      {String label, Iterable<String> options, int selected_idx = 0, bool radio = true, String tooltip}) {
+      {String label,
+      Iterable<String> options,
+      int selected_idx = 0,
+      bool radio = true,
+      String tooltip,
+      Iterable<String> option_tooltips = null}) {
+    // if option_tooltips is specified, ensure it's same length as options
+    // also replace null so that the call to .replace() below doesn't crash
+    var options_list = List<String>.from(options);
+    if (option_tooltips == null) {
+      option_tooltips = List<String>.filled(options_list.length, '');
+    }
+    var option_tooltips_list = List<String>.from(option_tooltips);
+    if (options_list.length != option_tooltips_list.length) {
+      throw ArgumentError("options and item_tooltips must be same length, but their lengths are "
+          "${options_list.length} and ${option_tooltips_list.length} respectively:\n"
+          "options = ${options_list}\n"
+          "item_tooltips = ${option_tooltips_list}");
+    }
+
     return DialogRadio.from((b) => b
-      ..options.replace(options)
+      ..options.replace(options_list)
       ..selected_idx = selected_idx
       ..radio = radio
       ..label = label
-      ..tooltip = tooltip);
+      ..tooltip = tooltip
+      ..option_tooltips.replace(option_tooltips_list));
   }
 
   BuiltList<String> get options;
@@ -360,6 +382,9 @@ abstract class DialogRadio
 
   // if true, display as radio buttons, otherwise display as dropdown
   bool get radio;
+
+  // tooltips for individual options
+  BuiltList<String> get option_tooltips;
 
   String get value => options[selected_idx];
 }

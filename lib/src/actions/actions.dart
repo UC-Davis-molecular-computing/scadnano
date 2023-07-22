@@ -371,7 +371,7 @@ abstract class SelectModesSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Strand/domain/loopout names
+// Strand/domain/loopout names/labels
 
 // used to set or remove (set name=null to remove)
 abstract class StrandNameSet
@@ -397,7 +397,30 @@ abstract class StrandNameSet
 }
 
 // used to set or remove (set name=null to remove)
-// used for both Domains and Loopouts
+abstract class StrandLabelSet
+    with BuiltJsonSerializable, UndoableAction
+    implements SingleStrandAction, Built<StrandLabelSet, StrandLabelSetBuilder> {
+  @nullable
+  String get label;
+
+  Strand get strand;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandLabelSet({String label, Strand strand}) = _$StrandLabelSet._;
+
+  StrandLabelSet._();
+
+  static Serializer<StrandLabelSet> get serializer => _$strandLabelSetSerializer;
+
+  @memoized
+  int get hashCode;
+
+  @override
+  String short_description() => "set strand label";
+}
+
+// used to set or remove (set name=null to remove)
+// used for Domains, Loopouts, and Extensions
 abstract class SubstrandNameSet
     with BuiltJsonSerializable, UndoableAction
     implements StrandPartAction, Built<SubstrandNameSet, SubstrandNameSetBuilder> {
@@ -420,6 +443,32 @@ abstract class SubstrandNameSet
 
   @override
   String short_description() => "set ${substrand.type_description()} name";
+}
+
+// used to set or remove (set name=null to remove)
+// used for Domains, Loopouts, and Extensions
+abstract class SubstrandLabelSet
+    with BuiltJsonSerializable, UndoableAction
+    implements StrandPartAction, Built<SubstrandLabelSet, SubstrandLabelSetBuilder> {
+  @nullable
+  String get label;
+
+  Substrand get substrand;
+
+  StrandPart get strand_part => substrand;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SubstrandLabelSet({String label, Substrand substrand}) = _$SubstrandLabelSet._;
+
+  SubstrandLabelSet._();
+
+  static Serializer<SubstrandLabelSet> get serializer => _$substrandLabelSetSerializer;
+
+  @memoized
+  int get hashCode;
+
+  @override
+  String short_description() => "set ${substrand.type_description()} label";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -484,6 +533,38 @@ abstract class ShowStrandNamesSet
   static Serializer<ShowStrandNamesSet> get serializer => _$showStrandNamesSetSerializer;
 }
 
+abstract class ShowStrandLabelsSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowStrandLabelsSet, ShowStrandLabelsSetBuilder> {
+  bool get show;
+
+  factory ShowStrandLabelsSet(bool show) => ShowStrandLabelsSet.from((b) => b..show = show);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowStrandLabelsSet.from([void Function(ShowStrandLabelsSetBuilder) updates]) =
+      _$ShowStrandLabelsSet;
+
+  ShowStrandLabelsSet._();
+
+  static Serializer<ShowStrandLabelsSet> get serializer => _$showStrandLabelsSetSerializer;
+}
+
+abstract class ShowDomainLabelsSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowDomainLabelsSet, ShowDomainLabelsSetBuilder> {
+  bool get show;
+
+  factory ShowDomainLabelsSet(bool show) => ShowDomainLabelsSet.from((b) => b..show = show);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowDomainLabelsSet.from([void Function(ShowDomainLabelsSetBuilder) updates]) =
+      _$ShowDomainLabelsSet;
+
+  ShowDomainLabelsSet._();
+
+  static Serializer<ShowDomainLabelsSet> get serializer => _$showDomainLabelsSetSerializer;
+}
+
 abstract class ShowModificationsSet
     with BuiltJsonSerializable
     implements Action, Built<ShowModificationsSet, ShowModificationsSetBuilder> {
@@ -513,6 +594,19 @@ abstract class DomainNameFontSizeSet
   static Serializer<DomainNameFontSizeSet> get serializer => _$domainNameFontSizeSetSerializer;
 }
 
+abstract class DomainLabelFontSizeSet
+    with BuiltJsonSerializable
+    implements Action, Built<DomainLabelFontSizeSet, DomainLabelFontSizeSetBuilder> {
+  num get font_size;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DomainLabelFontSizeSet({num font_size}) = _$DomainLabelFontSizeSet._;
+
+  DomainLabelFontSizeSet._();
+
+  static Serializer<DomainLabelFontSizeSet> get serializer => _$domainLabelFontSizeSetSerializer;
+}
+
 abstract class StrandNameFontSizeSet
     with BuiltJsonSerializable
     implements Action, Built<StrandNameFontSizeSet, StrandNameFontSizeSetBuilder> {
@@ -524,6 +618,19 @@ abstract class StrandNameFontSizeSet
   StrandNameFontSizeSet._();
 
   static Serializer<StrandNameFontSizeSet> get serializer => _$strandNameFontSizeSetSerializer;
+}
+
+abstract class StrandLabelFontSizeSet
+    with BuiltJsonSerializable
+    implements Action, Built<StrandLabelFontSizeSet, StrandLabelFontSizeSetBuilder> {
+  num get font_size;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandLabelFontSizeSet({num font_size}) = _$StrandLabelFontSizeSet._;
+
+  StrandLabelFontSizeSet._();
+
+  static Serializer<StrandLabelFontSizeSet> get serializer => _$strandLabelFontSizeSetSerializer;
 }
 
 abstract class ModificationFontSizeSet
@@ -1899,21 +2006,26 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
   @nullable
   StrandOrder get strand_order;
 
-  bool get column_major;
+  bool get column_major_strand;
+
+  bool get column_major_plate;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ExportDNA(
-      {bool include_scaffold,
-      bool include_only_selected_strands,
-      ExportDNAFormat export_dna_format,
-      StrandOrder strand_order = null,
-      bool column_major = true}) {
+  factory ExportDNA({
+    bool include_scaffold,
+    bool include_only_selected_strands,
+    ExportDNAFormat export_dna_format,
+    StrandOrder strand_order = null,
+    bool column_major_strand = true,
+    bool column_major_plate = true,
+  }) {
     return ExportDNA.from((b) => b
       ..include_scaffold = include_scaffold
       ..include_only_selected_strands = include_only_selected_strands
       ..export_dna_format = export_dna_format
       ..strand_order = strand_order
-      ..column_major = column_major);
+      ..column_major_strand = column_major_strand
+      ..column_major_plate = column_major_plate);
   }
 
   factory ExportDNA.from([void Function(ExportDNABuilder) updates]) = _$ExportDNA;
@@ -1929,11 +2041,8 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
 abstract class ExportCanDoDNA
     with BuiltJsonSerializable
     implements Action, Built<ExportCanDoDNA, ExportCanDoDNABuilder> {
-  ExportDNAFormat get export_dna_format;
-  factory ExportCanDoDNA({
-    ExportDNAFormat export_dna_format,
-  }) {
-    return ExportCanDoDNA.from((b) => b..export_dna_format = export_dna_format);
+  factory ExportCanDoDNA() {
+    return ExportCanDoDNA.from((b) => b);
   }
 
   factory ExportCanDoDNA.from([void Function(ExportCanDoDNABuilder) updates]) = _$ExportCanDoDNA;

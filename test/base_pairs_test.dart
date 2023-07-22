@@ -68,6 +68,29 @@ main() {
       design = design.draw_strand(1, 26).to(13).with_sequence('T' * 13).commit();
     });
 
+    test('extended_forward_strand', () {
+      var helices = [for (int i = 0; i < 1; i++) Helix(idx: i, max_offset: 40, grid: Grid.square)];
+      var test_design = Design(helices: helices);
+
+      /*
+        0123456789012345678901234567890123456789
+      1 
+      0 [-------->[-------->
+        <--------]
+      */
+
+      test_design = test_design.draw_strand(0, 0).to(10).with_sequence('A' * 10).commit();
+      test_design = test_design.draw_strand(0, 10).to(20).with_sequence('A' * 10).commit();
+      test_design = test_design.draw_strand(0, 10).to(0).with_sequence('A' * 10).commit();
+
+      var d01f = test_design.strands[0].domains[0];
+      var d01r = test_design.strands[2].domains[0];
+
+      var overlapping_domains_h0 = test_design.find_overlapping_domains_on_helix(0);
+
+      expect(overlapping_domains_h0.length, 1);
+      expect(overlapping_domains_h0, contains(Tuple2<Domain, Domain>(d01f, d01r)));
+    });
     test('find_overlapping_domains', () {
       var d01f = design.strands[0].domains[0];
       var d02f = design.strands[1].domains[0];

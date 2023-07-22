@@ -7,13 +7,13 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
-import 'package:scadnano/src/state/idt_fields.dart';
-import 'package:scadnano/src/state/modification_type.dart';
-import 'package:scadnano/src/state/substrand.dart';
 
-import 'design_main_strand_and_domain_names.dart';
+import 'design_main_strand_and_domain_texts.dart';
 import 'design_main_strand_dna_end.dart';
 import 'transform_by_helix_group.dart';
+import '../state/idt_fields.dart';
+import '../state/modification_type.dart';
+import '../state/substrand.dart';
 import '../state/modification.dart';
 import '../state/address.dart';
 import '../state/geometry.dart';
@@ -72,11 +72,15 @@ mixin DesignMainStrandPropsMixin on UiProps {
   bool modification_display_connector;
   bool show_dna;
   bool show_modifications;
-  bool show_domain_names;
-  bool show_strand_names;
   bool display_reverse_DNA_right_side_up;
-  num domain_name_font_size;
+  bool show_strand_names;
+  bool show_strand_labels;
+  bool show_domain_names;
+  bool show_domain_labels;
   num strand_name_font_size;
+  num strand_label_font_size;
+  num domain_name_font_size;
+  num domain_label_font_size;
   num modification_font_size;
   bool invert_y;
   BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
@@ -147,8 +151,11 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..only_display_selected_helices = props.only_display_selected_helices)(),
       _insertions(),
       _deletions(),
-      if (props.show_domain_names || props.show_strand_names)
-        (DesignMainStrandAndDomainNames() // shows both domain and strand names
+      if (props.show_domain_names ||
+          props.show_strand_names ||
+          props.show_strand_labels ||
+          props.show_domain_labels)
+        (DesignMainStrandAndDomainTexts() // shows both domain and strand names
           ..strand = props.strand
           ..helices = props.helices
           ..groups = props.groups
@@ -156,13 +163,17 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..show_dna = props.show_dna
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..only_display_selected_helices = props.only_display_selected_helices
-          ..show_domain_names = props.show_domain_names
           ..show_strand_names = props.show_strand_names
+          ..show_strand_labels = props.show_strand_labels
+          ..show_domain_names = props.show_domain_names
+          ..show_domain_labels = props.show_domain_labels
+          ..strand_name_font_size = props.strand_name_font_size
+          ..strand_label_font_size = props.strand_label_font_size
+          ..domain_name_font_size = props.domain_name_font_size
+          ..domain_label_font_size = props.domain_label_font_size
           ..context_menu_strand = context_menu_strand
           ..helix_idx_to_svg_position = helix_idx_to_svg_position_y_map_on_strand
-          ..domain_name_font_size = props.domain_name_font_size
-          ..strand_name_font_size = props.strand_name_font_size
-          ..key = 'domain-names')(),
+          ..key = 'names-and-labels')(),
       if (props.show_modifications)
         (DesignMainStrandModifications()
           ..strand = props.strand
@@ -262,8 +273,14 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
   set_strand_name() => app.disable_keyboard_shortcuts_while(ask_for_strand_name);
 
+  set_strand_label() => app.disable_keyboard_shortcuts_while(
+      () => ask_for_label(props.strand, null, app.state.ui_state.selectables_store.selected_strands));
+
   set_substrand_name(Substrand substrand) =>
       app.disable_keyboard_shortcuts_while(() => ask_for_substrand_name(substrand));
+
+  set_substrand_label(Substrand substrand) => app.disable_keyboard_shortcuts_while(
+      () => ask_for_label(props.strand, substrand, app.state.ui_state.selectables_store.selected_substrands));
 
   ReactElement _insertions() {
     List<ReactElement> paths = [];
@@ -474,6 +491,26 @@ feature for individual domains, set select mode to domain.
               ContextMenuItem(
                   title: 'remove domain name',
                   on_click: () => app.dispatch(actions.SubstrandNameSet(name: null, substrand: substrand))),
+          ].build()),
+      ContextMenuItem(
+          title: 'edit label',
+          nested: [
+            ContextMenuItem(
+              title: 'set strand label',
+              on_click: set_strand_label,
+            ),
+            if (props.strand.label != null)
+              ContextMenuItem(
+                  title: 'remove strand label',
+                  on_click: () => app.dispatch(actions.StrandLabelSet(label: null, strand: props.strand))),
+            ContextMenuItem(
+              title: 'set domain label',
+              on_click: () => set_substrand_label(substrand),
+            ),
+            if (substrand.label != null)
+              ContextMenuItem(
+                  title: 'remove domain label',
+                  on_click: () => app.dispatch(actions.SubstrandLabelSet(label: null, substrand: substrand))),
           ].build()),
       ContextMenuItem(
           title: 'reflect',
@@ -1028,6 +1065,53 @@ PAGEHPLC : Dual PAGE & HPLC
   }
 }
 
+Future<void> ask_for_label(Strand strand, Substrand substrand, BuiltSet<Strand> selected_strands) async {
+  String part_name = 'strand';
+  if (substrand != null) {
+    part_name = substrand.type_description();
+  }
+
+  int label_idx = 0;
+  var items = List<DialogItem>.filled(1, null);
+
+  String existing_label = '';
+  if (substrand == null && strand.label != null) {
+    existing_label = strand.label;
+  } else if (substrand != null && substrand.label != null) {
+    existing_label = substrand.label;
+  }
+
+  items[label_idx] = DialogTextArea(
+      label: 'label',
+      value: existing_label,
+      cols: 40,
+      rows: 8,
+      tooltip: "Enter the ${part_name} label here.");
+
+  var dialog = Dialog(
+      title: 'set ${part_name} label',
+      type: substrand == null ? DialogType.set_strand_label : DialogType.set_substrand_label,
+      items: items,
+      use_saved_response: false);
+
+  List<DialogItem> results = await util.dialog(dialog);
+  if (results == null) return;
+
+  String label = (results[label_idx] as DialogTextArea).value;
+
+  actions.UndoableAction action;
+  if (substrand == null) {
+    action = batch_if_multiple_selected(
+        label_set_strand_action_creator(label), strand, selected_strands, "set strand label");
+  } else {
+    action = actions.SubstrandLabelSet(label: label, substrand: substrand);
+    // action = batch_if_multiple_selected(
+    //     label_set_strand_action_creator(label), props.strand, selected_strands, "set domain label");
+  }
+
+  app.dispatch(action);
+}
+
 actions.UndoableAction batch_if_multiple_selected(StrandActionCreator action_creator, Strand strand,
     BuiltSet<Strand> selected_strands, String short_description) {
   actions.Action action;
@@ -1061,6 +1145,12 @@ StrandActionCreator color_set_substrand_action_creator(Substrand substrand, Stri
     ((Strand strand) =>
         actions.StrandOrSubstrandColorSet(strand: strand, substrand: substrand, color: Color.hex(color_hex)));
 
+StrandActionCreator label_set_strand_action_creator(String label) =>
+    ((Strand strand) => actions.StrandLabelSet(strand: strand, label: label));
+
+StrandActionCreator label_set_substrand_action_creator(Substrand substrand, String label) =>
+    ((Strand strand) => actions.SubstrandLabelSet(substrand: substrand, label: label));
+
 String tooltip_text(Strand strand) =>
     "Strand:\n" +
     (strand.name == null ? "" : "    name=${strand.name}\n") +
@@ -1068,7 +1158,7 @@ String tooltip_text(Strand strand) =>
     (!strand.circular ? "" : "    circular\n") +
     "    5' end=${tooltip_end(strand.first_domain, strand.dnaend_5p)}\n" +
     "    3' end=${tooltip_end(strand.last_domain, strand.dnaend_3p)}\n" +
-    (strand.label == null ? "" : "    label: ${strand.label.toString()}\n") +
+    (strand.label == null ? "" : "    label=${strand.label.toString()}\n") +
     (strand.idt == null ? "" : "    idt info=\n${strand.idt.tooltip()}");
 
 String tooltip_end(Domain ss, DNAEnd end) => "(helix=${ss.helix}, offset=${end.offset_inclusive})";

@@ -34,13 +34,13 @@ import 'util_reducer.dart';
 import '../util.dart' as util;
 
 Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([
-  TypedReducer<BuiltList<Strand>, actions.AssignDNA>(assign_dna_reducer),
   TypedReducer<BuiltList<Strand>, actions.RemoveDNA>(remove_dna_reducer),
   TypedReducer<BuiltList<Strand>, actions.ReplaceStrands>(replace_strands_reducer),
   TypedReducer<BuiltList<Strand>, actions.SingleStrandAction>(strands_single_strand_reducer),
 ]);
 
 GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGlobalReducers([
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.AssignDNA>(assign_dna_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.AssignDomainNameComplementFromBoundStrands>(//
       assign_domain_name_complement_from_bound_strands_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.AssignDomainNameComplementFromBoundDomains>(//
@@ -115,6 +115,7 @@ Reducer<Strand> strand_part_reducer = combineReducers([
   TypedReducer<Strand, actions.ExtensionDisplayLengthAngleSet>(extension_display_length_angle_change_reducer),
   TypedReducer<Strand, actions.InsertionOrDeletionAction>(insertion_deletion_reducer),
   TypedReducer<Strand, actions.SubstrandNameSet>(substrand_name_set_reducer),
+  TypedReducer<Strand, actions.SubstrandLabelSet>(substrand_label_set_reducer),
 ]);
 
 Strand substrand_name_set_reducer(Strand strand, actions.SubstrandNameSet action) {
@@ -128,6 +129,27 @@ Strand substrand_name_set_reducer(Strand strand, actions.SubstrandNameSet action
     substrand = (substrand as Loopout).rebuild((b) => b..name = action.name);
   } else if (substrand is Extension) {
     substrand = (substrand as Extension).rebuild((b) => b..name = action.name);
+  } else {
+    throw AssertionError('substrand must be Domain, Loopout, or Extension');
+  }
+
+  var substrands = strand.substrands.toList();
+  substrands[substrand_idx] = substrand;
+  strand = strand.rebuild((s) => s..substrands.replace(substrands));
+  return strand;
+}
+
+Strand substrand_label_set_reducer(Strand strand, actions.SubstrandLabelSet action) {
+  int substrand_idx = strand.substrands.indexOf(action.substrand);
+
+  // we do the same thing no matter if its Domain, Loopout, or Extension, but need to cast to call rebuild
+  Substrand substrand = action.substrand;
+  if (substrand is Domain) {
+    substrand = (substrand as Domain).rebuild((b) => b..label = action.label);
+  } else if (substrand is Loopout) {
+    substrand = (substrand as Loopout).rebuild((b) => b..label = action.label);
+  } else if (substrand is Extension) {
+    substrand = (substrand as Extension).rebuild((b) => b..label = action.label);
   } else {
     throw AssertionError('substrand must be Domain, Loopout, or Extension');
   }
@@ -554,6 +576,7 @@ Reducer<Strand> single_strand_reducer = combineReducers([
   TypedReducer<Strand, actions.ModificationRemove>(modification_remove_reducer),
   TypedReducer<Strand, actions.ModificationEdit>(modification_edit_reducer),
   TypedReducer<Strand, actions.StrandNameSet>(strand_name_set_reducer),
+  TypedReducer<Strand, actions.StrandLabelSet>(strand_label_set_reducer),
   TypedReducer<Strand, actions.ScalePurificationIDTFieldsAssign>(
       scale_purification_idt_fields_assign_reducer),
   TypedReducer<Strand, actions.PlateWellIDTFieldsAssign>(plate_well_idt_fields_assign_reducer),
@@ -593,6 +616,9 @@ Strand scale_purification_idt_fields_assign_reducer(
 
 Strand strand_name_set_reducer(Strand strand, actions.StrandNameSet action) =>
     strand.rebuild((b) => b..name = action.name);
+
+Strand strand_label_set_reducer(Strand strand, actions.StrandLabelSet action) =>
+    strand.rebuild((b) => b..label = action.label);
 
 Strand extension_add_reducer(Strand strand, actions.ExtensionAdd action) {
   var substrands = strand.substrands.toList();

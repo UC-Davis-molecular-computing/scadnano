@@ -118,7 +118,7 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
     // get IDT names of strands exported, and return them joined into a single string
     ExportDNAFormat format = ExportDNAFormat.idt_bulk;
     //XXX: export can return a Future<List<int>>, but only when exporting to Excel files.
-    String idt_str = format.export(strands, strand_order: strand_order, column_major: column_major);
+    String idt_str = format.export(strands, strand_order: strand_order, column_major_strand: column_major);
 
     List<String> idt_lines = idt_str.split('\n');
     List<String> names = [];

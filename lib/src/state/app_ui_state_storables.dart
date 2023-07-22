@@ -26,17 +26,25 @@ abstract class AppUIStateStorables
 
   bool get show_dna;
 
+  bool get show_strand_names;
+
+  bool get show_strand_labels;
+
   bool get show_domain_names;
 
-  bool get show_strand_names;
+  bool get show_domain_labels;
 
   bool get show_base_pair_lines;
 
   bool get show_base_pair_lines_with_mismatches;
 
+  num get strand_name_font_size;
+
+  num get strand_label_font_size;
+
   num get domain_name_font_size;
 
-  num get strand_name_font_size;
+  num get domain_label_font_size;
 
   bool get show_modifications;
 
@@ -121,12 +129,16 @@ abstract class AppUIStateStorables
     b.side_selected_helix_idxs = SetBuilder<int>();
     b.autofit = true;
     b.show_dna = false;
-    b.show_domain_names = false;
     b.show_strand_names = false;
+    b.show_strand_labels = false;
+    b.show_domain_names = false;
+    b.show_domain_labels = false;
     b.show_base_pair_lines = false;
     b.show_base_pair_lines_with_mismatches = false;
-    b.domain_name_font_size = constants.default_domain_name_font_size;
     b.strand_name_font_size = constants.default_strand_name_font_size;
+    b.strand_label_font_size = constants.default_strand_label_font_size;
+    b.domain_name_font_size = constants.default_domain_name_font_size;
+    b.domain_label_font_size = constants.default_domain_label_font_size;
     b.show_modifications = true;
     b.show_mismatches = false;
     b.show_domain_name_mismatches = false;
