@@ -87,7 +87,8 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..helix_idx_to_svg_position_map = state.helix_idx_to_svg_position_map
         ..invert_y = state.ui_state.invert_y
         ..selection_rope = state.ui_state.selection_rope
-        ..disable_png_caching_dna_sequences = state.ui_state.disable_png_caching_dna_sequences);
+        ..disable_png_caching_dna_sequences = state.ui_state.disable_png_caching_dna_sequences
+        ..display_reverse_DNA_right_side_up = state.ui_state.display_reverse_DNA_right_side_up);
     }
   },
 )(DesignMain);
@@ -136,6 +137,7 @@ mixin DesignMainPropsMixin on UiProps {
   String displayed_group_name;
   SelectionRope selection_rope;
   bool disable_png_caching_dna_sequences;
+  bool display_reverse_DNA_right_side_up;
   BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
   bool invert_y;
 }
@@ -261,6 +263,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..only_display_selected_helices = props.only_display_selected_helices
           ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
           ..disable_png_caching_dna_sequences = props.disable_png_caching_dna_sequences
+          ..display_reverse_DNA_right_side_up = props.display_reverse_DNA_right_side_up
           ..key = 'dna-sequences')(),
 
       if (props.show_loopout_extension_length)

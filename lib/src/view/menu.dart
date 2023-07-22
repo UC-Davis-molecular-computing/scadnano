@@ -89,6 +89,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..show_slice_bar = state.ui_state.show_slice_bar
       ..show_mouseover_data = state.ui_state.show_mouseover_data
       ..disable_png_caching_dna_sequences = state.ui_state.disable_png_caching_dna_sequences
+      ..display_reverse_DNA_right_side_up = state.ui_state.display_reverse_DNA_right_side_up
       ..local_storage_design_choice = state.ui_state.local_storage_design_choice
       ..clear_helix_selection_when_loading_new_design =
           state.ui_state.clear_helix_selection_when_loading_new_design
@@ -149,6 +150,7 @@ mixin MenuPropsMixin on UiProps {
   bool show_slice_bar;
   bool show_mouseover_data;
   bool disable_png_caching_dna_sequences;
+  bool display_reverse_DNA_right_side_up;
   bool default_crossover_type_scaffold_for_setting_helix_rolls;
   bool default_crossover_type_staple_for_setting_helix_rolls;
   LocalStorageDesignChoice local_storage_design_choice;
@@ -610,6 +612,7 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
       view_menu_helices(),
       view_menu_display_major_ticks_options(),
       view_menu_base_pairs(),
+      view_menu_dna(),
       DropdownDivider({'key': 'divider-major-tick-widths'}),
       ...view_menu_zoom_speed(),
       DropdownDivider({'key': 'divider-zoom_speed'}),
@@ -924,6 +927,35 @@ only shown between pairs of complementary bases.'''
     ]);
   }
 
+  ReactElement view_menu_dna() {
+    return (MenuDropdownRight()
+      ..title = 'DNA'
+      ..id = 'view_menu_dna'
+      ..key = 'view_menu_dna-dropdown'
+      ..className = 'submenu_item')([
+      (MenuBoolean()
+        ..value = props.show_dna
+        ..display = 'DNA sequences'
+        ..tooltip = '''\
+Show DNA sequences that have been assigned to strands. In a large design, this
+can slow down the performance of panning and zooming navigation, so uncheck it
+to speed up navigation.'''
+        ..onChange = ((_) => props.dispatch(actions.ShowDNASet(!props.show_dna)))
+        ..key = 'show-dna-sequences')(),
+      (MenuBoolean()
+        ..value = props.display_reverse_DNA_right_side_up
+        ..display = 'Display reverse DNA right-side up'
+        ..tooltip = '''\
+  Displays DNA right-side up on reverse strands.'''
+        ..name = 'display-reverse-DNA-right-side-up'
+        ..hide = !props.show_dna
+        ..onChange = (_) {
+          props.dispatch(actions.DisplayReverseDNARightSideUpSet(!props.display_reverse_DNA_right_side_up));
+        }
+        ..key = 'display-reverse-DNA-right-side-up')()
+    ]);
+  }
+
   List<ReactElement> view_menu_zoom_speed() {
     return [
       (MenuNumber()
@@ -939,15 +971,6 @@ only shown between pairs of complementary bases.'''
 
   List<ReactElement> view_menu_misc() {
     return [
-      (MenuBoolean()
-        ..value = props.show_dna
-        ..display = 'DNA sequences'
-        ..tooltip = '''\
-Show DNA sequences that have been assigned to strands. In a large design, this
-can slow down the performance of panning and zooming navigation, so uncheck it
-to speed up navigation.'''
-        ..onChange = ((_) => props.dispatch(actions.ShowDNASet(!props.show_dna)))
-        ..key = 'show-dna-sequences')(),
       (MenuBoolean()
         ..value = props.invert_y
         ..display = 'Invert y-axis'
@@ -1035,7 +1058,7 @@ debugging, but be warned that it will be very slow to render a large number of D
         ..onChange = (_) {
           props.dispatch(actions.DisablePngCachingDnaSequencesSet(!props.disable_png_caching_dna_sequences));
         }
-        ..key = 'disable-png-caching-dna-sequences')()
+        ..key = 'disable-png-caching-dna-sequences')(),
     ];
   }
 
