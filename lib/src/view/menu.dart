@@ -6,15 +6,16 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/dna_file_type.dart';
-import 'package:scadnano/src/json_serializable.dart';
-import 'package:scadnano/src/middleware/local_storage.dart';
-import 'package:scadnano/src/middleware/system_clipboard.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
-import 'package:scadnano/src/state/geometry.dart';
-import 'package:scadnano/src/state/undo_redo.dart';
+import '../dna_file_type.dart';
+import '../json_serializable.dart';
+import '../middleware/local_storage.dart';
+import '../middleware/system_clipboard.dart';
+import '../state/design.dart';
+import '../state/dna_end.dart';
+import '../state/export_dna_format_strand_order.dart';
+import '../state/geometry.dart';
+import '../state/undo_redo.dart';
+import '../middleware/export_dna_sequences.dart' as export_dna_sequences;
 import '../state/dialog.dart';
 import '../state/example_designs.dart';
 import '../state/export_dna_format.dart';
@@ -45,10 +46,14 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..no_grid_is_none =
           state.design == null ? false : state.design.groups.values.every((group) => group.grid != Grid.none)
       ..show_dna = state.ui_state.show_dna
-      ..show_domain_names = state.ui_state.show_domain_names
       ..show_strand_names = state.ui_state.show_strand_names
-      ..domain_name_font_size = state.ui_state.domain_name_font_size
+      ..show_strand_labels = state.ui_state.show_strand_labels
+      ..show_domain_names = state.ui_state.show_domain_names
+      ..show_domain_labels = state.ui_state.show_domain_labels
       ..strand_name_font_size = state.ui_state.strand_name_font_size
+      ..strand_label_font_size = state.ui_state.strand_label_font_size
+      ..domain_name_font_size = state.ui_state.domain_name_font_size
+      ..domain_label_font_size = state.ui_state.domain_label_font_size
       ..show_modifications = state.ui_state.show_modifications
       ..show_mismatches = state.ui_state.show_mismatches
       ..show_domain_name_mismatches = state.ui_state.show_domain_name_mismatches
@@ -103,10 +108,14 @@ mixin MenuPropsMixin on UiProps {
   BuiltSet<DNAEnd> selected_ends;
   bool no_grid_is_none;
   bool show_dna;
-  bool show_domain_names;
   bool show_strand_names;
-  num domain_name_font_size;
+  bool show_strand_labels;
+  bool show_domain_names;
+  bool show_domain_labels;
   num strand_name_font_size;
+  num strand_label_font_size;
+  num domain_name_font_size;
+  num domain_label_font_size;
   num zoom_speed;
   bool show_modifications;
   num modification_font_size;
@@ -393,7 +402,8 @@ with some default direction chosen. Play with it and see!
       // select all
       DropdownDivider({}),
       (MenuDropdownItem()
-        ..on_click = ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.A, ctrlKey: true).wrapped))
+        ..on_click =
+            ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.A, ctrlKey: true).wrapped))
         ..display = 'Select All'
         ..tooltip = '''\
 Select all strands in the design.'''
@@ -689,27 +699,9 @@ strand at the same (helix,offset).'''
     ]);
   }
 
-//   ReactElement view_menu_show_dna() {
-//     return (MenuDropdownRight()
-//       ..title = 'DNA sequences'
-//       ..id = 'view_menu_show_dna-dropdown'
-//       ..key = 'view_menu_show_dna-dropdown'
-//       ..className = 'submenu_item')([
-//       (MenuBoolean()
-//         ..value = props.show_dna
-//         ..display = 'Show DNA sequences'
-//         ..tooltip = '''\
-// Show DNA sequences that have been assigned to strands. In a large design, this
-// can slow down the performance of panning and zooming navigation, so uncheck it
-// to speed up navigation.'''
-//         ..onChange = ((_) => props.dispatch(actions.ShowDNASet(!props.show_dna)))
-//         ..key = 'show-dna-sequences')(),
-//     ]);
-//   }
-
   ReactElement view_menu_show_labels() {
     return (MenuDropdownRight()
-      ..title = 'Strand/domain names'
+      ..title = 'Strand/domain names/labels'
       ..id = 'view_menu_show_labels-dropdown'
       ..key = 'view_menu_show_labels-dropdown'
       ..className = 'submenu_item')([
@@ -723,10 +715,24 @@ strand at the same (helix,offset).'''
         ..display = 'strand name font size'
         ..default_value = props.strand_name_font_size
         ..hide = !props.show_strand_names
-        ..tooltip = 'Adjust to change the font size of strand name.'
+        ..tooltip = 'Adjust the font size of strand names.'
         ..on_new_value =
             ((num font_size) => props.dispatch(actions.StrandNameFontSizeSet(font_size: font_size)))
         ..key = 'strand-name-font-size')(),
+      (MenuBoolean()
+        ..value = props.show_strand_labels
+        ..display = 'Show strand labels'
+        ..tooltip = "Show strand labels near 5' domain of strand."
+        ..onChange = ((_) => props.dispatch(actions.ShowStrandLabelsSet(!props.show_strand_labels)))
+        ..key = 'show-strand-label')(),
+      (MenuNumber()
+        ..display = 'strand label font size'
+        ..default_value = props.strand_label_font_size
+        ..hide = !props.show_strand_labels
+        ..tooltip = 'Adjust the font size of strand labels.'
+        ..on_new_value =
+            ((num font_size) => props.dispatch(actions.StrandLabelFontSizeSet(font_size: font_size)))
+        ..key = 'strand-label-font-size')(),
       (MenuBoolean()
         ..value = props.show_domain_names
         ..display = 'Show domain names'
@@ -737,10 +743,24 @@ strand at the same (helix,offset).'''
         ..display = 'domain name font size'
         ..default_value = props.domain_name_font_size
         ..hide = !props.show_domain_names
-        ..tooltip = 'Adjust to change the font size of domain and loopout name.'
+        ..tooltip = 'Adjust the font size of domain/loopout/extension names.'
         ..on_new_value =
             ((num font_size) => props.dispatch(actions.DomainNameFontSizeSet(font_size: font_size)))
         ..key = 'domain-name-font-size')(),
+      (MenuBoolean()
+        ..value = props.show_domain_labels
+        ..display = 'Show domain labels'
+        ..tooltip = "Show domain labels near 5' domain of strand."
+        ..onChange = ((_) => props.dispatch(actions.ShowDomainLabelsSet(!props.show_domain_labels)))
+        ..key = 'show-domain-label')(),
+      (MenuNumber()
+        ..display = 'domain label font size'
+        ..default_value = props.domain_label_font_size
+        ..hide = !props.show_domain_labels
+        ..tooltip = 'Adjust the font size of domain labels.'
+        ..on_new_value =
+            ((num font_size) => props.dispatch(actions.DomainLabelFontSizeSet(font_size: font_size)))
+        ..key = 'domain-label-font-size')(),
     ]);
   }
 
@@ -1000,7 +1020,7 @@ In a large design, this can slow down the performance, so uncheck it when not in
           props.dispatch(actions.ShowMouseoverDataSet(!props.show_mouseover_data));
         }
         ..key = 'show-mouseover-data')(),
-        (MenuBoolean()
+      (MenuBoolean()
         ..value = props.disable_png_caching_dna_sequences
         ..display = 'Disable PNG caching of DNA sequences'
         ..tooltip = '''\
@@ -1037,9 +1057,14 @@ debugging, but be warned that it will be very slow to render a large number of D
         ..tooltip = "Export SVG figure of main view (design shown in center of screen)."
         ..display = 'SVG main view')(),
       (MenuDropdownItem()
-        ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna))
+        ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna_sequences.export_dna))
         ..tooltip = "Export DNA sequences of strands to a file."
         ..display = 'DNA sequences')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.ExportCanDoDNA()))
+        ..tooltip = "Export design's DNA sequences as a CSV in the same way as cadnano v2.\n"
+            "This is useful, for example, with CanDo's atomic model generator."
+        ..display = 'DNA sequences (cadnano v2 format)')(),
       DropdownDivider({'key': 'divider-not-full-design'}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile(whitespace: true)))
@@ -1258,56 +1283,6 @@ However, it may be less stable than the main site.'''
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // helper methods
 
-  Future<void> export_dna() async {
-    List<String> export_options = ExportDNAFormat.values.map((v) => v.toString()).toList();
-    List<String> sort_options = StrandOrder.values.map((v) => v.toString()).toList();
-
-    int idx_include_scaffold = 0;
-    int idx_include_only_selected_strands = 1;
-    int idx_format_str = 2;
-    int idx_sort = 3;
-    int idx_column_major = 4;
-    int idx_strand_order_str = 5;
-
-    List<DialogItem> items = [null, null, null, null, null, null];
-    items[idx_include_scaffold] = DialogCheckbox(label: 'include scaffold', value: false);
-    items[idx_include_only_selected_strands] =
-        DialogCheckbox(label: 'include only selected strands', value: false);
-    items[idx_format_str] = DialogRadio(label: 'designs', options: export_options);
-    items[idx_sort] = DialogCheckbox(label: 'sort strands', value: false);
-    items[idx_column_major] =
-        DialogCheckbox(label: 'column-major order (uncheck for row-major order)', value: true);
-    items[idx_strand_order_str] = DialogRadio(label: 'strand part to sort by', options: sort_options);
-
-    var dialog = Dialog(title: 'export DNA sequences', type: DialogType.export_dna_sequences, items: items, disable_when_any_checkboxes_off: {
-      idx_column_major: [idx_sort],
-      idx_strand_order_str: [idx_sort]
-    });
-
-    List<DialogItem> results = await util.dialog(dialog);
-    if (results == null) return;
-
-    bool include_scaffold = (results[idx_include_scaffold] as DialogCheckbox).value;
-    bool include_only_selected_strands = (results[idx_include_only_selected_strands] as DialogCheckbox).value;
-    String format_str = (results[idx_format_str] as DialogRadio).value;
-    bool sort = (results[idx_sort] as DialogCheckbox).value;
-    StrandOrder strand_order = null;
-    bool column_major = true;
-    if (sort) {
-      column_major = (results[idx_column_major] as DialogCheckbox).value;
-      String strand_order_str = (results[idx_strand_order_str] as DialogRadio).value;
-      strand_order = StrandOrder.fromString(strand_order_str);
-    }
-    ExportDNAFormat format = ExportDNAFormat.fromString(format_str);
-
-    props.dispatch(actions.ExportDNA(
-        include_scaffold: include_scaffold,
-        include_only_selected_strands: include_only_selected_strands,
-        export_dna_format: format,
-        strand_order: strand_order,
-        column_major: column_major));
-  }
-
   Future<void> load_example_dialog() async {
     var dialog = Dialog(title: 'Load example DNA design', type: DialogType.load_example_dna_design, items: [
       DialogRadio(
@@ -1336,7 +1311,8 @@ Future<void> ask_for_autobreak_parameters() async {
   items[max_length_idx] = DialogInteger(label: 'max length', value: 60);
   items[min_distance_to_xover_idx] = DialogInteger(label: 'min distance to xover', value: 3);
 
-  var dialog = Dialog(title: 'Choose autobreak parameters', type: DialogType.choose_autobreak_parameters, items: items);
+  var dialog = Dialog(
+      title: 'Choose autobreak parameters', type: DialogType.choose_autobreak_parameters, items: items);
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 
@@ -1368,7 +1344,8 @@ Future<void> ask_for_geometry(Geometry geometry) async {
   items[minor_groove_angle_idx] =
       DialogFloat(label: 'minor groove angle (degrees)', value: geometry.minor_groove_angle);
 
-  var dialog = Dialog(title: 'adjust geometric parameters', type: DialogType.adjust_geometric_parameters, items: items);
+  var dialog = Dialog(
+      title: 'adjust geometric parameters', type: DialogType.adjust_geometric_parameters, items: items);
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 

@@ -21,8 +21,7 @@ import 'package:scadnano/src/actions/actions.dart' as actions;
 
 import 'utils.dart';
 
-void helix0_strand0_inlined_test(
-    Design design, {int max_offset, List<int> major_ticks, int start, int end}) {
+void helix0_strand0_inlined_test(Design design, {int max_offset, List<int> major_ticks, int start, int end}) {
   expect(design.helices.length, 1);
   expect(design.strands.length, 1);
   var helix = design.helices[0];
@@ -47,33 +46,28 @@ main() {
     });
 
     test('no_deletion_after_loopout', () {
-      expect(() => design.draw_strand(0, 0).move(8).loopout(0, 10, 5).with_deletion(4),
-          throwsArgumentError);
+      expect(() => design.draw_strand(0, 0).move(8).loopout(0, 10, 5).with_deletion(4), throwsArgumentError);
     });
 
     test('no_insertion_after_loopout', () {
-      expect(() => design.draw_strand(0, 0).move(8).loopout(0, 10, 5).with_insertion(4, 2),
-          throwsArgumentError);
+      expect(
+          () => design.draw_strand(0, 0).move(8).loopout(0, 10, 5).with_insertion(4, 2), throwsArgumentError);
     });
 
     test('deletion_below_range', () {
-      expect(() => design.draw_strand(0, 4).move(4).with_deletion(2),
-          throwsA(IllegalDesignError('')));
+      expect(() => design.draw_strand(0, 4).move(4).with_deletion(2), throwsA(IllegalDesignError('')));
     });
 
     test('deletion_above_range', () {
-      expect(() => design.draw_strand(0, 0).move(4).with_deletion(6),
-          throwsA(IllegalDesignError('')));
+      expect(() => design.draw_strand(0, 0).move(4).with_deletion(6), throwsA(IllegalDesignError('')));
     });
 
     test('insertion_below_range', () {
-      expect(() => design.draw_strand(0, 4).move(4).with_insertion(2, 2),
-          throwsA(IllegalDesignError('')));
+      expect(() => design.draw_strand(0, 4).move(4).with_insertion(2, 2), throwsA(IllegalDesignError('')));
     });
 
     test('insertion_above_range', () {
-      expect(() => design.draw_strand(0, 0).move(4).with_insertion(6, 2),
-          throwsA(IllegalDesignError('')));
+      expect(() => design.draw_strand(0, 0).move(4).with_insertion(6, 2), throwsA(IllegalDesignError('')));
     });
 
     test('inline_deletions_insertions__one_deletion', () {
@@ -276,12 +270,14 @@ main() {
         |         |       |       |
     0   [------------------------->
         */
-      design = design.draw_strand(0, 0).move(24).with_deletion(19).with_insertions([
-        Insertion(5, 2), Insertion(11, 1)]).commit();
+      design = design
+          .draw_strand(0, 0)
+          .move(24)
+          .with_deletion(19)
+          .with_insertions([Insertion(5, 2), Insertion(11, 1)]).commit();
       design = inline_insertions_deletions_reducer(design, action);
       helix0_strand0_inlined_test(design, max_offset: 26, major_ticks: [0, 10, 19, 26], start: 0, end: 26);
     });
-
 
     test('inline_deletions_insertions__deletions_insertions_in_multiple_domains_two_strands', () {
       /*
@@ -296,8 +292,11 @@ main() {
         | . . . . . . . . | . . . . . . . . | . . . . . . |
          [ - - - - - - - - - - - - - - > [ - - - - - - - >
         */
-      design = design.draw_strand(0, 0).move(14).with_deletion(2).with_insertions([
-        Insertion(5, 2), Insertion(10, 1)]).commit();
+      design = design
+          .draw_strand(0, 0)
+          .move(14)
+          .with_deletion(2)
+          .with_insertions([Insertion(5, 2), Insertion(10, 1)]).commit();
       design = design.draw_strand(0, 14).to(24).with_deletion(19).commit();
       design = inline_insertions_deletions_reducer(design, action);
       expect(design.helices.length, 1);
@@ -316,6 +315,5 @@ main() {
       expect(strand1.domains[0].deletions, []);
       expect(strand1.domains[0].insertions, []);
     });
-
   });
 }

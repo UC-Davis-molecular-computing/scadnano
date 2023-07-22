@@ -10,8 +10,15 @@ import '../util.dart' as util;
 
 part 'export_dna_format_strand_order.g.dart';
 
-
 class StrandOrder extends EnumClass {
+  static const sort_option_tooltips = [
+    "",
+    "",
+    "Whichever of 5' or 3' appears first is used",
+    """The "top-left-most" (smallest helix/smallest offset) domain is used for sorting,
+regardless of whether it is 5', 3', or internal."""
+  ];
+
   const StrandOrder._(String name) : super(name);
 
   static Serializer<StrandOrder> get serializer => _$strandOrderSerializer;

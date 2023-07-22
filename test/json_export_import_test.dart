@@ -29,7 +29,7 @@ import 'utils.dart';
 main() {
   group('JSON export/import', () {
     test('simple_design_domain_and_strand_colors', () {
-      var helices = [for (int idx=0; idx<4; idx++) Helix(idx: idx, max_offset: 100, grid: Grid.square)];
+      var helices = [for (int idx = 0; idx < 4; idx++) Helix(idx: idx, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
       var ext_5p_color = Color.rgb(0, 0, 0);
@@ -39,14 +39,20 @@ main() {
       Color dom3_color = null;
       var ext_3p_color = Color.rgb(4, 0, 0);
       var strand_color = Color.rgb(5, 0, 0);
-      design = design.draw_strand(0, 0)
-          .extension_5p(5).with_domain_color(ext_5p_color)
-          .move(8).with_domain_color(dom1_color)
-          .cross(1)
-          .move(-8).with_domain_color(dom2_color)
-          .loopout(2, 5).with_domain_color(loop_color)
+      design = design
+          .draw_strand(0, 0)
+          .extension_5p(5)
+          .with_domain_color(ext_5p_color)
           .move(8)
-          .extension_3p(5).with_domain_color(ext_3p_color)
+          .with_domain_color(dom1_color)
+          .cross(1)
+          .move(-8)
+          .with_domain_color(dom2_color)
+          .loopout(2, 5)
+          .with_domain_color(loop_color)
+          .move(8)
+          .extension_3p(5)
+          .with_domain_color(ext_3p_color)
           .with_color(strand_color)
           .commit();
 
@@ -73,13 +79,18 @@ main() {
     });
 
     test('loopout_name', () {
-      var helices = [for (int idx=0; idx<4; idx++) Helix(idx: idx, max_offset: 100, grid: Grid.square)];
+      var helices = [for (int idx = 0; idx < 4; idx++) Helix(idx: idx, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design.draw_strand(0, 0)
-          .move(8).with_domain_name('dom1')
-          .loopout(1, 5).with_domain_name('loop').with_domain_label('loop label')
-          .move(-8).with_domain_name('dom2')
+      design = design
+          .draw_strand(0, 0)
+          .move(8)
+          .with_domain_name('dom1')
+          .loopout(1, 5)
+          .with_domain_name('loop')
+          .with_domain_label('loop label')
+          .move(-8)
+          .with_domain_name('dom2')
           .commit();
 
       var design_json = design.to_json_serializable();

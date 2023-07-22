@@ -49,8 +49,7 @@ abstract class Extension
   bool get is_5p;
 
   @nullable
-  @BuiltValueField(serialize: false)
-  Object get label;
+  String get label;
 
   @nullable
   String get name;
@@ -74,7 +73,7 @@ abstract class Extension
       double display_length = constants.default_display_length,
       double display_angle = constants.default_display_angle,
       bool is_5p,
-      Object label = null,
+      String label = null,
       String name = null,
       String dna_sequence = null,
       bool is_scaffold = false,
@@ -130,7 +129,7 @@ abstract class Extension
     double display_angle =
         util.optional_field(json_map, constants.display_angle_key, constants.default_display_angle);
     String name = util.optional_field_with_null_default(json_map, constants.name_key);
-    Object label = util.optional_field_with_null_default(json_map, constants.label_key);
+    String label = util.optional_field_with_null_default(json_map, constants.label_key);
 
     String dna_sequence = util.optional_field_with_null_default(json_map, constants.dna_sequence_key);
 
@@ -183,6 +182,5 @@ abstract class Extension
       is_on_extension: true,
       substrand_id: id);
 
-  double compute_rotation() =>
-    util.compute_end_rotation(display_angle, adjacent_domain.forward, is_5p);
+  double compute_rotation() => util.compute_end_rotation(display_angle, adjacent_domain.forward, is_5p);
 }

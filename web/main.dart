@@ -4,6 +4,3 @@ main() {
   app = App();
   app.start();
 }
-
-
-

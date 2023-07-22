@@ -753,7 +753,7 @@ You may need to reset the local settings, in particular to remove a locally stor
 
 ## Running offline
 It is possible to run scadnano offline, so that no internet connection is needed.
-To do this, follow the [instructions](CONTRIBUTING.md#making-contributions) for running a local server in the CONTRIBUTING document, which involves three steps:
+To do this, you can follow the [instructions](CONTRIBUTING.md#making-contributions) for running a local server in the CONTRIBUTING document, which involves three steps:
 
 - [Clone](CONTRIBUTING.md#cloning) the scadnano repository from GitHub.
 
@@ -761,7 +761,15 @@ To do this, follow the [instructions](CONTRIBUTING.md#making-contributions) for 
 
 - [Run](CONTRIBUTING.md#running-a-local-server) a local server.
 
+Alternatively, you can run scadnano as a [Docker](https://www.docker.com/) container. This can be used for contributing to or running scadnano without having to install everything manually. This is confirmed working on Linux, but other platforms like Apple Silicon may recieve errors. Docker support is experimental and maintained by @headblockhead - please reference them in any issues encountered.
 
+To run using Docker:
+
+- [Clone](CONTRIBUTING.md#cloning) the scadnano repository from GitHub.
+
+- [Install](CONTRIBUTING.md#installing-docker) Docker.
+
+- [Run](CONTRIBUTING.md#clone-and-run-using-docker) the Dockerfile.
 
 ## Performance tips
 There are some [performance issues](https://github.com/UC-Davis-molecular-computing/scadnano/issues/191) that we don't fully understand. But in general, if you are working on a very large design, it is best to minimize how much is displayed/done. In particular, performance will be best if DNA sequence and mismatches are not shown. (This is true even if your design has no mismatches, because on each edit to the design, it is costly to check for new potential mismatches.) On very large designs (e.g., more than 10,000 base pairs), it can be a significant cost to write the entire design to localStorage on each edit. So you may want to disable this (under the File menu) and save only infrequently.

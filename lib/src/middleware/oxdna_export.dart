@@ -332,7 +332,7 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand> strands_
 
   for (var strand in strands_to_export) {
     List<Tuple2<OxdnaStrand, bool>> strand_domains = [];
-    for (int ss_idx=0; ss_idx<strand.substrands.length; ss_idx++) {
+    for (int ss_idx = 0; ss_idx < strand.substrands.length; ss_idx++) {
       var domain = strand.substrands[ss_idx];
       var ox_strand = OxdnaStrand();
       String seq = domain.dna_sequence;

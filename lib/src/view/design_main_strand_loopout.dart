@@ -19,6 +19,7 @@ import '../state/strand.dart';
 import '../state/domain.dart';
 import '../state/loopout.dart';
 import '../app.dart';
+import 'design_main_strand.dart' as design_main_strand;
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 import 'pure_component.dart';
@@ -167,6 +168,14 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
               title: 'remove loopout name',
               on_click: () => app.dispatch(actions.SubstrandNameSet(name: null, substrand: props.loopout))),
         ContextMenuItem(
+          title: 'set loopout label',
+          on_click: set_loopout_label,
+        ),
+        if (props.loopout.label != null)
+          ContextMenuItem(
+              title: 'remove loopout label',
+              on_click: () => app.dispatch(actions.SubstrandLabelSet(substrand: props.loopout, label: null))),
+        ContextMenuItem(
           title: 'set loopout color',
           on_click: () => app.dispatch(
               actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: props.loopout)),
@@ -211,6 +220,12 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
   }
 
   set_loopout_name() => app.disable_keyboard_shortcuts_while(ask_for_loopout_name);
+
+  set_loopout_label() => app.disable_keyboard_shortcuts_while(() => design_main_strand.ask_for_label(
+        props.strand,
+        props.loopout,
+        app.state.ui_state.selectables_store.selected_substrands,
+      ));
 
   Future<void> ask_for_loopout_name() async {
     int name_idx = 0;

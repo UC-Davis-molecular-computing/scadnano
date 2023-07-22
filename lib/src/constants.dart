@@ -8,40 +8,42 @@ import 'state/grid.dart';
 
 // WARNING: Do not modify line below, except for the version string
 //          (and also add new version string to scadnano_versions_to_link).
-const String CURRENT_VERSION = "0.17.13";
+const String CURRENT_VERSION = "0.18.0";
 const String INITIAL_VERSION = "0.1.0";
 
 // scadnano versions that we deploy so that older versions can be used.
-final scadnano_older_versions_to_link =[
-  "0.17.12",
-  "0.17.11",
-  "0.17.10",
-  "0.17.9",
-  "0.17.8",
-  "0.17.7",
-  "0.17.6",
-  "0.17.5",
-  "0.17.4",
-  // "0.17.3", // accidentally skipped this version
-  "0.17.2",
-  "0.17.1",
-  "0.17.0",
+final scadnano_older_versions_to_link = [
+  "0.17.14",
+  // "0.17.13",
+  // "0.17.12",
+  // "0.17.11",
+  // "0.17.10",
+  // "0.17.9",
+  // "0.17.8",
+  // "0.17.7",
+  // "0.17.6",
+  // "0.17.5",
+  // "0.17.4",
+  // // "0.17.3", // accidentally skipped this version
+  // "0.17.2",
+  // "0.17.1",
+  // "0.17.0",
   "0.16.3",
-  "0.16.2",
-  "0.16.1",
-  "0.16.0",
+  // "0.16.2",
+  // "0.16.1",
+  // "0.16.0",
   "0.15.3",
-  "0.15.2",
-  "0.15.1",
-  "0.15.0",
+  // "0.15.2",
+  // "0.15.1",
+  // "0.15.0",
   "0.14.0",
   "0.13.4",
-  "0.13.3",
-  "0.13.2",
-  "0.13.1",
-  "0.13.0",
+  // "0.13.3",
+  // "0.13.2",
+  // "0.13.1",
+  // "0.13.0",
   "0.12.2",
-  "0.12.1",
+  // "0.12.1",
 ];
 final scadnano_versions_to_link = [CURRENT_VERSION] + scadnano_older_versions_to_link;
 
@@ -117,8 +119,10 @@ const Grid default_grid = Grid.none;
 //const Grid default_grid = Grid.square;
 
 const default_modification_font_size = 12;
-const default_domain_name_font_size = 10;
 const default_strand_name_font_size = 16;
+const default_strand_label_font_size = 16;
+const default_domain_name_font_size = 10;
+const default_domain_label_font_size = 10;
 const default_major_tick_offset_font_size = 12;
 const default_major_tick_width_font_size = 8;
 
@@ -423,14 +427,14 @@ const css_selector_end_3p_domain = 'three-prime-end';
 const css_selector_end_parent_group = 'dna-ends';
 const css_selector_loopout_extension_length = 'loopout-extension-length';
 
-const css_selector_domain_name = 'domain-name';
 const css_selector_strand_name = 'strand-name';
-const css_selector_domain_name_text = 'domain-name-text';
-const css_selector_strand_name_text = 'strand-name-text';
+const css_selector_strand_label = 'strand-label';
+const css_selector_domain_name = 'domain-name';
+const css_selector_domain_label = 'domain-label';
 const css_selector_loopout_name = 'loopout-name';
-const css_selector_loopout_name_text = 'loopout-name-text';
+const css_selector_loopout_label = 'loopout-label';
 const css_selector_extension_name = 'extension-name';
-const css_selector_extension_name_text = 'extension-name-text';
+const css_selector_extension_label = 'extension-label';
 
 const css_selector_domain_moving = 'domain-line-moving';
 const css_selector_disallowed = 'disallowed';

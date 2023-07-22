@@ -146,7 +146,7 @@ setup_file_drag_and_drop_listener(Element drop_zone) {
     }
 
     var dot_exts = constants.all_scadnano_file_extensions.map((ext) => '.' + ext).toList();
-    var extensions_str = dot_exts.sublist(0, dot_exts.length-1).join(', ') + ', or ' + dot_exts.last;
+    var extensions_str = dot_exts.sublist(0, dot_exts.length - 1).join(', ') + ', or ' + dot_exts.last;
     if (files.length > 1) {
       window.alert('More than one file dropped! Please drop only one ${extensions_str} file.');
       return;

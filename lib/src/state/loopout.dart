@@ -33,11 +33,11 @@ abstract class Loopout
   factory Loopout({
     int loopout_num_bases,
     int prev_domain_idx,
-    bool is_scaffold=false,
+    bool is_scaffold = false,
     String dna_sequence = null,
     Color color = null,
     String name = null,
-    Object label = null,
+    String label = null,
   }) =>
       Loopout.from((b) => b
         ..loopout_num_bases = loopout_num_bases
@@ -55,8 +55,7 @@ abstract class Loopout
   String get name;
 
   @nullable
-  @BuiltValueField(serialize: false)
-  Object get label;
+  String get label;
 
   // idx's within Strand.substrands (not Strand.domains)
   int get prev_domain_idx;
@@ -96,7 +95,7 @@ abstract class Loopout
     var class_name = 'Loopout';
     int loopout_num_bases = util.mandatory_field(json_map, constants.loopout_key, class_name);
     String name = util.optional_field_with_null_default(json_map, constants.name_key);
-    Object label = util.optional_field_with_null_default(json_map, constants.label_key);
+    String label = util.optional_field_with_null_default(json_map, constants.label_key);
     Color color = json_map.containsKey(constants.color_key)
         ? util.parse_json_color(json_map[constants.color_key])
         : null;

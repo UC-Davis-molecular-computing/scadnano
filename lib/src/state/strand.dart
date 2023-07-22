@@ -53,7 +53,7 @@ abstract class Strand
     Modification3Prime modification_3p = null,
     Map<int, ModificationInternal> modifications_int = const {},
     String name = null,
-    Object label = null,
+    String label = null,
   }) {
     if (color == null) {
       color = is_scaffold ? util.scaffold_color : util.color_cycler.next();
@@ -173,7 +173,7 @@ abstract class Strand
   }
 
   _rebuild_extension_with_new_fields_based_on_strand(Extension ext, bool is_5p, Strand strand) {
-    Domain adjacent_domain = is_5p? strand.first_domain: strand.last_domain;
+    Domain adjacent_domain = is_5p ? strand.first_domain : strand.last_domain;
     return ext.rebuild((b) => b
       ..is_scaffold = is_scaffold
       ..strand_id = strand.id
@@ -321,8 +321,7 @@ abstract class Strand
   String get name;
 
   @nullable
-  @BuiltValueField(serialize: false)
-  Object get label;
+  String get label;
 
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
 
@@ -822,8 +821,7 @@ abstract class Strand
       if (substrands[i] is Extension) {
         Extension ext = substrands[i];
         Domain adjacent_domain = ext.is_5p ? substrands[i + 1] as Domain : substrands[i - 1] as Domain;
-        ext = ext.rebuild(
-            (b) => b..adjacent_domain.replace(adjacent_domain));
+        ext = ext.rebuild((b) => b..adjacent_domain.replace(adjacent_domain));
         substrands[i] = ext;
       }
     }
@@ -846,7 +844,7 @@ abstract class Strand
 
     String name = util.optional_field_with_null_default(json_map, constants.name_key);
 
-    Object label = util.optional_field_with_null_default(json_map, constants.label_key);
+    String label = util.optional_field_with_null_default(json_map, constants.label_key);
 
     var unused_fields = util.unused_fields_map(json_map, constants.strand_keys);
 

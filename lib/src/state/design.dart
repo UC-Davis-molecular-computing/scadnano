@@ -13,7 +13,6 @@ import 'package:scadnano/src/state/strand_maker.dart';
 import '../state/loopout.dart';
 import '../state/potential_vertical_crossover.dart';
 import '../state/selectable.dart';
-import 'package:tuple/tuple.dart';
 import 'geometry.dart';
 import 'crossover.dart';
 import 'dna_end.dart';
@@ -29,6 +28,7 @@ import 'helix.dart';
 import 'grid.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
+import 'strand_creation.dart';
 import 'substrand.dart';
 import 'unused_fields.dart';
 import 'domain_name_mismatch.dart';
@@ -543,7 +543,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     for (Strand strand in this.strands) {
       for (Domain domain in strand.domains) {
         unpaired_insertion_deletion_map_builder[domain] =
-            this._find_unpaired_insertion_deletions_on_substrand(domain);
+            this.find_unpaired_insertion_deletions_on_domain(domain, false);
       }
     }
     var unpaired_insertion_deletion_half_built_map = Map<Domain, BuiltList<Address>>();
@@ -1524,29 +1524,32 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
   }
 
-  List<Address> _find_unpaired_insertion_deletions_on_substrand(Domain substrand) {
-    var unpaireds = List<Address>();
+  List<Address> find_unpaired_insertion_deletions_on_domain(Domain domain, bool include_other_domain) {
+    // if include_other_domain is true, then unmatched insertions/deletions on domains bound to this
+    // one are included; otherwise only insertions/deletions on `domain` that are not on the bound
+    // domain are included
+    var unpaireds = <Address>[];
 
-    for (int offset = substrand.start; offset < substrand.end; offset++) {
-      if (substrand.deletions.contains(offset)) {
+    for (int offset = domain.start; offset < domain.end; offset++) {
+      var other_dom = this.other_domain_at_offset(domain, offset);
+      if (other_dom == null) {
         continue;
       }
 
-      var other_ss = this.other_substrand_at_offset(substrand, offset);
-      if (other_ss == null) {
+      if (domain.deletions.contains(offset) && !other_dom.deletions.contains(offset)) {
+        unpaireds.add(new Address(helix_idx: domain.helix, offset: offset, forward: domain.forward));
+        continue;
+      } else if (include_other_domain &&
+          other_dom.deletions.contains(offset) &&
+          !domain.deletions.contains(offset)) {
+        unpaireds.add(new Address(helix_idx: other_dom.helix, offset: offset, forward: other_dom.forward));
         continue;
       }
 
-      // other_ss has a deletion (and substrand implicitly doesn't since we would have continue'd),
-      if (other_ss.deletions.contains(offset)) {
-        unpaireds.add(new Address(helix_idx: other_ss.helix, offset: offset, forward: other_ss.forward));
-        continue;
-      }
-
-      int length_insertion_substrand = substrand.insertion_offset_to_length[offset];
-      int length_insertion_other_ss = other_ss.insertion_offset_to_length[offset];
+      int length_insertion_substrand = domain.insertion_offset_to_length[offset];
+      int length_insertion_other_ss = other_dom.insertion_offset_to_length[offset];
       if (length_insertion_substrand != length_insertion_other_ss) {
-        unpaireds.add(new Address(helix_idx: other_ss.helix, offset: offset, forward: other_ss.forward));
+        unpaireds.add(new Address(helix_idx: other_dom.helix, offset: offset, forward: other_dom.forward));
         continue;
       }
     }
@@ -1561,7 +1564,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         continue;
       }
 
-      var other_ss = this.other_substrand_at_offset(substrand, offset);
+      var other_ss = this.other_domain_at_offset(substrand, offset);
       if (other_ss == null || other_ss.dna_sequence == null) {
         continue;
       }
@@ -1612,12 +1615,12 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   /// Return other substrand at `offset` on `substrand.helix_idx`, or null if there isn't one.
-  Domain other_substrand_at_offset(Domain substrand, int offset) {
-    List<Domain> other_substrands = this._other_substrands_overlapping(substrand);
-    for (var other_ss in other_substrands) {
-      if (other_ss.contains_offset(offset)) {
-        assert(substrand.forward != other_ss.forward);
-        return other_ss;
+  Domain other_domain_at_offset(Domain domain, int offset) {
+    List<Domain> other_domains = this._other_domains_overlapping(domain);
+    for (var other_domain in other_domains) {
+      if (other_domain.contains_offset(offset)) {
+        assert(domain.forward != other_domain.forward);
+        return other_domain;
       }
     }
     return null;
@@ -1751,21 +1754,32 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   /// Return [Domain] at [address], INCLUSIVE, or null if there is none.
-  Domain domain_on_helix_at(Address address) {
+  Domain domain_on_helix_at(Address address, [StrandCreation strand_creation = null]) {
     for (var domain in this.helix_idx_to_domains[address.helix_idx]) {
       if (domain.contains_offset(address.offset) && domain.forward == address.forward) {
+        return domain;
+      } else if (strand_creation != null && overlap(domain, address.offset, strand_creation.start)) {
         return domain;
       }
     }
     return null;
   }
 
-  /// Return list of Substrands overlapping `substrand`.
-  List<Domain> _other_substrands_overlapping(Domain substrand) {
+  bool overlap(Domain domain, int offset, int start) {
+    int overlap_start = max(min(domain.start, domain.end), min(start, offset));
+    int overlap_end = min(max(domain.start, domain.end), max(start, offset));
+    if (overlap_start >= overlap_end) {
+      return false;
+    }
+    return true;
+  }
+
+  /// Return list of Domains overlapping `substrand`.
+  List<Domain> _other_domains_overlapping(Domain domain) {
     List<Domain> ret = [];
-    var helix = this.helices[substrand.helix];
+    var helix = this.helices[domain.helix];
     for (var other_ss in helix_idx_to_domains[helix.idx]) {
-      if (substrand.overlaps(other_ss)) {
+      if (domain.overlaps(other_ss)) {
         ret.add(other_ss);
       }
     }
@@ -1883,7 +1897,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 //    return view_orders.toBuiltList();
 //  }
 
-  bool is_occupied(Address address) => domain_on_helix_at(address) != null;
+  bool is_occupied(Address address, [StrandCreation strand_creation]) =>
+      domain_on_helix_at(address, strand_creation) != null;
 
   @memoized
   int max_offset_of_strands_at(int helix_idx) {
@@ -2035,7 +2050,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
           if (reverse_domains.isNotEmpty) {
             reverse_domain = reverse_domains.first;
           } else {
-            break;
+            // no more reverse domains to process, so we can exit
+            return overlapping_domains;
           }
         } else {
           // [---f_dom--->   [---next_f_dom-->
@@ -2318,6 +2334,26 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       }
     }
     return to_return;
+  }
+
+  /// Returns idx on strand (starting from 5' end) of the base at the given address.
+  int idx_on_strand(Address address) {
+    var domain = this.domain_on_helix_at(address);
+    if (domain == null) {
+      throw ArgumentError("no strand in Design at address ${address}");
+    }
+    var strand = this.substrand_to_strand[domain];
+    int strand_idx = 0;
+    for (var substrand in strand.substrands) {
+      if (domain == substrand) {
+        int domain_idx = domain.substrand_offset_to_substrand_dna_idx(address.offset, address.forward);
+        strand_idx += domain_idx;
+        break;
+      } else {
+        strand_idx += substrand.dna_length();
+      }
+    }
+    return strand_idx;
   }
 }
 

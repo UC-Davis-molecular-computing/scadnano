@@ -19,6 +19,7 @@ import 'strand.dart';
 import '../app.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
+import 'substrand.dart';
 
 part 'selectable.g.dart';
 
@@ -35,6 +36,10 @@ abstract class SelectablesStore
 
   @memoized
   BuiltSet<Strand> get selected_strands => BuiltSet<Strand>.from(selected_items.where((s) => s is Strand));
+
+  @memoized
+  BuiltSet<Strand> get selected_substrands =>
+      BuiltSet<Strand>.from(selected_items.where((s) => s is Substrand));
 
   @memoized
   BuiltSet<Crossover> get selected_crossovers =>
