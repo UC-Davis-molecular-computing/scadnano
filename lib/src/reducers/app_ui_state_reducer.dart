@@ -424,37 +424,20 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..show_domain_name_mismatches = TypedReducer<bool, actions.ShowDomainNameMismatchesSet>(show_domain_name_mismatches_reducer)(storables.show_domain_name_mismatches, action)
     ..show_unpaired_insertion_deletions = TypedReducer<bool, actions.ShowUnpairedInsertionDeletionsSet>(show_unpaired_insertion_deletions_reducer)(storables.show_unpaired_insertion_deletions, action)
     ..invert_y = TypedReducer<bool, actions.InvertYSet>(invert_y_reducer)(storables.invert_y, action)
-    ..warn_on_exit_if_unsaved = TypedReducer<bool, actions.WarnOnExitIfUnsavedSet>(
-        warn_on_exit_if_unsaved_reducer)(storables.warn_on_exit_if_unsaved, action)
-    ..show_helix_circles_main_view = TypedReducer<bool, actions.ShowHelixCirclesMainViewSet>(
-        show_helix_circles_main_view_reducer)(storables.show_helix_circles_main_view, action)
-    ..show_helix_components_main_view = TypedReducer<bool, actions.ShowHelixComponentsMainViewSet>(
-        show_helix_components_main_view_reducer)(storables.show_helix_components_main_view, action)
-    ..show_edit_mode_menu = TypedReducer<bool, actions.ShowEditMenuToggle>(show_edit_mode_menu_reducer)(
-        storables.show_edit_mode_menu, action)
-    ..show_grid_coordinates_side_view = TypedReducer<bool, actions.ShowGridCoordinatesSideViewSet>(
-        show_grid_coordinates_side_view_reducer)(storables.show_grid_coordinates_side_view, action)
-    ..show_helices_axis_arrows = TypedReducer<bool, actions.ShowAxisArrowsSet>(
-        show_helices_axis_arrows_reducer)(storables.show_helices_axis_arrows, action)
-    ..show_loopout_extension_length = TypedReducer<bool, actions.ShowLoopoutExtensionLengthSet>(
-        show_loopout_extension_length_reducer)(storables.show_loopout_extension_length, action)
-    ..show_slice_bar = TypedReducer<bool, actions.ShowSliceBarSet>(show_slice_bar_reducer)(
-        storables.show_slice_bar, action)
-    ..slice_bar_offset = TypedReducer<int, actions.SliceBarOffsetSet>(slice_bar_offset_set_reducer)(
-        storables.slice_bar_offset, action)
-    ..disable_png_caching_dna_sequences = TypedReducer<bool, actions.DisablePngCachingDnaSequencesSet>(
-        disable_png_caching_dna_sequences_reducer)(storables.disable_png_caching_dna_sequences, action)
-    ..display_reverse_DNA_right_side_up = TypedReducer<bool, actions.DisplayReverseDNARightSideUpSet>(
-        display_reverse_DNA_right_side_up_reducer)(storables.display_reverse_DNA_right_side_up, action)
-    ..local_storage_design_choice = TypedReducer<LocalStorageDesignChoice,
-        actions.LocalStorageDesignChoiceSet>(local_storage_design_choice_reducer)(
-        storables.local_storage_design_choice, action).toBuilder()
-    ..clear_helix_selection_when_loading_new_design = TypedReducer<bool,
-        actions.ClearHelixSelectionWhenLoadingNewDesignSet>(
-        clear_helix_selection_when_loading_new_design_set_reducer)(
-        storables.clear_helix_selection_when_loading_new_design, action)
-    ..strand_paste_keep_color = TypedReducer<bool, actions.StrandPasteKeepColorSet>(
-        strand_paste_keep_color_reducer)(storables.strand_paste_keep_color, action)
+    ..warn_on_exit_if_unsaved = TypedReducer<bool, actions.WarnOnExitIfUnsavedSet>(warn_on_exit_if_unsaved_reducer)(storables.warn_on_exit_if_unsaved, action)
+    ..show_helix_circles_main_view = TypedReducer<bool, actions.ShowHelixCirclesMainViewSet>(show_helix_circles_main_view_reducer)(storables.show_helix_circles_main_view, action)
+    ..show_helix_components_main_view = TypedReducer<bool, actions.ShowHelixComponentsMainViewSet>(show_helix_components_main_view_reducer)(storables.show_helix_components_main_view, action)
+    ..show_edit_mode_menu = TypedReducer<bool, actions.ShowEditMenuToggle>(show_edit_mode_menu_reducer)(storables.show_edit_mode_menu, action)
+    ..show_grid_coordinates_side_view = TypedReducer<bool, actions.ShowGridCoordinatesSideViewSet>(show_grid_coordinates_side_view_reducer)(storables.show_grid_coordinates_side_view, action)
+    ..show_helices_axis_arrows = TypedReducer<bool, actions.ShowAxisArrowsSet>(show_helices_axis_arrows_reducer)(storables.show_helices_axis_arrows, action)
+    ..show_loopout_extension_length = TypedReducer<bool, actions.ShowLoopoutExtensionLengthSet>(show_loopout_extension_length_reducer)(storables.show_loopout_extension_length, action)
+    ..show_slice_bar = TypedReducer<bool, actions.ShowSliceBarSet>(show_slice_bar_reducer)(storables.show_slice_bar, action)
+    ..slice_bar_offset = TypedReducer<int, actions.SliceBarOffsetSet>(slice_bar_offset_set_reducer)(storables.slice_bar_offset, action)
+    ..disable_png_caching_dna_sequences = TypedReducer<bool, actions.DisablePngCachingDnaSequencesSet>(disable_png_caching_dna_sequences_reducer)(storables.disable_png_caching_dna_sequences, action)
+    ..display_reverse_DNA_right_side_up = TypedReducer<bool, actions.DisplayReverseDNARightSideUpSet>(display_reverse_DNA_right_side_up_reducer)(storables.display_reverse_DNA_right_side_up, action)
+    ..local_storage_design_choice = TypedReducer<LocalStorageDesignChoice, actions.LocalStorageDesignChoiceSet>(local_storage_design_choice_reducer)(storables.local_storage_design_choice, action).toBuilder()
+    ..clear_helix_selection_when_loading_new_design = TypedReducer<bool, actions.ClearHelixSelectionWhenLoadingNewDesignSet>(clear_helix_selection_when_loading_new_design_set_reducer)(storables.clear_helix_selection_when_loading_new_design, action)
+    ..strand_paste_keep_color = TypedReducer<bool, actions.StrandPasteKeepColorSet>(strand_paste_keep_color_reducer)(storables.strand_paste_keep_color, action)
     ..autofit = TypedReducer<bool, actions.AutofitSet>(center_on_load_reducer)(storables.autofit, action)
     ..show_editor = TypedReducer<bool, actions.SetShowEditor>(show_editor_reducer)(storables.show_editor, action)
     ..display_base_offsets_of_major_ticks = TypedReducer<bool, actions.DisplayMajorTicksOffsetsSet>(display_base_offsets_of_major_ticks_reducer)(storables.display_base_offsets_of_major_ticks, action)

@@ -446,7 +446,7 @@ abstract class Domain
         offset += forward;
       }
     }
-    
+
     var seq_modified = String.fromCharCodes(reverse ? codeunits.reversed : codeunits);
     return seq_modified;
   }

@@ -4283,7 +4283,6 @@ abstract class DisplayReverseDNARightSideUpSet
       _$displayReverseDNARightSideUpSetSerializer;
 }
 
-
 abstract class SliceBarMoveStart
     with BuiltJsonSerializable
     implements Action, Built<SliceBarMoveStart, SliceBarMoveStartBuilder> {

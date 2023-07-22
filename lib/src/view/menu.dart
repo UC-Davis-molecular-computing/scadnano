@@ -928,13 +928,12 @@ only shown between pairs of complementary bases.'''
   }
 
   ReactElement view_menu_dna() {
-    return (
-      MenuDropdownRight()
+    return (MenuDropdownRight()
       ..title = 'DNA'
       ..id = 'view_menu_dna'
       ..key = 'view_menu_dna-dropdown'
       ..className = 'submenu_item')([
-        (MenuBoolean()
+      (MenuBoolean()
         ..value = props.show_dna
         ..display = 'DNA sequences'
         ..tooltip = '''\
@@ -942,19 +941,18 @@ Show DNA sequences that have been assigned to strands. In a large design, this
 can slow down the performance of panning and zooming navigation, so uncheck it
 to speed up navigation.'''
         ..onChange = ((_) => props.dispatch(actions.ShowDNASet(!props.show_dna)))
-        ..key = 'show-dna-sequences')() ,
-
-        (MenuBoolean()
-          ..value = props.display_reverse_DNA_right_side_up
-          ..display = 'Display reverse DNA right-side up'
-          ..tooltip = '''\
+        ..key = 'show-dna-sequences')(),
+      (MenuBoolean()
+        ..value = props.display_reverse_DNA_right_side_up
+        ..display = 'Display reverse DNA right-side up'
+        ..tooltip = '''\
   Displays DNA right-side up on reverse strands.'''
-          ..name = 'display-reverse-DNA-right-side-up'
-          ..hide = !props.show_dna
-          ..onChange = (_) {
-            props.dispatch(actions.DisplayReverseDNARightSideUpSet(!props.display_reverse_DNA_right_side_up));
-          }
-          ..key = 'display-reverse-DNA-right-side-up') ()
+        ..name = 'display-reverse-DNA-right-side-up'
+        ..hide = !props.show_dna
+        ..onChange = (_) {
+          props.dispatch(actions.DisplayReverseDNARightSideUpSet(!props.display_reverse_DNA_right_side_up));
+        }
+        ..key = 'display-reverse-DNA-right-side-up')()
     ]);
   }
 
@@ -1061,8 +1059,6 @@ debugging, but be warned that it will be very slow to render a large number of D
           props.dispatch(actions.DisablePngCachingDnaSequencesSet(!props.disable_png_caching_dna_sequences));
         }
         ..key = 'disable-png-caching-dna-sequences')(),
-
-        
     ];
   }
 

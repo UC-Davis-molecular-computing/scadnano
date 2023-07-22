@@ -90,7 +90,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
 
     num dx1 = geometry.base_width_svg;
     num dx2 = 0.5 * geometry.base_width_svg;
-    if(props.display_reverse_DNA_right_side_up && !props.domain.forward){
+    if (props.display_reverse_DNA_right_side_up && !props.domain.forward) {
       dx1 = -dx1;
       dx2 = -dx2;
     }

@@ -91,7 +91,8 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
   static const classname_dna_sequence = 'dna-seq';
 
   ReactElement _dna_sequence_on_domain(Domain domain) {
-    var seq_to_draw = domain.dna_sequence_deletions_insertions_to_spaces(reverse : props.display_reverse_DNA_right_side_up && !domain.forward);
+    var seq_to_draw = domain.dna_sequence_deletions_insertions_to_spaces(
+        reverse: props.display_reverse_DNA_right_side_up && !domain.forward);
 
     var rotate_degrees = 0;
     int offset = domain.offset_5p;
@@ -106,16 +107,15 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     var dy, x, y;
     var text_length = props.geometry.base_width_svg * (domain.visual_length - 0.342);
 
-    //extension, loopout, 
-   
+    //extension, loopout,
+
     if (domain.forward) {
       //rotation and displacement for forward text
       rotate_degrees = 0;
       dy = -props.geometry.base_height_svg * 0.25;
       x = pos.x + x_adjust;
       y = pos.y;
-    } 
-    else {
+    } else {
       if (props.display_reverse_DNA_right_side_up) {
         rotate_degrees = 0;
         //displacement for reverse text
@@ -130,8 +130,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
         y = pos.y;
       }
     }
-    
-    
+
     var id = 'dna-${util.id_domain(domain)}';
 
     return (Dom.text()
@@ -146,10 +145,9 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
   }
 
   ReactElement _dna_sequence_on_insertion(Domain domain, int offset, int length) {
-
     var reverse_right_side_up = props.display_reverse_DNA_right_side_up && !domain.forward;
 
-    var subseq = domain.dna_sequence_in(offset, offset, reverse : reverse_right_side_up);
+    var subseq = domain.dna_sequence_in(offset, offset, reverse: reverse_right_side_up);
     //XXX: path_length appears to return different results depending on the computer (probably resolution??)
     // don't rely on it. This caused Firefox for example to render different on the same version.
 //    num path_length = insertion_path_elt.getTotalLength();
@@ -179,7 +177,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       ..xlinkHref = '#${util.id_insertion(domain, offset)}'
       ..startOffset = start_offset
       ..style = style_map);
-      
+
     return (Dom.text()
       ..key = 'textelt-${util.id_insertion(domain, offset)}'
       ..dy = dy)(text_path_props(subseq));
