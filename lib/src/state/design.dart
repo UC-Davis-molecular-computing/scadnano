@@ -1758,8 +1758,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     for (var domain in this.helix_idx_to_domains[address.helix_idx]) {
       if (domain.contains_offset(address.offset) && domain.forward == address.forward) {
         return domain;
-      } else if (strand_creation != null && overlap(domain, address.offset, strand_creation.start)) {
-        return domain;
       }
     }
     return null;
@@ -2381,15 +2379,6 @@ Map<String, HelixGroup> _calculate_groups_from_helix_builder(
   };
 
   return groups;
-}
-
-bool _uses_default_group(Iterable<Helix> helices) {
-  for (var helix in helices) {
-    if (helix.group != constants.default_group_name) {
-      return false;
-    }
-  }
-  return true;
 }
 
 ensure_helix_groups_in_groups_map(
