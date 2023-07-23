@@ -231,7 +231,7 @@ ReactElement context_menu_to_ul(ContextMenu menu) {
                     item.on_click();
                   }
                 : null
-            ..className = 'context-menu-item'+
+            ..className = 'context-menu-item' +
                 (item.disabled ? " " + constants.css_selector_context_menu_item_disabled : ""))(item.title),
           item.nested != null
               ? (DesignContextSubmenu()

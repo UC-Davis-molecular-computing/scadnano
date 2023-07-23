@@ -71,7 +71,7 @@ Please file bug reports and make feature requests as GitHub repository issues in
 or the
 [Python scripting library](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues).
 
-Early versions of this project didn't have well-defined versions. However, we will try to announce breaking changes (and possibly new features) under the [GitHub releases page](https://github.com/UC-Davis-molecular-computing/scadnano/releases). The version numbers in this web interface repo and the [Python library repo](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/releases) won't always advance at the same time.
+We will try to announce breaking changes (and possibly new features) under the [GitHub releases page](https://github.com/UC-Davis-molecular-computing/scadnano/releases). The version numbers in this web interface repo and the [Python library repo](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/releases) won't always advance at the same time, and sometimes a feature is supported in one before the other.
 
 Following [semantic versioning](https://semver.org/), version numbers are major.minor.patch, i.e., version 0.9.2 has minor version number 9. Prior to version 1.0.0, when a breaking change is made, this will increment the minor version (for example, going from 0.9.4 to 0.10.0). After version 1.0.0, breaking changes will increment the major version.
 
@@ -734,12 +734,13 @@ We have found that the autostaple and autobreak tools are largely unnecessary in
 since scadnano allows one to copy and paste strands (unlike cadnano), 
 encouraging a more free-form method of creating large designs rapidly.
 
-Recursive copy/pasting speeds up this process even further.
-For instance, to create a vertical "column" of 32 staples in a 32-helix rectangle, one would create 2 types of staples (plus some special cases near the top/bottom), copy/paste them to make 4, copy/paste *those* to make 8, then 16, and finally 32 staples. 
-Since most of the design consists of horizontally translated copies of this column it can be created quickly by copying and pasting the whole column.
+Copy/pasting speeds up this process even further.
+For instance, to create a vertical "column" of 32 staples in a 32-helix rectangle, one would create a staple, copy/paste it below, then use the [Autopaste](https://github.com/UC-Davis-molecular-computing/scadnano/issues/580) feature to repeatedly paste more copies below to create a full "column" of staples.
+Then this entire column can be selected, and autopaste can be used to fill in the rest of the design with those staples.
+See the [tutorial](tutorial/tutorial.md) for more details.
 
 A standard DNA origami rectangle, for instance, can be created in about 10 minutes.
-One downside is that a complete novice, who has no idea where staples ought to go, does not have a default push-button way to create an initial design.
+One downside is that a complete novice, who has no idea where staples ought to go or what they should look like, does not have a default push-button way to create an initial design without using autostaple.
 However, numerous example designs are provided to learn what good staple design looks like. 
 
 See the [tutorial](tutorial/tutorial.md) for detailed instructions on creating a 24-helix DNA origami rectangle using the scadnano web interface.
@@ -752,15 +753,23 @@ You may need to reset the local settings, in particular to remove a locally stor
 
 ## Running offline
 It is possible to run scadnano offline, so that no internet connection is needed.
-To do this, follow the [instructions](CONTRIBUTING.md#making-contributions) for running a local server in the CONTRIBUTING document, which involves three steps:
+To do this, you can follow the [instructions](CONTRIBUTING.md#making-contributions) for running a local server in the CONTRIBUTING document, which involves three steps:
 
-- [Cloning](CONTRIBUTING.md#cloning) the scadnano repository from GitHub.
+- [Clone](CONTRIBUTING.md#cloning) the scadnano repository from GitHub.
 
-- [Installing](CONTRIBUTING.md#installing-dart) the Dart SDK.
+- [Install](CONTRIBUTING.md#installing-dart) the Dart SDK.
 
-- [Running](CONTRIBUTING.md#running-a-local-server) a local server.
+- [Run](CONTRIBUTING.md#running-a-local-server) a local server.
 
+Alternatively, you can run scadnano as a [Docker](https://www.docker.com/) container. This can be used for contributing to or running scadnano without having to install everything manually. This is confirmed working on Linux, but other platforms like Apple Silicon may recieve errors. Docker support is experimental and maintained by @headblockhead - please reference them in any issues encountered.
 
+To run using Docker:
+
+- [Clone](CONTRIBUTING.md#cloning) the scadnano repository from GitHub.
+
+- [Install](CONTRIBUTING.md#installing-docker) Docker.
+
+- [Run](CONTRIBUTING.md#clone-and-run-using-docker) the Dockerfile.
 
 ## Performance tips
 There are some [performance issues](https://github.com/UC-Davis-molecular-computing/scadnano/issues/191) that we don't fully understand. But in general, if you are working on a very large design, it is best to minimize how much is displayed/done. In particular, performance will be best if DNA sequence and mismatches are not shown. (This is true even if your design has no mismatches, because on each edit to the design, it is costly to check for new potential mismatches.) On very large designs (e.g., more than 10,000 base pairs), it can be a significant cost to write the entire design to localStorage on each edit. So you may want to disable this (under the File menu) and save only infrequently.

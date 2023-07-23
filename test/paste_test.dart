@@ -45,8 +45,8 @@ main() {
     setUp(() {
       helices = [for (int helix in all_helices) Helix(idx: helix, max_offset: 40, grid: Grid.square)];
       Design design = Design(helices: helices, grid: Grid.square);
-      design = design.strand(0, 0).move(10).commit();
-      design = design.strand(0, 20).move(10).cross(1).move(-5).commit();
+      design = design.draw_strand(0, 0).move(10).commit();
+      design = design.draw_strand(0, 20).move(10).cross(1).move(-5).commit();
       orig_strand = design.strands[0];
       second_strand = design.strands[1];
       store = store_from_design(design);
@@ -415,8 +415,6 @@ main() {
 
       expect(state.design.strands.length, 0);
 
-
-
       // autopaste to helix 0, offset 0
       var autopaste_action =
           actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
@@ -468,7 +466,7 @@ main() {
         'group2': HelixGroup(grid: Grid.square, helices_view_order: [5, 4, 7, 6]),
       };
       Design design = Design(helices: helices, grid: Grid.square, groups: groups);
-      design = design.strand(0, 0).move(10).cross(1).move(-10).commit();
+      design = design.draw_strand(0, 0).move(10).cross(1).move(-10).commit();
       orig_strand = design.strands.first;
       store = store_from_design(design);
     });
@@ -613,7 +611,7 @@ main() {
     setUp(() {
       helices = [for (int helix in all_helices) Helix(idx: helix, max_offset: 40, grid: Grid.square)];
       Design design = Design(helices: helices, grid: Grid.square);
-      design = design.strand(0, 0).move(10).commit();
+      design = design.draw_strand(0, 0).move(10).commit();
       orig_strand = design.strands.first;
       store = store_from_design(design);
       state = store.state;
@@ -668,7 +666,7 @@ main() {
       // simulate Ctrl+V; view/design.dart handle the async aspect of reading from the clipboard,
       // we need to synchronously mock it here for unit testing
       var manual_paste_initiate_action =
-      actions.ManualPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
+          actions.ManualPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
       state = test_dispatch(store, manual_paste_initiate_action);
       copy_info = state.ui_state.copy_info;
 
@@ -689,7 +687,7 @@ main() {
 
       // autopaste to helix 2
       var autopaste_action_2 =
-      actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
+          actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
       state = test_dispatch(store, autopaste_action_2);
       copy_info = state.ui_state.copy_info;
       expect(state.design.strands.length, 3);
@@ -699,7 +697,7 @@ main() {
 
       // autopaste to helix 3
       var autopaste_action_3 =
-      actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
+          actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
       state = test_dispatch(store, autopaste_action_3);
       copy_info = state.ui_state.copy_info;
       expect(state.design.strands.length, 4);
@@ -709,7 +707,7 @@ main() {
 
       // attempted autopaste to helix 4; should do nothing
       var autopaste_action_4 =
-      actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
+          actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
       state = test_dispatch(store, autopaste_action_4);
       copy_info = state.ui_state.copy_info;
       expect(state.design.strands.length, 4);
@@ -881,9 +879,9 @@ main() {
       */
 
       // add strands on all helices
-      Design design = state.design.strand(1, 0).to(10).commit();
-      design = design.strand(2, 0).to(10).commit();
-      design = design.strand(3, 0).to(10).commit();
+      Design design = state.design.draw_strand(1, 0).to(10).commit();
+      design = design.draw_strand(2, 0).to(10).commit();
+      design = design.draw_strand(3, 0).to(10).commit();
       store = store_from_design(design);
       state = store.state;
 

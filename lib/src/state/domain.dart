@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+import 'package:color/color.dart';
 import 'package:tuple/tuple.dart';
 import 'package:built_collection/built_collection.dart';
 
@@ -74,11 +75,12 @@ abstract class Domain
       int end,
       Iterable<int> deletions,
       Iterable<Insertion> insertions,
-      String dna_sequence,
       String strand_id,
-      bool is_scaffold,
+      String dna_sequence = null,
+      Color color = null,
+      bool is_scaffold = false,
       String name = null,
-      Object label = null,
+      String label = null,
       bool is_first = false,
       bool is_last = false}) {
     if (deletions == null) {
@@ -97,6 +99,7 @@ abstract class Domain
       ..name = name
       ..label = label
       ..dna_sequence = dna_sequence
+      ..color = color
       ..strand_id = strand_id
       ..is_first = is_first
       ..is_last = is_last
@@ -126,12 +129,14 @@ abstract class Domain
   String get name;
 
   @nullable
-  @BuiltValueField(serialize: false)
-  Object get label;
+  String get label;
 
   // properties below here not stored in JSON, but computed from containing Strand
   @nullable
   String get dna_sequence;
+
+  @nullable
+  Color get color;
 
   @nullable
   String get strand_id;
@@ -154,6 +159,7 @@ abstract class Domain
       is_scaffold: is_scaffold,
       substrand_is_first: is_first,
       substrand_is_last: is_last,
+      is_on_extension: false,
       substrand_id: id);
 
   @memoized
@@ -164,6 +170,7 @@ abstract class Domain
       is_scaffold: is_scaffold,
       substrand_is_first: is_first,
       substrand_is_last: is_last,
+      is_on_extension: false,
       substrand_id: id);
 
   @memoized
@@ -187,6 +194,8 @@ abstract class Domain
   bool is_domain() => true;
 
   bool is_loopout() => false;
+
+  bool is_extension() => false;
 
   DNAEnd get dnaend_5p => forward ? dnaend_start : dnaend_end;
 
@@ -226,7 +235,9 @@ abstract class Domain
           .insertions
           .map((insertion) => insertion.to_json_serializable(suppress_indent: suppress_indent)));
     }
-
+    if (this.color != null) {
+      json_map[constants.color_key] = color.toHexColor().toCssString();
+    }
     if (label != null) {
       json_map[constants.label_key] = label;
     }
@@ -237,7 +248,7 @@ abstract class Domain
   }
 
   static DomainBuilder from_json(Map<String, dynamic> json_map) {
-    var class_name = 'Substrand';
+    var class_name = 'Domain';
     var forward = util.mandatory_field(json_map, constants.forward_key, class_name,
         legacy_keys: constants.legacy_forward_keys);
     var helix = util.mandatory_field(json_map, constants.helix_idx_key, class_name);
@@ -246,8 +257,12 @@ abstract class Domain
     var deletions = List<int>.from(util.optional_field(json_map, constants.deletions_key, []));
     var insertions = parse_json_insertions(util.optional_field(json_map, constants.insertions_key, []));
 
+    Color color = json_map.containsKey(constants.color_key)
+        ? util.parse_json_color(json_map[constants.color_key])
+        : null;
+
     String name = util.optional_field_with_null_default(json_map, constants.name_key);
-    Object label = util.optional_field_with_null_default(json_map, constants.label_key);
+    String label = util.optional_field_with_null_default(json_map, constants.label_key);
 
     var unused_fields = util.unused_fields_map(json_map, constants.domain_keys);
 
@@ -303,6 +318,7 @@ abstract class Domain
       ..end = end
       ..deletions.replace(deletions)
       ..insertions.replace(insertions)
+      ..color = color
       ..name = name
       ..label = label
       ..unused_fields = unused_fields;
@@ -324,7 +340,7 @@ abstract class Domain
   int get offset_5p => this.forward ? this.start : this.end - 1;
 
   /// 3' end, INCLUSIVE
-  @memoized 
+  @memoized
   int get offset_3p => this.forward ? this.end - 1 : this.start;
 
   int dna_length() => (this.end - this.start) - this.deletions.length + this.num_insertions;
@@ -396,7 +412,7 @@ abstract class Domain
   /// For insertions, all bases corresponding to the insertion
   /// (including the first one that would be represented even if there were no insertion)
   /// are replaced with a single space.
-  String dna_sequence_deletions_insertions_to_spaces() {
+  String dna_sequence_deletions_insertions_to_spaces({bool reverse = false}) {
     String seq = this.dna_sequence;
     List<int> codeunits = [];
 
@@ -431,7 +447,7 @@ abstract class Domain
       }
     }
 
-    var seq_modified = String.fromCharCodes(codeunits);
+    var seq_modified = String.fromCharCodes(reverse ? codeunits.reversed : codeunits);
     return seq_modified;
   }
 
@@ -442,7 +458,7 @@ abstract class Domain
   ///  unlike other parts of this API where the right endpoint is exclusive.
   ///  This is to make the notion well-defined when one of the endpoints is on an offset with a
   ///  deletion or insertion.
-  String dna_sequence_in(int offset_low, int offset_high) {
+  String dna_sequence_in(int offset_low, int offset_high, {bool reverse = false}) {
     if (dna_sequence == null) {
       return null;
     }
@@ -474,6 +490,9 @@ abstract class Domain
     }
 
     String subseq = dna_sequence.substring(str_idx_low, str_idx_high + 1);
+    if (reverse) {
+      subseq = subseq.split('').reversed.join();
+    }
     return subseq;
   }
 
@@ -525,7 +544,7 @@ abstract class Domain
     return num;
   }
 
-  bool  overlaps(Domain other) {
+  bool overlaps(Domain other) {
     return (this.helix == other.helix &&
         this.forward == (!other.forward) &&
         this.compute_overlap(other) != null);

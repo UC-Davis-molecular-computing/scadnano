@@ -15,6 +15,7 @@ import 'package:scadnano/src/middleware/system_clipboard.dart';
 import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
+import 'package:scadnano/src/state/dna_extensions_move.dart';
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:scadnano/src/state/selection_rope.dart';
 import 'package:scadnano/src/view/design_main_arrows.dart';
@@ -206,10 +207,10 @@ class DesignViewComponent {
         }
       }
       // put away strand color picker if click occurred anywhere outside of it
-      if (app.state.ui_state.strand_color_picker_strand != null) {
+      if (app.state.ui_state.color_picker_strand != null) {
         var strand_color_picker_elt = querySelector('#strand-color-picker');
         if (strand_color_picker_elt != null && !strand_color_picker_elt.contains(target)) {
-          app.dispatch(actions.StrandColorPickerHide());
+          app.dispatch(actions.StrandOrSubstrandColorPickerHide());
         }
       }
     });
@@ -293,6 +294,22 @@ class DesignViewComponent {
             int old_offset = moves_store.current_offset;
             if (offset != old_offset) {
               app.dispatch(actions.DNAEndsMoveAdjustOffset(offset: offset));
+            }
+          }
+        }
+        DNAExtensionsMove extensions_move_store = app.store_extensions_move.state;
+        if (extensions_move_store != null) {
+          var group_names = group_names_of_extensions(extensions_move_store);
+          if (group_names.length != 1) {
+            var msg = 'Cannot move or copy DNA extensions unless they are all on the same helix group.\n'
+                'The selected ends occupy the following helix groups: ${group_names?.join(", ")}';
+            window.alert(msg);
+          } else {
+            Point<num> old_point = extensions_move_store.current_point;
+            Point<num> point =
+                util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, true, main_view_svg);
+            if (point != old_point) {
+              app.dispatch(actions.DNAExtensionsMoveAdjustPosition(position: point));
             }
           }
         }
@@ -380,7 +397,8 @@ class DesignViewComponent {
         var new_address = Address(
             helix_idx: strand_creation.helix.idx, offset: new_offset, forward: strand_creation.forward);
         if (old_offset != new_offset &&
-            !app.state.design.is_occupied(new_address) && // can't draw strand over existing strand
+            !app.state.design
+                .is_occupied(new_address, strand_creation) && // can't draw strand over existing strand
             new_offset != strand_creation.original_offset && // can't put start and end at same offset
             strand_creation.helix.min_offset <= new_offset && // can't go off end of helix
             new_offset < strand_creation.helix.max_offset) {
@@ -611,10 +629,10 @@ class DesignViewComponent {
       paste_strands_auto();
     }
 
-    // Ctrl+A for select all
+    // Ctrl+A for select all, Ctrl+Shift+A for current helix group only
     if ((ev.ctrlKey || ev.metaKey) && key == KeyCode.A && edit_mode_is_select_or_rope_select()) {
       ev.preventDefault();
-      app.dispatch(actions.SelectAllSelectable());
+      app.dispatch(actions.SelectAllSelectable(current_helix_group_only: ev.shiftKey));
     }
 
     if (key == EditModeChoice.pencil.key_code()) {
@@ -702,16 +720,18 @@ class DesignViewComponent {
       app.dispatch(actions.HelixGroupMoveStop());
     }
   }
-  render_loading_dialog(){
-      react_dom.render(
-        over_react_components.ErrorBoundary()(
-          (ReduxProvider()..store = app.store)(
-            ConnectedLoadingDialog()(),
-          ),
+
+  render_loading_dialog() {
+    react_dom.render(
+      over_react_components.ErrorBoundary()(
+        (ReduxProvider()..store = app.store)(
+          ConnectedLoadingDialog()(),
         ),
-        this.dialog_loading_container,
-      );
+      ),
+      this.dialog_loading_container,
+    );
   }
+
   render(AppState state) {
     if (state.has_error) {
       if (!root_element.children.contains(this.error_message_pane)) {
@@ -775,7 +795,7 @@ class DesignViewComponent {
         this.root_element.children.add(this.footer_separator);
         this.root_element.children.add(this.footer_element);
         this.root_element.children.add(this.dialog_form_container);
-         this.root_element.children.add(this.dialog_loading_container);
+        this.root_element.children.add(this.dialog_loading_container);
         this.root_element.children.add(this.strand_color_picker_container);
         this.root_element.children.add(this.context_menu_container);
       }
@@ -822,12 +842,16 @@ class DesignViewComponent {
                   ..store = app.store_potential_crossover
                   ..context = app.context_potential_crossover)(
                   (ReduxProvider()
-                    ..store = app.store_dna_ends_move
-                    ..context = app.context_dna_ends_move)(
+                    ..store = app.store_extensions_move
+                    ..context = app.context_extensions_move)(
                     (ReduxProvider()
-                      ..store = app.store_helix_group_move
-                      ..context = app.context_helix_group_move)(
-                      ConnectedDesignMain()(),
+                      ..store = app.store_dna_ends_move
+                      ..context = app.context_dna_ends_move)(
+                      (ReduxProvider()
+                        ..store = app.store_helix_group_move
+                        ..context = app.context_helix_group_move)(
+                        ConnectedDesignMain()(),
+                      ),
                     ),
                   ),
                 ),
@@ -888,7 +912,6 @@ class DesignViewComponent {
         this.dialog_form_container,
       );
 
-
       // loading dialog
       react_dom.render(
         over_react_components.ErrorBoundary()(
@@ -899,11 +922,10 @@ class DesignViewComponent {
         this.dialog_loading_container,
       );
 
-
       react_dom.render(
           over_react_components.ErrorBoundary()(
             (ReduxProvider()..store = app.store)(
-              ConnectedStrandColorPicker()(),
+              ConnectedStrandOrSubstrandColorPicker()(),
             ),
           ),
           this.strand_color_picker_container);
@@ -924,34 +946,6 @@ class DesignViewComponent {
       var action = actions.PotentialCrossoverMove(point: point);
       app.dispatch(actions.ThrottledActionFast(action, 1 / 60.0));
     }
-  }
-
-  copy_selected_strands() {
-    // do nothing if no strands are selected
-    if (app.state.ui_state.selectables_store.selected_strands.isEmpty) return;
-    app.dispatch(actions.CopySelectedStrands());
-  }
-
-  paste_strands_manually() {
-    // it was much easier to handle the asynchronous read (seems to be the only way to read the clipboard)
-    // here than to handle it in middleware;
-    // unit testing especially seemed to be very difficult with all the asynchronous calls
-    clipboard.read().then((String content) {
-      if (content != null && content.isNotEmpty) {
-        app.dispatch(actions.ManualPasteInitiate(clipboard_content: content));
-      }
-    });
-  }
-
-  paste_strands_auto() {
-    // it was much easier to handle the asynchronous read (seems to be the only way to read the clipboard)
-    // here than to handle it in middleware;
-    // unit testing especially seemed to be very difficult with all the asynchronous calls
-    clipboard.read().then((String content) {
-      if (content != null && content.isNotEmpty) {
-        app.dispatch(actions.AutoPasteInitiate(clipboard_content: content));
-      }
-    });
   }
 
   side_view_mouse_leave_update_mouseover() {
@@ -993,6 +987,34 @@ class DesignViewComponent {
   }
 }
 
+copy_selected_strands() {
+  // do nothing if no strands are selected
+  if (app.state.ui_state.selectables_store.selected_strands.isEmpty) return;
+  app.dispatch(actions.CopySelectedStrands());
+}
+
+paste_strands_manually() {
+  // it was much easier to handle the asynchronous read (seems to be the only way to read the clipboard)
+  // here than to handle it in middleware;
+  // unit testing especially seemed to be very difficult with all the asynchronous calls
+  clipboard.read().then((String content) {
+    if (content != null && content.isNotEmpty) {
+      app.dispatch(actions.ManualPasteInitiate(clipboard_content: content));
+    }
+  });
+}
+
+paste_strands_auto() {
+  // it was much easier to handle the asynchronous read (seems to be the only way to read the clipboard)
+  // here than to handle it in middleware;
+  // unit testing especially seemed to be very difficult with all the asynchronous calls
+  clipboard.read().then((String content) {
+    if (content != null && content.isNotEmpty) {
+      app.dispatch(actions.AutoPasteInitiate(clipboard_content: content));
+    }
+  });
+}
+
 group_names_of_strands(StrandsMove strands_move) =>
     app.state.design.group_names_of_strands(strands_move.strands_moving);
 
@@ -1000,6 +1022,9 @@ group_names_of_domains(DomainsMove domains_move) =>
     app.state.design.group_names_of_domains(domains_move.domains_moving);
 
 group_names_of_ends(DNAEndsMove ends_move) => app.state.design.group_names_of_ends(ends_move.ends_moving);
+
+group_names_of_extensions(DNAExtensionsMove extensions_move) =>
+    app.state.design.group_names_of_ends(extensions_move.ends_moving);
 
 main_view_pointer_up(MouseEvent event) {
 //  util.set_allow_pan(true);
@@ -1012,6 +1037,14 @@ main_view_pointer_up(MouseEvent event) {
     app.dispatch(actions.DNAEndsMoveStop());
     if (dna_ends_move.is_nontrivial) {
       app.dispatch(actions.DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
+    }
+  }
+
+  DNAExtensionsMove extensions_move = app.store_extensions_move.state;
+  if (extensions_move != null) {
+    app.dispatch(actions.DNAExtensionsMoveStop());
+    if (extensions_move.is_nontrivial) {
+      app.dispatch(actions.DNAExtensionsMoveCommit(dna_extensions_move: extensions_move));
     }
   }
 

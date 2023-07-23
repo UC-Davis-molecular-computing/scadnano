@@ -185,7 +185,6 @@ class EditorViewComponent {
   }
 }
 
-
 //TODO: there's a lot of repeated code between here and the functions that save/load the .dna files
 // handle file saving/loading for script files
 script_save_file() async {

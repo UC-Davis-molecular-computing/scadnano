@@ -1,5 +1,6 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
+import 'package:scadnano/src/state/extension.dart';
 import 'package:scadnano/src/state/selectable.dart';
 
 import 'transform_by_helix_group.dart';
@@ -48,7 +49,12 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
       var domain = props.strand.first_domain;
       if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(domain.helix)) {
         Helix helix_5p = props.helices[domain.helix];
-        bool selected = props.selected_modifications_in_strand.contains(props.strand.selectable_modification_5p);
+        bool selected =
+            props.selected_modifications_in_strand.contains(props.strand.selectable_modification_5p);
+        Extension ext = null;
+        if (props.strand.has_5p_extension) {
+          ext = props.strand.substrands.first;
+        }
         modifications.add((DesignMainStrandModification()
           ..selectable_modification = props.strand.selectable_modification_5p
           ..helix = helix_5p
@@ -57,6 +63,8 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
           ..display_connector = props.display_connector
           ..selected = selected
           ..helix_svg_position_y = props.helix_idx_to_svg_position_y_map[helix_5p.idx]
+          ..ext = ext
+          ..geometry = props.geometry
           ..key = "5'")());
       }
     }
@@ -65,18 +73,26 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
       var domain = props.strand.last_domain;
       if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(domain.helix)) {
         Helix helix_3p = props.helices[domain.helix];
+        Extension ext = null;
+        if (props.strand.has_3p_extension) {
+          ext = props.strand.substrands.last;
+        }
         modifications.add((DesignMainStrandModification()
           ..selectable_modification = props.strand.selectable_modification_3p
           ..helix = helix_3p
           ..transform = transform_of_helix(domain.helix)
           ..font_size = props.font_size
           ..display_connector = props.display_connector
-          ..selected = props.selected_modifications_in_strand.contains(props.strand.selectable_modification_3p)
+          ..selected =
+              props.selected_modifications_in_strand.contains(props.strand.selectable_modification_3p)
           ..helix_svg_position_y = props.helix_idx_to_svg_position_y_map[helix_3p.idx]
+          ..ext = ext
+          ..geometry = props.geometry
           ..key = "3'")());
       }
     }
 
+    var sel_mod = props.strand.selectable_modifications_int_by_dna_idx;
 
     // for (int dna_idx_mod in props.strand.modifications_int.keys) {
     for (int dna_idx_mod in props.strand.selectable_modifications_int_by_dna_idx.keys) {
@@ -108,13 +124,18 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
             ..selected = props.selected_modifications_in_strand.contains(selectable_mod_int)
             ..dna_idx_mod = dna_idx_mod
             ..helix_svg_position_y = props.helix_idx_to_svg_position_y_map[helix.idx]
+            ..geometry = props.geometry
             ..key = "internal-${dna_idx_mod}")());
         }
       } else if (ss_with_mod is Loopout) {
-        throw IllegalDesignError('currently unsupported to draw modification on Loopout');
+        throw IllegalDesignError('currently unsupported to draw internal modification on Loopout');
+      } else if (ss_with_mod is Extension) {
+        throw IllegalDesignError('currently unsupported to draw internal modification on Extension');
       }
     }
 
     return modifications.isEmpty ? null : (Dom.g()..className = 'modifications')(modifications);
   }
 }
+
+bool mod_5p_is_in_extension(Strand strand) {}

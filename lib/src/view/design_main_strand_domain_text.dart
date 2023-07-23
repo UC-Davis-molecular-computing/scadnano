@@ -4,48 +4,50 @@ import 'dart:math';
 import 'package:meta/meta.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/substrand.dart';
 
+import '../state/group.dart';
+import '../state/geometry.dart';
+import '../state/domain.dart';
+import 'pure_component.dart';
+import '../state/helix.dart';
+import '../state/context_menu.dart';
 import '../state/strand.dart';
 import '../state/address.dart';
-import '../state/geometry.dart';
-import '../state/group.dart';
-import '../app.dart';
-import '../state/helix.dart';
-import '../state/domain.dart';
-import '../util.dart' as util;
-import '../state/selectable.dart';
-import 'design_main_strand_dna_end.dart';
-import 'pure_component.dart';
-import '../state/context_menu.dart';
 import '../state/modification_type.dart';
-import '../actions/actions.dart' as actions;
+import '../app.dart';
 import '../constants.dart' as constants;
+import '../util.dart' as util;
+import '../actions/actions.dart' as actions;
 
-part 'design_main_strand_domain_name.over_react.g.dart';
+part 'design_main_strand_domain_text.over_react.g.dart';
 
-UiFactory<DesignMainStrandDomainNameProps> DesignMainStrandDomainName = _$DesignMainStrandDomainName;
+// general component for "text to a domain" (e.g, strand name, domain name, strand label)
+UiFactory<DesignMainStrandDomainTextProps> DesignMainStrandDomainText = _$DesignMainStrandDomainText;
 
-mixin DesignMainStrandDomainNamePropsMixin on UiProps {
+mixin DesignMainStrandDomainTextPropsMixin on UiProps {
   Strand strand;
-  Domain domain;
+  Domain domain; // domain next to which we draw strand name
   Helix helix;
   Geometry geometry;
   BuiltMap<String, HelixGroup> helix_groups;
+  String text;
+  String css_selector_text;
 
   int font_size;
-  bool show_dna;
+  int num_stacked;
   String transform;
   Point<num> helix_svg_position;
 
   List<ContextMenuItem> Function(Strand strand,
-      {@required Domain domain,
+      {@required Substrand substrand,
       @required Address address,
       @required ModificationType type}) context_menu_strand;
 }
 
-class DesignMainStrandDomainNameProps = UiProps with DesignMainStrandDomainNamePropsMixin;
+class DesignMainStrandDomainTextProps = UiProps with DesignMainStrandDomainTextPropsMixin;
 
-class DesignMainStrandDomainNameComponent extends UiComponent2<DesignMainStrandDomainNameProps>
+class DesignMainStrandDomainTextComponent extends UiComponent2<DesignMainStrandDomainTextProps>
     with PureComponent {
   @override
   render() {
@@ -57,10 +59,10 @@ class DesignMainStrandDomainNameComponent extends UiComponent2<DesignMainStrandD
 
     String baseline = props.domain.forward ? 'baseline' : 'hanging';
 
-    // offset depends on whether we are showing DNA, so they don't overlap
-    num offset_of_dna = props.show_dna ? props.helix.geometry.base_height_svg : 0;
+    // offset depends on whether we are showing DNA and/or domain names, so they don't overlap
+    num y_offset = props.num_stacked * props.helix.geometry.base_height_svg;
 
-    var dy = props.geometry.base_height_svg * 0.7 + offset_of_dna;
+    var dy = props.geometry.base_height_svg * 0.7 + y_offset;
     if (props.domain.forward) {
       dy = -dy;
     }
@@ -73,10 +75,10 @@ class DesignMainStrandDomainNameComponent extends UiComponent2<DesignMainStrandD
       ..transform = props.transform
       ..fontSize = props.font_size
       ..dominantBaseline = baseline
-      ..className = constants.css_selector_domain_name_text)(props.domain.name);
+      ..className = props.css_selector_text)(props.text);
   }
 
-  String id() => props.domain.id + '_name';
+  String id() => props.strand.id + '_name';
 
   // needed for capturing right-click events with React:
   // https://medium.com/@ericclemmons/react-event-preventdefault-78c28c950e46
@@ -98,11 +100,12 @@ class DesignMainStrandDomainNameComponent extends UiComponent2<DesignMainStrandD
     if (!event.shiftKey) {
       event.preventDefault();
       event.stopPropagation();
-      Address address = util.find_closest_address(event, [props.helix], props.helix_groups,
-          props.geometry, {props.helix.idx: props.helix_svg_position}.build());
+      Address address = util.find_closest_address(event, [props.helix], props.helix_groups, props.geometry,
+          {props.helix.idx: props.helix_svg_position}.build());
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
-              items: props.context_menu_strand(props.strand, domain: props.domain, address: address).build(),
+              items:
+                  props.context_menu_strand(props.strand, substrand: props.domain, address: address).build(),
               position: event.page)));
     }
   }

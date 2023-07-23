@@ -11,7 +11,8 @@ mixin MenuDropdownRightProps on UiProps {
   String tooltip;
   String title;
   String id;
-  bool disallow_overflow;     // IMPORTANT: only set this to true if you are sure the dropdown won't contain its own dropdowns; otherwise disallowing overflow will cause submenus to not be visible
+  bool
+      disallow_overflow; // IMPORTANT: only set this to true if you are sure the dropdown won't contain its own dropdowns; otherwise disallowing overflow will cause submenus to not be visible
   bool disabled;
 }
 
@@ -20,8 +21,8 @@ mixin MenuDropdownRightState on UiState {
   Ref<DivElement> HTML_element;
 }
 
-class MenuDropdownRightComponent extends UiStatefulComponent2<
-    MenuDropdownRightProps, MenuDropdownRightState> {
+class MenuDropdownRightComponent
+    extends UiStatefulComponent2<MenuDropdownRightProps, MenuDropdownRightState> {
   @override
   Map get initialState => (newState()
     ..HTML_element = createRef()
@@ -33,8 +34,7 @@ class MenuDropdownRightComponent extends UiStatefulComponent2<
   // once component mounts and HTML_element has a reference assigned, save top coord to set proper css styling
   @override
   void componentDidMount() {
-    setState(
-        state..top = state.HTML_element.current.getBoundingClientRect().top);
+    setState(state..top = state.HTML_element.current.getBoundingClientRect().top);
   }
 
   @override
@@ -50,8 +50,7 @@ class MenuDropdownRightComponent extends UiStatefulComponent2<
       'style': state.top != null
           ? {
               '--offset-top': '${state.top}px',
-              '--overflow-y':
-                  props.disallow_overflow == true ? 'auto' : 'visible'
+              '--overflow-y': props.disallow_overflow == true ? 'auto' : 'visible'
             }
           : {}
     }, props.children);
@@ -59,8 +58,7 @@ class MenuDropdownRightComponent extends UiStatefulComponent2<
     if (props.tooltip == null) {
       return menu_dropdown_right;
     } else {
-      return (Dom
-          .span() // had to put outside of DropdownItem to make tooltip show up when disabled
+      return (Dom.span() // had to put outside of DropdownItem to make tooltip show up when disabled
         ..title = props.tooltip)(menu_dropdown_right);
     }
   }

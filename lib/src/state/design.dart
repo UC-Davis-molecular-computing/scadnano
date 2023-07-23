@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:tuple/tuple.dart';
 import 'package:collection/collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
@@ -12,7 +13,6 @@ import 'package:scadnano/src/state/strand_maker.dart';
 import '../state/loopout.dart';
 import '../state/potential_vertical_crossover.dart';
 import '../state/selectable.dart';
-import 'package:tuple/tuple.dart';
 import 'geometry.dart';
 import 'crossover.dart';
 import 'dna_end.dart';
@@ -23,10 +23,12 @@ import 'linker.dart';
 import 'modification.dart';
 import 'strand.dart';
 import 'domain.dart';
+import 'extension.dart';
 import 'helix.dart';
 import 'grid.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
+import 'strand_creation.dart';
 import 'substrand.dart';
 import 'unused_fields.dart';
 import 'domain_name_mismatch.dart';
@@ -150,7 +152,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<int, Helix> helices_in_group(String group_name) =>
       BuiltMap<int, Helix>.from(helices.toMap()..removeWhere((idx, helix) => helix.group != group_name));
 
-  StrandMaker strand(int current_helix, int current_offset) {
+  StrandMaker draw_strand(int current_helix, int current_offset) {
     return StrandMaker(this, current_helix, current_offset);
   }
 
@@ -211,7 +213,16 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   String group_name_of_domain(Domain domain) => group_name_of_helix_idx(domain.helix);
 
-  String group_name_of_strand(Strand strand) => group_name_of_domain(strand.first_domain);
+  // if the strand is in multiple groups, return null; otherwise return the group name
+  String group_name_of_strand(Strand strand) {
+    String first_group_name = group_name_of_domain(strand.first_domain);
+    for (var domain in strand.domains) {
+      if (first_group_name != group_name_of_domain(domain)) {
+        return null;
+      }
+    }
+    return first_group_name;
+  }
 
   BuiltSet<String> group_names_of_domains(Iterable<Domain> domains) {
     var helix_idxs_of_domains = {for (var domain in domains) domain.helix};
@@ -222,7 +233,11 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltSet<String> group_names_of_ends(Iterable<DNAEnd> ends) {
     Set<String> names = {};
     for (var end in ends) {
-      int helix_idx = end_to_domain[end].helix;
+      var substrand = end_to_domain[end];
+      if (substrand == null) {
+        substrand = end_to_extension[end].adjacent_domain;
+      }
+      int helix_idx = substrand.helix;
       var helix = helices[helix_idx];
       var name = helix.group;
       names.add(name);
@@ -342,6 +357,17 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   @memoized
+  BuiltMap<String, Extension> get extensions_by_id {
+    var builder = MapBuilder<String, Extension>();
+    for (var strand in strands) {
+      for (var ext in strand.extensions) {
+        builder[ext.id] = ext;
+      }
+    }
+    return builder.build();
+  }
+
+  @memoized
   BuiltMap<String, Crossover> get crossovers_by_id {
     var builder = MapBuilder<String, Crossover>();
     for (var strand in strands) {
@@ -396,6 +422,10 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       for (var domain in strand.domains) {
         builder[domain.dnaend_start.id] = domain.dnaend_start;
         builder[domain.dnaend_end.id] = domain.dnaend_end;
+      }
+
+      for (var ext in strand.extensions) {
+        builder[ext.dnaend_free.id] = ext.dnaend_free;
       }
     }
     return builder.build();
@@ -455,6 +485,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     for (var map_small in [
       strands_by_id,
       loopouts_by_id,
+      extensions_by_id,
       crossovers_by_id,
       ends_by_id,
       domains_by_id,
@@ -470,7 +501,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return map.build();
   }
 
-  /// design.strands_overlapping[strand] is a list of all strands that overlap strand, including possibly itself.
+  /// design.strands_overlapping[draw_strand] is a list of all strands that overlap strand, including possibly itself.
   @memoized
   BuiltMap<Strand, BuiltList<Strand>> get strands_overlapping {
     Map<Strand, List<Strand>> map = {};
@@ -507,6 +538,22 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   @memoized
+  BuiltMap<Domain, BuiltList<Address>> get unpaired_insertion_deletion_map {
+    var unpaired_insertion_deletion_map_builder = Map<Domain, List<Address>>();
+    for (Strand strand in this.strands) {
+      for (Domain domain in strand.domains) {
+        unpaired_insertion_deletion_map_builder[domain] =
+            this.find_unpaired_insertion_deletions_on_domain(domain, false);
+      }
+    }
+    var unpaired_insertion_deletion_half_built_map = Map<Domain, BuiltList<Address>>();
+    unpaired_insertion_deletion_map_builder.forEach((domain, unpaireds) {
+      unpaired_insertion_deletion_half_built_map[domain] = unpaireds.build();
+    });
+    return unpaired_insertion_deletion_half_built_map.build();
+  }
+
+  @memoized
   BuiltMap<DNAEnd, Domain> get end_to_domain {
     var end_to_substrand_builder = MapBuilder<DNAEnd, Domain>();
     for (var strand in strands) {
@@ -516,6 +563,17 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       }
     }
     return end_to_substrand_builder.build();
+  }
+
+  @memoized
+  BuiltMap<DNAEnd, Extension> get end_to_extension {
+    var end_to_extension_builder = MapBuilder<DNAEnd, Extension>();
+    for (var strand in strands) {
+      for (var extension in strand.extensions) {
+        end_to_extension_builder[extension.dnaend_free] = extension;
+      }
+    }
+    return end_to_extension_builder.build();
   }
 
   @memoized
@@ -564,6 +622,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   Strand loopout_to_strand(Loopout loopout) => substrand_to_strand[loopout];
 
   Strand end_to_strand(DNAEnd end) => substrand_to_strand[end_to_domain[end]];
+
+  Strand extension_end_to_strand(DNAEnd end) => substrand_to_strand[end_to_extension[end]];
 
   @memoized
   BuiltList<int> get helix_idxs => helices.keys.toBuiltList();
@@ -1464,6 +1524,38 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
   }
 
+  List<Address> find_unpaired_insertion_deletions_on_domain(Domain domain, bool include_other_domain) {
+    // if include_other_domain is true, then unmatched insertions/deletions on domains bound to this
+    // one are included; otherwise only insertions/deletions on `domain` that are not on the bound
+    // domain are included
+    var unpaireds = <Address>[];
+
+    for (int offset = domain.start; offset < domain.end; offset++) {
+      var other_dom = this.other_domain_at_offset(domain, offset);
+      if (other_dom == null) {
+        continue;
+      }
+
+      if (domain.deletions.contains(offset) && !other_dom.deletions.contains(offset)) {
+        unpaireds.add(new Address(helix_idx: domain.helix, offset: offset, forward: domain.forward));
+        continue;
+      } else if (include_other_domain &&
+          other_dom.deletions.contains(offset) &&
+          !domain.deletions.contains(offset)) {
+        unpaireds.add(new Address(helix_idx: other_dom.helix, offset: offset, forward: other_dom.forward));
+        continue;
+      }
+
+      int length_insertion_substrand = domain.insertion_offset_to_length[offset];
+      int length_insertion_other_ss = other_dom.insertion_offset_to_length[offset];
+      if (length_insertion_substrand != length_insertion_other_ss) {
+        unpaireds.add(new Address(helix_idx: other_dom.helix, offset: offset, forward: other_dom.forward));
+        continue;
+      }
+    }
+    return unpaireds;
+  }
+
   ListBuilder<Mismatch> _find_mismatches_on_substrand(Domain substrand) {
     var mismatches = ListBuilder<Mismatch>();
 
@@ -1472,7 +1564,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         continue;
       }
 
-      var other_ss = this.other_substrand_at_offset(substrand, offset);
+      var other_ss = this.other_domain_at_offset(substrand, offset);
       if (other_ss == null || other_ss.dna_sequence == null) {
         continue;
       }
@@ -1523,12 +1615,12 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   /// Return other substrand at `offset` on `substrand.helix_idx`, or null if there isn't one.
-  Domain other_substrand_at_offset(Domain substrand, int offset) {
-    List<Domain> other_substrands = this._other_substrands_overlapping(substrand);
-    for (var other_ss in other_substrands) {
-      if (other_ss.contains_offset(offset)) {
-        assert(substrand.forward != other_ss.forward);
-        return other_ss;
+  Domain other_domain_at_offset(Domain domain, int offset) {
+    List<Domain> other_domains = this._other_domains_overlapping(domain);
+    for (var other_domain in other_domains) {
+      if (other_domain.contains_offset(offset)) {
+        assert(domain.forward != other_domain.forward);
+        return other_domain;
       }
     }
     return null;
@@ -1541,6 +1633,14 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var ret = this.domain_mismatches_map[domain];
     if (ret == null) {
       ret = BuiltList<Mismatch>();
+    }
+    return ret;
+  }
+
+  BuiltList<Address> unpaired_insertion_deletion_on_domain(Domain domain) {
+    var ret = this.unpaired_insertion_deletion_map[domain];
+    if (ret == null) {
+      ret = BuiltList<Address>();
     }
     return ret;
   }
@@ -1654,7 +1754,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   /// Return [Domain] at [address], INCLUSIVE, or null if there is none.
-  Domain domain_on_helix_at(Address address) {
+  Domain domain_on_helix_at(Address address, [StrandCreation strand_creation = null]) {
     for (var domain in this.helix_idx_to_domains[address.helix_idx]) {
       if (domain.contains_offset(address.offset) && domain.forward == address.forward) {
         return domain;
@@ -1663,12 +1763,21 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return null;
   }
 
-  /// Return list of Substrands overlapping `substrand`.
-  List<Domain> _other_substrands_overlapping(Domain substrand) {
+  bool overlap(Domain domain, int offset, int start) {
+    int overlap_start = max(min(domain.start, domain.end), min(start, offset));
+    int overlap_end = min(max(domain.start, domain.end), max(start, offset));
+    if (overlap_start >= overlap_end) {
+      return false;
+    }
+    return true;
+  }
+
+  /// Return list of Domains overlapping `substrand`.
+  List<Domain> _other_domains_overlapping(Domain domain) {
     List<Domain> ret = [];
-    var helix = this.helices[substrand.helix];
+    var helix = this.helices[domain.helix];
     for (var other_ss in helix_idx_to_domains[helix.idx]) {
-      if (substrand.overlaps(other_ss)) {
+      if (domain.overlaps(other_ss)) {
         ret.add(other_ss);
       }
     }
@@ -1786,7 +1895,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 //    return view_orders.toBuiltList();
 //  }
 
-  bool is_occupied(Address address) => domain_on_helix_at(address) != null;
+  bool is_occupied(Address address, [StrandCreation strand_creation]) =>
+      domain_on_helix_at(address, strand_creation) != null;
 
   @memoized
   int max_offset_of_strands_at(int helix_idx) {
@@ -1847,6 +1957,111 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
             '${groups.keys.join(", ")}');
       }
     }
+  }
+
+  /// maps each helix_idx to a list of offsets where there is a complementary base pair on each strand
+  @memoized
+  BuiltMap<int, BuiltList<int>> get base_pairs => this._base_pairs(false);
+
+  /// maps each helix_idx to a list of offsets where there is a base on each strand,
+  /// NOT necessarily complementary
+  @memoized
+  BuiltMap<int, BuiltList<int>> get base_pairs_with_mismatches => this._base_pairs(true);
+
+  BuiltMap<int, BuiltList<int>> _base_pairs(bool allow_mismatches) {
+    var base_pairs = Map<int, BuiltList<int>>();
+    for (int idx in this.helices.keys) {
+      List<int> offsets = [];
+      List<Tuple2<Domain, Domain>> overlapping_domains = find_overlapping_domains_on_helix(idx);
+      for (var domain_pair in overlapping_domains) {
+        Domain dom1 = domain_pair.item1;
+        Domain dom2 = domain_pair.item2;
+        var start_and_end = dom1.compute_overlap(dom2);
+        int start = start_and_end.item1;
+        int end = start_and_end.item2;
+        for (int offset = start; offset < end; offset++) {
+          if (dom1.deletions.contains(offset) || dom2.deletions.contains(offset)) {
+            continue;
+          }
+          var seq1 = dom1.dna_sequence_in(offset, offset);
+          var seq2 = dom2.dna_sequence_in(offset, offset);
+          // we use reverse_complementary instead of base_complementary here to allow for insertions
+          // that may give a larger DNA sequence than length 1 at a given offset
+          if (allow_mismatches ||
+              util.reverse_complementary(seq1, seq2, allow_wildcard: true, allow_null: true)) {
+            offsets.add(offset);
+          }
+        }
+      }
+      if (offsets.isNotEmpty) {
+        base_pairs[idx] = offsets.build();
+      }
+    }
+
+    return base_pairs.build();
+  }
+
+  List<Tuple2<Domain, Domain>> find_overlapping_domains_on_helix(int helix_idx) {
+    // compute list of pairs of domains that overlap on Helix `helix`
+    List<Domain> forward_domains = domains_on_helix(helix_idx, forward: true);
+    List<Domain> reverse_domains_list = domains_on_helix(helix_idx, forward: false);
+    forward_domains.sort((Domain d1, Domain d2) => d1.start - d2.start);
+    reverse_domains_list.sort((Domain d1, Domain d2) => d1.start - d2.start);
+
+    if (forward_domains.isEmpty || reverse_domains_list.isEmpty) {
+      return [];
+    }
+
+    // need to be efficient to remove the front element repeatedly
+    var reverse_domains = Queue<Domain>.from(reverse_domains_list);
+
+    List<Tuple2<Domain, Domain>> overlapping_domains = [];
+
+    for (var forward_domain in forward_domains) {
+      var reverse_domain = reverse_domains.first;
+
+      // remove each reverse_domain that strictly precedes forward domain
+      // they cannot overlap forward_domain nor any domain following it in the list forward_domains
+      while (reverse_domain.end <= forward_domain.start && reverse_domains.isNotEmpty) {
+        reverse_domains.removeFirst();
+        if (reverse_domains.isNotEmpty) {
+          reverse_domain = reverse_domains.first;
+        } else {
+          // if all reverse domains are gone, we're done
+          return overlapping_domains;
+        }
+      }
+
+      // otherwise we may have found an overlapping reverse_domain, OR forward_domain could precede it
+      // if forward_domain precedes reverse_domain, next inner loop is skipped,
+      // and we go to next forward_domain in the outer loop
+
+      // add each reverse_domain that overlaps forward_domain
+      while (forward_domain.overlaps(reverse_domain)) {
+        overlapping_domains.add(Tuple2<Domain, Domain>(forward_domain, reverse_domain));
+
+        if (reverse_domain.end <= forward_domain.end) {
+          // [-----f_dom--->[--next_f_dom-->
+          //    [--r_dom--->
+          // reverse_domain can't overlap *next* forward_domain, so safe to remove
+          reverse_domains.removeFirst();
+          if (reverse_domains.isNotEmpty) {
+            reverse_domain = reverse_domains.first;
+          } else {
+            // no more reverse domains to process, so we can exit
+            return overlapping_domains;
+          }
+        } else {
+          // [---f_dom--->   [---next_f_dom-->
+          //       [----r_dom->[--next_r_dom---->
+          //  reverse_domain possibly overlaps next forward_domain, so keep it in queue
+          //  but this is last reverse_domain overlapping current forward_domain, so safe to break loop
+          break;
+        }
+      }
+    }
+
+    return overlapping_domains;
   }
 
   num yaw_of_helix(Helix helix) {
@@ -2118,6 +2333,26 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
     return to_return;
   }
+
+  /// Returns idx on strand (starting from 5' end) of the base at the given address.
+  int idx_on_strand(Address address) {
+    var domain = this.domain_on_helix_at(address);
+    if (domain == null) {
+      throw ArgumentError("no strand in Design at address ${address}");
+    }
+    var strand = this.substrand_to_strand[domain];
+    int strand_idx = 0;
+    for (var substrand in strand.substrands) {
+      if (domain == substrand) {
+        int domain_idx = domain.substrand_offset_to_substrand_dna_idx(address.offset, address.forward);
+        strand_idx += domain_idx;
+        break;
+      } else {
+        strand_idx += substrand.dna_length();
+      }
+    }
+    return strand_idx;
+  }
 }
 
 Map<String, HelixGroup> _calculate_groups_from_helix_builder(
@@ -2144,15 +2379,6 @@ Map<String, HelixGroup> _calculate_groups_from_helix_builder(
   };
 
   return groups;
-}
-
-bool _uses_default_group(Iterable<Helix> helices) {
-  for (var helix in helices) {
-    if (helix.group != constants.default_group_name) {
-      return false;
-    }
-  }
-  return true;
 }
 
 ensure_helix_groups_in_groups_map(
@@ -2355,6 +2581,8 @@ class IllegalDesignError implements Exception {
   String cause;
 
   IllegalDesignError(this.cause);
+
+  bool operator ==(Object other) => other is IllegalDesignError;
 }
 
 class IllegalCadnanoDesignError implements IllegalDesignError {

@@ -13,6 +13,7 @@ import 'package:scadnano/src/state/geometry.dart';
 import '../state/strand.dart';
 import '../state/domain.dart';
 import '../state/loopout.dart';
+import '../state/extension.dart';
 import 'pure_component.dart';
 import '../util.dart' as util;
 
@@ -24,6 +25,7 @@ mixin DesignMainDNASequencePropsMixin on UiProps {
   Strand strand;
   BuiltSet<int> side_selected_helix_idxs;
   bool only_display_selected_helices;
+  bool display_reverse_DNA_right_side_up;
 
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
@@ -47,9 +49,9 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     List<ReactElement> dna_sequence_elts = [];
     for (int i = 0; i < this.props.strand.substrands.length; i++) {
       var substrand = this.props.strand.substrands[i];
-      if (substrand.is_domain()) {
+      if (substrand is Domain) {
         if (should_draw_domain(substrand, side_selected_helix_idxs, props.only_display_selected_helices)) {
-          var domain = substrand as Domain;
+          Domain domain = substrand;
           List<ReactElement> domain_elts = [];
           domain_elts.add(this._dna_sequence_on_domain(domain));
           for (var insertion in domain.insertions) {
@@ -62,16 +64,25 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
             ..className = 'dna-seq-on-domain-group'
             ..key = util.id_domain(domain))(domain_elts));
         }
-      } else {
+      } else if (substrand is Loopout) {
         assert(0 < i);
         assert(i < this.props.strand.substrands.length - 1);
-        var loopout = substrand as Loopout;
+        Loopout loopout = substrand;
         Domain prev_dom = this.props.strand.substrands[i - 1];
         Domain next_dom = this.props.strand.substrands[i + 1];
         if (should_draw_domain(prev_dom, side_selected_helix_idxs, props.only_display_selected_helices) &&
             should_draw_domain(next_dom, side_selected_helix_idxs, props.only_display_selected_helices)) {
           dna_sequence_elts.add(this._dna_sequence_on_loopout(loopout, prev_dom, next_dom));
         }
+      } else if (substrand is Extension) {
+        assert(i == 0 || i == props.strand.substrands.length - 1);
+        Extension ext = substrand;
+        if (should_draw_domain(
+            ext.adjacent_domain, side_selected_helix_idxs, props.only_display_selected_helices)) {
+          dna_sequence_elts.add(this._dna_sequence_on_extension(ext));
+        }
+      } else {
+        throw AssertionError('unrecognized substrand type: ${substrand}');
       }
     }
     return (Dom.g()
@@ -82,37 +93,63 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
   static const classname_dna_sequence = 'dna-seq';
 
   ReactElement _dna_sequence_on_domain(Domain domain) {
-    var seq_to_draw = domain.dna_sequence_deletions_insertions_to_spaces();
+    var seq_to_draw = domain.dna_sequence_deletions_insertions_to_spaces(
+        reverse: props.display_reverse_DNA_right_side_up && !domain.forward);
 
     var rotate_degrees = 0;
     int offset = domain.offset_5p;
     var helix = props.helices[domain.helix];
-    Point<num> pos = helix.svg_base_pos(offset, domain.forward, props.helix_idx_to_svg_position_map[domain.helix].y);
+    Point<num> pos =
+        helix.svg_base_pos(offset, domain.forward, props.helix_idx_to_svg_position_map[domain.helix].y);
     var rotate_x = pos.x;
     var rotate_y = pos.y;
 
     // this is needed to make complementary DNA bases line up more nicely (still not perfect)
     var x_adjust = -props.geometry.base_width_svg * 0.32;
-    if (!domain.forward) {
-      rotate_degrees = 180;
-    }
-    var dy = -props.geometry.base_height_svg * 0.25;
+    var dy, x, y;
     var text_length = props.geometry.base_width_svg * (domain.visual_length - 0.342);
+
+    //extension, loopout,
+
+    if (domain.forward) {
+      //rotation and displacement for forward text
+      rotate_degrees = 0;
+      dy = -props.geometry.base_height_svg * 0.25;
+      x = pos.x + x_adjust;
+      y = pos.y;
+    } else {
+      if (props.display_reverse_DNA_right_side_up) {
+        rotate_degrees = 0;
+        //displacement for reverse text
+        dy = props.geometry.base_height_svg * 0.75;
+        x = pos.x - x_adjust - text_length;
+        y = pos.y + props.geometry.base_height_svg;
+      } else {
+        rotate_degrees = 180;
+        //displacement for reverse text if option not enabled
+        dy = -props.geometry.base_height_svg * 0.25;
+        x = pos.x + x_adjust;
+        y = pos.y;
+      }
+    }
+
     var id = 'dna-${util.id_domain(domain)}';
 
     return (Dom.text()
       ..key = id
       ..id = id
       ..className = classname_dna_sequence
-      ..x = '${pos.x + x_adjust}'
-      ..y = '${pos.y}'
+      ..x = '$x'
+      ..y = '$y'
       ..textLength = '$text_length'
       ..transform = 'rotate(${rotate_degrees} ${rotate_x} ${rotate_y})'
       ..dy = '$dy')(seq_to_draw);
   }
 
   ReactElement _dna_sequence_on_insertion(Domain domain, int offset, int length) {
-    var subseq = domain.dna_sequence_in(offset, offset);
+    var reverse_right_side_up = props.display_reverse_DNA_right_side_up && !domain.forward;
+
+    var subseq = domain.dna_sequence_in(offset, offset, reverse: reverse_right_side_up);
     //XXX: path_length appears to return different results depending on the computer (probably resolution??)
     // don't rely on it. This caused Firefox for example to render different on the same version.
 //    num path_length = insertion_path_elt.getTotalLength();
@@ -131,6 +168,10 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       style_map = {'fontSize': '${font_size}px'};
     }
 
+    if (reverse_right_side_up) {
+      style_map['dominantBaseline'] = 'hanging';
+    }
+
     SvgProps text_path_props = (Dom.textPath()
       ..className = classname_dna_sequence + '-insertion'
       //XXX: xlink:href is deprecated, but this is needed for exporting SVG, due to a bug in Inkscape
@@ -138,6 +179,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       ..xlinkHref = '#${util.id_insertion(domain, offset)}'
       ..startOffset = start_offset
       ..style = style_map);
+
     return (Dom.text()
       ..key = 'textelt-${util.id_insertion(domain, offset)}'
       ..dy = dy)(text_path_props(subseq));
@@ -172,14 +214,51 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       ..startOffset = start_offset
       ..style = style_map);
     return (Dom.text()
-      ..key = 'loopout-text-'
+      ..key = 'loopout-dna'
           'H${prev_domain.helix},${prev_domain.offset_3p}-'
           'H${next_domain.helix},${next_domain.offset_5p}'
+      ..dy = dy)(text_path_props(subseq));
+  }
+
+  ReactElement _dna_sequence_on_extension(Extension ext) {
+    var subseq = ext.dna_sequence;
+    var length = subseq.length;
+
+    var start_offset = '50%';
+    var dy = '${0.1 * props.geometry.base_height_svg}';
+
+    Tuple2<num, num> ls_fs;
+    ls_fs = _calculate_letter_spacing_and_font_size_extension(ext);
+    num letter_spacing = ls_fs.item1;
+    num font_size = ls_fs.item2;
+
+    Map<String, dynamic> style_map;
+    if (letter_spacing != null) {
+      style_map = {'letterSpacing': '${letter_spacing}em', 'fontSize': '${font_size}px'};
+    } else {
+      style_map = {'fontSize': '${font_size}px'};
+    }
+
+    SvgProps text_path_props = (Dom.textPath()
+      ..className = classname_dna_sequence + '-extension'
+      ..xlinkHref = '#${ext.id}'
+      ..startOffset = start_offset
+      ..style = style_map);
+    return (Dom.text()
+      ..key = 'extension-dna-'
+          'H${ext.adjacent_domain.helix},${ext.adjacent_domain.start}-'
+          '${ext.adjacent_domain.end}'
       ..dy = dy)(text_path_props(subseq));
   }
 }
 
 Tuple2<num, num> _calculate_letter_spacing_and_font_size_loopout(int len) {
+  num letter_spacing = 0;
+  num font_size = 12;
+  return Tuple2<num, num>(letter_spacing, font_size);
+}
+
+Tuple2<num, num> _calculate_letter_spacing_and_font_size_extension(Extension ext) {
   num letter_spacing = 0;
   num font_size = 12;
   return Tuple2<num, num>(letter_spacing, font_size);

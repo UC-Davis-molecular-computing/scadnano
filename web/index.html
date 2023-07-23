@@ -307,7 +307,7 @@
         // svg-png-caching
 
         function on_zoom(newZoom) {
-            if (newZoom < 1 && svg_cache_callback) {
+            if (newZoom < zoom_threshold && svg_cache_callback) {
                 svg_cache_callback();
             }
         }
@@ -477,7 +477,11 @@
 
     function current_zoom_main() {
         if ('undefined' !== typeof main_view_svg_pan_zoom) {
-            return main_view_svg_pan_zoom.getZoom();
+            // using main_view_svg_pan_zoom.getZoom() returns a "relative zoom" (see svg-pan-zoom.js L:1202)
+            // which is the zoom variable divided by an "original zoom"
+            // but "original zoom" changes everytime we fit+center, which messes up mouse coordinate calculations in Dart
+            // so we want the zoom variable without being divided by "original zoom", which is provided by getSizes().realZoom
+            return main_view_svg_pan_zoom.getSizes().realZoom;
         } else {
             // console.log('using default zoom for main');
             return 1;
@@ -486,7 +490,8 @@
 
     function current_zoom_side() {
         if ('undefined' !== typeof side_view_svg_pan_zoom) {
-            return side_view_svg_pan_zoom.getZoom();
+            // use realZoom instead of getZoom() same as current_zoom_main
+            return side_view_svg_pan_zoom.getSizes().realZoom;
         } else {
             // console.log('using default zoom for side');
             return 1;

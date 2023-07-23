@@ -73,33 +73,33 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
   var helices = [for (int i = 0; i < 6; i++) Helix(idx: i, max_offset: 100, grid: Grid.square)];
   var d = Design(helices: helices, grid: Grid.square);
 
-  d = d.strand(1, 0).move(16).cross(0).move(-16).with_name('A').commit();
-  d = d.strand(3, 0).move(16).cross(2).move(-16).with_name('B').commit();
-  d = d.strand(5, 0).move(16).cross(4).move(-16).with_name('C').commit();
+  d = d.draw_strand(1, 0).move(16).cross(0).move(-16).with_name('A').commit();
+  d = d.draw_strand(3, 0).move(16).cross(2).move(-16).with_name('B').commit();
+  d = d.draw_strand(5, 0).move(16).cross(4).move(-16).with_name('C').commit();
 
-  d = d.strand(0, 40).move(-24).cross(1).move(8).with_name('D').commit();
+  d = d.draw_strand(0, 40).move(-24).cross(1).move(8).with_name('D').commit();
 
-  d = d.strand(1, 24).move(8).cross(2).move(-16).cross(3).move(8).with_name('E').commit();
-  d = d.strand(3, 24).move(8).cross(4).move(-16).cross(5).move(8).with_name('F').commit();
+  d = d.draw_strand(1, 24).move(8).cross(2).move(-16).cross(3).move(8).with_name('E').commit();
+  d = d.draw_strand(3, 24).move(8).cross(4).move(-16).cross(5).move(8).with_name('F').commit();
 
-  d = d.strand(0, 72).move(-32).with_name('G').commit();
+  d = d.draw_strand(0, 72).move(-32).with_name('G').commit();
 
-  d = d.strand(2, 40).move(-8).cross(1).move(24).with_name('H').commit();
-  d = d.strand(1, 56).move(8).cross(2).move(-24).with_name('I').commit();
+  d = d.draw_strand(2, 40).move(-8).cross(1).move(24).with_name('H').commit();
+  d = d.draw_strand(1, 56).move(8).cross(2).move(-24).with_name('I').commit();
 
-  d = d.strand(4, 40).move(-8).cross(3).move(24).with_name('J').commit();
-  d = d.strand(3, 56).move(8).cross(4).move(-24).with_name('K').commit();
+  d = d.draw_strand(4, 40).move(-8).cross(3).move(24).with_name('J').commit();
+  d = d.draw_strand(3, 56).move(8).cross(4).move(-24).with_name('K').commit();
 
-  d = d.strand(5, 24).move(32).with_name('L').commit();
+  d = d.draw_strand(5, 24).move(32).with_name('L').commit();
 
-  d = d.strand(2, 72).move(-8).cross(1).move(16).cross(0).move(-8).with_name('M').commit();
-  d = d.strand(4, 72).move(-8).cross(3).move(16).cross(2).move(-8).with_name('N').commit();
+  d = d.draw_strand(2, 72).move(-8).cross(1).move(16).cross(0).move(-8).with_name('M').commit();
+  d = d.draw_strand(4, 72).move(-8).cross(3).move(16).cross(2).move(-8).with_name('N').commit();
 
-  d = d.strand(5, 56).move(24).cross(4).move(-8).with_name('O').commit();
+  d = d.draw_strand(5, 56).move(24).cross(4).move(-8).with_name('O').commit();
 
-  d = d.strand(0, 96).move(-16).cross(1).move(16).with_name('P').commit();
-  d = d.strand(2, 96).move(-16).cross(3).move(16).with_name('Q').commit();
-  d = d.strand(4, 96).move(-16).cross(5).move(16).with_name('R').commit();
+  d = d.draw_strand(0, 96).move(-16).cross(1).move(16).with_name('P').commit();
+  d = d.draw_strand(2, 96).move(-16).cross(3).move(16).with_name('Q').commit();
+  d = d.draw_strand(4, 96).move(-16).cross(5).move(16).with_name('R').commit();
 
   // assign DNA to strands so we can export IDT
   var strands = d.strands.toList();
@@ -118,7 +118,7 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
     // get IDT names of strands exported, and return them joined into a single string
     ExportDNAFormat format = ExportDNAFormat.idt_bulk;
     //XXX: export can return a Future<List<int>>, but only when exporting to Excel files.
-    String idt_str = format.export(strands, strand_order: strand_order, column_major: column_major);
+    String idt_str = format.export(strands, strand_order: strand_order, column_major_strand: column_major);
 
     List<String> idt_lines = idt_str.split('\n');
     List<String> names = [];
@@ -236,5 +236,4 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
     var strand = design.strands[0];
     expect(strand.name, 'staple1 strand level');
   });
-
 }

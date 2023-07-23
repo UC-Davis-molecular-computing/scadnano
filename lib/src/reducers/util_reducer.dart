@@ -33,4 +33,3 @@ GlobalReducer<LocalState, GlobalState> combineGlobalReducers<LocalState, GlobalS
     return local_state;
   };
 }
-

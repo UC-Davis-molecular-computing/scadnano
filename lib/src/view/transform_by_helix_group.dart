@@ -1,4 +1,3 @@
-
 import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';

@@ -33,6 +33,7 @@ mixin DesignMainStrandInsertionPropsMixin on UiProps {
   String transform;
   Color color;
   bool selected;
+  bool display_reverse_DNA_right_side_up;
   num svg_position_y;
 
   Insertion get insertion => selectable_insertion.insertion;
@@ -55,7 +56,8 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       classname += ' ' + constants.css_selector_scaffold;
     }
 
-    Point<num> pos = props.helix.svg_base_pos(props.insertion.offset, props.domain.forward, props.svg_position_y);
+    Point<num> pos =
+        props.helix.svg_base_pos(props.insertion.offset, props.domain.forward, props.svg_position_y);
     ReactElement insertion_background = _insertion_background(pos);
     ReactElement insertion_path = _insertion_path();
     ReactElement text_num_insertions = _text_number_of_insertions(pos);
@@ -88,6 +90,10 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
 
     num dx1 = geometry.base_width_svg;
     num dx2 = 0.5 * geometry.base_width_svg;
+    if (props.display_reverse_DNA_right_side_up && !props.domain.forward) {
+      dx1 = -dx1;
+      dx2 = -dx2;
+    }
     num dy1 = 2 * geometry.base_height_svg;
     num dy2 = 2 * geometry.base_height_svg;
     if (props.domain.forward) {

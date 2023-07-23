@@ -6,14 +6,16 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/dna_file_type.dart';
-import 'package:scadnano/src/json_serializable.dart';
-import 'package:scadnano/src/middleware/local_storage.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
-import 'package:scadnano/src/state/geometry.dart';
-import 'package:scadnano/src/state/undo_redo.dart';
+import '../dna_file_type.dart';
+import '../json_serializable.dart';
+import '../middleware/local_storage.dart';
+import '../middleware/system_clipboard.dart';
+import '../state/design.dart';
+import '../state/dna_end.dart';
+import '../state/export_dna_format_strand_order.dart';
+import '../state/geometry.dart';
+import '../state/undo_redo.dart';
+import '../middleware/export_dna_sequences.dart' as export_dna_sequences;
 import '../state/dialog.dart';
 import '../state/example_designs.dart';
 import '../state/export_dna_format.dart';
@@ -27,6 +29,7 @@ import '../view/menu_boolean.dart';
 import '../view/menu_dropdown_item.dart';
 import '../view/menu_dropdown_right.dart';
 import '../view/menu_form_file.dart';
+import 'design.dart';
 
 import '../app.dart';
 import '../actions/actions.dart' as actions;
@@ -41,20 +44,27 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..selected_ends = state.ui_state.selectables_store.selected_dna_ends
       ..geometry = state.design?.geometry
       ..no_grid_is_none =
-      state.design == null ? false : state.design.groups.values.every((group) => group.grid != Grid.none)
+          state.design == null ? false : state.design.groups.values.every((group) => group.grid != Grid.none)
       ..show_dna = state.ui_state.show_dna
-      ..show_domain_names = state.ui_state.show_domain_names
       ..show_strand_names = state.ui_state.show_strand_names
-      ..domain_name_font_size = state.ui_state.domain_name_font_size
+      ..show_strand_labels = state.ui_state.show_strand_labels
+      ..show_domain_names = state.ui_state.show_domain_names
+      ..show_domain_labels = state.ui_state.show_domain_labels
       ..strand_name_font_size = state.ui_state.strand_name_font_size
+      ..strand_label_font_size = state.ui_state.strand_label_font_size
+      ..domain_name_font_size = state.ui_state.domain_name_font_size
+      ..domain_label_font_size = state.ui_state.domain_label_font_size
       ..show_modifications = state.ui_state.show_modifications
       ..show_mismatches = state.ui_state.show_mismatches
       ..show_domain_name_mismatches = state.ui_state.show_domain_name_mismatches
+      ..show_unpaired_insertion_deletions = state.ui_state.show_unpaired_insertion_deletions
       ..strand_paste_keep_color = state.ui_state.strand_paste_keep_color
       ..zoom_speed = state.ui_state.zoom_speed
       ..autofit = state.ui_state.autofit
       ..only_display_selected_helices = state.ui_state.only_display_selected_helices
 //    ..grid = state.design?.grid
+      ..show_base_pair_lines = state.ui_state.show_base_pair_lines
+      ..show_base_pair_lines_with_mismatches = state.ui_state.show_base_pair_lines_with_mismatches
       ..example_designs = state.ui_state.example_designs
       ..design_has_insertions_or_deletions = state.design?.has_insertions_or_deletions == true
       ..undo_stack_empty = state.undo_redo.undo_stack.isEmpty
@@ -75,9 +85,11 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
       ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
       ..show_helices_axis_arrows = state.ui_state.show_helices_axis_arrows
-      ..show_loopout_length = state.ui_state.show_loopout_length
+      ..show_loopout_extension_length = state.ui_state.show_loopout_extension_length
       ..show_slice_bar = state.ui_state.show_slice_bar
       ..show_mouseover_data = state.ui_state.show_mouseover_data
+      ..disable_png_caching_dna_sequences = state.ui_state.disable_png_caching_dna_sequences
+      ..display_reverse_DNA_right_side_up = state.ui_state.display_reverse_DNA_right_side_up
       ..local_storage_design_choice = state.ui_state.local_storage_design_choice
       ..clear_helix_selection_when_loading_new_design =
           state.ui_state.clear_helix_selection_when_loading_new_design
@@ -97,10 +109,14 @@ mixin MenuPropsMixin on UiProps {
   BuiltSet<DNAEnd> selected_ends;
   bool no_grid_is_none;
   bool show_dna;
-  bool show_domain_names;
   bool show_strand_names;
-  num domain_name_font_size;
+  bool show_strand_labels;
+  bool show_domain_names;
+  bool show_domain_labels;
   num strand_name_font_size;
+  num strand_label_font_size;
+  num domain_name_font_size;
+  num domain_label_font_size;
   num zoom_speed;
   bool show_modifications;
   num modification_font_size;
@@ -109,6 +125,7 @@ mixin MenuPropsMixin on UiProps {
   bool modification_display_connector;
   bool show_mismatches;
   bool show_domain_name_mismatches;
+  bool show_unpaired_insertion_deletions;
   bool strand_paste_keep_color;
   bool autofit;
   bool only_display_selected_helices;
@@ -117,6 +134,8 @@ mixin MenuPropsMixin on UiProps {
   bool undo_stack_empty;
   bool redo_stack_empty;
   bool enable_copy;
+  bool show_base_pair_lines;
+  bool show_base_pair_lines_with_mismatches;
   bool display_of_major_ticks_offsets;
   bool display_base_offsets_of_major_ticks_only_first_helix;
   bool display_major_tick_widths;
@@ -127,9 +146,11 @@ mixin MenuPropsMixin on UiProps {
   bool show_helix_components_main_view;
   bool show_grid_coordinates_side_view;
   bool show_helices_axis_arrows;
-  bool show_loopout_length;
+  bool show_loopout_extension_length;
   bool show_slice_bar;
   bool show_mouseover_data;
+  bool disable_png_caching_dna_sequences;
+  bool display_reverse_DNA_right_side_up;
   bool default_crossover_type_scaffold_for_setting_helix_rolls;
   bool default_crossover_type_staple_for_setting_helix_rolls;
   LocalStorageDesignChoice local_storage_design_choice;
@@ -218,7 +239,7 @@ If checked, before attempting to close or refresh the page, if the design has
 changed since it was last saved, a warning dialog is displayed to ask if you
 really want to exit without saving.'''
         ..onChange =
-        ((_) => props.dispatch(actions.WarnOnExitIfUnsavedSet(warn: !props.warn_on_exit_if_unsaved)))
+            ((_) => props.dispatch(actions.WarnOnExitIfUnsavedSet(warn: !props.warn_on_exit_if_unsaved)))
         ..key = 'warn-on-exit-if-unsaved')(),
       DropdownDivider({'key': 'divider-save'}),
       (MenuFormFile()
@@ -248,9 +269,8 @@ Clear the stored design, reset all local settings, and reload the page.'''
       (MenuBoolean()
         ..value = props.clear_helix_selection_when_loading_new_design
         ..display = 'Clear helix selection when loading new design'
-        ..onChange = ((_) =>
-            props.dispatch(actions.ClearHelixSelectionWhenLoadingNewDesignSet(
-                clear: !props.clear_helix_selection_when_loading_new_design)))
+        ..onChange = ((_) => props.dispatch(actions.ClearHelixSelectionWhenLoadingNewDesignSet(
+            clear: !props.clear_helix_selection_when_loading_new_design)))
         ..tooltip = '''\
 If checked, the selected helices will be clear when loading a new design.
 Otherwise, helix selection is not cleared, meaning that all the selected helices in the current
@@ -259,8 +279,7 @@ design will be selected (based on helix index) on the loaded design.'''
     ]);
   }
 
-  ReactElement file_menu_save_design_local_storage_options() =>
-      (MenuDropdownRight()
+  ReactElement file_menu_save_design_local_storage_options() => (MenuDropdownRight()
         ..title = 'Local storage design save options'
         ..id = 'file_menu_local-storage-options'
         ..key = 'file_menu_local-storage-options'
@@ -272,10 +291,8 @@ design will be selected (based on helix index) on the loaded design.'''
 On every edit, save current design in localStorage (in your web browser).
 
 Disabling this minimizes the time needed to render large designs.'''
-          ..onChange = ((_) =>
-              props.dispatch(
-                  actions.LocalStorageDesignChoiceSet(
-                      choice: props.local_storage_design_choice.to_on_edit())))
+          ..onChange = ((_) => props.dispatch(
+              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_on_edit())))
           ..key = 'save-dna-design-in-local-storage')(),
         (MenuBoolean()
           ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.on_exit
@@ -284,10 +301,8 @@ Disabling this minimizes the time needed to render large designs.'''
 Before exiting, save current design in localStorage (in your web browser). 
 For large designs, this is faster than saving on every edit, but if the browser crashes, 
 all changes made will be lost, so it is not as safe as storing on every edit.'''
-          ..onChange = ((_) =>
-              props.dispatch(
-                  actions.LocalStorageDesignChoiceSet(
-                      choice: props.local_storage_design_choice.to_on_exit())))
+          ..onChange = ((_) => props.dispatch(
+              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_on_exit())))
           ..key = 'save-dna-design-in-local-storage-on-exit')(),
         (MenuBoolean()
           ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.never
@@ -297,9 +312,8 @@ Never saves the design in localStorage.
 
 WARNING: you must save your design manually by pressing Ctrl+S or selecting 
 File-->Save, or your design will be lost when you close the browser tab.'''
-          ..onChange = ((_) =>
-              props.dispatch(
-                  actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_never())))
+          ..onChange = ((_) => props.dispatch(
+              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_never())))
           ..key = 'never-save-dna-design-in-local-storage')(),
         (MenuBoolean()
           ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.periodic
@@ -309,10 +323,8 @@ Every <period> seconds, save current design in localStorage (in your web browser
 Also saves before exiting.
 This is safer than never saving, or saving only before exiting, but will not save edits
 that occurred between the last save and a browser crash.'''
-          ..onChange = ((_) =>
-              props.dispatch(
-                  actions.LocalStorageDesignChoiceSet(
-                      choice: props.local_storage_design_choice.to_periodic())))
+          ..onChange = ((_) => props.dispatch(
+              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_periodic())))
           ..key = 'save-dna-design-in-local-storage-periodically')(),
         (MenuNumber()
           ..display = 'period (seconds)'
@@ -320,9 +332,8 @@ that occurred between the last save and a browser crash.'''
           ..default_value = props.local_storage_design_choice.period_seconds
           ..hide = props.local_storage_design_choice.option != LocalStorageDesignOption.periodic
           ..tooltip = 'Number of seconds between saving design to localStorage.'
-          ..on_new_value = ((num period) =>
-              props.dispatch(actions.LocalStorageDesignChoiceSet(
-                  choice: LocalStorageDesignChoice(LocalStorageDesignOption.periodic, period))))
+          ..on_new_value = ((num period) => props.dispatch(actions.LocalStorageDesignChoiceSet(
+              choice: LocalStorageDesignChoice(LocalStorageDesignOption.periodic, period))))
           ..key = 'period-of-save-dna-design-in-local-storage-periodically')(),
       ]);
 
@@ -354,12 +365,57 @@ that occurred between the last save and a browser crash.'''
         }
         ..display = 'Copy'
         ..keyboard_shortcut = 'Ctrl+C'
+        ..tooltip = '''\
+Copy the currently selected strand(s). They can be pasted into this design,
+or into another design in another browser or tab. You can also paste into
+a text document to see a JSON description of the copied strand(s).'''
         ..disabled = !props.enable_copy)(),
       (MenuDropdownItem()
         ..on_click =
-        ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped))
+            ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped))
         ..display = 'Paste'
+        ..tooltip = '''\
+Paste the previously copied strand(s). They can be pasted into this design,
+or into another design in another browser or tab. You can also paste into
+a text document to see a JSON description of the copied strand(s).
+'''
         ..keyboard_shortcut = 'Ctrl+V')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => paste_strands_auto())
+        ..display = 'Autopaste'
+        ..tooltip = '''\
+This automatically pastes copied strands to an automatically selected position 
+in the design, which can be faster to create many copies of strand(s) than
+manually selecting each position to paste. First copy some strand(s), then 
+manually paste them using the menu Edit-->Paste or pressing Ctrl+V. Once this
+is done once, by selecting Edit-->Autopaste (or pressing Shift+Ctrl+V), 
+another copy of the same strand(s) are pasted, in the same "direction" as the
+first paste.
+
+For example, if the first paste was one helix down from the the copied strand(s),
+and 10 offset positions to the right, then Autopaste will make the next paste
+also one helix down from the first paste, and 10 offset positions to its right.
+
+You can also Autopaste immediately after copying, without having pasted first,
+with some default direction chosen. Play with it and see!
+'''
+        ..keyboard_shortcut = 'Ctrl+Shift+V')(),
+      ///////////////////////////////////////////////////////////////
+      // select all
+      DropdownDivider({}),
+      (MenuDropdownItem()
+        ..on_click =
+            ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.A, ctrlKey: true).wrapped))
+        ..display = 'Select All'
+        ..tooltip = '''\
+Select all strands in the design.'''
+        ..keyboard_shortcut = 'Ctrl+A')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.SelectAllSelectable(current_helix_group_only: true)))
+        ..display = 'Select All in Helix Group'
+        ..tooltip = '''\
+Select all selectable strands in the current helix group.'''
+        ..keyboard_shortcut = 'Ctrl+Shift+A')(),
       ///////////////////////////////////////////////////////////////
       // pasted strands keep original color
       DropdownDivider({}),
@@ -370,7 +426,7 @@ that occurred between the last save and a browser crash.'''
 If checked, when copying and pasting a strand, the color is preserved.
 If unchecked, then a new color is generated.'''
         ..onChange =
-        ((_) => props.dispatch(actions.StrandPasteKeepColorSet(keep: !props.strand_paste_keep_color))))(),
+            ((_) => props.dispatch(actions.StrandPasteKeepColorSet(keep: !props.strand_paste_keep_color))))(),
       ///////////////////////////////////////////////////////////////
       // inline insertions/deletions
       DropdownDivider({}),
@@ -378,8 +434,7 @@ If unchecked, then a new color is generated.'''
         ..on_click = ((_) => props.dispatch(actions.InlineInsertionsDeletions()))
         ..display = 'Inline insertions/deletions'
         ..disabled = !props.design_has_insertions_or_deletions
-        ..tooltip = ''
-            '''
+        ..tooltip = '''\
 Remove insertions and deletions from the design and replace them with domains
 whose lengths correspond to the true strand length. Also moves major tick 
 marks on helices so that they are adjacent to the same bases as before.''')(),
@@ -388,12 +443,12 @@ marks on helices so that they are adjacent to the same bases as before.''')(),
       // Connect selected ends by crossovers
       DropdownDivider({}),
       (MenuDropdownItem()
-      // ..on_click = ((_) => connect_ends_by_crossovers(props.selected_ends))
+        // ..on_click = ((_) => connect_ends_by_crossovers(props.selected_ends))
         ..on_click = ((_) => props.dispatch(actions.JoinStrandsByMultipleCrossovers()))
         ..display = 'Connect selected ends by crossovers'
         ..disabled = props.selected_ends.isEmpty
-        ..tooltip = ''
-            '''Connect selected ends by crossovers. 
+        ..tooltip = '''\
+Connect selected ends by crossovers. 
 
 Ends are connected by crossovers as follows. Within each HelixGroup: 
 
@@ -412,9 +467,7 @@ to the first end e2 after it in this order, if
         ..display = 'Set helix coordinates based on crossovers'
         ..disabled = props.no_grid_is_none
         ..tooltip = '''\
-The grid must be set to none to enable this.${props.no_grid_is_none
-            ? " (Currently disabled since the grid is not none.)"
-            : ""}
+The grid must be set to none to enable this.${props.no_grid_is_none ? " (Currently disabled since the grid is not none.)" : ""}
 
 Select some crossovers and some helices. If no helices are selected, then all
 helices are processed. At most one crossover between pairs of adjacent (in
@@ -546,18 +599,20 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
       ..on_click = (_) => app.dispatch(undo_or_redo_action_creator(num_times)))();
   }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // view menu
 
   view_menu() {
     var elts = [
-      view_menu_show_dna(),
+      view_menu_warnings(),
+      // view_menu_show_dna(),
       view_menu_autofit(),
       view_menu_show_labels(),
       view_menu_mods(),
       view_menu_helices(),
       view_menu_display_major_ticks_options(),
+      view_menu_base_pairs(),
+      view_menu_dna(),
       DropdownDivider({'key': 'divider-major-tick-widths'}),
       ...view_menu_zoom_speed(),
       DropdownDivider({'key': 'divider-zoom_speed'}),
@@ -580,7 +635,7 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
         ..tooltip = '''\
 The side and main views will be translated to fit the current design in the window.
 '''
-        ..on_click = (_){
+        ..on_click = (_) {
           util.fit_and_center();
           util.dispatch_set_zoom_threshold(true);
         }
@@ -606,21 +661,12 @@ To autofit the current design without reloading, click "Auto-fit current design"
     ]);
   }
 
-  ReactElement view_menu_show_dna() {
+  ReactElement view_menu_warnings() {
     return (MenuDropdownRight()
-      ..title = 'DNA sequences'
-      ..id = 'view_menu_show_dna-dropdown'
-      ..key = 'view_menu_show_dna-dropdown'
+      ..title = 'Warnings'
+      ..id = 'view_menu_show_warnings'
+      ..key = 'view_menu_show_warnings'
       ..className = 'submenu_item')([
-      (MenuBoolean()
-        ..value = props.show_dna
-        ..display = 'Show DNA sequences'
-        ..tooltip = '''\
-Show DNA sequences that have been assigned to strands. In a large design, this
-can slow down the performance of panning and zooming navigation, so uncheck it
-to speed up navigation.'''
-        ..onChange = ((_) => props.dispatch(actions.ShowDNASet(!props.show_dna)))
-        ..key = 'show-dna-sequences')(),
       (MenuBoolean()
         ..value = props.show_mismatches
         ..display = 'Show DNA base mismatches'
@@ -631,12 +677,34 @@ helix with the opposite orientation.'''
           props.dispatch(actions.ShowMismatchesSet(!props.show_mismatches));
         }
         ..key = 'show-mismatches')(),
+      (MenuBoolean()
+        ..value = props.show_domain_name_mismatches
+        ..display = 'Show domain name mismatches'
+        ..tooltip = '''\
+Show mismatches between domain names assigned to one strand and the strand on the same
+helix with the opposite orientation.'''
+        ..onChange = (_) {
+          props.dispatch(actions.ShowDomainNameMismatchesSet(!props.show_domain_name_mismatches));
+        }
+        ..key = 'show-domain-name-mismatches')(),
+      (MenuBoolean()
+        ..value = props.show_unpaired_insertion_deletions
+        ..display = 'Show unpaired insertion/deletions'
+        ..tooltip = '''\
+Show unpaired deletions and insertions. This is defined to be an insertion/deletion on
+a strand, where another strand is at the same (helix,offset) (in the opposite direction),
+which lacks the insertion/deletion. It does NOT show a warning if there is no other
+strand at the same (helix,offset).'''
+        ..onChange = (_) {
+          props.dispatch(actions.ShowUnpairedInsertionDeletionsSet(!props.show_unpaired_insertion_deletions));
+        }
+        ..key = 'show-unpaired-insertion-deletions')(),
     ]);
   }
 
   ReactElement view_menu_show_labels() {
     return (MenuDropdownRight()
-      ..title = 'Strand/domain names'
+      ..title = 'Strand/domain names/labels'
       ..id = 'view_menu_show_labels-dropdown'
       ..key = 'view_menu_show_labels-dropdown'
       ..className = 'submenu_item')([
@@ -650,10 +718,24 @@ helix with the opposite orientation.'''
         ..display = 'strand name font size'
         ..default_value = props.strand_name_font_size
         ..hide = !props.show_strand_names
-        ..tooltip = 'Adjust to change the font size of strand name.'
+        ..tooltip = 'Adjust the font size of strand names.'
         ..on_new_value =
-        ((num font_size) => props.dispatch(actions.StrandNameFontSizeSet(font_size: font_size)))
+            ((num font_size) => props.dispatch(actions.StrandNameFontSizeSet(font_size: font_size)))
         ..key = 'strand-name-font-size')(),
+      (MenuBoolean()
+        ..value = props.show_strand_labels
+        ..display = 'Show strand labels'
+        ..tooltip = "Show strand labels near 5' domain of strand."
+        ..onChange = ((_) => props.dispatch(actions.ShowStrandLabelsSet(!props.show_strand_labels)))
+        ..key = 'show-strand-label')(),
+      (MenuNumber()
+        ..display = 'strand label font size'
+        ..default_value = props.strand_label_font_size
+        ..hide = !props.show_strand_labels
+        ..tooltip = 'Adjust the font size of strand labels.'
+        ..on_new_value =
+            ((num font_size) => props.dispatch(actions.StrandLabelFontSizeSet(font_size: font_size)))
+        ..key = 'strand-label-font-size')(),
       (MenuBoolean()
         ..value = props.show_domain_names
         ..display = 'Show domain names'
@@ -664,20 +746,24 @@ helix with the opposite orientation.'''
         ..display = 'domain name font size'
         ..default_value = props.domain_name_font_size
         ..hide = !props.show_domain_names
-        ..tooltip = 'Adjust to change the font size of domain and loopout name.'
+        ..tooltip = 'Adjust the font size of domain/loopout/extension names.'
         ..on_new_value =
-        ((num font_size) => props.dispatch(actions.DomainNameFontSizeSet(font_size: font_size)))
+            ((num font_size) => props.dispatch(actions.DomainNameFontSizeSet(font_size: font_size)))
         ..key = 'domain-name-font-size')(),
       (MenuBoolean()
-        ..value = props.show_domain_name_mismatches
-        ..display = 'Show domain name mismatches'
-        ..tooltip = '''\
-Show mismatches between domain names assigned to one strand and the strand on the same
-helix with the opposite orientation.'''
-        ..onChange = (_) {
-          props.dispatch(actions.ShowDomainNameMismatchesSet(!props.show_domain_name_mismatches));
-        }
-        ..key = 'show-domain-name-mismatches')(),
+        ..value = props.show_domain_labels
+        ..display = 'Show domain labels'
+        ..tooltip = "Show domain labels near 5' domain of strand."
+        ..onChange = ((_) => props.dispatch(actions.ShowDomainLabelsSet(!props.show_domain_labels)))
+        ..key = 'show-domain-label')(),
+      (MenuNumber()
+        ..display = 'domain label font size'
+        ..default_value = props.domain_label_font_size
+        ..hide = !props.show_domain_labels
+        ..tooltip = 'Adjust the font size of domain labels.'
+        ..on_new_value =
+            ((num font_size) => props.dispatch(actions.DomainLabelFontSizeSet(font_size: font_size)))
+        ..key = 'domain-label-font-size')(),
     ]);
   }
 
@@ -740,9 +826,8 @@ Shows helix representation in main view. Hiding them hides all view elements
 associated with a helix: grid lines depicting offsets, circles with helix index,
 major tick offsets.'''
         ..name = 'show-helix-components-main-view'
-        ..onChange = ((_) =>
-            props.dispatch(actions.ShowHelixComponentsMainViewSet(
-                show_helix_components: !props.show_helix_components_main_view)))
+        ..onChange = ((_) => props.dispatch(actions.ShowHelixComponentsMainViewSet(
+            show_helix_components: !props.show_helix_components_main_view)))
         ..key = 'show-helix-components-main-view')(),
       (MenuBoolean()
         ..value = props.show_helix_circles_main_view
@@ -754,9 +839,8 @@ designs that have overlapping non-parallel helices.
 To hide all view elements associated with helices (e.g., major ticks),
 toggle "Show main view helices".'''
         ..name = 'show-helix-circles-main-view'
-        ..onChange = ((_) =>
-            props.dispatch(actions.ShowHelixCirclesMainViewSet(
-                show_helix_circles_main_view: !props.show_helix_circles_main_view)))
+        ..onChange = ((_) => props.dispatch(actions.ShowHelixCirclesMainViewSet(
+            show_helix_circles_main_view: !props.show_helix_circles_main_view)))
         ..key = 'show-helix-circles-main-view')(),
     ]);
   }
@@ -779,9 +863,8 @@ toggle "Show main view helices".'''
         ..hide = !props.display_of_major_ticks_offsets
         ..display = '... on all helices'
         ..tooltip = 'Display the integer base offset to the right of each major tick, for all helices.'
-        ..onChange = ((_) =>
-            props.dispatch(actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(
-                !props.display_base_offsets_of_major_ticks_only_first_helix)))
+        ..onChange = ((_) => props.dispatch(actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(
+            !props.display_base_offsets_of_major_ticks_only_first_helix)))
         ..key = 'display-major-tick-offsets-on-all-helices')(),
       (MenuNumber()
         ..display = 'major tick offset font size'
@@ -797,16 +880,15 @@ toggle "Show main view helices".'''
         ..tooltip =
             'Display the number of bases between each adjacent pair of major ticks, on the first helix.'
         ..onChange =
-        ((_) => props.dispatch(actions.SetDisplayMajorTickWidths(!props.display_major_tick_widths)))
+            ((_) => props.dispatch(actions.SetDisplayMajorTickWidths(!props.display_major_tick_widths)))
         ..key = 'display-major-tick-widths')(),
       (MenuBoolean()
         ..value = props.display_major_tick_widths_all_helices
         ..hide = !props.display_major_tick_widths
         ..display = '...on all helices'
         ..tooltip = 'Display the number of bases between each adjacent pair of major ticks, on all helices.'
-        ..onChange = ((_) =>
-            props.dispatch(
-                actions.SetDisplayMajorTickWidthsAllHelices(!props.display_major_tick_widths_all_helices)))
+        ..onChange = ((_) => props.dispatch(
+            actions.SetDisplayMajorTickWidthsAllHelices(!props.display_major_tick_widths_all_helices)))
         ..key = 'display-major-tick-widths-on-all-helices')(),
       (MenuNumber()
         ..display = 'Major tick width font size'
@@ -815,6 +897,62 @@ toggle "Show main view helices".'''
         ..tooltip = 'Adjust to change the font size of major tick offsets.'
         ..on_new_value = ((num font_size) => props.dispatch(actions.MajorTickWidthFontSizeSet(font_size)))
         ..key = 'major-tick-width-font-size')(),
+    ]);
+  }
+
+  ReactElement view_menu_base_pairs() {
+    return (MenuDropdownRight()
+      ..title = 'Base pairs'
+      ..id = 'view_menu_base_pairs'
+      ..key = 'view_menu_base_pairs-dropdown'
+      ..className = 'submenu_item')([
+      (MenuBoolean()
+        ..value = props.show_base_pair_lines
+        ..display = 'Base pair lines'
+        ..tooltip = 'Draw vertical lines between pairs of bases at the same offset on the same helix.'
+        ..onChange = ((_) =>
+            props.dispatch(actions.ShowBasePairLinesSet(show_base_pair_lines: !props.show_base_pair_lines)))
+        ..key = 'base_pair_lines')(),
+      (MenuBoolean()
+        ..value = props.show_base_pair_lines_with_mismatches
+        ..hide = !props.show_base_pair_lines
+        ..display = '... even if bases mismatch'
+        ..tooltip = '''\
+Lines are drawn between all pairs of bases at the same offset on the same helix, 
+regardless of whether the bases are complementary. If unchecked then lines are 
+only shown between pairs of complementary bases.'''
+        ..onChange = ((_) => props.dispatch(actions.ShowBasePairLinesWithMismatchesSet(
+            show_base_pair_lines_with_mismatches: !props.show_base_pair_lines_with_mismatches)))
+        ..key = 'base_pair_lines_mismatches')(),
+    ]);
+  }
+
+  ReactElement view_menu_dna() {
+    return (MenuDropdownRight()
+      ..title = 'DNA'
+      ..id = 'view_menu_dna'
+      ..key = 'view_menu_dna-dropdown'
+      ..className = 'submenu_item')([
+      (MenuBoolean()
+        ..value = props.show_dna
+        ..display = 'DNA sequences'
+        ..tooltip = '''\
+Show DNA sequences that have been assigned to strands. In a large design, this
+can slow down the performance of panning and zooming navigation, so uncheck it
+to speed up navigation.'''
+        ..onChange = ((_) => props.dispatch(actions.ShowDNASet(!props.show_dna)))
+        ..key = 'show-dna-sequences')(),
+      (MenuBoolean()
+        ..value = props.display_reverse_DNA_right_side_up
+        ..display = 'Display reverse DNA right-side up'
+        ..tooltip = '''\
+  Displays DNA right-side up on reverse strands.'''
+        ..name = 'display-reverse-DNA-right-side-up'
+        ..hide = !props.show_dna
+        ..onChange = (_) {
+          props.dispatch(actions.DisplayReverseDNARightSideUpSet(!props.display_reverse_DNA_right_side_up));
+        }
+        ..key = 'display-reverse-DNA-right-side-up')()
     ]);
   }
 
@@ -853,36 +991,33 @@ To inspect how all axes change, check View --> Show axis arrows.'''
         ..tooltip = '''\
 Shows grid coordinates in the side view under the helix index.'''
         ..name = 'show-grid-coordinates-side-view'
-        ..onChange = ((_) =>
-            props.dispatch(actions.ShowGridCoordinatesSideViewSet(
-                show_grid_coordinates_side_view: !props.show_grid_coordinates_side_view)))
+        ..onChange = ((_) => props.dispatch(actions.ShowGridCoordinatesSideViewSet(
+            show_grid_coordinates_side_view: !props.show_grid_coordinates_side_view)))
         ..key = 'show-grid-coordinates-side-view')(),
       (MenuBoolean()
         ..value = props.show_helices_axis_arrows
-        ..display = 'Show axis arrows'
+        ..display = 'Axis arrows'
         ..tooltip = '''\
 Show axis arrows in side and main view
 Red : X-axis
 Green : Y-axis
 Blue : Z-axis'''
         ..name = 'show-helices-axis-arrows'
-        ..onChange = ((_) =>
-            props
-                .dispatch(
-                actions.ShowAxisArrowsSet(show_helices_axis_arrows: !props.show_helices_axis_arrows)))
+        ..onChange = ((_) => props
+            .dispatch(actions.ShowAxisArrowsSet(show_helices_axis_arrows: !props.show_helices_axis_arrows)))
         ..key = 'show-helices-axis-arrows')(),
       (MenuBoolean()
-        ..value = props.show_loopout_length
-        ..display = 'Show loopout lengths'
+        ..value = props.show_loopout_extension_length
+        ..display = 'Loopout/extension lengths'
         ..tooltip = '''\
-When selected, the length of each loopout is displayed next to it.'''
-        ..name = 'show-loopout-length'
-        ..onChange = ((_) =>
-            props.dispatch(actions.ShowLoopoutLengthSet(show_loopout_length: !props.show_loopout_length)))
-        ..key = 'show-loopout-length')(),
+When selected, the length of each loopout and extension is displayed next to it.'''
+        ..name = 'show-loopout-extension-length'
+        ..onChange = ((_) => props.dispatch(
+            actions.ShowLoopoutExtensionLengthSet(show_length: !props.show_loopout_extension_length)))
+        ..key = 'show-loopout-extension-length')(),
       (MenuBoolean()
         ..value = props.show_slice_bar
-        ..display = 'Show slice bar'
+        ..display = 'Slice bar'
         ..tooltip = '''\
 When selected, a slicebar is displayed, which users can drag and move to
 display the DNA backbone angle of all helices at a particular offset.
@@ -894,7 +1029,7 @@ display the DNA backbone angle of all helices at a particular offset.
         ..key = 'show-slice-bar')(),
       (MenuBoolean()
         ..value = props.show_mouseover_data
-        ..display = 'Display strand and helix details in footer'
+        ..display = 'Strand and helix details in footer'
         ..tooltip = '''\
 When selected, the footer will display details about the design based
 on where the cursor is located. If the cursor is on a helix, the helix
@@ -907,7 +1042,23 @@ In a large design, this can slow down the performance, so uncheck it when not in
         ..onChange = (_) {
           props.dispatch(actions.ShowMouseoverDataSet(!props.show_mouseover_data));
         }
-        ..key = 'show-mouseover-data')()
+        ..key = 'show-mouseover-data')(),
+      (MenuBoolean()
+        ..value = props.disable_png_caching_dna_sequences
+        ..display = 'Disable PNG caching of DNA sequences'
+        ..tooltip = '''\
+DNA sequences are displayed as SVG (scaled vector graphics), which slow down the program
+significantly when zoomed far out on a large design and hundreds or thousands of DNA bases 
+are displayed simultaneously. To prevent this, the image of DNA sequences is converted 
+to a PNG image when zoomed out sufficiently far, which is much faster to display.
+
+Select this option to disable this PNG caching of DNA sequences. This can be useful when 
+debugging, but be warned that it will be very slow to render a large number of DNA bases.'''
+        ..name = 'disable-png-caching-dna-sequences'
+        ..onChange = (_) {
+          props.dispatch(actions.DisablePngCachingDnaSequencesSet(!props.disable_png_caching_dna_sequences));
+        }
+        ..key = 'disable-png-caching-dna-sequences')(),
     ];
   }
 
@@ -929,15 +1080,41 @@ In a large design, this can slow down the performance, so uncheck it when not in
         ..tooltip = "Export SVG figure of main view (design shown in center of screen)."
         ..display = 'SVG main view')(),
       (MenuDropdownItem()
-        ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna))
+        ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna_sequences.export_dna))
         ..tooltip = "Export DNA sequences of strands to a file."
         ..display = 'DNA sequences')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.ExportCanDoDNA()))
+        ..tooltip = "Export design's DNA sequences as a CSV in the same way as cadnano v2.\n"
+            "This is useful, for example, with CanDo's atomic model generator."
+        ..display = 'DNA sequences (cadnano v2 format)')(),
       DropdownDivider({'key': 'divider-not-full-design'}),
       (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile()))
+        ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile(whitespace: true)))
         ..tooltip = "Export design to cadnano (version 2) .json file."
         ..display = 'cadnano v2'
         ..key = 'export-cadnano')(),
+      DropdownItem(
+        {
+          'href': 'https://scadnano-python-package.readthedocs.io/en/latest/#interoperability-cadnano-v2',
+          'target': '_blank',
+          'title': """\
+Read constraints that the scadnano design must obey to exportable to cadnano v2.
+The constraints are the same for the scadnano Python package (described at the 
+linked page) as for the web interface.
+"""
+        },
+        'cadnano v2 export instructions',
+      ),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile(whitespace: false)))
+        ..tooltip = """\
+Export design to cadnano (version 2) .json file with no whitespace or newlines.
+This is necessary to use the cadnano file with CanDo, which causes a confusing error 
+cadnano files that have whitespace. ("Bad .json file format is detected in 
+'structure.json'. Or no dsDNA or strand crossovers exist.")"""
+        ..display = 'cadnano v2 no whitespace'
+        ..key = 'export-cadnano-no-whitespace')(),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.OxdnaExport()))
         ..tooltip = "Export design to oxDNA .dat and .top files, which can be loaded in oxDNA or oxView."
@@ -1008,7 +1185,7 @@ In a large design, this can slow down the performance, so uncheck it when not in
       DropdownItem(
         {
           'href':
-          'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/tutorial/tutorial.md',
+              'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/tutorial/tutorial.md',
           'target': '_blank',
         },
         'tutorial (Python scripting)',
@@ -1106,12 +1283,12 @@ However, it may be less stable than the main site.'''
         version_dropdown_items
       ]),
       (MenuDropdownItem()
-        ..on_click = ((_) =>
-            window.alert(''
-                'scadnano is a program for designing synthetic DNA structures such as DNA origami. '
-                '\n\nscadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group. '
-                'Though similar in design, scadnano is distinct from cadnano (https://cadnano.org), '
-                'which is developed and maintained by the Douglas lab (https://bionano.ucsf.edu/) at UCSF.'))
+        ..on_click = ((_) => window.alert(''
+            'scadnano version ${constants.CURRENT_VERSION}'
+            '\n\nscadnano is a program for designing synthetic DNA structures such as DNA origami. '
+            '\n\nscadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group. '
+            'Though similar in design, scadnano is distinct from cadnano (https://cadnano.org), '
+            'which is developed and maintained by the Douglas lab (https://bionano.ucsf.edu/) at UCSF.'))
         ..display = 'About')(),
 //       DropdownItem(
 //         {
@@ -1129,58 +1306,8 @@ However, it may be less stable than the main site.'''
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // helper methods
 
-  Future<void> export_dna() async {
-    List<String> export_options = ExportDNAFormat.values.map((v) => v.toString()).toList();
-    List<String> sort_options = StrandOrder.values.map((v) => v.toString()).toList();
-
-    int idx_include_scaffold = 0;
-    int idx_include_only_selected_strands = 1;
-    int idx_format_str = 2;
-    int idx_sort = 3;
-    int idx_column_major = 4;
-    int idx_strand_order_str = 5;
-
-    List<DialogItem> items = [null, null, null, null, null, null];
-    items[idx_include_scaffold] = DialogCheckbox(label: 'include scaffold', value: false);
-    items[idx_include_only_selected_strands] =
-        DialogCheckbox(label: 'include only selected strands', value: false);
-    items[idx_format_str] = DialogRadio(label: 'designs', options: export_options);
-    items[idx_sort] = DialogCheckbox(label: 'sort strands', value: false);
-    items[idx_column_major] =
-        DialogCheckbox(label: 'column-major order (uncheck for row-major order)', value: true);
-    items[idx_strand_order_str] = DialogRadio(label: 'strand part to sort by', options: sort_options);
-
-    var dialog = Dialog(title: 'export DNA sequences', items: items, disable_when_any_checkboxes_off: {
-      idx_column_major: [idx_sort],
-      idx_strand_order_str: [idx_sort]
-    });
-
-    List<DialogItem> results = await util.dialog(dialog);
-    if (results == null) return;
-
-    bool include_scaffold = (results[idx_include_scaffold] as DialogCheckbox).value;
-    bool include_only_selected_strands = (results[idx_include_only_selected_strands] as DialogCheckbox).value;
-    String format_str = (results[idx_format_str] as DialogRadio).value;
-    bool sort = (results[idx_sort] as DialogCheckbox).value;
-    StrandOrder strand_order = null;
-    bool column_major = true;
-    if (sort) {
-      column_major = (results[idx_column_major] as DialogCheckbox).value;
-      String strand_order_str = (results[idx_strand_order_str] as DialogRadio).value;
-      strand_order = StrandOrder.fromString(strand_order_str);
-    }
-    ExportDNAFormat format = ExportDNAFormat.fromString(format_str);
-
-    props.dispatch(actions.ExportDNA(
-        include_scaffold: include_scaffold,
-        include_only_selected_strands: include_only_selected_strands,
-        export_dna_format: format,
-        strand_order: strand_order,
-        column_major: column_major));
-  }
-
   Future<void> load_example_dialog() async {
-    var dialog = Dialog(title: 'Load example DNA design', items: [
+    var dialog = Dialog(title: 'Load example DNA design', type: DialogType.load_example_dna_design, items: [
       DialogRadio(
         label: 'designs',
         options: props.example_designs.filenames,
@@ -1207,7 +1334,8 @@ Future<void> ask_for_autobreak_parameters() async {
   items[max_length_idx] = DialogInteger(label: 'max length', value: 60);
   items[min_distance_to_xover_idx] = DialogInteger(label: 'min distance to xover', value: 3);
 
-  var dialog = Dialog(title: 'Choose autobreak parameters', items: items);
+  var dialog = Dialog(
+      title: 'Choose autobreak parameters', type: DialogType.choose_autobreak_parameters, items: items);
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 
@@ -1239,7 +1367,8 @@ Future<void> ask_for_geometry(Geometry geometry) async {
   items[minor_groove_angle_idx] =
       DialogFloat(label: 'minor groove angle (degrees)', value: geometry.minor_groove_angle);
 
-  var dialog = Dialog(title: 'adjust geometric parameters', items: items);
+  var dialog = Dialog(
+      title: 'adjust geometric parameters', type: DialogType.adjust_geometric_parameters, items: items);
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 
@@ -1259,8 +1388,8 @@ Future<void> ask_for_geometry(Geometry geometry) async {
   app.dispatch(actions.GeometrySet(geometry: new_geometry));
 }
 
-request_load_file_from_file_chooser(FileUploadInputElement file_chooser,
-    void Function(FileReader, String) onload_callback) {
+request_load_file_from_file_chooser(
+    FileUploadInputElement file_chooser, void Function(FileReader, String) onload_callback) {
   List<File> files = file_chooser.files;
   assert(files.isNotEmpty);
   File file = files[0];

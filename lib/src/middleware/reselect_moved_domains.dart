@@ -33,8 +33,7 @@ reselect_moved_domains_middleware(Store<AppState> store, action, NextDispatcher 
     var new_group = old_design.groups[new_helix.group];
 
     BuiltList<int> new_helices_view_order = new_group.helices_view_order;
-    BuiltMap<int, int> old_helices_view_order_inverse =
-        domains_move.original_helices_view_order_inverse;
+    BuiltMap<int, int> old_helices_view_order_inverse = domains_move.original_helices_view_order_inverse;
 
     // first collect old addresses while design.end_to_substrand is still valid, convert them to
     // their new addresses so we can look them up
@@ -58,7 +57,7 @@ reselect_moved_domains_middleware(Store<AppState> store, action, NextDispatcher 
     Design new_design = store.state.design;
     // if domain polarity switched, the 3' end of each domain will now be where the 5' end was
     BuiltMap<Address, Domain> address_to_domain =
-          domains_move.delta_forward ? new_design.address_3p_to_domain : new_design.address_5p_to_domain;
+        domains_move.delta_forward ? new_design.address_3p_to_domain : new_design.address_5p_to_domain;
     for (var address in addresses) {
       Domain new_domain = address_to_domain[address];
       new_domains.add(new_domain);

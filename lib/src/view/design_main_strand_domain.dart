@@ -7,6 +7,7 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
 import 'package:scadnano/src/state/modification_type.dart';
+import 'package:scadnano/src/state/substrand.dart';
 import 'package:scadnano/src/view/transform_by_helix_group.dart';
 
 import '../state/strand.dart';
@@ -32,8 +33,7 @@ UiFactory<DesignMainDomainProps> DesignMainDomain = _$DesignMainDomain;
 @Props()
 mixin DesignMainDomainPropsMixin on UiProps {
   Domain domain;
-  Color color;
-  String dna_sequence;
+  Color strand_color;
 
   Helix helix;
   String strand_tooltip;
@@ -42,7 +42,7 @@ mixin DesignMainDomainPropsMixin on UiProps {
   Point<num> helix_svg_position;
 
   List<ContextMenuItem> Function(Strand strand,
-      {@required Domain domain,
+      {@required Substrand substrand,
       @required Address address,
       @required ModificationType type}) context_menu_strand;
 
@@ -76,6 +76,8 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
       classname += ' ' + constants.css_selector_scaffold;
     }
 
+    var color = domain.color ?? props.strand_color;
+
     return (Dom.line()
       ..className = classname
       ..onClick = _handle_click_for_nick_insertion_deletion
@@ -90,7 +92,7 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
       ..onMouseMove = ((event) => util.update_mouseover(event, props.helix, props.helix_svg_position))
       ..onPointerDown = handle_click_down
       ..onPointerUp = handle_click_up
-      ..stroke = props.color.toHexColor().toCssString()
+      ..stroke = color.toHexColor().toCssString()
       ..transform = props.transform
       ..x1 = '${start_svg.x}'
       ..y1 = '${start_svg.y}'
@@ -185,7 +187,8 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
           event, props.helix, props.groups[props.helix.group], props.geometry, props.helix_svg_position);
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
-              items: props.context_menu_strand(props.strand, domain: props.domain, address: address).build(),
+              items:
+                  props.context_menu_strand(props.strand, substrand: props.domain, address: address).build(),
               position: event.page)));
     }
   }

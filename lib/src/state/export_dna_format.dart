@@ -94,14 +94,29 @@ StrandComparison strands_comparison_function(StrandOrder strand_order, bool colu
 
 /// Format of exported DNA sequences
 class ExportDNAFormat extends EnumClass {
+  static const tooltips = [
+    """\
+Format for IDT's "bulk input" webpage when specifying strands
+in individual test tubes.
+""",
+    """\
+Excel file formatted for IDT's plate upload webpage for 96-well plates.
+""",
+    """\
+Excel file formatted for IDT's plate upload webpage for 384-well plates.
+""",
+    """\
+Simple CSV (comma-separated value) format. Not a format used by any biotech company.""",
+  ];
+
   const ExportDNAFormat._(String name) : super(name);
 
   static Serializer<ExportDNAFormat> get serializer => _$exportDNAFormatSerializer;
 
-  static const ExportDNAFormat csv = _$csv;
   static const ExportDNAFormat idt_bulk = _$idt_bulk;
   static const ExportDNAFormat idt_plates96 = _$idt_plates96;
   static const ExportDNAFormat idt_plates384 = _$idt_plates384;
+  static const ExportDNAFormat csv = _$csv;
 
   static BuiltSet<ExportDNAFormat> get values => _$values;
 
@@ -166,17 +181,21 @@ class ExportDNAFormat extends EnumClass {
     throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
   }
 
-
   /// Output object (String if text file; Future<List<int>> if binary) representing list of Strands
   /// I couldn't see a way to export Excel files synchronously, since they require loading an
   /// existing Excel file from a local resource using an HttpRequest, which is asynchronous.
   /// So export returns a Future<List<int>> if calling idt_plates_export and a String (with text file
   /// contents) otherwise. The caller needs to check the return type, or the type of this,
   /// to determine whether to use the return value directly or to wait for it asynchronously.
-  export(Iterable<Strand> strands, {StrandOrder strand_order = null, bool column_major = true}) {
+  export(
+    Iterable<Strand> strands, {
+    StrandOrder strand_order = null,
+    bool column_major_strand = true,
+    bool column_major_plate = true,
+  }) {
     List<Strand> strands_sorted = strands.toList();
     if (strand_order != null) {
-      StrandComparison compare = strands_comparison_function(strand_order, column_major);
+      StrandComparison compare = strands_comparison_function(strand_order, column_major_strand);
       strands_sorted.sort(compare);
     }
 
@@ -187,9 +206,9 @@ class ExportDNAFormat extends EnumClass {
         case idt_bulk:
           return idt_bulk_export(strands_sorted);
         case idt_plates96:
-          return idt_plates_export(strands_sorted, PlateType.wells96);
+          return idt_plates_export(strands_sorted, PlateType.wells96, column_major_plate);
         case idt_plates384:
-          return idt_plates_export(strands_sorted, PlateType.wells384);
+          return idt_plates_export(strands_sorted, PlateType.wells384, column_major_plate);
       }
     } on ExportDNAException catch (e) {
       throw e;
@@ -218,12 +237,13 @@ String csv_export(Iterable<Strand> strands) {
 String idt_sequence_null_aware(Strand strand) => strand.idt_dna_sequence ?? '*****NONE*****';
 
 String idt_bulk_export(Iterable<Strand> strands, {String scale = '25nm', String purification = 'STD'}) {
-  var lines = strands
-      .map((strand) => '${strand.idt_export_name()},${idt_sequence_null_aware(strand)},${scale},${purification}');
+  var lines = strands.map(
+      (strand) => '${strand.idt_export_name()},${idt_sequence_null_aware(strand)},${scale},${purification}');
   return lines.join('\n');
 }
 
-Future<List<int>> idt_plates_export(Iterable<Strand> strands, PlateType plate_type) async {
+Future<List<int>> idt_plates_export(
+    Iterable<Strand> strands, PlateType plate_type, bool column_major_plate) async {
   var plate_coord = _PlateCoordinate(plate_type);
   int plate = 1;
   int excel_row = 1;
@@ -273,7 +293,7 @@ Future<List<int>> idt_plates_export(Iterable<Strand> strands, PlateType plate_ty
         num_strands_remaining == min_strands_per_plate) {
       plate_coord.advance_to_next_plate();
     } else {
-      plate_coord.increment();
+      plate_coord.increment(column_major_plate);
     }
 
     if (plate != plate_coord.plate) {
@@ -351,14 +371,26 @@ class _PlateCoordinate {
 
   _PlateCoordinate(this.plate_type);
 
-  increment() {
-    row_idx++;
-    if (row_idx == rows_of(plate_type).length) {
-      row_idx = 0;
+  increment(bool column_major) {
+    if (column_major) {
+      row_idx++;
+      if (row_idx == rows_of(plate_type).length) {
+        row_idx = 0;
+        col_idx++;
+        if (col_idx == cols_of(plate_type).length) {
+          col_idx = 0;
+          plate++;
+        }
+      }
+    } else {
       col_idx++;
       if (col_idx == cols_of(plate_type).length) {
         col_idx = 0;
-        plate++;
+        row_idx++;
+        if (row_idx == rows_of(plate_type).length) {
+          row_idx = 0;
+          plate++;
+        }
       }
     }
   }

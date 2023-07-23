@@ -2,44 +2,34 @@ echo "type"
 echo "  ./test.sh -h"
 echo "to display options"
 
-#TODO: don't know how to prevent this check from printing error message to the screen in case pub isn't found
-if type pub > /dev/null; then
-  PUB=pub
-  echo "Using pub as dart pub command"
-else 
-  # on Windows the pub command is called pub.bat
-  PUB=pub.bat
-  echo "Using pub.bat as dart pub command"
-fi
-
 if [ "$1" == "--debug" ] || [ "$1" == "-d" ]; then
   if [ "$2" == "-n" ]; then
     echo "running"
-    echo "    $PUB run build_runner test -- -n $3 -P debug"
-    $PUB run build_runner test -- -n $3 -P debug
+    echo "    dart run build_runner test -- -n $3 -P debug"
+    dart run build_runner test -- -n $3 -P debug
   else
     echo "running"
-    echo "    $PUB run build_runner test -- -P debug"
-    $PUB run build_runner test -- -P debug
+    echo "    dart run build_runner test -- -P debug"
+    dart run build_runner test -- -P debug
   fi
 elif [ "$1" == "--test" ] || [ "$1" == "-t" ]; then
   echo "running"
-  echo "    $PUB run build_runner test -- $2"
-  $PUB run build_runner test -- $2
+  echo "    dart run build_runner test -- $2"
+  dart run build_runner test -- $2
 elif [ "$1" == "-n" ]; then
   if [ "$3" == "-d" ]; then
     echo "running"
-    echo "    $PUB run build_runner test -- -n $2 -P debug"
-    $PUB run build_runner test -- -n $2 -P debug
+    echo "    dart run build_runner test -- -n $2 -P debug"
+    dart run build_runner test -- -n $2 -P debug
   else
     echo "running"
-    echo "    $PUB run build_runner test -- -n $2"
-    $PUB run build_runner test -- -n $2
+    echo "    dart run build_runner test -- -n $2"
+    dart run build_runner test -- -n $2
   fi
 elif [ "$1" == "-td" ] || [ "$1" == "-dt" ]; then
   echo "running"
-  echo "    $PUB run build_runner test -- $2 -P debug"
-  $PUB run build_runner test -- $2 -P debug
+  echo "    dart run build_runner test -- $2 -P debug"
+  dart run build_runner test -- $2 -P debug
 elif [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
   echo
   echo "Usage: bash test.sh [OPTION]"
@@ -61,6 +51,6 @@ elif [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
   echo "                  so Chrome DevTools are available."
 else
   echo "running"
-  echo "    $PUB run build_runner test"
-  $PUB run build_runner test
+  echo "    dart run build_runner test"
+  dart run build_runner test
 fi
