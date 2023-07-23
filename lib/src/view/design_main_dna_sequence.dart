@@ -86,8 +86,8 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       }
     }
     return (Dom.g()
-    ..className = 'strand-dna-sequence'
-    ..id = 'dna-sequence-${this.props.strand.id}')(dna_sequence_elts);
+      ..className = 'strand-dna-sequence'
+      ..id = 'dna-sequence-${this.props.strand.id}')(dna_sequence_elts);
   }
 
   static const classname_dna_sequence = 'dna-seq';

@@ -927,9 +927,7 @@ abstract class LoadingDialogHide
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Copy SVG to clipboard
 
-abstract class CopySVG
-    with BuiltJsonSerializable
-    implements Action, Built<CopySVG, CopySVGBuilder> {
+abstract class CopySVG with BuiltJsonSerializable implements Action, Built<CopySVG, CopySVGBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory CopySVG([void Function(CopySVGBuilder) updates]) = _$CopySVG;
 

@@ -1097,19 +1097,19 @@ copy_svg_as_png(SvgSvgElement svg_element) async {
     var svgImage = new ImageElement(src: svgUrl);
     document.body.append(svgImage);
     svgImage.addEventListener('load', (event) async {
-        var canvas = new CanvasElement();
-        canvas.width = svg_element.viewBox.baseVal.width * 2;
-        canvas.height = svg_element.viewBox.baseVal.height * 2;
-        var canvasCtx = canvas.context2D;
-        canvasCtx.drawImage(svgImage, 0, 0);
-        var imgData = await canvas.toBlob('image/png');
-        clipboard_write('image/png', imgData);
-        svgImage.remove();
+      var canvas = new CanvasElement();
+      canvas.width = svg_element.viewBox.baseVal.width * 2;
+      canvas.height = svg_element.viewBox.baseVal.height * 2;
+      var canvasCtx = canvas.context2D;
+      canvasCtx.drawImage(svgImage, 0, 0);
+      var imgData = await canvas.toBlob('image/png');
+      clipboard_write('image/png', imgData);
+      svgImage.remove();
 
-        Url.revokeObjectUrl(svgUrl);
+      Url.revokeObjectUrl(svgUrl);
     });
     svgImage.src = svgUrl;
-    
+
     // window.navigator.clipboard.write(DataTransfer()..setData(blob_type_string, content));
 
   } on Exception catch (e, stackTrace) {

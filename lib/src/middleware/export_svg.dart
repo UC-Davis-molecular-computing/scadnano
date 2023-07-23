@@ -63,11 +63,10 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
 }
 
 _export_svg(svg.SvgSvgElement svg_element, String filename_append) {
-
-    var serializer = new XmlSerializer();
-    var source = serializer.serializeToString(svg_element);
+  var serializer = new XmlSerializer();
+  var source = serializer.serializeToString(svg_element);
   //clipboard.write(source);
-    //add name spaces.
+  //add name spaces.
   //    if(!source.match(r'/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)') {
   //      source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
   //    }
@@ -75,31 +74,33 @@ _export_svg(svg.SvgSvgElement svg_element, String filename_append) {
   //      source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
   //    }
 
-    //add xml declaration
+  //add xml declaration
   //  source = '<?xml version="1.1" standalone="no"?>\r\n' + source;
 
-    //convert svg source to URI data scheme.
+  //convert svg source to URI data scheme.
   //  var url = "data:image/svg+xml;charset=utf-8," + Uri.encodeComponent(source);
 
   //  String blob_type = "data:image/svg+xml;charset=utf-8,";
 
-    String filename = app.state.ui_state.loaded_filename;
-    filename = filename.substring(0, filename.lastIndexOf('.'));
-    filename += '_${filename_append}.svg';
+  String filename = app.state.ui_state.loaded_filename;
+  filename = filename.substring(0, filename.lastIndexOf('.'));
+  filename += '_${filename_append}.svg';
 
-    util.save_file(filename, source, blob_type: util.BlobType.image);
+  util.save_file(filename, source, blob_type: util.BlobType.image);
 }
 
 _copy_from_elements(List<Element> svg_elements) {
-  var cloned_svg_element_with_style = SvgSvgElement()..children = svg_elements.map(clone_and_apply_style).toList();
+  var cloned_svg_element_with_style = SvgSvgElement()
+    ..children = svg_elements.map(clone_and_apply_style).toList();
 
   // we can't get bbox without it being added to the DOM first
   document.body.append(cloned_svg_element_with_style);
   var bbox = cloned_svg_element_with_style.getBBox();
   cloned_svg_element_with_style.remove();
 
-  // have to add some padding to viewbox, for some reason bbox doesn't always fit it by a few pixels?? 
-  cloned_svg_element_with_style.setAttribute('viewBox', '${bbox.x.floor() - 1} ${bbox.y.floor() - 1} ${bbox.width.ceil() + 3} ${bbox.height.ceil() + 3}');
+  // have to add some padding to viewbox, for some reason bbox doesn't always fit it by a few pixels??
+  cloned_svg_element_with_style.setAttribute('viewBox',
+      '${bbox.x.floor() - 1} ${bbox.y.floor() - 1} ${bbox.width.ceil() + 3} ${bbox.height.ceil() + 3}');
 
   util.copy_svg_as_png(cloned_svg_element_with_style);
 }
@@ -147,12 +148,11 @@ Element clone_and_apply_style(Element elt_orig) {
   Element elt_styled = elt_orig.clone(true);
 
   bool selected = elt_orig.classes.contains('selected');
-  
+
   elt_orig.classes.remove('selected');
   clone_and_apply_style_rec(elt_styled, elt_orig);
-  
-  if (selected) 
-    elt_orig.classes.add('selected');
+
+  if (selected) elt_orig.classes.add('selected');
 
   // need to get from original since it has been rendered (styled hasn't been rendered so has 0 bounding box
   // also need to get from g element, not svg element, since svg element dimensions based on original
