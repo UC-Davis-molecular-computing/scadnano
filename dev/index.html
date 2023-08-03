@@ -124,6 +124,18 @@
 
 <script type="text/javascript">
 
+    // for copying svg as png in Dart; some reason, Dart:HTML's navigator.clipboard.write is faulty
+    function clipboard_write(blob_type_string, blob) {
+        try {
+            navigator.clipboard.write([
+                new ClipboardItem({
+                    [blob_type_string]: blob
+                })
+            ]);
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     function setup_splits(show_editor) {
         setup_split_drag('side-pane', 'main-pane', 'side-main-separator');
