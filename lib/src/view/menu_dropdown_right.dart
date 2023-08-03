@@ -17,21 +17,24 @@ mixin MenuDropdownRightProps on UiProps {
 }
 
 mixin MenuDropdownRightState on UiState {
+  num top;
   Ref<DivElement> HTML_element;
 }
 
 class MenuDropdownRightComponent
     extends UiStatefulComponent2<MenuDropdownRightProps, MenuDropdownRightState> {
   @override
-  Map get initialState => (newState()..HTML_element = createRef());
+  Map get initialState => (newState()
+    ..HTML_element = createRef()
+    ..top = null);
 
   @override
   get defaultProps => (newProps()..disabled = false);
 
-  // once component mounts and HTML_element has a reference assigned, force a re-render to set proper css styling
+  // once component mounts and HTML_element has a reference assigned, save top coord to set proper css styling
   @override
   void componentDidMount() {
-    forceUpdate();
+    setState(state..top = state.HTML_element.current.getBoundingClientRect().top);
   }
 
   @override
@@ -44,9 +47,9 @@ class MenuDropdownRightComponent
       'disabled': props.disabled,
       'ref': state.HTML_element,
       /* set some custom CSS props so dropright divs know how much to shift themselves upwards */
-      'style': state.HTML_element.current != null
+      'style': state.top != null
           ? {
-              '--offset-top': '${state.HTML_element.current.getBoundingClientRect().top}px',
+              '--offset-top': '${state.top}px',
               '--overflow-y': props.disallow_overflow == true ? 'auto' : 'visible'
             }
           : {}

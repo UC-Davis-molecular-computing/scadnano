@@ -68,7 +68,7 @@ class DesignMainDNAMismatchesComponent extends UiComponent2<DesignMainDNAMismatc
         if (domain_components.isNotEmpty) {
           mismatch_components.add((Dom.g()
             ..transform = transform_str
-            ..className = 'mismatch-components-in-domain'
+            ..className = 'mismatch-components-in-domain mismatch-${strand.id}'
             ..key = util.id_domain(domain))(domain_components));
         }
       }
