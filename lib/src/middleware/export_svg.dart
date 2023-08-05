@@ -40,9 +40,10 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
           var elt = document.getElementById("main-view-svg");
           if (action.type == actions.ExportSvgType.selected) {
             List<Element> selected_elts = get_selected_strands(store);
-            if (selected_elts.length == 0)
-              window.alert("No strands are selected, there is nothing to export!");
-            else {
+            if (selected_elts.length == 0) {
+              window.alert("No strands are selected, there is nothing to export.\n"
+                  "Please select some strands before choosing this option.");
+            } else {
               var cloned_svg_element_with_style = get_cloned_svg_element_with_style(selected_elts);
               _export_from_element(cloned_svg_element_with_style, 'selected');
             }
@@ -63,7 +64,7 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
   }
 }
 
-get_selected_strands(Store<AppState> store) {
+List<Element> get_selected_strands(Store<AppState> store) {
   var selected_strands = store.state.ui_state.selectables_store.selected_strands;
   List<Element> selected_elts = [];
   if (selected_strands.length != 0) {
@@ -77,7 +78,7 @@ get_selected_strands(Store<AppState> store) {
   return selected_elts;
 }
 
-get_cloned_svg_element_with_style(List<Element> selected_elts) {
+SvgSvgElement get_cloned_svg_element_with_style(List<Element> selected_elts) {
   var cloned_svg_element_with_style = SvgSvgElement()
     ..children = selected_elts.map(clone_and_apply_style).toList();
 
