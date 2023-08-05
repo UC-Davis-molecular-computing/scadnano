@@ -40,8 +40,12 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
           var elt = document.getElementById("main-view-svg");
           if (action.type == actions.ExportSvgType.selected) {
             List<Element> selected_elts = get_selected_strands(store);
-            var cloned_svg_element_with_style = get_cloned_svg_element_with_style(selected_elts);
-            _export_from_element(cloned_svg_element_with_style, 'selected');
+            if (selected_elts.length == 0)
+              window.alert("No strands are selected, there is nothing to export!");
+            else {
+              var cloned_svg_element_with_style = get_cloned_svg_element_with_style(selected_elts);
+              _export_from_element(cloned_svg_element_with_style, 'selected');
+            }
           } else
             _export_from_element(elt, 'main');
         }

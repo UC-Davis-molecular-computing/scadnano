@@ -1081,8 +1081,8 @@ debugging, but be warned that it will be very slow to render a large number of D
         ..display = 'SVG main view')(),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.selected)))
-        ..tooltip = "Export SVG figure of selected objects"
-        ..display = 'SVG of selected objects')(),
+        ..tooltip = "Export SVG figure of selected strands"
+        ..display = 'SVG of selected strands')(),
       (MenuDropdownItem()
         ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna_sequences.export_dna))
         ..tooltip = "Export DNA sequences of strands to a file."
