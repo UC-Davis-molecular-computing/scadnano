@@ -11,7 +11,7 @@ import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 
 export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
-  if (action is actions.ExportSvg || action is actions.CopySVG) {
+  if (action is actions.ExportSvg || action is actions.CopySelectedStandsToClipboardImage) {
     var ui_state = store.state.ui_state;
     var dna_sequence_png_uri = ui_state.dna_sequence_png_uri;
     var is_zoom_above_threshold = ui_state.is_zoom_above_threshold;
@@ -23,7 +23,8 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
 
     // If main needs to be exported, then the png needs to be disabled if currently being used.
     bool need_to_disable_png =
-        (action is actions.CopySVG || action.type == actions.ExportSvgType.main) && using_png_dna_sequence;
+        (action is actions.CopySelectedStandsToClipboardImage || action.type == actions.ExportSvgType.main) &&
+            using_png_dna_sequence;
 
     if (need_to_disable_png) {
       // Disables the png
@@ -54,9 +55,11 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
           var elt = document.getElementById("side-view-svg");
           _export_from_element(elt, 'side');
         }
-      } else if (action is actions.CopySVG) {
+      } else if (action is actions.CopySelectedStandsToClipboardImage) {
         List<Element> selected_elts = get_selected_strands(store);
-        if (selected_elts.length != 0) _copy_from_elements(selected_elts);
+        if (selected_elts.length != 0) {
+          _copy_from_elements(selected_elts);
+        }
       }
     }
   } else {

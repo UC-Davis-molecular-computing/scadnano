@@ -83,7 +83,7 @@ class App {
       initialize_state();
       setup_undo_redo_keyboard_listeners();
       setup_save_open_dna_file_keyboard_listeners();
-      copy_SVG_keyboard_listeners();
+      copy_selected_strands_to_clipboard_image_keyboard_listeners();
 //    util.save_editor_content_to_js_context(state.editor_content);
       restore_all_local_storage(app.store);
       setup_warning_before_unload();
@@ -278,13 +278,13 @@ setup_save_open_dna_file_keyboard_listeners() {
   });
 }
 
-copy_SVG_keyboard_listeners() {
+copy_selected_strands_to_clipboard_image_keyboard_listeners() {
   document.body.onKeyDown.listen((KeyboardEvent event) {
     int key = event.which;
-    // ctrl+I to copy SVG
+    // Ctrl+I to copy image of selected strands to clipboard
     if ((event.ctrlKey || event.metaKey) && !event.shiftKey && key == KeyCode.I && !event.altKey) {
       event.preventDefault();
-      app.dispatch(actions.CopySVG());
+      app.dispatch(actions.CopySelectedStandsToClipboardImage());
     }
   });
 }
