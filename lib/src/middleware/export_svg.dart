@@ -41,7 +41,7 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
           if (action.type == actions.ExportSvgType.selected) {
             List<Element> selected_elts = get_selected_strands(store);
             if (selected_elts.length == 0) {
-              window.alert("No strands are selected, there is nothing to export.\n"
+              window.alert("No strands are selected, so there is nothing to export.\n"
                   "Please select some strands before choosing this option.");
             } else {
               var cloned_svg_element_with_style = get_cloned_svg_element_with_style(selected_elts);
