@@ -61,6 +61,7 @@ import 'state/domain_name_mismatch.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  CopySelectedStandsToClipboardImage,
   LoadingDialogHide,
   LoadingDialogShow,
   ResetLocalStorage,

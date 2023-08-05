@@ -85,7 +85,9 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
         throw AssertionError('unrecognized substrand type: ${substrand}');
       }
     }
-    return (Dom.g()..className = 'strand-dna-sequence')(dna_sequence_elts);
+    return (Dom.g()
+      ..className = 'strand-dna-sequence'
+      ..id = 'dna-sequence-${this.props.strand.id}')(dna_sequence_elts);
   }
 
   static const classname_dna_sequence = 'dna-seq';

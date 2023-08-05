@@ -925,6 +925,23 @@ abstract class LoadingDialogHide
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Copy SVG to clipboard
+
+abstract class CopySelectedStandsToClipboardImage
+    with BuiltJsonSerializable
+    implements Action, Built<CopySelectedStandsToClipboardImage, CopySelectedStandsToClipboardImageBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory CopySelectedStandsToClipboardImage(
+          [void Function(CopySelectedStandsToClipboardImageBuilder) updates]) =
+      _$CopySelectedStandsToClipboardImage;
+
+  CopySelectedStandsToClipboardImage._();
+
+  static Serializer<CopySelectedStandsToClipboardImage> get serializer =>
+      _$copySelectedStandsToClipboardImageSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Save/load files
 
 abstract class SaveDNAFile
@@ -2055,7 +2072,7 @@ abstract class ExportCanDoDNA
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Export SVG
 
-enum ExportSvgType { main, side, both }
+enum ExportSvgType { main, side, both, selected }
 
 abstract class ExportSvg with BuiltJsonSerializable implements Action, Built<ExportSvg, ExportSvgBuilder> {
   factory ExportSvg.from([void Function(ExportSvgBuilder) updates]) = _$ExportSvg;
