@@ -373,10 +373,10 @@ a text document to see a JSON description of the copied strand(s).'''
       (MenuDropdownItem()
         ..on_click = (_) {
           if (props.enable_copy) {
-            window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.I, ctrlKey: true).wrapped);
+            app.dispatch(actions.CopySelectedStandsToClipboardImage());
           }
         }
-        ..display = 'Copy image of selected strands'
+        ..display = 'Copy image'
         ..keyboard_shortcut = 'Ctrl+I'
         ..tooltip = '''\
 Copy a (PNG bitmap) image of the currently selected strand(s) to the system 
