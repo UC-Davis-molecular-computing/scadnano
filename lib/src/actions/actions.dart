@@ -2067,7 +2067,7 @@ abstract class ExportCanDoDNA
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Export SVG
 
-enum ExportSvgType { main, side, both }
+enum ExportSvgType { main, side, both, selected }
 
 abstract class ExportSvg with BuiltJsonSerializable implements Action, Built<ExportSvg, ExportSvgBuilder> {
   factory ExportSvg.from([void Function(ExportSvgBuilder) updates]) = _$ExportSvg;

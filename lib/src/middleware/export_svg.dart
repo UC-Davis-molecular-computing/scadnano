@@ -34,32 +34,64 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
     } else {
       if (action is actions.ExportSvg) {
         // Exports the appropriate svgs.
-        if (action.type == actions.ExportSvgType.main || action.type == actions.ExportSvgType.both) {
+        if (action.type == actions.ExportSvgType.main ||
+            action.type == actions.ExportSvgType.both ||
+            action.type == actions.ExportSvgType.selected) {
           var elt = document.getElementById("main-view-svg");
-          _export_from_element(elt, 'main');
+          if (action.type == actions.ExportSvgType.selected) {
+            List<Element> selected_elts = get_selected_strands(store);
+            if (selected_elts.length == 0) {
+              window.alert("No strands are selected, so there is nothing to export.\n"
+                  "Please select some strands before choosing this option.");
+            } else {
+              var cloned_svg_element_with_style = get_cloned_svg_element_with_style(selected_elts);
+              _export_from_element(cloned_svg_element_with_style, 'selected');
+            }
+          } else
+            _export_from_element(elt, 'main');
         }
         if (action.type == actions.ExportSvgType.side || action.type == actions.ExportSvgType.both) {
           var elt = document.getElementById("side-view-svg");
           _export_from_element(elt, 'side');
         }
       } else if (action is actions.CopySVG) {
-        var selected_strands = store.state.ui_state.selectables_store.selected_strands;
-
-        if (selected_strands.length != 0) {
-          List<Element> selected_elts = [];
-          for (var strand in selected_strands) {
-            var strand_elt = document.getElementById(strand.id);
-            var dna_seq_elt = document.getElementById('dna-sequence-${strand.id}');
-            var mismatch_elts = document.getElementsByClassName('mismatch-${strand.id}');
-            selected_elts.addAll([strand_elt, if (dna_seq_elt != null) dna_seq_elt, ...mismatch_elts]);
-          }
-          _copy_from_elements(selected_elts);
-        }
+        List<Element> selected_elts = get_selected_strands(store);
+        if (selected_elts.length != 0) _copy_from_elements(selected_elts);
       }
     }
   } else {
     next(action);
   }
+}
+
+List<Element> get_selected_strands(Store<AppState> store) {
+  var selected_strands = store.state.ui_state.selectables_store.selected_strands;
+  List<Element> selected_elts = [];
+  if (selected_strands.length != 0) {
+    for (var strand in selected_strands) {
+      var strand_elt = document.getElementById(strand.id);
+      var dna_seq_elt = document.getElementById('dna-sequence-${strand.id}');
+      var mismatch_elts = document.getElementsByClassName('mismatch-${strand.id}');
+      selected_elts.addAll([strand_elt, if (dna_seq_elt != null) dna_seq_elt, ...mismatch_elts]);
+    }
+  }
+  return selected_elts;
+}
+
+SvgSvgElement get_cloned_svg_element_with_style(List<Element> selected_elts) {
+  var cloned_svg_element_with_style = SvgSvgElement()
+    ..children = selected_elts.map(clone_and_apply_style).toList();
+
+  // we can't get bbox without it being added to the DOM first
+  document.body.append(cloned_svg_element_with_style);
+  var bbox = cloned_svg_element_with_style.getBBox();
+  cloned_svg_element_with_style.remove();
+
+  // have to add some padding to viewbox, for some reason bbox doesn't always fit it by a few pixels??
+  cloned_svg_element_with_style.setAttribute('viewBox',
+      '${bbox.x.floor() - 1} ${bbox.y.floor() - 1} ${bbox.width.ceil() + 3} ${bbox.height.ceil() + 3}');
+
+  return cloned_svg_element_with_style;
 }
 
 _export_svg(svg.SvgSvgElement svg_element, String filename_append) {
@@ -90,23 +122,16 @@ _export_svg(svg.SvgSvgElement svg_element, String filename_append) {
 }
 
 _copy_from_elements(List<Element> svg_elements) {
-  var cloned_svg_element_with_style = SvgSvgElement()
-    ..children = svg_elements.map(clone_and_apply_style).toList();
-
-  // we can't get bbox without it being added to the DOM first
-  document.body.append(cloned_svg_element_with_style);
-  var bbox = cloned_svg_element_with_style.getBBox();
-  cloned_svg_element_with_style.remove();
-
-  // have to add some padding to viewbox, for some reason bbox doesn't always fit it by a few pixels??
-  cloned_svg_element_with_style.setAttribute('viewBox',
-      '${bbox.x.floor() - 1} ${bbox.y.floor() - 1} ${bbox.width.ceil() + 3} ${bbox.height.ceil() + 3}');
-
+  var cloned_svg_element_with_style = get_cloned_svg_element_with_style(svg_elements);
   util.copy_svg_as_png(cloned_svg_element_with_style);
 }
 
 _export_from_element(Element svg_element, String filename_append) {
-  var cloned_svg_element_with_style = clone_and_apply_style(svg_element);
+  var cloned_svg_element_with_style;
+  if (filename_append != "selected")
+    cloned_svg_element_with_style = clone_and_apply_style(svg_element);
+  else
+    cloned_svg_element_with_style = svg_element;
   // if element is not an svg element (it can be a child element of svg e.g. groups, lines, text, etc), wrap in svg tag
   if (!(svg_element is svg.SvgSvgElement))
     cloned_svg_element_with_style = SvgSvgElement()..children = [cloned_svg_element_with_style];
