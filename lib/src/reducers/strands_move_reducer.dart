@@ -1,9 +1,11 @@
+import 'dart:html';
 import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart';
 import 'package:redux/redux.dart';
 
+import '../app.dart';
 import '../state/group.dart';
 import '../state/design.dart';
 import '../reducers/util_reducer.dart';
@@ -67,8 +69,68 @@ StrandsMove strands_adjust_address_reducer(
     bool allowable = is_allowable(state.design, new_strands_move);
     return new_strands_move.rebuild((b) => b..allowable = allowable);
   } else {
+    if (adjust_helix_offsets_with_moving_strands(state, state.design, new_strands_move)) {
+      bool allowable = is_allowable(state.design, new_strands_move);
+      return new_strands_move.rebuild((b) => b..allowable = allowable);
+    }
     return strands_move;
   }
+}
+
+adjust_helix_offsets_with_moving_strands(AppState state, Design design, StrandsMove strands_move,
+    {Set<int> original_helix_idxs_set = null}) {
+  // Similar code as in in_bounds method with changes to adjust helix offsets
+
+  if (original_helix_idxs_set == null) {
+    original_helix_idxs_set = populate_original_helices_idxs_set(strands_move);
+  }
+
+  var current_address_helix_idx = strands_move.current_address.helix_idx;
+  if (!design.helices.containsKey(current_address_helix_idx)) {
+    return false; // helix is not in design, so cannot be in bounds
+  }
+
+  var current_helix = design.helices[current_address_helix_idx];
+  var current_group = design.groups[current_helix.group];
+  var num_helices_in_group = design.helices_in_group(current_helix.group).length;
+
+  int delta_view_order = strands_move.delta_view_order;
+  int delta_offset = strands_move.delta_offset;
+
+  // look for helix out of bounds
+  Set<int> view_orders_of_helices_of_moving_strands = view_order_moving(strands_move);
+  int min_view_order = view_orders_of_helices_of_moving_strands.min;
+  int max_view_order = view_orders_of_helices_of_moving_strands.max;
+  // Add code below instead of return false to adjust vertical strand movement i.e. Add new helices according to movement, etc.
+  if (min_view_order + delta_view_order < 0) return false;
+  if (max_view_order + delta_view_order >= num_helices_in_group) return false;
+
+  // If code reaches to this point, we know that helix offset is out of bounds since this function is only called if the strands moving are out of bounds
+  for (int original_helix_idx in original_helix_idxs_set) {
+    var helix_idx_to_domains_map =
+        construct_helix_idx_to_domains_map(strands_move.strands_moving, original_helix_idxs_set);
+    var domains_moving = helix_idx_to_domains_map[original_helix_idx];
+    if (domains_moving.isEmpty) continue;
+
+    int view_order_orig = strands_move.original_helices_view_order_inverse[original_helix_idx];
+    int new_helix_idx = current_group.helices_view_order[view_order_orig + delta_view_order];
+    Helix helix = design.helices[new_helix_idx];
+    for (var domain in domains_moving) {
+      if (domain.start + delta_offset < helix.min_offset) {
+        app.dispatch(
+            actions.HelixOffsetChange(helix_idx: helix.idx, min_offset: domain.start + delta_offset));
+        helix.rebuild((b) => b..min_offset = domain.start + delta_offset);
+        state.rebuild((b) => b..design.helices[helix.idx] = helix);
+      }
+      if (domain.end + delta_offset > helix.max_offset) {
+        app.dispatch(actions.HelixOffsetChange(helix_idx: helix.idx, max_offset: domain.end + delta_offset));
+        helix.rebuild((b) => b..max_offset = domain.end + delta_offset);
+        state.rebuild((b) => b..design.helices[helix.idx] = helix);
+      }
+    }
+    print(state.design.helices[3]);
+  }
+  return true;
 }
 
 bool in_bounds_and_allowable(Design design, StrandsMove strands_move) {
