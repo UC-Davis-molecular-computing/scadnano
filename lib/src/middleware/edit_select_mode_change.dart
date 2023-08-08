@@ -17,8 +17,7 @@ const selectable_css_style_non_domain_or_end = {
 };
 
 const selectable_css_style_domain = {
-  'stroke': 'hotpink',
-  'stroke-width': '5pt', // makes thicker when selected so easier to see
+  'filter': 'url("#shadow")',
 };
 
 const selectable_css_style_end = {
