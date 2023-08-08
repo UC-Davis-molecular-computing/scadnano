@@ -118,7 +118,8 @@ class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
   }
 }
 
-send_error(String escaped_error_message) async{
+send_error(String escaped_error_message) async {
   app.dispatch(actions.ErrorMessageSet(escaped_error_message));
+  app.dispatch(actions.LoadingDialogHide()); // close loading dialog if it's currently being shown
   app.view.design_view.render(app.state);
 }

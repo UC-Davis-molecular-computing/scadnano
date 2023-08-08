@@ -10,6 +10,68 @@ part 'dialog.g.dart';
 
 typedef OnSubmit = void Function(List<DialogItem> items);
 
+class DialogType extends EnumClass {
+  const DialogType._(String name) : super(name);
+
+  @memoized
+  int get hashCode;
+
+  static Serializer<DialogType> get serializer => _$dialogTypeSerializer;
+
+  /******************** end BuiltValue boilerplate *********************/
+
+  static const DialogType choose_autobreak_parameters = _$choose_autobreak_parameters;
+  static const DialogType adjust_geometric_parameters = _$adjust_geometric_parameters;
+  static const DialogType create_new_helix_group = _$create_new_helix_group;
+  static const DialogType adjust_current_helix_group = _$adjust_current_helix_group;
+  static const DialogType adjust_helix_indices = _$adjust_helix_indices;
+  static const DialogType assign_scale_purification = _$assign_scale_purification;
+  static const DialogType assign_plate_well = _$assign_plate_well;
+  static const DialogType add_modification = _$add_modification;
+  static const DialogType set_strand_name = _$set_strand_name;
+  static const DialogType set_strand_label = _$set_strand_label;
+  static const DialogType set_domain_name = _$set_domain_name;
+  static const DialogType set_substrand_label = _$set_substrand_label;
+  static const DialogType assign_dna_sequence = _$assign_dna_sequence;
+  static const DialogType remove_dna_sequence = _$remove_dna_sequence;
+  static const DialogType edit_modification = _$edit_modification;
+  static const DialogType set_color = _$set_color;
+  static const DialogType set_loopout_name = _$set_loopout_name;
+  static const DialogType set_helix_minimum_offset = _$set_helix_minimum_offset;
+  static const DialogType set_helix_maximum_offset = _$set_helix_maximum_offset;
+  static const DialogType set_helix_index = _$set_helix_index;
+  static const DialogType set_helix_roll_degrees = _$set_helix_roll_degrees;
+  static const DialogType set_helix_tick_marks = _$set_helix_tick_marks;
+  static const DialogType set_helix_grid_position = _$set_helix_grid_position;
+  static const DialogType set_helix_position = _$set_helix_position;
+  static const DialogType move_selected_helices_to_group = _$move_selected_helices_to_group;
+  static const DialogType export_dna_sequences = _$export_dna_sequences;
+  static const DialogType load_example_dna_design = _$load_example_dna_design;
+
+  static const DialogType add_extension = _$add_extension;
+  static const DialogType set_extension_name = _$set_extension_name;
+  static const DialogType set_extension_display_length_angle = _$set_extension_display_length_angle;
+
+  static BuiltSet<DialogType> get values => _$values;
+
+  static DialogType valueOf(String name) => _$valueOf(name);
+
+  String to_json() => name;
+
+  static DialogType from_json(String the_name) {
+    for (var val in values) {
+      if (val.name == the_name) {
+        return val;
+      }
+    }
+    throw ArgumentError('there is no Dialog Type with name "${the_name}"');
+  }
+}
+
+// built_value isn't able to parse ProcessCallback if we add a return type to it, so just leave it out
+// but FYI, this returns BuiltList<DialogItem>
+typedef ProcessCallback = Function(BuiltList<DialogItem> items);
+
 /// Describes form for pop-up dialog interacting with user.
 abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, DialogBuilder> {
   factory Dialog.from([void Function(DialogBuilder) updates]) = _$Dialog;
@@ -18,12 +80,19 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
 
   static Serializer<Dialog> get serializer => _$dialogSerializer;
 
+  static BuiltList<DialogItem> identity_function(BuiltList<DialogItem> items) {
+    return items;
+  }
+
   @memoized
   int get hashCode;
 
   /// See comments on fields below for explanation of their meaning.
   factory Dialog(
       {String title,
+      DialogType type,
+      ProcessCallback process_saved_response = identity_function,
+      bool use_saved_response = true,
       Iterable<DialogItem> items,
       Iterable<Iterable<int>> mutually_exclusive_checkbox_groups = const [],
       Iterable<int> disable = const {},
@@ -59,8 +128,11 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
 
     return Dialog.from((b) => b
       ..title = title
+      ..type = type
+      ..process_saved_response = process_saved_response
+      ..use_saved_response = use_saved_response
       ..items.replace(items)
-      ..disable.replace(disable)      
+      ..disable.replace(disable)
       ..mutually_exclusive_checkbox_groups.replace(mutually_exclusive_checkbox_groups_half_built)
       ..disable_when_any_radio_button_selected.replace(disable_when_any_radio_button_selected_half_built)
       ..disable_when_any_checkboxes_on.replace(disable_when_any_checkboxes_on_half_built)
@@ -70,6 +142,14 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
   /************************ end BuiltValue boilerplate ************************/
 
   String get title;
+
+  DialogType get type;
+
+  @nullable
+  @BuiltValueField(serialize: false, compare: false)
+  ProcessCallback get process_saved_response;
+
+  bool get use_saved_response;
 
   BuiltList<DialogItem> get items;
 
@@ -264,13 +344,34 @@ abstract class DialogRadio
 
   /************************ end BuiltValue boilerplate ************************/
 
-  factory DialogRadio({String label, Iterable<String> options, int selected_idx = 0, bool radio = true, String tooltip}) {
+  factory DialogRadio(
+      {String label,
+      Iterable<String> options,
+      int selected_idx = 0,
+      bool radio = true,
+      String tooltip,
+      Iterable<String> option_tooltips = null}) {
+    // if option_tooltips is specified, ensure it's same length as options
+    // also replace null so that the call to .replace() below doesn't crash
+    var options_list = List<String>.from(options);
+    if (option_tooltips == null) {
+      option_tooltips = List<String>.filled(options_list.length, '');
+    }
+    var option_tooltips_list = List<String>.from(option_tooltips);
+    if (options_list.length != option_tooltips_list.length) {
+      throw ArgumentError("options and item_tooltips must be same length, but their lengths are "
+          "${options_list.length} and ${option_tooltips_list.length} respectively:\n"
+          "options = ${options_list}\n"
+          "item_tooltips = ${option_tooltips_list}");
+    }
+
     return DialogRadio.from((b) => b
-      ..options.replace(options)
+      ..options.replace(options_list)
       ..selected_idx = selected_idx
       ..radio = radio
       ..label = label
-      ..tooltip = tooltip);
+      ..tooltip = tooltip
+      ..option_tooltips.replace(option_tooltips_list));
   }
 
   BuiltList<String> get options;
@@ -281,6 +382,9 @@ abstract class DialogRadio
 
   // if true, display as radio buttons, otherwise display as dropdown
   bool get radio;
+
+  // tooltips for individual options
+  BuiltList<String> get option_tooltips;
 
   String get value => options[selected_idx];
 }
@@ -310,6 +414,32 @@ abstract class DialogLink
   String get label;
 
   String get link;
+
+  String get value;
+}
+
+abstract class DialogLabel
+    with BuiltJsonSerializable
+    implements DialogItem, Built<DialogLabel, DialogLabelBuilder> {
+  DialogLabel._();
+
+  factory DialogLabel.from([void Function(DialogLabelBuilder) updates]) = _$DialogLabel;
+
+  static Serializer<DialogLabel> get serializer => _$dialogLabelSerializer;
+
+  @memoized
+  int get hashCode;
+
+  factory DialogLabel({String label, String tooltip}) {
+    return DialogLabel.from((b) => b
+      ..label = label
+      ..value = ""
+      ..tooltip = tooltip);
+  }
+
+  /************************ end BuiltValue boilerplate ************************/
+
+  String get label;
 
   String get value;
 }

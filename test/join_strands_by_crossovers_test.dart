@@ -1,6 +1,6 @@
 // @dart=2.9
 
-import 'package:scadnano/src/reducers/change_loopout_length.dart';
+import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
 import 'package:scadnano/src/reducers/delete_reducer.dart';
 import 'package:scadnano/src/reducers/design_reducer.dart';
 import 'package:scadnano/src/reducers/nick_ligate_join_by_crossover_reducers.dart';
@@ -42,11 +42,14 @@ main() {
 
         if (helix == 0) {
           // top scaffold has no nick
-          design = design.strand(0, 0).to(right_end).as_scaffold().commit();
+          design = design.draw_strand(0, 0).to(right_end).as_scaffold().commit();
         } else {
-          design = design.strand(helix, scaffold_5p).move(scaffold_move).as_scaffold().commit();
-          design =
-              design.strand(helix, scaffold_5p + scaffold_move).move(scaffold_move).as_scaffold().commit();
+          design = design.draw_strand(helix, scaffold_5p).move(scaffold_move).as_scaffold().commit();
+          design = design
+              .draw_strand(helix, scaffold_5p + scaffold_move)
+              .move(scaffold_move)
+              .as_scaffold()
+              .commit();
         }
       }
 
@@ -60,7 +63,7 @@ main() {
         }
         int staple_offset = staple_5p;
         for (int i = 0; i < 4; i++) {
-          design = design.strand(helix, staple_offset).move(staple_move).commit();
+          design = design.draw_strand(helix, staple_offset).move(staple_move).commit();
           staple_offset += staple_move;
         }
       }
@@ -114,13 +117,13 @@ main() {
       // scaffold should be last because it was just added
       var scaffold = design.strands.last;
       expect(scaffold.is_scaffold, true);
-      for (int i=0; i<16; i++) {
+      for (int i = 0; i < 16; i++) {
         var staple = design.strands[i];
         expect(staple.is_scaffold, false);
       }
 
       expect(scaffold.substrands.length, 7);
-      for (int i=0; i<16; i++) {
+      for (int i = 0; i < 16; i++) {
         var staple = design.strands[i];
         expect(staple.substrands.length, 1);
       }
@@ -155,20 +158,19 @@ main() {
 
       expect(design.strands.length, 15);
 
-      for (int i=0; i<7; i++) {
+      for (int i = 0; i < 7; i++) {
         var scaffold = design.strands[i];
         expect(scaffold.is_scaffold, true);
         expect(scaffold.substrands.length, 1);
         expect(scaffold.circular, false);
       }
-      for (int i=7; i<15; i++) {
+      for (int i = 7; i < 15; i++) {
         var staple = design.strands[i];
         expect(staple.is_scaffold, false);
         expect(staple.substrands.length, 2);
         expect(staple.circular, true);
       }
     });
-
 
     test('all_scaffold_and_staple', () {
       /*
@@ -200,7 +202,7 @@ main() {
       expect(design.strands.length, 9);
 
       bool found_scaffold = false;
-      for (int i=0; i<9; i++) {
+      for (int i = 0; i < 9; i++) {
         var strand = design.strands[i];
         if (strand.is_scaffold) {
           expect(found_scaffold, false);
@@ -214,6 +216,5 @@ main() {
         }
       }
     });
-
   });
 }

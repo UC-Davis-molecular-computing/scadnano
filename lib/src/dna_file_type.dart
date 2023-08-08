@@ -20,4 +20,3 @@ class DNAFileType extends EnumClass {
   static BuiltSet<DNAFileType> get values => _$values;
   static DNAFileType valueOf(String name) => _$valueOf(name);
 }
-

@@ -4,17 +4,18 @@ import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:tuple/tuple.dart';
 
-part 'design_main_mismatch.over_react.g.dart';
+part 'design_main_warning_star.over_react.g.dart';
 
-UiFactory<DesignMainMismatchProps> DesignMainMismatch = _$DesignMainMismatch;
+UiFactory<DesignMainWarningStarProps> DesignMainWarningStar = _$DesignMainWarningStar;
 
-mixin DesignMainMismatchProps on UiProps {
+mixin DesignMainWarningStarProps on UiProps {
   Point<num> base_svg_pos;
   bool forward;
   Geometry geometry;
+  String color;
 }
 
-class DesignMainMismatchComponent extends UiComponent2<DesignMainMismatchProps> {
+class DesignMainWarningStarComponent extends UiComponent2<DesignMainWarningStarProps> {
   @override
   render() {
     List<num> xs = List<num>.from(_star_at_origin().item1);
@@ -39,8 +40,12 @@ class DesignMainMismatchComponent extends UiComponent2<DesignMainMismatchProps> 
     }
 
     return (Dom.polygon()
-      ..className = 'mismatch-star'
+      ..className = 'warning-star'
       ..points = points.join(' ')
+      ..style = {
+        "stroke": "${props.color}",
+        "fill": "${props.color}",
+      }
       ..transform = 'rotate(${rotate_degrees} ${props.base_svg_pos.x} ${props.base_svg_pos.y})')();
   }
 

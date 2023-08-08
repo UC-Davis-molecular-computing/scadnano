@@ -9,7 +9,7 @@ import '../state/design.dart';
 import '../state/strand.dart';
 import '../state/domain.dart';
 import 'pure_component.dart';
-import 'design_main_mismatch.dart';
+import 'design_main_warning_star.dart';
 import '../util.dart' as util;
 
 part 'design_main_dna_mismatches.over_react.g.dart';
@@ -41,7 +41,8 @@ class DesignMainDNAMismatchesComponent extends UiComponent2<DesignMainDNAMismatc
         for (Mismatch mismatch in mismatches) {
           var helix = props.design.helices[domain.helix];
           if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(helix.idx)) {
-            var base_svg_pos = helix.svg_base_pos(mismatch.offset, domain.forward, props.helix_idx_to_svg_position_y_map[helix.idx]);
+            var base_svg_pos = helix.svg_base_pos(
+                mismatch.offset, domain.forward, props.helix_idx_to_svg_position_y_map[helix.idx]);
             // For now, if there is a mismatch in an insertion we simply display it for the whole insertion,
             // not for a specific base. We maintain React keys to agree on any mismatches in the same
             // insertion, and we only render one of them.
@@ -49,10 +50,11 @@ class DesignMainDNAMismatchesComponent extends UiComponent2<DesignMainDNAMismatc
             if (!keys.contains(key)) {
               // otherwise, already rendered mismatch for this insertion
               keys.add(key);
-              var mismatch_component = (DesignMainMismatch()
+              var mismatch_component = (DesignMainWarningStar()
                 ..base_svg_pos = base_svg_pos
                 ..geometry = props.design.geometry
                 ..forward = domain.forward
+                ..color = 'red'
                 ..key = key)();
               domain_components.add(mismatch_component);
             }
@@ -66,7 +68,7 @@ class DesignMainDNAMismatchesComponent extends UiComponent2<DesignMainDNAMismatc
         if (domain_components.isNotEmpty) {
           mismatch_components.add((Dom.g()
             ..transform = transform_str
-            ..className = 'mismatch-components-in-domain'
+            ..className = 'mismatch-components-in-domain mismatch-${strand.id}'
             ..key = util.id_domain(domain))(domain_components));
         }
       }

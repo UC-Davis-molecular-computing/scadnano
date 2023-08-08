@@ -29,9 +29,7 @@ UiFactory<EndMovingProps> ConnectedEndMoving = connect<DNAEndsMove, EndMovingPro
   context: app.context_dna_ends_move,
 )(EndMoving);
 
-
 UiFactory<EndMovingProps> EndMoving = _$EndMoving;
-
 
 mixin EndMovingProps on UiProps {
   DNAEnd dna_end;
@@ -44,8 +42,8 @@ mixin EndMovingProps on UiProps {
   int current_offset;
   bool render;
   num svg_position_y;
+  String transform;
 }
-
 
 class EndMovingComponent extends UiComponent2<EndMovingProps> {
   @override
@@ -69,6 +67,10 @@ class EndMovingComponent extends UiComponent2<EndMovingProps> {
       ..color = props.color
       ..classname = classname
       ..forward = props.forward;
+    if (props.transform != null) {
+      // https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-center-in-svg
+      end_props = end_props..transform = props.transform;
+    }
     return end_props();
   }
 }

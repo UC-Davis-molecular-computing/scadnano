@@ -2,6 +2,7 @@
 library util;
 
 import 'dart:html';
+import 'dart:collection';
 import 'dart:js' as js;
 import 'dart:math';
 import 'dart:async';
@@ -41,6 +42,7 @@ import 'state/grid.dart';
 import 'state/grid_position.dart';
 import 'state/helix.dart';
 import 'state/loopout.dart';
+import 'state/extension.dart';
 import 'state/design.dart';
 import 'state/mouseover_data.dart';
 import 'constants.dart' as constants;
@@ -873,23 +875,24 @@ GridPosition position3d_to_grid_position(Position3D position, Grid grid, Geometr
 }
 
 Position3D grid_position_to_position3d(GridPosition grid_position, Grid grid, Geometry geometry) {
-  num y, z;
+  num x, y;
+
   if (grid == Grid.square) {
-    z = grid_position.h * geometry.distance_between_helices_nm;
+    x = grid_position.h * geometry.distance_between_helices_nm;
     y = grid_position.v * geometry.distance_between_helices_nm;
   } else if (grid == Grid.hex) {
     Point<num> point = hex_grid_position_to_position2d_diameter_1_circles(grid_position);
-    z = point.x * geometry.distance_between_helices_nm;
+    x = point.x * geometry.distance_between_helices_nm;
     y = point.y * geometry.distance_between_helices_nm;
   } else if (grid == Grid.honeycomb) {
     Point<num> point = honeycomb_grid_position_to_position2d_diameter_1_circles(grid_position);
-    z = point.x * geometry.distance_between_helices_nm;
+    x = point.x * geometry.distance_between_helices_nm;
     y = point.y * geometry.distance_between_helices_nm;
   } else {
     throw ArgumentError(
         'cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
   }
-  return Position3D(x: 0, y: y, z: z);
+  return Position3D(x: x, y: y, z: 0);
 }
 
 Point<num> position3d_to_side_view_svg(Position3D position, bool invert_y, Geometry geometry) => Point<num>(
@@ -995,6 +998,9 @@ num sigmoid(num x) {
   return 1.0 / (1.0 + exp(-x));
 }
 
+@JS()
+external clipboard_write(String blob_type_string, Blob content);
+
 @JS(constants.js_function_name_cache_svg)
 external ImageElement cache_svg(String svg_elt_id);
 
@@ -1081,6 +1087,36 @@ String blob_type_to_string(BlobType blob_type) {
       return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
   }
   throw AssertionError(ASSERTION_ERROR_MESSAGE);
+}
+
+copy_svg_as_png(SvgSvgElement svg_element) async {
+  try {
+    var serializer = new XmlSerializer();
+    var source = serializer.serializeToString(svg_element);
+    var svgUrl = Url.createObjectUrlFromBlob(new Blob([source], 'image/svg+xml'));
+    var svgImage = new ImageElement(src: svgUrl);
+    document.body.append(svgImage);
+    svgImage.addEventListener('load', (event) async {
+      var canvas = new CanvasElement();
+      canvas.width = svg_element.viewBox.baseVal.width * 2;
+      canvas.height = svg_element.viewBox.baseVal.height * 2;
+      var canvasCtx = canvas.context2D;
+      canvasCtx.drawImage(svgImage, 0, 0);
+      var imgData = await canvas.toBlob('image/png');
+      clipboard_write('image/png', imgData);
+      svgImage.remove();
+
+      Url.revokeObjectUrl(svgUrl);
+    });
+    svgImage.src = svgUrl;
+
+    // window.navigator.clipboard.write(DataTransfer()..setData(blob_type_string, content));
+
+  } on Exception catch (e, stackTrace) {
+    print(stackTrace);
+  } on Error catch (e, stackTrace) {
+    print(stackTrace);
+  }
 }
 
 /// [and_then] is a callback to do if the file save dialog is not canceled and no other error occurs.
@@ -1368,6 +1404,74 @@ String wc_base(String base) {
   return base;
 }
 
+var set_equality = SetEquality();
+
+/// Indicates if `base1` and `base2` are complementary DNA bases.
+bool bases_complementary(String base1, String base2, {bool allow_wildcard = false, bool allow_null = false}) {
+  if (allow_null && (base1 == null || base2 == null)) {
+    return true;
+  } else if (!allow_null && (base1 == null || base2 == null)) {
+    return false;
+  }
+
+  if (allow_wildcard && (base1 == constants.DNA_BASE_WILDCARD || base2 == constants.DNA_BASE_WILDCARD)) {
+    return true;
+  }
+
+  if (base1.length != 1 || base2.length != 1) {
+    throw ArgumentError('base1 and base2 must each be a single character: '
+        'base1 = ${base1}, base2 = ${base2}');
+  }
+  base1 = base1.toUpperCase();
+  base2 = base2.toUpperCase();
+
+  return set_equality.equals({base1, base2}, {'A', 'T'}) || set_equality.equals({base1, base2}, {'C', 'G'});
+}
+
+/// Indicates if `seq1` and `seq2` are reverse complementary DNA sequences.
+bool reverse_complementary(String seq1, String seq2, {bool allow_wildcard = false, bool allow_null = false}) {
+  if (allow_null && (seq1 == null || seq2 == null)) {
+    return true;
+  } else if (!allow_null && (seq1 == null || seq2 == null)) {
+    return false;
+  }
+
+  if (seq1.length != seq2.length) {
+    return false;
+  }
+  for (int i = 0, j = seq2.length - 1; i < seq1.length; i++, j--) {
+    var b1 = seq1[i];
+    var b2 = seq2[j];
+    if (!bases_complementary(b1, b2, allow_wildcard: allow_wildcard, allow_null: allow_null)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+Color parse_json_color(Object json_obj) {
+  try {
+    if (json_obj is Map) {
+      int r = json_obj['r'];
+      int g = json_obj['g'];
+      int b = json_obj['b'];
+      return RgbColor(r, g, b);
+    } else if (json_obj is String) {
+      return HexColor(json_obj);
+    } else if (json_obj is int) {
+      String hex_str = color_decimal_int_to_hex(json_obj);
+      return HexColor(hex_str);
+    } else {
+      throw ArgumentError.value('JSON object representing color must be a Map, String, or int, '
+          'but instead it is a ${json_obj.runtimeType}:\n${json_obj}');
+    }
+  } on Exception {
+    print("WARNING: I couldn't understand the color specification ${json_obj}, so I'm substituting black.");
+    return RgbColor.name('black');
+  }
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // unit testing utilities
 
@@ -1496,10 +1600,11 @@ void svg_to_png_data() {
 /// and the zoom is not above threshold `is_zoom_above_threshold`,
 /// and there is no pending action `disable_png_cache_until_action_completes`.
 bool use_png(String dna_sequence_png_uri, bool is_zoom_above_threshold,
-    actions.Action disable_png_cache_until_action_completes) {
+    actions.ExportSvg export_svg_action_delayed_for_png_cache, bool disable_png_caching_dna_sequences) {
   return dna_sequence_png_uri != null &&
       !is_zoom_above_threshold &&
-      disable_png_cache_until_action_completes == null;
+      export_svg_action_delayed_for_png_cache == null &&
+      !disable_png_caching_dna_sequences;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1542,6 +1647,74 @@ mouse_leave_update_mouseover() {
   if (show_mouseover_data()) {
     app.dispatch(actions.MouseoverDataClear());
   }
+}
+
+double compute_end_rotation(double display_angle, bool forward, bool is_5p) {
+  var radians = display_angle * 2 * pi / 360.0;
+  // convert to rectangular coordinates to make reflection easier
+  num x = cos(radians);
+  num y = sin(radians);
+  // honestly I don't quite understand why the following rules work,
+  // but I played with it until they looked right.
+  y = -y;
+  if (!forward) {
+    x = -x;
+  }
+  if ((forward && is_5p) || (!forward && !is_5p)) {
+    x = -x;
+  }
+  // convert back from rectangular coordinates to radians
+  var reflected_radians = atan2(y, x);
+  var degrees = reflected_radians * 360.0 / (2 * pi);
+  return degrees;
+}
+
+Point<num> compute_extension_attached_end_svg(
+    Extension ext, Domain adj_dom, Helix adj_helix, num adj_helix_svg_y) {
+  int end_offset = ext.is_5p ? adj_dom.offset_5p : adj_dom.offset_3p;
+  Point<num> extension_attached_end_svg =
+      adj_helix.svg_base_pos(end_offset, adj_dom.forward, adj_helix_svg_y);
+  return extension_attached_end_svg;
+}
+
+// computes the SVG coordinates of the end of an Extension that is not shared with the adjacent Domain
+Point<num> compute_extension_free_end_svg(
+    Point<num> attached_end_svg, Extension ext, Domain adjacent_domain, Geometry geometry) {
+  num x = attached_end_svg.x;
+  num y = attached_end_svg.y;
+  var angle_radians = ext.display_angle * 2 * pi / 360.0;
+  // convert polar coordinates in Extension to rectangular coordinates, and convert from nm to SVG pixels
+  num x_delta = ext.display_length * cos(angle_radians) * geometry.nm_to_svg_pixels;
+  num y_delta = ext.display_length * sin(angle_radians) * geometry.nm_to_svg_pixels;
+  if (adjacent_domain.forward) {
+    y_delta = -y_delta;
+  }
+  if ((adjacent_domain.forward && ext.is_5p) || (!adjacent_domain.forward && !ext.is_5p)) {
+    x_delta = -x_delta;
+  }
+  x += x_delta;
+  y += y_delta;
+  Point<num> ext_end_svg = Point<num>(x, y);
+  return ext_end_svg;
+}
+
+Tuple2<double, double> compute_extension_length_and_angle_from_point(Point<num> current_mouse_point,
+    Point<num> attached_end_svg, Extension ext, Domain adjacent_domain, Geometry geometry) {
+  num new_x = current_mouse_point.x;
+  num new_y = current_mouse_point.y;
+  num old_x = attached_end_svg.x;
+  num old_y = attached_end_svg.y;
+  num x_delta = new_x - old_x;
+  num y_delta = new_y - old_y;
+  double display_length = sqrt(x_delta * x_delta + y_delta * y_delta) * geometry.svg_pixels_to_nm;
+  var angle_radians = atan2(y_delta, x_delta);
+  if (adjacent_domain.forward) {
+    angle_radians = -angle_radians;
+  }
+  if ((adjacent_domain.forward && ext.is_5p) || (!adjacent_domain.forward && !ext.is_5p)) {
+    angle_radians = pi - angle_radians;
+  }
+  return Tuple2(display_length, angle_radians * 180 / pi);
 }
 
 update_mouseover(SyntheticMouseEvent event_syn, Helix helix, Point<num> helix_svg_position) {

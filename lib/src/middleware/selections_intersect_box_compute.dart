@@ -161,6 +161,11 @@ bool interval_contained(num l1, num h1, num l2, num h2) {
   return l1 >= l2 && h1 <= h2;
 }
 
+// indicates if real line interval (l1,h1) \subseteq (l2,h2)
+bool interval_intersect(num l1, num h1, num l2, num h2) {
+  return !(l2 > h1 || l1 > h2);
+}
+
 /// indicates if polygon completely contains rectangle, i.e., it contains all 4 corner points
 bool polygon_contains_rect(List<Point<num>> polygon, Rectangle<num> rect) {
   num x1 = rect.left;

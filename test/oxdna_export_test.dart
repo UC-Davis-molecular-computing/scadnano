@@ -54,8 +54,8 @@ main() {
       */
       var helices = [for (int i = 0; i < 2; i++) Helix(idx: i, max_offset: 7, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
-      design = design.strand(0, 0).to(7).cross(1).move(-7).commit();
-      design = design.strand(0, 7).move(-7).cross(1).move(7).commit();
+      design = design.draw_strand(0, 0).to(7).cross(1).move(-7).commit();
+      design = design.draw_strand(0, 7).move(-7).cross(1).move(7).commit();
 
       // expected values for verification
       int expected_num_nucleotides = 7 * 4;
@@ -208,8 +208,8 @@ main() {
             grid: Grid.square, position: Position3D(x: 100, y: 0, z: 0), helices_view_order: [2, 3]),
       };
       var design = Design(helices: helices, grid: Grid.square, groups: groups);
-      design = design.strand(0, 0).to(7).cross(1).move(-7).commit();
-      design = design.strand(2, 7).move(-7).cross(3).move(7).commit();
+      design = design.draw_strand(0, 0).to(7).cross(1).move(-7).commit();
+      design = design.draw_strand(2, 7).move(-7).cross(3).move(7).commit();
 
       // expected values for verification
       int expected_num_nucleotides = 7 * 4;
@@ -344,12 +344,21 @@ main() {
         helix 2   +------->
       */
       var helix_builders = [
-        HelixBuilder()..idx= 0..grid_position=GridPosition(1, 1).toBuilder()..max_offset=8,
-        HelixBuilder()..idx= 1..grid_position=GridPosition(0, 1).toBuilder()..max_offset=8,
-        HelixBuilder()..idx= 2..grid_position=GridPosition(0, 2).toBuilder()..max_offset=8,
+        HelixBuilder()
+          ..idx = 0
+          ..grid_position = GridPosition(1, 1).toBuilder()
+          ..max_offset = 8,
+        HelixBuilder()
+          ..idx = 1
+          ..grid_position = GridPosition(0, 1).toBuilder()
+          ..max_offset = 8,
+        HelixBuilder()
+          ..idx = 2
+          ..grid_position = GridPosition(0, 2).toBuilder()
+          ..max_offset = 8,
       ];
       var design = Design(helix_builders: helix_builders, grid: Grid.honeycomb);
-      design = design.strand(0, 0).to(8).cross(1).move(-8).cross(2).to(8).commit();
+      design = design.draw_strand(0, 0).to(8).cross(1).move(-8).cross(2).to(8).commit();
 
       // expected values for verification
       int expected_num_nucleotides = 8 * 3;
@@ -454,7 +463,7 @@ main() {
       */
       var helix = [Helix(idx: 0, max_offset: 7, grid: Grid.square)];
       var design = Design(helices: helix, grid: Grid.square);
-      design = design.strand(0, 0).to(7).add_deletion(0, 4).commit();
+      design = design.draw_strand(0, 0).to(7).add_deletion(0, 4).commit();
 
       // expected values for verification
       int expected_num_nucleotides = 6;
@@ -557,7 +566,7 @@ main() {
       */
       var helix = [Helix(idx: 0, max_offset: 10, grid: Grid.square)];
       var design = Design(helices: helix, grid: Grid.square);
-      design = design.strand(0, 0).to(7).add_insertion(0, 4, 1).commit();
+      design = design.draw_strand(0, 0).to(7).add_insertion(0, 4, 1).commit();
 
       // expected values for verification
       int expected_num_nucleotides = 8;
@@ -661,8 +670,8 @@ main() {
       */
       var helix = [Helix(idx: 0, max_offset: 14, grid: Grid.square)];
       var design = Design(helices: helix, grid: Grid.square);
-      design = design.strand(0, 0).to(4).loopout(0, 4).to(7).commit();
-      design = design.strand(0, 7).to(0).commit();
+      design = design.draw_strand(0, 0).to(4).loopout(0, 4).to(7).commit();
+      design = design.draw_strand(0, 7).to(0).commit();
 
       // expected values for verification
       int expected_num_nucleotides = 7 * 2 + 4;

@@ -12,7 +12,7 @@ import '../state/geometry.dart';
 import '../state/strand.dart';
 import '../state/domain.dart';
 import 'pure_component.dart';
-import 'design_main_mismatch.dart';
+import 'design_main_warning_star.dart';
 import '../util.dart' as util;
 
 part 'design_main_slice_bar.over_react.g.dart';
@@ -57,9 +57,11 @@ class DesignMainSliceBarComponent extends UiComponent2<DesignMainSliceBarProps> 
     // Add slicebar if needed
     var geometry = props.geometry;
     var slice_bar_svg_width = geometry.base_width_svg;
-    var slice_bar_svg_height = displayed_helices_max_y - displayed_helices_min_y + geometry.helix_diameter_svg;
+    var slice_bar_svg_height =
+        displayed_helices_max_y - displayed_helices_min_y + geometry.helix_diameter_svg;
     var helix = props.helices[helix_idxs_in_group.first];
-    var slice_bar_svg_base_center_pos = helix.svg_base_pos(props.slice_bar_offset, true, props.helix_idx_to_svg_position_map[helix_idxs_in_group.first].y);
+    var slice_bar_svg_base_center_pos = helix.svg_base_pos(
+        props.slice_bar_offset, true, props.helix_idx_to_svg_position_map[helix_idxs_in_group.first].y);
 
     var slice_bar_x = slice_bar_svg_base_center_pos.x - geometry.base_width_svg / 2;
     var slice_bar_y = displayed_helices_min_y - geometry.helix_radius_svg + geometry.base_height_svg;

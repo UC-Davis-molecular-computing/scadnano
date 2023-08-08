@@ -10,6 +10,8 @@ import 'package:platform_detect/platform_detect.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:over_react/over_react.dart' as react;
+import 'package:scadnano/src/reducers/dna_extensions_move_reducer.dart';
+import 'package:scadnano/src/state/dna_extensions_move.dart';
 
 import 'middleware/all_middleware.dart';
 import 'middleware/throttle.dart';
@@ -42,16 +44,14 @@ const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 
 const DEBUG_SELECT = false;
 
-test_stuff() async {
-
-}
+test_stuff() async {}
 
 /// One instance of this class contains the global variables needed by all parts of the app.
 class App {
   AppState get state => store.state;
   View view;
 
-  Store store;
+  Store<AppState> store;
 
   // for optimization; too slow to store in Model since it's updated 60 times/sec
   Store<SelectionRope> store_selection_rope;
@@ -60,6 +60,8 @@ class App {
   var context_selection_box = createContext();
   Store<PotentialCrossover> store_potential_crossover;
   var context_potential_crossover = createContext();
+  Store<DNAExtensionsMove> store_extensions_move;
+  var context_extensions_move = createContext();
   Store<DNAEndsMove> store_dna_ends_move;
   var context_dna_ends_move = createContext();
   Store<HelixGroupMove> store_helix_group_move;
@@ -81,6 +83,7 @@ class App {
       initialize_state();
       setup_undo_redo_keyboard_listeners();
       setup_save_open_dna_file_keyboard_listeners();
+      copy_selected_strands_to_clipboard_image_keyboard_listeners();
 //    util.save_editor_content_to_js_context(state.editor_content);
       restore_all_local_storage(app.store);
       setup_warning_before_unload();
@@ -113,6 +116,9 @@ class App {
         initialState: null, middleware: [throttle_middleware]);
 
     store_potential_crossover = Store<PotentialCrossover>(optimized_potential_crossover_reducer,
+        initialState: null, middleware: [throttle_middleware]);
+
+    store_extensions_move = Store<DNAExtensionsMove>(optimized_dna_extensions_move_reducer,
         initialState: null, middleware: [throttle_middleware]);
 
     store_dna_ends_move = Store<DNAEndsMove>(optimized_dna_ends_move_reducer,
@@ -166,6 +172,12 @@ class App {
         underlying_action is actions.DNAEndsMoveAdjustOffset ||
         underlying_action is actions.DNAEndsMoveStop) {
       store_dna_ends_move.dispatch(action);
+    }
+
+    if (underlying_action is actions.DNAExtensionsMoveSetSelectedExtensionEnds ||
+        underlying_action is actions.DNAExtensionsMoveAdjustPosition ||
+        underlying_action is actions.DNAExtensionsMoveStop) {
+      store_extensions_move.dispatch(action);
     }
 
     if (underlying_action is actions.HelixGroupMoveCreate ||
@@ -262,6 +274,17 @@ setup_save_open_dna_file_keyboard_listeners() {
       event.preventDefault();
       // TODO(benlee12): maybe this is slightly hacky.
       document.getElementById('open-form-file').click();
+    }
+  });
+}
+
+copy_selected_strands_to_clipboard_image_keyboard_listeners() {
+  document.body.onKeyDown.listen((KeyboardEvent event) {
+    int key = event.which;
+    // Ctrl+I to copy image of selected strands to clipboard
+    if ((event.ctrlKey || event.metaKey) && !event.shiftKey && key == KeyCode.I && !event.altKey) {
+      event.preventDefault();
+      app.dispatch(actions.CopySelectedStandsToClipboardImage());
     }
   });
 }

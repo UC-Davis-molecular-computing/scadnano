@@ -6,6 +6,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:built_value/standard_json_plugin.dart';
 import 'package:color/color.dart';
 import 'package:scadnano/src/dna_file_type.dart';
+import 'package:scadnano/src/state/dna_extensions_move.dart';
 import 'package:scadnano/src/state/undo_redo.dart';
 import 'package:tuple/tuple.dart';
 
@@ -43,6 +44,7 @@ import 'state/grid.dart';
 import 'state/helix.dart';
 import 'state/idt_fields.dart';
 import 'state/loopout.dart';
+import 'state/extension.dart';
 import 'state/mouseover_data.dart';
 import 'state/position3d.dart';
 import 'state/select_mode.dart';
@@ -59,6 +61,7 @@ import 'state/domain_name_mismatch.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  CopySelectedStandsToClipboardImage,
   LoadingDialogHide,
   LoadingDialogShow,
   ResetLocalStorage,
@@ -73,8 +76,13 @@ part 'serializers.g.dart';
   ScalePurificationIDTFieldsAssign,
   StrandNameSet,
   SubstrandNameSet,
+  StrandLabelSet,
+  SubstrandLabelSet,
   DomainNameMismatch,
+  ShowBasePairLinesSet,
+  ShowBasePairLinesWithMismatchesSet,
   ShowDomainNameMismatchesSet,
+  ShowUnpairedInsertionDeletionsSet,
   ModificationEdit,
   ModificationConnectorLengthSet,
   Modifications5PrimeEdit,
@@ -82,7 +90,7 @@ part 'serializers.g.dart';
   ModificationsInternalEdit,
   ModificationRemove,
   ModificationAdd,
-  ShowLoopoutLengthSet,
+  ShowLoopoutExtensionLengthSet,
   HelixGroupMove,
   HelixGroupMoveStart,
   HelixGroupMoveCreate,
@@ -107,8 +115,10 @@ part 'serializers.g.dart';
   SelectModesAdd,
   SelectionBox,
   ShowDNASet,
-  ShowDomainNamesSet,
   ShowStrandNamesSet,
+  ShowStrandLabelsSet,
+  ShowDomainNamesSet,
+  ShowDomainLabelsSet,
   ShowModificationsSet,
   ShowMismatchesSet,
   SetShowEditor,
@@ -134,6 +144,7 @@ part 'serializers.g.dart';
   DesignSideRotationData,
   Helix,
   HelixGroup,
+  Extension,
   Domain,
   Strand,
   Geometry,
@@ -173,6 +184,10 @@ part 'serializers.g.dart';
   SelectAllSelectable,
   Select,
   Loopout,
+  ExtensionAdd,
+  ExtensionDisplayLengthAngleSet,
+  ExtensionNumBasesChange,
+  ExtensionsNumBasesChange,
   LoopoutLengthChange,
   LoopoutsLengthChange,
   ConvertCrossoverToLoopout,
@@ -213,6 +228,8 @@ part 'serializers.g.dart';
   PotentialCrossoverCreate,
   PotentialCrossoverMove,
   PotentialCrossoverRemove,
+  DNAExtensionMove,
+  DNAExtensionsMove,
   WarnOnExitIfUnsavedSet,
   AssignDNA,
   AssignDNAComplementFromBoundStrands,
@@ -241,6 +258,11 @@ part 'serializers.g.dart';
   DNAEndsMoveSetSelectedEnds,
   DNAEndsMoveAdjustOffset,
   DNAEndsMoveCommit,
+  DNAExtensionsMoveStart,
+  DNAExtensionsMoveSetSelectedExtensionEnds,
+  DNAExtensionsMoveAdjustPosition,
+  DNAExtensionsMoveStop,
+  DNAExtensionsMoveCommit,
   // CopySelectedObjectTextToSystemClipboard,
   AutoPasteInitiate,
   ManualPasteInitiate,
@@ -281,10 +303,11 @@ part 'serializers.g.dart';
   DialogShow,
   DialogHide,
   DialogLink,
+  DialogType,
   StrandOrder,
-  StrandColorSet,
-  StrandColorPickerShow,
-  StrandColorPickerHide,
+  StrandOrSubstrandColorSet,
+  StrandOrSubstrandColorPickerShow,
+  StrandOrSubstrandColorPickerHide,
   StrandPasteKeepColorSet,
   ExampleDesigns,
   ExampleDesignsLoad,
@@ -300,15 +323,17 @@ part 'serializers.g.dart';
   SelectableModification3Prime,
   SelectableModificationInternal,
   LoadDnaSequenceImageUri,
-  SetDisablePngCacheUntilActionCompletes,
+  SetExportSvgActionDelayedForPngCache,
   SetIsZoomAboveThreshold,
   DNASequencePredefined,
   SetOnlyDisplaySelectedHelices,
   InvertYSet,
   SetModificationDisplayConnector,
   ModificationFontSizeSet,
-  DomainNameFontSizeSet,
   StrandNameFontSizeSet,
+  StrandLabelFontSizeSet,
+  DomainNameFontSizeSet,
+  DomainLabelFontSizeSet,
   MajorTickOffsetFontSizeSet,
   MajorTickWidthFontSizeSet,
   HelicesPositionsSetBasedOnCrossovers,
@@ -318,6 +343,8 @@ part 'serializers.g.dart';
   SetDisplayMajorTickWidths,
   SetDisplayMajorTickWidthsAllHelices,
   SliceBarOffsetSet,
+  DisablePngCachingDnaSequencesSet,
+  DisplayReverseDNARightSideUpSet,
   SliceBarMoveStart,
   SliceBarMoveStop,
   ShowSliceBarSet,
@@ -340,16 +367,15 @@ Serializers standard_serializers = (serializers.toBuilder()
       ..add(PointSerializer<num>())
       ..add(ColorSerializer())
       ..addPlugin(new StandardJsonPlugin())
-      // https://github.com/google/built_value.dart/issues/1018#issue-849937552
-      // BuiltValue does not automatically create serializer for nested BuiltMap (see dialog.dart, disable_when_any_radio_button_selected)
-      // so add serializer manually here
+// https://github.com/google/built_value.dart/issues/1018#issue-849937552
+// BuiltValue does not automatically create serializer for nested BuiltMap (see dialog.dart, disable_when_any_radio_button_selected)
+// so add serializer manually here
       ..addBuilderFactory(
           const FullType(BuiltMap, const [
             const FullType(int),
             const FullType(BuiltList, const [const FullType(String)])
           ]),
-          () => new MapBuilder<int, BuiltList<String>>())
-      )
+          () => new MapBuilder<int, BuiltList<String>>()))
     .build();
 
 //Serializers standard_serializers2 = (serializers.toBuilder()..addPlugin(new StandardJsonPlugin())).build();

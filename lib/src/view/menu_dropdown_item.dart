@@ -18,7 +18,9 @@ class MenuDropdownItemProps = UiProps with MenuDropdownItemPropsMixin;
 
 class MenuDropdownItemComponent extends UiComponent2<MenuDropdownItemProps> {
   @override
-  get defaultProps => (newProps()..disabled = false..active=false);
+  get defaultProps => (newProps()
+    ..disabled = false
+    ..active = false);
 
   @override
   render() {

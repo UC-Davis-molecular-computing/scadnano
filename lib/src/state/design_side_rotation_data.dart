@@ -1,4 +1,3 @@
-
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
@@ -27,7 +26,8 @@ abstract class DesignSideRotationParams
     ..helix_idx = helix_idx
     ..offset = offset);
 
-  factory DesignSideRotationParams.from([void Function(DesignSideRotationParamsBuilder) updates]) = _$DesignSideRotationParams;
+  factory DesignSideRotationParams.from([void Function(DesignSideRotationParamsBuilder) updates]) =
+      _$DesignSideRotationParams;
 
   DesignSideRotationParams._();
 
@@ -68,9 +68,9 @@ abstract class DesignSideRotationData
           num_domains_found++;
           Strand strand = design.substrand_to_strand[domain];
           if (domain.forward) {
-            color_forward = strand.color;
+            color_forward = domain.color ?? strand.color;
           } else {
-            color_reverse = strand.color;
+            color_reverse = domain.color ?? strand.color;
           }
         }
         if (num_domains_found >= 2) {
@@ -78,8 +78,8 @@ abstract class DesignSideRotationData
         }
       }
       double minor_groove_angle = design.geometry.minor_groove_angle;
-      design_side_rotation_datas_builder.add(DesignSideRotationData(helix, offset, color_forward,
-          color_reverse, roll_forward, minor_groove_angle));
+      design_side_rotation_datas_builder.add(DesignSideRotationData(
+          helix, offset, color_forward, color_reverse, roll_forward, minor_groove_angle));
     }
     return design_side_rotation_datas_builder;
   }
@@ -95,7 +95,8 @@ abstract class DesignSideRotationData
         ..roll_forward = roll_forward
         ..minor_groove_angle = minor_groove_angle);
 
-  factory DesignSideRotationData.from([void Function(DesignSideRotationDataBuilder) updates]) = _$DesignSideRotationData;
+  factory DesignSideRotationData.from([void Function(DesignSideRotationDataBuilder) updates]) =
+      _$DesignSideRotationData;
 
   DesignSideRotationData._();
 

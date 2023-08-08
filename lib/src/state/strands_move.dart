@@ -31,8 +31,12 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
       Address original_address,
       bool copy = false,
       bool keep_color = true}) {
-    var strands_fixed =
-        copy ? all_strands : [for (var strand in all_strands) if (!strands_moving.contains(strand)) strand];
+    var strands_fixed = copy
+        ? all_strands
+        : [
+            for (var strand in all_strands)
+              if (!strands_moving.contains(strand)) strand
+          ];
     if (original_helices_view_order_inverse == null) {
       throw ArgumentError('original_helices_view_order_inverse must be specified');
     }

@@ -75,11 +75,17 @@ class DesignMainStrandCrossoverComponent
 
     String path;
     if (within_group) {
-      path = crossover_path_description_within_group(
-          props.prev_domain, props.next_domain, props.helices, props.geometry, props.prev_domain_helix_svg_position_y, props.next_domain_helix_svg_position_y);
+      path = crossover_path_description_within_group(props.prev_domain, props.next_domain, props.helices,
+          props.geometry, props.prev_domain_helix_svg_position_y, props.next_domain_helix_svg_position_y);
     } else {
       path = crossover_path_description_between_groups(
-          props.prev_domain, props.next_domain, props.helices, props.geometry, props.groups, props.prev_domain_helix_svg_position_y, props.next_domain_helix_svg_position_y);
+          props.prev_domain,
+          props.next_domain,
+          props.helices,
+          props.geometry,
+          props.groups,
+          props.prev_domain_helix_svg_position_y,
+          props.next_domain_helix_svg_position_y);
     }
 
     var color = strand.color.toHexColor().toCssString();

@@ -17,8 +17,7 @@ const selectable_css_style_non_domain_or_end = {
 };
 
 const selectable_css_style_domain = {
-  'stroke': 'hotpink',
-  'stroke-width': '5pt', // makes thicker when selected so easier to see
+  'filter': 'url("#shadow")',
 };
 
 const selectable_css_style_end = {
@@ -45,8 +44,8 @@ edit_select_mode_change_middleware(Store<AppState> store, action, NextDispatcher
   }
 }
 
-set_selectables_css_style_rules(Design design, BuiltSet<EditModeChoice> edit_modes,
-    BuiltSet<SelectModeChoice> select_modes) {
+set_selectables_css_style_rules(
+    Design design, BuiltSet<EditModeChoice> edit_modes, BuiltSet<SelectModeChoice> select_modes) {
   bool edit_mode_is_select_or_rope =
       edit_modes.contains(EditModeChoice.select) || edit_modes.contains(EditModeChoice.rope_select);
   bool scaffold_parts_selectable =
