@@ -91,7 +91,7 @@ final default_geometry = Geometry();
 const scadnano_css_stylesheet_name_no_ext = r'scadnano-styles';
 const scadnano_css_stylesheet_name = '${scadnano_css_stylesheet_name_no_ext}.css';
 
-const NUM_DIGITS_PRECISION_POSITION_DISPLAYED = 2;
+const NUM_DIGITS_PRECISION_POSITION_DISPLAYED = 1;
 
 /// DISTANCE_BETWEEN_HELICES_SVG is set to (BASE_WIDTH_SVG * 2.5/0.332) based on the following calculation,
 /// to attempt to make the DNA appear to scale in 2D drawings:

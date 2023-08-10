@@ -394,4 +394,24 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     }
     return ticks.build();
   }
+
+  double backbone_angle_at_offset(int offset, bool forward, Geometry geometry) {
+    // Computes the backbone angle at *offset* for the strand in the direction given by *forward*.
+    //
+    // :param offset:
+    //     offset on this helix
+    // :param forward:
+    //     whether to compute angle for the forward or reverse strand
+    // :param geometry:
+    //     :any:`Geometry` parameters to determine bases per turn
+    // :return:
+    //     backbone angle at *offset* for the strand in the direction given by *forward*.
+    var degrees_per_base = 360 / geometry.bases_per_turn;
+    var angle = this.roll + offset * degrees_per_base;
+    if (!forward) {
+      angle += geometry.minor_groove_angle;
+    }
+    angle %= 360;
+    return angle;
+  }
 }
