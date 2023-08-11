@@ -371,6 +371,22 @@ or into another design in another browser or tab. You can also paste into
 a text document to see a JSON description of the copied strand(s).'''
         ..disabled = !props.enable_copy)(),
       (MenuDropdownItem()
+        ..on_click = (_) {
+          if (props.enable_copy) {
+            app.dispatch(actions.CopySelectedStandsToClipboardImage());
+          }
+        }
+        ..display = 'Copy image'
+        ..keyboard_shortcut = 'Ctrl+I'
+        ..tooltip = '''\
+Copy a (PNG bitmap) image of the currently selected strand(s) to the system 
+clipboard. This image can be pasted into graphics programs such as Powerpoint
+or Inkscape. Note that the bitmap image will be pixelated on zoom-in, unlike
+SVG (scaled vector graphics). To retain the vector graphics in the image so 
+that it stays sharp on zoom-in, use the option Export-->SVG of selected strands
+to save an SVG file of the selected strands.'''
+        ..disabled = !props.enable_copy)(),
+      (MenuDropdownItem()
         ..on_click =
             ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped))
         ..display = 'Paste'

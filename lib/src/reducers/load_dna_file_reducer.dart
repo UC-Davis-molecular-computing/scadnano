@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/dna_file_type.dart';
@@ -38,11 +39,18 @@ The design has the following problem:
 ${error.cause}
 ${util.stack_trace_message_bug_report(stack_trace)}''';
   } catch (error, stack_trace) {
+    window.alert(
+        'I was unable to process that file. Only scadnano .sc files are supported for opening via the menu File-->Open or dragging onto the browser. If you are trying to import a cadnano file (ending. in .json), use the menu option File-->Import cadnano v2. Here is the full error message: ');
     error_message = "I encountered an error while reading the file ${action.filename}:"
         '\n\n$hline'
         '\n* error type:    ${error.runtimeType}'
         '\n* error message: ${error.toString()}'
         '\n$hline'
+        '\nIf the file is imported from cadnano, use the option of importing "cadnano v2".'
+        '\nTo do this, go to the menu options, then perform Select File --> Import "cadnano v2".'
+        '\nImporting a .json file is not allowed when selecting the "Open" option. Use a file with the .sc extension.'
+        '\nIt is the same thing for dragging a file into the browser. A .json file will also cause an error, even if it is dragged in.'
+        '\nEssentially, for .sc files, you can use the open or drag and drop feature. For .json files, you have to import "cadnano v2".'
         '\n\nThat file\'s contents are printed below.'
         '${util.stack_trace_message_bug_report(stack_trace)}'
         '\n\nThe file ${action.filename} has this content:\n\n${action.content}';
