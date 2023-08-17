@@ -67,10 +67,8 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
       grid_position_str = position_str.replaceAll(' ', '');
     }
 
-    var forward_angle =
-        props.helix.backbone_angle_at_offset(props.slice_bar_offset, true, props.helix.geometry);
-    var reverse_angle =
-        props.helix.backbone_angle_at_offset(props.slice_bar_offset, false, props.helix.geometry);
+    var forward_angle = props.helix.backbone_angle_at_offset(props.slice_bar_offset, true);
+    var reverse_angle = props.helix.backbone_angle_at_offset(props.slice_bar_offset, false);
 
     var tooltip = '''\
 position:  ${position_str}

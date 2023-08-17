@@ -2353,6 +2353,59 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
     return strand_idx;
   }
+
+  /// maps helix indices to list of addresses of crossovers on that helix (helix_idx of Address is idx
+  /// of *other* helix, so the Addresses are not interpretable as Addresses in the Design, since the
+  /// other two parts (offset and forward) refer to the current helix (the key in the returned Map)
+  @memoized
+  BuiltMap<int, BuiltList<Address>> get helix_to_crossover_addresses {
+    Map<int, List<Address>> ret = {for (int helix_idx in this.helix_idxs) helix_idx: []};
+    for (int helix_idx in this.helix_idxs) {
+      var domains = this.domains_on_helix(helix_idx);
+      for (Domain domain in domains) {
+        var strand = this.substrand_to_strand[domain];
+        var domains_on_strand = strand.domains;
+        var num_domains = domains_on_strand.length;
+        var domain_idx = domains_on_strand.indexOf(domain);
+
+        // if not first domain, then there is a crossover to the previous domain
+        if (domain_idx > 0) {
+          var offset = domain.offset_5p;
+          var other_domain = domains_on_strand[domain_idx - 1];
+          var other_helix_idx = other_domain.helix;
+          ret[helix_idx].add(Address(helix_idx: other_helix_idx, offset: offset, forward: domain.forward));
+        }
+
+        // if not last domain, then there is a crossover to the next domain
+        if (domain_idx < num_domains - 1) {
+          var offset = domain.offset_3p;
+          var other_domain = domains_on_strand[domain_idx + 1];
+          var other_helix_idx = other_domain.helix;
+          ret[helix_idx].add(Address(helix_idx: other_helix_idx, offset: offset, forward: domain.forward));
+        }
+      }
+    }
+
+    // convert to built map of built lists
+    Map<int, BuiltList<Address>> ret_built_lists = {
+      for (int helix_idx in this.helix_idxs) helix_idx: ret[helix_idx].build()
+    };
+    return ret_built_lists.build();
+  }
+
+  /// returns design with all helix rolls relaxed (based on crossover locations)
+  Design relax_helix_rolls() {
+    Map<int, Helix> helices_relaxed = this.helices.toMap();
+
+    for (var helix_idx in helices_relaxed.keys) {
+      var helix = helices_relaxed[helix_idx];
+      var crossover_addresses = this.helix_to_crossover_addresses[helix_idx];
+      helix = helix.relax_roll(this.helices, crossover_addresses);
+      helices_relaxed[helix_idx] = helix;
+    }
+
+    return this.rebuild((b) => b..helices.replace(helices_relaxed));
+  }
 }
 
 Map<String, HelixGroup> _calculate_groups_from_helix_builder(
