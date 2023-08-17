@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:tuple/tuple.dart';
 import '../state/design.dart';
 import '../state/position3d.dart';
 import '../state/unused_fields.dart';
@@ -395,15 +396,13 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     return ticks.build();
   }
 
-  double backbone_angle_at_offset(int offset, bool forward, Geometry geometry) {
+  double backbone_angle_at_offset(int offset, bool forward) {
     // Computes the backbone angle at *offset* for the strand in the direction given by *forward*.
     //
     // :param offset:
     //     offset on this helix
     // :param forward:
     //     whether to compute angle for the forward or reverse strand
-    // :param geometry:
-    //     :any:`Geometry` parameters to determine bases per turn
     // :return:
     //     backbone angle at *offset* for the strand in the direction given by *forward*.
     var degrees_per_base = 360 / geometry.bases_per_turn;
@@ -412,6 +411,25 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
       angle += geometry.minor_groove_angle;
     }
     angle %= 360;
+    return angle;
+  }
+
+  Helix relax_roll(BuiltMap<int, Helix> helices, BuiltList<Address> crossover_addresses) {
+    var roll = compute_relaxed_roll(helices, crossover_addresses);
+    var new_helix = this.rebuild((b) => b..roll = roll);
+    return new_helix;
+  }
+
+  double compute_relaxed_roll(BuiltMap<int, Helix> helices, BuiltList<Address> crossover_addresses) {
+    List<Tuple2<double, double>> angles = [];
+    for (var address in crossover_addresses) {
+      var other_helix = helices[address.helix_idx];
+      var angle_of_other_helix = util.angle_from_helix_to_helix(this, other_helix);
+      var crossover_angle = this.backbone_angle_at_offset(address.offset, address.forward);
+      var relative_angle = Tuple2<double, double>(crossover_angle, angle_of_other_helix);
+      angles.add(relative_angle);
+    }
+    var angle = util.minimum_strain_angle(angles);
     return angle;
   }
 }

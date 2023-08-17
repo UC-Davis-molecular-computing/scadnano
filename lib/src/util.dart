@@ -1793,3 +1793,138 @@ Map<int, int> invert_helices_view_order(Iterable<int> helices_view_order) {
   }
   return view_order_inverse;
 }
+
+double degrees(double rad) => rad * 180 / pi;
+
+double radians(double deg) => deg * pi / 180;
+
+// Computes angle between `helix` and `other_helix` in degrees.
+//
+// :param helix:
+//     first helix
+// :param other_helix:
+//     second helix
+// :param grid:
+//     :any:`Grid` to use when calculating Helix positions
+// :param geometry:
+//     :any:`Geometry` to use when calculating Helix positions
+// :return:
+//     angle between `helix` and `other_helix` in degrees.
+double angle_from_helix_to_helix(Helix helix, Helix other_helix) {
+  var p1 = helix.position;
+  var p2 = other_helix.position;
+
+  // negate y_diff because y increases going down in the main view
+  var y_diff = -(p2.y - p1.y);
+  var x_diff = p2.x - p1.x;
+
+  var angle = degrees(atan2(y_diff, x_diff));
+
+  // negate angle because we rotate clockwise
+  angle = -angle;
+
+  // subtract 90 since we define 0 angle to be up instead of right
+  angle += 90;
+
+  // normalize to be in range [0, 360)
+  angle %= 360;
+
+  return angle;
+}
+
+// Computes the angle that minimizes the "strain" of all relative angles in the given list.
+//
+// A "relative angle" is a pair :math:`(\theta, \mu)`. The strain is set to 0 by setting
+// :math:`\theta = \mu`; more generally the strain is :math:`(\theta-\mu)^2`, where :math:`\theta-\mu`
+// is the "angular difference" (e.g., 10-350 is 20 since 350 is also -10 mod 360).
+//
+// The constraint is that in the list
+// [:math:`(\theta_1, \mu_1)`, :math:`(\theta_2, \mu_2)`, ..., :math:`(\theta_n, \mu_n)`],
+// we can rotate all angles :math:`\theta_i` by the same amount :math:`\theta`.
+// So this calculates the angle :math:`\theta` that minimizes
+// :math:`\sum_i [(\theta + \theta_i) - \mu_i]^2`
+//
+// :param relative_angles:
+//     List of :math:`(\theta_i, \mu_i)` pairs, where :math:`\theta_i = \mu_i` means 0 strain, and angles
+//     are in units of degrees.
+// :return:
+//     angle :math:`\theta` by which to rotate all angles :math:`\theta_i`
+//     (but not changing any "zero angle" :math:`\mu_i`)
+//     such that :math:`\sum_i [(\theta + \theta_i) - \mu_i]^2` is minimized.
+double minimum_strain_angle(List<Tuple2<double, double>> relative_angles) {
+  var adjusted_angles = [for (var angle in relative_angles) angle.item1 - angle.item2];
+  var ave_angle = average_angle(adjusted_angles);
+  var min_strain_angle = -ave_angle;
+  min_strain_angle %= 360;
+  return min_strain_angle;
+}
+
+// :param x: angle in degrees
+// :param y: angle in degrees
+// :return: signed difference between angles `x` and `y`, in degrees, in range [-180, 180]
+double angle_distance(double x, double y) {
+  var a = (x - y) % 360;
+  var b = (y - x) % 360;
+  var diff = a < b ? -a : b;
+  return diff;
+}
+
+// :param angles: list of angles in degrees
+// :param angle: angle in degrees
+// :return: sum of squared distances from each angle in `angles` to `angle`
+double sum_squared_angle_distances(List<double> angles, double angle) {
+  double sum = 0.0;
+  for (var a in angles) {
+    var dist = angle_distance(angle, a);
+    sum += dist * dist;
+  }
+  return sum;
+}
+
+// Calculate the "circular mean" of the angles in `angles`. Note this coincides with the arithemtic mean
+// for certain lists of angles, e.g., [0, 10, 50], in a way that the circular mean calculated via
+// interpreting angles as unit vectors (https://en.wikipedia.org/wiki/Circular_mean) does not.
+//
+// This algorithm is due to Julian Panetta. (https://julianpanetta.com/)
+//
+// :param angles:
+//     List of angles in degrees.
+// :return:
+//     average angle of the list of angles, normalized to be between 0 and 360.
+double average_angle(List<double> angles) {
+  int num_angles = angles.length;
+  double mean_angle = 0.0;
+  if (num_angles > 0) {
+    mean_angle = angles.reduce((a, b) => a + b) / num_angles;
+  }
+
+  double min_dist = double.infinity;
+  double optimal_angle = 0;
+  for (int n = 0; n < num_angles; n++) {
+    var candidate_angle = mean_angle + 360.0 * n / num_angles;
+    var candidate_dist = sum_squared_angle_distances(angles, candidate_angle);
+    if (min_dist > candidate_dist) {
+      min_dist = candidate_dist;
+      optimal_angle = candidate_angle;
+    }
+  }
+
+  optimal_angle %= 360.0;
+
+  // taking mod 360 sometimes results in 360.0 instead of 0.0. This is hacky but fixes it.
+  if ((360.0 - optimal_angle).abs() < 0.000000001) {
+    optimal_angle = 0.0;
+  }
+
+  // in case it's a nice round number, let's get rid of the floating-point error artifacts here
+  optimal_angle = round(optimal_angle, 9);
+
+  return optimal_angle;
+}
+
+double round(double x, int precision) {
+  var x_big = x * pow(10, precision);
+  int x_big_int = x_big.round();
+  x = x_big_int / pow(10, precision);
+  return x;
+}
