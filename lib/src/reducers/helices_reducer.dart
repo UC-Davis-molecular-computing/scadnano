@@ -32,6 +32,7 @@ Reducer<BuiltMap<int, Helix>> helices_local_reducer = combineReducers([
 ]);
 
 GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGlobalReducers([
+  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.RelaxHelixRolls>(relax_helix_rolls_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.GroupChange>(helix_group_change_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.GridChange>(helix_grid_change_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixGridPositionSet>(
@@ -476,6 +477,22 @@ BuiltMap<int, Helix> helix_grid_change_reducer(
   }
 
   return new_helices.build();
+}
+
+BuiltMap<int, Helix> relax_helix_rolls_reducer(
+    BuiltMap<int, Helix> helices, AppState state, actions.RelaxHelixRolls action) {
+  var helix_idxs_to_relax =
+      action.only_selected ? state.ui_state.side_selected_helix_idxs : state.design.helix_idxs;
+
+  var new_helices_map = helices.toMap();
+  for (var helix_idx in helix_idxs_to_relax) {
+    var helix = new_helices_map[helix_idx];
+    var crossover_addresses = state.design.helix_to_crossover_addresses[helix_idx];
+    var helix_relaxed = helix.relax_roll(helices, crossover_addresses);
+    new_helices_map[helix_idx] = helix_relaxed;
+  }
+
+  return new_helices_map.build();
 }
 
 BuiltMap<int, Helix> helix_group_change_reducer(

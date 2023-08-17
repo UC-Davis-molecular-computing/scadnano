@@ -478,21 +478,8 @@ to the first end e2 after it in this order, if
       ///////////////////////////////////////////////////////////////
       // Set helix coordinates based on crossovers
       DropdownDivider({}),
-      (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers()))
-        ..display = 'Set helix coordinates based on crossovers'
-        ..disabled = props.no_grid_is_none
-        ..tooltip = '''\
-The grid must be set to none to enable this.${props.no_grid_is_none ? " (Currently disabled since the grid is not none.)" : ""}
-
-Select some crossovers and some helices. If no helices are selected, then all
-helices are processed. At most one crossover between pairs of adjacent (in
-view order) helices can be selected. If a pair of adjacent helices has no
-crossover selected, it is assumed to be the first crossover.
-
-New grid coordinates are calculated based on the crossovers to ensure that each
-pair of adjacent helices has crossover angles that point the backbone angles
-directly at the adjoining helix.''')(),
+      edit_menu_helix_rolls(),
+      DropdownDivider({}),
       (MenuBoolean()
         ..value = props.default_crossover_type_scaffold_for_setting_helix_rolls
         ..display = 'default to leftmost scaffold crossover'
@@ -613,6 +600,53 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
       ..display = '${action_name} ${item.short_description}${most_recent_string}'
       ..key = '${action_name.toLowerCase()}-${num_times}'
       ..on_click = (_) => app.dispatch(undo_or_redo_action_creator(num_times)))();
+  }
+
+  ReactElement edit_menu_helix_rolls() {
+    return (MenuDropdownRight()
+      ..title = 'Helix rolls'
+      ..id = 'edit_menu_helix-rolls'
+      ..key = 'edit_menu_helix-rolls'
+      ..className = 'submenu-item')([
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.RelaxHelixRolls(only_selected: false)))
+        ..display = 'Set helix rolls to unstrain crossovers'
+        ..key = 'edit_menu_helix-rolls_set-helix-rolls'
+        ..tooltip = '''\
+Sets all helix rolls to "relax" them based on their crossovers.
+
+This calculates the "strain" of each crossover c as the absolute value d_c of 
+the distance between the angle to the helix to which it is connected and the 
+angle of that crossover given the current helix roll. It minimizes sum_c d_c^2, 
+i.e., minimize the sum of the squares of the strains. This can be used to 
+create a design with "reasonable" crossover locations and then set the rolls 
+to match the crossover locations as best as possible.
+''')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.RelaxHelixRolls(only_selected: true)))
+        ..display = 'Set *selected* helix rolls to unstrain crossovers'
+        ..key = 'edit_menu_helix-rolls_set-selected-helix-rolls'
+        ..tooltip = '''\
+Same as option "Set helix rolls based on crossovers and helix coordinates" above,
+but changes the rolls only of selected helices.
+''')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers()))
+        ..display = 'Set helix coordinates based on crossovers'
+        ..key = 'edit_menu_helix-rolls_set-helix-positions-based-on-crossovers'
+        ..disabled = props.no_grid_is_none
+        ..tooltip = '''\
+The grid must be set to none to enable this.${props.no_grid_is_none ? " (Currently disabled since the grid is not none.)" : ""}
+
+Select some crossovers and some helices. If no helices are selected, then all
+helices are processed. At most one crossover between pairs of adjacent (in
+view order) helices can be selected. If a pair of adjacent helices has no
+crossover selected, it is assumed to be the first crossover.
+
+New grid coordinates are calculated based on the crossovers to ensure that each
+pair of adjacent helices has crossover angles that point the backbone angles
+directly at the adjoining helix.''')(),
+    ]);
   }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
