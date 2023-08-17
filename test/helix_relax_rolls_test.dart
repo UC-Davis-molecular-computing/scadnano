@@ -13,12 +13,14 @@ import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/extension.dart';
 import 'package:scadnano/src/state/select_mode.dart';
 import 'package:scadnano/src/state/strand.dart';
+import 'package:scadnano/src/util.dart';
 import 'package:test/test.dart';
 
 import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/actions/actions.dart' as actions;
+import 'package:tuple/tuple.dart';
 
-import 'utils.dart';
+import 'package:scadnano/src/util.dart' as util;
 
 main() {
   group('HelixRollRelax', () {
@@ -92,7 +94,7 @@ main() {
       var crossover_addresses_h2 = design3h.helix_to_crossover_addresses[2].toList();
       expect(crossover_addresses_h0.length, 2);
       expect(crossover_addresses_h1.length, 1);
-      expect(crossover_addresses_h1.length, 1);
+      expect(crossover_addresses_h2.length, 1);
 
       var f1 = 4 / 10.5;
       var f2 = 12 / 10.5;
@@ -270,6 +272,17 @@ main() {
       expect(a0.forward, false);
       expect(a1.forward, false);
       expect(a2.forward, false);
+    });
+
+    test('minimum_strain_angle_0_10_20_relative_to_0', () {
+      var relative_angles = [
+        Tuple2<double, double>(0, 0),
+        Tuple2<double, double>(10, 0),
+        Tuple2<double, double>(20, 0),
+      ];
+      var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
+      var exp_min_strain_angle = 350.0;
+      expect(act_min_strain_angle, closeTo(exp_min_strain_angle, epsilon));
     });
   });
 }
