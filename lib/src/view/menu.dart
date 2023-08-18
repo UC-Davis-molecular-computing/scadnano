@@ -495,10 +495,10 @@ a text document to see a JSON description of the copied strand(s).'''
         ..display = 'Copy image'
         ..keyboard_shortcut = 'Ctrl+I'
         ..tooltip = '''\
-Copy a (PNG bitmap) image of the currently selected strand(s) to the system 
+Copy a (PNG bitmap) image of the currently selected strand(s) to the system
 clipboard. This image can be pasted into graphics programs such as Powerpoint
 or Inkscape. Note that the bitmap image will be pixelated on zoom-in, unlike
-SVG (scaled vector graphics). To retain the vector graphics in the image so 
+SVG (scaled vector graphics). To retain the vector graphics in the image so
 that it stays sharp on zoom-in, use the option Export-->SVG of selected strands
 to save an SVG file of the selected strands.'''
         ..disabled = !props.enable_copy)(),
@@ -516,11 +516,11 @@ a text document to see a JSON description of the copied strand(s).
         ..on_click = ((_) => paste_strands_auto())
         ..display = 'Autopaste'
         ..tooltip = '''\
-This automatically pastes copied strands to an automatically selected position 
+This automatically pastes copied strands to an automatically selected position
 in the design, which can be faster to create many copies of strand(s) than
-manually selecting each position to paste. First copy some strand(s), then 
+manually selecting each position to paste. First copy some strand(s), then
 manually paste them using the menu Edit-->Paste or pressing Ctrl+V. Once this
-is done once, by selecting Edit-->Autopaste (or pressing Shift+Ctrl+V), 
+is done once, by selecting Edit-->Autopaste (or pressing Shift+Ctrl+V),
 another copy of the same strand(s) are pasted, in the same "direction" as the
 first paste.
 
