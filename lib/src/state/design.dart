@@ -2400,8 +2400,10 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     for (var helix_idx in helices_relaxed.keys) {
       var helix = helices_relaxed[helix_idx];
       var crossover_addresses = this.helix_to_crossover_addresses[helix_idx];
-      helix = helix.relax_roll(this.helices, crossover_addresses);
-      helices_relaxed[helix_idx] = helix;
+      if (crossover_addresses.isNotEmpty) {
+        helix = helix.relax_roll(this.helices, crossover_addresses);
+        helices_relaxed[helix_idx] = helix;
+      }
     }
 
     return this.rebuild((b) => b..helices.replace(helices_relaxed));

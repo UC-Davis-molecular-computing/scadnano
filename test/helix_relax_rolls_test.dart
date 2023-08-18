@@ -120,6 +120,39 @@ main() {
       expect(design3h.helices[2].roll, closeTo(exp_h2_roll, epsilon));
     });
 
+    test('2_helix_no_crossovers', () {
+      /*
+          0         1         2
+          012345678901234567890
+        0 [--->[-------->
+
+        1 <---]<--------]
+      */
+      List<Helix> helices = [];
+      var initial_roll = 30;
+      for (int i = 0; i < 2; i++) {
+        var helix = Helix(
+            max_offset: 60, grid: Grid.square, idx: i, grid_position: GridPosition(0, i), roll: initial_roll);
+        helices.add(helix);
+      }
+      var design2h = Design(helices: helices, grid: Grid.square);
+
+      design2h = design2h.draw_strand(0, 0).move(5).commit();
+      design2h = design2h.draw_strand(0, 5).move(10).commit();
+      design2h = design2h.draw_strand(1, 5).move(-5).commit();
+      design2h = design2h.draw_strand(1, 15).move(-10).commit();
+
+      var crossover_addresses_h0 = design2h.helix_to_crossover_addresses[0].toList();
+      var crossover_addresses_h1 = design2h.helix_to_crossover_addresses[1].toList();
+      expect(crossover_addresses_h0.length, 0);
+      expect(crossover_addresses_h1.length, 0);
+
+      design2h = design2h.relax_helix_rolls();
+
+      expect(design2h.helices[0].roll, closeTo(initial_roll, epsilon));
+      expect(design2h.helices[1].roll, closeTo(initial_roll, epsilon));
+    });
+
     test('3_helix_6_crossovers', () {
       /*
           0         1         2         3         4         5         6
