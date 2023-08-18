@@ -346,8 +346,6 @@ that occurred between the last save and a browser crash.'''
         'title': 'Edit',
         'id': 'edit-nav-dropdown',
       },
-      ///////////////////////////////////////////////////////////////
-      // cut/copy/paste
       (MenuDropdownRight()
         ..title = 'Undo'
         ..id = "edit_menu_undo-dropdown"
@@ -357,95 +355,10 @@ that occurred between the last save and a browser crash.'''
         ..id = "edit_menu_redo-dropdown"
         ..disabled = props.redo_stack_empty)(redo_dropdowns),
       DropdownDivider({}),
-      (MenuDropdownItem()
-        ..on_click = (_) {
-          if (props.enable_copy) {
-            window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.C, ctrlKey: true).wrapped);
-          }
-        }
-        ..display = 'Copy'
-        ..keyboard_shortcut = 'Ctrl+C'
-        ..tooltip = '''\
-Copy the currently selected strand(s). They can be pasted into this design,
-or into another design in another browser or tab. You can also paste into
-a text document to see a JSON description of the copied strand(s).'''
-        ..disabled = !props.enable_copy)(),
-      (MenuDropdownItem()
-        ..on_click = (_) {
-          if (props.enable_copy) {
-            app.dispatch(actions.CopySelectedStandsToClipboardImage());
-          }
-        }
-        ..display = 'Copy image'
-        ..keyboard_shortcut = 'Ctrl+I'
-        ..tooltip = '''\
-Copy a (PNG bitmap) image of the currently selected strand(s) to the system 
-clipboard. This image can be pasted into graphics programs such as Powerpoint
-or Inkscape. Note that the bitmap image will be pixelated on zoom-in, unlike
-SVG (scaled vector graphics). To retain the vector graphics in the image so 
-that it stays sharp on zoom-in, use the option Export-->SVG of selected strands
-to save an SVG file of the selected strands.'''
-        ..disabled = !props.enable_copy)(),
-      (MenuDropdownItem()
-        ..on_click =
-            ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped))
-        ..display = 'Paste'
-        ..tooltip = '''\
-Paste the previously copied strand(s). They can be pasted into this design,
-or into another design in another browser or tab. You can also paste into
-a text document to see a JSON description of the copied strand(s).
-'''
-        ..keyboard_shortcut = 'Ctrl+V')(),
-      (MenuDropdownItem()
-        ..on_click = ((_) => paste_strands_auto())
-        ..display = 'Autopaste'
-        ..tooltip = '''\
-This automatically pastes copied strands to an automatically selected position 
-in the design, which can be faster to create many copies of strand(s) than
-manually selecting each position to paste. First copy some strand(s), then 
-manually paste them using the menu Edit-->Paste or pressing Ctrl+V. Once this
-is done once, by selecting Edit-->Autopaste (or pressing Shift+Ctrl+V), 
-another copy of the same strand(s) are pasted, in the same "direction" as the
-first paste.
-
-For example, if the first paste was one helix down from the the copied strand(s),
-and 10 offset positions to the right, then Autopaste will make the next paste
-also one helix down from the first paste, and 10 offset positions to its right.
-
-You can also Autopaste immediately after copying, without having pasted first,
-with some default direction chosen. Play with it and see!
-'''
-        ..keyboard_shortcut = 'Ctrl+Shift+V')(),
-      ///////////////////////////////////////////////////////////////
-      // select all
+      edit_menu_copy_paste(),
       DropdownDivider({}),
-      (MenuDropdownItem()
-        ..on_click =
-            ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.A, ctrlKey: true).wrapped))
-        ..display = 'Select All'
-        ..tooltip = '''\
-Select all strands in the design.'''
-        ..keyboard_shortcut = 'Ctrl+A')(),
-      (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.SelectAllSelectable(current_helix_group_only: true)))
-        ..display = 'Select All in Helix Group'
-        ..tooltip = '''\
-Select all selectable strands in the current helix group.'''
-        ..keyboard_shortcut = 'Ctrl+Shift+A')(),
-      ///////////////////////////////////////////////////////////////
-      // pasted strands keep original color
-      DropdownDivider({}),
-      (MenuBoolean()
-        ..value = props.strand_paste_keep_color
-        ..display = 'Pasted strands keep original color'
-        ..tooltip = '''\
-If checked, when copying and pasting a strand, the color is preserved.
-If unchecked, then a new color is generated.'''
-        ..onChange =
-            ((_) => props.dispatch(actions.StrandPasteKeepColorSet(keep: !props.strand_paste_keep_color))))(),
       ///////////////////////////////////////////////////////////////
       // inline insertions/deletions
-      DropdownDivider({}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.InlineInsertionsDeletions()))
         ..display = 'Inline insertions/deletions'
@@ -454,10 +367,9 @@ If unchecked, then a new color is generated.'''
 Remove insertions and deletions from the design and replace them with domains
 whose lengths correspond to the true strand length. Also moves major tick 
 marks on helices so that they are adjacent to the same bases as before.''')(),
-      ///////////////////////////////////////////////////////////////
+      DropdownDivider({}),
       ///////////////////////////////////////////////////////////////
       // Connect selected ends by crossovers
-      DropdownDivider({}),
       (MenuDropdownItem()
         // ..on_click = ((_) => connect_ends_by_crossovers(props.selected_ends))
         ..on_click = ((_) => props.dispatch(actions.JoinStrandsByMultipleCrossovers()))
@@ -475,55 +387,8 @@ to the first end e2 after it in this order, if
 2) e1 is "above" e2 (lower helix idx; more generally earlier in helices_view_order), 
 3) opposite direction (one is forward and the other reverse), and 
 4) opposite side of a strand (i.e., one is 5' and the other 3').''')(),
-      ///////////////////////////////////////////////////////////////
-      // Set helix coordinates based on crossovers
       DropdownDivider({}),
       edit_menu_helix_rolls(),
-      DropdownDivider({}),
-      (MenuBoolean()
-        ..value = props.default_crossover_type_scaffold_for_setting_helix_rolls
-        ..display = 'default to leftmost scaffold crossover'
-        ..tooltip = '''\
-When selecting "Set helix coordinates based on crossovers", if two adjacent 
-helices do not have a crossover selected, determines which types to select 
-automatically.
-
-If this is checked and "default to leftmost staple crossover" is unchecked,
-then the leftmost scaffold crossover will be used.
-
-If both are checked, the leftmost crossover of any type will be used.
-
-Ignored if design is not an origami (i.e., does not have at least one scaffold).'''
-        ..onChange = (_) {
-          // disallow if both would be unchecked
-          if (props.default_crossover_type_staple_for_setting_helix_rolls) {
-            props.dispatch(actions.DefaultCrossoverTypeForSettingHelixRollsSet(
-                scaffold: !props.default_crossover_type_scaffold_for_setting_helix_rolls,
-                staple: props.default_crossover_type_staple_for_setting_helix_rolls));
-          }
-        })(),
-      (MenuBoolean()
-        ..value = props.default_crossover_type_staple_for_setting_helix_rolls
-        ..display = 'default to leftmost staple crossover'
-        ..tooltip = '''\
-When selecting "Set helix coordinates based on crossovers", if two adjacent 
-helices do not have a crossover selected, determines which types to select 
-automatically.
-
-If this is checked and "default to leftmost scaffold crossover" is unchecked,
-then the leftmost staple crossover will be used.
-
-If both are checked, the leftmost crossover of any type will be used.
-
-Ignored if design is not an origami (i.e., does not have at least one scaffold).'''
-        ..onChange = (_) {
-          // disallow if both would be unchecked
-          if (props.default_crossover_type_scaffold_for_setting_helix_rolls) {
-            props.dispatch(actions.DefaultCrossoverTypeForSettingHelixRollsSet(
-                scaffold: props.default_crossover_type_scaffold_for_setting_helix_rolls,
-                staple: !props.default_crossover_type_staple_for_setting_helix_rolls));
-          }
-        })(),
       ///////////////////////////////////////////////////////////////
       // Set geometric parameters
       DropdownDivider({}),
@@ -602,6 +467,95 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
       ..on_click = (_) => app.dispatch(undo_or_redo_action_creator(num_times)))();
   }
 
+  ReactElement edit_menu_copy_paste() {
+    return (MenuDropdownRight()
+      ..title = 'Copy/Paste/Select'
+      ..id = 'edit_menu_copy-paste'
+      ..key = 'edit_menu_copy-paste'
+      ..className = 'submenu-item')([
+      (MenuDropdownItem()
+        ..on_click = (_) {
+          if (props.enable_copy) {
+            window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.C, ctrlKey: true).wrapped);
+          }
+        }
+        ..display = 'Copy'
+        ..keyboard_shortcut = 'Ctrl+C'
+        ..tooltip = '''\
+Copy the currently selected strand(s). They can be pasted into this design,
+or into another design in another browser or tab. You can also paste into
+a text document to see a JSON description of the copied strand(s).'''
+        ..disabled = !props.enable_copy)(),
+      (MenuDropdownItem()
+        ..on_click = (_) {
+          if (props.enable_copy) {
+            app.dispatch(actions.CopySelectedStandsToClipboardImage());
+          }
+        }
+        ..display = 'Copy image'
+        ..keyboard_shortcut = 'Ctrl+I'
+        ..tooltip = '''\
+Copy a (PNG bitmap) image of the currently selected strand(s) to the system
+clipboard. This image can be pasted into graphics programs such as Powerpoint
+or Inkscape. Note that the bitmap image will be pixelated on zoom-in, unlike
+SVG (scaled vector graphics). To retain the vector graphics in the image so
+that it stays sharp on zoom-in, use the option Export-->SVG of selected strands
+to save an SVG file of the selected strands.'''
+        ..disabled = !props.enable_copy)(),
+      (MenuDropdownItem()
+        ..on_click =
+            ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped))
+        ..display = 'Paste'
+        ..tooltip = '''\
+Paste the previously copied strand(s). They can be pasted into this design,
+or into another design in another browser or tab. You can also paste into
+a text document to see a JSON description of the copied strand(s).
+'''
+        ..keyboard_shortcut = 'Ctrl+V')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => paste_strands_auto())
+        ..display = 'Autopaste'
+        ..tooltip = '''\
+This automatically pastes copied strands to an automatically selected position
+in the design, which can be faster to create many copies of strand(s) than
+manually selecting each position to paste. First copy some strand(s), then
+manually paste them using the menu Edit-->Paste or pressing Ctrl+V. Once this
+is done once, by selecting Edit-->Autopaste (or pressing Shift+Ctrl+V),
+another copy of the same strand(s) are pasted, in the same "direction" as the
+first paste.
+
+For example, if the first paste was one helix down from the the copied strand(s),
+and 10 offset positions to the right, then Autopaste will make the next paste
+also one helix down from the first paste, and 10 offset positions to its right.
+
+You can also Autopaste immediately after copying, without having pasted first,
+with some default direction chosen. Play with it and see!
+'''
+        ..keyboard_shortcut = 'Ctrl+Shift+V')(),
+      (MenuDropdownItem()
+        ..on_click =
+            ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.A, ctrlKey: true).wrapped))
+        ..display = 'Select All'
+        ..tooltip = '''\
+Select all strands in the design.'''
+        ..keyboard_shortcut = 'Ctrl+A')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.SelectAllSelectable(current_helix_group_only: true)))
+        ..display = 'Select All in Helix Group'
+        ..tooltip = '''\
+Select all selectable strands in the current helix group.'''
+        ..keyboard_shortcut = 'Ctrl+Shift+A')(),
+      (MenuBoolean()
+        ..value = props.strand_paste_keep_color
+        ..display = 'Pasted strands keep original color'
+        ..tooltip = '''\
+If checked, when copying and pasting a strand, the color is preserved.
+If unchecked, then a new color is generated.'''
+        ..onChange =
+            ((_) => props.dispatch(actions.StrandPasteKeepColorSet(keep: !props.strand_paste_keep_color))))(),
+    ]);
+  }
+
   ReactElement edit_menu_helix_rolls() {
     return (MenuDropdownRight()
       ..title = 'Helix rolls'
@@ -618,9 +572,10 @@ Sets all helix rolls to "relax" them based on their crossovers.
 This calculates the "strain" of each crossover c as the absolute value d_c of 
 the distance between the angle to the helix to which it is connected and the 
 angle of that crossover given the current helix roll. It minimizes sum_c d_c^2, 
-i.e., minimize the sum of the squares of the strains. This can be used to 
-create a design with "reasonable" crossover locations and then set the rolls 
-to match the crossover locations as best as possible.
+i.e., minimize the sum of the squares of the strains (if modeling crossovers
+as rotational springs, this minimizes the total energy stored in each spring). 
+This can be used to create a design with "reasonable" crossover locations and 
+then set the rolls to match the crossover locations as best as possible.
 ''')(),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.RelaxHelixRolls(only_selected: true)))
@@ -630,6 +585,7 @@ to match the crossover locations as best as possible.
 Same as option "Set helix rolls based on crossovers and helix coordinates" above,
 but changes the rolls only of selected helices.
 ''')(),
+      DropdownDivider({}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers()))
         ..display = 'Set helix coordinates based on crossovers'
@@ -646,6 +602,50 @@ crossover selected, it is assumed to be the first crossover.
 New grid coordinates are calculated based on the crossovers to ensure that each
 pair of adjacent helices has crossover angles that point the backbone angles
 directly at the adjoining helix.''')(),
+      (MenuBoolean()
+        ..value = props.default_crossover_type_scaffold_for_setting_helix_rolls
+        ..display = 'default to leftmost scaffold crossover'
+        ..tooltip = '''\
+When selecting "Set helix coordinates based on crossovers", if two adjacent 
+helices do not have a crossover selected, determines which types to select 
+automatically.
+
+If this is checked and "default to leftmost staple crossover" is unchecked,
+then the leftmost scaffold crossover will be used.
+
+If both are checked, the leftmost crossover of any type will be used.
+
+Ignored if design is not an origami (i.e., does not have at least one scaffold).'''
+        ..onChange = (_) {
+          // disallow if both would be unchecked
+          if (props.default_crossover_type_staple_for_setting_helix_rolls) {
+            props.dispatch(actions.DefaultCrossoverTypeForSettingHelixRollsSet(
+                scaffold: !props.default_crossover_type_scaffold_for_setting_helix_rolls,
+                staple: props.default_crossover_type_staple_for_setting_helix_rolls));
+          }
+        })(),
+      (MenuBoolean()
+        ..value = props.default_crossover_type_staple_for_setting_helix_rolls
+        ..display = 'default to leftmost staple crossover'
+        ..tooltip = '''\
+When selecting "Set helix coordinates based on crossovers", if two adjacent 
+helices do not have a crossover selected, determines which types to select 
+automatically.
+
+If this is checked and "default to leftmost scaffold crossover" is unchecked,
+then the leftmost staple crossover will be used.
+
+If both are checked, the leftmost crossover of any type will be used.
+
+Ignored if design is not an origami (i.e., does not have at least one scaffold).'''
+        ..onChange = (_) {
+          // disallow if both would be unchecked
+          if (props.default_crossover_type_scaffold_for_setting_helix_rolls) {
+            props.dispatch(actions.DefaultCrossoverTypeForSettingHelixRollsSet(
+                scaffold: props.default_crossover_type_scaffold_for_setting_helix_rolls,
+                staple: !props.default_crossover_type_staple_for_setting_helix_rolls));
+          }
+        })(),
     ]);
   }
 
