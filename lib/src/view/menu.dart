@@ -572,9 +572,10 @@ Sets all helix rolls to "relax" them based on their crossovers.
 This calculates the "strain" of each crossover c as the absolute value d_c of 
 the distance between the angle to the helix to which it is connected and the 
 angle of that crossover given the current helix roll. It minimizes sum_c d_c^2, 
-i.e., minimize the sum of the squares of the strains. This can be used to 
-create a design with "reasonable" crossover locations and then set the rolls 
-to match the crossover locations as best as possible.
+i.e., minimize the sum of the squares of the strains (if modeling crossovers
+as rotational springs, this minimizes the total energy stored in each spring). 
+This can be used to create a design with "reasonable" crossover locations and 
+then set the rolls to match the crossover locations as best as possible.
 ''')(),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.RelaxHelixRolls(only_selected: true)))
