@@ -1184,6 +1184,27 @@ abstract class HelixRollSetAtOther
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// relax helix rolls
+
+abstract class RelaxHelixRolls
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<RelaxHelixRolls, RelaxHelixRollsBuilder> {
+  bool get only_selected;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory RelaxHelixRolls({bool only_selected}) = _$RelaxHelixRolls._;
+
+  RelaxHelixRolls._();
+
+  static Serializer<RelaxHelixRolls> get serializer => _$relaxHelixRollsSerializer;
+
+  @override
+  String short_description() {
+    return "set helix rolls to unstrain crossovers";
+  }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Error message
 
 abstract class ErrorMessageSet

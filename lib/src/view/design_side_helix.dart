@@ -27,6 +27,7 @@ UiFactory<DesignSideHelixProps> DesignSideHelix = _$DesignSideHelix;
 
 mixin DesignSideHelixProps on UiProps {
   Helix helix;
+  int slice_bar_offset;
   bool selected;
   bool mouse_is_over;
   bool helix_change_apply_to_all;
@@ -52,19 +53,29 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
     // of idx, which is useful for making figures in the documentation showing how the grids work
 //    bool SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX = true;
     bool SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX = false;
-    String grid_position_str;
+    int precision = constants.NUM_DIGITS_PRECISION_POSITION_DISPLAYED;
 
-    String tooltip;
+    String grid_position_str;
+    String position_str;
     if (props.grid.is_none) {
       var pos = props.helix.position3d;
-      int precision = constants.NUM_DIGITS_PRECISION_POSITION_DISPLAYED;
-      tooltip = '${pos.x.toStringAsFixed(precision)}, ${pos.y.toStringAsFixed(precision)}';
+      position_str = '${pos.x.toStringAsFixed(precision)}, ${pos.y.toStringAsFixed(precision)}';
       grid_position_str = '${pos.x.toStringAsFixed(1)},${pos.y.toStringAsFixed(1)}';
     } else {
       var pos = props.helix.grid_position;
-      tooltip = '${pos.h}, ${pos.v}';
-      grid_position_str = tooltip.replaceAll(' ', '');
+      position_str = '${pos.h}, ${pos.v}';
+      grid_position_str = position_str.replaceAll(' ', '');
     }
+
+    var forward_angle = props.helix.backbone_angle_at_offset(props.slice_bar_offset, true);
+    var reverse_angle = props.helix.backbone_angle_at_offset(props.slice_bar_offset, false);
+
+    var tooltip = '''\
+position:  ${position_str}
+roll:      ${props.helix.roll.toStringAsFixed(precision)}
+backbone angles at current slice bar offset = ${props.slice_bar_offset}:
+  forward: ${forward_angle.toStringAsFixed(precision)}
+  reverse: ${reverse_angle.toStringAsFixed(precision)}''';
 
     var children = [
       (Dom.circle()

@@ -149,6 +149,7 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
   @BuiltValueField(serialize: false, compare: false)
   ProcessCallback get process_saved_response;
 
+  // TODO: document this
   bool get use_saved_response;
 
   BuiltList<DialogItem> get items;

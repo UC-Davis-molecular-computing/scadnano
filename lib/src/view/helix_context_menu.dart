@@ -125,9 +125,13 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
   Future<void> dialog_helix_set_roll() async {
     int helix_idx = helix.idx;
 
-    var dialog = Dialog(title: 'set helix roll (degrees)', type: DialogType.set_helix_roll_degrees, items: [
-      DialogFloat(label: 'roll', value: helix.roll),
-    ]);
+    var dialog = Dialog(
+        title: 'set helix roll (degrees)',
+        type: DialogType.set_helix_roll_degrees,
+        use_saved_response: false,
+        items: [
+          DialogFloat(label: 'roll', value: helix.roll),
+        ]);
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 

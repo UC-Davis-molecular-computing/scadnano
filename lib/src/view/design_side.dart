@@ -39,6 +39,7 @@ UiFactory<DesignSideProps> ConnectedDesignSide = connect<AppState, DesignSidePro
             ? util.rotation_datas_at_offset_in_group(
                 state.ui_state.slice_bar_offset, state.design, state.ui_state.displayed_group_name)
             : BuiltList<DesignSideRotationData>()
+        ..slice_bar_offset = state.ui_state.slice_bar_offset
         ..edit_modes = state.ui_state.edit_modes
         ..displayed_group = displayed_group
         ..grid_position_mouse_cursor = state.ui_state.side_view_grid_position_mouse_cursor
@@ -57,6 +58,7 @@ mixin DesignSideProps on UiProps {
   BuiltList<DesignSideRotationData> rotation_datas;
   BuiltSet<EditModeChoice> edit_modes;
   Geometry geometry;
+  int slice_bar_offset;
 
   Point<num> mouse_svg_pos;
   GridPosition grid_position_mouse_cursor;
@@ -84,6 +86,7 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> with PureCompone
       for (var helix in props.helices.values)
         (DesignSideHelix()
           ..helix = helix
+          ..slice_bar_offset = props.slice_bar_offset
           ..grid = props.displayed_group.grid
           ..invert_y = props.invert_y
           ..helix_change_apply_to_all = props.helix_change_apply_to_all
