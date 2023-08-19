@@ -30,10 +30,8 @@ class MenuDropdownItemComponent extends UiComponent2<MenuDropdownItemProps> {
         'disabled': props.disabled,
         'onClick': props.on_click,
       },
-      props.display,
-      props.keyboard_shortcut != null
-          ? (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')(props.keyboard_shortcut)
-          : null,
+      Dom.span()(props.display),
+      props.keyboard_shortcut,
     );
 
     if (props.tooltip == null) {

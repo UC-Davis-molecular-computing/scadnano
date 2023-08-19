@@ -923,9 +923,13 @@ https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-cen
     line-height: 0.8rem;
 }
 
-/* Thicken the dropdown vertical spacing */
+/* Thicken the dropdown vertical spacing and use flexbox */
 .dropdown-item {
     padding: .5rem 1.5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    column-gap: 1rem;
 }
 
 /* Since the dropdowns are links, need to overwrite default colors */
@@ -1039,12 +1043,6 @@ https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-cen
 /* Hides the data-browse psuedo-element. */
 .form-file-dropdown .custom-file-input + .custom-file-label::after {
     content: none;
-}
-
-.dropdown-item-keyboard-shortcut-span {
-    float: right;
-    width: 33%;
-    position: relative;
 }
 
 /************************************************
