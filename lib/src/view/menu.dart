@@ -1232,7 +1232,7 @@ cadnano files that have whitespace. ("Bad .json file format is detected in
       ),
       DropdownItem(
         {
-          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/tutorial/tutorial.md',
+          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/main/tutorial/tutorial.md',
           'target': '_blank',
         },
         'tutorial (web interface)',
@@ -1247,7 +1247,7 @@ cadnano files that have whitespace. ("Bad .json file format is detected in
       DropdownItem(
         {
           'href':
-              'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/tutorial/tutorial.md',
+              'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/main/tutorial/tutorial.md',
           'target': '_blank',
         },
         'tutorial (Python scripting)',
