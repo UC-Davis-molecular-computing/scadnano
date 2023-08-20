@@ -415,12 +415,12 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   }
 
   Helix relax_roll(BuiltMap<int, Helix> helices, BuiltList<Address> crossover_addresses) {
-    var roll = compute_relaxed_roll(helices, crossover_addresses);
-    var new_helix = this.rebuild((b) => b..roll = roll);
+    var roll_delta = compute_relaxed_roll_delta(helices, crossover_addresses);
+    var new_helix = this.rebuild((b) => b..roll = roll + roll_delta);
     return new_helix;
   }
 
-  double compute_relaxed_roll(BuiltMap<int, Helix> helices, BuiltList<Address> crossover_addresses) {
+  double compute_relaxed_roll_delta(BuiltMap<int, Helix> helices, BuiltList<Address> crossover_addresses) {
     List<Tuple2<double, double>> angles = [];
     for (var address in crossover_addresses) {
       var other_helix = helices[address.helix_idx];
