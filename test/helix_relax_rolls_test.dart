@@ -263,7 +263,6 @@ main() {
         2                            <------+<--------+<--------+
       */
       List<Helix> helices = [];
-      [];
       for (int i = 0; i < 3; i++) {
         var helix = Helix(max_offset: 60, grid: Grid.square, idx: i, grid_position: GridPosition(0, i));
         if (i == 2) {
@@ -336,7 +335,39 @@ main() {
       expect(design2h.helices[1].roll, closeTo(exp_h1_roll, epsilon));
     });
 
-    test('helix_crossovers', () {
+    test('2_helix_2_crossover_call_relax_twice', () {
+      /*
+          0         1
+          012345678901234
+        0 [---+[-----+
+              |      |
+        1 [---+<-----+
+    */
+      List<Helix> helices = [];
+      for (int i = 0; i < 2; i++) {
+        var helix = Helix(max_offset: 60, grid: Grid.square, idx: i, grid_position: GridPosition(0, i));
+        helices.add(helix);
+      }
+      var design2h = Design(helices: helices, grid: Grid.square);
+      design2h = design2h.draw_strand(0, 0).move(5).cross(1).move(-5).commit();
+      design2h = design2h.draw_strand(0, 5).move(6).cross(1).move(-6).commit();
+
+      var exp_h0_roll = 120.0;
+      var exp_h1_roll = 150.0;
+
+      design2h = design2h.relax_helix_rolls();
+
+      expect(exp_h0_roll, design2h.helices[0].roll);
+      expect(exp_h1_roll, design2h.helices[1].roll);
+
+      // test for bug that reset roll; if called twice in a row it should have no effect the second time
+      design2h = design2h.relax_helix_rolls();
+
+      expect(exp_h0_roll, design2h.helices[0].roll);
+      expect(exp_h1_roll, design2h.helices[1].roll);
+    });
+
+    test('helix_crossover_addresses', () {
       //////////////////////////////////////////
       // 3-helix design with 3 strands
       var xs0 = design3helix3strand.helix_to_crossover_addresses[0];
