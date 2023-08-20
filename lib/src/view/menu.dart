@@ -480,6 +480,7 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
           }
         }
         ..display = 'Copy'
+        ..key = 'edit_menu_copy-paste_copy'
         ..keyboard_shortcut = 'Ctrl+C'
         ..tooltip = '''\
 Copy the currently selected strand(s). They can be pasted into this design,
@@ -493,6 +494,7 @@ a text document to see a JSON description of the copied strand(s).'''
           }
         }
         ..display = 'Copy image'
+        ..key = 'edit_menu_copy-paste_copy-image'
         ..keyboard_shortcut = 'Ctrl+I'
         ..tooltip = '''\
 Copy a (PNG bitmap) image of the currently selected strand(s) to the system
@@ -506,6 +508,7 @@ to save an SVG file of the selected strands.'''
         ..on_click =
             ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped))
         ..display = 'Paste'
+        ..key = 'edit_menu_copy-paste_paste'
         ..tooltip = '''\
 Paste the previously copied strand(s). They can be pasted into this design,
 or into another design in another browser or tab. You can also paste into
@@ -515,6 +518,7 @@ a text document to see a JSON description of the copied strand(s).
       (MenuDropdownItem()
         ..on_click = ((_) => paste_strands_auto())
         ..display = 'Autopaste'
+        ..key = 'edit_menu_copy-paste_autopaste'
         ..tooltip = '''\
 This automatically pastes copied strands to an automatically selected position
 in the design, which can be faster to create many copies of strand(s) than
@@ -536,18 +540,21 @@ with some default direction chosen. Play with it and see!
         ..on_click =
             ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.A, ctrlKey: true).wrapped))
         ..display = 'Select All'
+        ..key = 'edit_menu_copy-select-all'
         ..tooltip = '''\
 Select all strands in the design.'''
         ..keyboard_shortcut = 'Ctrl+A')(),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.SelectAllSelectable(current_helix_group_only: true)))
         ..display = 'Select All in Helix Group'
+        ..key = 'edit_menu_copy-select-all-in-helix-groups'
         ..tooltip = '''\
 Select all selectable strands in the current helix group.'''
         ..keyboard_shortcut = 'Ctrl+Shift+A')(),
       (MenuBoolean()
         ..value = props.strand_paste_keep_color
         ..display = 'Pasted strands keep original color'
+        ..key = 'edit_menu_copy-paste_Pasted strands keep original color'
         ..tooltip = '''\
 If checked, when copying and pasting a strand, the color is preserved.
 If unchecked, then a new color is generated.'''
@@ -605,6 +612,7 @@ directly at the adjoining helix.''')(),
       (MenuBoolean()
         ..value = props.default_crossover_type_scaffold_for_setting_helix_rolls
         ..display = 'default to leftmost scaffold crossover'
+        ..key = 'edit_menu_helix-rolls_default to leftmost scaffold crossover'
         ..tooltip = '''\
 When selecting "Set helix coordinates based on crossovers", if two adjacent 
 helices do not have a crossover selected, determines which types to select 
@@ -627,6 +635,7 @@ Ignored if design is not an origami (i.e., does not have at least one scaffold).
       (MenuBoolean()
         ..value = props.default_crossover_type_staple_for_setting_helix_rolls
         ..display = 'default to leftmost staple crossover'
+        ..key = 'edit_menu_helix-rolls_default to leftmost staple crossover'
         ..tooltip = '''\
 When selecting "Set helix coordinates based on crossovers", if two adjacent 
 helices do not have a crossover selected, determines which types to select 
