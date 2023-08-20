@@ -120,6 +120,105 @@ main() {
       expect(design3h.helices[2].roll, closeTo(exp_h2_roll, epsilon));
     });
 
+    test('3_helix_2_crossovers_1_loopout_crossovers_method', () {
+      /*
+          0         1          2
+          012345678901234567890
+        0 [---+[------+[------+
+              |       |        \
+        1 [---+       |        |
+                      |        /
+        2      <------+<------+
+      */
+      List<Helix> helices = [];
+      [];
+      for (int i = 0; i < 3; i++) {
+        var helix = Helix(max_offset: 60, grid: Grid.square, idx: i, grid_position: GridPosition(0, i));
+        if (i == 2) {
+          helix = helix.rebuild((b) => b..grid_position.replace(GridPosition(1, 0)));
+        }
+        helices.add(helix);
+      }
+      var design3h = Design(helices: helices, grid: Grid.square);
+
+      design3h = design3h.draw_strand(0, 0).move(5).cross(1).move(-5).commit();
+      design3h = design3h.draw_strand(0, 5).move(8).cross(2).move(-8).commit();
+      design3h = design3h.draw_strand(0, 13).move(8).loopout(2, 3).move(-8).commit();
+
+      var crossover_addresses = design3h.helix_to_crossover_addresses;
+      var crossover_addresses_h0 = crossover_addresses[0];
+      var crossover_addresses_h1 = crossover_addresses[1];
+      var crossover_addresses_h2 = crossover_addresses[2];
+
+      expect(crossover_addresses_h0.length, 2);
+      expect(crossover_addresses_h1.length, 1);
+      expect(crossover_addresses_h2.length, 1);
+
+      expect(crossover_addresses_h0[0], Address(helix_idx: 1, offset: 4, forward: true));
+      expect(crossover_addresses_h0[1], Address(helix_idx: 2, offset: 12, forward: true));
+
+      expect(crossover_addresses_h1[0], Address(helix_idx: 0, offset: 4, forward: false));
+
+      expect(crossover_addresses_h2[0], Address(helix_idx: 0, offset: 12, forward: false));
+    });
+
+    test('3_helix_2_crossovers_1_loopout', () {
+      /*
+          0         1          2
+          012345678901234567890
+        0 [---+[------+[------+
+              |       |        \
+        1 [---+       |        |
+                      |        /
+        2      <------+<------+
+      */
+      List<Helix> helices = [];
+      [];
+      for (int i = 0; i < 3; i++) {
+        var helix = Helix(max_offset: 60, grid: Grid.square, idx: i, grid_position: GridPosition(0, i));
+        if (i == 2) {
+          helix = helix.rebuild((b) => b..grid_position.replace(GridPosition(1, 0)));
+        }
+        helices.add(helix);
+      }
+      var design3h = Design(helices: helices, grid: Grid.square);
+
+      design3h = design3h.draw_strand(0, 0).move(5).cross(1).move(-5).commit();
+      design3h = design3h.draw_strand(0, 5).move(8).cross(2).move(-8).commit();
+      design3h = design3h.draw_strand(0, 13).move(8).loopout(2, 3).move(-8).commit();
+
+      var crossover_addresses_h0 = design3h.helix_to_crossover_addresses[0].toList();
+      var crossover_addresses_h1 = design3h.helix_to_crossover_addresses[1].toList();
+      var crossover_addresses_h2 = design3h.helix_to_crossover_addresses[2].toList();
+      expect(crossover_addresses_h0.length, 2);
+      expect(crossover_addresses_h1.length, 1);
+      expect(crossover_addresses_h2.length, 1);
+
+      var f1 = 4 / 10.5;
+      var f2 = 12 / 10.5;
+      var a1 = f1 * 360 % 360;
+      var a2 = f2 * 360 % 360;
+
+      // rules for angles:
+      // - add 150 if on reverse strand to account of minor groove
+      // - subtract angle of helix crossover is connecting to
+
+      var ave_h0 = (a1 - 180 + a2 - 90) / 2; // helix 1 at 180 degrees, helix 2 at 90 degrees
+      var exp_h0_roll = (-ave_h0) % 360;
+
+      var ave_h1 = a1 + 150; // helix 0 at 0 degrees relative to helix 1
+      var exp_h1_roll = (-ave_h1) % 360;
+
+      var ave_h2 = a2 + 150 - (-90); // helix 0 at -90 degrees relative to helix 2
+      var exp_h2_roll = (-ave_h2) % 360;
+
+      design3h = design3h.relax_helix_rolls();
+
+      expect(design3h.helices[0].roll, closeTo(exp_h0_roll, epsilon));
+      expect(design3h.helices[1].roll, closeTo(exp_h1_roll, epsilon));
+      expect(design3h.helices[2].roll, closeTo(exp_h2_roll, epsilon));
+    });
+
     test('2_helix_no_crossovers', () {
       /*
           0         1         2

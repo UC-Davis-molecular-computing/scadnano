@@ -2367,21 +2367,30 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         var domains_on_strand = strand.domains;
         var num_domains = domains_on_strand.length;
         var domain_idx = domains_on_strand.indexOf(domain);
+        var domain_idx_in_substrands = strand.substrands.indexOf(domain);
 
         // if not first domain, then there is a crossover to the previous domain
         if (domain_idx > 0) {
-          var offset = domain.offset_5p;
-          var other_domain = domains_on_strand[domain_idx - 1];
-          var other_helix_idx = other_domain.helix;
-          ret[helix_idx].add(Address(helix_idx: other_helix_idx, offset: offset, forward: domain.forward));
+          // ... unless there's a loopout between them
+          var previous_substrand = strand.substrands[domain_idx_in_substrands - 1];
+          if (previous_substrand.is_domain()) {
+            var offset = domain.offset_5p;
+            var other_domain = domains_on_strand[domain_idx - 1];
+            var other_helix_idx = other_domain.helix;
+            ret[helix_idx].add(Address(helix_idx: other_helix_idx, offset: offset, forward: domain.forward));
+          }
         }
 
         // if not last domain, then there is a crossover to the next domain
         if (domain_idx < num_domains - 1) {
-          var offset = domain.offset_3p;
-          var other_domain = domains_on_strand[domain_idx + 1];
-          var other_helix_idx = other_domain.helix;
-          ret[helix_idx].add(Address(helix_idx: other_helix_idx, offset: offset, forward: domain.forward));
+          // ... unless there's a loopout between them
+          var next_substrand = strand.substrands[domain_idx_in_substrands + 1];
+          if (next_substrand.is_domain()) {
+            var offset = domain.offset_3p;
+            var other_domain = domains_on_strand[domain_idx + 1];
+            var other_helix_idx = other_domain.helix;
+            ret[helix_idx].add(Address(helix_idx: other_helix_idx, offset: offset, forward: domain.forward));
+          }
         }
       }
     }
