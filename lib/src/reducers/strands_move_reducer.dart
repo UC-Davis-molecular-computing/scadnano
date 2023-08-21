@@ -13,6 +13,7 @@ import '../state/strand.dart';
 import '../state/strands_move.dart';
 import '../actions/actions.dart' as actions;
 import '../extension_methods.dart';
+import '../constants.dart' as constants;
 
 GlobalReducer<StrandsMove, AppState> strands_move_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<StrandsMove, AppState, actions.StrandsMoveStart>(strands_move_start_reducer),
@@ -79,6 +80,16 @@ bool in_bounds_and_allowable(Design design, StrandsMove strands_move) {
 }
 
 bool in_bounds(Design design, StrandsMove strands_move, {Set<int> original_helix_idxs_set = null}) {
+  constants.strand_bounds_status status = get_strand_bounds_details(design, strands_move,
+      original_helix_idxs_set: original_helix_idxs_set)['status'];
+  if (status == constants.strand_bounds_status.in_bounds ||
+      status == constants.strand_bounds_status.in_bounds_with_min_offset_changes ||
+      status == constants.strand_bounds_status.in_bounds_with_max_offset_changes) return true;
+  return false;
+}
+
+Map get_strand_bounds_details(Design design, StrandsMove strands_move,
+    {Set<int> original_helix_idxs_set = null}) {
   // collect helix idxs on moving strands (if new design, may be different from design.helices.keys
   if (original_helix_idxs_set == null) {
     original_helix_idxs_set = populate_original_helices_idxs_set(strands_move);
@@ -86,7 +97,9 @@ bool in_bounds(Design design, StrandsMove strands_move, {Set<int> original_helix
 
   var current_address_helix_idx = strands_move.current_address.helix_idx;
   if (!design.helices.containsKey(current_address_helix_idx)) {
-    return false; // helix is not in design, so cannot be in bounds
+    return {
+      'status': constants.strand_bounds_status.helix_not_in_design
+    }; // helix is not in design, so cannot be in bounds
   }
   var current_helix = design.helices[current_address_helix_idx];
   var current_group = design.groups[current_helix.group];
@@ -99,10 +112,16 @@ bool in_bounds(Design design, StrandsMove strands_move, {Set<int> original_helix
   Set<int> view_orders_of_helices_of_moving_strands = view_order_moving(strands_move);
   int min_view_order = view_orders_of_helices_of_moving_strands.min;
   int max_view_order = view_orders_of_helices_of_moving_strands.max;
-  if (min_view_order + delta_view_order < 0) return false;
-  if (max_view_order + delta_view_order >= num_helices_in_group) return false;
+  if (min_view_order + delta_view_order < 0)
+    return {'status': constants.strand_bounds_status.helix_out_of_bounds};
+  if (max_view_order + delta_view_order >= num_helices_in_group)
+    return {'status': constants.strand_bounds_status.helix_out_of_bounds};
 
   // look for offset out of bounds
+  Map out_of_bounds_min_offset_changes = {};
+  Map out_of_bounds_max_offset_changes = {};
+  Map in_bounds_min_offset_changes = {};
+  Map in_bounds_max_offset_changes = {};
   for (int original_helix_idx in original_helix_idxs_set) {
     var helix_idx_to_domains_map =
         construct_helix_idx_to_domains_map(strands_move.strands_moving, original_helix_idxs_set);
@@ -112,13 +131,64 @@ bool in_bounds(Design design, StrandsMove strands_move, {Set<int> original_helix
     int view_order_orig = strands_move.original_helices_view_order_inverse[original_helix_idx];
     int new_helix_idx = current_group.helices_view_order[view_order_orig + delta_view_order];
     Helix helix = design.helices[new_helix_idx];
-    for (var domain in domains_moving) {
-      if (domain.start + delta_offset < helix.min_offset) return false;
-      if (domain.end + delta_offset > helix.max_offset) return false;
-    }
-  }
 
-  return true;
+    int outOfBoundsNewMinOffset = helix.min_offset;
+    int outOfBoundsNewMaxOffset = helix.max_offset;
+    int inBoundsNewMinOffset = helix.min_offset;
+    int inBoundsNewMaxOffset = helix.max_offset;
+    int max_offset_of_helix = design.max_offset_of_strands_at(helix.idx);
+    int min_offset_of_helix = design.min_offset_of_strands_at(helix.idx);
+
+    for (var domain in domains_moving) {
+      if (domain.start + delta_offset < helix.min_offset)
+        outOfBoundsNewMinOffset = [outOfBoundsNewMinOffset, domain.start + delta_offset].min;
+      else if (domain.start + delta_offset > helix.min_offset)
+        inBoundsNewMinOffset = [
+          [inBoundsNewMinOffset, domain.start + delta_offset].max,
+          0,
+          min_offset_of_helix
+        ].min;
+      if (domain.end + delta_offset > helix.max_offset)
+        outOfBoundsNewMaxOffset = [outOfBoundsNewMaxOffset, domain.end + delta_offset].max;
+      else if (domain.end + delta_offset < helix.max_offset)
+        inBoundsNewMaxOffset = [
+          [inBoundsNewMaxOffset, domain.end + delta_offset].min,
+          48,
+          max_offset_of_helix
+        ].max;
+      // if (domain.start + delta_offset < helix.min_offset) return "min_offset_out_of_bounds";
+      // if (domain.end + delta_offset > helix.max_offset) return "max_offset_out_of_bounds";
+    }
+    if (outOfBoundsNewMinOffset < helix.min_offset)
+      out_of_bounds_min_offset_changes[helix.idx] = outOfBoundsNewMinOffset;
+    if (outOfBoundsNewMaxOffset > helix.max_offset)
+      out_of_bounds_max_offset_changes[helix.idx] = outOfBoundsNewMaxOffset;
+    if (inBoundsNewMinOffset > helix.min_offset)
+      in_bounds_min_offset_changes[helix.idx] = inBoundsNewMinOffset;
+    if (inBoundsNewMaxOffset < helix.max_offset)
+      in_bounds_max_offset_changes[helix.idx] = inBoundsNewMaxOffset;
+  }
+  if (out_of_bounds_min_offset_changes.isNotEmpty)
+    return {
+      'status': constants.strand_bounds_status.min_offset_out_of_bounds,
+      'offsets': out_of_bounds_min_offset_changes
+    };
+  if (out_of_bounds_max_offset_changes.isNotEmpty)
+    return {
+      'status': constants.strand_bounds_status.max_offset_out_of_bounds,
+      'offsets': out_of_bounds_max_offset_changes
+    };
+  if (in_bounds_min_offset_changes.isNotEmpty)
+    return {
+      'status': constants.strand_bounds_status.in_bounds_with_min_offset_changes,
+      'offsets': in_bounds_min_offset_changes
+    };
+  if (in_bounds_max_offset_changes.isNotEmpty)
+    return {
+      'status': constants.strand_bounds_status.in_bounds_with_max_offset_changes,
+      'offsets': in_bounds_max_offset_changes
+    };
+  return {'status': constants.strand_bounds_status.in_bounds};
 }
 
 // collect helix idxs on moving strands (if new design, may be different from design.helices.keys

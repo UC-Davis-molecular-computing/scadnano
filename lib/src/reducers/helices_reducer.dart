@@ -4,7 +4,9 @@ import 'package:collection/collection.dart';
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/reducers/groups_reducer.dart';
+import 'package:scadnano/src/reducers/strands_move_reducer.dart';
 import 'package:scadnano/src/state/group.dart';
+import 'package:scadnano/src/state/strands_move.dart';
 import '../reducers/util_reducer.dart';
 import '../state/app_state.dart';
 
@@ -50,6 +52,8 @@ GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGl
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixMaxOffsetSetByDomainsAllSameMax>(
     helix_max_offset_set_by_domains_all_same_max_reducer,
   ),
+  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.StrandsMoveAdjustAddress>(
+      helix_offset_change_all_with_moving_strands_reducer),
 ]);
 
 BuiltMap<int, Helix> helix_individual_reducer(
@@ -184,6 +188,26 @@ Helix helix_offset_change_reducer(Helix helix, AppState _, actions.HelixOffsetCh
 Helix _change_offset_one_helix(Helix helix, int min_offset, int max_offset) => helix.rebuild((b) => b
   ..min_offset = min_offset ?? helix.min_offset
   ..max_offset = max_offset ?? helix.max_offset);
+
+BuiltMap<int, Helix> helix_offset_change_all_with_moving_strands_reducer(
+    BuiltMap<int, Helix> helices, AppState state, actions.StrandsMoveAdjustAddress action) {
+  StrandsMove new_strands_move =
+      state.ui_state.strands_move.rebuild((b) => b..current_address.replace(action.address));
+  Map strand_bounds_details = get_strand_bounds_details(state.design, new_strands_move);
+  constants.strand_bounds_status status = strand_bounds_details['status'];
+
+  var offsets = strand_bounds_details['offsets'];
+  if (status == constants.strand_bounds_status.min_offset_out_of_bounds ||
+      status == constants.strand_bounds_status.in_bounds_with_min_offset_changes) {
+    Helix map_func(int idx, Helix helix) => _change_offset_one_helix(helix, offsets[idx], null);
+    helices = helices.map_values(map_func);
+  } else if (status == constants.strand_bounds_status.max_offset_out_of_bounds ||
+      status == constants.strand_bounds_status.in_bounds_with_max_offset_changes) {
+    Helix map_func(int idx, Helix helix) => _change_offset_one_helix(helix, null, offsets[idx]);
+    helices = helices.map_values(map_func);
+  }
+  return helices;
+}
 
 BuiltMap<int, Helix> helix_offset_change_all_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.HelixOffsetChangeAll action) {
