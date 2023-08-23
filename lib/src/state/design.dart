@@ -2402,13 +2402,28 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return ret_built_lists.build();
   }
 
+  /// Like helix_to_crossover_addresses but ignores crossovers from a helix to itself
+  @memoized
+  BuiltMap<int, BuiltList<Address>> get helix_to_crossover_addresses_disallow_intrahelix {
+    var ret = this.helix_to_crossover_addresses.toMap();
+    for (int helix_idx in ret.keys) {
+      var addresses_with_intra = ret[helix_idx];
+      var addresses_without_intra = [
+        for (var address in addresses_with_intra)
+          if (address.helix_idx != helix_idx) address
+      ].build();
+      ret[helix_idx] = addresses_without_intra;
+    }
+    return ret.build();
+  }
+
   /// returns design with all helix rolls relaxed (based on crossover locations)
   Design relax_helix_rolls() {
     Map<int, Helix> helices_relaxed = this.helices.toMap();
 
     for (var helix_idx in helices_relaxed.keys) {
       var helix = helices_relaxed[helix_idx];
-      var crossover_addresses = this.helix_to_crossover_addresses[helix_idx];
+      var crossover_addresses = this.helix_to_crossover_addresses_disallow_intrahelix[helix_idx];
       if (crossover_addresses.isNotEmpty) {
         helix = helix.relax_roll(this.helices, crossover_addresses);
         helices_relaxed[helix_idx] = helix;
