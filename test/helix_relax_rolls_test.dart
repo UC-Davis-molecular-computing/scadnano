@@ -7,10 +7,12 @@ import 'package:scadnano/src/reducers/nick_ligate_join_by_crossover_reducers.dar
 import 'package:scadnano/src/state/address.dart';
 import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/grid_position.dart';
+import 'package:scadnano/src/state/group.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/extension.dart';
+import 'package:scadnano/src/state/position3d.dart';
 import 'package:scadnano/src/state/select_mode.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:test/test.dart';
@@ -20,6 +22,7 @@ import 'package:scadnano/src/actions/actions.dart' as actions;
 import 'package:tuple/tuple.dart';
 
 import 'package:scadnano/src/util.dart' as util;
+import 'package:scadnano/src/constants.dart' as constants;
 
 main() {
   group('HelixRollRelax', () {
@@ -563,6 +566,67 @@ main() {
       expect(a2.forward, false);
       expect(a3.forward, false);
       expect(a4.forward, false);
+    });
+
+    test('helix_crossover_addresses_2_helix_disallow_intergroup_crossovers', () {
+      /*            1         2         3
+          0123456789012345678901234567890123456789
+        0 [---+[--------+[----------+[--+
+              |         |           |   |
+        1 <---+<--------+<----------+   |
+                                        |
+        group 2                         |
+        2                            <--+
+       */
+      var group2name = 'group 2';
+
+      var helices = [
+        for (int i = 0; i < 3; i++) Helix(max_offset: 50, idx: i, grid_position: GridPosition(0, i))
+      ];
+      helices[2] = helices[2].rebuild((b) => b..group = group2name);
+      var design = Design(helices: helices, grid: Grid.square);
+      design = design.draw_strand(0, 0).move(5).cross(1).move(-5).commit();
+      design = design.draw_strand(0, 5).move(10).cross(1).move(-10).commit();
+      design = design.draw_strand(0, 15).move(12).cross(1).move(-12).commit();
+      design = design.draw_strand(0, 27).move(4).cross(2).move(-4).commit();
+
+      expect(design.groups.length, 2);
+
+      var exp_group_names = List<String>.from(design.groups.keys);
+      expect(exp_group_names, [constants.default_group_name, group2name]);
+
+      var xs0 = design.helix_to_crossover_addresses_disallow_intrahelix_disallow_intergroup[0];
+      expect(xs0.length, 3);
+      var a0 = xs0[0];
+      var a1 = xs0[1];
+      var a2 = xs0[2];
+      expect(a0.offset, 4);
+      expect(a1.offset, 14);
+      expect(a2.offset, 26);
+      expect(a0.helix_idx, 1);
+      expect(a1.helix_idx, 1);
+      expect(a2.helix_idx, 1);
+      expect(a0.forward, true);
+      expect(a1.forward, true);
+      expect(a2.forward, true);
+
+      var xs1 = design.helix_to_crossover_addresses_disallow_intrahelix_disallow_intergroup[1];
+      expect(xs1.length, 3);
+      a0 = xs1[0];
+      a1 = xs1[1];
+      a2 = xs1[2];
+      expect(a0.offset, 4);
+      expect(a1.offset, 14);
+      expect(a2.offset, 26);
+      expect(a0.helix_idx, 0);
+      expect(a1.helix_idx, 0);
+      expect(a2.helix_idx, 0);
+      expect(a0.forward, false);
+      expect(a1.forward, false);
+      expect(a2.forward, false);
+
+      var xs2 = design.helix_to_crossover_addresses_disallow_intrahelix_disallow_intergroup[2];
+      expect(xs2.length, 0);
     });
 
     test('minimum_strain_angle_0_10_20_relative_to_0', () {

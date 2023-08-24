@@ -2407,12 +2407,27 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<int, BuiltList<Address>> get helix_to_crossover_addresses_disallow_intrahelix {
     var ret = this.helix_to_crossover_addresses.toMap();
     for (int helix_idx in ret.keys) {
-      var addresses_with_intra = ret[helix_idx];
-      var addresses_without_intra = [
-        for (var address in addresses_with_intra)
+      var addresses_with_intrahelix_crossovers = ret[helix_idx];
+      var addresses_without_intrahelix_crossovers = [
+        for (var address in addresses_with_intrahelix_crossovers)
           if (address.helix_idx != helix_idx) address
       ].build();
-      ret[helix_idx] = addresses_without_intra;
+      ret[helix_idx] = addresses_without_intrahelix_crossovers;
+    }
+    return ret.build();
+  }
+
+  /// Like helix_to_crossover_addresses_disallow_intrahelix but ignores crossovers between two helix groups
+  @memoized
+  BuiltMap<int, BuiltList<Address>> get helix_to_crossover_addresses_disallow_intrahelix_disallow_intergroup {
+    var ret = this.helix_to_crossover_addresses_disallow_intrahelix.toMap();
+    for (int helix_idx in ret.keys) {
+      var addresses_with_intergroup_crossovers = ret[helix_idx];
+      var addresses_without_intergroup_crossovers = [
+        for (var address in addresses_with_intergroup_crossovers)
+          if (this.helices[address.helix_idx].group == this.helices[helix_idx].group) address
+      ].build();
+      ret[helix_idx] = addresses_without_intergroup_crossovers;
     }
     return ret.build();
   }
