@@ -67,15 +67,19 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
       grid_position_str = position_str.replaceAll(' ', '');
     }
 
-    var forward_angle = props.helix.backbone_angle_at_offset(props.slice_bar_offset, true);
-    var reverse_angle = props.helix.backbone_angle_at_offset(props.slice_bar_offset, false);
-
+    // these aren't defined if slice bar is not showing, so check for null
+    var forward_angle = props.slice_bar_offset != null
+        ? props.helix.backbone_angle_at_offset(props.slice_bar_offset, true)
+        : null;
+    var reverse_angle = props.slice_bar_offset != null
+        ? props.helix.backbone_angle_at_offset(props.slice_bar_offset, false)
+        : null;
     var tooltip = '''\
 position:  ${position_str}
 roll:      ${props.helix.roll.toStringAsFixed(precision)}
 backbone angles at current slice bar offset = ${props.slice_bar_offset}:
-  forward: ${forward_angle.toStringAsFixed(precision)}
-  reverse: ${reverse_angle.toStringAsFixed(precision)}''';
+  forward: ${forward_angle?.toStringAsFixed(precision)}
+  reverse: ${reverse_angle?.toStringAsFixed(precision)}''';
 
     var children = [
       (Dom.circle()
