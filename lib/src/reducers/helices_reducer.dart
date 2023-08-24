@@ -487,7 +487,8 @@ BuiltMap<int, Helix> relax_helix_rolls_reducer(
   var new_helices_map = helices.toMap();
   for (var helix_idx in helix_idxs_to_relax) {
     var helix = new_helices_map[helix_idx];
-    var crossover_addresses = state.design.helix_to_crossover_addresses[helix_idx];
+    var crossover_addresses =
+        state.design.helix_to_crossover_addresses_disallow_intrahelix_disallow_intergroup[helix_idx];
     var helix_relaxed = helix.relax_roll(helices, crossover_addresses);
     new_helices_map[helix_idx] = helix_relaxed;
   }

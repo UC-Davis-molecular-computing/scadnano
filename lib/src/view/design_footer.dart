@@ -52,7 +52,7 @@ class DesignFooterComponent extends UiComponent2<DesignFooterProps> {
         text += (', ' +
             'strand DNA index: ${mouseover_data.strand_idx}, ' +
             'domain length: ${domain_length}, ' +
-            'strand length: ${strand.dna_length}, ' +
+            'strand length: ${strand?.dna_length}, ' +
             (domain?.name != null ? 'domain name: ${domain.name}, ' : '') +
             (domain?.label != null ? 'domain label: ${domain.label}, ' : '') +
             (strand.name != null ? 'strand name: ${strand.name}, ' : '') +

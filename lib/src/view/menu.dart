@@ -591,7 +591,7 @@ then set the rolls to match the crossover locations as best as possible.
         ..tooltip = '''\
 Same as option "Set helix rolls based on crossovers and helix coordinates" above,
 but changes the rolls only of selected helices.''')(),
-      DropdownDivider({}),
+      DropdownDivider({'key': 'dropdown1'}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers()))
         ..display = 'Set helix coordinates based on crossovers'
@@ -674,7 +674,7 @@ Ignored if design is not an origami (i.e., does not have at least one scaffold).
       DropdownDivider({'key': 'divider-major-tick-widths'}),
       ...view_menu_zoom_speed(),
       DropdownDivider({'key': 'divider-zoom_speed'}),
-      ...view_menu_misc()
+      ...view_menu_misc(),
     ];
     return NavDropdown({
       'title': 'View',
