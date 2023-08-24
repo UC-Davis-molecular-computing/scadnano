@@ -8,12 +8,12 @@ import 'state/grid.dart';
 
 // WARNING: Do not modify line below, except for the version string
 //          (and also add new version string to scadnano_versions_to_link).
-const String CURRENT_VERSION = "0.18.7";
+const String CURRENT_VERSION = "0.18.8";
 const String INITIAL_VERSION = "0.1.0";
 
 // scadnano versions that we deploy so that older versions can be used.
 final scadnano_older_versions_to_link = [
-  "0.18.6",
+  "0.18.7",
   "0.17.14",
   // "0.17.13",
   // "0.17.12",
@@ -75,7 +75,7 @@ const RIGHT_CLICK_BUTTON = 2;
 const KEY_CODE_SHOW_POTENTIAL_HELIX = KeyCode.H;
 const KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO = KeyCode.W;
 final KEY_CODE_COMMAND_MAC =
-    browser.isFirefox ? 224 : 91; // Meta/Command: https://tosbourn.com/cmd-osx-key-code/
+browser.isFirefox ? 224 : 91; // Meta/Command: https://tosbourn.com/cmd-osx-key-code/
 final KEY_CODE_TOGGLE_SELECT_MAC = KEY_CODE_COMMAND_MAC;
 const KEY_CODE_SELECT = KeyCode.SHIFT;
 const KEY_CODE_TOGGLE_SELECT = KeyCode.CTRL;
@@ -210,15 +210,15 @@ const strands_key = 'strands';
 const design_modifications_key = 'modifications_in_design';
 const groups_key = 'groups';
 final design_keys = [
-      version_key,
-      grid_key,
-      helices_key,
-      helices_view_order_key,
-      potential_helices_key,
-      strands_key,
-      design_modifications_key,
-      groups_key,
-    ] +
+  version_key,
+  grid_key,
+  helices_key,
+  helices_view_order_key,
+  potential_helices_key,
+  strands_key,
+  design_modifications_key,
+  groups_key,
+] +
     legacy_geometry_keys;
 
 // Geometry keys
@@ -230,12 +230,12 @@ const minor_groove_angle_key = 'minor_groove_angle';
 const legacy_minor_groove_angle_keys = ['groove_angle'];
 const inter_helix_gap_key = 'inter_helix_gap';
 final geometry_keys = [
-      rise_per_base_pair_key,
-      helix_radius_key,
-      bases_per_turn_key,
-      minor_groove_angle_key,
-      inter_helix_gap_key,
-    ] +
+  rise_per_base_pair_key,
+  helix_radius_key,
+  bases_per_turn_key,
+  minor_groove_angle_key,
+  inter_helix_gap_key,
+] +
     legacy_minor_groove_angle_keys +
     legacy_rise_per_base_pair_keys;
 
@@ -256,21 +256,21 @@ const major_tick_start_key = 'major_tick_start';
 const major_tick_periodic_distances_key = 'major_tick_periodic_distances';
 const group_key = 'group';
 final helix_keys = [
-      idx_on_helix_key,
-      max_offset_key,
-      min_offset_key,
-      roll_key,
-      pitch_key,
-      yaw_key,
-      grid_position_key,
-      svg_position_key,
-      position_key,
-      major_ticks_key,
-      major_tick_distance_key,
-      major_tick_start_key,
-      major_tick_periodic_distances_key,
-      group_key,
-    ] +
+  idx_on_helix_key,
+  max_offset_key,
+  min_offset_key,
+  roll_key,
+  pitch_key,
+  yaw_key,
+  grid_position_key,
+  svg_position_key,
+  position_key,
+  major_ticks_key,
+  major_tick_distance_key,
+  major_tick_start_key,
+  major_tick_periodic_distances_key,
+  group_key,
+] +
     legacy_position_keys;
 // Cannot have List concatenation in const expressions.
 // Seems like it won't be fixed soon (related issue):
@@ -297,17 +297,17 @@ const modification_5p_key = '5prime_modification';
 const modification_3p_key = '3prime_modification';
 const modifications_int_key = 'internal_modifications';
 final strand_keys = [
-      color_key,
-      dna_sequence_key,
-      idt_key,
-      is_scaffold_key,
-      substrands_key,
-      modification_5p_key,
-      modification_3p_key,
-      modifications_int_key,
-      label_key,
-      name_key,
-    ] +
+  color_key,
+  dna_sequence_key,
+  idt_key,
+  is_scaffold_key,
+  substrands_key,
+  modification_5p_key,
+  modification_3p_key,
+  modifications_int_key,
+  label_key,
+  name_key,
+] +
     legacy_dna_sequence_keys +
     legacy_substrands_keys;
 
@@ -350,16 +350,16 @@ const end_key = 'end';
 const deletions_key = 'deletions';
 const insertions_key = 'insertions';
 final domain_keys = [
-      helix_idx_key,
-      forward_key,
-      start_key,
-      end_key,
-      deletions_key,
-      insertions_key,
-      label_key,
-      name_key,
-      color_key,
-    ] +
+  helix_idx_key,
+  forward_key,
+  start_key,
+  end_key,
+  deletions_key,
+  insertions_key,
+  label_key,
+  name_key,
+  color_key,
+] +
     legacy_forward_keys;
 
 // Loopout keys
