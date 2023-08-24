@@ -136,11 +136,20 @@ objects off the diagonal that are not intended to be selected.''';
       case insertion:
         return '''\
 (i)nsertion: Clicking on a bound domain adds an insertion at that offset.
-Clicking an existing insertion removes it.''';
+Clicking an existing insertion removes it.
+
+Ctrl+click will add an insertion to strands in *every* helix at the same offset.''';
       case deletion:
         return '''\
 (d)eletion: Clicking on a bound domain adds a deletion at that offset.
-Clicking an existing deletion removes it.''';
+Clicking an existing deletion removes it.
+
+Ctrl+click will add a deletion to strands in *every* helix at the same offset.
+This can be useful for adding "columns" of deletions useful for twist correction
+in DNA origami.
+(See https://www.nature.com/articles/nchem.1070 for an explanation of twist
+correction in DNA origami.)
+''';
       case move_group:
         return '''\
 (m)ove group: This mode allows one to translate the currently selected helix

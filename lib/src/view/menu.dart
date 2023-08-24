@@ -590,8 +590,7 @@ then set the rolls to match the crossover locations as best as possible.
         ..key = 'edit_menu_helix-rolls_set-selected-helix-rolls'
         ..tooltip = '''\
 Same as option "Set helix rolls based on crossovers and helix coordinates" above,
-but changes the rolls only of selected helices.
-''')(),
+but changes the rolls only of selected helices.''')(),
       DropdownDivider({}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers()))
@@ -1233,7 +1232,7 @@ cadnano files that have whitespace. ("Bad .json file format is detected in
       ),
       DropdownItem(
         {
-          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/tutorial/tutorial.md',
+          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/main/tutorial/tutorial.md',
           'target': '_blank',
         },
         'tutorial (web interface)',
@@ -1248,7 +1247,7 @@ cadnano files that have whitespace. ("Bad .json file format is detected in
       DropdownItem(
         {
           'href':
-              'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/tutorial/tutorial.md',
+              'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/main/tutorial/tutorial.md',
           'target': '_blank',
         },
         'tutorial (Python scripting)',
