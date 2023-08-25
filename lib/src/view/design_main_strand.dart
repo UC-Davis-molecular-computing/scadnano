@@ -913,7 +913,9 @@ PAGEHPLC : Dual PAGE & HPLC
     int idt_text_idx = 2;
     int connector_length_idx = 3;
     int index_of_dna_base_idx = 4;
-    var items = List<DialogItem>.filled(5, null);
+    int attached_to_base_idx = 5;
+    int allowed_bases_idx = 6;
+    var items = List<DialogItem>.filled(7, null);
     items[modification_type_idx] = DialogRadio(
         label: 'modification type', options: {"3'", "5'", "internal"}, selected_idx: selected_index);
 
@@ -950,19 +952,39 @@ PAGEHPLC : Dual PAGE & HPLC
 
     items[index_of_dna_base_idx] = DialogInteger(label: 'index of DNA base', value: strand_dna_idx);
 
+    items[attached_to_base_idx] = DialogCheckbox(label: 'attached to base?', value: true, tooltip: '''\
+If checked, then this internal modification is attached to a DNA base (such as internal biotin /iBiodT/). 
+In that case the list of allowed DNA bases to which it can attach must be specified in the field 
+"allowed bases". If unchecked, then this internal modification goes in between bases (e.g., a carbon linker
+such as /iSp9/).''');
+
+    items[allowed_bases_idx] = DialogText(label: 'allowed bases', value: 'ACGT', tooltip: '''\
+TODO
+''');
+
     // don't allow to modify index of DNA base when 3' or 5' is selected
     var dialog = Dialog(
-        title: 'add modification',
-        type: DialogType.add_modification,
-        items: items,
-        use_saved_response: false,
-        // so that where they click influences which type of modification (5'/3'/internal) is automatically
-        // selected for them instead of being whatever the previous dialog used
-        disable_when_any_radio_button_selected: {
-          index_of_dna_base_idx: {
-            modification_type_idx: ["3'", "5'"]
-          },
-        });
+      title: 'add modification',
+      type: DialogType.add_modification,
+      items: items,
+      // so that where they click influences which type of modification (5'/3'/internal) is automatically
+      // selected for them instead of being whatever the previous dialog used
+      use_saved_response: false,
+      disable_when_any_radio_button_selected: {
+        index_of_dna_base_idx: {
+          modification_type_idx: ["3'", "5'"]
+        },
+        attached_to_base_idx: {
+          modification_type_idx: ["3'", "5'"]
+        },
+        allowed_bases_idx: {
+          modification_type_idx: ["3'", "5'"]
+        },
+      },
+      disable_when_any_checkboxes_off: {
+        allowed_bases_idx: [attached_to_base_idx]
+      },
+    );
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
@@ -972,6 +994,8 @@ PAGEHPLC : Dual PAGE & HPLC
     String idt_text = (results[idt_text_idx] as DialogText).value;
     int connector_length = (results[connector_length_idx] as DialogInteger).value;
     int index_of_dna_base = (results[index_of_dna_base_idx] as DialogInteger).value;
+    bool attached_to_base = (results[attached_to_base_idx] as DialogCheckbox).value;
+    String allowed_bases_str = (results[allowed_bases_idx] as DialogText).value;
 
     Modification mod;
     if (modification_type == "3'") {
@@ -989,11 +1013,19 @@ PAGEHPLC : Dual PAGE & HPLC
         connector_length: connector_length,
       );
     } else {
+      var allowed_bases = null;
+      if (attached_to_base) {
+        allowed_bases_str = allowed_bases_str.replaceAll(RegExp(r'[^(A|C|G|T|a|c|g|t)]'), '');
+        allowed_bases =
+            {for (int i = 0; i < allowed_bases_str.length; i++) allowed_bases_str[i].toUpperCase()}.build();
+        print('allowed_bases = ${allowed_bases}');
+      }
       mod = ModificationInternal(
         // id: id,
         display_text: display_text,
         idt_text: idt_text,
         connector_length: connector_length,
+        allowed_bases: allowed_bases,
       );
     }
 

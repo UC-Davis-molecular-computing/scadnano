@@ -188,6 +188,34 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
     expect(idt_content, '${strand_name};/5Biosg/ AAAAA CCCC/iBiodT/ GGGGG /3Cy3Sp/;25nm;STD');
   });
 
+  test('domain_delimiters_internal_nonbase_modifications', () {
+    var strand_name = 's1';
+    var mod_i = ModificationInternal(display_text: '9C', idt_text: '/iSp9/');
+
+    var helices = [for (int i = 0; i < 6; i++) Helix(idx: i, max_offset: 100, grid: Grid.square)];
+    var design = Design(helices: helices, grid: Grid.square);
+    design = design
+        .draw_strand(0, 0)
+        .move(5)
+        .with_domain_sequence('AAAAA')
+        .cross(1)
+        .move(-5)
+        .with_domain_sequence('CCCCT')
+        .cross(2)
+        .move(5)
+        .with_domain_sequence('GGGGG')
+        .with_name(strand_name)
+        .with_modification_internal(8, mod_i)
+        .commit();
+
+    var strand = design.strands[0];
+    var strand_idt_dna_sequence = strand.idt_dna_sequence(domain_delimiter: ' ');
+    expect(strand_idt_dna_sequence, 'AAAAA CCCC/iSp9/T GGGGG');
+
+    var idt_content = idt_bulk_export(design.strands, delimiter: ';', domain_delimiter: ' ').trim();
+    expect(idt_content, '${strand_name};AAAAA CCCC/iSp9/T GGGGG;25nm;STD');
+  });
+
   test('to_idt_bulk_input_format__row_major_5p', () {
     var names_joined = get_names_idt(design_6h, StrandOrder.five_prime, false);
     expect(names_joined, 'DGPAEIHMQBFKJNRCLO');
