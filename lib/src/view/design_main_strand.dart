@@ -955,6 +955,9 @@ PAGEHPLC : Dual PAGE & HPLC
         title: 'add modification',
         type: DialogType.add_modification,
         items: items,
+        use_saved_response: false,
+        // so that where they click influences which type of modification (5'/3'/internal) is automatically
+        // selected for them instead of being whatever the previous dialog used
         disable_when_any_radio_button_selected: {
           index_of_dna_base_idx: {
             modification_type_idx: ["3'", "5'"]

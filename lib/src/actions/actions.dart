@@ -2048,11 +2048,17 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
 
   bool get column_major_plate;
 
+  String get delimiter;
+
+  String get domain_delimiter;
+
   /************************ begin BuiltValue boilerplate ************************/
   factory ExportDNA({
     bool include_scaffold,
     bool include_only_selected_strands,
     ExportDNAFormat export_dna_format,
+    String delimiter,
+    String domain_delimiter,
     StrandOrder strand_order = null,
     bool column_major_strand = true,
     bool column_major_plate = true,
@@ -2061,6 +2067,8 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
       ..include_scaffold = include_scaffold
       ..include_only_selected_strands = include_only_selected_strands
       ..export_dna_format = export_dna_format
+      ..delimiter = delimiter
+      ..domain_delimiter = domain_delimiter
       ..strand_order = strand_order
       ..column_major_strand = column_major_strand
       ..column_major_plate = column_major_plate);
