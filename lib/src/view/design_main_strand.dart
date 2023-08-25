@@ -952,15 +952,11 @@ PAGEHPLC : Dual PAGE & HPLC
 
     items[index_of_dna_base_idx] = DialogInteger(label: 'index of DNA base', value: strand_dna_idx);
 
-    items[attached_to_base_idx] = DialogCheckbox(label: 'attached to base?', value: true, tooltip: '''\
-If checked, then this internal modification is attached to a DNA base (such as internal biotin /iBiodT/). 
-In that case the list of allowed DNA bases to which it can attach must be specified in the field 
-"allowed bases". If unchecked, then this internal modification goes in between bases (e.g., a carbon linker
-such as /iSp9/).''');
+    items[attached_to_base_idx] =
+        DialogCheckbox(label: 'attached to base?', value: true, tooltip: tooltip_attached_to_base_checkbox);
 
-    items[allowed_bases_idx] = DialogText(label: 'allowed bases', value: 'ACGT', tooltip: '''\
-TODO
-''');
+    items[allowed_bases_idx] =
+        DialogText(label: 'allowed bases', value: 'ACGT', tooltip: tooltip_allowed_bases_textfield);
 
     // don't allow to modify index of DNA base when 3' or 5' is selected
     var dialog = Dialog(
@@ -1018,7 +1014,6 @@ TODO
         allowed_bases_str = allowed_bases_str.replaceAll(RegExp(r'[^(A|C|G|T|a|c|g|t)]'), '');
         allowed_bases =
             {for (int i = 0; i < allowed_bases_str.length; i++) allowed_bases_str[i].toUpperCase()}.build();
-        print('allowed_bases = ${allowed_bases}');
       }
       mod = ModificationInternal(
         // id: id,
@@ -1334,3 +1329,12 @@ Future<void> ask_for_color(Strand strand, BuiltSet<Strand> selected_strands) asy
       color_set_strand_action_creator(color_hex), strand, selected_strands, "set strand color");
   app.dispatch(action);
 }
+
+String tooltip_attached_to_base_checkbox = '''\
+If checked, then this internal modification is attached to a DNA base (such as internal biotin /iBiodT/). 
+In that case the list of allowed DNA bases to which it can attach must be specified in the field 
+"allowed bases". If unchecked, then this internal modification goes in between bases (e.g., a carbon linker
+such as /iSp9/).''';
+
+String tooltip_allowed_bases_textfield = '''\
+TODO''';
