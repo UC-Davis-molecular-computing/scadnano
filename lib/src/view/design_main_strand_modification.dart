@@ -17,6 +17,7 @@ import '../util.dart' as util;
 import '../state/strand.dart';
 import '../state/helix.dart';
 import '../constants.dart' as constants;
+import 'design_main_strand.dart';
 
 part 'design_main_strand_modification.over_react.g.dart';
 
@@ -157,19 +158,42 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
     int display_text_idx = 0;
     int idt_text_idx = 1;
     int connector_length_idx = 2;
-    // int id_idx = 2;
-    var items = List<DialogItem>.filled(3, null);
+    int attached_to_base_idx = 3;
+    int allowed_bases_idx = 4;
+
+    bool is_internal = props.modification is ModificationInternal;
+    int num_items = is_internal ? 5 : 3;
+    var items = List<DialogItem>.filled(num_items, null);
     items[display_text_idx] = DialogText(label: 'display text', value: props.modification.display_text);
     items[idt_text_idx] = DialogText(label: 'idt text', value: props.modification.idt_text);
     items[connector_length_idx] =
         DialogInteger(label: 'connector length', value: props.modification.connector_length);
     // items[id_idx] = DialogText(label: 'id', value: props.modification.id);
 
+    if (is_internal) {
+      ModificationInternal mod = (props.modification as ModificationInternal);
+      bool attached_to_base_old = mod.allowed_bases != null;
+      items[attached_to_base_idx] = DialogCheckbox(
+          label: 'attached to base?',
+          value: attached_to_base_old,
+          tooltip: tooltip_attached_to_base_checkbox);
+
+      var allowed_bases_old = attached_to_base_old ? mod.allowed_bases.join('') : 'ACGT';
+      items[allowed_bases_idx] = DialogText(
+          label: 'allowed bases', value: allowed_bases_old, tooltip: tooltip_allowed_bases_textfield);
+    }
+
     var dialog = Dialog(
-        title: 'edit modification',
-        type: DialogType.edit_modification,
-        items: items,
-        use_saved_response: false);
+      title: 'edit modification',
+      type: DialogType.edit_modification,
+      items: items,
+      use_saved_response: false,
+      disable_when_any_checkboxes_off: is_internal
+          ? {
+              allowed_bases_idx: [attached_to_base_idx]
+            }
+          : {},
+    );
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
@@ -181,24 +205,31 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
     Modification new_mod;
     if (props.modification is Modification3Prime) {
       new_mod = Modification3Prime(
-        //id: id,
         display_text: display_text,
         idt_text: idt_text,
         connector_length: connector_length,
       );
     } else if (props.modification is Modification5Prime) {
       new_mod = Modification5Prime(
-        //id: id,
         display_text: display_text,
         idt_text: idt_text,
         connector_length: connector_length,
       );
     } else {
+      bool attached_to_base = (results[attached_to_base_idx] as DialogCheckbox).value;
+      String allowed_bases_str = (results[allowed_bases_idx] as DialogText).value;
+      var allowed_bases = null;
+      if (attached_to_base) {
+        allowed_bases_str = allowed_bases_str.replaceAll(RegExp(r'[^(A|C|G|T|a|c|g|t)]'), '');
+        allowed_bases =
+            {for (int i = 0; i < allowed_bases_str.length; i++) allowed_bases_str[i].toUpperCase()}.build();
+      }
       new_mod = ModificationInternal(
         // id: props.modification.id,
         display_text: display_text,
         idt_text: props.modification.idt_text,
         connector_length: connector_length,
+        allowed_bases: allowed_bases,
       );
     }
 
