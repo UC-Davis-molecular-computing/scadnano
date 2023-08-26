@@ -325,8 +325,7 @@ abstract class Strand
 
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
 
-  @memoized
-  String get idt_dna_sequence {
+  String idt_dna_sequence({String domain_delimiter = ''}) {
     if (dna_sequence == null) {
       return null;
     }
@@ -338,26 +337,9 @@ abstract class Strand
       ret_list.add(modification_5p.idt_text);
     }
 
-    // internal mods
-    for (int offset = 0; offset < dna_sequence.length; offset++) {
-      String base = dna_sequence[offset];
-      ret_list.add(base);
-      if (modifications_int.containsKey(offset)) {
-        // if internal mod attached to base, replace base
-        var mod = modifications_int[offset];
-        if (mod.idt_text != null) {
-          if (mod.allowed_bases != null) {
-            if (!mod.allowed_bases.contains(base)) {
-              var msg = 'internal modification ${mod} can only replace one of these bases: '
-                  '${mod.allowed_bases}.join(","), but the base at offset ${offset} is ${base}';
-              throw IllegalDesignError(msg);
-            }
-            ret_list.last = mod.idt_text; // replace base with modified base
-          } else {
-            ret_list.add(mod.idt_text); // append modification between two bases
-          }
-        }
-      }
+    // DNA sequence and internal mods
+    for (var substrand in this.substrands) {
+      ret_list.add(idt_dna_sequence_substrand(substrand));
     }
 
     // 3' mods
@@ -365,7 +347,49 @@ abstract class Strand
       ret_list.add(modification_3p.idt_text);
     }
 
-    return ret_list.join();
+    return ret_list.join(domain_delimiter);
+  }
+
+  String idt_dna_sequence_substrand(Substrand substrand) {
+    if (this.dna_sequence == null) {
+      return null;
+    }
+
+    var strand = this;
+    int len_dna_prior = 0;
+    for (var prev_substrand in strand.substrands) {
+      if (prev_substrand == substrand) {
+        break;
+      }
+      len_dna_prior += prev_substrand.dna_length();
+    }
+
+    List<String> new_seq_list = [];
+    for (int pos = 0; pos < substrand.dna_sequence.length; pos++) {
+      String base = substrand.dna_sequence[pos];
+      new_seq_list.add(base);
+      int strand_pos = pos + len_dna_prior;
+      if (strand.modifications_int.containsKey(strand_pos)) {
+        // if internal mod attached to base, replace base
+        var mod = strand.modifications_int[strand_pos];
+        if (mod.idt_text != null) {
+          var idt_text_with_delim = mod.idt_text;
+          if (mod.allowed_bases != null) {
+            if (!mod.allowed_bases.contains(base)) {
+              var msg = ('internal modification ${mod} can only replace one of these bases: '
+                  '${mod.allowed_bases.join(",")}, '
+                  'but the base at position ${strand_pos} is ${base}');
+              throw IllegalDesignError(msg);
+            }
+            new_seq_list.last = idt_text_with_delim; // replace base with modified base
+          } else {
+            new_seq_list.add(idt_text_with_delim); // append modification between two bases
+          }
+        }
+      }
+    }
+
+    return new_seq_list.join('');
   }
 
   @memoized
