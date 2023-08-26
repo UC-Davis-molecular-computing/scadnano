@@ -10,6 +10,7 @@ import 'package:react/react.dart' as react;
 
 import 'design_main_strand_and_domain_texts.dart';
 import 'design_main_strand_dna_end.dart';
+import 'design_main_strand_modification.dart';
 import 'transform_by_helix_group.dart';
 import '../state/idt_fields.dart';
 import '../state/modification_type.dart';
@@ -264,7 +265,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
   }
 
   add_modification(Substrand substrand, Address address, ModificationType type) =>
-      app.disable_keyboard_shortcuts_while(() => ask_for_add_modification(substrand, address, type));
+      app.disable_keyboard_shortcuts_while(
+          () => ask_for_add_modification(props.strand, substrand, address, type));
 
   assign_scale_purification_fields() =>
       app.disable_keyboard_shortcuts_while(ask_for_assign_scale_purification_fields);
@@ -885,179 +887,6 @@ PAGEHPLC : Dual PAGE & HPLC
       var action = actions.IDTFieldsRemove(strand: strand);
       app.dispatch(action);
     }
-  }
-
-  Future<void> ask_for_add_modification(Substrand substrand, Address address,
-      [ModificationType type = ModificationType.internal]) async {
-    /*
-    substrand -  selected substrand (domain or extension)
-    address - address of DNA base (nullable if substrand is an extension)
-    type - type of modification: five_prime, three_prime, internal (default)
-    */
-    if (address == null) {
-      assert(substrand is Extension);
-    }
-    int selected_index = 2;
-
-    if (type == ModificationType.five_prime) {
-      selected_index = 1;
-    } else if (type == ModificationType.three_prime) {
-      selected_index = 0;
-    }
-
-    // if they clicked on a domain, get the address; if an extension, just default to 0
-    int strand_dna_idx = address != null ? clicked_strand_dna_idx(substrand, address, props.strand) : 0;
-
-    int modification_type_idx = 0;
-    int display_text_idx = 1;
-    int idt_text_idx = 2;
-    int connector_length_idx = 3;
-    int index_of_dna_base_idx = 4;
-    int attached_to_base_idx = 5;
-    int allowed_bases_idx = 6;
-    var items = List<DialogItem>.filled(7, null);
-    items[modification_type_idx] = DialogRadio(
-        label: 'modification type', options: {"3'", "5'", "internal"}, selected_idx: selected_index);
-
-    String initial_display_text = "";
-    String initial_idt_text = "";
-    int initial_connector_length = constants.default_modification_connector_length;
-    // String initial_id = "";
-
-    // if there is a last mod of this type, it auto-populates the dialog inputs
-    Modification last_mod;
-    if (selected_index == 0) {
-      // 3' mod
-      last_mod = app.state.ui_state.last_mod_3p;
-    } else if (selected_index == 1) {
-      // 5' mod
-      last_mod = app.state.ui_state.last_mod_5p;
-    } else if (selected_index == 2) {
-      // internal mod
-      last_mod = app.state.ui_state.last_mod_int;
-    } else {
-      throw AssertionError('should be unreachable');
-    }
-    if (last_mod != null) {
-      initial_display_text = last_mod.display_text;
-      initial_idt_text = last_mod.idt_text;
-      initial_connector_length = last_mod.connector_length;
-      // initial_id = last_mod.id;
-    }
-
-    items[display_text_idx] = DialogText(label: 'display text', value: initial_display_text);
-    items[idt_text_idx] = DialogText(label: 'idt text', value: initial_idt_text);
-    items[connector_length_idx] = DialogInteger(label: 'connector length', value: initial_connector_length);
-    // items[id_idx] = DialogText(label: 'id', value: initial_id);
-
-    items[index_of_dna_base_idx] = DialogInteger(label: 'index of DNA base', value: strand_dna_idx);
-
-    items[attached_to_base_idx] =
-        DialogCheckbox(label: 'attached to base?', value: true, tooltip: tooltip_attached_to_base_checkbox);
-
-    items[allowed_bases_idx] =
-        DialogText(label: 'allowed bases', value: 'ACGT', tooltip: tooltip_allowed_bases_textfield);
-
-    // don't allow to modify index of DNA base when 3' or 5' is selected
-    var dialog = Dialog(
-      title: 'add modification',
-      type: DialogType.add_modification,
-      items: items,
-      // so that where they click influences which type of modification (5'/3'/internal) is automatically
-      // selected for them instead of being whatever the previous dialog used
-      use_saved_response: false,
-      disable_when_any_radio_button_selected: {
-        index_of_dna_base_idx: {
-          modification_type_idx: ["3'", "5'"]
-        },
-        attached_to_base_idx: {
-          modification_type_idx: ["3'", "5'"]
-        },
-        allowed_bases_idx: {
-          modification_type_idx: ["3'", "5'"]
-        },
-      },
-      disable_when_any_checkboxes_off: {
-        allowed_bases_idx: [attached_to_base_idx]
-      },
-    );
-
-    List<DialogItem> results = await util.dialog(dialog);
-    if (results == null) return;
-    String modification_type = (results[modification_type_idx] as DialogRadio).value;
-    String display_text = (results[display_text_idx] as DialogText).value;
-    // String id = (results[id_idx] as DialogText).value;
-    String idt_text = (results[idt_text_idx] as DialogText).value;
-    int connector_length = (results[connector_length_idx] as DialogInteger).value;
-    int index_of_dna_base = (results[index_of_dna_base_idx] as DialogInteger).value;
-    bool attached_to_base = (results[attached_to_base_idx] as DialogCheckbox).value;
-    String allowed_bases_str = (results[allowed_bases_idx] as DialogText).value;
-
-    Modification mod;
-    if (modification_type == "3'") {
-      mod = Modification3Prime(
-        //id: id,
-        display_text: display_text,
-        idt_text: idt_text,
-        connector_length: connector_length,
-      );
-    } else if (modification_type == "5'") {
-      mod = Modification5Prime(
-        //id: id,
-        display_text: display_text,
-        idt_text: idt_text,
-        connector_length: connector_length,
-      );
-    } else {
-      var allowed_bases = null;
-      if (attached_to_base) {
-        allowed_bases_str = allowed_bases_str.replaceAll(RegExp(r'[^(A|C|G|T|a|c|g|t)]'), '');
-        allowed_bases =
-            {for (int i = 0; i < allowed_bases_str.length; i++) allowed_bases_str[i].toUpperCase()}.build();
-      }
-      mod = ModificationInternal(
-        // id: id,
-        display_text: display_text,
-        idt_text: idt_text,
-        connector_length: connector_length,
-        allowed_bases: allowed_bases,
-      );
-    }
-
-    // if modification type is 5' or 3' and many such ends are selected, add modifications to all of them
-    actions.UndoableAction action;
-    if (mod is ModificationInternal) {
-      action =
-          actions.ModificationAdd(strand: props.strand, modification: mod, strand_dna_idx: index_of_dna_base);
-    } else {
-      List<DNAEnd> ends_selected = app.state.ui_state.selectables_store.selected_dna_ends.toList();
-
-      if (mod is Modification5Prime && !ends_selected.contains(props.strand.dnaend_5p)) {
-        ends_selected.add(props.strand.dnaend_5p);
-      } else if (mod is Modification3Prime && !ends_selected.contains(props.strand.dnaend_3p)) {
-        ends_selected.add(props.strand.dnaend_3p);
-      }
-
-      if (ends_selected.length == 1) {
-        action = actions.ModificationAdd(
-            strand: props.strand, modification: mod, strand_dna_idx: index_of_dna_base);
-      } else if (ends_selected.length > 1) {
-        // safe to batch this action since it's only for 5' or 3', so each strand will only be modified once
-        List<actions.ModificationAdd> all_actions = [];
-        for (var end_selected in ends_selected) {
-          var strand_of_end_selected = app.state.design.end_to_strand(end_selected);
-          var new_action = actions.ModificationAdd(
-              strand: strand_of_end_selected, modification: mod, strand_dna_idx: null);
-          all_actions.add(new_action);
-        }
-        action = actions.BatchAction(all_actions, "add modifications");
-      } else {
-        print('WARNING: selectable_mods should have at least one element in it by this line');
-        return;
-      }
-    }
-
-    app.dispatch(action);
   }
 
   Future<void> ask_for_strand_name() async {
