@@ -168,7 +168,6 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
     items[idt_text_idx] = DialogText(label: 'idt text', value: props.modification.idt_text);
     items[connector_length_idx] =
         DialogInteger(label: 'connector length', value: props.modification.connector_length);
-    // items[id_idx] = DialogText(label: 'id', value: props.modification.id);
 
     if (is_internal) {
       ModificationInternal mod = (props.modification as ModificationInternal);
@@ -200,7 +199,6 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
     String display_text = (results[display_text_idx] as DialogText).value;
     String idt_text = (results[idt_text_idx] as DialogText).value;
     int connector_length = (results[connector_length_idx] as DialogInteger).value;
-    // String id = (results[id_idx] as DialogText).value;
 
     Modification new_mod;
     if (props.modification is Modification3Prime) {
@@ -220,21 +218,20 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
       String allowed_bases_str = (results[allowed_bases_idx] as DialogText).value;
       var allowed_bases = null;
       if (attached_to_base) {
+        // remove all symbols other than ACGTacgt
         allowed_bases_str = allowed_bases_str.replaceAll(RegExp(r'[^(A|C|G|T|a|c|g|t)]'), '');
         allowed_bases =
             {for (int i = 0; i < allowed_bases_str.length; i++) allowed_bases_str[i].toUpperCase()}.build();
       }
       new_mod = ModificationInternal(
-        // id: props.modification.id,
         display_text: display_text,
-        idt_text: props.modification.idt_text,
+        idt_text: idt_text,
         connector_length: connector_length,
         allowed_bases: allowed_bases,
       );
     }
 
-    List<SelectableModification> selectable_mods =
-        app.state.ui_state.selectables_store.selected_modifications.toList();
+    var selectable_mods = app.state.ui_state.selectables_store.selected_modifications.toList();
     if (!selectable_mods.contains(props.selectable_modification)) {
       selectable_mods.add(props.selectable_modification);
     }
