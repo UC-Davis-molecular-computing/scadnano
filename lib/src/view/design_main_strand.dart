@@ -1337,4 +1337,6 @@ In that case the list of allowed DNA bases to which it can attach must be specif
 such as /iSp9/).''';
 
 String tooltip_allowed_bases_textfield = '''\
-TODO''';
+For internal modifications that are attached to a base, this field specifies the bases to which 
+it can be attached. (Any symbols other than ACGTacgt are ignored in this field). For instance,
+IDT can only attach a biotin modification /iBiodT/ to a T base, so one would enter T in this field.''';
