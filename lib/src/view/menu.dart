@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:scadnano/src/state/selectable.dart';
 import '../dna_file_type.dart';
 import '../json_serializable.dart';
 import '../middleware/local_storage.dart';
@@ -539,18 +540,22 @@ with some default direction chosen. Play with it and see!
       (MenuDropdownItem()
         ..on_click =
             ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.A, ctrlKey: true).wrapped))
-        ..display = 'Select All'
+        ..display = 'Select all'
         ..key = 'edit_menu_copy-select-all'
-        ..tooltip = '''\
-Select all strands in the design.'''
+        ..tooltip = 'Select all strands in the design.'
         ..keyboard_shortcut = 'Ctrl+A')(),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.SelectAllSelectable(current_helix_group_only: true)))
-        ..display = 'Select All in Helix Group'
+        ..display = 'Select all in helix group'
         ..key = 'edit_menu_copy-select-all-in-helix-groups'
-        ..tooltip = '''\
-Select all selectable strands in the current helix group.'''
+        ..tooltip = 'Select all selectable strands in the current helix group.'
         ..keyboard_shortcut = 'Ctrl+Shift+A')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => app.disable_keyboard_shortcuts_while(ask_for_select_all_with_same_as_selected))
+        ..display = 'Select all with same...'
+        ..key = 'edit_menu_copy-select-all-with-same'
+        ..tooltip = 'Select all strands that share given trait(s) as the currently selected strand(s).'
+        ..keyboard_shortcut = 'Alt+Shift+A')(),
       (MenuBoolean()
         ..value = props.strand_paste_keep_color
         ..display = 'Pasted strands keep original color'

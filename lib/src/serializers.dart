@@ -183,6 +183,8 @@ part 'serializers.g.dart';
   DeleteAllSelected,
   SelectAll,
   SelectAllSelectable,
+  SelectAllWithSameAsSelected,
+  SelectableTrait,
   Select,
   Loopout,
   ExtensionAdd,
