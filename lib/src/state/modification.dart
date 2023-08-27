@@ -254,6 +254,8 @@ abstract class ModificationInternal
   @nullable
   BuiltSet<String> get allowed_bases;
 
+  bool get attached_to_base => this.allowed_bases != null;
+
   String html_id(Address address) => mod_html_id(this, address);
 
   Modification set_id(String id) => rebuild((b) => b..id = id);

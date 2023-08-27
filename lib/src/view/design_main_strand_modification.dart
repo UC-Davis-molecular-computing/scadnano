@@ -57,6 +57,15 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
     Point<num> pos;
     if (props.ext == null) {
       pos = props.helix.svg_base_pos(props.address.offset, props.address.forward, props.helix_svg_position_y);
+      // if internal modification that goes between bases, adjust x offset to be after the given base,
+      // instead of on it
+      if (props.modification is ModificationInternal) {
+        var mod = (props.modification as ModificationInternal);
+        if (!mod.attached_to_base) {
+          var delta = props.helix.geometry.base_width_svg / 2;
+          pos = Point<num>(pos.x + delta, pos.y);
+        }
+      }
     } else {
       var ext = props.ext;
       var adj_dom = props.ext.adjacent_domain;
@@ -304,7 +313,6 @@ Future<void> ask_for_add_modification(Strand strand, Substrand substrand, Addres
   if (results == null) return;
   String modification_type = (results[modification_type_idx] as DialogRadio).value;
   String display_text = (results[display_text_idx] as DialogText).value;
-  // String id = (results[id_idx] as DialogText).value;
   String idt_text = (results[idt_text_idx] as DialogText).value;
   int connector_length = (results[connector_length_idx] as DialogInteger).value;
   int index_of_dna_base = (results[index_of_dna_base_idx] as DialogInteger).value;
@@ -314,14 +322,12 @@ Future<void> ask_for_add_modification(Strand strand, Substrand substrand, Addres
   Modification mod;
   if (modification_type == "3'") {
     mod = Modification3Prime(
-      //id: id,
       display_text: display_text,
       idt_text: idt_text,
       connector_length: connector_length,
     );
   } else if (modification_type == "5'") {
     mod = Modification5Prime(
-      //id: id,
       display_text: display_text,
       idt_text: idt_text,
       connector_length: connector_length,
@@ -334,7 +340,6 @@ Future<void> ask_for_add_modification(Strand strand, Substrand substrand, Addres
           {for (int i = 0; i < allowed_bases_str.length; i++) allowed_bases_str[i].toUpperCase()}.build();
     }
     mod = ModificationInternal(
-      // id: id,
       display_text: display_text,
       idt_text: idt_text,
       connector_length: connector_length,
