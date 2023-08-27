@@ -329,7 +329,7 @@ Future<void> ask_for_add_modification(Strand strand, Substrand substrand, Addres
   } else {
     var allowed_bases = null;
     if (attached_to_base) {
-      allowed_bases_str = allowed_bases_str.replaceAll(RegExp(r'[^(A|C|G|T|a|c|g|t)]'), '');
+      allowed_bases_str = allowed_bases_str.replaceAll(RegExp(r'[^(ACGTacgt)]'), '');
       allowed_bases =
           {for (int i = 0; i < allowed_bases_str.length; i++) allowed_bases_str[i].toUpperCase()}.build();
     }
@@ -440,7 +440,7 @@ edit_modification(Modification modification, SelectableModification selectable_m
     var allowed_bases = null;
     if (attached_to_base) {
       // remove all symbols other than ACGTacgt
-      allowed_bases_str = allowed_bases_str.replaceAll(RegExp(r'[^(A|C|G|T|a|c|g|t)]'), '');
+      allowed_bases_str = allowed_bases_str.replaceAll(RegExp(r'[^(ACGTacgt)]'), '');
       allowed_bases =
           {for (int i = 0; i < allowed_bases_str.length; i++) allowed_bases_str[i].toUpperCase()}.build();
     }
