@@ -222,7 +222,6 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
 
   ReactElement _dna_sequence_on_extension(Extension ext) {
     var subseq = ext.dna_sequence;
-    var length = subseq.length;
 
     var start_offset = '50%';
     var dy = '${0.1 * props.geometry.base_height_svg}';
@@ -246,8 +245,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       ..style = style_map);
     return (Dom.text()
       ..key = 'extension-dna-'
-          'H${ext.adjacent_domain.helix},${ext.adjacent_domain.start}-'
-          '${ext.adjacent_domain.end}'
+          'H${ext.adjacent_domain.helix},${ext.adjacent_domain.start}-${ext.adjacent_domain.end}'
       ..dy = dy)(text_path_props(subseq));
   }
 }

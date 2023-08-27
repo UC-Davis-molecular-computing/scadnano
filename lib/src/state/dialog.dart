@@ -47,10 +47,10 @@ class DialogType extends EnumClass {
   static const DialogType move_selected_helices_to_group = _$move_selected_helices_to_group;
   static const DialogType export_dna_sequences = _$export_dna_sequences;
   static const DialogType load_example_dna_design = _$load_example_dna_design;
-
   static const DialogType add_extension = _$add_extension;
   static const DialogType set_extension_name = _$set_extension_name;
   static const DialogType set_extension_display_length_angle = _$set_extension_display_length_angle;
+  static const DialogType select_all_with_same_as_selected = _$select_all_with_same_as_selected;
 
   static BuiltSet<DialogType> get values => _$values;
 
@@ -314,7 +314,7 @@ abstract class DialogCheckbox
 
   static Serializer<DialogCheckbox> get serializer => _$dialogCheckboxSerializer;
 
-  factory DialogCheckbox({String label, bool value = false, String tooltip}) {
+  factory DialogCheckbox({String label, bool value = false, String tooltip = ""}) {
     return DialogCheckbox.from((b) => b
       ..label = label
       ..value = value

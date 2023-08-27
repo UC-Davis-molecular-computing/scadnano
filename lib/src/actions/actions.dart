@@ -1543,6 +1543,24 @@ abstract class SelectAllSelectable
   static Serializer<SelectAllSelectable> get serializer => _$selectAllSelectableSerializer;
 }
 
+// used to select all strands (and maybe someday extended to other objects like Domains)
+// with the same "trait" (e.g., name, label, color) as already selected strand(s)
+abstract class SelectAllWithSameAsSelected
+    with BuiltJsonSerializable
+    implements Action, Built<SelectAllWithSameAsSelected, SelectAllWithSameAsSelectedBuilder> {
+  BuiltList<Selectable> get templates;
+
+  BuiltList<SelectableTrait> get traits;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SelectAllWithSameAsSelected({BuiltList<Selectable> templates, BuiltList<SelectableTrait> traits}) =
+      _$SelectAllWithSameAsSelected._;
+
+  SelectAllWithSameAsSelected._();
+
+  static Serializer<SelectAllWithSameAsSelected> get serializer => _$selectAllWithSameAsSelectedSerializer;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Delete selected non-helix items
 
