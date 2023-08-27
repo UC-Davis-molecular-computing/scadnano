@@ -183,8 +183,7 @@ const EPSILON = 0.000000001;
 bool are_close(double x1, double x2, [double epsilon = EPSILON]) => (x1 - x2).abs() < epsilon;
 
 /// Tests if [x1] and [x2] are within [epsilon] of each other.
-bool are_all_close(Iterable<double> x1s, Iterable<double> x2s, [double epsilon = EPSILON]) =>
-    [
+bool are_all_close(Iterable<double> x1s, Iterable<double> x2s, [double epsilon = EPSILON]) => [
       for (var pair in quiver.zip([x1s, x2s])) pair
     ].every((pair) => are_close(pair[0], pair[1], epsilon));
 
@@ -252,8 +251,7 @@ Future<List<DialogItem>> dialog(Dialog dialog) async {
   }
   // https://api.dart.dev/stable/2.7.0/dart-async/Completer-class.html
   Completer<List<DialogItem>> completer = Completer<List<DialogItem>>();
-  dialog = dialog.rebuild((b) =>
-  b
+  dialog = dialog.rebuild((b) => b
     ..on_submit = (List<DialogItem> items) {
       completer.complete(items);
     });
@@ -285,8 +283,8 @@ class Version {
 
   bool operator <(Version other) =>
       (major < other.major) ||
-          (major == other.major && minor < other.minor) ||
-          (major == other.major && minor == other.minor && patch < other.patch);
+      (major == other.major && minor < other.minor) ||
+      (major == other.major && minor == other.minor && patch < other.patch);
 }
 
 /// Pulls major/minor/patch integers from version_str, e.g., "2.13.432" becomes the Tuple (2, 13, 432)
@@ -316,8 +314,8 @@ bool lists_contain_same_elts<T extends Comparable>(Iterable<T> elts1, Iterable<T
 // assign SVG coordinates to helices
 
 /// Returns SVG position for helices
-Map<int, Point<num>> helices_assign_svg(Geometry geometry, bool invert_y, BuiltMap<int, Helix> helices,
-    BuiltMap<String, HelixGroup> groups,
+Map<int, Point<num>> helices_assign_svg(
+    Geometry geometry, bool invert_y, BuiltMap<int, Helix> helices, BuiltMap<String, HelixGroup> groups,
     {BuiltSet<int> helix_idxs_to_calculate = null}) {
   if (helix_idxs_to_calculate == null || helix_idxs_to_calculate.isEmpty) {
     helix_idxs_to_calculate = [for (var helix in helices.values) helix.idx].toBuiltSet();
@@ -422,8 +420,8 @@ num distance_to_rectangle(Point<num> point, Point<num> upper_left_corner, num wi
 /// Returns (dx,dy) representing distances from point to rectangle. Can be negative to indicate if
 /// point is above or below rectangle, or left or right of it.
 /// This is assuming the rectangle is "unrotated" by -angle.
-Point<num> xy_distances_to_rectangle(Point<num> point, Point<num> upper_left_corner, num width, num height,
-    num angle) {
+Point<num> xy_distances_to_rectangle(
+    Point<num> point, Point<num> upper_left_corner, num width, num height, num angle) {
   Point<num> unrotated_point = rotate(point, -angle, origin: upper_left_corner);
   num x_low = upper_left_corner.x;
   num x_hi = upper_left_corner.x + width;
@@ -452,8 +450,8 @@ Point<num> xy_distances_to_rectangle(Point<num> point, Point<num> upper_left_cor
 }
 
 /// Finds closest point in rectangle to [point]. If [point] is inside rectangle, returns [point];
-Point<num> closest_point_in_rectangle(Point<num> point, Point<num> upper_left_corner, num width, num height,
-    num angle) {
+Point<num> closest_point_in_rectangle(
+    Point<num> point, Point<num> upper_left_corner, num width, num height, num angle) {
   var distances = xy_distances_to_rectangle(point, upper_left_corner, width, height, angle);
   Point<num> unrotated_point = rotate(point, -angle, origin: upper_left_corner);
   num x = unrotated_point.x + distances.x;
@@ -473,7 +471,7 @@ Helix find_closest_helix(MouseEvent event, Iterable<Helix> helices, BuiltMap<Str
   for (var helix in helices) {
     var group = groups[helix.group];
     var helix_upper_left_corner =
-    group.transform_point_main_view(helix_idx_to_svg_position_map[helix.idx], geometry);
+        group.transform_point_main_view(helix_idx_to_svg_position_map[helix.idx], geometry);
     var dist = distance_to_rectangle(
         svg_clicked_point, helix_upper_left_corner, helix.svg_width, helix.svg_height, group.pitch);
     if (min_dist == null || min_dist > dist) {
@@ -525,7 +523,7 @@ int find_closest_offset(MouseEvent event, Iterable<Helix> helices_in_group, Heli
     Geometry geometry, num helices_in_group_first_svg_position_x) {
   var svg_clicked_point = svg_position_of_mouse_click(event);
   var svg_clicked_point_untransformed =
-  group.transform_point_main_view(svg_clicked_point, geometry, inverse: true);
+      group.transform_point_main_view(svg_clicked_point, geometry, inverse: true);
 
   var range = find_helix_group_min_max(helices_in_group);
   var min_offset = range.x;
@@ -539,8 +537,8 @@ int find_closest_offset(MouseEvent event, Iterable<Helix> helices_in_group, Heli
 }
 
 /// Return list of mouseover data about helix group `group_name` at `offset`.
-BuiltList<DesignSideRotationData> rotation_datas_at_offset_in_group(int offset, Design design,
-    String group_name) {
+BuiltList<DesignSideRotationData> rotation_datas_at_offset_in_group(
+    int offset, Design design, String group_name) {
   List<DesignSideRotationParams> rotation_params_list = [];
   if (offset != null) {
     for (var helix_idx in design.helix_idxs_in_group[group_name]) {
@@ -564,12 +562,12 @@ Address find_closest_address(MouseEvent event, Iterable<Helix> helices, BuiltMap
 
   var group = groups[helix.group];
   var helix_upper_left_corner =
-  group.transform_point_main_view(helix_idx_to_svg_position_map[helix.idx], geometry);
+      group.transform_point_main_view(helix_idx_to_svg_position_map[helix.idx], geometry);
   var closest_point_in_helix = closest_point_in_rectangle(
       svg_clicked_point, helix_upper_left_corner, helix.svg_width, helix.svg_height, group.pitch);
 
   var closest_point_in_helix_untransformed =
-  group.transform_point_main_view(closest_point_in_helix, geometry, inverse: true);
+      group.transform_point_main_view(closest_point_in_helix, geometry, inverse: true);
 
   int offset = helix.svg_x_to_offset(closest_point_in_helix_untransformed.x, helix_svg_position.x);
   bool forward = helix.svg_y_is_forward(closest_point_in_helix_untransformed.y, helix_svg_position.y);
@@ -597,9 +595,7 @@ Point<num> get_svg_point(MouseEvent event) {
   if (browser.isFirefox) {
     SvgElement target = event.target as SvgElement;
     Element svg_elt = svg_ancestor(target);
-    var rect = svg_elt
-        .getBoundingClientRect()
-        .topLeft;
+    var rect = svg_elt.getBoundingClientRect().topLeft;
     var offset = event.client - rect;
     return offset;
   } else {
@@ -618,8 +614,8 @@ Point<num> rect_to_point(Rect rect) => Point<num>(rect.x, rect.y);
 
 Point<int> round_point(Point<num> point) => Point<int>(point.x.round(), point.y.round());
 
-Point<num> transform_mouse_coord_to_svg_current_panzoom_correct_firefox(MouseEvent event, bool is_main_view,
-    SvgSvgElement view_svg) {
+Point<num> transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
+    MouseEvent event, bool is_main_view, SvgSvgElement view_svg) {
   Point<num> point;
   if (!browser.isFirefox) {
     point = event.offset;
@@ -684,8 +680,8 @@ Point<num> transform_svg_to_mouse_coord(Point<num> point, Point<num> pan, num zo
 
 Rectangle<num> svg_rect_to_rectangle(Rect rect) => Rectangle<num>(rect.x, rect.y, rect.width, rect.height);
 
-transform_rect(Point<num> transform(Point<num> p, Point<num> pan, num zoom), Rect rect, Point<num> pan,
-    num zoom) {
+transform_rect(
+    Point<num> transform(Point<num> p, Point<num> pan, num zoom), Rect rect, Point<num> pan, num zoom) {
   var up_left = Point<num>(rect.x, rect.y);
   var low_right = Point<num>(rect.x + rect.width, rect.y + rect.height);
   var up_left_tran = transform(up_left, pan, zoom);
@@ -898,14 +894,12 @@ Position3D grid_position_to_position3d(GridPosition grid_position, Grid grid, Ge
   return Position3D(x: x, y: y, z: 0);
 }
 
-Point<num> position3d_to_side_view_svg(Position3D position, bool invert_y, Geometry geometry) =>
-    Point<num>(
+Point<num> position3d_to_side_view_svg(Position3D position, bool invert_y, Geometry geometry) => Point<num>(
       position.x * geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
       position.y * geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
     );
 
-Position3D svg_side_view_to_position3d(Point<num> svg_pos, bool invert_y, Geometry geometry) =>
-    Position3D(
+Position3D svg_side_view_to_position3d(Point<num> svg_pos, bool invert_y, Geometry geometry) => Position3D(
       x: svg_pos.x / geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
       y: svg_pos.y / geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
       z: 0,
@@ -949,8 +943,8 @@ dynamic mandatory_field(Map<String, dynamic> map, String key, String name,
 /// [legacy_transformer] is used instead of [transformer]/
 T optional_field<T, U>(Map<String, dynamic> map, String key, T default_value,
     {T Function(U) transformer = null,
-      List<String> legacy_keys = const [],
-      T Function(U) legacy_transformer = null}) {
+    List<String> legacy_keys = const [],
+    T Function(U) legacy_transformer = null}) {
   var value = null;
   if (!map.containsKey(key)) {
     for (var legacy_key in legacy_keys) {
@@ -1087,7 +1081,7 @@ String blob_type_to_string(BlobType blob_type) {
     case BlobType.image:
       return 'image/svg+xml;charset=utf-8,';
     case BlobType.excel:
-    // https://stackoverflow.com/questions/974079/setting-mime-type-for-excel-document
+      // https://stackoverflow.com/questions/974079/setting-mime-type-for-excel-document
 //      return 'application/vnd.ms-excel';
       return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
   }
@@ -1208,7 +1202,7 @@ String id_modification_3p(Strand strand, Modification3Prime mod) => 'modificatio
 
 String id_modification_int(Strand strand, ModificationInternal mod, Address address) =>
     'modification-int-H${address.helix_idx}-${address.offset}-'
-        '${address.forward ? "forward" : "reverse"}-${strand.id}';
+    '${address.forward ? "forward" : "reverse"}-${strand.id}';
 
 Map<Type, List> split_list_selectable_by_type(List<Selectable> selected) {
   Map<Type, List> selected_all = {Crossover: [], Loopout: [], DNAEnd: [], Strand: []};
@@ -1265,8 +1259,8 @@ bool helices_view_order_is_default(BuiltList<int> helix_idxs, HelixGroup group) 
 List<int> identity_permutation(int length) => [for (int i = 0; i < length; i++) i];
 
 /// Return offset and direction on helix where click event occurred.
-Address get_address_on_helix(MouseEvent event, Helix helix, HelixGroup group, Geometry geometry,
-    Point<num> helix_svg_position) {
+Address get_address_on_helix(
+    MouseEvent event, Helix helix, HelixGroup group, Geometry geometry, Point<num> helix_svg_position) {
   var closest_address = find_closest_address(
       event, [helix], {helix.group: group}.build(), geometry, {helix.idx: helix_svg_position}.build());
   return closest_address;
@@ -1385,12 +1379,7 @@ String with_newlines(String string, int width) {
 }
 
 /// Return reverse Watson-Crick complement of seq. (leave non-base symbols alone)
-String wc(String seq) =>
-    seq
-        .split('')
-        .reversed
-        .map((base) => wc_base(base))
-        .join('');
+String wc(String seq) => seq.split('').reversed.map((base) => wc_base(base)).join('');
 
 String wc_base(String base) {
   switch (base) {
@@ -1490,9 +1479,9 @@ AppState default_state({Grid grid = Grid.none}) {
   var design = Design(grid: grid);
   var ui_state = AppUIState.from_design(design);
   var state = (DEFAULT_AppState.toBuilder()
-    ..design = design.toBuilder()
-    ..ui_state.replace(ui_state)
-    ..editor_content = '')
+        ..design = design.toBuilder()
+        ..ui_state.replace(ui_state)
+        ..editor_content = '')
       .build();
   return state;
 }
@@ -1679,17 +1668,17 @@ double compute_end_rotation(double display_angle, bool forward, bool is_5p) {
   return degrees;
 }
 
-Point<num> compute_extension_attached_end_svg(Extension ext, Domain adj_dom, Helix adj_helix,
-    num adj_helix_svg_y) {
+Point<num> compute_extension_attached_end_svg(
+    Extension ext, Domain adj_dom, Helix adj_helix, num adj_helix_svg_y) {
   int end_offset = ext.is_5p ? adj_dom.offset_5p : adj_dom.offset_3p;
   Point<num> extension_attached_end_svg =
-  adj_helix.svg_base_pos(end_offset, adj_dom.forward, adj_helix_svg_y);
+      adj_helix.svg_base_pos(end_offset, adj_dom.forward, adj_helix_svg_y);
   return extension_attached_end_svg;
 }
 
 // computes the SVG coordinates of the end of an Extension that is not shared with the adjacent Domain
-Point<num> compute_extension_free_end_svg(Point<num> attached_end_svg, Extension ext, Domain adjacent_domain,
-    Geometry geometry) {
+Point<num> compute_extension_free_end_svg(
+    Point<num> attached_end_svg, Extension ext, Domain adjacent_domain, Geometry geometry) {
   num x = attached_end_svg.x;
   num y = attached_end_svg.y;
   var angle_radians = ext.display_angle * 2 * pi / 360.0;
@@ -1744,8 +1733,8 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix, Point<num> helix_sv
           'y = ${event.offset.y},   '
           'pan = (${pan.x.toStringAsFixed(2)}, ${pan.y.toStringAsFixed(2)}),   '
           'zoom = ${zoom.toStringAsFixed(2)},   '
-      //        'svg_x = ${svg_x.toStringAsFixed(2)},   '
-      //        'svg_y = ${svg_y.toStringAsFixed(2)},   '
+          //        'svg_x = ${svg_x.toStringAsFixed(2)},   '
+          //        'svg_y = ${svg_y.toStringAsFixed(2)},   '
           'helix = ${helix.idx},   '
           'offset = ${offset},   '
           'forward = ${forward}');
