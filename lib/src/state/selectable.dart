@@ -573,6 +573,7 @@ class SelectableTrait extends EnumClass {
   static const SelectableTrait dna_sequence = _$dna_sequence;
   static const SelectableTrait idt = _$idt;
   static const SelectableTrait circular = _$circular;
+  static const SelectableTrait helices = _$helices;
 
   static BuiltSet<SelectableTrait> get values => _$values;
 
@@ -589,6 +590,7 @@ class SelectableTrait extends EnumClass {
     if (this == dna_sequence) return 'DNA sequence';
     if (this == idt) return 'IDT fields';
     if (this == circular) return 'circular';
+    if (this == helices) return 'helices';
     throw AssertionError('unrecognized trait ${this}');
   }
 
@@ -602,6 +604,7 @@ class SelectableTrait extends EnumClass {
     if (this == dna_sequence) return strand.dna_sequence;
     if (this == idt) return strand.idt;
     if (this == circular) return strand.circular;
+    if (this == helices) return [for (var domain in strand.domains) domain.helix];
     throw AssertionError('unrecognized trait ${this}');
   }
 
@@ -634,6 +637,19 @@ class SelectableTrait extends EnumClass {
       for (var mod1 in mods1.values) {
         for (var mod2 in mods2.values) {
           if (mod1.id == mod2.id) {
+            return true;
+          }
+        }
+      }
+      return false;
+    } else if (this == helices) {
+      assert(v1 is List<int>);
+      assert(v2 is List<int>);
+      var helices1 = (v1 as List<int>);
+      var helices2 = (v2 as List<int>);
+      for (int h1 in helices1) {
+        for (int h2 in helices2) {
+          if (h1 == h2) {
             return true;
           }
         }
