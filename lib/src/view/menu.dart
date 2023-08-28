@@ -569,8 +569,7 @@ for how objects are selected by these boxes.
 If unchecked, select any object *entirely contained within* the selection box.
 
 If checked, select any object *intersecting* the selection box, even if some parts lie 
-outside the box. (NOTE: This is unsupported currently for the selection rope polygon. 
-Currently it ignores this field and always acts as though it is unchecked.)'''
+outside the box.'''
         ..onChange = ((_) => props.dispatch(
             actions.SelectionBoxIntersectionRuleSet(intersect: !props.selection_box_intersection))))(),
       (MenuBoolean()
