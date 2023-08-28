@@ -1436,6 +1436,25 @@ abstract class GeometrySet
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Selectables
 
+// If intersect is true, then any object intersecting the selection box is selected.
+// If intersect is false, then any object contained in the selectin box is selected.
+abstract class SelectionBoxIntersectionRuleSet
+    with BuiltJsonSerializable
+    implements Action, Built<SelectionBoxIntersectionRuleSet, SelectionBoxIntersectionRuleSetBuilder> {
+  bool get intersect;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SelectionBoxIntersectionRuleSet({bool intersect}) = _$SelectionBoxIntersectionRuleSet._;
+
+  SelectionBoxIntersectionRuleSet._();
+
+  static Serializer<SelectionBoxIntersectionRuleSet> get serializer =>
+      _$selectionBoxIntersectionRuleSetSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
 abstract class Select with BuiltJsonSerializable implements Action, Built<Select, SelectBuilder> {
   Selectable get selectable;
 
