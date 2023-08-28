@@ -44,8 +44,10 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
       // Besides, it didn't work well in Chrome and I
       // basically had to implement it myself based on bounding boxes.
 
-      elts_overlapping =
-          elements_intersecting_box(MAIN_VIEW_SVG_ID, select_box_bbox, select_modes, is_origami).toSet();
+      bool selection_box_intersection = store.state.ui_state.selection_box_intersection;
+      elts_overlapping = elements_intersecting_box(
+              MAIN_VIEW_SVG_ID, select_box_bbox, select_modes, is_origami, selection_box_intersection)
+          .toSet();
     } else {
       // use selection rope
       svg.PolygonElement rope_elt = querySelector('#selection-rope-main') as svg.PolygonElement;
@@ -55,8 +57,10 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
       }
 
       List<Point<num>> points = points_of_polygon_elt(rope_elt);
-      elts_overlapping =
-          elements_intersecting_polygon(MAIN_VIEW_SVG_ID, points, select_modes, is_origami).toSet();
+      bool selection_box_intersection = store.state.ui_state.selection_box_intersection;
+      elts_overlapping = elements_intersecting_polygon(
+              MAIN_VIEW_SVG_ID, points, select_modes, is_origami, selection_box_intersection)
+          .toSet();
     }
 
     var selectable_by_id = state.design.selectable_by_id;
@@ -90,17 +94,17 @@ List<Point<num>> points_of_polygon_elt(svg.PolygonElement rope_elt) {
 
 /// gets list of elements associated to Selectables that intersect selection rope [rope]
 /// (described as list of points in non-self-intersecting polygon) in elements with classname
-List<svg.SvgElement> elements_intersecting_polygon(
-    String classname, List<Point<num>> polygon, Iterable<SelectModeChoice> select_modes, bool is_origami) {
-  return generalized_intersection_list_polygon(
-      classname, polygon, select_modes, is_origami, polygon_contains_rect);
+List<svg.SvgElement> elements_intersecting_polygon(String classname, List<Point<num>> polygon,
+    Iterable<SelectModeChoice> select_modes, bool is_origami, bool selection_box_intersection) {
+  var overlap = selection_box_intersection ? polygon_intersects_rect : polygon_contains_rect;
+  return generalized_intersection_list_polygon(classname, polygon, select_modes, is_origami, overlap);
 }
 
 // gets list of elements associated to Selectables that intersect select_box_bbox in elements with classname
 List<svg.SvgElement> elements_intersecting_box(String classname, Rectangle<num> select_box_bbox,
-    Iterable<SelectModeChoice> select_modes, bool is_origami) {
-  return generalized_intersection_list_box(
-      classname, select_box_bbox, select_modes, is_origami, interval_contained);
+    Iterable<SelectModeChoice> select_modes, bool is_origami, bool selection_box_intersection) {
+  var overlap = selection_box_intersection ? interval_intersect : interval_contained;
+  return generalized_intersection_list_box(classname, select_box_bbox, select_modes, is_origami, overlap);
 }
 
 /// Like generalized_intersection_list_box, but where selection is described by a polygon instead of rect.
@@ -168,6 +172,28 @@ bool interval_intersect(num l1, num h1, num l2, num h2) {
 
 /// indicates if polygon completely contains rectangle, i.e., it contains all 4 corner points
 bool polygon_contains_rect(List<Point<num>> polygon, Rectangle<num> rect) {
+  num x1 = rect.left;
+  num y1 = rect.top;
+  num x2 = x1 + rect.width;
+  num y2 = y1 + rect.height;
+  var up_left = Point<num>(x1, y1);
+  var up_right = Point<num>(x2, y1);
+  var low_left = Point<num>(x1, y2);
+  var low_right = Point<num>(x2, y2);
+
+  for (var corner in [up_left, up_right, low_left, low_right]) {
+    if (!polygon_contains_point(polygon, corner)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/// indicates if polygon intersects rectangle
+bool polygon_intersects_rect(List<Point<num>> polygon, Rectangle<num> rect) {
+  //TODO: figure this out
+  //https://stackoverflow.com/questions/7136547/method-to-detect-intersection-between-a-rectangle-and-a-polygon
   num x1 = rect.left;
   num y1 = rect.top;
   num x2 = x1 + rect.width;

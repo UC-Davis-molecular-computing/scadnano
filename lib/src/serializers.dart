@@ -181,6 +181,7 @@ part 'serializers.g.dart';
   SelectionsClear,
   SelectOrToggleItems,
   DeleteAllSelected,
+  SelectionBoxIntersectionRuleSet,
   SelectAll,
   SelectAllSelectable,
   SelectAllWithSameAsSelected,

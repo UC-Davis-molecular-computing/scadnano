@@ -98,6 +98,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
           state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls
       ..default_crossover_type_staple_for_setting_helix_rolls =
           state.ui_state.default_crossover_type_staple_for_setting_helix_rolls
+      ..selection_box_intersection = state.ui_state.selection_box_intersection
       ..undo_redo = state.undo_redo);
   },
   // Used for component test.
@@ -156,6 +157,7 @@ mixin MenuPropsMixin on UiProps {
   bool default_crossover_type_staple_for_setting_helix_rolls;
   LocalStorageDesignChoice local_storage_design_choice;
   bool clear_helix_selection_when_loading_new_design;
+  bool selection_box_intersection;
   Geometry geometry;
   UndoRedo undo_redo;
 }
@@ -556,6 +558,22 @@ with some default direction chosen. Play with it and see!
         ..key = 'edit_menu_copy-select-all-with-same'
         ..tooltip = 'Select all strands that share given trait(s) as the currently selected strand(s).'
         ..keyboard_shortcut = 'Alt+Shift+A')(),
+      (MenuBoolean()
+        ..value = props.selection_box_intersection
+        ..display = 'Selection box intersection'
+        ..key = 'edit_menu_copy-paste_Selection box intersection'
+        ..tooltip = '''\
+In Select mode, one does Shift+drag to create a selection box, and in rope select mode,
+one can draw a more general selection "rope" polygon. This checkbox determines the rule 
+for how objects are selected by these boxes.
+
+If unchecked, select any object *entirely contained within* the selection box.
+
+If checked, select any object *intersecting* the selection box, even if some parts lie 
+outside the box. (NOTE: This is unsupported currently for the selection rope polygon. 
+Currently it ignores this field and always acts as though it is unchecked.)'''
+        ..onChange = ((_) => props.dispatch(
+            actions.SelectionBoxIntersectionRuleSet(intersect: !props.selection_box_intersection))))(),
       (MenuBoolean()
         ..value = props.strand_paste_keep_color
         ..display = 'Pasted strands keep original color'
