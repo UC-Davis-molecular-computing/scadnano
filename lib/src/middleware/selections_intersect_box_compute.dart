@@ -190,26 +190,37 @@ bool polygon_contains_rect(List<Point<num>> polygon, Rectangle<num> rect) {
   return true;
 }
 
-/// indicates if polygon intersects rectangle
-bool polygon_intersects_rect(List<Point<num>> polygon, Rectangle<num> rect) {
-  //TODO: figure this out
-  //https://stackoverflow.com/questions/7136547/method-to-detect-intersection-between-a-rectangle-and-a-polygon
-  num x1 = rect.left;
-  num y1 = rect.top;
-  num x2 = x1 + rect.width;
-  num y2 = y1 + rect.height;
-  var up_left = Point<num>(x1, y1);
-  var up_right = Point<num>(x2, y1);
-  var low_left = Point<num>(x1, y2);
-  var low_right = Point<num>(x2, y2);
-
-  for (var corner in [up_left, up_right, low_left, low_right]) {
-    if (!polygon_contains_point(polygon, corner)) {
+/// indicates if rectangle completely contains polygon, i.e., it contains all 4 corner points
+bool rect_contains_polygon(Rectangle<num> rect, List<Point<num>> polygon) {
+  for (var polygon_vertex in polygon) {
+    if (!rect_contains_point(rect, polygon_vertex)) {
       return false;
     }
   }
 
   return true;
+}
+
+/// indicates if polygon intersects rectangle
+bool polygon_intersects_rect(List<Point<num>> polygon, Rectangle<num> rect) {
+  // Three ways for polygon to intersect rectangle:
+  // (1) rectangle entirely within polygon
+  // (2) polygon entirely within rectangle
+  // (3) two lines intersect (line on side of rectangle with line on side of polygon)
+  //https://stackoverflow.com/questions/7136547/method-to-detect-intersection-between-a-rectangle-and-a-polygon
+
+  if (rect_contains_polygon(rect, polygon)) return true; // (1)
+  if (polygon_contains_rect(polygon, rect)) return true; // (2)
+  // (3)
+  for (var rect_line in lines_of_rect(rect)) {
+    for (var polygon_line in lines_of_polygon(polygon)) {
+      if (rect_line.intersects(polygon_line)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
 }
 
 /// indicates if [polygon] contains point
@@ -232,7 +243,17 @@ bool polygon_contains_point(List<Point<num>> polygon, Point<num> point) {
   return num_lines_intersecting % 2 == 1;
 }
 
-/// returns the lines in [poylgon]
+/// indicates if [rect] contains point
+bool rect_contains_point(Rectangle<num> rect, Point<num> point) {
+  num x1 = rect.left;
+  num y1 = rect.top;
+  num x2 = x1 + rect.width;
+  num y2 = y1 + rect.height;
+
+  return x1 <= point.x && point.x <= x2 && y1 <= point.y && point.y <= y2;
+}
+
+/// returns the lines in [polygon]
 List<Line> lines_of_polygon(List<Point<num>> polygon) {
   List<Line> lines = [];
   for (int i = 0; i < polygon.length - 1; i++) {
@@ -245,6 +266,24 @@ List<Line> lines_of_polygon(List<Point<num>> polygon) {
   var closing_line = Line(polygon.last, polygon.first);
   lines.add(closing_line);
   return lines;
+}
+
+/// returns the lines in [rect]
+List<Line> lines_of_rect(Rectangle<num> rect) {
+  num x1 = rect.left;
+  num y1 = rect.top;
+  num x2 = x1 + rect.width;
+  num y2 = y1 + rect.height;
+  var up_left = Point<num>(x1, y1);
+  var up_right = Point<num>(x2, y1);
+  var bot_left = Point<num>(x1, y2);
+  var bot_right = Point<num>(x2, y2);
+  var top_line = Line(up_left, up_right);
+  var bot_line = Line(bot_left, bot_right);
+  var left_line = Line(up_left, bot_left);
+  var right_line = Line(up_right, bot_right);
+
+  return [top_line, bot_line, left_line, right_line];
 }
 
 List<Element> find_selectable_elements(Iterable<SelectModeChoice> select_modes, bool is_origami) {
