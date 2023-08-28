@@ -63,7 +63,6 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..zoom_speed = state.ui_state.zoom_speed
       ..autofit = state.ui_state.autofit
       ..only_display_selected_helices = state.ui_state.only_display_selected_helices
-//    ..grid = state.design?.grid
       ..show_base_pair_lines = state.ui_state.show_base_pair_lines
       ..show_base_pair_lines_with_mismatches = state.ui_state.show_base_pair_lines_with_mismatches
       ..example_designs = state.ui_state.example_designs
@@ -109,6 +108,7 @@ UiFactory<MenuProps> Menu = _$Menu;
 
 mixin MenuPropsMixin on UiProps {
   BuiltSet<DNAEnd> selected_ends;
+  bool selection_box_intersection;
   bool no_grid_is_none;
   bool show_dna;
   bool show_strand_names;
@@ -149,7 +149,6 @@ mixin MenuPropsMixin on UiProps {
   bool show_grid_coordinates_side_view;
   bool show_helices_axis_arrows;
   bool show_loopout_extension_length;
-  bool show_slice_bar;
   bool show_mouseover_data;
   bool disable_png_caching_dna_sequences;
   bool display_reverse_DNA_right_side_up;
@@ -157,7 +156,7 @@ mixin MenuPropsMixin on UiProps {
   bool default_crossover_type_staple_for_setting_helix_rolls;
   LocalStorageDesignChoice local_storage_design_choice;
   bool clear_helix_selection_when_loading_new_design;
-  bool selection_box_intersection;
+  bool show_slice_bar;
   Geometry geometry;
   UndoRedo undo_redo;
 }
