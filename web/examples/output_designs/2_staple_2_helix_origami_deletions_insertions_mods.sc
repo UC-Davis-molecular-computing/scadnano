@@ -6,9 +6,9 @@
     {"max_offset": 48, "grid_position": [0, 1]}
   ],
   "modifications_in_design": {
-    "/5Biosg/": {
+    "5'-/5Biosg/": {
       "display_text": "B",
-      "idt_text": "/5Biosg/",
+      "idt_text": "5'-/5Biosg/",
       "display_connector": false,
       "location": "5'"
     }
@@ -40,7 +40,7 @@
         {"helix": 0, "forward": false, "start": 24, "end": 40, "insertions": [[26, 2]]},
         {"helix": 1, "forward": true, "start": 24, "end": 40}
       ],
-      "5prime_modification": "/5Biosg/"
+      "5prime_modification": "5'-/5Biosg/"
     }
   ]
 }
