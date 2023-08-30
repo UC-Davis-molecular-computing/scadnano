@@ -12,7 +12,7 @@ import 'design_main_strand_and_domain_texts.dart';
 import 'design_main_strand_dna_end.dart';
 import 'design_main_strand_modification.dart';
 import 'transform_by_helix_group.dart';
-import '../state/idt_fields.dart';
+import '../state/vendor_fields.dart';
 import '../state/modification_type.dart';
 import '../state/substrand.dart';
 import '../state/modification.dart';
@@ -414,7 +414,7 @@ assigned, assign the complementary DNA sequence to this strand.
         on_click: () => add_modification(substrand, address, type),
       ),
       ContextMenuItem(
-          title: 'edit idt fields',
+          title: 'edit vendor fields',
           nested: [
             ContextMenuItem(
               title: 'assign scale/purification fields',
@@ -425,22 +425,21 @@ assigned, assign the complementary DNA sequence to this strand.
                 on_click: assign_plate_well_fields,
                 disabled: app.state.ui_state.selectables_store.selected_strands
                         .toList()
-                        .any((element) => element.idt == null) ||
-                    props.strand.idt == null),
+                        .any((element) => element.vendor_fields == null) ||
+                    props.strand.vendor_fields == null),
             if (app.state.ui_state.selectables_store.selected_strands
                     .toList()
-                    .any((element) => element.idt != null) ||
-                props.strand.idt != null)
+                    .any((element) => element.vendor_fields != null) ||
+                props.strand.vendor_fields != null)
               ContextMenuItem(
-                title: 'remove all IDT fields',
-                on_click: () => remove_idt_fields(),
+                title: 'remove all vendor fields',
+                on_click: () => remove_vendor_fields(),
               ),
-            if (app.state.ui_state.selectables_store.selected_strands
-                    .toList()
-                    .any((element) => element.idt?.plate != null && element.idt?.well != null) ||
-                props.strand.idt?.well != null && props.strand.idt?.purification != null)
+            if (app.state.ui_state.selectables_store.selected_strands.toList().any((element) =>
+                    element.vendor_fields?.plate != null && element.vendor_fields?.well != null) ||
+                props.strand.vendor_fields?.well != null && props.strand.vendor_fields?.purification != null)
               ContextMenuItem(
-                title: 'remove plate/well fields',
+                title: 'remove plate/well vendor fields',
                 on_click: () => remove_plate_well_fields(),
               ),
           ].build()),
@@ -637,9 +636,9 @@ after:
     app.dispatch(action);
   }
 
-  select_index_for_one_strand(String idt_option, Set<String> options, bool default_index) {
-    if (options.contains(idt_option)) {
-      return options.toList().indexOf(idt_option);
+  select_index_for_one_strand(String vendor_option, Set<String> options, bool default_index) {
+    if (options.contains(vendor_option)) {
+      return options.toList().indexOf(vendor_option);
     } else if (default_index) {
       return 1;
     } else {
@@ -648,48 +647,51 @@ after:
   }
 
   select_scale_index_for_multiple_strands(List<Strand> all_strands, Set<String> options) {
-    bool all_same_scale = all_strands.every((element) => all_strands[0].idt?.scale == element.idt?.scale);
-    bool default_scale_option = all_strands.every((element) => element.idt == null);
+    bool all_same_scale =
+        all_strands.every((element) => all_strands[0].vendor_fields?.scale == element.vendor_fields?.scale);
+    bool default_scale_option = all_strands.every((element) => element.vendor_fields == null);
 
     if (all_same_scale)
-      return select_index_for_one_strand(all_strands[0].idt?.scale, options, default_scale_option);
+      return select_index_for_one_strand(all_strands[0].vendor_fields?.scale, options, default_scale_option);
     else
       return 0;
   }
 
   custom_scale_value(List<Strand> all_strands) {
-    bool all_same_scale = all_strands.every((element) => all_strands[0].idt?.scale == element.idt?.scale);
+    bool all_same_scale =
+        all_strands.every((element) => all_strands[0].vendor_fields?.scale == element.vendor_fields?.scale);
     if (all_same_scale)
-      return all_strands[0].idt?.scale ?? "";
+      return all_strands[0].vendor_fields?.scale ?? "";
     else
       return "";
   }
 
   custom_purification_value(List<Strand> all_strands) {
-    bool all_same_purification =
-        all_strands.every((element) => all_strands[0].idt?.purification == element.idt?.purification);
+    bool all_same_purification = all_strands.every(
+        (element) => all_strands[0].vendor_fields?.purification == element.vendor_fields?.purification);
     if (all_same_purification)
-      return all_strands[0].idt?.purification ?? "";
+      return all_strands[0].vendor_fields?.purification ?? "";
     else
       return "";
   }
 
   select_purification_index_for_multiple_strands(List<Strand> all_strands, Set<String> options) {
-    bool all_same_purification =
-        all_strands.every((element) => all_strands[0].idt?.purification == element.idt?.purification);
-    bool default_purification_option = all_strands.every((element) => element.idt == null);
+    bool all_same_purification = all_strands.every(
+        (element) => all_strands[0].vendor_fields?.purification == element.vendor_fields?.purification);
+    bool default_purification_option = all_strands.every((element) => element.vendor_fields == null);
 
     if (all_same_purification)
       return select_index_for_one_strand(
-          all_strands[0].idt?.purification, options, default_purification_option);
+          all_strands[0].vendor_fields?.purification, options, default_purification_option);
     else
       return 0;
   }
 
   select_plate_number(List<Strand> all_strands) {
-    bool all_same_plate = all_strands.every((element) => all_strands[0].idt?.plate == element.idt?.plate);
+    bool all_same_plate =
+        all_strands.every((element) => all_strands[0].vendor_fields?.plate == element.vendor_fields?.plate);
     if (all_same_plate) {
-      return all_strands[0].idt?.plate;
+      return all_strands[0].vendor_fields?.plate;
     } else
       return null;
   }
@@ -725,7 +727,8 @@ after:
         label: "scale",
         options: options_scale,
         radio: false,
-        tooltip: """25nm : 25nmole
+        tooltip: """\
+25nm : 25nmole
 100nm : 100 nmole
 250nm : 250 nmole
 1um : 1 µmole
@@ -739,8 +742,8 @@ PU : PAGE Ultramer™
 """,
         selected_idx: all_strands.length > 1
             ? select_scale_index_for_multiple_strands(all_strands, options_scale)
-            : select_index_for_one_strand(
-                props.strand.idt?.scale, options_scale, all_strands.every((element) => element.idt == null)));
+            : select_index_for_one_strand(props.strand.vendor_fields?.scale, options_scale,
+                all_strands.every((element) => element.vendor_fields == null)));
 
     items[scale_custom_idx] = DialogText(
         label: "custom scale",
@@ -751,7 +754,8 @@ PU : PAGE Ultramer™
         label: "purification",
         options: options_purification,
         radio: false,
-        tooltip: """STD	: Standard Desalting
+        tooltip: """\
+STD	: Standard Desalting
 PAGE : PAGE
 HPLC : HPLC 
 IEHPLC : IE HPLC
@@ -761,15 +765,15 @@ PAGEHPLC : Dual PAGE & HPLC
 """,
         selected_idx: all_strands.length > 1
             ? select_purification_index_for_multiple_strands(all_strands, options_purification)
-            : select_index_for_one_strand(props.strand.idt?.purification, options_purification,
-                all_strands.every((element) => element.idt == null)));
+            : select_index_for_one_strand(props.strand.vendor_fields?.purification, options_purification,
+                all_strands.every((element) => element.vendor_fields == null)));
 
     items[purification_custom_idx] = DialogText(
         label: "custom purification",
         value: (items[purification_options_idx].value != "" ? "" : custom_purification_value(all_strands)));
 
     var dialog = Dialog(
-        title: "assign scale/purification IDT fields",
+        title: "assign scale/purification vendor fields",
         type: DialogType.assign_scale_purification,
         items: items,
         disable_when_any_checkboxes_off: {
@@ -798,19 +802,21 @@ PAGEHPLC : Dual PAGE & HPLC
 
     if (all_strands.length > 1) {
       for (var strand in all_strands) {
-        var idt_fields = IDTFields(
-            scale: (scale == "" && strand.idt?.scale != null) ? strand.idt.scale : scale,
-            purification: (purification == "" && strand.idt?.purification != null)
-                ? strand.idt.purification
+        var vendor_fields = VendorFields(
+            scale: (scale == "" && strand.vendor_fields?.scale != null) ? strand.vendor_fields.scale : scale,
+            purification: (purification == "" && strand.vendor_fields?.purification != null)
+                ? strand.vendor_fields.purification
                 : purification,
-            plate: strand.idt?.plate,
-            well: strand.idt?.well);
-        var action = actions.ScalePurificationIDTFieldsAssign(idt_fields: idt_fields, strand: strand);
+            plate: strand.vendor_fields?.plate,
+            well: strand.vendor_fields?.well);
+        var action =
+            actions.ScalePurificationVendorFieldsAssign(vendor_fields: vendor_fields, strand: strand);
         app.dispatch(action);
       }
     } else {
-      var idt_fields = IDTFields(scale: scale, purification: purification);
-      var action = actions.ScalePurificationIDTFieldsAssign(idt_fields: idt_fields, strand: props.strand);
+      var vendor_fields = VendorFields(scale: scale, purification: purification);
+      var action =
+          actions.ScalePurificationVendorFieldsAssign(vendor_fields: vendor_fields, strand: props.strand);
       app.dispatch(action);
     }
   }
@@ -825,10 +831,10 @@ PAGEHPLC : Dual PAGE & HPLC
     items[plate_idx] = DialogText(label: "plate", value: select_plate_number(all_strands) ?? "");
     items[well_idx] = DialogText(
         label: "well",
-        value: props.strand.idt?.well != null ? props.strand.idt.well : "",
+        value: props.strand.vendor_fields?.well != null ? props.strand.vendor_fields.well : "",
         tooltip: all_strands.length > 1 ? "Only individual strands can have a well assigned." : "");
     var dialog = Dialog(
-        title: "assign plate/well IDT fields",
+        title: "assign plate/well vendor fields",
         type: DialogType.assign_plate_well,
         items: items,
         disable: {if (all_strands.length > 1) well_idx});
@@ -840,53 +846,59 @@ PAGEHPLC : Dual PAGE & HPLC
     List<String> conflicting_strands = [];
     if (all_strands.length > 1) {
       for (var strand in all_strands) {
-        if (strand.idt == null)
+        if (strand.vendor_fields == null)
           conflicting_strands.add("${strand.address_5p}");
         else {
-          var idt_fields = IDTFields(
-              scale: strand.idt.scale,
-              purification: strand.idt.purification,
-              plate: (plate == "") ? strand.idt.plate : plate,
-              well: (strand.idt?.well != null) ? strand.idt.well : "");
-          var action = actions.PlateWellIDTFieldsAssign(idt_fields: idt_fields, strand: strand);
+          var vendor_fields = VendorFields(
+              scale: strand.vendor_fields.scale,
+              purification: strand.vendor_fields.purification,
+              plate: (plate == "") ? strand.vendor_fields.plate : plate,
+              well: (strand.vendor_fields?.well != null) ? strand.vendor_fields.well : "");
+          var action = actions.PlateWellVendorFieldsAssign(vendor_fields: vendor_fields, strand: strand);
           app.dispatch(action);
         }
       }
     } else {
       well = (results[well_idx] as DialogText).value;
-      if (props.strand.idt == null)
+      if (props.strand.vendor_fields == null)
         conflicting_strands.add("${props.strand.address_5p}");
       else {
-        var idt_fields = IDTFields(
-            scale: props.strand.idt.scale,
-            purification: props.strand.idt.purification,
+        var vendor_fields = VendorFields(
+            scale: props.strand.vendor_fields.scale,
+            purification: props.strand.vendor_fields.purification,
             plate: plate,
             well: well);
-        var action = actions.PlateWellIDTFieldsAssign(idt_fields: idt_fields, strand: props.strand);
+        var action = actions.PlateWellVendorFieldsAssign(vendor_fields: vendor_fields, strand: props.strand);
         app.dispatch(action);
       }
     }
     if (conflicting_strands.length >= 1)
-      window.alert(
-          "No IDT fields were assigned to strands: $conflicting_strands. \nAssign scale and purification before editing plate/well fields.");
+      window.alert("No vendor fields were assigned to strands: $conflicting_strands. \n"
+          "Assign scale and purification before editing plate/well fields.");
   }
 
   remove_plate_well_fields() {
     var all_strands = app.state.ui_state.selectables_store.selected_strands.toList();
     if (all_strands.length == 0) all_strands.add(props.strand);
+    List<actions.UndoableAction> all_actions = [];
     for (var strand in all_strands) {
-      var action = actions.PlateWellIDTFieldsRemove(strand: strand);
+      var action = actions.PlateWellVendorFieldsRemove(strand: strand);
       app.dispatch(action);
     }
+    var batch_action = actions.BatchAction(all_actions, "remove plate/well fields");
+    app.dispatch(batch_action);
   }
 
-  remove_idt_fields() {
+  remove_vendor_fields() {
     var all_strands = app.state.ui_state.selectables_store.selected_strands.toList();
     if (all_strands.length == 0) all_strands.add(props.strand);
+    List<actions.UndoableAction> all_actions = [];
     for (var strand in all_strands) {
-      var action = actions.IDTFieldsRemove(strand: strand);
+      var action = actions.VendorFieldsRemove(strand: strand);
       app.dispatch(action);
     }
+    var batch_action = actions.BatchAction(all_actions, "remove vendor fields");
+    app.dispatch(batch_action);
   }
 
   Future<void> ask_for_strand_name() async {
@@ -1018,7 +1030,7 @@ String tooltip_text(Strand strand) =>
     "    5' end=${tooltip_end(strand.first_domain, strand.dnaend_5p)}\n" +
     "    3' end=${tooltip_end(strand.last_domain, strand.dnaend_3p)}\n" +
     (strand.label == null ? "" : "    label=${strand.label.toString()}\n") +
-    (strand.idt == null ? "" : "    idt info=\n${strand.idt.tooltip()}");
+    (strand.vendor_fields == null ? "" : "    vendor fields=\n${strand.vendor_fields.tooltip()}");
 
 String tooltip_end(Domain ss, DNAEnd end) => "(helix=${ss.helix}, offset=${end.offset_inclusive})";
 

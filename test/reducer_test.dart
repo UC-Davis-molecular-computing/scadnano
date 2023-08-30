@@ -3318,7 +3318,7 @@ main() {
               {"helix": 0, "forward": true, "start": 0, "end": 16}
             ],
             "name": "staple1", 
-            "idt": {
+            "vendor_fields": {
               "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A1",
               "unused_idt_field_foo": {
                 "foo_idt_field": "foo_idt",
@@ -3368,7 +3368,7 @@ main() {
         "modifications_in_design": {
           "/5Biosg/": {
             "display_text": "B",
-            "idt_text": "/5Biosg/",
+            "vendor_code": "/5Biosg/",
             "font_size": 30,
             "display_connector": true,
             "location": "5'",

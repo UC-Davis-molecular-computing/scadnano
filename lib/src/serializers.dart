@@ -42,7 +42,7 @@ import 'state/strand_creation.dart';
 import 'state/strands_move.dart';
 import 'state/grid.dart';
 import 'state/helix.dart';
-import 'state/idt_fields.dart';
+import 'state/vendor_fields.dart';
 import 'state/loopout.dart';
 import 'state/extension.dart';
 import 'state/mouseover_data.dart';
@@ -71,10 +71,10 @@ part 'serializers.g.dart';
   ModificationType,
   ShowEditMenuToggle,
   ShowAxisArrowsSet,
-  IDTFieldsRemove,
-  PlateWellIDTFieldsRemove,
-  PlateWellIDTFieldsAssign,
-  ScalePurificationIDTFieldsAssign,
+  VendorFieldsRemove,
+  PlateWellVendorFieldsRemove,
+  PlateWellVendorFieldsAssign,
+  ScalePurificationVendorFieldsAssign,
   StrandNameSet,
   SubstrandNameSet,
   StrandLabelSet,
@@ -151,7 +151,7 @@ part 'serializers.g.dart';
   Geometry,
   Crossover,
   DNAEnd,
-  IDTFields,
+  VendorFields,
   GridPosition,
   Position3D,
   Point,

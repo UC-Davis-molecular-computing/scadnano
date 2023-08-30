@@ -17,7 +17,7 @@ abstract class Modification {
 
   String get id;
 
-  String get idt_text;
+  String get vendor_code;
 
   int get connector_length;
 
@@ -30,7 +30,7 @@ abstract class Modification {
   static Map<String, dynamic> mod_to_json_serializable(Modification mod, bool suppress_indent) {
     Map<String, dynamic> map = {
       constants.mod_display_text_key: mod.display_text,
-      if (mod.idt_text != null) constants.mod_idt_text_key: mod.idt_text,
+      if (mod.vendor_code != null) constants.mod_vendor_code_key: mod.vendor_code,
       if (mod.connector_length != constants.default_modification_connector_length)
         constants.mod_connector_length_key: mod.connector_length,
     };
@@ -70,14 +70,14 @@ abstract class Modification5Prime
   factory Modification5Prime(
       {String display_text,
       String id,
-      String idt_text,
+      String vendor_code,
       int connector_length = constants.default_modification_connector_length,
       BuiltMap<String, Object> unused_fields}) {
-    String id_to_assign = id ?? ("5'-" + (idt_text ?? display_text));
+    String id_to_assign = id ?? (vendor_code ?? display_text);
     var unused_fields_to_assign = unused_fields ?? BuiltMap<String, Object>();
     return Modification5Prime.from((b) => b
       ..display_text = display_text
-      ..idt_text = idt_text
+      ..vendor_code = vendor_code
       ..id = id_to_assign
       ..connector_length = connector_length
       ..unused_fields.replace(unused_fields_to_assign));
@@ -102,7 +102,7 @@ abstract class Modification5Prime
   String get id;
 
   @nullable
-  String get idt_text;
+  String get vendor_code;
 
   int get connector_length;
 
@@ -121,7 +121,9 @@ abstract class Modification5Prime
     String id = json_map[constants.mod_id_key];
     String location = json_map[constants.mod_location_key];
     assert(location == "5'");
-    String idt_text = json_map[constants.mod_idt_text_key];
+    // String vendor_code = json_map[constants.mod_vendor_code_key];
+    String vendor_code = util.mandatory_field(json_map, constants.mod_vendor_code_key, "Modification5Prime",
+        legacy_keys: constants.legacy_mod_vendor_code_keys);
     int connector_length = util.optional_field(
         json_map, constants.mod_connector_length_key, constants.default_modification_connector_length);
     var unused_fields = util.unused_fields_map(json_map, constants.modification_keys).build();
@@ -129,7 +131,7 @@ abstract class Modification5Prime
     return Modification5Prime(
         display_text: display_text,
         id: id,
-        idt_text: idt_text,
+        vendor_code: vendor_code,
         unused_fields: unused_fields,
         connector_length: connector_length);
   }
@@ -141,14 +143,14 @@ abstract class Modification3Prime
   factory Modification3Prime(
       {String display_text,
       String id,
-      String idt_text,
+      String vendor_code,
       int connector_length = constants.default_modification_connector_length,
       BuiltMap<String, Object> unused_fields}) {
-    String id_to_assign = id ?? ("3'-" + (idt_text ?? display_text));
+    String id_to_assign = id ?? (vendor_code ?? display_text);
     var unused_fields_to_assign = unused_fields ?? BuiltMap<String, Object>();
     return Modification3Prime.from((b) => b
       ..display_text = display_text
-      ..idt_text = idt_text
+      ..vendor_code = vendor_code
       ..id = id_to_assign
       ..connector_length = connector_length
       ..unused_fields.replace(unused_fields_to_assign));
@@ -173,7 +175,7 @@ abstract class Modification3Prime
   String get id;
 
   @nullable
-  String get idt_text;
+  String get vendor_code;
 
   int get connector_length;
 
@@ -192,7 +194,9 @@ abstract class Modification3Prime
     String id = json_map[constants.mod_id_key];
     String location = json_map[constants.mod_location_key];
     assert(location == "3'");
-    String idt_text = json_map[constants.mod_idt_text_key];
+    // String vendor_code = json_map[constants.mod_vendor_code_key];
+    String vendor_code = util.mandatory_field(json_map, constants.mod_vendor_code_key, "Modification3Prime",
+        legacy_keys: constants.legacy_mod_vendor_code_keys);
     int connector_length = util.optional_field(
         json_map, constants.mod_connector_length_key, constants.default_modification_connector_length);
     var unused_fields = util.unused_fields_map(json_map, constants.modification_keys).build();
@@ -200,7 +204,7 @@ abstract class Modification3Prime
     return Modification3Prime(
         display_text: display_text,
         id: id,
-        idt_text: idt_text,
+        vendor_code: vendor_code,
         unused_fields: unused_fields,
         connector_length: connector_length);
   }
@@ -212,15 +216,15 @@ abstract class ModificationInternal
   factory ModificationInternal(
       {String display_text,
       String id,
-      String idt_text,
+      String vendor_code,
       int connector_length = constants.default_modification_connector_length,
       BuiltSet<String> allowed_bases,
       BuiltMap<String, Object> unused_fields}) {
-    String id_to_assign = id ?? ("internal-" + (idt_text ?? display_text));
+    String id_to_assign = id ?? (vendor_code ?? display_text);
     var unused_fields_to_assign = unused_fields ?? BuiltMap<String, Object>();
     return ModificationInternal.from((b) => b
       ..display_text = display_text
-      ..idt_text = idt_text
+      ..vendor_code = vendor_code
       ..id = id_to_assign
       ..connector_length = connector_length
       ..allowed_bases = allowed_bases?.toBuilder()
@@ -247,7 +251,7 @@ abstract class ModificationInternal
   String get id;
 
   @nullable
-  String get idt_text;
+  String get vendor_code;
 
   int get connector_length;
 
@@ -275,7 +279,9 @@ abstract class ModificationInternal
     String id = json_map[constants.mod_id_key];
     String location = json_map[constants.mod_location_key];
     assert(location == "internal");
-    String idt_text = json_map[constants.mod_idt_text_key];
+    // String vendor_code = json_map[constants.mod_vendor_code_key];
+    String vendor_code = util.mandatory_field(json_map, constants.mod_vendor_code_key, "ModificationInternal",
+        legacy_keys: constants.legacy_mod_vendor_code_keys);
     int connector_length = util.optional_field(
         json_map, constants.mod_connector_length_key, constants.default_modification_connector_length);
     var allowed_bases_json = json_map[constants.mod_allowed_bases_key];
@@ -285,7 +291,7 @@ abstract class ModificationInternal
     return ModificationInternal(
         display_text: display_text,
         id: id,
-        idt_text: idt_text,
+        vendor_code: vendor_code,
         connector_length: connector_length,
         allowed_bases: allowed_bases,
         unused_fields: unused_fields);

@@ -210,7 +210,7 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
     var substrands = substrands_list[i];
     var dna_sequence = dna_sequences[i];
     // assign old properties to first new strand and find new/default properties for remaining
-    var idt = i == 0 ? strand.idt : null;
+    var idt = i == 0 ? strand.vendor_fields : null;
     var is_scaffold = strand.is_scaffold; //i == 0 ? strand.is_scaffold : false;
 
     Map<int, ModificationInternal> mods_int = internal_mods_to_keep[i];
@@ -221,7 +221,7 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
     var new_strand = Strand(substrands,
         name: strand.name,
         dna_sequence: dna_sequence,
-        idt: idt,
+        vendor_fields: idt,
         is_scaffold: is_scaffold,
         color: color,
         modification_5p: mod_5p_cur,

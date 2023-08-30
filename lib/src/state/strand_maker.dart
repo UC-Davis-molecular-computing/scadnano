@@ -10,13 +10,13 @@ import 'package:scadnano/src/state/substrand.dart';
 
 import '../constants.dart' as constants;
 import 'helix.dart';
-import 'idt_fields.dart';
+import 'vendor_fields.dart';
 
 class StrandMaker {
   Design design;
   List<Substrand> substrands = [];
   Color color = Color.rgb(247, 67, 8); //(#f74308)
-  IDTFields idt = null; //(#f74308)
+  VendorFields idt = null; //(#f74308)
   String dna_sequence = null;
   bool circular = false;
   String name = null;
@@ -50,7 +50,7 @@ class StrandMaker {
         is_scaffold: this.is_scaffold,
         dna_sequence: this.dna_sequence,
         label: this.label,
-        idt: this.idt,
+        vendor_fields: this.idt,
         name: this.name,
         modification_3p: this.modification_3p,
         modification_5p: this.modification_5p,
@@ -240,11 +240,11 @@ class StrandMaker {
   }
 
   StrandMaker with_idt(
-      {String scale = constants.default_idt_scale,
-      String purification = constants.default_idt_purification,
+      {String scale = constants.default_vendor_scale,
+      String purification = constants.default_vendor_purification,
       String plate = null,
       String well = null}) {
-    this.idt = IDTFields(scale: scale, purification: purification, plate: plate, well: well);
+    this.idt = VendorFields(scale: scale, purification: purification, plate: plate, well: well);
     return this;
   }
 

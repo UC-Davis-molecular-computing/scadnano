@@ -602,7 +602,7 @@ class SelectableTrait extends EnumClass {
     if (this == modification_3p) return strand.modification_3p;
     if (this == modification_int) return strand.modifications_int;
     if (this == dna_sequence) return strand.dna_sequence;
-    if (this == idt) return strand.idt;
+    if (this == idt) return strand.vendor_fields;
     if (this == circular) return strand.circular;
     if (this == helices) return [for (var domain in strand.domains) domain.helix];
     throw AssertionError('unrecognized trait ${this}');

@@ -372,7 +372,7 @@ main() {
               ModificationInternal(
                   display_text: 'Cy3',
                   id: '/iCy3/',
-                  idt_text: '/iCy3/',
+                  vendor_code: '/iCy3/',
                   allowed_bases: null,
                   unused_fields: BuiltMap<String, Object>()))
           .commit();
@@ -384,7 +384,7 @@ main() {
           .with_modification_5p(Modification5Prime(
               display_text: 'B',
               id: '/5Biosg/',
-              idt_text: '/5Biosg/',
+              vendor_code: '/5Biosg/',
               unused_fields: BuiltMap<String, Object>()))
           .commit();
 
@@ -400,7 +400,7 @@ main() {
             5: ModificationInternal(
                 display_text: 'Cy3',
                 id: '/iCy3/',
-                idt_text: '/iCy3/',
+                vendor_code: '/iCy3/',
                 allowed_bases: null,
                 unused_fields: BuiltMap<String, Object>())
           },
@@ -415,7 +415,7 @@ main() {
             modification_5p: Modification5Prime(
                 display_text: 'B',
                 id: '/5Biosg/',
-                idt_text: '/5Biosg/',
+                vendor_code: '/5Biosg/',
                 unused_fields: BuiltMap<String, Object>()))));
       expect(actual_design.strands, expected_design.strands);
     });
