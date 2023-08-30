@@ -163,7 +163,7 @@ def create(*, num_helices: int, num_cols: int, assign_seq: bool = True, seam_lef
     so for such a scaffold this really represents where any unused and undepicted bases of the scaffold will
     form a loop-out). If negative (default value) then it will be chosen to be along the origami seam.
     
-    `idt`, if ``True``, creates an :any:`IDTFields` in each staple strand suitable for 
+    `idt`, if ``True``, creates an :any:`VendorFields` in each staple strand suitable for
     calling :py:meth:`DNADesign.write_idt_file` or :py:meth:`DNADesign.write_idt_plate_excel_file` 
 
     Here's an example of using :any:`origami_rectangle.create` to create a design for a

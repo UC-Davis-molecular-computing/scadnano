@@ -149,7 +149,7 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
         .commit();
 
     var strand = design.strands[0];
-    var strand_idt_dna_sequence = strand.idt_dna_sequence(domain_delimiter: ' ');
+    var strand_idt_dna_sequence = strand.vendor_dna_sequence(domain_delimiter: ' ');
     expect(strand_idt_dna_sequence, 'AAAAA CCCCC GGGGG');
 
     var idt_content = idt_bulk_export(design.strands, delimiter: ';', domain_delimiter: ' ').trim();
@@ -158,9 +158,10 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
 
   test('domain_delimiters_modifications', () {
     var strand_name = 's1';
-    var mod_5 = Modification5Prime(display_text: 'B', idt_text: '/5Biosg/');
-    var mod_3 = Modification3Prime(display_text: 'Cy3', idt_text: '/3Cy3Sp/');
-    var mod_i = ModificationInternal(display_text: 'B', idt_text: '/iBiodT/', allowed_bases: {'T'}.build());
+    var mod_5 = Modification5Prime(display_text: 'B', vendor_code: '/5Biosg/');
+    var mod_3 = Modification3Prime(display_text: 'Cy3', vendor_code: '/3Cy3Sp/');
+    var mod_i =
+        ModificationInternal(display_text: 'B', vendor_code: '/iBiodT/', allowed_bases: {'T'}.build());
 
     var helices = [for (int i = 0; i < 6; i++) Helix(idx: i, max_offset: 100, grid: Grid.square)];
     var design = Design(helices: helices, grid: Grid.square);
@@ -181,7 +182,7 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
         .commit();
 
     var strand = design.strands[0];
-    var strand_idt_dna_sequence = strand.idt_dna_sequence(domain_delimiter: ' ');
+    var strand_idt_dna_sequence = strand.vendor_dna_sequence(domain_delimiter: ' ');
     expect(strand_idt_dna_sequence, '/5Biosg/ AAAAA CCCC/iBiodT/ GGGGG /3Cy3Sp/');
 
     var idt_content = idt_bulk_export(design.strands, delimiter: ';', domain_delimiter: ' ').trim();
@@ -190,7 +191,7 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
 
   test('domain_delimiters_internal_nonbase_modifications', () {
     var strand_name = 's1';
-    var mod_i = ModificationInternal(display_text: '9C', idt_text: '/iSp9/');
+    var mod_i = ModificationInternal(display_text: '9C', vendor_code: '/iSp9/');
 
     var helices = [for (int i = 0; i < 6; i++) Helix(idx: i, max_offset: 100, grid: Grid.square)];
     var design = Design(helices: helices, grid: Grid.square);
@@ -209,7 +210,7 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
         .commit();
 
     var strand = design.strands[0];
-    var strand_idt_dna_sequence = strand.idt_dna_sequence(domain_delimiter: ' ');
+    var strand_idt_dna_sequence = strand.vendor_dna_sequence(domain_delimiter: ' ');
     expect(strand_idt_dna_sequence, 'AAAAA CCCC/iSp9/T GGGGG');
 
     var idt_content = idt_bulk_export(design.strands, delimiter: ';', domain_delimiter: ' ').trim();
@@ -285,10 +286,10 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
     expect(design.strands.length, 1);
     var strand = design.strands[0];
     expect(strand.name, 'staple1');
-    expect(strand.idt.scale, '100nm');
-    expect(strand.idt.purification, 'HPLC');
-    expect(strand.idt.plate, 'plate1');
-    expect(strand.idt.well, 'A1');
+    expect(strand.vendor_fields.scale, '100nm');
+    expect(strand.vendor_fields.purification, 'HPLC');
+    expect(strand.vendor_fields.plate, 'plate1');
+    expect(strand.vendor_fields.well, 'A1');
   });
 
   test('from_json__legacy_idt_name__strand_name_exists', () {

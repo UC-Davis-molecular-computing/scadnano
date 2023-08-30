@@ -11,7 +11,7 @@ import 'linker.dart';
 import 'modification.dart';
 import '../serializers.dart';
 import 'dna_end.dart';
-import 'idt_fields.dart';
+import 'vendor_fields.dart';
 import 'select_mode.dart';
 import 'selectable.dart';
 import 'crossover.dart';
@@ -47,7 +47,7 @@ abstract class Strand
     Color color = null,
     bool circular = false,
     String dna_sequence = null,
-    IDTFields idt = null,
+    VendorFields vendor_fields = null,
     bool is_scaffold = false,
     Modification5Prime modification_5p = null,
     Modification3Prime modification_3p = null,
@@ -63,7 +63,7 @@ abstract class Strand
       ..color = color
       ..circular = circular
       ..substrands.replace(substrands)
-      ..idt = idt?.toBuilder()
+      ..vendor_fields = vendor_fields?.toBuilder()
       ..modification_5p = modification_5p?.toBuilder()
       ..modification_3p = modification_3p?.toBuilder()
       ..modifications_int.replace(modifications_int)
@@ -297,7 +297,7 @@ abstract class Strand
   }
 
   @nullable
-  IDTFields get idt;
+  VendorFields get vendor_fields;
 
   bool get is_scaffold;
 
@@ -325,7 +325,7 @@ abstract class Strand
 
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
 
-  String idt_dna_sequence({String domain_delimiter = ''}) {
+  String vendor_dna_sequence({String domain_delimiter = ''}) {
     if (dna_sequence == null) {
       return null;
     }
@@ -333,24 +333,24 @@ abstract class Strand
     List<String> ret_list = [];
 
     // 5' mod
-    if (modification_5p != null && modification_5p.idt_text != null) {
-      ret_list.add(modification_5p.idt_text);
+    if (modification_5p != null && modification_5p.vendor_code != null) {
+      ret_list.add(modification_5p.vendor_code);
     }
 
     // DNA sequence and internal mods
     for (var substrand in this.substrands) {
-      ret_list.add(idt_dna_sequence_substrand(substrand));
+      ret_list.add(vendor_dna_sequence_substrand(substrand));
     }
 
     // 3' mods
-    if (modification_3p != null && modification_3p.idt_text != null) {
-      ret_list.add(modification_3p.idt_text);
+    if (modification_3p != null && modification_3p.vendor_code != null) {
+      ret_list.add(modification_3p.vendor_code);
     }
 
     return ret_list.join(domain_delimiter);
   }
 
-  String idt_dna_sequence_substrand(Substrand substrand) {
+  String vendor_dna_sequence_substrand(Substrand substrand) {
     if (this.dna_sequence == null) {
       return null;
     }
@@ -372,8 +372,8 @@ abstract class Strand
       if (strand.modifications_int.containsKey(strand_pos)) {
         // if internal mod attached to base, replace base
         var mod = strand.modifications_int[strand_pos];
-        if (mod.idt_text != null) {
-          var idt_text_with_delim = mod.idt_text;
+        if (mod.vendor_code != null) {
+          var vendor_code_with_delim = mod.vendor_code;
           if (mod.allowed_bases != null) {
             if (!mod.allowed_bases.contains(base)) {
               var msg = ('internal modification ${mod} can only replace one of these bases: '
@@ -381,9 +381,9 @@ abstract class Strand
                   'but the base at position ${strand_pos} is ${base}');
               throw IllegalDesignError(msg);
             }
-            new_seq_list.last = idt_text_with_delim; // replace base with modified base
+            new_seq_list.last = vendor_code_with_delim; // replace base with modified base
           } else {
-            new_seq_list.add(idt_text_with_delim); // append modification between two bases
+            new_seq_list.add(vendor_code_with_delim); // append modification between two bases
           }
         }
       }
@@ -683,9 +683,10 @@ abstract class Strand
       json_map[constants.dna_sequence_key] = this.dna_sequence;
     }
 
-    if (this.idt != null) {
-      var idt_json = this.idt.to_json_serializable(suppress_indent: suppress_indent);
-      json_map[constants.idt_key] = suppress_indent ? NoIndent(idt_json) : idt_json;
+    if (this.vendor_fields != null) {
+      var vendor_fields_json = this.vendor_fields.to_json_serializable(suppress_indent: suppress_indent);
+      json_map[constants.vendor_fields_key] =
+          suppress_indent ? NoIndent(vendor_fields_json) : vendor_fields_json;
     }
 
     if (this.is_scaffold) {
@@ -872,16 +873,24 @@ abstract class Strand
 
     var unused_fields = util.unused_fields_map(json_map, constants.strand_keys);
 
-    IDTFields idt = null;
-    Map<String, dynamic> idt_dict = null;
-    if (json_map.containsKey(constants.idt_key)) {
-      idt_dict = json_map[constants.idt_key];
-      idt = IDTFields.from_json(idt_dict);
-    }
+    // VendorFields vendor_fields = null;
+    // Map<String, dynamic> vendor_fields_dict = null;
+    // if (json_map.containsKey(constants.vendor_fields_key)) {
+    //   vendor_fields_dict = json_map[constants.vendor_fields_key];
+    //   vendor_fields = VendorFields.from_json(vendor_fields_dict);
+    // }
+    Map<String, dynamic> vendor_fields_dict = util.optional_field_with_null_default(
+        json_map, constants.vendor_fields_key,
+        legacy_keys: constants.legacy_vendor_fields_keys);
+    VendorFields vendor_fields =
+        vendor_fields_dict == null ? null : VendorFields.from_json(vendor_fields_dict);
+
     // legacy:
-    // if no name is specified, but there's a name field in idt, then use that as the Strand's name
-    if (name == null && idt_dict != null && idt_dict.containsKey(constants.idt_name_key)) {
-      name = idt_dict[constants.idt_name_key];
+    // if no name is specified, but there's a name field in vendor fields, then use that as the Strand's name
+    if (name == null &&
+        vendor_fields_dict != null &&
+        vendor_fields_dict.containsKey(constants.vendor_name_key)) {
+      name = vendor_fields_dict[constants.vendor_name_key];
     }
 
     Strand strand = Strand(
@@ -889,7 +898,7 @@ abstract class Strand
       color: color,
       circular: circular,
       name: name,
-      idt: idt,
+      vendor_fields: vendor_fields,
       is_scaffold: is_scaffold,
       dna_sequence: dna_sequence,
       label: label,
@@ -1003,7 +1012,7 @@ abstract class Strand
 
   /// Name to use when exporting this Strand.
   /// Prefer idt.name if defined, then this.name if defined, then default_export_name().
-  String idt_export_name() {
+  String vendor_export_name() {
     if (name != null) {
       return name;
     } else {

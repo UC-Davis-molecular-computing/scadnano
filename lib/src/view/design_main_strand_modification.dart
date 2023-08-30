@@ -237,7 +237,7 @@ Future<void> ask_for_add_modification(Strand strand, Substrand substrand, Addres
 
   int modification_type_idx = 0;
   int display_text_idx = 1;
-  int idt_text_idx = 2;
+  int vendor_code_idx = 2;
   int connector_length_idx = 3;
   int index_of_dna_base_idx = 4;
   int attached_to_base_idx = 5;
@@ -247,7 +247,7 @@ Future<void> ask_for_add_modification(Strand strand, Substrand substrand, Addres
       label: 'modification type', options: {"3'", "5'", "internal"}, selected_idx: selected_index);
 
   String initial_display_text = "";
-  String initial_idt_text = "";
+  String initial_vendor_code = "";
   int initial_connector_length = constants.default_modification_connector_length;
   // String initial_id = "";
 
@@ -267,13 +267,13 @@ Future<void> ask_for_add_modification(Strand strand, Substrand substrand, Addres
   }
   if (last_mod != null) {
     initial_display_text = last_mod.display_text;
-    initial_idt_text = last_mod.idt_text;
+    initial_vendor_code = last_mod.vendor_code;
     initial_connector_length = last_mod.connector_length;
     // initial_id = last_mod.id;
   }
 
   items[display_text_idx] = DialogText(label: 'display text', value: initial_display_text);
-  items[idt_text_idx] = DialogText(label: 'idt text', value: initial_idt_text);
+  items[vendor_code_idx] = DialogText(label: 'vendor code', value: initial_vendor_code);
   items[connector_length_idx] = DialogInteger(label: 'connector length', value: initial_connector_length);
   // items[id_idx] = DialogText(label: 'id', value: initial_id);
 
@@ -313,7 +313,7 @@ Future<void> ask_for_add_modification(Strand strand, Substrand substrand, Addres
   if (results == null) return;
   String modification_type = (results[modification_type_idx] as DialogRadio).value;
   String display_text = (results[display_text_idx] as DialogText).value;
-  String idt_text = (results[idt_text_idx] as DialogText).value;
+  String vendor_code = (results[vendor_code_idx] as DialogText).value;
   int connector_length = (results[connector_length_idx] as DialogInteger).value;
   int index_of_dna_base = (results[index_of_dna_base_idx] as DialogInteger).value;
   bool attached_to_base = (results[attached_to_base_idx] as DialogCheckbox).value;
@@ -323,13 +323,13 @@ Future<void> ask_for_add_modification(Strand strand, Substrand substrand, Addres
   if (modification_type == "3'") {
     mod = Modification3Prime(
       display_text: display_text,
-      idt_text: idt_text,
+      vendor_code: vendor_code,
       connector_length: connector_length,
     );
   } else if (modification_type == "5'") {
     mod = Modification5Prime(
       display_text: display_text,
-      idt_text: idt_text,
+      vendor_code: vendor_code,
       connector_length: connector_length,
     );
   } else {
@@ -341,7 +341,7 @@ Future<void> ask_for_add_modification(Strand strand, Substrand substrand, Addres
     }
     mod = ModificationInternal(
       display_text: display_text,
-      idt_text: idt_text,
+      vendor_code: vendor_code,
       connector_length: connector_length,
       allowed_bases: allowed_bases,
     );
@@ -384,7 +384,7 @@ Future<void> ask_for_add_modification(Strand strand, Substrand substrand, Addres
 edit_modification(Modification modification, SelectableModification selectable_modification, Strand strand,
     int dna_idx_mod) async {
   int display_text_idx = 0;
-  int idt_text_idx = 1;
+  int vendor_code_idx = 1;
   int connector_length_idx = 2;
   int attached_to_base_idx = 3;
   int allowed_bases_idx = 4;
@@ -393,7 +393,7 @@ edit_modification(Modification modification, SelectableModification selectable_m
   int num_items = is_internal ? 5 : 3;
   var items = List<DialogItem>.filled(num_items, null);
   items[display_text_idx] = DialogText(label: 'display text', value: modification.display_text);
-  items[idt_text_idx] = DialogText(label: 'idt text', value: modification.idt_text);
+  items[vendor_code_idx] = DialogText(label: 'vendor code', value: modification.vendor_code);
   items[connector_length_idx] =
       DialogInteger(label: 'connector length', value: modification.connector_length);
 
@@ -423,20 +423,20 @@ edit_modification(Modification modification, SelectableModification selectable_m
   if (results == null) return;
 
   String display_text = (results[display_text_idx] as DialogText).value;
-  String idt_text = (results[idt_text_idx] as DialogText).value;
+  String vendor_code = (results[vendor_code_idx] as DialogText).value;
   int connector_length = (results[connector_length_idx] as DialogInteger).value;
 
   Modification new_mod;
   if (modification is Modification3Prime) {
     new_mod = Modification3Prime(
       display_text: display_text,
-      idt_text: idt_text,
+      vendor_code: vendor_code,
       connector_length: connector_length,
     );
   } else if (modification is Modification5Prime) {
     new_mod = Modification5Prime(
       display_text: display_text,
-      idt_text: idt_text,
+      vendor_code: vendor_code,
       connector_length: connector_length,
     );
   } else {
@@ -451,7 +451,7 @@ edit_modification(Modification modification, SelectableModification selectable_m
     }
     new_mod = ModificationInternal(
       display_text: display_text,
-      idt_text: idt_text,
+      vendor_code: vendor_code,
       connector_length: connector_length,
       allowed_bases: allowed_bases,
     );

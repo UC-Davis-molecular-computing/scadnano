@@ -234,22 +234,22 @@ class ExportDNAException implements Exception {
 }
 
 String csv_export(Iterable<Strand> strands, String domain_delimiter) {
-  var lines = strands
-      .map((strand) => '${strand.idt_export_name()},${idt_sequence_null_aware(strand, domain_delimiter)}');
+  var lines = strands.map(
+      (strand) => '${strand.vendor_export_name()},${vendor_sequence_null_aware(strand, domain_delimiter)}');
   return lines.join('\n');
 }
 
-String idt_sequence_null_aware(Strand strand, String domain_delimiter) =>
-    strand.idt_dna_sequence(domain_delimiter: domain_delimiter) ?? '*****NONE*****';
+String vendor_sequence_null_aware(Strand strand, String domain_delimiter) =>
+    strand.vendor_dna_sequence(domain_delimiter: domain_delimiter) ?? '*****NONE*****';
 
 String idt_bulk_export(Iterable<Strand> strands,
     {String delimiter = ',',
     String domain_delimiter = '',
     String scale = '25nm',
     String purification = 'STD'}) {
-  var lines = strands.map((strand) => '${strand.idt_export_name()}'
+  var lines = strands.map((strand) => '${strand.vendor_export_name()}'
       '${delimiter}'
-      '${idt_sequence_null_aware(strand, domain_delimiter)}'
+      '${vendor_sequence_null_aware(strand, domain_delimiter)}'
       '${delimiter}'
       '${scale}'
       '${delimiter}'
@@ -295,8 +295,8 @@ Future<List<int>> idt_plates_export(Iterable<Strand> strands, PlateType plate_ty
     var well = plate_coord.well();
     decoder.insertRow(plate_name, excel_row);
     decoder.updateCell(plate_name, 0, excel_row, well);
-    decoder.updateCell(plate_name, 1, excel_row, strand.idt_export_name());
-    decoder.updateCell(plate_name, 2, excel_row, idt_sequence_null_aware(strand, domain_delimiter));
+    decoder.updateCell(plate_name, 1, excel_row, strand.vendor_export_name());
+    decoder.updateCell(plate_name, 2, excel_row, vendor_sequence_null_aware(strand, domain_delimiter));
     num_strands_remaining--;
 
     // IDT charges extra for a plate with < 24 strands for 96-well plate
