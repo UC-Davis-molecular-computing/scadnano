@@ -316,7 +316,6 @@ final strand_keys = [
 // Modification keys
 const mod_location_key = 'location';
 const mod_display_text_key = 'display_text';
-const mod_id_key = 'id';
 const mod_vendor_code_key = 'vendor_code';
 const legacy_mod_vendor_code_keys = ['idt_text'];
 const mod_allowed_bases_key = 'allowed_bases';
@@ -324,7 +323,6 @@ const mod_connector_length_key = 'connector_length';
 final modification_keys = [
       mod_location_key,
       mod_display_text_key,
-      mod_id_key,
       mod_vendor_code_key,
       mod_allowed_bases_key,
       mod_connector_length_key,

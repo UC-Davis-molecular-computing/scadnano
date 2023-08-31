@@ -432,7 +432,7 @@ abstract class Strand
     for (int i = 0; i < substrands.length; i++) {
       var substrand = substrands[i];
       if (substrand is Domain) {
-        // TODO: support displaying mods on loopouts eventually
+        // TODO: support displaying mods on loopouts and extensions eventually
         BuiltMap<int, ModificationInternal> mods_on_ss = internal_modifications_on_substrand[i];
         for (int dna_idx_ss in mods_on_ss.keys) {
           var mod = mods_on_ss[dna_idx_ss];
@@ -698,16 +698,16 @@ abstract class Strand
     ];
 
     if (this.modification_5p != null) {
-      json_map[constants.modification_5p_key] = this.modification_5p.id;
+      json_map[constants.modification_5p_key] = this.modification_5p.vendor_code;
     }
     if (this.modification_3p != null) {
-      json_map[constants.modification_3p_key] = this.modification_3p.id;
+      json_map[constants.modification_3p_key] = this.modification_3p.vendor_code;
     }
     if (this.modifications_int.isNotEmpty) {
       Map<String, dynamic> mods_map = {};
       for (int offset in this.modifications_int.keys) {
         var mod = this.modifications_int[offset];
-        mods_map['${offset}'] = mod.id;
+        mods_map['${offset}'] = mod.vendor_code;
       }
       json_map[constants.modifications_int_key] = suppress_indent ? NoIndent(mods_map) : mods_map;
     }

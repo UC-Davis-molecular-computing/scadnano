@@ -924,8 +924,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     if (mods.length > 0) {
       Map<String, dynamic> mods_map = {};
       for (var mod in mods) {
-        if (!mods_map.containsKey(mod.id)) {
-          mods_map[mod.id] = mod.to_json_serializable(suppress_indent: suppress_indent);
+        if (!mods_map.containsKey(mod.vendor_code)) {
+          mods_map[mod.vendor_code] = mod.to_json_serializable(suppress_indent: suppress_indent);
         }
       }
       json_map[constants.design_modifications_key] = mods_map;
@@ -1293,7 +1293,14 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       for (var mod_key in all_mods_json.keys) {
         var mod_json = all_mods_json[mod_key];
         var mod = Modification.from_json(mod_json);
-        mod = mod.set_id(mod_key);
+        if (mod_key != mod.vendor_code) {
+          print('WARNING: modification key "${mod_key}" does not match vendor code "${mod.vendor_code}"; '
+              'changing key to match vendor code');
+        }
+        mod_key = mod.vendor_code;
+        if (all_mods.containsKey(mod_key)) {
+          throw IllegalDesignError('multiple modifications with same vendor code "${mod_key}"');
+        }
         all_mods[mod_key] = mod;
       }
       Design.assign_modifications_to_strands(strands, strand_jsons, all_mods);

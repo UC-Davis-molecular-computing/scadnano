@@ -627,16 +627,16 @@ class SelectableTrait extends EnumClass {
       // two modifications match if their IDs match
       var m1 = (v1 as Modification);
       var m2 = (v2 as Modification);
-      return m1.id == m2.id;
+      return m1.vendor_code == m2.vendor_code;
     } else if (this == modification_int) {
       assert(v1 is BuiltMap<int, ModificationInternal>);
       assert(v2 is BuiltMap<int, ModificationInternal>);
-      // two strands with internal modifications match if they share any internal modifications with same ID
+      // two strands with internal modifications match if share internal modifications with same vendor code
       var mods1 = (v1 as BuiltMap<int, ModificationInternal>);
       var mods2 = (v2 as BuiltMap<int, ModificationInternal>);
       for (var mod1 in mods1.values) {
         for (var mod2 in mods2.values) {
-          if (mod1.id == mod2.id) {
+          if (mod1.vendor_code == mod2.vendor_code) {
             return true;
           }
         }
