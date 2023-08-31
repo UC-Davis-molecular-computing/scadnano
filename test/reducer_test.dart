@@ -3370,7 +3370,6 @@ main() {
             "display_text": "B",
             "vendor_code": "/5Biosg/",
             "font_size": 30,
-            "display_connector": true,
             "location": "5'",
             "extra_modification_field": {
               "foo_modification_field": "foo_modification",
@@ -5995,13 +5994,11 @@ main() {
               "/iCy3/": {
                 "display_text": "Cy3",
                 "idt_text": "/iCy3/",
-                "display_connector": false,
                 "location": "internal"
               },
               "/iBiodT/": {
                 "display_text": "B",
                 "idt_text": "/iBiodT/",
-                "display_connector": false,
                 "location": "internal",
                 "allowed_bases": ["T"]
               }
@@ -6038,13 +6035,11 @@ main() {
             "/iCy3/": {
               "display_text": "Cy3",
               "idt_text": "/iCy3/",
-              "display_connector": false,
               "location": "internal"
             },
             "/iBiodT/": {
               "display_text": "B",
               "idt_text": "/iBiodT/",
-              "display_connector": false,
               "location": "internal",
               "allowed_bases": ["T"]
             }
@@ -6275,25 +6270,21 @@ main() {
             "/5Biosg/": {
               "display_text": "B",
               "idt_text": "/5Biosg/",
-              "display_connector": false,
               "location": "5'"
             },
             "/3Cy3Sp/": {
               "display_text": "Cy3",
               "idt_text": "/3Cy3Sp/",
-              "display_connector": false,
               "location": "3'"
             },
             "/iCy3/": {
               "display_text": "Cy3",
               "idt_text": "/iCy3/",
-              "display_connector": false,
               "location": "internal"
             },
             "/iBiodT/": {
               "display_text": "B",
               "idt_text": "/iBiodT/",
-              "display_connector": false,
               "location": "internal",
               "allowed_bases": ["T"]
             }
@@ -6433,25 +6424,21 @@ main() {
               "/5Biosg/": {
                 "display_text": "B",
                 "idt_text": "/5Biosg/",
-                "display_connector": false,
                 "location": "5'"
               },
               "/3Cy3Sp/": {
                 "display_text": "Cy3",
                 "idt_text": "/3Cy3Sp/",
-                "display_connector": false,
                 "location": "3'"
               },
               "/iCy3/": {
                 "display_text": "Cy3",
                 "idt_text": "/iCy3/",
-                "display_connector": false,
                 "location": "internal"
               },
               "/iBiodT/": {
                 "display_text": "B",
                 "idt_text": "/iBiodT/",
-                "display_connector": false,
                 "location": "internal",
                 "allowed_bases": ["T"]
               }
@@ -6580,25 +6567,21 @@ main() {
               "/5Biosg/": {
                 "display_text": "B",
                 "idt_text": "/5Biosg/",
-                "display_connector": false,
                 "location": "5'"
               },
               "/3Cy3Sp/": {
                 "display_text": "Cy3",
                 "idt_text": "/3Cy3Sp/",
-                "display_connector": false,
                 "location": "3'"
               },
               "/iCy3/": {
                 "display_text": "Cy3",
                 "idt_text": "/iCy3/",
-                "display_connector": false,
                 "location": "internal"
               },
               "/iBiodT/": {
                 "display_text": "B",
                 "idt_text": "/iBiodT/",
-                "display_connector": false,
                 "location": "internal",
                 "allowed_bases": ["T"]
               }
@@ -6725,25 +6708,21 @@ main() {
               "/5Biosg/": {
                 "display_text": "B",
                 "idt_text": "/5Biosg/",
-                "display_connector": false,
                 "location": "5'"
               },
               "/3Cy3Sp/": {
                 "display_text": "Cy3",
                 "idt_text": "/3Cy3Sp/",
-                "display_connector": false,
                 "location": "3'"
               },
               "/iCy3/": {
                 "display_text": "Cy3",
                 "idt_text": "/iCy3/",
-                "display_connector": false,
                 "location": "internal"
               },
               "/iBiodT/": {
                 "display_text": "B",
                 "idt_text": "/iBiodT/",
-                "display_connector": false,
                 "location": "internal",
                 "allowed_bases": ["T"]
               }
@@ -6884,25 +6863,21 @@ main() {
               "/5Biosg/": {
                 "display_text": "B",
                 "idt_text": "/5Biosg/",
-                "display_connector": false,
                 "location": "5'"
               },
               "/3Cy3Sp/": {
                 "display_text": "Cy3",
                 "idt_text": "/3Cy3Sp/",
-                "display_connector": false,
                 "location": "3'"
               },
               "/iCy3/": {
                 "display_text": "Cy3",
                 "idt_text": "/iCy3/",
-                "display_connector": false,
                 "location": "internal"
               },
               "/iBiodT/": {
                 "display_text": "B",
                 "idt_text": "/iBiodT/",
-                "display_connector": false,
                 "location": "internal",
                 "allowed_bases": ["T"]
               }
@@ -7057,25 +7032,21 @@ main() {
               "/5Biosg/": {
                 "display_text": "B",
                 "idt_text": "/5Biosg/",
-                "display_connector": false,
                 "location": "5'"
               },
               "/3Cy3Sp/": {
                 "display_text": "Cy3",
                 "idt_text": "/3Cy3Sp/",
-                "display_connector": false,
                 "location": "3'"
               },
               "/iCy3/": {
                 "display_text": "Cy3",
                 "idt_text": "/iCy3/",
-                "display_connector": false,
                 "location": "internal"
               },
               "/iBiodT/": {
                 "display_text": "B",
                 "idt_text": "/iBiodT/",
-                "display_connector": false,
                 "location": "internal",
                 "allowed_bases": ["T"]
               }

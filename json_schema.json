@@ -129,15 +129,11 @@
         "vendor_code": {
           "type": "string"
         },
-        "display_connector": {
-          "type": "boolean"
-        },
         "location": {
           "type": "string"
         }
       },
       "required": [
-        "display_connector",
         "display_text",
         "vendor_code",
         "location"
