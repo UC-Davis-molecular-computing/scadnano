@@ -351,10 +351,12 @@ that occurred between the last save and a browser crash.'''
       (MenuDropdownRight()
         ..title = 'Undo'
         ..id = "edit_menu_undo-dropdown"
+        ..keyboard_shortcut = 'Ctrl+Z'
         ..disabled = props.undo_stack_empty)(undo_dropdowns),
       (MenuDropdownRight()
         ..title = 'Redo'
         ..id = "edit_menu_redo-dropdown"
+        ..keyboard_shortcut = 'Ctrl+Shift+Z'
         ..disabled = props.redo_stack_empty)(redo_dropdowns),
       DropdownDivider({}),
       edit_menu_copy_paste(),
@@ -433,7 +435,8 @@ so will only work on scadnano designs that are exportable to cadnano.
         ..tooltip = '''\
 Puts nicks in long staple strands automatically.
 WARNING: Autobreak is an experimental feature and may be modified or removed.
-It uses cadnano code that crashes on many designs, so it is not guaranteed to work properly. It will also only work on scadnano designs that are exportable to cadnano.
+It uses cadnano code that crashes on many designs, so it is not guaranteed to work properly. 
+It will also only work on scadnano designs that are exportable to cadnano.
         ''')(),
     );
   }
@@ -462,9 +465,8 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
 
   ReactElement undo_or_redo_dropdown(UndoRedoItem item, ActionFromIntCreator undo_or_redo_action_creator,
       int num_times, String action_name, bool is_most_recent) {
-    String most_recent_string = is_most_recent ? " [Most Recent]" : "";
     return (MenuDropdownItem()
-      ..display = '${action_name} ${item.short_description}${most_recent_string}'
+      ..display = '${action_name} "${item.short_description}"' + (is_most_recent ? " [Most Recent]" : "")
       ..key = '${action_name.toLowerCase()}-${num_times}'
       ..on_click = (_) => app.dispatch(undo_or_redo_action_creator(num_times)))();
   }
