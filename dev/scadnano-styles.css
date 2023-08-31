@@ -977,6 +977,10 @@ https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-cen
     white-space: nowrap;
     background-color: transparent;
     border: 0;
+    /*These next three are in case we include a keyboard shortcut, so it is right-justified.*/
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 /* Hover */
