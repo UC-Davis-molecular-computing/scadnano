@@ -9,7 +9,6 @@
     "/5Biosg/": {
       "display_text": "B",
       "vendor_code": "/5Biosg/",
-      "display_connector": false,
       "location": "5'"
     }
   },

@@ -9,7 +9,6 @@
     "/5Biosg/": {
       "display_text": "B",
       "idt_text": "/5Biosg/",
-      "display_connector": false,
       "location": "5'"
     }
   },
