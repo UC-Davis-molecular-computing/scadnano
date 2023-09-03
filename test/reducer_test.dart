@@ -3365,7 +3365,7 @@ main() {
             "5prime_modification": "/5Biosg/"
           }
         ],
-        "modifications_in_design": {
+        "modifications_5p_in_design": {
           "/5Biosg/": {
             "display_text": "B",
             "vendor_code": "/5Biosg/",

@@ -207,7 +207,11 @@ const helices_key = 'helices';
 const helices_view_order_key = 'helices_view_order';
 const potential_helices_key = 'potential_helices';
 const strands_key = 'strands';
-const design_modifications_key = 'modifications_in_design';
+const design_modifications_key =
+    'modifications_in_design'; // legacy key for when we stored all mods in one map
+const design_modifications_5p_key = 'modifications_5p_in_design';
+const design_modifications_3p_key = 'modifications_3p_in_design';
+const design_modifications_int_key = 'modifications_int_in_design';
 const groups_key = 'groups';
 final design_keys = [
       version_key,
@@ -217,6 +221,9 @@ final design_keys = [
       potential_helices_key,
       strands_key,
       design_modifications_key,
+      design_modifications_5p_key,
+      design_modifications_3p_key,
+      design_modifications_int_key,
       groups_key,
     ] +
     legacy_geometry_keys;
