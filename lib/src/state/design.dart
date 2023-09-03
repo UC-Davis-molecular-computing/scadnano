@@ -21,6 +21,7 @@ import '../json_serializable.dart';
 import 'group.dart';
 import 'linker.dart';
 import 'modification.dart';
+import 'modification_type.dart';
 import 'strand.dart';
 import 'domain.dart';
 import 'extension.dart';
@@ -920,15 +921,21 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
 
     // modifications
-    var mods = this._all_modifications();
-    if (mods.length > 0) {
-      Map<String, dynamic> mods_map = {};
-      for (var mod in mods) {
-        if (!mods_map.containsKey(mod.vendor_code)) {
-          mods_map[mod.vendor_code] = mod.to_json_serializable(suppress_indent: suppress_indent);
+    for (var mod_type in [
+      ModificationType.five_prime,
+      ModificationType.three_prime,
+      ModificationType.internal
+    ]) {
+      var mods = this._all_modifications(mod_type);
+      if (mods.length > 0) {
+        Map<String, dynamic> mods_map = {};
+        for (var mod in mods) {
+          if (!mods_map.containsKey(mod.vendor_code)) {
+            mods_map[mod.vendor_code] = mod.to_json_serializable(suppress_indent: suppress_indent);
+          }
         }
+        json_map[mod_type.key] = mods_map;
       }
-      json_map[constants.design_modifications_key] = mods_map;
     }
 
     json_map[constants.strands_key] = [
@@ -939,20 +946,39 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   // set of all modifications in this design
-  BuiltSet<Modification> _all_modifications() {
-    var mods_5p = BuiltSet<Modification>({
-      for (var strand in strands)
-        if (strand.modification_5p != null) strand.modification_5p
-    });
-    var mods_3p = BuiltSet<Modification>({
-      for (var strand in strands)
-        if (strand.modification_3p != null) strand.modification_3p
-    });
-    var mods_int = BuiltSet<Modification>({
-      for (var strand in strands)
-        for (var mod in strand.modifications_int.values) mod
-    });
-    return mods_5p.union(mods_3p).union(mods_int);
+  BuiltSet<Modification> _all_modifications([ModificationType mod_type = null]) {
+    if (mod_type == null) {
+      var mods_5p = BuiltSet<Modification>({
+        for (var strand in strands)
+          if (strand.modification_5p != null) strand.modification_5p
+      });
+      var mods_3p = BuiltSet<Modification>({
+        for (var strand in strands)
+          if (strand.modification_3p != null) strand.modification_3p
+      });
+      var mods_int = BuiltSet<Modification>({
+        for (var strand in strands)
+          for (var mod in strand.modifications_int.values) mod
+      });
+      return mods_5p.union(mods_3p).union(mods_int);
+    } else if (mod_type == ModificationType.five_prime) {
+      return BuiltSet<Modification>({
+        for (var strand in strands)
+          if (strand.modification_5p != null) strand.modification_5p
+      });
+    } else if (mod_type == ModificationType.three_prime) {
+      return BuiltSet<Modification>({
+        for (var strand in strands)
+          if (strand.modification_3p != null) strand.modification_3p
+      });
+    } else if (mod_type == ModificationType.internal) {
+      return BuiltSet<Modification>({
+        for (var strand in strands)
+          for (var mod in strand.modifications_int.values) mod
+      });
+    } else {
+      throw AssertionError('unrecognized ModificationType: ${mod_type}');
+    }
   }
 
   bool has_nondefault_max_offset(Helix helix) {
@@ -1286,10 +1312,37 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     Map<String, HelixGroup> groups_map =
         group_builders_map.map((key, value) => MapEntry<String, HelixGroup>(key, value.build()));
 
-    // modifications in whole design
+    Map<String, Modification5Prime> mods_5p = {};
+    Map<String, Modification3Prime> mods_3p = {};
+    Map<String, ModificationInternal> mods_int = {};
+
+    for (var all_mods_key_and_mods in [
+      Tuple2<String, Map<String, Modification5Prime>>(constants.design_modifications_5p_key, mods_5p),
+      Tuple2<String, Map<String, Modification3Prime>>(constants.design_modifications_3p_key, mods_3p),
+      Tuple2<String, Map<String, ModificationInternal>>(constants.design_modifications_int_key, mods_int),
+    ]) {
+      var all_mods_key = all_mods_key_and_mods.item1;
+      var mods = all_mods_key_and_mods.item2;
+      if (json_map.keys.contains(all_mods_key)) {
+        var all_mods_json = json_map[all_mods_key];
+        for (var mod_key in all_mods_json.keys) {
+          var mod_json = all_mods_json[mod_key];
+          var mod = Modification.from_json(mod_json);
+          if (mod_key != mod.vendor_code) {
+            print('WARNING: key ${mod_key} does not match vendor_code field ${mod.vendor_code}'
+                'for modification ${mod}\n'
+                'replacing with key = ${mod.vendor_code}');
+          }
+          mod_key = mod.vendor_code;
+          mods[mod_key] = mod;
+        }
+      }
+    }
+
+    // legacy code; now we stored modifications in 3 separate maps depending on 5', 3', internal
+    Map<String, Modification> all_mods = {};
     if (json_map.containsKey(constants.design_modifications_key)) {
       Map<String, dynamic> all_mods_json = json_map[constants.design_modifications_key];
-      Map<String, Modification> all_mods = {};
       for (var mod_key in all_mods_json.keys) {
         var mod_json = all_mods_json[mod_key];
         var mod = Modification.from_json(mod_json);
@@ -1303,9 +1356,9 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         }
         all_mods[mod_key] = mod;
       }
-      Design.assign_modifications_to_strands(strands, strand_jsons, all_mods);
       // design_builder.strands.replace(strands);
     }
+    Design.assign_modifications_to_strands(strands, strand_jsons, mods_5p, mods_3p, mods_int, all_mods);
 
     return Design(
         helix_builders: helix_builders_map.values,
@@ -1336,18 +1389,37 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   static assign_modifications_to_strands(
-      List<Strand> strands, List strand_jsons, Map<String, Modification> all_mods) {
+    List<Strand> strands,
+    List strand_jsons,
+    Map<String, Modification> mods_5p,
+    Map<String, Modification> mods_3p,
+    Map<String, Modification> mods_int,
+    Map<String, Modification> all_mods, // legacy
+  ) {
+    bool legacy;
+    if (all_mods.isNotEmpty) {
+      // legacy code for when modifications were stored in a single dict
+      assert(mods_5p.isEmpty && mods_3p.isEmpty && mods_int.isEmpty);
+      legacy = true;
+    } else if (mods_5p.isNotEmpty || mods_3p.isNotEmpty || mods_int.isNotEmpty) {
+      assert(all_mods.isEmpty);
+      legacy = false;
+    } else {
+      // no modifications
+      return;
+    }
+
     for (int i = 0; i < strands.length; i++) {
       var strand = strands[i];
       var strand_json = strand_jsons[i];
       if (strand_json.containsKey(constants.modification_5p_key)) {
         var mod_name = strand_json[constants.modification_5p_key];
-        Modification5Prime mod = all_mods[mod_name];
+        Modification5Prime mod = legacy ? all_mods[mod_name] : mods_5p[mod_name];
         strand = strand.rebuild((b) => b..modification_5p.replace(mod));
       }
       if (strand_json.containsKey(constants.modification_3p_key)) {
         var mod_name = strand_json[constants.modification_3p_key];
-        Modification3Prime mod = all_mods[mod_name];
+        Modification3Prime mod = legacy ? all_mods[mod_name] : mods_3p[mod_name];
         strand = strand.rebuild((b) => b..modification_3p.replace(mod));
       }
       if (strand_json.containsKey(constants.modifications_int_key)) {
@@ -1356,7 +1428,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         for (var idx_str in mod_names_by_idx_json.keys) {
           int offset = int.parse(idx_str);
           String mod_name = mod_names_by_idx_json[idx_str];
-          ModificationInternal mod = all_mods[mod_name];
+          ModificationInternal mod = legacy ? all_mods[mod_name] : mods_int[mod_name];
           mods_by_idx[offset] = mod;
         }
         strand = strand.rebuild((b) => b..modifications_int.replace(mods_by_idx));

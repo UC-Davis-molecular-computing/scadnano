@@ -1,6 +1,10 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+
+import '../constants.dart' as constants;
+import 'design.dart';
+
 part 'modification_type.g.dart';
 
 class ModificationType extends EnumClass {
@@ -16,6 +20,19 @@ class ModificationType extends EnumClass {
 
   @memoized
   String get to_json => name;
+
+  @memoized
+  String get key {
+    if (this == ModificationType.five_prime) {
+      return constants.design_modifications_5p_key;
+    } else if (this == ModificationType.three_prime) {
+      return constants.design_modifications_3p_key;
+    } else if (this == ModificationType.internal) {
+      return constants.design_modifications_int_key;
+    } else {
+      throw IllegalDesignError('unknown ModificationType "${this}"');
+    }
+  }
 
   static Serializer<ModificationType> get serializer => _$modificationTypeSerializer;
 }
