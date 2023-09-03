@@ -1,16 +1,17 @@
 import 'dart:convert';
 import 'dart:html';
 import 'package:built_collection/built_collection.dart';
-import 'package:http/http.dart' as http;
-
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/state/selectable.dart';
+
+import 'react_bootstrap.dart';
+
 import '../dna_file_type.dart';
 import '../json_serializable.dart';
 import '../middleware/local_storage.dart';
 import '../middleware/system_clipboard.dart';
+import '../state/selectable.dart';
 import '../state/design.dart';
 import '../state/dna_end.dart';
 import '../state/export_dna_format_strand_order.dart';
@@ -24,7 +25,6 @@ import '../state/grid.dart';
 import '../state/local_storage_design_choice.dart';
 import '../view/menu_number.dart';
 import '../view/redraw_counter_component_mixin.dart';
-import '../view/react_bootstrap.dart';
 import '../constants.dart' as constants;
 import '../view/menu_boolean.dart';
 import '../view/menu_dropdown_item.dart';
