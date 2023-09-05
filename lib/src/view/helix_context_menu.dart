@@ -111,7 +111,8 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
   }
 
   Future<void> dialog_helix_set_idx() async {
-    var dialog = Dialog(title: 'set helix index', type: DialogType.set_helix_index, items: [
+    var dialog =
+        Dialog(title: 'set helix index', use_saved_response: false, type: DialogType.set_helix_index, items: [
       DialogInteger(label: 'new index', value: helix.idx),
     ]);
     List<DialogItem> results = await util.dialog(dialog);
@@ -324,10 +325,14 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
   Future<void> dialog_helix_set_grid_position() async {
     var grid_position = helix.grid_position ?? GridPosition(0, 0);
 
-    var dialog = Dialog(title: 'set helix grid position', type: DialogType.set_helix_grid_position, items: [
-      DialogInteger(label: 'h', value: grid_position.h),
-      DialogInteger(label: 'v', value: grid_position.v),
-    ]);
+    var dialog = Dialog(
+        title: 'set helix grid position',
+        use_saved_response: false,
+        type: DialogType.set_helix_grid_position,
+        items: [
+          DialogInteger(label: 'h', value: grid_position.h),
+          DialogInteger(label: 'v', value: grid_position.v),
+        ]);
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
@@ -341,11 +346,15 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
   Future<void> dialog_helix_set_position() async {
     var position = helix.position ?? Position3D();
 
-    var dialog = Dialog(title: 'set helix position', type: DialogType.set_helix_position, items: [
-      DialogFloat(label: 'x', value: position.x),
-      DialogFloat(label: 'y', value: position.y),
-      DialogFloat(label: 'z', value: position.z),
-    ]);
+    var dialog = Dialog(
+        title: 'set helix position',
+        use_saved_response: false,
+        type: DialogType.set_helix_position,
+        items: [
+          DialogFloat(label: 'x', value: position.x),
+          DialogFloat(label: 'y', value: position.y),
+          DialogFloat(label: 'z', value: position.z),
+        ]);
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;

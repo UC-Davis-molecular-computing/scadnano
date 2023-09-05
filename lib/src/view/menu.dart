@@ -923,6 +923,16 @@ toggle "Show main view helices".'''
         ..onChange = ((_) => props.dispatch(actions.ShowHelixCirclesMainViewSet(
             show_helix_circles_main_view: !props.show_helix_circles_main_view)))
         ..key = 'show-helix-circles-main-view')(),
+      (MenuBoolean()
+        ..value = props.show_grid_coordinates_side_view
+        ..display = 'Show helix coordinates in side view'
+        ..tooltip = '''\
+Displays coordinates of each helix in the side view (either grid coordinates 
+or real coordinates in nanometers, depending on whether a grid is selected).'''
+        ..name = 'show-grid-coordinates-side-view'
+        ..onChange = ((_) => props.dispatch(actions.ShowGridCoordinatesSideViewSet(
+            show_grid_coordinates_side_view: !props.show_grid_coordinates_side_view)))
+        ..key = 'show-grid-coordinates-side-view')(),
     ]);
   }
 
@@ -1066,15 +1076,6 @@ To inspect how all axes change, check View --> Show axis arrows.'''
         ..name = 'invert-y-axis'
         ..onChange = ((_) => props.dispatch(actions.InvertYSet(invert_y: !props.invert_y)))
         ..key = 'invert-y-axis')(),
-      (MenuBoolean()
-        ..value = props.show_grid_coordinates_side_view
-        ..display = 'Show grid coordinates in side view'
-        ..tooltip = '''\
-Shows grid coordinates in the side view under the helix index.'''
-        ..name = 'show-grid-coordinates-side-view'
-        ..onChange = ((_) => props.dispatch(actions.ShowGridCoordinatesSideViewSet(
-            show_grid_coordinates_side_view: !props.show_grid_coordinates_side_view)))
-        ..key = 'show-grid-coordinates-side-view')(),
       (MenuBoolean()
         ..value = props.show_helices_axis_arrows
         ..display = 'Axis arrows'
