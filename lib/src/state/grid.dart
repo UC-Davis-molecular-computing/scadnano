@@ -36,7 +36,7 @@ class Grid extends EnumClass {
     } else if (this == Grid.square) {
       return 8;
     } else if (this == Grid.none) {
-      return 0;
+      return 8;
     } else {
       throw AssertionError('unreachable');
     }
