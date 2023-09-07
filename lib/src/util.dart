@@ -8,7 +8,6 @@ import 'dart:math';
 import 'dart:async';
 import 'dart:svg' hide Point, ImageElement;
 import 'dart:typed_data';
-import 'dart:collection';
 
 import 'package:collection/collection.dart';
 import 'package:over_react/over_react.dart';

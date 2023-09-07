@@ -231,24 +231,24 @@ String cando_compatible_csv_export(Iterable<Strand> strands) {
   buf.writeln('Start,End,Sequence,Length,Color');
   for (var strand in strands) {
 // If the export name contains 'SCAF', then it's a scaffold strand, so we do not export it for cando.
-    if (strand.idt_export_name().contains('SCAF')) {
+    if (strand.vendor_export_name().contains('SCAF')) {
       continue;
     }
 // Remove the characters 'ST' from the start of the export name as cando doesn't understand them.
-    var cando_strand = strand.idt_export_name().replaceAll(RegExp(r'^ST'), '');
+    var cando_strand = strand.vendor_export_name().replaceAll(RegExp(r'^ST'), '');
 // Split the export name into the start and end positions.
     RegExp cando_split_regex = RegExp(r'\d+\[\d+\]');
     List<String> cando_split_name =
         cando_split_regex.allMatches(cando_strand).map((match) => match.group(0)).toList();
     if (cando_split_name.length != 2) {
-      throw ExportDNAException('Invalid strand name: ${strand.idt_export_name()}');
+      throw ExportDNAException('Invalid strand name: ${strand.vendor_export_name()}');
     }
     var cando_strand_end = cando_split_name[1];
     var cando_strand_start = cando_split_name[0];
 // Write the strand to the CSV file.
     buf.writeln('${cando_strand_start},${cando_strand_end}'
-        ',${idt_sequence_null_aware(strand, "")}'
-        ',${idt_sequence_null_aware(strand, "").length}'
+        ',${vendor_sequence_null_aware(strand, "")}'
+        ',${vendor_sequence_null_aware(strand, "").length}'
         ',${strand.color.toHexColor().toCssString().toUpperCase()}');
   }
   return buf.toString();

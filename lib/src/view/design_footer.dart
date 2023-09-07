@@ -49,14 +49,13 @@ class DesignFooterComponent extends UiComponent2<DesignFooterProps> {
         int domain_length = mouseover_data.domain.dna_length();
         var strand = props.strand_first_mouseover_data;
         var domain = mouseover_data.domain;
-        text += (', ' +
-            'strand DNA index: ${mouseover_data.strand_idx}, ' +
-            'domain length: ${domain_length}, ' +
-            'strand length: ${strand?.dna_length}, ' +
-            (domain?.name != null ? 'domain name: ${domain.name}, ' : '') +
-            (domain?.label != null ? 'domain label: ${domain.label}, ' : '') +
-            (strand.name != null ? 'strand name: ${strand.name}, ' : '') +
-            (strand.label != null ? 'strand label: ${strand.label} ' : ''));
+        text += (', strand DNA index: ${mouseover_data.strand_idx}' +
+            ', domain length: ${domain_length}' +
+            ', strand length: ${strand?.dna_length}' +
+            (domain?.name != null ? ', domain name: ${domain.name}' : '') +
+            (domain?.label != null ? ', domain label: ${domain.label}' : '') +
+            (strand?.name != null ? ', strand name: ${strand.name}' : '') +
+            (strand?.label != null ? ', strand label: ${strand.label}' : ''));
         ;
       }
     } else {

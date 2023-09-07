@@ -8,12 +8,12 @@ import 'state/grid.dart';
 
 // WARNING: Do not modify line below, except for the version string
 //          (and also add new version string to scadnano_versions_to_link).
-const String CURRENT_VERSION = "0.18.10";
+const String CURRENT_VERSION = "0.19.0";
 const String INITIAL_VERSION = "0.1.0";
 
 // scadnano versions that we deploy so that older versions can be used.
 final scadnano_older_versions_to_link = [
-  "0.18.9",
+  "0.18.10",
   "0.17.14",
   // "0.17.13",
   // "0.17.12",
@@ -207,7 +207,11 @@ const helices_key = 'helices';
 const helices_view_order_key = 'helices_view_order';
 const potential_helices_key = 'potential_helices';
 const strands_key = 'strands';
-const design_modifications_key = 'modifications_in_design';
+const design_modifications_key =
+    'modifications_in_design'; // legacy key for when we stored all mods in one map
+const design_modifications_5p_key = 'modifications_5p_in_design';
+const design_modifications_3p_key = 'modifications_3p_in_design';
+const design_modifications_int_key = 'modifications_int_in_design';
 const groups_key = 'groups';
 final design_keys = [
       version_key,
@@ -217,6 +221,9 @@ final design_keys = [
       potential_helices_key,
       strands_key,
       design_modifications_key,
+      design_modifications_5p_key,
+      design_modifications_3p_key,
+      design_modifications_int_key,
       groups_key,
     ] +
     legacy_geometry_keys;
@@ -288,7 +295,8 @@ const label_key = 'label';
 const color_key = 'color';
 const dna_sequence_key = 'sequence';
 const legacy_dna_sequence_keys = ['dna_sequence'];
-const idt_key = 'idt';
+const vendor_fields_key = 'vendor_fields';
+const legacy_vendor_fields_keys = ['idt'];
 const is_scaffold_key = 'is_scaffold';
 const substrands_key = 'domains';
 const circular_key = 'circular';
@@ -299,7 +307,7 @@ const modifications_int_key = 'internal_modifications';
 final strand_keys = [
       color_key,
       dna_sequence_key,
-      idt_key,
+      vendor_fields_key,
       is_scaffold_key,
       substrands_key,
       modification_5p_key,
@@ -309,36 +317,37 @@ final strand_keys = [
       name_key,
     ] +
     legacy_dna_sequence_keys +
+    legacy_vendor_fields_keys +
     legacy_substrands_keys;
 
 // Modification keys
 const mod_location_key = 'location';
 const mod_display_text_key = 'display_text';
-const mod_id_key = 'id';
-const mod_idt_text_key = 'idt_text';
+const mod_vendor_code_key = 'vendor_code';
+const legacy_mod_vendor_code_keys = ['idt_text'];
 const mod_allowed_bases_key = 'allowed_bases';
 const mod_connector_length_key = 'connector_length';
-const modification_keys = [
-  mod_location_key,
-  mod_display_text_key,
-  mod_id_key,
-  mod_idt_text_key,
-  mod_allowed_bases_key,
-  mod_connector_length_key,
-];
+final modification_keys = [
+      mod_location_key,
+      mod_display_text_key,
+      mod_vendor_code_key,
+      mod_allowed_bases_key,
+      mod_connector_length_key,
+    ] +
+    legacy_mod_vendor_code_keys;
 
-// IDTFields keys
-const idt_name_key = 'name';
-const idt_scale_key = 'scale';
-const idt_purification_key = 'purification';
-const idt_plate_key = 'plate';
-const idt_well_key = 'well';
-const idt_keys = [
-  idt_name_key,
-  idt_scale_key,
-  idt_purification_key,
-  idt_plate_key,
-  idt_well_key,
+// VendorFields keys
+const vendor_name_key = 'name';
+const vendor_scale_key = 'scale';
+const vendor_purification_key = 'purification';
+const vendor_plate_key = 'plate';
+const vendor_well_key = 'well';
+const vendor_keys = [
+  vendor_name_key,
+  vendor_scale_key,
+  vendor_purification_key,
+  vendor_plate_key,
+  vendor_well_key,
 ];
 
 // Domain keys
@@ -458,5 +467,5 @@ const css_selector_selected = 'selected';
 
 const css_selector_context_menu_item_disabled = 'context_menu_item_disabled';
 
-const default_idt_scale = "25nm";
-const default_idt_purification = "STD";
+const default_vendor_scale = "25nm";
+const default_vendor_purification = "STD";

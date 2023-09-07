@@ -1,274 +1,289 @@
 {
-    "$schema": "http://json-schema.org/draft-06/schema#",
-    "$ref": "#/definitions/DNADesign",
-    "definitions": {
-        "DNADesign": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "grid": {
-                    "type": "string"
-                },
-                "helices": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/Helix"
-                    }
-                },
-                "strands": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/Strand"
-                    }
-                },
-                "version": {
-                    "type": "string"
-                },
-                "modifications_in_design": {
-                    "$ref": "#/definitions/ModificationsInDesign"
-                },
-                "helices_view_order": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                }
-            },
-            "required": [
-                "grid",
-                "helices",
-                "strands"
-            ],
-            "title": "DNADesign"
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$ref": "#/definitions/DNADesign",
+  "definitions": {
+    "DNADesign": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "grid": {
+          "type": "string"
         },
-        "Helix": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "idx": {
-                    "type": "integer"
-                },
-                "min_offset": {
-                    "type": "integer"
-                },
-                "max_offset": {
-                    "type": "integer"
-                },
-                "grid_position": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "position": {
-                    "$ref": "#/definitions/Position"
-                },
-                "roll": {
-                    "type": "number"
-                },
-                "pitch": {
-                    "type": "number"
-                },
-                "yaw": {
-                    "type": "number"
-                },
-                "major_tick_distance": {
-                    "type": "integer"
-                },
-                "major_ticks": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                }
-            },
-            "required": [],
-            "title": "Helix"
+        "helices": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Helix"
+          }
         },
-        "Position": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "x": {
-                    "type": "number"
-                },
-                "y": {
-                    "type": "number"
-                },
-                "z": {
-                    "type": "number"
-                }
-            },
-            "required": [
-                "x",
-                "y",
-                "z"
-            ],
-            "title": "Position"
+        "strands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Strand"
+          }
         },
-        "ModificationsInDesign": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "/5Biosg/": {
-                    "$ref": "#/definitions/5Biosg"
-                }
-            },
-            "required": [
-                "/5Biosg/"
-            ],
-            "title": "ModificationsInDesign"
+        "version": {
+          "type": "string"
         },
-        "5Biosg": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "display_text": {
-                    "type": "string"
-                },
-                "idt_text": {
-                    "type": "string"
-                },
-                "display_connector": {
-                    "type": "boolean"
-                },
-                "location": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "display_connector",
-                "display_text",
-                "idt_text",
-                "location"
-            ],
-            "title": "5Biosg"
+        "modifications_in_design": {
+          "$ref": "#/definitions/ModificationsInDesign"
         },
-        "Strand": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "color": {
-                    "$ref": "#/definitions/ColorUnion"
-                },
-                "sequence": {
-                    "type": "string"
-                },
-                "domains": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/Domain"
-                    }
-                },
-                "is_scaffold": {
-                    "type": "boolean"
-                },
-                "5prime_modification": {
-                    "type": "string"
-                },
-                "3prime_modification": {
-                    "type": "string"
-                },
-                "internal_modifications": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                },
-                "idt": {
-                    "$ref": "#/definitions/Idt"
-                }
-            },
-            "required": [
-                "domains"
-            ],
-            "title": "Strand"
-        },
-        "Domain": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "helix": {
-                    "type": "integer"
-                },
-                "forward": {
-                    "type": "boolean"
-                },
-                "start": {
-                    "type": "integer"
-                },
-                "end": {
-                    "type": "integer"
-                },
-                "deletions": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "insertions": {
-                    "type": "array",
-                    "items": {
-                        "type": "array",
-                        "items": {
-                            "type": "integer"
-                        }
-                    }
-                },
-                "loopout": {
-                    "type": "integer"
-                }
-            },
-            "required": [],
-            "title": "Domain"
-        },
-        "Idt": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "scale": {
-                    "$ref": "#/definitions/Scale"
-                },
-                "purification": {
-                    "$ref": "#/definitions/Purification"
-                }
-            },
-            "required": [
-                "name",
-                "purification",
-                "scale"
-            ],
-            "title": "Idt"
-        },
-        "ColorUnion": {
-            "anyOf": [
-                {
-                    "$ref": "#/definitions/ColorHexString"
-                },
-                {
-                    "type": "integer"
-                }
-            ],
-            "title": "ColorUnion"
-        },
-        "ColorHexString": {
-            "type": "string",
-            "title": "ColorHexString"
-        },
-        "Purification": {
-            "type": "string",
-            "enum": ["STD", "PAGE", "HPLC", "IEHPLC", "RNASE", "DUALHPLC", "PAGEHPLC"],
-            "title": "Purification"
-        },
-        "Scale": {
-            "type": "string",
-            "enum": [ "25nm", "100nm", "250nm", "1um", "5um", "10um", "4nmU", "20nmU", "PU", "25nmS" ],
-            "title": "Scale"
+        "helices_view_order": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
         }
+      },
+      "required": [
+        "grid",
+        "helices",
+        "strands"
+      ],
+      "title": "DNADesign"
+    },
+    "Helix": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "idx": {
+          "type": "integer"
+        },
+        "min_offset": {
+          "type": "integer"
+        },
+        "max_offset": {
+          "type": "integer"
+        },
+        "grid_position": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "position": {
+          "$ref": "#/definitions/Position"
+        },
+        "roll": {
+          "type": "number"
+        },
+        "pitch": {
+          "type": "number"
+        },
+        "yaw": {
+          "type": "number"
+        },
+        "major_tick_distance": {
+          "type": "integer"
+        },
+        "major_ticks": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      },
+      "required": [],
+      "title": "Helix"
+    },
+    "Position": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "title": "Position"
+    },
+    "ModificationsInDesign": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "/5Biosg/": {
+          "$ref": "#/definitions/5Biosg"
+        }
+      },
+      "required": [
+        "/5Biosg/"
+      ],
+      "title": "ModificationsInDesign"
+    },
+    "5Biosg": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "display_text": {
+          "type": "string"
+        },
+        "vendor_code": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "display_text",
+        "vendor_code",
+        "location"
+      ],
+      "title": "5Biosg"
+    },
+    "Strand": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "color": {
+          "$ref": "#/definitions/ColorUnion"
+        },
+        "sequence": {
+          "type": "string"
+        },
+        "domains": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Domain"
+          }
+        },
+        "is_scaffold": {
+          "type": "boolean"
+        },
+        "5prime_modification": {
+          "type": "string"
+        },
+        "3prime_modification": {
+          "type": "string"
+        },
+        "internal_modifications": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "idt": {
+          "$ref": "#/definitions/Idt"
+        }
+      },
+      "required": [
+        "domains"
+      ],
+      "title": "Strand"
+    },
+    "Domain": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "helix": {
+          "type": "integer"
+        },
+        "forward": {
+          "type": "boolean"
+        },
+        "start": {
+          "type": "integer"
+        },
+        "end": {
+          "type": "integer"
+        },
+        "deletions": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "insertions": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        },
+        "loopout": {
+          "type": "integer"
+        }
+      },
+      "required": [],
+      "title": "Domain"
+    },
+    "Idt": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "scale": {
+          "$ref": "#/definitions/Scale"
+        },
+        "purification": {
+          "$ref": "#/definitions/Purification"
+        }
+      },
+      "required": [
+        "name",
+        "purification",
+        "scale"
+      ],
+      "title": "Idt"
+    },
+    "ColorUnion": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/ColorHexString"
+        },
+        {
+          "type": "integer"
+        }
+      ],
+      "title": "ColorUnion"
+    },
+    "ColorHexString": {
+      "type": "string",
+      "title": "ColorHexString"
+    },
+    "Purification": {
+      "type": "string",
+      "enum": [
+        "STD",
+        "PAGE",
+        "HPLC",
+        "IEHPLC",
+        "RNASE",
+        "DUALHPLC",
+        "PAGEHPLC"
+      ],
+      "title": "Purification"
+    },
+    "Scale": {
+      "type": "string",
+      "enum": [
+        "25nm",
+        "100nm",
+        "250nm",
+        "1um",
+        "5um",
+        "10um",
+        "4nmU",
+        "20nmU",
+        "PU",
+        "25nmS"
+      ],
+      "title": "Scale"
     }
+  }
 }
 
 

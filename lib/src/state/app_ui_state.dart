@@ -237,6 +237,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get show_mouseover_data => storables.show_mouseover_data;
 
+  bool get selection_box_intersection => storables.selection_box_intersection;
+
   static void _initializeBuilder(AppUIStateBuilder b) {
     b.copy_info = null;
     b.last_mod_5p = null;

@@ -44,8 +44,10 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
       // Besides, it didn't work well in Chrome and I
       // basically had to implement it myself based on bounding boxes.
 
-      elts_overlapping =
-          elements_intersecting_box(MAIN_VIEW_SVG_ID, select_box_bbox, select_modes, is_origami).toSet();
+      bool selection_box_intersection = store.state.ui_state.selection_box_intersection;
+      elts_overlapping = elements_intersecting_box(
+              MAIN_VIEW_SVG_ID, select_box_bbox, select_modes, is_origami, selection_box_intersection)
+          .toSet();
     } else {
       // use selection rope
       svg.PolygonElement rope_elt = querySelector('#selection-rope-main') as svg.PolygonElement;
@@ -55,8 +57,10 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
       }
 
       List<Point<num>> points = points_of_polygon_elt(rope_elt);
-      elts_overlapping =
-          elements_intersecting_polygon(MAIN_VIEW_SVG_ID, points, select_modes, is_origami).toSet();
+      bool selection_box_intersection = store.state.ui_state.selection_box_intersection;
+      elts_overlapping = elements_intersecting_polygon(
+              MAIN_VIEW_SVG_ID, points, select_modes, is_origami, selection_box_intersection)
+          .toSet();
     }
 
     var selectable_by_id = state.design.selectable_by_id;
@@ -90,17 +94,17 @@ List<Point<num>> points_of_polygon_elt(svg.PolygonElement rope_elt) {
 
 /// gets list of elements associated to Selectables that intersect selection rope [rope]
 /// (described as list of points in non-self-intersecting polygon) in elements with classname
-List<svg.SvgElement> elements_intersecting_polygon(
-    String classname, List<Point<num>> polygon, Iterable<SelectModeChoice> select_modes, bool is_origami) {
-  return generalized_intersection_list_polygon(
-      classname, polygon, select_modes, is_origami, polygon_contains_rect);
+List<svg.SvgElement> elements_intersecting_polygon(String classname, List<Point<num>> polygon,
+    Iterable<SelectModeChoice> select_modes, bool is_origami, bool selection_box_intersection) {
+  var overlap = selection_box_intersection ? polygon_intersects_rect : polygon_contains_rect;
+  return generalized_intersection_list_polygon(classname, polygon, select_modes, is_origami, overlap);
 }
 
 // gets list of elements associated to Selectables that intersect select_box_bbox in elements with classname
 List<svg.SvgElement> elements_intersecting_box(String classname, Rectangle<num> select_box_bbox,
-    Iterable<SelectModeChoice> select_modes, bool is_origami) {
-  return generalized_intersection_list_box(
-      classname, select_box_bbox, select_modes, is_origami, interval_contained);
+    Iterable<SelectModeChoice> select_modes, bool is_origami, bool selection_box_intersection) {
+  var overlap = selection_box_intersection ? interval_intersect : interval_contained;
+  return generalized_intersection_list_box(classname, select_box_bbox, select_modes, is_origami, overlap);
 }
 
 /// Like generalized_intersection_list_box, but where selection is described by a polygon instead of rect.
@@ -186,6 +190,39 @@ bool polygon_contains_rect(List<Point<num>> polygon, Rectangle<num> rect) {
   return true;
 }
 
+/// indicates if rectangle completely contains polygon, i.e., it contains all 4 corner points
+bool rect_contains_polygon(Rectangle<num> rect, List<Point<num>> polygon) {
+  for (var polygon_vertex in polygon) {
+    if (!rect_contains_point(rect, polygon_vertex)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/// indicates if polygon intersects rectangle
+bool polygon_intersects_rect(List<Point<num>> polygon, Rectangle<num> rect) {
+  // Three ways for polygon to intersect rectangle:
+  // (1) rectangle entirely within polygon
+  // (2) polygon entirely within rectangle
+  // (3) two lines intersect (line on side of rectangle with line on side of polygon)
+  //https://stackoverflow.com/questions/7136547/method-to-detect-intersection-between-a-rectangle-and-a-polygon
+
+  if (rect_contains_polygon(rect, polygon)) return true; // (1)
+  if (polygon_contains_rect(polygon, rect)) return true; // (2)
+  // (3)
+  for (var rect_line in lines_of_rect(rect)) {
+    for (var polygon_line in lines_of_polygon(polygon)) {
+      if (rect_line.intersects(polygon_line)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 /// indicates if [polygon] contains point
 /// https://www.geeksforgeeks.org/how-to-check-if-a-given-point-lies-inside-a-polygon/
 bool polygon_contains_point(List<Point<num>> polygon, Point<num> point) {
@@ -206,7 +243,17 @@ bool polygon_contains_point(List<Point<num>> polygon, Point<num> point) {
   return num_lines_intersecting % 2 == 1;
 }
 
-/// returns the lines in [poylgon]
+/// indicates if [rect] contains point
+bool rect_contains_point(Rectangle<num> rect, Point<num> point) {
+  num x1 = rect.left;
+  num y1 = rect.top;
+  num x2 = x1 + rect.width;
+  num y2 = y1 + rect.height;
+
+  return x1 <= point.x && point.x <= x2 && y1 <= point.y && point.y <= y2;
+}
+
+/// returns the lines in [polygon]
 List<Line> lines_of_polygon(List<Point<num>> polygon) {
   List<Line> lines = [];
   for (int i = 0; i < polygon.length - 1; i++) {
@@ -219,6 +266,24 @@ List<Line> lines_of_polygon(List<Point<num>> polygon) {
   var closing_line = Line(polygon.last, polygon.first);
   lines.add(closing_line);
   return lines;
+}
+
+/// returns the lines in [rect]
+List<Line> lines_of_rect(Rectangle<num> rect) {
+  num x1 = rect.left;
+  num y1 = rect.top;
+  num x2 = x1 + rect.width;
+  num y2 = y1 + rect.height;
+  var up_left = Point<num>(x1, y1);
+  var up_right = Point<num>(x2, y1);
+  var bot_left = Point<num>(x1, y2);
+  var bot_right = Point<num>(x2, y2);
+  var top_line = Line(up_left, up_right);
+  var bot_line = Line(bot_left, bot_right);
+  var left_line = Line(up_left, bot_left);
+  var right_line = Line(up_right, bot_right);
+
+  return [top_line, bot_line, left_line, right_line];
 }
 
 List<Element> find_selectable_elements(Iterable<SelectModeChoice> select_modes, bool is_origami) {

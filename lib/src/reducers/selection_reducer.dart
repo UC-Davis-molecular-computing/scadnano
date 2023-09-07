@@ -29,6 +29,8 @@ GlobalReducer<SelectablesStore, AppState> selectables_store_global_reducer = com
   TypedGlobalReducer<SelectablesStore, AppState, actions.Select>(select_reducer),
   TypedGlobalReducer<SelectablesStore, AppState, actions.SelectOrToggleItems>(select_or_toggle_items_reducer),
   TypedGlobalReducer<SelectablesStore, AppState, actions.SelectAllSelectable>(select_all_selectables_reducer),
+  TypedGlobalReducer<SelectablesStore, AppState, actions.SelectAllWithSameAsSelected>(
+      select_all_with_same_reducer),
 ]);
 
 // is item currently selectable, given all the information about select modes, whether it's part of
@@ -140,6 +142,49 @@ SelectablesStore select_all_reducer(SelectablesStore selectables_store, actions.
     selectables_store.select_all(action.selectables, only: action.only);
 
 SelectablesStore selections_clear_reducer(SelectablesStore selectables_store, _) => selectables_store.clear();
+
+SelectablesStore select_all_with_same_reducer(
+    SelectablesStore selectables_store, AppState state, actions.SelectAllWithSameAsSelected action) {
+  // gather values of traits of selected strands
+  Map<SelectableTrait, List<Object>> trait_values = {for (var trait in action.traits) trait: []};
+  for (var strand in action.templates) {
+    for (var trait in action.traits) {
+      trait_values[trait].add(trait.trait_of_strand(strand));
+    }
+  }
+
+  // find strands in design with same traits and select them
+  // The selection rule is that the strand must "match" all traits, i.e., for each trait,
+  // at least one currently selected strand must have the same trait.
+  var selected_strands = selectables_store.selected_strands.toList();
+  for (var strand in state.design.strands) {
+    if (selected_strands.contains(strand)) continue;
+    bool include_strand = true;
+    // by default include the strand; now go looking for a trait where it doesn't match
+    for (var trait in trait_values.keys) {
+      var trait_values_selected = trait_values[trait];
+      var trait_value_strand = trait.trait_of_strand(strand);
+      bool found_matching_trait = false;
+      for (var trait_value in trait_values_selected) {
+        if (trait.matches(trait_value_strand, trait_value)) {
+          found_matching_trait = true;
+          break;
+        }
+      }
+      if (!found_matching_trait) {
+        include_strand = false;
+        continue;
+      }
+    }
+    if (include_strand) {
+      selected_strands.add(strand);
+    }
+  }
+
+  selectables_store = selectables_store.rebuild((b) => b..selected_items.replace(selected_strands));
+
+  return selectables_store;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // side_selected_helices global reducer

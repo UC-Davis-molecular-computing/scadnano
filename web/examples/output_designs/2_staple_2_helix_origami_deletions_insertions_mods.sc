@@ -8,8 +8,7 @@
   "modifications_in_design": {
     "/5Biosg/": {
       "display_text": "B",
-      "idt_text": "/5Biosg/",
-      "display_connector": false,
+      "vendor_code": "/5Biosg/",
       "location": "5'"
     }
   },

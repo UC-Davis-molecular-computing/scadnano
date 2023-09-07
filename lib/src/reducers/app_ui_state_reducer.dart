@@ -449,7 +449,8 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..only_display_selected_helices = TypedReducer<bool, actions.SetOnlyDisplaySelectedHelices>(only_display_selected_helices_reducer)(storables.only_display_selected_helices, action)
     ..default_crossover_type_scaffold_for_setting_helix_rolls = TypedReducer<bool, actions.DefaultCrossoverTypeForSettingHelixRollsSet>(default_crossover_type_scaffold_for_setting_helix_rolls_reducer)(storables.default_crossover_type_scaffold_for_setting_helix_rolls, action)
     ..default_crossover_type_staple_for_setting_helix_rolls = TypedReducer<bool, actions.DefaultCrossoverTypeForSettingHelixRollsSet>(default_crossover_type_staple_for_setting_helix_rolls_reducer)(storables.default_crossover_type_staple_for_setting_helix_rolls, action)
-    ..show_mouseover_data = TypedReducer<bool, actions.ShowMouseoverDataSet>(show_mouseover_data_set_reducer)(storables.show_mouseover_data, action));
+    ..show_mouseover_data = TypedReducer<bool, actions.ShowMouseoverDataSet>(show_mouseover_data_set_reducer)(storables.show_mouseover_data, action)
+    ..selection_box_intersection = TypedReducer<bool, actions.SelectionBoxIntersectionRuleSet>(selection_box_intersection_reducer)(storables.selection_box_intersection, action));
 }
 
 Reducer<String> displayed_group_name_reducer = combineReducers([
@@ -596,3 +597,6 @@ GlobalReducer<BuiltList<MouseoverData>, AppState> mouseover_datas_global_reducer
   // TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.SetAppUIStateStorable>(
   //     mouseover_data_set_app_ui_state_storable_reducer),
 ]);
+
+bool selection_box_intersection_reducer(bool _, actions.SelectionBoxIntersectionRuleSet action) =>
+    action.intersect;

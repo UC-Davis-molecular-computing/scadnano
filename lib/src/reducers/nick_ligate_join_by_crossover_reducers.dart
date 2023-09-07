@@ -250,7 +250,7 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
         name: strand.name,
         color: strand.color,
         dna_sequence: dna_before,
-        idt: strand.idt,
+        vendor_fields: strand.vendor_fields,
         is_scaffold: strand.is_scaffold,
         modification_5p: strand.modification_5p,
         modification_3p: null,
@@ -652,7 +652,7 @@ Strand join_two_strands_with_substrands(
 
   //TODO: use properties_from_strand_3p to determine where to get properties
   var color = properties_from_strand_3p ? strand_3p.color : strand_5p.color;
-  var idt = properties_from_strand_3p ? strand_3p.idt : strand_5p.idt;
+  var idt = properties_from_strand_3p ? strand_3p.vendor_fields : strand_5p.vendor_fields;
 
   // strand_3p is strand whose 3' end is being joined to the other strand's 5' end
   var dna = null;
@@ -692,7 +692,7 @@ Strand join_two_strands_with_substrands(
       name: strand_name,
       color: color,
       dna_sequence: dna,
-      idt: idt,
+      vendor_fields: idt,
       is_scaffold: strand_3p.is_scaffold || strand_5p.is_scaffold,
       modification_5p: mod_5p,
       modification_3p: mod_3p,

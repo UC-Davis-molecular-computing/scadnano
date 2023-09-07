@@ -26,7 +26,7 @@ helix_hide_all_middleware(Store<AppState> store, dynamic action, NextDispatcher 
       var msg = 'The option "Display only selected helices" is enabled. '
           'Since no helices are selected, none will be displayed in the main view.\n\n'
           'To display the helices, either select some helices in the side view, or disable the option '
-          '"Display only selected helices" under the "View" menu.';
+          '"View-->Helices-->Display only selected helices".';
       util.async_alert(msg);
     }
   }

@@ -1,15 +1,17 @@
 import 'dart:convert';
 import 'dart:html';
 import 'package:built_collection/built_collection.dart';
-import 'package:http/http.dart' as http;
-
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+
+import 'react_bootstrap.dart';
+
 import '../dna_file_type.dart';
 import '../json_serializable.dart';
 import '../middleware/local_storage.dart';
 import '../middleware/system_clipboard.dart';
+import '../state/selectable.dart';
 import '../state/design.dart';
 import '../state/dna_end.dart';
 import '../state/export_dna_format_strand_order.dart';
@@ -23,7 +25,6 @@ import '../state/grid.dart';
 import '../state/local_storage_design_choice.dart';
 import '../view/menu_number.dart';
 import '../view/redraw_counter_component_mixin.dart';
-import '../view/react_bootstrap.dart';
 import '../constants.dart' as constants;
 import '../view/menu_boolean.dart';
 import '../view/menu_dropdown_item.dart';
@@ -62,7 +63,6 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..zoom_speed = state.ui_state.zoom_speed
       ..autofit = state.ui_state.autofit
       ..only_display_selected_helices = state.ui_state.only_display_selected_helices
-//    ..grid = state.design?.grid
       ..show_base_pair_lines = state.ui_state.show_base_pair_lines
       ..show_base_pair_lines_with_mismatches = state.ui_state.show_base_pair_lines_with_mismatches
       ..example_designs = state.ui_state.example_designs
@@ -97,6 +97,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
           state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls
       ..default_crossover_type_staple_for_setting_helix_rolls =
           state.ui_state.default_crossover_type_staple_for_setting_helix_rolls
+      ..selection_box_intersection = state.ui_state.selection_box_intersection
       ..undo_redo = state.undo_redo);
   },
   // Used for component test.
@@ -107,6 +108,7 @@ UiFactory<MenuProps> Menu = _$Menu;
 
 mixin MenuPropsMixin on UiProps {
   BuiltSet<DNAEnd> selected_ends;
+  bool selection_box_intersection;
   bool no_grid_is_none;
   bool show_dna;
   bool show_strand_names;
@@ -147,7 +149,6 @@ mixin MenuPropsMixin on UiProps {
   bool show_grid_coordinates_side_view;
   bool show_helices_axis_arrows;
   bool show_loopout_extension_length;
-  bool show_slice_bar;
   bool show_mouseover_data;
   bool disable_png_caching_dna_sequences;
   bool display_reverse_DNA_right_side_up;
@@ -155,6 +156,7 @@ mixin MenuPropsMixin on UiProps {
   bool default_crossover_type_staple_for_setting_helix_rolls;
   LocalStorageDesignChoice local_storage_design_choice;
   bool clear_helix_selection_when_loading_new_design;
+  bool show_slice_bar;
   Geometry geometry;
   UndoRedo undo_redo;
 }
@@ -349,10 +351,12 @@ that occurred between the last save and a browser crash.'''
       (MenuDropdownRight()
         ..title = 'Undo'
         ..id = "edit_menu_undo-dropdown"
+        ..keyboard_shortcut = 'Ctrl+Z'
         ..disabled = props.undo_stack_empty)(undo_dropdowns),
       (MenuDropdownRight()
         ..title = 'Redo'
         ..id = "edit_menu_redo-dropdown"
+        ..keyboard_shortcut = 'Ctrl+Shift+Z'
         ..disabled = props.redo_stack_empty)(redo_dropdowns),
       DropdownDivider({}),
       edit_menu_copy_paste(),
@@ -431,7 +435,8 @@ so will only work on scadnano designs that are exportable to cadnano.
         ..tooltip = '''\
 Puts nicks in long staple strands automatically.
 WARNING: Autobreak is an experimental feature and may be modified or removed.
-It uses cadnano code that crashes on many designs, so it is not guaranteed to work properly. It will also only work on scadnano designs that are exportable to cadnano.
+It uses cadnano code that crashes on many designs, so it is not guaranteed to work properly. 
+It will also only work on scadnano designs that are exportable to cadnano.
         ''')(),
     );
   }
@@ -460,9 +465,8 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
 
   ReactElement undo_or_redo_dropdown(UndoRedoItem item, ActionFromIntCreator undo_or_redo_action_creator,
       int num_times, String action_name, bool is_most_recent) {
-    String most_recent_string = is_most_recent ? " [Most Recent]" : "";
     return (MenuDropdownItem()
-      ..display = '${action_name} ${item.short_description}${most_recent_string}'
+      ..display = '${action_name} "${item.short_description}"' + (is_most_recent ? " [Most Recent]" : "")
       ..key = '${action_name.toLowerCase()}-${num_times}'
       ..on_click = (_) => app.dispatch(undo_or_redo_action_creator(num_times)))();
   }
@@ -539,18 +543,37 @@ with some default direction chosen. Play with it and see!
       (MenuDropdownItem()
         ..on_click =
             ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.A, ctrlKey: true).wrapped))
-        ..display = 'Select All'
+        ..display = 'Select all'
         ..key = 'edit_menu_copy-select-all'
-        ..tooltip = '''\
-Select all strands in the design.'''
+        ..tooltip = 'Select all strands in the design.'
         ..keyboard_shortcut = 'Ctrl+A')(),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.SelectAllSelectable(current_helix_group_only: true)))
-        ..display = 'Select All in Helix Group'
+        ..display = 'Select all in helix group'
         ..key = 'edit_menu_copy-select-all-in-helix-groups'
-        ..tooltip = '''\
-Select all selectable strands in the current helix group.'''
+        ..tooltip = 'Select all selectable strands in the current helix group.'
         ..keyboard_shortcut = 'Ctrl+Shift+A')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => app.disable_keyboard_shortcuts_while(ask_for_select_all_with_same_as_selected))
+        ..display = 'Select all with same...'
+        ..key = 'edit_menu_copy-select-all-with-same'
+        ..tooltip = 'Select all strands that share given trait(s) as the currently selected strand(s).'
+        ..keyboard_shortcut = 'Alt+Shift+A')(),
+      (MenuBoolean()
+        ..value = props.selection_box_intersection
+        ..display = 'Selection box intersection'
+        ..key = 'edit_menu_copy-paste_Selection box intersection'
+        ..tooltip = '''\
+In Select mode, one does Shift+drag to create a selection box, and in rope select mode,
+one can draw a more general selection "rope" polygon. This checkbox determines the rule 
+for how objects are selected by these boxes.
+
+If unchecked, select any object *entirely contained within* the selection box.
+
+If checked, select any object *intersecting* the selection box, even if some parts lie 
+outside the box.'''
+        ..onChange = ((_) => props.dispatch(
+            actions.SelectionBoxIntersectionRuleSet(intersect: !props.selection_box_intersection))))(),
       (MenuBoolean()
         ..value = props.strand_paste_keep_color
         ..display = 'Pasted strands keep original color'
@@ -900,6 +923,16 @@ toggle "Show main view helices".'''
         ..onChange = ((_) => props.dispatch(actions.ShowHelixCirclesMainViewSet(
             show_helix_circles_main_view: !props.show_helix_circles_main_view)))
         ..key = 'show-helix-circles-main-view')(),
+      (MenuBoolean()
+        ..value = props.show_grid_coordinates_side_view
+        ..display = 'Show helix coordinates in side view'
+        ..tooltip = '''\
+Displays coordinates of each helix in the side view (either grid coordinates 
+or real coordinates in nanometers, depending on whether a grid is selected).'''
+        ..name = 'show-grid-coordinates-side-view'
+        ..onChange = ((_) => props.dispatch(actions.ShowGridCoordinatesSideViewSet(
+            show_grid_coordinates_side_view: !props.show_grid_coordinates_side_view)))
+        ..key = 'show-grid-coordinates-side-view')(),
     ]);
   }
 
@@ -1043,15 +1076,6 @@ To inspect how all axes change, check View --> Show axis arrows.'''
         ..name = 'invert-y-axis'
         ..onChange = ((_) => props.dispatch(actions.InvertYSet(invert_y: !props.invert_y)))
         ..key = 'invert-y-axis')(),
-      (MenuBoolean()
-        ..value = props.show_grid_coordinates_side_view
-        ..display = 'Show grid coordinates in side view'
-        ..tooltip = '''\
-Shows grid coordinates in the side view under the helix index.'''
-        ..name = 'show-grid-coordinates-side-view'
-        ..onChange = ((_) => props.dispatch(actions.ShowGridCoordinatesSideViewSet(
-            show_grid_coordinates_side_view: !props.show_grid_coordinates_side_view)))
-        ..key = 'show-grid-coordinates-side-view')(),
       (MenuBoolean()
         ..value = props.show_helices_axis_arrows
         ..display = 'Axis arrows'

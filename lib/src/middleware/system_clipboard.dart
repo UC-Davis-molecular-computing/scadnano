@@ -137,8 +137,8 @@ void put_strand_info_on_clipboard(Store<AppState> store) {
     Map<String, dynamic> mods_map = {};
     if (modifications.length > 0) {
       for (var mod in modifications) {
-        if (!mods_map.containsKey(mod.id)) {
-          mods_map[mod.id] = mod.to_json_serializable(suppress_indent: true);
+        if (!mods_map.containsKey(mod.vendor_code)) {
+          mods_map[mod.vendor_code] = mod.to_json_serializable(suppress_indent: true);
         }
       }
     }
