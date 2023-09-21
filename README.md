@@ -185,7 +185,7 @@ It is instructive to see how that example design is represented as a `.sc` file
     { "max_offset": 48, "grid_position": [0,0] },
     { "max_offset": 48, "grid_position": [0,1] }
   ],
-  "modifications_in_design": {
+  "modifications_5p_in_design": {
     "/5Biosg/": {
       "display_text": "B",
       "vendor_code": "/5Biosg/",
