@@ -40,6 +40,12 @@ class DesignMainBasePairLinesComponent extends UiComponent2<DesignMainBasePairLi
     for (int helix_idx in base_pairs.keys) {
       if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(helix_idx)) {
         var helix = props.design.helices[helix_idx];
+        HelixGroup group = props.design.groups[helix.group];
+        String transform_str = group.transform_str(props.design.geometry);
+
+        // code below draws one line for each base pair, should render somewhat slowly
+        // however, this makes it easier to associate base pair lines to individual strands,
+        // convenient when exporting SVG
         List<ReactElement> helix_components = [];
         for (int offset in base_pairs[helix_idx]) {
           var svg_position_y = props.helix_idx_to_svg_position_y_map[helix_idx];
@@ -55,13 +61,30 @@ class DesignMainBasePairLinesComponent extends UiComponent2<DesignMainBasePairLi
             ..key = 'base-pair-line-H${helix_idx}-${offset}')();
           helix_components.add(base_pair_line);
         }
-        HelixGroup group = props.design.groups[helix.group];
-        String transform_str = group.transform_str(props.design.geometry);
         var helix_dom_group = (Dom.g()
           ..transform = transform_str
           ..className = 'base-pair-lines-components-in-helix'
           ..key = 'base-pair-lines-components-in-helix-H${helix_idx}')(helix_components);
         base_pair_lines_components.add(helix_dom_group);
+
+        // // code below draws one long disconnected path for base pairs in each helix; should render faster
+        // // however, it's not clear how to use this when exporting SVG for only some selected strands
+        // // since it puts all the base pair lines for the whole helix in one single SVG path
+        // var d = StringBuffer();
+        // for (int offset in base_pairs[helix_idx]) {
+        //   var svg_position_y = props.helix_idx_to_svg_position_y_map[helix_idx];
+        //   var base_svg_forward_pos = helix.svg_base_pos(offset, true, svg_position_y);
+        //   var base_svg_reverse_pos = helix.svg_base_pos(offset, false, svg_position_y);
+        //   d.write(" M ${base_svg_forward_pos.x} ${base_svg_forward_pos.y}"
+        //       " L ${base_svg_reverse_pos.x} ${base_svg_reverse_pos.y}");
+        // }
+        // var helix_lines_path = (Dom.path()
+        //   ..d = d.toString()
+        //   ..transform = transform_str
+        //   ..stroke = 'black'
+        //   ..className = constants.css_selector_base_pair_line
+        //   ..key = 'base-pair-lines-H${helix_idx}')();
+        // base_pair_lines_components.add(helix_lines_path);
       }
     }
 

@@ -25,28 +25,8 @@ export_dna_sequences_middleware(Store<AppState> store, action, NextDispatcher ne
 
     try {
       String result = cando_compatible_csv_export(strands);
-
-      // See export comments for why we have this stupid special case
-      // if (result is Future<List<int>>) {
-      //   result.then((response) {
-      //     List<int> content = response;
-      //     util.save_file(filename, content, blob_type: blob_type);
-      //   }).catchError((e, stackTrace) {
-      //     var cause = "";
-      //     if (has_cause(e)) {
-      //       cause = e.cause;
-      //     } else if (has_message(e)) {
-      //       cause = e.message;
-      //     }
-      //     var msg = cause + '\n\n' + stackTrace.toString();
-      //     store.dispatch(actions.ErrorMessageSet(msg));
-      //     app.view.design_view.render(store.state);
-      //   });
-      // } else {
       String content = result;
       util.save_file(filename, content, blob_type: blob_type);
-      // }
-      // .then((content) => util.save_file(filename, content, blob_type: blob_type))
     } catch (e, stackTrace) {
       var cause = "";
       if (has_cause(e)) {
@@ -60,7 +40,7 @@ export_dna_sequences_middleware(Store<AppState> store, action, NextDispatcher ne
     }
   }
 
-// Export DNA for other platforms.
+  // Export DNA for other platforms.
   if (action is actions.ExportDNA) {
     List<Strand> strands;
     if (action.include_only_selected_strands) {
@@ -79,6 +59,8 @@ export_dna_sequences_middleware(Store<AppState> store, action, NextDispatcher ne
     try {
       var result = action.export_dna_format.export(
         strands,
+        delimiter: action.delimiter,
+        domain_delimiter: action.domain_delimiter,
         strand_order: action.strand_order,
         column_major_strand: action.column_major_strand,
         column_major_plate: action.column_major_plate,
@@ -126,12 +108,27 @@ Future<void> export_dna() async {
   int idx_include_scaffold = 0;
   int idx_include_only_selected_strands = 1;
   int idx_format_str = 2;
-  int idx_column_major_plate = 3;
-  int idx_sort = 4;
-  int idx_column_major_strand = 5;
-  int idx_strand_order_str = 6;
+  int idx_delimiter = 3;
+  int idx_domain_delimiter = 4;
+  int idx_column_major_plate = 5;
+  int idx_sort = 6;
+  int idx_column_major_strand = 7;
+  int idx_strand_order_str = 8;
 
-  List<DialogItem> items = List<DialogItem>.filled(7, null);
+  List<DialogItem> items = List<DialogItem>.filled(9, null);
+
+  items[idx_delimiter] = DialogText(label: 'delimiter between IDT fields', value: ',', tooltip: '''\
+Delimiter to separate IDT fields in a "bulk input" text file, for instance if set to ";", then a line 
+of the file could be
+  strand_name;AAAAACCCCCGGGGG;25nm;STD''');
+
+  items[idx_domain_delimiter] =
+      DialogText(label: 'delimiter between DNA sequences of domains', value: '', tooltip: '''\
+Delimiter to separate DNA sequences from different domains/loopouts/extensions, for instance if set to " ", 
+then the exported DNA sequence could be
+  AAAAA CCCCC GGGGG
+if it had three domains each of length 5.''');
+
   items[idx_include_scaffold] = DialogCheckbox(label: 'include scaffold', value: false);
   items[idx_include_only_selected_strands] =
       DialogCheckbox(label: 'include only selected strands', value: false);
@@ -213,11 +210,15 @@ which part of the strand to use as the address.
   }
   bool column_major_plate = (results[idx_column_major_plate] as DialogCheckbox).value;
   ExportDNAFormat format = ExportDNAFormat.fromString(format_str);
+  String delimiter = (results[idx_delimiter] as DialogText).value;
+  String domain_delimiter = (results[idx_domain_delimiter] as DialogText).value;
 
   app.dispatch(actions.ExportDNA(
     include_scaffold: include_scaffold,
     include_only_selected_strands: include_only_selected_strands,
     export_dna_format: format,
+    delimiter: delimiter,
+    domain_delimiter: domain_delimiter,
     strand_order: strand_order,
     column_major_strand: column_major_strand,
     column_major_plate: column_major_plate,
@@ -230,23 +231,25 @@ String cando_compatible_csv_export(Iterable<Strand> strands) {
   buf.writeln('Start,End,Sequence,Length,Color');
   for (var strand in strands) {
 // If the export name contains 'SCAF', then it's a scaffold strand, so we do not export it for cando.
-    if (strand.idt_export_name().contains('SCAF')) {
+    if (strand.vendor_export_name().contains('SCAF')) {
       continue;
     }
 // Remove the characters 'ST' from the start of the export name as cando doesn't understand them.
-    var cando_strand = strand.idt_export_name().replaceAll(RegExp(r'^ST'), '');
+    var cando_strand = strand.vendor_export_name().replaceAll(RegExp(r'^ST'), '');
 // Split the export name into the start and end positions.
     RegExp cando_split_regex = RegExp(r'\d+\[\d+\]');
     List<String> cando_split_name =
         cando_split_regex.allMatches(cando_strand).map((match) => match.group(0)).toList();
     if (cando_split_name.length != 2) {
-      throw ExportDNAException('Invalid strand name: ${strand.idt_export_name()}');
+      throw ExportDNAException('Invalid strand name: ${strand.vendor_export_name()}');
     }
     var cando_strand_end = cando_split_name[1];
     var cando_strand_start = cando_split_name[0];
 // Write the strand to the CSV file.
-    buf.writeln(
-        '${cando_strand_start},${cando_strand_end},${idt_sequence_null_aware(strand)},${idt_sequence_null_aware(strand).length},${strand.color.toHexColor().toCssString().toUpperCase()}');
+    buf.writeln('${cando_strand_start},${cando_strand_end}'
+        ',${vendor_sequence_null_aware(strand, "")}'
+        ',${vendor_sequence_null_aware(strand, "").length}'
+        ',${strand.color.toHexColor().toCssString().toUpperCase()}');
   }
   return buf.toString();
 }

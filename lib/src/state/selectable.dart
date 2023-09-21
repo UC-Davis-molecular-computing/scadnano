@@ -7,6 +7,7 @@ import 'package:built_value/serializer.dart';
 import '../serializers.dart';
 import '../actions/actions.dart' as actions;
 import 'crossover.dart';
+import 'dialog.dart';
 import 'domain.dart';
 import 'address.dart';
 import 'loopout.dart';
@@ -550,4 +551,152 @@ bool origami_type_selectable(Selectable selectable) {
   } else {
     return select_modes().contains(SelectModeChoice.staple);
   }
+}
+
+// for specifying traits in Edit-->Copy/Paste/Select-->Select all with same...
+class SelectableTrait extends EnumClass {
+  const SelectableTrait._(String name) : super(name);
+
+  @memoized
+  int get hashCode;
+
+  static Serializer<SelectableTrait> get serializer => _$selectableTraitSerializer;
+
+  /******************** end BuiltValue boilerplate *********************/
+
+  static const SelectableTrait strand_name = _$strand_name;
+  static const SelectableTrait strand_label = _$strand_label;
+  static const SelectableTrait color = _$color;
+  static const SelectableTrait modification_5p = _$modification_5p;
+  static const SelectableTrait modification_3p = _$modification_3p;
+  static const SelectableTrait modification_int = _$modification_int;
+  static const SelectableTrait dna_sequence = _$dna_sequence;
+  static const SelectableTrait vendor_fields = _$vendor_fields;
+  static const SelectableTrait circular = _$circular;
+  static const SelectableTrait helices = _$helices;
+
+  static BuiltSet<SelectableTrait> get values => _$values;
+
+  static SelectableTrait valueOf(String name) => _$valueOf(name);
+
+  @memoized
+  String get description {
+    if (this == strand_name) return 'name';
+    if (this == strand_label) return 'label';
+    if (this == color) return 'color';
+    if (this == modification_5p) return "5' modification";
+    if (this == modification_3p) return "3' modification";
+    if (this == modification_int) return "internal modification";
+    if (this == dna_sequence) return 'DNA sequence';
+    if (this == vendor_fields) return 'vendor fields';
+    if (this == circular) return 'circular';
+    if (this == helices) return 'helices';
+    throw AssertionError('unrecognized trait ${this}');
+  }
+
+  Object trait_of_strand(Strand strand) {
+    if (this == strand_name) return strand.name;
+    if (this == strand_label) return strand.label;
+    if (this == color) return strand.color;
+    if (this == modification_5p) return strand.modification_5p;
+    if (this == modification_3p) return strand.modification_3p;
+    if (this == modification_int) return strand.modifications_int;
+    if (this == dna_sequence) return strand.dna_sequence;
+    if (this == vendor_fields) return strand.vendor_fields;
+    if (this == circular) return strand.circular;
+    if (this == helices) return [for (var domain in strand.domains) domain.helix];
+    throw AssertionError('unrecognized trait ${this}');
+  }
+
+  // generic way to check if two trait values "match" that generalizes beyond ==,
+  // for instance two Modifications match if their IDs match (but not perhaps their position if internal).
+  bool matches(Object v1, Object v2) {
+    if (v1 == null && v2 == null) {
+      return true;
+    } else if (v1 == null && v2 != null) {
+      return false;
+    } else if (v1 != null && v2 == null) {
+      return false;
+    }
+    // If we make it past here, both values are non-null.
+
+    // put code here that checks something other than equality and returns
+    if (this == modification_5p || this == modification_3p) {
+      assert(v1 is Modification5Prime || v1 is Modification3Prime);
+      assert(v2 is Modification5Prime || v2 is Modification3Prime);
+      // two modifications match if their IDs match
+      var m1 = (v1 as Modification);
+      var m2 = (v2 as Modification);
+      return m1.vendor_code == m2.vendor_code;
+    } else if (this == modification_int) {
+      assert(v1 is BuiltMap<int, ModificationInternal>);
+      assert(v2 is BuiltMap<int, ModificationInternal>);
+      // two strands with internal modifications match if share internal modifications with same vendor code
+      var mods1 = (v1 as BuiltMap<int, ModificationInternal>);
+      var mods2 = (v2 as BuiltMap<int, ModificationInternal>);
+      for (var mod1 in mods1.values) {
+        for (var mod2 in mods2.values) {
+          if (mod1.vendor_code == mod2.vendor_code) {
+            return true;
+          }
+        }
+      }
+      return false;
+    } else if (this == helices) {
+      assert(v1 is List<int>);
+      assert(v2 is List<int>);
+      var helices1 = (v1 as List<int>);
+      var helices2 = (v2 as List<int>);
+      for (int h1 in helices1) {
+        for (int h2 in helices2) {
+          if (h1 == h2) {
+            return true;
+          }
+        }
+      }
+      return false;
+    } else {
+      // if we're not sure what else to do, just check for equality
+      return v1 == v2;
+    }
+  }
+}
+
+Future<void> ask_for_select_all_with_same_as_selected() async {
+  var selected_strands = BuiltList<Selectable>.from(app.state.ui_state.selectables_store.selected_strands);
+  if (selected_strands.length == 0) {
+    window.alert('No strands are selected. Select at least one strand before choosing this option.');
+    return;
+  }
+
+  var all_traits = List<SelectableTrait>.from(SelectableTrait.values);
+  var items = List<DialogItem>.filled(all_traits.length, null);
+
+  for (int idx = 0; idx < all_traits.length; idx++) {
+    var trait = all_traits[idx];
+    items[idx] = DialogCheckbox(label: trait.description, value: false);
+  }
+
+  var dialog = Dialog(
+    title: "Select all strands with same traits as currently selected strand(s)",
+    type: DialogType.select_all_with_same_as_selected,
+    items: items,
+  );
+  List<DialogItem> results = await util.dialog(dialog);
+  if (results == null) return;
+
+  List<SelectableTrait> traits_for_selection = [];
+  for (int idx = 0; idx < all_traits.length; idx++) {
+    var trait = all_traits[idx];
+    bool trait_selected = (results[idx] as DialogCheckbox).value;
+    if (trait_selected) {
+      traits_for_selection.add(trait);
+    }
+  }
+
+  var action = actions.SelectAllWithSameAsSelected(
+    templates: selected_strands,
+    traits: traits_for_selection.build(),
+  );
+  app.dispatch(action);
 }

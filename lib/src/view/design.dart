@@ -629,10 +629,18 @@ class DesignViewComponent {
       paste_strands_auto();
     }
 
-    // Ctrl+A for select all, Ctrl+Shift+A for current helix group only
-    if ((ev.ctrlKey || ev.metaKey) && key == KeyCode.A && edit_mode_is_select_or_rope_select()) {
+    // Ctrl+A for select all
+    if ((ev.ctrlKey || ev.metaKey) &&
+        !(ev.altKey) &&
+        key == KeyCode.A &&
+        edit_mode_is_select_or_rope_select()) {
       ev.preventDefault();
+      // Ctrl+Shift+A for current helix group only
       app.dispatch(actions.SelectAllSelectable(current_helix_group_only: ev.shiftKey));
+    } else if (ev.altKey && ev.shiftKey && !(ev.ctrlKey || ev.metaKey) && key == KeyCode.A) {
+      // Alt+Shift+A for Select all with same
+      ev.preventDefault();
+      app.disable_keyboard_shortcuts_while(ask_for_select_all_with_same_as_selected);
     }
 
     if (key == EditModeChoice.pencil.key_code()) {

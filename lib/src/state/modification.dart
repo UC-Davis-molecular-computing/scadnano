@@ -15,9 +15,7 @@ part 'modification.g.dart';
 abstract class Modification {
   String get display_text;
 
-  String get id;
-
-  String get idt_text;
+  String get vendor_code;
 
   int get connector_length;
 
@@ -25,12 +23,10 @@ abstract class Modification {
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false});
 
-  Modification set_id(String id);
-
   static Map<String, dynamic> mod_to_json_serializable(Modification mod, bool suppress_indent) {
     Map<String, dynamic> map = {
       constants.mod_display_text_key: mod.display_text,
-      if (mod.idt_text != null) constants.mod_idt_text_key: mod.idt_text,
+      if (mod.vendor_code != null) constants.mod_vendor_code_key: mod.vendor_code,
       if (mod.connector_length != constants.default_modification_connector_length)
         constants.mod_connector_length_key: mod.connector_length,
     };
@@ -62,23 +58,20 @@ abstract class Modification {
 }
 
 String mod_html_id(Modification modification, Address address) =>
-    "modification-${modification.id.replaceAll('/', '')}-${address}";
+    "modification-${modification.vendor_code.replaceAll('/', '')}-${address}";
 
 abstract class Modification5Prime
     with BuiltJsonSerializable, UnusedFields
     implements Built<Modification5Prime, Modification5PrimeBuilder>, Modification {
   factory Modification5Prime(
       {String display_text,
-      String id,
-      String idt_text,
+      String vendor_code,
       int connector_length = constants.default_modification_connector_length,
       BuiltMap<String, Object> unused_fields}) {
-    String id_to_assign = id ?? ("5'-" + (idt_text ?? display_text));
     var unused_fields_to_assign = unused_fields ?? BuiltMap<String, Object>();
     return Modification5Prime.from((b) => b
       ..display_text = display_text
-      ..idt_text = idt_text
-      ..id = id_to_assign
+      ..vendor_code = vendor_code
       ..connector_length = connector_length
       ..unused_fields.replace(unused_fields_to_assign));
   }
@@ -96,19 +89,11 @@ abstract class Modification5Prime
 
   String get display_text;
 
-  // need to delay assigning id until modification is read, since Modification.from_json doesn't know
-  // the key in the map that maps the id to this modification. Call set_id after creating to set this.
-  @nullable
-  String get id;
-
-  @nullable
-  String get idt_text;
+  String get vendor_code;
 
   int get connector_length;
 
   String html_id(Address address) => mod_html_id(this, address);
-
-  Modification set_id(String id) => rebuild((b) => b..id = id);
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     var ret = Modification.mod_to_json_serializable(this, suppress_indent);
@@ -118,18 +103,17 @@ abstract class Modification5Prime
 
   static Modification5Prime from_json(Map<String, dynamic> json_map) {
     String display_text = json_map[constants.mod_display_text_key];
-    String id = json_map[constants.mod_id_key];
     String location = json_map[constants.mod_location_key];
     assert(location == "5'");
-    String idt_text = json_map[constants.mod_idt_text_key];
+    String vendor_code = util.mandatory_field(json_map, constants.mod_vendor_code_key, "Modification5Prime",
+        legacy_keys: constants.legacy_mod_vendor_code_keys);
     int connector_length = util.optional_field(
         json_map, constants.mod_connector_length_key, constants.default_modification_connector_length);
     var unused_fields = util.unused_fields_map(json_map, constants.modification_keys).build();
 
     return Modification5Prime(
         display_text: display_text,
-        id: id,
-        idt_text: idt_text,
+        vendor_code: vendor_code,
         unused_fields: unused_fields,
         connector_length: connector_length);
   }
@@ -140,16 +124,13 @@ abstract class Modification3Prime
     implements Built<Modification3Prime, Modification3PrimeBuilder>, Modification {
   factory Modification3Prime(
       {String display_text,
-      String id,
-      String idt_text,
+      String vendor_code,
       int connector_length = constants.default_modification_connector_length,
       BuiltMap<String, Object> unused_fields}) {
-    String id_to_assign = id ?? ("3'-" + (idt_text ?? display_text));
     var unused_fields_to_assign = unused_fields ?? BuiltMap<String, Object>();
     return Modification3Prime.from((b) => b
       ..display_text = display_text
-      ..idt_text = idt_text
-      ..id = id_to_assign
+      ..vendor_code = vendor_code
       ..connector_length = connector_length
       ..unused_fields.replace(unused_fields_to_assign));
   }
@@ -167,19 +148,11 @@ abstract class Modification3Prime
 
   String get display_text;
 
-  // need to delay assigning id until modification is read, since Modification.from_json doesn't know
-  // the key in the map that maps the id to this modification. Call set_id after creating to set this.
-  @nullable
-  String get id;
-
-  @nullable
-  String get idt_text;
+  String get vendor_code;
 
   int get connector_length;
 
   String html_id(Address address) => mod_html_id(this, address);
-
-  Modification set_id(String id) => rebuild((b) => b..id = id);
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     var ret = Modification.mod_to_json_serializable(this, suppress_indent);
@@ -189,18 +162,17 @@ abstract class Modification3Prime
 
   static Modification3Prime from_json(Map<String, dynamic> json_map) {
     String display_text = json_map[constants.mod_display_text_key];
-    String id = json_map[constants.mod_id_key];
     String location = json_map[constants.mod_location_key];
     assert(location == "3'");
-    String idt_text = json_map[constants.mod_idt_text_key];
+    String vendor_code = util.mandatory_field(json_map, constants.mod_vendor_code_key, "Modification3Prime",
+        legacy_keys: constants.legacy_mod_vendor_code_keys);
     int connector_length = util.optional_field(
         json_map, constants.mod_connector_length_key, constants.default_modification_connector_length);
     var unused_fields = util.unused_fields_map(json_map, constants.modification_keys).build();
 
     return Modification3Prime(
         display_text: display_text,
-        id: id,
-        idt_text: idt_text,
+        vendor_code: vendor_code,
         unused_fields: unused_fields,
         connector_length: connector_length);
   }
@@ -211,20 +183,16 @@ abstract class ModificationInternal
     implements Built<ModificationInternal, ModificationInternalBuilder>, Modification {
   factory ModificationInternal(
       {String display_text,
-      String id,
-      String idt_text,
+      String vendor_code,
       int connector_length = constants.default_modification_connector_length,
       BuiltSet<String> allowed_bases,
       BuiltMap<String, Object> unused_fields}) {
-    String id_to_assign = id ?? ("internal-" + (idt_text ?? display_text));
     var unused_fields_to_assign = unused_fields ?? BuiltMap<String, Object>();
-    var allowed_bases_to_assign = allowed_bases ?? BuiltSet<String>(['A', 'C', 'G', 'T']);
     return ModificationInternal.from((b) => b
       ..display_text = display_text
-      ..idt_text = idt_text
-      ..id = id_to_assign
+      ..vendor_code = vendor_code
       ..connector_length = connector_length
-      ..allowed_bases.replace(allowed_bases_to_assign)
+      ..allowed_bases = allowed_bases?.toBuilder()
       ..unused_fields.replace(unused_fields_to_assign));
   }
 
@@ -242,22 +210,16 @@ abstract class ModificationInternal
 
   String get display_text;
 
-  // need to delay assigning id until modification is read, since Modification.from_json doesn't know
-  // the key in the map that maps the id to this modification. Call set_id after creating to set this.
-  @nullable
-  String get id;
-
-  @nullable
-  String get idt_text;
+  String get vendor_code;
 
   int get connector_length;
 
   @nullable
   BuiltSet<String> get allowed_bases;
 
-  String html_id(Address address) => mod_html_id(this, address);
+  bool get attached_to_base => this.allowed_bases != null;
 
-  Modification set_id(String id) => rebuild((b) => b..id = id);
+  String html_id(Address address) => mod_html_id(this, address);
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     var ret = Modification.mod_to_json_serializable(this, suppress_indent);
@@ -271,10 +233,10 @@ abstract class ModificationInternal
 
   static ModificationInternal from_json(Map<String, dynamic> json_map) {
     String display_text = json_map[constants.mod_display_text_key];
-    String id = json_map[constants.mod_id_key];
     String location = json_map[constants.mod_location_key];
     assert(location == "internal");
-    String idt_text = json_map[constants.mod_idt_text_key];
+    String vendor_code = util.mandatory_field(json_map, constants.mod_vendor_code_key, "ModificationInternal",
+        legacy_keys: constants.legacy_mod_vendor_code_keys);
     int connector_length = util.optional_field(
         json_map, constants.mod_connector_length_key, constants.default_modification_connector_length);
     var allowed_bases_json = json_map[constants.mod_allowed_bases_key];
@@ -283,8 +245,7 @@ abstract class ModificationInternal
 
     return ModificationInternal(
         display_text: display_text,
-        id: id,
-        idt_text: idt_text,
+        vendor_code: vendor_code,
         connector_length: connector_length,
         allowed_bases: allowed_bases,
         unused_fields: unused_fields);

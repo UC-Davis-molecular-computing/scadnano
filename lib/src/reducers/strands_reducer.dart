@@ -577,41 +577,41 @@ Reducer<Strand> single_strand_reducer = combineReducers([
   TypedReducer<Strand, actions.ModificationEdit>(modification_edit_reducer),
   TypedReducer<Strand, actions.StrandNameSet>(strand_name_set_reducer),
   TypedReducer<Strand, actions.StrandLabelSet>(strand_label_set_reducer),
-  TypedReducer<Strand, actions.ScalePurificationIDTFieldsAssign>(
-      scale_purification_idt_fields_assign_reducer),
-  TypedReducer<Strand, actions.PlateWellIDTFieldsAssign>(plate_well_idt_fields_assign_reducer),
-  TypedReducer<Strand, actions.PlateWellIDTFieldsRemove>(plate_well_idt_fields_remove_reducer),
-  TypedReducer<Strand, actions.IDTFieldsRemove>(idt_fields_remove_reducer),
+  TypedReducer<Strand, actions.ScalePurificationVendorFieldsAssign>(
+      scale_purification_vendor_fields_assign_reducer),
+  TypedReducer<Strand, actions.PlateWellVendorFieldsAssign>(plate_well_vendor_fields_assign_reducer),
+  TypedReducer<Strand, actions.PlateWellVendorFieldsRemove>(plate_well_vendor_fields_remove_reducer),
+  TypedReducer<Strand, actions.VendorFieldsRemove>(vendor_fields_remove_reducer),
 ]);
 
-Strand idt_fields_remove_reducer(Strand strand, actions.IDTFieldsRemove action) {
-  Strand strand_with_new_idt_fields = strand.rebuild((m) => m.idt = null);
-  return strand_with_new_idt_fields;
+Strand vendor_fields_remove_reducer(Strand strand, actions.VendorFieldsRemove action) {
+  Strand strand_with_new_vendor_fields = strand.rebuild((m) => m.vendor_fields = null);
+  return strand_with_new_vendor_fields;
 }
 
-Strand plate_well_idt_fields_remove_reducer(Strand strand, actions.PlateWellIDTFieldsRemove action) {
-  if (strand.idt != null) {
-    Strand strand_with_new_idt_fields;
-    strand_with_new_idt_fields = strand.rebuild((m) => m.idt
+Strand plate_well_vendor_fields_remove_reducer(Strand strand, actions.PlateWellVendorFieldsRemove action) {
+  if (strand.vendor_fields != null) {
+    Strand strand_with_new_vendor_fields;
+    strand_with_new_vendor_fields = strand.rebuild((m) => m.vendor_fields
       ..plate = null
       ..well = null);
-    return strand_with_new_idt_fields;
+    return strand_with_new_vendor_fields;
   } else {
     return strand;
   }
 }
 
-Strand plate_well_idt_fields_assign_reducer(Strand strand, actions.PlateWellIDTFieldsAssign action) {
-  Strand strand_with_new_idt_fields;
-  strand_with_new_idt_fields = strand.rebuild((m) => m.idt.replace(action.idt_fields));
-  return strand_with_new_idt_fields;
+Strand plate_well_vendor_fields_assign_reducer(Strand strand, actions.PlateWellVendorFieldsAssign action) {
+  Strand strand_with_new_vendor_fields;
+  strand_with_new_vendor_fields = strand.rebuild((m) => m.vendor_fields.replace(action.vendor_fields));
+  return strand_with_new_vendor_fields;
 }
 
-Strand scale_purification_idt_fields_assign_reducer(
-    Strand strand, actions.ScalePurificationIDTFieldsAssign action) {
-  Strand strand_with_new_idt_fields;
-  strand_with_new_idt_fields = strand.rebuild((m) => m.idt.replace(action.idt_fields));
-  return strand_with_new_idt_fields;
+Strand scale_purification_vendor_fields_assign_reducer(
+    Strand strand, actions.ScalePurificationVendorFieldsAssign action) {
+  Strand strand_with_new_vendor_fields;
+  strand_with_new_vendor_fields = strand.rebuild((m) => m.vendor_fields.replace(action.vendor_fields));
+  return strand_with_new_vendor_fields;
 }
 
 Strand strand_name_set_reducer(Strand strand, actions.StrandNameSet action) =>

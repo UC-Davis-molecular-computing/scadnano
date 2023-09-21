@@ -73,7 +73,7 @@ def add_adapters(design):
                            start=left_outside_seed, end=left_inside_seed)
         ss_bot = sc.Domain(helix=bot_helix, forward=False,
                            start=left_outside_seed, end=left_inside_seed)
-        idt = sc.IDTFields(name=f'adap-left-{top_helix}-{bot_helix}',
+        idt = sc.VendorFields(name=f'adap-left-{top_helix}-{bot_helix}',
                            scale='25nm', purification='STD')
         adapter = sc.Strand(domains=[ss_bot, ss_top], idt=idt)
         design.add_strand(adapter)
@@ -87,7 +87,7 @@ def add_adapters(design):
                            start=right_inside_seed, end=right_outside_seed)
         ss_bot = sc.Domain(helix=bot_helix, forward=False,
                            start=right_inside_seed, end=right_outside_seed)
-        idt = sc.IDTFields(name=f'adap-right-{top_helix}-{bot_helix}',
+        idt = sc.VendorFields(name=f'adap-right-{top_helix}-{bot_helix}',
                            scale='25nm', purification='STD')
         adapter = sc.Strand(domains=[ss_top, ss_bot], idt=idt)
         design.add_strand(adapter)

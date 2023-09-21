@@ -15,7 +15,7 @@ import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
-import 'package:scadnano/src/state/idt_fields.dart';
+import 'package:scadnano/src/state/vendor_fields.dart';
 import 'package:scadnano/src/state/linker.dart';
 import 'package:scadnano/src/state/substrand.dart';
 import 'package:scadnano/src/util.dart';
@@ -1184,6 +1184,27 @@ abstract class HelixRollSetAtOther
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// relax helix rolls
+
+abstract class RelaxHelixRolls
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<RelaxHelixRolls, RelaxHelixRollsBuilder> {
+  bool get only_selected;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory RelaxHelixRolls({bool only_selected}) = _$RelaxHelixRolls._;
+
+  RelaxHelixRolls._();
+
+  static Serializer<RelaxHelixRolls> get serializer => _$relaxHelixRollsSerializer;
+
+  @override
+  String short_description() {
+    return "set helix rolls to unstrain crossovers";
+  }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Error message
 
 abstract class ErrorMessageSet
@@ -1415,6 +1436,25 @@ abstract class GeometrySet
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Selectables
 
+// If intersect is true, then any object intersecting the selection box is selected.
+// If intersect is false, then any object contained in the selectin box is selected.
+abstract class SelectionBoxIntersectionRuleSet
+    with BuiltJsonSerializable
+    implements Action, Built<SelectionBoxIntersectionRuleSet, SelectionBoxIntersectionRuleSetBuilder> {
+  bool get intersect;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SelectionBoxIntersectionRuleSet({bool intersect}) = _$SelectionBoxIntersectionRuleSet._;
+
+  SelectionBoxIntersectionRuleSet._();
+
+  static Serializer<SelectionBoxIntersectionRuleSet> get serializer =>
+      _$selectionBoxIntersectionRuleSetSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
 abstract class Select with BuiltJsonSerializable implements Action, Built<Select, SelectBuilder> {
   Selectable get selectable;
 
@@ -1520,6 +1560,24 @@ abstract class SelectAllSelectable
       _$SelectAllSelectable;
 
   static Serializer<SelectAllSelectable> get serializer => _$selectAllSelectableSerializer;
+}
+
+// used to select all strands (and maybe someday extended to other objects like Domains)
+// with the same "trait" (e.g., name, label, color) as already selected strand(s)
+abstract class SelectAllWithSameAsSelected
+    with BuiltJsonSerializable
+    implements Action, Built<SelectAllWithSameAsSelected, SelectAllWithSameAsSelectedBuilder> {
+  BuiltList<Selectable> get templates;
+
+  BuiltList<SelectableTrait> get traits;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SelectAllWithSameAsSelected({BuiltList<Selectable> templates, BuiltList<SelectableTrait> traits}) =
+      _$SelectAllWithSameAsSelected._;
+
+  SelectAllWithSameAsSelected._();
+
+  static Serializer<SelectAllWithSameAsSelected> get serializer => _$selectAllWithSameAsSelectedSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2027,11 +2085,17 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
 
   bool get column_major_plate;
 
+  String get delimiter;
+
+  String get domain_delimiter;
+
   /************************ begin BuiltValue boilerplate ************************/
   factory ExportDNA({
     bool include_scaffold,
     bool include_only_selected_strands,
     ExportDNAFormat export_dna_format,
+    String delimiter,
+    String domain_delimiter,
     StrandOrder strand_order = null,
     bool column_major_strand = true,
     bool column_major_plate = true,
@@ -2040,6 +2104,8 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
       ..include_scaffold = include_scaffold
       ..include_only_selected_strands = include_only_selected_strands
       ..export_dna_format = export_dna_format
+      ..delimiter = delimiter
+      ..domain_delimiter = domain_delimiter
       ..strand_order = strand_order
       ..column_major_strand = column_major_strand
       ..column_major_plate = column_major_plate);
@@ -3377,83 +3443,84 @@ abstract class DeletionRemove
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// assign scale/purification IDT fields of strands
-abstract class ScalePurificationIDTFieldsAssign
+// assign scale/purification vendor fields of strands
+abstract class ScalePurificationVendorFieldsAssign
     with BuiltJsonSerializable, UndoableAction
     implements
         SingleStrandAction,
-        Built<ScalePurificationIDTFieldsAssign, ScalePurificationIDTFieldsAssignBuilder> {
+        Built<ScalePurificationVendorFieldsAssign, ScalePurificationVendorFieldsAssignBuilder> {
   Strand get strand;
 
-  IDTFields get idt_fields;
+  VendorFields get vendor_fields;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ScalePurificationIDTFieldsAssign({Strand strand, IDTFields idt_fields}) =
-      _$ScalePurificationIDTFieldsAssign._;
+  factory ScalePurificationVendorFieldsAssign({Strand strand, VendorFields vendor_fields}) =
+      _$ScalePurificationVendorFieldsAssign._;
 
-  ScalePurificationIDTFieldsAssign._();
+  ScalePurificationVendorFieldsAssign._();
 
-  static Serializer<ScalePurificationIDTFieldsAssign> get serializer =>
-      _$scalePurificationIDTFieldsAssignSerializer;
+  static Serializer<ScalePurificationVendorFieldsAssign> get serializer =>
+      _$scalePurificationVendorFieldsAssignSerializer;
 
   @override
-  String short_description() => "assign scale purification IDT fields";
+  String short_description() => "assign scale purification vendor fields";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // assign plate/well IDT fields of strands
-abstract class PlateWellIDTFieldsAssign
+abstract class PlateWellVendorFieldsAssign
     with BuiltJsonSerializable, UndoableAction
-    implements SingleStrandAction, Built<PlateWellIDTFieldsAssign, PlateWellIDTFieldsAssignBuilder> {
+    implements SingleStrandAction, Built<PlateWellVendorFieldsAssign, PlateWellVendorFieldsAssignBuilder> {
   Strand get strand;
 
-  IDTFields get idt_fields;
+  VendorFields get vendor_fields;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory PlateWellIDTFieldsAssign({Strand strand, IDTFields idt_fields}) = _$PlateWellIDTFieldsAssign._;
+  factory PlateWellVendorFieldsAssign({Strand strand, VendorFields vendor_fields}) =
+      _$PlateWellVendorFieldsAssign._;
 
-  PlateWellIDTFieldsAssign._();
+  PlateWellVendorFieldsAssign._();
 
-  static Serializer<PlateWellIDTFieldsAssign> get serializer => _$plateWellIDTFieldsAssignSerializer;
+  static Serializer<PlateWellVendorFieldsAssign> get serializer => _$plateWellVendorFieldsAssignSerializer;
 
   @override
-  String short_description() => "assign plate well IDT fields";
+  String short_description() => "assign plate well vendor fields";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// remove plate/well IDT fields of strands
-abstract class PlateWellIDTFieldsRemove
+// remove plate/well vendor fields of strands
+abstract class PlateWellVendorFieldsRemove
     with BuiltJsonSerializable, UndoableAction
-    implements SingleStrandAction, Built<PlateWellIDTFieldsRemove, PlateWellIDTFieldsRemoveBuilder> {
+    implements SingleStrandAction, Built<PlateWellVendorFieldsRemove, PlateWellVendorFieldsRemoveBuilder> {
   Strand get strand;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory PlateWellIDTFieldsRemove({Strand strand}) = _$PlateWellIDTFieldsRemove._;
+  factory PlateWellVendorFieldsRemove({Strand strand}) = _$PlateWellVendorFieldsRemove._;
 
-  PlateWellIDTFieldsRemove._();
+  PlateWellVendorFieldsRemove._();
 
-  static Serializer<PlateWellIDTFieldsRemove> get serializer => _$plateWellIDTFieldsRemoveSerializer;
+  static Serializer<PlateWellVendorFieldsRemove> get serializer => _$plateWellVendorFieldsRemoveSerializer;
 
   @override
-  String short_description() => "remove plate well IDT fields";
+  String short_description() => "remove plate well vendor fields";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// remove plate/well IDT fields of strands
-abstract class IDTFieldsRemove
+// remove vendor fields of strands
+abstract class VendorFieldsRemove
     with BuiltJsonSerializable, UndoableAction
-    implements SingleStrandAction, Built<IDTFieldsRemove, IDTFieldsRemoveBuilder> {
+    implements SingleStrandAction, Built<VendorFieldsRemove, VendorFieldsRemoveBuilder> {
   Strand get strand;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory IDTFieldsRemove({Strand strand}) = _$IDTFieldsRemove._;
+  factory VendorFieldsRemove({Strand strand}) = _$VendorFieldsRemove._;
 
-  IDTFieldsRemove._();
+  VendorFieldsRemove._();
 
-  static Serializer<IDTFieldsRemove> get serializer => _$iDTFieldsRemoveSerializer;
+  static Serializer<VendorFieldsRemove> get serializer => _$vendorFieldsRemoveSerializer;
 
   @override
-  String short_description() => "remove IDT fields";
+  String short_description() => "remove vendor fields";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

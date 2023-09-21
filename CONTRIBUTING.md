@@ -662,6 +662,8 @@ For any more significant change that is made (e.g., closing an issue, adding a n
 
 Less frequently, pull requests (abbreviated PR) can be made from `dev` to `main`, but make sure that `dev` is working before merging to `main` as all changes to `main` are automatically built and deployed to https://scadnano.org.
 
+**Note about Github actions deploying to website:** One thing to note is that pushing to either the `main` branch (as this does) or the `dev` branch causes a Github action to start that updates the website https://scadnano.org (and https://scadnano.org/dev). If multiple of these actions run simultaneously, they can interfere with each other in unexpected ways. One way this can happen is merging from another branch to `dev` (e.g., in a PR closing an issue) and then immediately doing a PR from `dev` to `main`. Another way is merging `dev` to `main` and then immediately pushing to `dev`; for example, I always immediately update the version in constants.dart after merging to `main`. In the last case, I'm careful to wait until the action deploying from `main` is complete, before pushing the new commit to `dev`, otherwise the deployment from `main` can be cancelled. If this does happen, typically one can fix it by waiting until all deployment actions are done, then just re-run the action that was cancelled.
+
 **WARNING:** Always wait for the checks to complete. This is important 1) to ensure that unit tests pass, and 2) to ensure that the deployment to github pages on the dev branch does not get clobbered by the deployment on the main branch. Both deploy to the gh-pages branch, so we never want two of these actions running at once. They will look like this when incomplete:
 
 ![](images/github-CI-checks-incomplete.png)

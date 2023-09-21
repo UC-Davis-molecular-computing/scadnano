@@ -189,6 +189,8 @@ Simple CSV (comma-separated value) format. Not a format used by any biotech comp
   /// to determine whether to use the return value directly or to wait for it asynchronously.
   export(
     Iterable<Strand> strands, {
+    String delimiter = ',',
+    String domain_delimiter = '',
     StrandOrder strand_order = null,
     bool column_major_strand = true,
     bool column_major_plate = true,
@@ -202,13 +204,15 @@ Simple CSV (comma-separated value) format. Not a format used by any biotech comp
     try {
       switch (this) {
         case csv:
-          return csv_export(strands_sorted);
+          return csv_export(strands_sorted, domain_delimiter);
         case idt_bulk:
-          return idt_bulk_export(strands_sorted);
+          return idt_bulk_export(strands_sorted, delimiter: delimiter, domain_delimiter: domain_delimiter);
         case idt_plates96:
-          return idt_plates_export(strands_sorted, PlateType.wells96, column_major_plate);
+          return idt_plates_export(strands_sorted, PlateType.wells96, column_major_plate,
+              domain_delimiter: domain_delimiter);
         case idt_plates384:
-          return idt_plates_export(strands_sorted, PlateType.wells384, column_major_plate);
+          return idt_plates_export(strands_sorted, PlateType.wells384, column_major_plate,
+              domain_delimiter: domain_delimiter);
       }
     } on ExportDNAException catch (e) {
       throw e;
@@ -229,21 +233,32 @@ class ExportDNAException implements Exception {
   ExportDNAException(this.cause);
 }
 
-String csv_export(Iterable<Strand> strands) {
-  var lines = strands.map((strand) => '${strand.idt_export_name()},${idt_sequence_null_aware(strand)}');
-  return lines.join('\n');
-}
-
-String idt_sequence_null_aware(Strand strand) => strand.idt_dna_sequence ?? '*****NONE*****';
-
-String idt_bulk_export(Iterable<Strand> strands, {String scale = '25nm', String purification = 'STD'}) {
+String csv_export(Iterable<Strand> strands, String domain_delimiter) {
   var lines = strands.map(
-      (strand) => '${strand.idt_export_name()},${idt_sequence_null_aware(strand)},${scale},${purification}');
+      (strand) => '${strand.vendor_export_name()},${vendor_sequence_null_aware(strand, domain_delimiter)}');
   return lines.join('\n');
 }
 
-Future<List<int>> idt_plates_export(
-    Iterable<Strand> strands, PlateType plate_type, bool column_major_plate) async {
+String vendor_sequence_null_aware(Strand strand, String domain_delimiter) =>
+    strand.vendor_dna_sequence(domain_delimiter: domain_delimiter) ?? '*****NONE*****';
+
+String idt_bulk_export(Iterable<Strand> strands,
+    {String delimiter = ',',
+    String domain_delimiter = '',
+    String scale = '25nm',
+    String purification = 'STD'}) {
+  var lines = strands.map((strand) => '${strand.vendor_export_name()}'
+      '${delimiter}'
+      '${vendor_sequence_null_aware(strand, domain_delimiter)}'
+      '${delimiter}'
+      '${scale}'
+      '${delimiter}'
+      '${purification}');
+  return lines.join('\n');
+}
+
+Future<List<int>> idt_plates_export(Iterable<Strand> strands, PlateType plate_type, bool column_major_plate,
+    {String domain_delimiter}) async {
   var plate_coord = _PlateCoordinate(plate_type);
   int plate = 1;
   int excel_row = 1;
@@ -280,8 +295,8 @@ Future<List<int>> idt_plates_export(
     var well = plate_coord.well();
     decoder.insertRow(plate_name, excel_row);
     decoder.updateCell(plate_name, 0, excel_row, well);
-    decoder.updateCell(plate_name, 1, excel_row, strand.idt_export_name());
-    decoder.updateCell(plate_name, 2, excel_row, idt_sequence_null_aware(strand));
+    decoder.updateCell(plate_name, 1, excel_row, strand.vendor_export_name());
+    decoder.updateCell(plate_name, 2, excel_row, vendor_sequence_null_aware(strand, domain_delimiter));
     num_strands_remaining--;
 
     // IDT charges extra for a plate with < 24 strands for 96-well plate
