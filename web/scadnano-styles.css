@@ -668,7 +668,8 @@ label + select {
     fill: lightgray;
 }
 
-.selected {
+/* .selected { */
+.selected:not(.domain-line) {
     filter: url("#shadow");
 }
 
