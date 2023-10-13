@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="19px" height="22px" viewBox="0 0 19 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
+    <title>Group 8 Copy 16@3x</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-8-Copy-16" transform="translate(0.000000, 1.000000)">
+            <g id="Group-8-Copy-17" transform="translate(12.000000, 0.000000)" stroke="#FE69B4" stroke-width="2">
+                <path d="M0.469397039,5.37650443 C7.46141645,-13.5907976 7.12805121,33.9557445 0.794871123,15.1554482" id="Path-2"></path>
+            </g>
+            <rect id="Rectangle-Copy-4" fill="#429000" x="2" y="3" width="12" height="3" rx="1.5"></rect>
+            <rect id="Rectangle-Copy-5" fill="#429000" x="0" y="14" width="14" height="3" rx="1.5"></rect>
+            <polygon id="Triangle" stroke="#000000" stroke-width="0.25" fill="#429000" transform="translate(1.500000, 4.500000) rotate(-90.000000) translate(-1.500000, -4.500000) " points="1.5 3 3 6 0 6"></polygon>
+            <rect id="Rectangle" stroke="#000000" stroke-width="0.25" fill="#429000" x="0.125" y="14.125" width="2.75" height="2.75" rx="1"></rect>
+        </g>
+    </g>
+</svg>
