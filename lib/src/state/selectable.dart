@@ -571,7 +571,7 @@ class SelectableTrait extends EnumClass {
   static const SelectableTrait modification_3p = _$modification_3p;
   static const SelectableTrait modification_int = _$modification_int;
   static const SelectableTrait dna_sequence = _$dna_sequence;
-  static const SelectableTrait idt = _$idt;
+  static const SelectableTrait vendor_fields = _$vendor_fields;
   static const SelectableTrait circular = _$circular;
   static const SelectableTrait helices = _$helices;
 
@@ -588,7 +588,7 @@ class SelectableTrait extends EnumClass {
     if (this == modification_3p) return "3' modification";
     if (this == modification_int) return "internal modification";
     if (this == dna_sequence) return 'DNA sequence';
-    if (this == idt) return 'IDT fields';
+    if (this == vendor_fields) return 'vendor fields';
     if (this == circular) return 'circular';
     if (this == helices) return 'helices';
     throw AssertionError('unrecognized trait ${this}');
@@ -602,7 +602,7 @@ class SelectableTrait extends EnumClass {
     if (this == modification_3p) return strand.modification_3p;
     if (this == modification_int) return strand.modifications_int;
     if (this == dna_sequence) return strand.dna_sequence;
-    if (this == idt) return strand.vendor_fields;
+    if (this == vendor_fields) return strand.vendor_fields;
     if (this == circular) return strand.circular;
     if (this == helices) return [for (var domain in strand.domains) domain.helix];
     throw AssertionError('unrecognized trait ${this}');

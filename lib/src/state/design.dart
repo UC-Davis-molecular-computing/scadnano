@@ -1409,17 +1409,61 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       return;
     }
 
+    // lots of ugly checks below for backwards compatibility since we used to write
+    // "5'-" or "3'-" or "internal-" at the start of keys in the modifications map
     for (int i = 0; i < strands.length; i++) {
       var strand = strands[i];
       var strand_json = strand_jsons[i];
       if (strand_json.containsKey(constants.modification_5p_key)) {
         var mod_name = strand_json[constants.modification_5p_key];
-        Modification5Prime mod = legacy ? all_mods[mod_name] : mods_5p[mod_name];
+        Modification5Prime mod;
+        if (legacy) {
+          var key = mod_name;
+          if (!all_mods.containsKey(mod_name)) {
+            if (key.substring(0, 3) == "5'-") {
+              key = mod_name.substring(3);
+            } else {
+              key = "5'-${mod_name}";
+            }
+          }
+          mod = all_mods[key];
+        } else {
+          var key = mod_name;
+          if (!mods_5p.containsKey(mod_name)) {
+            if (key.substring(0, 3) == "5'-") {
+              key = mod_name.substring(3);
+            } else {
+              key = "5'-${mod_name}";
+            }
+          }
+          mod = mods_5p[key];
+        }
         strand = strand.rebuild((b) => b..modification_5p.replace(mod));
       }
       if (strand_json.containsKey(constants.modification_3p_key)) {
         var mod_name = strand_json[constants.modification_3p_key];
-        Modification3Prime mod = legacy ? all_mods[mod_name] : mods_3p[mod_name];
+        Modification3Prime mod;
+        if (legacy) {
+          var key = mod_name;
+          if (!all_mods.containsKey(mod_name)) {
+            if (key.substring(0, 3) == "3'-") {
+              key = mod_name.substring(3);
+            } else {
+              key = "3'-${mod_name}";
+            }
+          }
+          mod = all_mods[key];
+        } else {
+          var key = mod_name;
+          if (!mods_3p.containsKey(mod_name)) {
+            if (key.substring(0, 3) == "3'-") {
+              key = mod_name.substring(3);
+            } else {
+              key = "3'-${mod_name}";
+            }
+          }
+          mod = mods_3p[key];
+        }
         strand = strand.rebuild((b) => b..modification_3p.replace(mod));
       }
       if (strand_json.containsKey(constants.modifications_int_key)) {
@@ -1428,7 +1472,24 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         for (var idx_str in mod_names_by_idx_json.keys) {
           int offset = int.parse(idx_str);
           String mod_name = mod_names_by_idx_json[idx_str];
-          ModificationInternal mod = legacy ? all_mods[mod_name] : mods_int[mod_name];
+          ModificationInternal mod;
+          if (legacy) {
+            var key = mod_name;
+            if (!all_mods.containsKey(mod_name)) {
+              if (key.substring(0, 9) == "internal-") {
+                key = mod_name.substring(9);
+              } else {
+                key = "internal-${mod_name}";
+              }
+            }
+            mod = all_mods[key];
+          } else {
+            var key = mod_name;
+            if (!mods_int.containsKey(mod_name)) {
+              key = "internal-${mod_name}";
+            }
+            mod = mods_int[key];
+          }
           mods_by_idx[offset] = mod;
         }
         strand = strand.rebuild((b) => b..modifications_int.replace(mods_by_idx));

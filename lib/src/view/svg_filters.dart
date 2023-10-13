@@ -33,7 +33,16 @@ add_shadow_filter(svg.SvgSvgElement elt) {
       'y': '-100%',
       'width': '300%',
       'height': '300%',
-      'filterUnits': 'userSpaceOnUse',
+      // 'filterUnits': 'userSpaceOnUse',
+
+      // The above line has been commented because use of this line caused the strands outside the width x height area to disappear on 'hover'.
+      // Reverting this change and the changes mentioned below from an old PR #480 (Fixes #20, add shadow filter for domains).
+      // selectable_css_style_domain has been changed in src/middleware/edit_select_mode_change.dart file
+      // web/scadnano-styles.css has been changed
+      // .selected  ---->  .selected:not(.domain-line)
+
+      // However, after making the above mentioned changes, the old issue of domains being highlighted with hotpink on 'hover' instead of shadow comes back. This happens because of issues in SVG Filters that cannot apply the shadow filter to a straight line. Hence, the hotpink substitute is used.
+      // Because of this, hovering of doamins is slightly different in appearance (hotpink) than the other selectable elements (shadow).
     };
   // not sure why there's no setter provided for this
 //  filter_element.setAttribute('filterUnits', 'userSpaceOnUse');
