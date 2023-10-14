@@ -430,6 +430,7 @@ const css_selector_domain = 'domain-line';
 const css_selector_base_pair_line = 'base-pair-line';
 const css_selector_extension = 'extension-line';
 const css_selector_crossover = 'crossover-curve';
+const css_selector_crossover_same_helix = 'crossover-curve-same-helix';
 const css_selector_loopout = 'loopout-curve';
 const css_selector_end_5p_strand = 'five-prime-end-first-substrand';
 const css_selector_end_3p_strand = 'three-prime-end-last-substrand';

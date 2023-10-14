@@ -69,6 +69,13 @@ class DesignMainStrandCrossoverComponent
       classname += ' ' + constants.css_selector_scaffold;
     }
 
+    // Want to display crossovers within a helix a little darker since it's hard to see them;
+    // This is for "crossovers" that really are just buffered space between domains on the same helix.
+    if (props.prev_domain.helix == props.next_domain.helix &&
+        props.prev_domain.forward == props.next_domain.forward) {
+      classname += ' ' + constants.css_selector_crossover_same_helix;
+    }
+
     var prev_group = props.helices[props.prev_domain.helix].group;
     var next_group = props.helices[props.next_domain.helix].group;
     bool within_group = prev_group == next_group;

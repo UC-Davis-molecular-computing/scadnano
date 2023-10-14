@@ -742,6 +742,10 @@ label + select {
     fill: none;
 }
 
+.crossover-curve-same-helix {
+    stroke-opacity: 0.55;
+}
+
 .potential-vertical-crossover-curve {
     stroke-width: 4;
     fill: none;
