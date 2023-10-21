@@ -273,7 +273,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
   assign_plate_well_fields() => app.disable_keyboard_shortcuts_while(ask_for_assign_plate_well_fields);
 
-  set_strand_name() => app.disable_keyboard_shortcuts_while(ask_for_strand_name);
+  set_strand_name() => app.disable_keyboard_shortcuts_while(
+      () => ask_for_strand_name(props.strand, app.state.ui_state.selectables_store.selected_strands));
 
   set_strand_label() => app.disable_keyboard_shortcuts_while(
       () => ask_for_label(props.strand, null, app.state.ui_state.selectables_store.selected_strands));
@@ -474,7 +475,11 @@ assigned, assign the complementary DNA sequence to this strand.
             if (props.strand.name != null)
               ContextMenuItem(
                   title: 'remove strand name',
-                  on_click: () => app.dispatch(actions.StrandNameSet(name: null, strand: props.strand))),
+                  on_click: () => app.dispatch(batch_if_multiple_selected(
+                      (strand) => actions.StrandNameSet(name: null, strand: strand),
+                      props.strand,
+                      app.state.ui_state.selectables_store.selected_strands,
+                      'remove strand label'))),
             ContextMenuItem(
               title: 'set domain name',
               on_click: () => set_substrand_name(substrand),
@@ -503,7 +508,11 @@ feature for individual domains, set select mode to domain.
             if (props.strand.label != null)
               ContextMenuItem(
                   title: 'remove strand label',
-                  on_click: () => app.dispatch(actions.StrandLabelSet(label: null, strand: props.strand))),
+                  on_click: () => app.dispatch(batch_if_multiple_selected(
+                      (strand) => actions.StrandLabelSet(label: null, strand: strand),
+                      props.strand,
+                      app.state.ui_state.selectables_store.selected_strands,
+                      'remove strand label'))),
             ContextMenuItem(
               title: 'set domain label',
               on_click: () => set_substrand_label(substrand),
@@ -901,7 +910,7 @@ PAGEHPLC : Dual PAGE & HPLC
     app.dispatch(batch_action);
   }
 
-  Future<void> ask_for_strand_name() async {
+  Future<void> ask_for_strand_name(Strand strand, BuiltSet<Strand> selected_strands) async {
     int name_idx = 0;
     var items = List<DialogItem>.filled(1, null);
     items[name_idx] = DialogText(label: 'name', value: props.strand.name ?? '');
@@ -912,7 +921,8 @@ PAGEHPLC : Dual PAGE & HPLC
     if (results == null) return;
 
     String name = (results[name_idx] as DialogText).value;
-    actions.UndoableAction action = actions.StrandNameSet(name: name, strand: props.strand);
+    actions.UndoableAction action = batch_if_multiple_selected(
+        name_set_strand_action_creator(name), strand, selected_strands, "set strand name");
     app.dispatch(action);
   }
 
@@ -1015,6 +1025,9 @@ StrandActionCreator color_set_strand_action_creator(String color_hex) => ((Stran
 StrandActionCreator color_set_substrand_action_creator(Substrand substrand, String color_hex) =>
     ((Strand strand) =>
         actions.StrandOrSubstrandColorSet(strand: strand, substrand: substrand, color: Color.hex(color_hex)));
+
+StrandActionCreator name_set_strand_action_creator(String name) =>
+    ((Strand strand) => actions.StrandNameSet(strand: strand, name: name));
 
 StrandActionCreator label_set_strand_action_creator(String label) =>
     ((Strand strand) => actions.StrandLabelSet(strand: strand, label: label));
