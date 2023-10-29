@@ -2,8 +2,12 @@ import 'dart:html';
 import 'dart:svg' as svg;
 import 'dart:svg';
 
+import 'package:built_collection/built_collection.dart';
+import 'package:over_react/over_react.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/middleware/system_clipboard.dart';
+import 'package:scadnano/src/state/domain.dart';
+import 'package:scadnano/src/view/design_main_base_pair_lines.dart';
 
 import '../app.dart';
 import '../state/app_state.dart';
@@ -85,6 +89,18 @@ SvgSvgElement get_cloned_svg_element_with_style(List<Element> selected_elts) {
   var cloned_svg_element_with_style = SvgSvgElement()
     ..children = selected_elts.map(clone_and_apply_style).toList();
 
+  List<Element> base_pairs_elements = [
+    // TEMPORARY, JUST FOR TESTING
+    document.getElementsByClassName('base-pair-lines-main-view')[0] as Element
+  ];
+  cloned_svg_element_with_style.children.addAll(base_pairs_elements.map(clone_and_apply_style));
+
+  print(app.state.design.base_pairs);
+  print(app.state.design.strand_to_index);
+
+  print(app.state.design.get_selected_base_pairs(
+      app.state.design.base_pairs, app.state.ui_state.selectables_store.selected_strands));
+
   // we can't get bbox without it being added to the DOM first
   document.body.append(cloned_svg_element_with_style);
   var bbox = cloned_svg_element_with_style.getBBox();
@@ -131,10 +147,11 @@ _copy_from_elements(List<Element> svg_elements) {
 
 _export_from_element(Element svg_element, String filename_append) {
   var cloned_svg_element_with_style;
-  if (filename_append != "selected")
+  if (filename_append != "selected") {
     cloned_svg_element_with_style = clone_and_apply_style(svg_element);
-  else
+  } else {
     cloned_svg_element_with_style = svg_element;
+  }
   // if element is not an svg element (it can be a child element of svg e.g. groups, lines, text, etc), wrap in svg tag
   if (!(svg_element is svg.SvgSvgElement))
     cloned_svg_element_with_style = SvgSvgElement()..children = [cloned_svg_element_with_style];
