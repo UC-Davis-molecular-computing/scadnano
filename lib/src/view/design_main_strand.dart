@@ -928,7 +928,7 @@ PAGEHPLC : Dual PAGE & HPLC
 
     String name = (results[name_idx] as DialogText).value;
     actions.UndoableAction action = batch_if_multiple_selected(
-        name_set_strand_action_creator(name), strand, selected_strands, "set strand name");
+        name_set_strand_action_creator(name), strand, selected_strands, "set strand names");
     app.dispatch(action);
   }
 
@@ -953,7 +953,6 @@ PAGEHPLC : Dual PAGE & HPLC
 
 Future<void> ask_for_label<T extends SelectableMixin>(
     Strand strand, Substrand substrand, BuiltSet<T> selected_strands) async {
-  // T is expected to be Strand or Domain
   String part_name = 'strand';
   if (substrand != null) {
     part_name = substrand.type_description();
@@ -994,7 +993,7 @@ Future<void> ask_for_label<T extends SelectableMixin>(
   } else {
     action = actions.BatchAction(
         selected_strands.map((s) => actions.SubstrandLabelSet(label: label, substrand: (s as Substrand))),
-        "set domain labels");
+        "set substrand labels");
   }
 
   app.dispatch(action);

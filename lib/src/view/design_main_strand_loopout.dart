@@ -166,7 +166,10 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
         if (props.loopout.name != null)
           ContextMenuItem(
               title: 'remove loopout name',
-              on_click: () => app.dispatch(actions.SubstrandNameSet(name: null, substrand: props.loopout))),
+              on_click: () => app.dispatch(actions.BatchAction(
+                  app.state.ui_state.selectables_store.selected_loopouts
+                      .map((l) => actions.SubstrandNameSet(name: null, substrand: l)),
+                  "remove loopout names"))),
         ContextMenuItem(
           title: 'set loopout label',
           on_click: set_loopout_label,
@@ -174,7 +177,10 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
         if (props.loopout.label != null)
           ContextMenuItem(
               title: 'remove loopout label',
-              on_click: () => app.dispatch(actions.SubstrandLabelSet(substrand: props.loopout, label: null))),
+              on_click: () => app.dispatch(actions.BatchAction(
+                  app.state.ui_state.selectables_store.selected_loopouts
+                      .map((l) => actions.SubstrandLabelSet(label: null, substrand: l)),
+                  "remove loopout names"))),
         ContextMenuItem(
           title: 'set loopout color',
           on_click: () => app.dispatch(
@@ -224,7 +230,7 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
   set_loopout_label() => app.disable_keyboard_shortcuts_while(() => design_main_strand.ask_for_label(
         props.strand,
         props.loopout,
-        app.state.ui_state.selectables_store.selected_substrands,
+        app.state.ui_state.selectables_store.selected_loopouts,
       ));
 
   Future<void> ask_for_loopout_name() async {
@@ -237,8 +243,10 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     if (results == null) return;
 
     String name = (results[name_idx] as DialogText).value;
-    actions.UndoableAction action = actions.SubstrandNameSet(name: name, substrand: props.loopout);
-    app.dispatch(action);
+    app.dispatch(actions.BatchAction(
+        app.state.ui_state.selectables_store.selected_loopouts
+            .map((l) => actions.SubstrandNameSet(name: name, substrand: l)),
+        "set loopout names"));
   }
 
   String loopout_path_description_between_groups() {
