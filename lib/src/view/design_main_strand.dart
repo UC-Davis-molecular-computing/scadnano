@@ -481,7 +481,7 @@ assigned, assign the complementary DNA sequence to this strand.
                       (strand) => actions.StrandNameSet(name: null, strand: strand),
                       props.strand,
                       app.state.ui_state.selectables_store.selected_strands,
-                      'remove strand label'))),
+                      'remove strand name'))),
             ContextMenuItem(
               title: 'set domain name',
               on_click: () => set_domain_names(get_selected_domains()),
