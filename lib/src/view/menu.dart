@@ -89,6 +89,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..show_slice_bar = state.ui_state.show_slice_bar
       ..show_mouseover_data = state.ui_state.show_mouseover_data
       ..disable_png_caching_dna_sequences = state.ui_state.disable_png_caching_dna_sequences
+      ..retain_strand_color_on_selection = state.ui_state.retain_strand_color_on_selection
       ..display_reverse_DNA_right_side_up = state.ui_state.display_reverse_DNA_right_side_up
       ..local_storage_design_choice = state.ui_state.local_storage_design_choice
       ..clear_helix_selection_when_loading_new_design =
@@ -151,6 +152,7 @@ mixin MenuPropsMixin on UiProps {
   bool show_loopout_extension_length;
   bool show_mouseover_data;
   bool disable_png_caching_dna_sequences;
+  bool retain_strand_color_on_selection;
   bool display_reverse_DNA_right_side_up;
   bool default_crossover_type_scaffold_for_setting_helix_rolls;
   bool default_crossover_type_staple_for_setting_helix_rolls;
@@ -1141,6 +1143,19 @@ debugging, but be warned that it will be very slow to render a large number of D
           props.dispatch(actions.DisablePngCachingDnaSequencesSet(!props.disable_png_caching_dna_sequences));
         }
         ..key = 'disable-png-caching-dna-sequences')(),
+      (MenuBoolean()
+        ..value = props.retain_strand_color_on_selection
+        ..display = 'Retain strand color on selection'
+        ..tooltip = '''\
+Selected strands are normally highlighted in hot pink, which overrides the strand's color.
+Select this option to not override the strand's color when it is selected.
+A highlighting effect will still appear.
+        '''
+        ..name = 'retain-strand-color-on-selection'
+        ..onChange = (_) {
+          props.dispatch(actions.RetainStrandColorOnSelectionSet(!props.retain_strand_color_on_selection));
+        }
+        ..key = 'retain-strand-color-on-selection')(),
     ];
   }
 
