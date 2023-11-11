@@ -45,7 +45,10 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
             action.type == actions.ExportSvgType.selected) {
           var elt = document.getElementById("main-view-svg");
           if (action.type == actions.ExportSvgType.selected) {
-            List<Element> selected_elts = get_selected_base_pairs(store)..addAll(get_selected_strands(store));
+            List<Element> selected_elts = (!app.state.ui_state.show_base_pair_lines
+                ? []
+                : get_selected_base_pairs(store))
+              ..addAll(get_selected_strands(store));
             if (selected_elts.length == 0) {
               window.alert("No strands are selected, so there is nothing to export.\n"
                   "Please select some strands before choosing this option.");

@@ -173,7 +173,10 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
         if (props.ext.name != null)
           ContextMenuItem(
               title: 'remove extension name',
-              on_click: () => app.dispatch(actions.SubstrandNameSet(name: null, substrand: props.ext))),
+              on_click: () => app.dispatch(actions.BatchAction(
+                  app.state.ui_state.selectables_store.selected_extensions
+                      .map((e) => actions.SubstrandNameSet(name: null, substrand: e)),
+                  "remove extension names"))),
         ContextMenuItem(
           title: 'set extension label',
           on_click: set_extension_label,
@@ -181,7 +184,10 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
         if (props.ext.label != null)
           ContextMenuItem(
               title: 'remove extension label',
-              on_click: () => app.dispatch(actions.SubstrandLabelSet(label: null, substrand: props.ext))),
+              on_click: () => app.dispatch(actions.BatchAction(
+                  app.state.ui_state.selectables_store.selected_extensions
+                      .map((e) => actions.SubstrandLabelSet(label: null, substrand: e)),
+                  "remove extension labels"))),
         ContextMenuItem(
           title: 'set extension color',
           on_click: () => app
@@ -217,7 +223,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
   set_extension_label() => app.disable_keyboard_shortcuts_while(() => design_main_strand.ask_for_label(
         props.strand,
         props.ext,
-        app.state.ui_state.selectables_store.selected_substrands,
+        app.state.ui_state.selectables_store.selected_extensions,
       ));
 
   Future<void> ask_for_extension_name() async {
@@ -230,8 +236,10 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     if (results == null) return;
 
     String name = (results[name_idx] as DialogText).value;
-    actions.UndoableAction action = actions.SubstrandNameSet(name: name, substrand: props.ext);
-    app.dispatch(action);
+    app.dispatch(actions.BatchAction(
+        app.state.ui_state.selectables_store.selected_extensions
+            .map((e) => actions.SubstrandNameSet(name: name, substrand: e)),
+        "set extension names"));
   }
 
   extension_display_length_and_angle_change() =>

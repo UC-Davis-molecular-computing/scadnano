@@ -273,16 +273,19 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
   assign_plate_well_fields() => app.disable_keyboard_shortcuts_while(ask_for_assign_plate_well_fields);
 
-  set_strand_name() => app.disable_keyboard_shortcuts_while(ask_for_strand_name);
+  set_strand_name() => app.disable_keyboard_shortcuts_while(
+      () => ask_for_strand_name(props.strand, app.state.ui_state.selectables_store.selected_strands));
 
   set_strand_label() => app.disable_keyboard_shortcuts_while(
       () => ask_for_label(props.strand, null, app.state.ui_state.selectables_store.selected_strands));
 
-  set_substrand_name(Substrand substrand) =>
-      app.disable_keyboard_shortcuts_while(() => ask_for_substrand_name(substrand));
+  set_domain_names(BuiltSet<Domain> domains) =>
+      app.disable_keyboard_shortcuts_while(() => ask_for_domain_names(domains));
 
-  set_substrand_label(Substrand substrand) => app.disable_keyboard_shortcuts_while(
-      () => ask_for_label(props.strand, substrand, app.state.ui_state.selectables_store.selected_substrands));
+  set_domain_labels(Substrand substrand, BuiltSet<Domain> domains) {
+    return app.disable_keyboard_shortcuts_while(
+        () => ask_for_label(props.strand, substrand, get_selected_domains()));
+  }
 
   ReactElement _insertions() {
     List<ReactElement> paths = [];
@@ -474,10 +477,14 @@ assigned, assign the complementary DNA sequence to this strand.
             if (props.strand.name != null)
               ContextMenuItem(
                   title: 'remove strand name',
-                  on_click: () => app.dispatch(actions.StrandNameSet(name: null, strand: props.strand))),
+                  on_click: () => app.dispatch(batch_if_multiple_selected(
+                      (strand) => actions.StrandNameSet(name: null, strand: strand),
+                      props.strand,
+                      app.state.ui_state.selectables_store.selected_strands,
+                      'remove strand label'))),
             ContextMenuItem(
               title: 'set domain name',
-              on_click: () => set_substrand_name(substrand),
+              on_click: () => set_domain_names(get_selected_domains()),
             ),
             ContextMenuItem(
               title: 'assign domain name complement from bound strands',
@@ -491,7 +498,9 @@ feature for individual domains, set select mode to domain.
             if (substrand.name != null)
               ContextMenuItem(
                   title: 'remove domain name',
-                  on_click: () => app.dispatch(actions.SubstrandNameSet(name: null, substrand: substrand))),
+                  on_click: () => app.dispatch(actions.BatchAction(
+                      get_selected_domains().map((d) => actions.SubstrandNameSet(name: null, substrand: d)),
+                      'remove domain names'))),
           ].build()),
       ContextMenuItem(
           title: 'edit label',
@@ -503,15 +512,21 @@ feature for individual domains, set select mode to domain.
             if (props.strand.label != null)
               ContextMenuItem(
                   title: 'remove strand label',
-                  on_click: () => app.dispatch(actions.StrandLabelSet(label: null, strand: props.strand))),
+                  on_click: () => app.dispatch(batch_if_multiple_selected(
+                      (strand) => actions.StrandLabelSet(label: null, strand: strand),
+                      props.strand,
+                      app.state.ui_state.selectables_store.selected_strands,
+                      'remove strand label'))),
             ContextMenuItem(
               title: 'set domain label',
-              on_click: () => set_substrand_label(substrand),
+              on_click: () => set_domain_labels(substrand, get_selected_domains()),
             ),
             if (substrand.label != null)
               ContextMenuItem(
                   title: 'remove domain label',
-                  on_click: () => app.dispatch(actions.SubstrandLabelSet(label: null, substrand: substrand))),
+                  on_click: () => app.dispatch(actions.BatchAction(
+                      get_selected_domains().map((d) => actions.SubstrandLabelSet(label: null, substrand: d)),
+                      'remove domain labels'))),
           ].build()),
       ContextMenuItem(
           title: 'reflect',
@@ -901,7 +916,7 @@ PAGEHPLC : Dual PAGE & HPLC
     app.dispatch(batch_action);
   }
 
-  Future<void> ask_for_strand_name() async {
+  Future<void> ask_for_strand_name(Strand strand, BuiltSet<Strand> selected_strands) async {
     int name_idx = 0;
     var items = List<DialogItem>.filled(1, null);
     items[name_idx] = DialogText(label: 'name', value: props.strand.name ?? '');
@@ -912,17 +927,17 @@ PAGEHPLC : Dual PAGE & HPLC
     if (results == null) return;
 
     String name = (results[name_idx] as DialogText).value;
-    actions.UndoableAction action = actions.StrandNameSet(name: name, strand: props.strand);
+    actions.UndoableAction action = batch_if_multiple_selected(
+        name_set_strand_action_creator(name), strand, selected_strands, "set strand names");
     app.dispatch(action);
   }
 
-  Future<void> ask_for_substrand_name(Substrand substrand) async {
+  Future<void> ask_for_domain_names(BuiltSet<Domain> domains) async {
     int name_idx = 0;
     var items = List<DialogItem>.filled(1, null);
-
-    items[name_idx] = DialogText(label: 'name', value: substrand.name ?? '');
+    items[name_idx] = DialogText(label: 'name', value: "");
     var dialog = Dialog(
-        title: 'set ${substrand.type_description()} name',
+        title: 'set ${domains.first.type_description()} name',
         items: items,
         type: DialogType.set_domain_name,
         use_saved_response: false);
@@ -931,12 +946,13 @@ PAGEHPLC : Dual PAGE & HPLC
     if (results == null) return;
 
     String name = (results[name_idx] as DialogText).value;
-    actions.UndoableAction action = actions.SubstrandNameSet(name: name, substrand: substrand);
-    app.dispatch(action);
+    return app.dispatch(actions.BatchAction(
+        domains.map((d) => actions.SubstrandNameSet(name: name, substrand: d)), "set domain names"));
   }
 }
 
-Future<void> ask_for_label(Strand strand, Substrand substrand, BuiltSet<Strand> selected_strands) async {
+Future<void> ask_for_label<T extends SelectableMixin>(
+    Strand strand, Substrand substrand, BuiltSet<T> selected_strands) async {
   String part_name = 'strand';
   if (substrand != null) {
     part_name = substrand.type_description();
@@ -972,12 +988,12 @@ Future<void> ask_for_label(Strand strand, Substrand substrand, BuiltSet<Strand> 
 
   actions.UndoableAction action;
   if (substrand == null) {
-    action = batch_if_multiple_selected(
-        label_set_strand_action_creator(label), strand, selected_strands, "set strand label");
+    action = batch_if_multiple_selected(label_set_strand_action_creator(label), strand,
+        selected_strands as BuiltSet<Strand>, "set strand label");
   } else {
-    action = actions.SubstrandLabelSet(label: label, substrand: substrand);
-    // action = batch_if_multiple_selected(
-    //     label_set_strand_action_creator(label), props.strand, selected_strands, "set domain label");
+    action = actions.BatchAction(
+        selected_strands.map((s) => actions.SubstrandLabelSet(label: label, substrand: (s as Substrand))),
+        "set substrand labels");
   }
 
   app.dispatch(action);
@@ -1000,6 +1016,16 @@ actions.UndoableAction batch_if_multiple_selected(StrandActionCreator action_cre
   return action;
 }
 
+// this is so if user selects with the domain select tool, it still returns the selected domains
+// as opposed to just using "selected_strands"
+BuiltSet<Domain> get_selected_domains() {
+  return BuiltSet<Domain>(app.state.ui_state.selectables_store.selected_strands
+          .map((s) => s.substrands)
+          .expand((l) => l)
+          .toBuiltSet())
+      .union(app.state.ui_state.selectables_store.selected_domains);
+}
+
 typedef StrandActionCreator = actions.UndoableAction Function(Strand strand);
 
 StrandActionCreator scaffold_set_strand_action_creator(bool is_scaffold) =>
@@ -1015,6 +1041,9 @@ StrandActionCreator color_set_strand_action_creator(String color_hex) => ((Stran
 StrandActionCreator color_set_substrand_action_creator(Substrand substrand, String color_hex) =>
     ((Strand strand) =>
         actions.StrandOrSubstrandColorSet(strand: strand, substrand: substrand, color: Color.hex(color_hex)));
+
+StrandActionCreator name_set_strand_action_creator(String name) =>
+    ((Strand strand) => actions.StrandNameSet(strand: strand, name: name));
 
 StrandActionCreator label_set_strand_action_creator(String label) =>
     ((Strand strand) => actions.StrandLabelSet(strand: strand, label: label));
