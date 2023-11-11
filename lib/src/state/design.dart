@@ -2101,56 +2101,39 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   /// maps each helix_idx to a list of offsets where there is a complementary base pair on each strand
   @memoized
-  BuiltMap<int, BuiltList<int>> get base_pairs => this._base_pairs(false);
+  BuiltMap<int, BuiltList<int>> get base_pairs => this._base_pairs(false, strands.toBuiltSet());
 
   /// maps each helix_idx to a list of offsets where there is a base on each strand,
   /// NOT necessarily complementary
   @memoized
-  BuiltMap<int, BuiltList<int>> get base_pairs_with_mismatches => this._base_pairs(true);
+  BuiltMap<int, BuiltList<int>> get base_pairs_with_mismatches =>
+      this._base_pairs(true, strands.toBuiltSet());
 
-  /// given `base_pairs`, returns a filtered map that is connected by at least 2 strands in `selected_strands`
-  BuiltMap<int, BuiltList<int>> get_selected_base_pairs(
-      BuiltMap<int, BuiltList<int>> base_pairs, BuiltSet<Strand> selected_strands) {
-    Map<int, List<int>> connect_cnt = {};
+  // returns a subset of base_pairs that is connected to selected_strands
+  BuiltMap<int, BuiltList<int>> selected_base_pairs(BuiltSet<Strand> selected_strands) =>
+      this._base_pairs(false, selected_strands);
 
-    helices.forEach((i, v) {
-      connect_cnt[i] = List.filled(v.max_offset + 1, 0);
-    });
-    selected_strands.forEach((strand) {
-      strand.substrands.forEach((substrand) {
-        if (substrand is Domain) {
-          connect_cnt[substrand.helix][substrand.start] += 1;
-          connect_cnt[substrand.helix][substrand.end + 1] -= 1;
-        }
-      });
-    });
-    connect_cnt.updateAll((i, list) {
-      for (int i = 1; i < list.length; ++i) {
-        list[i] += list[i - 1];
-      }
-      return list;
-    });
-    Map<int, BuiltList<int>> connected_base_pairs = {};
-    base_pairs.forEach((i, list) {
-      List<int> base_pairs = [];
-      list.forEach((j) {
-        if (connect_cnt[i][j] == 2) {
-          base_pairs.add(j);
-        }
-        connected_base_pairs[i] = base_pairs.build();
-      });
-    });
-    return connected_base_pairs.build();
-  }
+  // returns a subset of base_pairs_with_mismatches that is connected to selected_strands
+  BuiltMap<int, BuiltList<int>> selected_base_pairs_with_mismatches(BuiltSet<Strand> selected_strands) =>
+      this._base_pairs(true, selected_strands);
 
-  BuiltMap<int, BuiltList<int>> _base_pairs(bool allow_mismatches) {
+  BuiltMap<int, BuiltList<int>> _base_pairs(bool allow_mismatches, BuiltSet<Strand> selected_strands) {
     var base_pairs = Map<int, BuiltList<int>>();
+    BuiltSet<Domain> selected_domains = selected_strands
+        .map((s) => s.substrands)
+        .expand((x) => x)
+        .where((x) => x is Domain)
+        .map((x) => x as Domain)
+        .toBuiltSet();
     for (int idx in this.helices.keys) {
       List<int> offsets = [];
       List<Tuple2<Domain, Domain>> overlapping_domains = find_overlapping_domains_on_helix(idx);
       for (var domain_pair in overlapping_domains) {
         Domain dom1 = domain_pair.item1;
         Domain dom2 = domain_pair.item2;
+        if (!selected_domains.contains(dom1) || !selected_domains.contains(dom2)) {
+          continue;
+        }
         var start_and_end = dom1.compute_overlap(dom2);
         int start = start_and_end.item1;
         int end = start_and_end.item2;

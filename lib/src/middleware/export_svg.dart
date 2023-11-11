@@ -4,6 +4,7 @@ import 'dart:svg';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
+import 'package:react/react_client/react_interop.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/middleware/system_clipboard.dart';
 import 'package:scadnano/src/state/domain.dart';
@@ -44,7 +45,7 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
             action.type == actions.ExportSvgType.selected) {
           var elt = document.getElementById("main-view-svg");
           if (action.type == actions.ExportSvgType.selected) {
-            List<Element> selected_elts = get_selected_strands(store);
+            List<Element> selected_elts = get_selected_base_pairs(store)..addAll(get_selected_strands(store));
             if (selected_elts.length == 0) {
               window.alert("No strands are selected, so there is nothing to export.\n"
                   "Please select some strands before choosing this option.");
@@ -85,21 +86,22 @@ List<Element> get_selected_strands(Store<AppState> store) {
   return selected_elts;
 }
 
+List<Element> get_selected_base_pairs(Store<AppState> store) {
+  var selected_strands = store.state.ui_state.selectables_store.selected_strands;
+  var base_pairs = store.state.ui_state.show_base_pair_lines_with_mismatches
+      ? store.state.design.selected_base_pairs_with_mismatches(selected_strands)
+      : store.state.design.selected_base_pairs(selected_strands);
+  List<Element> selected_elts = [];
+  for (int helix in base_pairs.keys) {
+    selected_elts
+        .addAll(base_pairs[helix].map((offset) => document.getElementById('base_pair-${helix}-${offset}')));
+  }
+  return selected_elts;
+}
+
 SvgSvgElement get_cloned_svg_element_with_style(List<Element> selected_elts) {
   var cloned_svg_element_with_style = SvgSvgElement()
     ..children = selected_elts.map(clone_and_apply_style).toList();
-
-  List<Element> base_pairs_elements = [
-    // TEMPORARY, JUST FOR TESTING
-    document.getElementsByClassName('base-pair-lines-main-view')[0] as Element
-  ];
-  cloned_svg_element_with_style.children.addAll(base_pairs_elements.map(clone_and_apply_style));
-
-  print(app.state.design.base_pairs);
-  print(app.state.design.strand_to_index);
-
-  print(app.state.design.get_selected_base_pairs(
-      app.state.design.base_pairs, app.state.ui_state.selectables_store.selected_strands));
 
   // we can't get bbox without it being added to the DOM first
   document.body.append(cloned_svg_element_with_style);

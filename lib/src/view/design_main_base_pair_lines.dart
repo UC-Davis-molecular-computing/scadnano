@@ -2,6 +2,7 @@ import 'dart:html';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/scadnano.dart';
 import 'package:scadnano/src/state/group.dart';
 import 'package:scadnano/src/state/helix.dart';
 
@@ -28,14 +29,16 @@ mixin DesignMainBasePairLinesProps on UiProps {
 class DesignMainBasePairLinesComponent extends UiComponent2<DesignMainBasePairLinesProps> with PureComponent {
   @override
   render() {
-    List<ReactElement> base_pair_lines_components = this._create_base_pair_lines_components();
+    List<ReactElement> base_pair_lines_components =
+        this.create_base_pair_lines_components(app.state.design.strands.toBuiltSet());
     return (Dom.g()..className = 'base-pair-lines-main-view')(base_pair_lines_components);
   }
 
-  List<ReactElement> _create_base_pair_lines_components() {
+  List<ReactElement> create_base_pair_lines_components(BuiltSet<Strand> strands) {
     List<ReactElement> base_pair_lines_components = [];
-    var base_pairs =
-        props.with_mismatches ? props.design.base_pairs_with_mismatches : props.design.base_pairs;
+    BuiltMap<int, BuiltList<int>> base_pairs = props.with_mismatches
+        ? props.design.selected_base_pairs_with_mismatches(strands)
+        : props.design.selected_base_pairs(strands);
 
     for (int helix_idx in base_pairs.keys) {
       if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(helix_idx)) {
@@ -52,6 +55,7 @@ class DesignMainBasePairLinesComponent extends UiComponent2<DesignMainBasePairLi
           var base_svg_forward_pos = helix.svg_base_pos(offset, true, svg_position_y);
           var base_svg_reverse_pos = helix.svg_base_pos(offset, false, svg_position_y);
           var base_pair_line = (Dom.line()
+            ..id = 'base_pair-${helix_idx}-${offset}'
             ..x1 = base_svg_forward_pos.x
             ..y1 = base_svg_forward_pos.y
             ..x2 = base_svg_reverse_pos.x
