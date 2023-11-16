@@ -64,7 +64,10 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
           _export_from_element(elt, 'side');
         }
       } else if (action is actions.CopySelectedStandsToClipboardImage) {
-        List<Element> selected_elts = get_selected_strands(store);
+        List<Element> selected_elts = (!app.state.ui_state.show_base_pair_lines
+            ? []
+            : get_selected_base_pairs(store))
+          ..addAll(get_selected_strands(store));
         if (selected_elts.length != 0) {
           _copy_from_elements(selected_elts);
         }
