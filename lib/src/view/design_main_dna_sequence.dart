@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:platform_detect/platform_detect.dart';
+import 'package:react/react_client/react_interop.dart';
 import 'package:scadnano/src/state/group.dart';
 import 'package:scadnano/src/view/transform_by_helix_group.dart';
 import 'package:tuple/tuple.dart';
@@ -134,6 +135,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     }
 
     var id = 'dna-${util.id_domain(domain)}';
+    double charWidth = 6.59375;
 
     return (Dom.text()
       ..key = id
@@ -141,7 +143,8 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       ..className = classname_dna_sequence
       ..x = '$x'
       ..y = '$y'
-      ..textLength = '$text_length'
+      // ..textLength = '$text_length'
+      ..letterSpacing = '${(text_length - charWidth * seq_to_draw.length) / (seq_to_draw.length - 1)}'
       ..transform = 'rotate(${rotate_degrees} ${rotate_x} ${rotate_y})'
       ..dy = '$dy')(seq_to_draw);
   }
