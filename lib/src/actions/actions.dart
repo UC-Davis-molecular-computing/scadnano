@@ -4357,7 +4357,7 @@ abstract class RetainStrandColorOnSelectionSet
   factory RetainStrandColorOnSelectionSet(bool retain_strand_color_on_selection) =>
       RetainStrandColorOnSelectionSet.from(
           (b) => b..retain_strand_color_on_selection = retain_strand_color_on_selection);
-  
+
   factory RetainStrandColorOnSelectionSet.from(
       [void Function(RetainStrandColorOnSelectionSetBuilder) updates]) = _$RetainStrandColorOnSelectionSet;
 
