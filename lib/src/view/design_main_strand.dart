@@ -85,6 +85,7 @@ mixin DesignMainStrandPropsMixin on UiProps {
   num modification_font_size;
   bool invert_y;
   BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
+  bool retain_strand_color_on_selection;
 }
 
 class DesignMainStrandProps = UiProps with DesignMainStrandPropsMixin, TransformByHelixGroupPropsMixin;
@@ -100,7 +101,11 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
     var classname = constants.css_selector_strand;
     if (props.selected) {
-      classname += ' ' + constants.css_selector_selected;
+      if (props.retain_strand_color_on_selection) {
+        classname += ' ' + constants.css_selector_selected;
+      } else {
+        classname += ' ' + constants.css_selector_selected_pink;
+      }
     }
     if (props.strand.is_scaffold) {
       classname += ' ' + constants.css_selector_scaffold;
@@ -149,7 +154,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..moving_dna_ends = props.moving_dna_ends
         ..geometry = props.geometry
         ..helix_idx_to_svg_position_map = helix_idx_to_svg_position_y_map_on_strand
-        ..only_display_selected_helices = props.only_display_selected_helices)(),
+        ..only_display_selected_helices = props.only_display_selected_helices
+        ..retain_strand_color_on_selection = props.retain_strand_color_on_selection)(),
       _insertions(),
       _deletions(),
       if (props.show_domain_names ||
@@ -188,6 +194,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..display_connector = props.modification_display_connector
           ..helix_idx_to_svg_position_y_map =
               props.helix_idx_to_svg_position_map.map((i, p) => MapEntry(i, p.y))
+          ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
           ..key = 'modifications')(),
     ]);
   }
@@ -298,6 +305,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
             ..transform = transform_of_helix(domain.helix)
             ..svg_position_y = props.helix_idx_to_svg_position_map[helix.idx].y
             ..display_reverse_DNA_right_side_up = props.display_reverse_DNA_right_side_up
+            ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
             ..key = util.id_insertion(domain, selectable_insertion.insertion.offset))());
         }
       }
@@ -332,6 +340,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
             ..selected = props.selected_deletions_in_strand.contains(selectable_deletion)
             ..transform = transform_of_helix(domain.helix)
             ..svg_position_y = props.helix_idx_to_svg_position_map[domain.helix].y
+            ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
             ..key = id)());
         }
       }

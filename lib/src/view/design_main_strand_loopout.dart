@@ -49,6 +49,7 @@ mixin DesignMainLoopoutPropsMixin on UiProps {
   Geometry geometry;
   num prev_helix_svg_position_y;
   num next_helix_svg_position_y;
+  bool retain_strand_color_on_selection;
 }
 
 class DesignMainLoopoutProps = UiProps with DesignMainLoopoutPropsMixin, TransformByHelixGroupPropsMixin;
@@ -69,7 +70,11 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
   render() {
     var classname = constants.css_selector_loopout;
     if (props.selected) {
-      classname += ' ' + constants.css_selector_selected;
+      if (props.retain_strand_color_on_selection) {
+        classname += ' ' + constants.css_selector_selected;
+      } else {
+        classname += ' ' + constants.css_selector_selected_pink;
+      }
     }
     if (props.strand.is_scaffold) {
       classname += ' ' + constants.css_selector_scaffold;

@@ -62,6 +62,7 @@ mixin DesignMainDNAEndPropsMixin on UiProps {
   bool drawing_potential_crossover;
   bool moving_this_dna_end;
   Point<num> helix_svg_position;
+  bool retain_strand_color_on_selection;
 }
 
 class DesignMainDNAEndProps = UiProps with DesignMainDNAEndPropsMixin;
@@ -94,7 +95,11 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     }
 
     if (props.selected) {
-      classname += ' ' + constants.css_selector_selected;
+      if (props.retain_strand_color_on_selection) {
+        classname += ' ' + constants.css_selector_selected;
+      } else {
+        classname += ' ' + constants.css_selector_selected_pink;
+      }
     }
     if (props.is_scaffold) {
       classname += ' ' + constants.css_selector_scaffold;

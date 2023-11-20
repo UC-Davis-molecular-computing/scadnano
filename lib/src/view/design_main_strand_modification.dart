@@ -49,6 +49,8 @@ mixin DesignMainStrandModificationProps on UiProps {
   num helix_svg_position_y;
 
   Extension ext; // optional; used if mod is on extension
+
+  bool retain_strand_color_on_selection;
 }
 
 class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStrandModificationProps> {
@@ -87,7 +89,11 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
     }
 
     if (props.selected) {
-      classname += ' ' + constants.css_selector_selected;
+      if (props.retain_strand_color_on_selection) {
+        classname += ' ' + constants.css_selector_selected;
+      } else {
+        classname += ' ' + constants.css_selector_selected_pink;
+      }
     }
     if (props.strand.is_scaffold) {
       classname += ' ' + constants.css_selector_scaffold;

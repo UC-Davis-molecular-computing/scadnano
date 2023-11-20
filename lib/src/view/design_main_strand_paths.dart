@@ -55,6 +55,7 @@ mixin DesignMainStrandPathsPropsMixin on UiProps {
   List<ContextMenuItem> Function(Strand strand, {Substrand substrand, Address address, ModificationType type})
       context_menu_strand;
   BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
+  bool retain_strand_color_on_selection;
 }
 
 class DesignMainStrandPathsProps = UiProps
@@ -115,6 +116,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..geometry = props.geometry
             ..strand_tooltip = props.strand_tooltip
             ..helix_svg_position = props.helix_idx_to_svg_position_map[helix.idx]
+            ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
             ..key = "domain-$i")());
 
           // don't draw 5' or 3' end of a circular strand
@@ -141,6 +143,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
                 ..moving_this_dna_end = props.moving_dna_ends && end_selected
                 ..drawing_potential_crossover = props.drawing_potential_crossover
                 ..helix_svg_position = props.helix_idx_to_svg_position_map[helix.idx]
+                ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
                 ..key = key)());
               is_5p = false;
             }
@@ -170,6 +173,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..next_helix = next_helix
             ..prev_helix_svg_position_y = props.helix_idx_to_svg_position_map[prev_helix.idx].y
             ..next_helix_svg_position_y = props.helix_idx_to_svg_position_map[next_helix.idx].y
+            ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
             ..key = "loopout-$i")());
         }
       } else if (substrand is Extension) {
@@ -216,6 +220,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..moving_this_dna_end = props.moving_dna_ends && end_selected
             ..drawing_potential_crossover = props.drawing_potential_crossover
             ..helix_svg_position = props.helix_idx_to_svg_position_map[adj_helix.idx]
+            ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
             ..key = key)());
         }
       }
@@ -243,6 +248,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
           ..geometry = props.geometry
           ..prev_domain_helix_svg_position_y = props.helix_idx_to_svg_position_map[prev_ss.helix].y
           ..next_domain_helix_svg_position_y = props.helix_idx_to_svg_position_map[next_ss.helix].y
+          ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
           ..key = 'crossover-paths-${idx_crossover - 1}')());
       }
     }
