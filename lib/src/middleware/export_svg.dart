@@ -8,6 +8,7 @@ import 'package:react/react_client/react_interop.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/middleware/system_clipboard.dart';
 import 'package:scadnano/src/state/domain.dart';
+import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/view/design_main_base_pair_lines.dart';
 
 import '../app.dart';
@@ -45,10 +46,7 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
             action.type == actions.ExportSvgType.selected) {
           var elt = document.getElementById("main-view-svg");
           if (action.type == actions.ExportSvgType.selected) {
-            List<Element> selected_elts = (!app.state.ui_state.show_base_pair_lines
-                ? []
-                : get_selected_base_pairs(store))
-              ..addAll(get_selected_strands(store));
+            List<Element> selected_elts = get_selected_svg_elements(store.state);
             if (selected_elts.length == 0) {
               window.alert("No strands are selected, so there is nothing to export.\n"
                   "Please select some strands before choosing this option.");
@@ -64,10 +62,7 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
           _export_from_element(elt, 'side');
         }
       } else if (action is actions.CopySelectedStandsToClipboardImage) {
-        List<Element> selected_elts = (!app.state.ui_state.show_base_pair_lines
-            ? []
-            : get_selected_base_pairs(store))
-          ..addAll(get_selected_strands(store));
+        List<Element> selected_elts = get_selected_svg_elements(store.state);
         if (selected_elts.length != 0) {
           _copy_from_elements(selected_elts);
         }
@@ -78,31 +73,38 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
   }
 }
 
-List<Element> get_selected_strands(Store<AppState> store) {
-  var selected_strands = store.state.ui_state.selectables_store.selected_strands;
+List<Element> get_selected_svg_elements(AppState state) {
+  BuiltSet<Strand> selected_strands = state.ui_state.selectables_store.selected_strands;
   List<Element> selected_elts = [];
-  if (selected_strands.length != 0) {
-    for (var strand in selected_strands) {
-      var strand_elt = document.getElementById(strand.id);
-      var dna_seq_elt = document.getElementById('dna-sequence-${strand.id}');
-      var mismatch_elts = document.getElementsByClassName('mismatch-${strand.id}');
-      selected_elts.addAll([strand_elt, if (dna_seq_elt != null) dna_seq_elt, ...mismatch_elts]);
-    }
+  if (app.state.ui_state.show_base_pair_lines) {
+    var base_pairs = state.ui_state.show_base_pair_lines_with_mismatches
+        ? state.design.selected_base_pairs_with_mismatches(selected_strands)
+        : state.design.selected_base_pairs(selected_strands);
+    selected_elts.addAll(get_svg_elements_of_base_pairs(base_pairs));
   }
+  selected_elts.addAll(get_svg_elements_of_strands(selected_strands));
   return selected_elts;
 }
 
-List<Element> get_selected_base_pairs(Store<AppState> store) {
-  var selected_strands = store.state.ui_state.selectables_store.selected_strands;
-  var base_pairs = store.state.ui_state.show_base_pair_lines_with_mismatches
-      ? store.state.design.selected_base_pairs_with_mismatches(selected_strands)
-      : store.state.design.selected_base_pairs(selected_strands);
-  List<Element> selected_elts = [];
-  for (int helix in base_pairs.keys) {
-    selected_elts
-        .addAll(base_pairs[helix].map((offset) => document.getElementById('base_pair-${helix}-${offset}')));
+List<Element> get_svg_elements_of_strands(BuiltSet<Strand> strands) {
+  List<Element> elts = [];
+  if (strands.length != 0) {
+    for (var strand in strands) {
+      var strand_elt = document.getElementById(strand.id);
+      var dna_seq_elt = document.getElementById('dna-sequence-${strand.id}');
+      var mismatch_elts = document.getElementsByClassName('mismatch-${strand.id}');
+      elts.addAll([strand_elt, if (dna_seq_elt != null) dna_seq_elt, ...mismatch_elts]);
+    }
   }
-  return selected_elts;
+  return elts;
+}
+
+List<Element> get_svg_elements_of_base_pairs(BuiltMap<int, BuiltList<int>> base_pairs) {
+  List<Element> elts = [];
+  for (int helix in base_pairs.keys) {
+    elts.addAll(base_pairs[helix].map((offset) => document.getElementById('base_pair-${helix}-${offset}')));
+  }
+  return elts;
 }
 
 SvgSvgElement get_cloned_svg_element_with_style(List<Element> selected_elts) {
