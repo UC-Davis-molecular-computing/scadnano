@@ -43,7 +43,8 @@ UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands =
     ..domain_label_font_size = state.ui_state.domain_label_font_size
     ..helix_idx_to_svg_position_map = state.helix_idx_to_svg_position_map
     ..display_reverse_DNA_right_side_up = state.ui_state.display_reverse_DNA_right_side_up
-    ..geometry = state.design.geometry;
+    ..geometry = state.design.geometry
+    ..retain_strand_color_on_selection = state.ui_state.retain_strand_color_on_selection;
 })(DesignMainStrands);
 
 UiFactory<DesignMainStrandsProps> DesignMainStrands = _$DesignMainStrands;
@@ -73,6 +74,7 @@ mixin DesignMainStrandsProps on UiProps {
   bool display_reverse_DNA_right_side_up;
   Geometry geometry;
   BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
+  bool retain_strand_color_on_selection;
 }
 
 class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> with PureComponent {
@@ -131,6 +133,7 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> wi
         ..geometry = props.geometry
         ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
         ..display_reverse_DNA_right_side_up = props.display_reverse_DNA_right_side_up
+        ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
         ..key = strand.toString())());
     }
 

@@ -4348,6 +4348,25 @@ abstract class DisablePngCachingDnaSequencesSet
       _$disablePngCachingDnaSequencesSetSerializer;
 }
 
+abstract class RetainStrandColorOnSelectionSet
+    with BuiltJsonSerializable
+    implements Action, Built<RetainStrandColorOnSelectionSet, RetainStrandColorOnSelectionSetBuilder> {
+  bool get retain_strand_color_on_selection;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory RetainStrandColorOnSelectionSet(bool retain_strand_color_on_selection) =>
+      RetainStrandColorOnSelectionSet.from(
+          (b) => b..retain_strand_color_on_selection = retain_strand_color_on_selection);
+
+  factory RetainStrandColorOnSelectionSet.from(
+      [void Function(RetainStrandColorOnSelectionSetBuilder) updates]) = _$RetainStrandColorOnSelectionSet;
+
+  RetainStrandColorOnSelectionSet._();
+
+  static Serializer<RetainStrandColorOnSelectionSet> get serializer =>
+      _$retainStrandColorOnSelectionSetSerializer;
+}
+
 abstract class DisplayReverseDNARightSideUpSet
     with BuiltJsonSerializable
     implements Action, Built<DisplayReverseDNARightSideUpSet, DisplayReverseDNARightSideUpSetBuilder> {

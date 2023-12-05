@@ -53,6 +53,7 @@ mixin DesignMainExtensionPropsMixin on UiProps {
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
   Geometry geometry;
+  bool retain_strand_color_on_selection;
 }
 
 class DesignMainExtensionProps = UiProps with DesignMainExtensionPropsMixin, TransformByHelixGroupPropsMixin;
@@ -76,7 +77,11 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
 
     var classname = constants.css_selector_extension;
     if (props.selected) {
-      classname += ' ' + constants.css_selector_selected;
+      if (props.retain_strand_color_on_selection) {
+        classname += ' ' + constants.css_selector_selected;
+      } else {
+        classname += ' ' + constants.css_selector_selected_pink;
+      }
     }
     if (props.strand.is_scaffold) {
       classname += ' ' + constants.css_selector_scaffold;
