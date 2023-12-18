@@ -86,6 +86,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
       ..show_helices_axis_arrows = state.ui_state.show_helices_axis_arrows
       ..show_loopout_extension_length = state.ui_state.show_loopout_extension_length
+      ..export_svg_text_separately = state.ui_state.export_svg_text_separately
       ..show_slice_bar = state.ui_state.show_slice_bar
       ..show_mouseover_data = state.ui_state.show_mouseover_data
       ..disable_png_caching_dna_sequences = state.ui_state.disable_png_caching_dna_sequences
@@ -154,6 +155,7 @@ mixin MenuPropsMixin on UiProps {
   bool display_reverse_DNA_right_side_up;
   bool default_crossover_type_scaffold_for_setting_helix_rolls;
   bool default_crossover_type_staple_for_setting_helix_rolls;
+  bool export_svg_text_separately;
   LocalStorageDesignChoice local_storage_design_choice;
   bool clear_helix_selection_when_loading_new_design;
   bool show_slice_bar;
@@ -1165,6 +1167,17 @@ debugging, but be warned that it will be very slow to render a large number of D
         ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.selected)))
         ..tooltip = "Export SVG figure of selected strands"
         ..display = 'SVG of selected strands')(),
+      (MenuBoolean()
+        ..value = props.export_svg_text_separately
+        ..display = 'export svg text separately'
+        ..tooltip = '''\
+When selected, every character of the text in a DNA sequence is exported separately.
+This is useful to circumvent an SVG bug found in Microsoft tools such as PowerPoint.'''
+        ..name = 'export-svg-text-separately'
+        ..onChange = (_) {
+          props.dispatch(actions.ExportSvgTextSeparatelySet(!props.export_svg_text_separately));
+        }
+        ..key = 'export-svg-text-separately')(),
       (MenuDropdownItem()
         ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna_sequences.export_dna))
         ..tooltip = "Export DNA sequences of strands to a file."
