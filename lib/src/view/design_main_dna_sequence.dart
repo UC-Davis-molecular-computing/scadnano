@@ -92,6 +92,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
   }
 
   static const classname_dna_sequence = 'dna-seq';
+  static const charWidth = 6.59375;
 
   ReactElement _dna_sequence_on_domain(Domain domain) {
     var seq_to_draw = domain.dna_sequence_deletions_insertions_to_spaces(
@@ -135,7 +136,6 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     }
 
     var id = 'dna-${util.id_domain(domain)}';
-    double charWidth = 6.59375;
 
     return (Dom.text()
       ..key = id
