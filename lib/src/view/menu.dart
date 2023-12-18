@@ -1167,6 +1167,16 @@ debugging, but be warned that it will be very slow to render a large number of D
         ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.selected)))
         ..tooltip = "Export SVG figure of selected strands"
         ..display = 'SVG of selected strands')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna_sequences.export_dna))
+        ..tooltip = "Export DNA sequences of strands to a file."
+        ..display = 'DNA sequences')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.ExportCanDoDNA()))
+        ..tooltip = "Export design's DNA sequences as a CSV in the same way as cadnano v2.\n"
+            "This is useful, for example, with CanDo's atomic model generator."
+        ..display = 'DNA sequences (cadnano v2 format)')(),
+      DropdownDivider({'key': 'divider-export-svg-settings'}),
       (MenuBoolean()
         ..value = props.export_svg_text_separately
         ..display = 'export svg text separately'
@@ -1178,15 +1188,6 @@ This is useful to circumvent an SVG bug found in Microsoft tools such as PowerPo
           props.dispatch(actions.ExportSvgTextSeparatelySet(!props.export_svg_text_separately));
         }
         ..key = 'export-svg-text-separately')(),
-      (MenuDropdownItem()
-        ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna_sequences.export_dna))
-        ..tooltip = "Export DNA sequences of strands to a file."
-        ..display = 'DNA sequences')(),
-      (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.ExportCanDoDNA()))
-        ..tooltip = "Export design's DNA sequences as a CSV in the same way as cadnano v2.\n"
-            "This is useful, for example, with CanDo's atomic model generator."
-        ..display = 'DNA sequences (cadnano v2 format)')(),
       DropdownDivider({'key': 'divider-not-full-design'}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile(whitespace: true)))
