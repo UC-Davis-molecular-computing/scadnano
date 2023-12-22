@@ -89,12 +89,24 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
 
     // To ensure that the extension name displays right-side up, we always draw from the
     // left point to the right point, regardless of which is the free end and which is attached.
-    var left_svg = extension_free_end_svg;
-    var right_svg = extension_attached_end_svg;
-    if (left_svg.x > right_svg.x) {
-      var swap = left_svg;
-      left_svg = right_svg;
-      right_svg = swap;
+    //NOTE: this causes the DNA to appear backwards in cases when the 3' end appears to the left
+    // of the 5' end. For now we will ditch this and draw the extension path from 5' to 3'
+    // (see svg_5p and svg_3p below), and figure out later how to display the name properly.
+    // Leaving this code here to help with that later.
+    // var left_svg = extension_free_end_svg;
+    // var right_svg = extension_attached_end_svg;
+    // if (left_svg.x > right_svg.x) {
+    //   var swap = left_svg;
+    //   left_svg = right_svg;
+    //   right_svg = swap;
+    // }
+
+    var svg_5p = extension_free_end_svg;
+    var svg_3p = extension_attached_end_svg;
+    if (!ext.is_5p) {
+      var swap = svg_5p;
+      svg_5p = svg_3p;
+      svg_3p = swap;
     }
 
     var color = ext.color ?? props.strand_color;
@@ -102,8 +114,10 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     // This is just a straight line, but for some reason, for displaying the extension name,
     // it only works to attach a textPath to it if it is a path, not a line.
     // So we use Dom.path() instead of Dom.line()
-    var path_d = 'M ${left_svg.x} ${left_svg.y} '
-        'L ${right_svg.x} ${right_svg.y}';
+    // var path_d = 'M ${left_svg.x} ${left_svg.y} '
+    //     'L ${right_svg.x} ${right_svg.y}';
+    var path_d = 'M ${svg_5p.x} ${svg_5p.y} '
+        'L ${svg_3p.x} ${svg_3p.y}';
     return (Dom.path()
       ..className = classname
       ..onPointerDown = handle_click_down
