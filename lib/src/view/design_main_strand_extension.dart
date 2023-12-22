@@ -255,10 +255,16 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     if (results == null) return;
 
     String name = (results[name_idx] as DialogText).value;
-    app.dispatch(actions.BatchAction(
-        app.state.ui_state.selectables_store.selected_extensions
-            .map((e) => actions.SubstrandNameSet(name: name, substrand: e)),
-        "set extension names"));
+    var selected_exts = app.state.ui_state.selectables_store.selected_extensions;
+    var action;
+    if (selected_exts.length > 1) {
+      action = actions.BatchAction(
+          selected_exts.map((e) => actions.SubstrandNameSet(name: name, substrand: e)),
+          "set extension names");
+    } else {
+      action = actions.SubstrandNameSet(name: name, substrand: props.ext);
+    }
+    app.dispatch(action);
   }
 
   extension_display_length_and_angle_change() =>
