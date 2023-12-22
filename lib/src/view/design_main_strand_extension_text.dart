@@ -6,7 +6,7 @@ import 'pure_component.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 
-part 'design_main_strand_extension_name.over_react.g.dart';
+part 'design_main_strand_extension_text.over_react.g.dart';
 
 UiFactory<DesignMainStrandExtensionTextProps> DesignMainStrandExtensionText = _$DesignMainStrandExtensionText;
 

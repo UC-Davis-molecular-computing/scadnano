@@ -16,7 +16,7 @@ import '../state/loopout.dart';
 import 'design_main_strand_paths.dart';
 import 'design_main_strand_domain_text.dart';
 import 'design_main_strand_loopout_name.dart';
-import 'design_main_strand_extension_name.dart';
+import 'design_main_strand_extension_text.dart';
 import 'pure_component.dart';
 import '../state/strand.dart';
 import '../state/helix.dart';
@@ -241,11 +241,11 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
       } else if (substrand is Extension) {
         Extension ext = substrand;
         int adj_helix_idx = ext.adjacent_domain.helix;
-        bool draw_loopout = should_draw_extension(
+        bool draw_ext = should_draw_extension(
             adj_helix_idx, props.side_selected_helix_idxs, props.only_display_selected_helices);
         int num_stacked = 0;
         if (props.show_dna) num_stacked++;
-        if (draw_loopout && ext.name != null) {
+        if (draw_ext && ext.name != null) {
           names.add((DesignMainStrandExtensionText()
             ..ext = ext
             ..text = ext.name
@@ -319,12 +319,12 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
       } else if (substrand is Extension) {
         Extension ext = substrand;
         int adj_helix_idx = ext.adjacent_domain.helix;
-        bool draw_loopout = should_draw_extension(
+        bool draw_ext = should_draw_extension(
             adj_helix_idx, props.side_selected_helix_idxs, props.only_display_selected_helices);
         int num_stacked = 0;
         if (props.show_dna) num_stacked++;
         if (props.show_domain_names) num_stacked++;
-        if (draw_loopout && ext.label != null) {
+        if (draw_ext && ext.label != null) {
           names.add((DesignMainStrandExtensionText()
             ..ext = ext
             ..num_stacked = num_stacked
