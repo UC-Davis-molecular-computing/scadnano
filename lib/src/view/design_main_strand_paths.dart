@@ -114,6 +114,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..helices = {helix.idx: helix}.build()
             ..groups = {helix.group: props.groups[helix.group]}.build()
             ..geometry = props.geometry
+            ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
             ..strand_tooltip = props.strand_tooltip
             ..helix_svg_position = props.helix_idx_to_svg_position_map[helix.idx]
             ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
@@ -139,6 +140,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
                 ..is_scaffold = props.strand.is_scaffold
                 ..selected = end_selected
                 ..strand = strand
+                ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
                 ..context_menu_strand = props.context_menu_strand
                 ..moving_this_dna_end = props.moving_dna_ends && end_selected
                 ..drawing_potential_crossover = props.drawing_potential_crossover
@@ -171,6 +173,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..next_domain = next_dom
             ..prev_helix = prev_helix
             ..next_helix = next_helix
+            ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
             ..prev_helix_svg_position_y = props.helix_idx_to_svg_position_map[prev_helix.idx].y
             ..next_helix_svg_position_y = props.helix_idx_to_svg_position_map[next_helix.idx].y
             ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
@@ -194,6 +197,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..strand_color = strand.color
             ..transform = transform_of_helix(adj_helix.idx)
             ..selected = props.selected_extensions_in_strand.contains(ext)
+            ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
             ..adjacent_domain = adj_dom
             ..adjacent_helix = adj_helix
             ..strand_tooltip = props.strand_tooltip
@@ -216,6 +220,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..is_scaffold = props.strand.is_scaffold
             ..selected = end_selected
             ..strand = strand
+            ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
             ..context_menu_strand = props.context_menu_strand
             ..moving_this_dna_end = props.moving_dna_ends && end_selected
             ..drawing_potential_crossover = props.drawing_potential_crossover
@@ -246,6 +251,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
           ..prev_domain = prev_ss
           ..next_domain = next_ss
           ..geometry = props.geometry
+          ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
           ..prev_domain_helix_svg_position_y = props.helix_idx_to_svg_position_map[prev_ss.helix].y
           ..next_domain_helix_svg_position_y = props.helix_idx_to_svg_position_map[next_ss.helix].y
           ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
