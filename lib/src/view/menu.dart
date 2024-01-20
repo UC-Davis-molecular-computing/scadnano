@@ -1168,18 +1168,54 @@ A highlighting effect will still appear.
         'title': 'Export',
         'id': 'export-nav-dropdown',
       },
-      (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.side)))
-        ..tooltip = "Export SVG figure of side view (cross-section of helices on the left side of screen)."
-        ..display = 'SVG side view')(),
-      (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.main)))
-        ..tooltip = "Export SVG figure of main view (design shown in center of screen)."
-        ..display = 'SVG main view')(),
-      (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.selected)))
-        ..tooltip = "Export SVG figure of selected strands"
-        ..display = 'SVG of selected strands')(),
+      (MenuDropdownRight()
+        ..title = 'Side view'
+        ..tooltip = "Export figure of side view (cross-section of helices on the left side of screen)."
+        ..id = 'export_menu_side_view'
+        ..key = 'export_menu_side_view-dropdown'
+        ..className = 'submenu_item')([
+          (MenuDropdownItem()
+            ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.side)))
+            ..display = 'SVG'
+            ..key = 'export-svg-side-view')(),
+          (MenuDropdownItem()
+            ..on_click = ((_) => props.dispatch(actions.ExportPdf(type: actions.ExportPdfType.side)))
+            ..display = 'PDF'
+            ..key = 'export-pdf-side-view')(),
+        ]
+      ),
+      (MenuDropdownRight()
+        ..title = 'Main view'
+        ..tooltip = "Export figure of main view (design shown in center of screen)."
+        ..id = 'export_menu_main_view'
+        ..key = 'export_menu_main_view-dropdown'
+        ..className = 'submenu_item')([
+          (MenuDropdownItem()
+            ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.main)))
+            ..display = 'SVG'
+            ..key = 'export-svg-main-view')(),
+          (MenuDropdownItem()
+            ..on_click = ((_) => props.dispatch(actions.ExportPdf(type: actions.ExportPdfType.main)))
+            ..display = 'PDF'
+            ..key = 'export-pdf-main-view')(),
+        ]
+      ),
+      (MenuDropdownRight()
+        ..title = 'Selected strands'
+        ..tooltip = "Export figure of selected strands."
+        ..id = 'export_menu_selected_strands'
+        ..key = 'export_menu_selected_strands-dropdown'
+        ..className = 'submenu_item')([
+          (MenuDropdownItem()
+            ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.selected)))
+            ..display = 'SVG'
+            ..key = 'export-svg-selected-strands')(),
+          (MenuDropdownItem()
+            ..on_click = ((_) => props.dispatch(actions.ExportPdf(type: actions.ExportPdfType.selected)))
+            ..display = 'PDF'
+            ..key = 'export-pdf-selected-strands')(),
+        ]
+      ),
       (MenuDropdownItem()
         ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna_sequences.export_dna))
         ..tooltip = "Export DNA sequences of strands to a file."

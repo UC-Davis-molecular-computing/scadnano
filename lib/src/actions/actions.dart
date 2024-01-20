@@ -2154,6 +2154,24 @@ abstract class ExportSvg with BuiltJsonSerializable implements Action, Built<Exp
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Export PDF
+
+enum ExportPdfType { main, side, both, selected }
+
+abstract class ExportPdf with BuiltJsonSerializable implements Action, Built<ExportPdf, ExportPdfBuilder> {
+  factory ExportPdf.from([void Function(ExportPdfBuilder) updates]) = _$ExportPdf;
+
+  ExportPdf._();
+
+  static Serializer<ExportPdf> get serializer => _$exportPdfSerializer;
+
+  /************************ end BuiltValue boilerplate ************************/
+  factory ExportPdf({ExportPdfType type}) = _$ExportPdf._;
+
+  ExportPdfType get type;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Strand part action
 
 // reducer takes a part of a strand and looks up the strand it's in by strand_id,

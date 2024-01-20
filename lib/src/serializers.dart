@@ -320,6 +320,7 @@ part 'serializers.g.dart';
   InlineInsertionsDeletions,
   AutofitSet,
   ExportSvg,
+  ExportPdf,
   Modification5Prime,
   Modification3Prime,
   ModificationInternal,

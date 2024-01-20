@@ -30,6 +30,7 @@ import 'reset_local_storage.dart';
 import 'reselect_moved_domains.dart';
 import 'save_file.dart';
 import 'export_svg.dart';
+import 'export_pdf.dart';
 import 'local_storage.dart';
 import 'selections_intersect_box_compute.dart';
 import 'strand_create.dart';
@@ -47,6 +48,7 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   move_ensure_all_in_same_helix_group_middleware,
   forbid_create_circular_strand_no_crossovers_middleware,
   export_svg_middleware,
+  export_pdf_middleware,
   save_file_middleware,
   load_file_middleware,
   export_cadnano_or_codenano_file_middleware,
