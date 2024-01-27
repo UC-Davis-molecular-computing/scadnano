@@ -54,7 +54,7 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
             }
           } else {
             if (store.state.ui_state.export_svg_text_separately) {
-              elt = make_portable(clone_and_apply_style(elt));
+              elt = get_cloned_svg_element_with_style([elt], store.state.ui_state.export_svg_text_separately);
             }
             _export_from_element(elt, 'main');
           }
@@ -245,7 +245,7 @@ SvgSvgElement get_cloned_svg_element_with_style(List<Element> selected_elts, boo
 
   // have to add some padding to viewbox, for some reason bbox doesn't always fit it by a few pixels??
   cloned_svg_element_with_style.setAttribute('viewBox',
-      '${bbox.x.floor() - 1} ${bbox.y.floor() - 1} ${bbox.width.ceil() + 3} ${bbox.height.ceil() + 3}');
+      '${bbox.x.floor() - 1} ${bbox.y.floor() - 1} ${bbox.width.ceil() + 3} ${bbox.height.ceil() + 6}');
 
   return cloned_svg_element_with_style;
 }
