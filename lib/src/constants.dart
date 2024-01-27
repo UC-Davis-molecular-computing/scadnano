@@ -466,6 +466,7 @@ const css_selector_deletion = 'deletion-cross';
 const css_selector_insertion_group = 'insertion-group';
 const css_selector_deletion_group = 'deletion-group';
 const css_selector_selected = 'selected';
+const css_selector_selected_pink = 'selected-pink';
 
 const css_selector_context_menu_item_disabled = 'context_menu_item_disabled';
 

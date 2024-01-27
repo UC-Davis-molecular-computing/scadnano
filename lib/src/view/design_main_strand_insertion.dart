@@ -39,6 +39,8 @@ mixin DesignMainStrandInsertionPropsMixin on UiProps {
   Insertion get insertion => selectable_insertion.insertion;
 
   Domain get domain => selectable_insertion.domain;
+
+  bool retain_strand_color_on_selection;
 }
 
 class DesignMainStrandInsertionProps = UiProps with DesignMainStrandInsertionPropsMixin;
@@ -50,7 +52,11 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
   render() {
     var classname = constants.css_selector_insertion_group;
     if (props.selected) {
-      classname += ' ' + constants.css_selector_selected;
+      if (props.retain_strand_color_on_selection) {
+        classname += ' ' + constants.css_selector_selected;
+      } else {
+        classname += ' ' + constants.css_selector_selected_pink;
+      }
     }
     if (props.selectable_insertion.is_scaffold) {
       classname += ' ' + constants.css_selector_scaffold;

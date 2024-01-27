@@ -1,8 +1,7 @@
 # scadnano
 
 [scadnano](http://scadnano.org)
-("
-scriptable-cadnano", [source code repository here](https://github.com/UC-Davis-molecular-computing/scadnano))
+("scriptable-cadnano", [source code repository here](https://github.com/UC-Davis-molecular-computing/scadnano))
 is a program for designing synthetic DNA structures such as DNA origami.
 The scadnano project is developed and maintained by the UC Davis Molecular Computing group.
 Note that [cadnano](https://cadnano.org) is a separate project, developed and maintained by

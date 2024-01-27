@@ -38,6 +38,7 @@ mixin DesignMainStrandCrossoverPropsMixin on UiProps {
   Geometry geometry;
   num prev_domain_helix_svg_position_y;
   num next_domain_helix_svg_position_y;
+  bool retain_strand_color_on_selection;
 }
 
 class DesignMainStrandCrossoverProps = UiProps
@@ -63,7 +64,11 @@ class DesignMainStrandCrossoverComponent
 
     var classname = constants.css_selector_crossover;
     if (props.selected) {
-      classname += ' ' + constants.css_selector_selected;
+      if (props.retain_strand_color_on_selection) {
+        classname += ' ' + constants.css_selector_selected;
+      } else {
+        classname += ' ' + constants.css_selector_selected_pink;
+      }
     }
     if (props.strand.is_scaffold) {
       classname += ' ' + constants.css_selector_scaffold;

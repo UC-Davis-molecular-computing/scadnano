@@ -247,7 +247,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       ..startOffset = start_offset
       ..style = style_map);
     return (Dom.text()
-      ..key = 'extension-dna-'
+      ..key = 'extension-dna-${ext.is_5p ? "5'" : "3'"}'
           'H${ext.adjacent_domain.helix},${ext.adjacent_domain.start}-${ext.adjacent_domain.end}'
       ..dy = dy)(text_path_props(subseq));
   }

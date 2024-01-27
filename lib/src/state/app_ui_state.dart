@@ -235,6 +235,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get disable_png_caching_dna_sequences => storables.disable_png_caching_dna_sequences;
 
+  bool get retain_strand_color_on_selection => storables.retain_strand_color_on_selection;
+
   bool get display_reverse_DNA_right_side_up => storables.display_reverse_DNA_right_side_up;
 
   bool get show_mouseover_data => storables.show_mouseover_data;
