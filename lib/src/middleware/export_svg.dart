@@ -351,12 +351,12 @@ final relevant_styles = {
 Element clone_and_apply_style(Element elt_orig) {
   Element elt_styled = elt_orig.clone(true);
 
-  bool selected = elt_orig.classes.contains('selected');
+  bool selected = elt_orig.classes.contains('selected-pink');
 
-  elt_orig.classes.remove('selected');
+  elt_orig.classes.remove('selected-pink');
   clone_and_apply_style_rec(elt_styled, elt_orig);
 
-  if (selected) elt_orig.classes.add('selected');
+  if (selected) elt_orig.classes.add('selected-pink');
 
   // need to get from original since it has been rendered (styled hasn't been rendered so has 0 bounding box
   // also need to get from g element, not svg element, since svg element dimensions based on original
