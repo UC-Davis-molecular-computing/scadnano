@@ -1,6 +1,7 @@
 import 'dart:html';
 import 'dart:svg' as svg;
 import 'dart:svg';
+import 'dart:math' as math;
 
 import 'package:over_react/over_react.dart';
 import 'package:redux/redux.dart';
@@ -53,7 +54,7 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
             }
           } else {
             if (store.state.ui_state.export_svg_text_separately) {
-              elt = separate_if_svg_text(clone_and_apply_style(elt));
+              elt = make_portable(clone_and_apply_style(elt));
             }
             _export_from_element(elt, 'main');
           }
@@ -74,37 +75,6 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
   }
 }
 
-// this directly modifies ele
-Node separate_if_svg_text(Node ele) {
-  if (ele is TextElement && ele is SvgElement) {
-    double letterSpacing = double.tryParse(ele.getAttribute('letter-spacing') ?? "null");
-    if (letterSpacing != null) {
-      List<Element> children = [];
-      List<String> dna_seq = ele.text.split("");
-      double x = double.parse(ele.getAttribute('x'));
-      for (var i = 0; i < dna_seq.length; ++i) {
-        var child = clone_and_apply_style(ele)
-          ..id = ele.id + '-n-${i}'
-          ..text = dna_seq[i];
-        child.setAttribute('x', x.toString());
-        child.setAttribute('y', ele.getAttribute('y'));
-        child.setAttribute('dominant-baseline', 'text-top');
-        child.classes.add(DesignMainDNASequenceComponent.classname_dna_sequence);
-        children.add(child);
-        x += letterSpacing + DesignMainDNASequenceComponent.charWidth;
-      }
-      return SvgElement.tag("g")..children = children;
-    }
-  }
-  if (ele is Element) {
-    if (ele.hasChildNodes()) {
-      List<Node> nodes = ele.nodes.map(separate_if_svg_text).toList();
-      ele.nodes = nodes;
-    }
-  }
-  return ele;
-}
-
 List<Element> get_selected_strands(Store<AppState> store) {
   var selected_strands = store.state.ui_state.selectables_store.selected_strands;
   List<Element> selected_elts = [];
@@ -119,11 +89,145 @@ List<Element> get_selected_strands(Store<AppState> store) {
   return selected_elts;
 }
 
+List<double> rotateVector(List<double> vec, double ang) {
+  ang = ang * (math.pi / 180);
+  var cos = math.cos(ang);
+  var sin = math.sin(ang);
+  return [vec[0] * cos - vec[1] * sin, vec[0] * sin + vec[1] * cos];
+}
+
+// gets the height of a character in font in px
+double get_text_height(String font) {
+  CanvasElement element = document.createElement("canvas");
+  CanvasRenderingContext2D context = element.getContext("2d");
+  context.font = font;
+  return double.tryParse(context.font.replaceAll(RegExp(r'[^0-9\.]'), ''));
+}
+
+// returns a matrix that represents the change made by dominant-baseline css property
+DomMatrix dominantBaselineMatrix(String dominantBaseline, double rot, String font) {
+  switch (dominantBaseline) {
+    case "ideographic":
+      return new DomMatrix([
+        1,
+        0,
+        0,
+        1,
+        ...rotateVector([0, (-3 * get_text_height(font)) / 12], rot)
+      ]);
+    case "hanging":
+      return new DomMatrix([
+        1,
+        0,
+        0,
+        1,
+        ...rotateVector([0, (9 * get_text_height(font)) / 12], rot)
+      ]);
+    case "central":
+      return new DomMatrix([
+        1,
+        0,
+        0,
+        1,
+        ...rotateVector([0, (4 * get_text_height(font)) / 12], rot)
+      ]);
+    default:
+      return new DomMatrix([1, 0, 0, 1, 0, 0]);
+  }
+}
+
+Map matrixToMap<T>(Matrix matrix) {
+  return {
+    "a": matrix.a,
+    "b": matrix.b,
+    "c": matrix.c,
+    "d": matrix.d,
+    "e": matrix.e,
+    "f": matrix.f,
+  };
+}
+
+Map domMatrixToMap(DomMatrix matrix) {
+  return {
+    "a": matrix.a,
+    "b": matrix.b,
+    "c": matrix.c,
+    "d": matrix.d,
+    "e": matrix.e,
+    "f": matrix.f,
+  };
+}
+
+Map pointToMap(svg.Point point) {
+  return {"x": point.x, "y": point.y};
+}
+
+// creates a new separate text svg for the jth character on a svg text element
+TextElement createPortableElement(TextContentElement textEle, int j) {
+  TextElement charEle = document.createElementNS("http://www.w3.org/2000/svg", "text");
+  charEle.text = textEle.text[j];
+  charEle.setAttribute("style", textEle.style.cssText);
+
+  var pos = DomPoint.fromPoint(pointToMap(textEle.getStartPositionOfChar(j)));
+  var rot = textEle.getRotationOfChar(j);
+
+  for (int i = 0; i < textEle.transform.baseVal.numberOfItems; ++i) {
+    var item = textEle.transform.baseVal.getItem(i);
+    pos = pos.matrixTransform(matrixToMap(item.matrix));
+    rot = item.angle;
+  }
+  if (charEle.style.getPropertyValue("dominant-baseline") != "") {
+    pos = pos.matrixTransform(domMatrixToMap(dominantBaselineMatrix(
+        charEle.style.getPropertyValue("dominant-baseline"),
+        rot,
+        textEle.style.fontSize + " " + textEle.style.fontFamily)));
+  }
+  charEle.style.setProperty("dominant-baseline", "");
+  charEle.style.setProperty("text-anchor", "start");
+  charEle.style.setProperty("text-shadow",
+      "-0.7px -0.7px 0 #fff, 0.7px -0.7px 0 #fff, -0.7px 0.7px 0 #fff, 0.7px 0.7px 0 #fff"); // doesn't work in PowerPoint
+  charEle.setAttribute("x", pos.x.toString());
+  charEle.setAttribute("y", pos.y.toString());
+  charEle.setAttribute("transform", "rotate(${rot} ${pos.x} ${pos.y})");
+  return charEle;
+}
+
+// makes a svg compatible for PowerPoint
+Element make_portable(Element src) {
+  var src_children = src.querySelectorAll("*");
+  document.body.append(src);
+  for (int i = 0; i < src_children.length; ++i) {
+    if (src_children[i] is svg.TextContentElement) {
+      TextContentElement textEle = src_children[i] as TextContentElement;
+      if (textEle.children.length == 1 && textEle.children[0].tagName == "textPath") {
+        continue;
+      }
+      List<TextContentElement> portableEles = [];
+      for (int j = 0; j < textEle.getNumberOfChars(); ++j) {
+        var charEle = createPortableElement(textEle, j);
+        portableEles.add(charEle);
+      }
+      if (textEle is TextPathElement) {
+        // move TextPath children up and delete the TextPath
+        var parent = textEle.parent;
+        var newParent = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        parent.parent.append(newParent);
+        newParent.append(textEle);
+        parent.remove();
+      }
+      portableEles.forEach((v) => textEle.parentNode.append(v));
+      textEle.remove();
+    }
+  }
+  src.remove();
+  return src;
+}
+
 SvgSvgElement get_cloned_svg_element_with_style(List<Element> selected_elts, bool separate_text) {
   var cloned_svg_element_with_style = SvgSvgElement()
     ..children = selected_elts.map(clone_and_apply_style).toList();
   if (separate_text) {
-    selected_elts = selected_elts.map(separate_if_svg_text).map((x) => x as Element).toList();
+    cloned_svg_element_with_style = make_portable(cloned_svg_element_with_style);
   }
 
   // we can't get bbox without it being added to the DOM first
