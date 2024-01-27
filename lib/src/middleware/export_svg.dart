@@ -89,7 +89,7 @@ List<Element> get_selected_strands(Store<AppState> store) {
   return selected_elts;
 }
 
-List<double> rotateVector(List<double> vec, double ang) {
+List<double> rotate_vector(List<double> vec, double ang) {
   ang = ang * (math.pi / 180);
   var cos = math.cos(ang);
   var sin = math.sin(ang);
@@ -105,15 +105,15 @@ double get_text_height(String font) {
 }
 
 // returns a matrix that represents the change made by dominant-baseline css property
-DomMatrix dominantBaselineMatrix(String dominantBaseline, double rot, String font) {
-  switch (dominantBaseline) {
+DomMatrix dominant_baseline_matrix(String dominant_baseline, double rot, String font) {
+  switch (dominant_baseline) {
     case "ideographic":
       return new DomMatrix([
         1,
         0,
         0,
         1,
-        ...rotateVector([0, (-3 * get_text_height(font)) / 12], rot)
+        ...rotate_vector([0, (-3 * get_text_height(font)) / 12], rot)
       ]);
     case "hanging":
       return new DomMatrix([
@@ -121,7 +121,7 @@ DomMatrix dominantBaselineMatrix(String dominantBaseline, double rot, String fon
         0,
         0,
         1,
-        ...rotateVector([0, (9 * get_text_height(font)) / 12], rot)
+        ...rotate_vector([0, (9 * get_text_height(font)) / 12], rot)
       ]);
     case "central":
       return new DomMatrix([
@@ -129,14 +129,14 @@ DomMatrix dominantBaselineMatrix(String dominantBaseline, double rot, String fon
         0,
         0,
         1,
-        ...rotateVector([0, (4 * get_text_height(font)) / 12], rot)
+        ...rotate_vector([0, (4 * get_text_height(font)) / 12], rot)
       ]);
     default:
       return new DomMatrix([1, 0, 0, 1, 0, 0]);
   }
 }
 
-Map matrixToMap<T>(Matrix matrix) {
+Map matrix_to_map<T>(Matrix matrix) {
   return {
     "a": matrix.a,
     "b": matrix.b,
@@ -147,7 +147,7 @@ Map matrixToMap<T>(Matrix matrix) {
   };
 }
 
-Map domMatrixToMap(DomMatrix matrix) {
+Map dom_matrix_to_map(DomMatrix matrix) {
   return {
     "a": matrix.a,
     "b": matrix.b,
@@ -158,38 +158,46 @@ Map domMatrixToMap(DomMatrix matrix) {
   };
 }
 
-Map pointToMap(svg.Point point) {
+Map point_to_map(svg.Point point) {
   return {"x": point.x, "y": point.y};
 }
 
 // creates a new separate text svg for the jth character on a svg text element
-TextElement createPortableElement(TextContentElement textEle, int j) {
-  TextElement charEle = document.createElementNS("http://www.w3.org/2000/svg", "text");
-  charEle.text = textEle.text[j];
-  charEle.setAttribute("style", textEle.style.cssText);
+TextElement create_portable_element(TextContentElement text_ele, int j) {
+  TextElement char_ele = document.createElementNS("http://www.w3.org/2000/svg", "text");
+  char_ele.text = text_ele.text[j];
+  char_ele.setAttribute("style", text_ele.style.cssText);
+  var pos = DomPoint.fromPoint(point_to_map(text_ele.getStartPositionOfChar(j)));
+  var rot = text_ele.getRotationOfChar(j);
 
-  var pos = DomPoint.fromPoint(pointToMap(textEle.getStartPositionOfChar(j)));
-  var rot = textEle.getRotationOfChar(j);
-
-  for (int i = 0; i < textEle.transform.baseVal.numberOfItems; ++i) {
-    var item = textEle.transform.baseVal.getItem(i);
-    pos = pos.matrixTransform(matrixToMap(item.matrix));
+  for (int i = 0; i < text_ele.transform.baseVal.numberOfItems; ++i) {
+    var item = text_ele.transform.baseVal.getItem(i);
+    pos = pos.matrixTransform(matrix_to_map(item.matrix));
     rot = item.angle;
   }
-  if (charEle.style.getPropertyValue("dominant-baseline") != "") {
-    pos = pos.matrixTransform(domMatrixToMap(dominantBaselineMatrix(
-        charEle.style.getPropertyValue("dominant-baseline"),
+  if (char_ele.style.getPropertyValue("dominant-baseline") != "") {
+    pos = pos.matrixTransform(dom_matrix_to_map(dominant_baseline_matrix(
+        char_ele.style.getPropertyValue("dominant-baseline"),
         rot,
-        textEle.style.fontSize + " " + textEle.style.fontFamily)));
+        text_ele.style.fontSize + " " + text_ele.style.fontFamily)));
   }
-  charEle.style.setProperty("dominant-baseline", "");
-  charEle.style.setProperty("text-anchor", "start");
-  charEle.style.setProperty("text-shadow",
-      "-0.7px -0.7px 0 #fff, 0.7px -0.7px 0 #fff, -0.7px 0.7px 0 #fff, 0.7px 0.7px 0 #fff"); // doesn't work in PowerPoint
-  charEle.setAttribute("x", pos.x.toString());
-  charEle.setAttribute("y", pos.y.toString());
-  charEle.setAttribute("transform", "rotate(${rot} ${pos.x} ${pos.y})");
-  return charEle;
+  char_ele.style.setProperty("dominant-baseline", "");
+  char_ele.style.setProperty("text-anchor", "start");
+  if (text_ele.classes.any([
+    "loopout-extension-length",
+    "dna-seq-insertion",
+    "dna-seq-loopout",
+    "dna-seq-extension",
+    "dna-seq"
+  ].contains)) {
+    char_ele.style.setProperty(
+        "text-shadow", // doesn't work in PowerPoint
+        "-0.7px -0.7px 0 #fff, 0.7px -0.7px 0 #fff, -0.7px 0.7px 0 #fff, 0.7px 0.7px 0 #fff");
+  }
+  char_ele.setAttribute("x", pos.x.toString());
+  char_ele.setAttribute("y", pos.y.toString());
+  char_ele.setAttribute("transform", "rotate(${rot} ${pos.x} ${pos.y})");
+  return char_ele;
 }
 
 // makes a svg compatible for PowerPoint
@@ -198,25 +206,25 @@ Element make_portable(Element src) {
   document.body.append(src);
   for (int i = 0; i < src_children.length; ++i) {
     if (src_children[i] is svg.TextContentElement) {
-      TextContentElement textEle = src_children[i] as TextContentElement;
-      if (textEle.children.length == 1 && textEle.children[0].tagName == "textPath") {
+      TextContentElement text_ele = src_children[i] as TextContentElement;
+      if (text_ele.children.length == 1 && text_ele.children[0].tagName == "textPath") {
         continue;
       }
-      List<TextContentElement> portableEles = [];
-      for (int j = 0; j < textEle.getNumberOfChars(); ++j) {
-        var charEle = createPortableElement(textEle, j);
-        portableEles.add(charEle);
+      List<TextContentElement> portable_eles = [];
+      for (int j = 0; j < text_ele.getNumberOfChars(); ++j) {
+        var char_ele = create_portable_element(text_ele, j);
+        portable_eles.add(char_ele);
       }
-      if (textEle is TextPathElement) {
+      if (text_ele is TextPathElement) {
         // move TextPath children up and delete the TextPath
-        var parent = textEle.parent;
-        var newParent = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        parent.parent.append(newParent);
-        newParent.append(textEle);
+        var parent = text_ele.parent;
+        var new_parent = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        parent.parent.append(new_parent);
+        new_parent.append(text_ele);
         parent.remove();
       }
-      portableEles.forEach((v) => textEle.parentNode.append(v));
-      textEle.remove();
+      portable_eles.forEach((v) => text_ele.parentNode.append(v));
+      text_ele.remove();
     }
   }
   src.remove();
