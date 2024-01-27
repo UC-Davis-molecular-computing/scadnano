@@ -3,9 +3,11 @@ import 'dart:svg' as svg;
 import 'dart:svg';
 import 'dart:math' as math;
 
+import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/middleware/system_clipboard.dart';
+import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/view/design_main_dna_sequence.dart';
 
 import '../app.dart';
