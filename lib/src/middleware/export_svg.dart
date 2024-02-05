@@ -1,15 +1,14 @@
 import 'dart:html';
 import 'dart:svg' as svg;
 import 'dart:svg';
+import 'dart:math' as math;
 
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
-import 'package:react/react_client/react_interop.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/middleware/system_clipboard.dart';
-import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/strand.dart';
-import 'package:scadnano/src/view/design_main_base_pair_lines.dart';
+import 'package:scadnano/src/view/design_main_dna_sequence.dart';
 
 import '../app.dart';
 import '../state/app_state.dart';
@@ -51,11 +50,16 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
               window.alert("No strands are selected, so there is nothing to export.\n"
                   "Please select some strands before choosing this option.");
             } else {
-              var cloned_svg_element_with_style = get_cloned_svg_element_with_style(selected_elts);
+              var cloned_svg_element_with_style = get_cloned_svg_element_with_style(
+                  selected_elts, store.state.ui_state.export_svg_text_separately);
               _export_from_element(cloned_svg_element_with_style, 'selected');
             }
-          } else
+          } else {
+            if (store.state.ui_state.export_svg_text_separately) {
+              elt = get_cloned_svg_element_with_style([elt], store.state.ui_state.export_svg_text_separately);
+            }
             _export_from_element(elt, 'main');
+          }
         }
         if (action.type == actions.ExportSvgType.side || action.type == actions.ExportSvgType.both) {
           var elt = document.getElementById("side-view-svg");
@@ -107,9 +111,154 @@ List<Element> get_svg_elements_of_base_pairs(BuiltMap<int, BuiltList<int>> base_
   return elts;
 }
 
-SvgSvgElement get_cloned_svg_element_with_style(List<Element> selected_elts) {
+List<double> rotate_vector(List<double> vec, double ang) {
+  ang = ang * (math.pi / 180);
+  var cos = math.cos(ang);
+  var sin = math.sin(ang);
+  return [vec[0] * cos - vec[1] * sin, vec[0] * sin + vec[1] * cos];
+}
+
+// gets the height of a character in font in px
+double get_text_height(String font) {
+  CanvasElement element = document.createElement("canvas");
+  CanvasRenderingContext2D context = element.getContext("2d");
+  context.font = font;
+  return double.tryParse(context.font.replaceAll(RegExp(r'[^0-9\.]'), ''));
+}
+
+// returns a matrix that represents the change made by dominant-baseline css property
+DomMatrix dominant_baseline_matrix(String dominant_baseline, double rot, String font) {
+  switch (dominant_baseline) {
+    case "ideographic":
+      return new DomMatrix([
+        1,
+        0,
+        0,
+        1,
+        ...rotate_vector([0, (-3 * get_text_height(font)) / 12], rot)
+      ]);
+    case "hanging":
+      return new DomMatrix([
+        1,
+        0,
+        0,
+        1,
+        ...rotate_vector([0, (9 * get_text_height(font)) / 12], rot)
+      ]);
+    case "central":
+      return new DomMatrix([
+        1,
+        0,
+        0,
+        1,
+        ...rotate_vector([0, (4 * get_text_height(font)) / 12], rot)
+      ]);
+    default:
+      return new DomMatrix([1, 0, 0, 1, 0, 0]);
+  }
+}
+
+Map matrix_to_map<T>(Matrix matrix) {
+  return {
+    "a": matrix.a,
+    "b": matrix.b,
+    "c": matrix.c,
+    "d": matrix.d,
+    "e": matrix.e,
+    "f": matrix.f,
+  };
+}
+
+Map dom_matrix_to_map(DomMatrix matrix) {
+  return {
+    "a": matrix.a,
+    "b": matrix.b,
+    "c": matrix.c,
+    "d": matrix.d,
+    "e": matrix.e,
+    "f": matrix.f,
+  };
+}
+
+Map point_to_map(svg.Point point) {
+  return {"x": point.x, "y": point.y};
+}
+
+// creates a new separate text svg for the jth character on a svg text element
+TextElement create_portable_element(TextContentElement text_ele, int j) {
+  TextElement char_ele = document.createElementNS("http://www.w3.org/2000/svg", "text");
+  char_ele.text = text_ele.text[j];
+  char_ele.setAttribute("style", text_ele.style.cssText);
+  var pos = DomPoint.fromPoint(point_to_map(text_ele.getStartPositionOfChar(j)));
+  var rot = text_ele.getRotationOfChar(j);
+
+  for (int i = 0; i < text_ele.transform.baseVal.numberOfItems; ++i) {
+    var item = text_ele.transform.baseVal.getItem(i);
+    pos = pos.matrixTransform(matrix_to_map(item.matrix));
+    rot = item.angle;
+  }
+  if (char_ele.style.getPropertyValue("dominant-baseline") != "") {
+    pos = pos.matrixTransform(dom_matrix_to_map(dominant_baseline_matrix(
+        char_ele.style.getPropertyValue("dominant-baseline"),
+        rot,
+        text_ele.style.fontSize + " " + text_ele.style.fontFamily)));
+  }
+  char_ele.style.setProperty("dominant-baseline", "");
+  char_ele.style.setProperty("text-anchor", "start");
+  if (text_ele.classes.any([
+    "loopout-extension-length",
+    "dna-seq-insertion",
+    "dna-seq-loopout",
+    "dna-seq-extension",
+    "dna-seq"
+  ].contains)) {
+    char_ele.style.setProperty(
+        "text-shadow", // doesn't work in PowerPoint
+        "-0.7px -0.7px 0 #fff, 0.7px -0.7px 0 #fff, -0.7px 0.7px 0 #fff, 0.7px 0.7px 0 #fff");
+  }
+  char_ele.setAttribute("x", pos.x.toString());
+  char_ele.setAttribute("y", pos.y.toString());
+  char_ele.setAttribute("transform", "rotate(${rot} ${pos.x} ${pos.y})");
+  return char_ele;
+}
+
+// makes a svg compatible for PowerPoint
+Element make_portable(Element src) {
+  var src_children = src.querySelectorAll("*");
+  document.body.append(src);
+  for (int i = 0; i < src_children.length; ++i) {
+    if (src_children[i] is svg.TextContentElement) {
+      TextContentElement text_ele = src_children[i] as TextContentElement;
+      if (text_ele.children.length == 1 && text_ele.children[0].tagName == "textPath") {
+        continue;
+      }
+      List<TextContentElement> portable_eles = [];
+      for (int j = 0; j < text_ele.getNumberOfChars(); ++j) {
+        var char_ele = create_portable_element(text_ele, j);
+        portable_eles.add(char_ele);
+      }
+      if (text_ele is TextPathElement) {
+        // move TextPath children up and delete the TextPath
+        var parent = text_ele.parent;
+        var new_parent = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        parent.parent.append(new_parent);
+        new_parent.append(text_ele);
+        parent.remove();
+      }
+      portable_eles.forEach((v) => text_ele.parentNode.append(v));
+      text_ele.remove();
+    }
+  }
+  src.remove();
+  return src;
+}
+
+SvgSvgElement get_cloned_svg_element_with_style(List<Element> selected_elts, bool separate_text) {
   var cloned_svg_element_with_style = SvgSvgElement()
     ..children = selected_elts.map(clone_and_apply_style).toList();
+  if (separate_text) {
+    cloned_svg_element_with_style = make_portable(cloned_svg_element_with_style);
+  }
 
   // we can't get bbox without it being added to the DOM first
   document.body.append(cloned_svg_element_with_style);
@@ -118,7 +267,7 @@ SvgSvgElement get_cloned_svg_element_with_style(List<Element> selected_elts) {
 
   // have to add some padding to viewbox, for some reason bbox doesn't always fit it by a few pixels??
   cloned_svg_element_with_style.setAttribute('viewBox',
-      '${bbox.x.floor() - 1} ${bbox.y.floor() - 1} ${bbox.width.ceil() + 3} ${bbox.height.ceil() + 3}');
+      '${bbox.x.floor() - 1} ${bbox.y.floor() - 1} ${bbox.width.ceil() + 3} ${bbox.height.ceil() + 6}');
 
   return cloned_svg_element_with_style;
 }
@@ -151,7 +300,7 @@ _export_svg(svg.SvgSvgElement svg_element, String filename_append) {
 }
 
 _copy_from_elements(List<Element> svg_elements) {
-  var cloned_svg_element_with_style = get_cloned_svg_element_with_style(svg_elements);
+  var cloned_svg_element_with_style = get_cloned_svg_element_with_style(svg_elements, false);
   util.copy_svg_as_png(cloned_svg_element_with_style);
 }
 
@@ -202,12 +351,12 @@ final relevant_styles = {
 Element clone_and_apply_style(Element elt_orig) {
   Element elt_styled = elt_orig.clone(true);
 
-  bool selected = elt_orig.classes.contains('selected');
+  bool selected = elt_orig.classes.contains('selected-pink');
 
-  elt_orig.classes.remove('selected');
+  elt_orig.classes.remove('selected-pink');
   clone_and_apply_style_rec(elt_styled, elt_orig);
 
-  if (selected) elt_orig.classes.add('selected');
+  if (selected) elt_orig.classes.add('selected-pink');
 
   // need to get from original since it has been rendered (styled hasn't been rendered so has 0 bounding box
   // also need to get from g element, not svg element, since svg element dimensions based on original
@@ -223,6 +372,7 @@ Element clone_and_apply_style(Element elt_orig) {
 }
 
 clone_and_apply_style_rec(Element elt_styled, Element elt_orig, {int depth = 0}) {
+  // print('elt_styled ${elt_styled.id} and elt_orig ${elt_orig.id}');
 //  Set<Element> children_styled_to_remove = {};
   var tag_name = elt_styled.tagName;
 
@@ -235,7 +385,8 @@ clone_and_apply_style_rec(Element elt_styled, Element elt_orig, {int depth = 0})
 
   if (relevant_styles.keys.contains(tag_name)) {
     var style_def = elt_orig.getComputedStyle();
-
+    // print(
+    // 'id ${elt_styled.id} fill ${style_def.getPropertyValue("fill")} relevant_styles ${relevant_styles[tag_name]}');
     //TODO: figure out how to remove nodes that aren't visible;
     // getting error "Unsupported operation: Cannot setRange on filtered list" when removing children
 //      if (style_def.visibility == 'hidden') {
@@ -249,14 +400,17 @@ clone_and_apply_style_rec(Element elt_styled, Element elt_orig, {int depth = 0})
         // correcting for this bug in InkScape that causes it to render hidden SVG objects:
         // https://bugs.launchpad.net/inkscape/+bug/1577763
         if (style_name == 'visibility' && style_value == 'hidden') {
-          style_strings.add('display: none');
+          // style_strings.add('display: none');
+          elt_styled.style.setProperty('display', 'none');
         }
-        style_strings.add('${style_name}: ${style_value}');
+        elt_styled.style.setProperty(style_name, style_value);
+        // style_strings.add('${style_name}: ${style_value};');
       }
     }
-    var style_string = style_strings.join('; ') + ';';
+    // var style_string = style_strings.join(' ');
 
-    elt_styled.setAttribute("style", style_string);
+    // elt_styled.setAttribute("style", style_string);
+    // print(elt_styled.styleMap);
 
 //    print('${' ' * depth * 2} ${tag_name} ${elt_orig.classes.toList()} style: $style_string');
   }

@@ -86,6 +86,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
       ..show_helices_axis_arrows = state.ui_state.show_helices_axis_arrows
       ..show_loopout_extension_length = state.ui_state.show_loopout_extension_length
+      ..export_svg_text_separately = state.ui_state.export_svg_text_separately
       ..show_slice_bar = state.ui_state.show_slice_bar
       ..show_mouseover_data = state.ui_state.show_mouseover_data
       ..disable_png_caching_dna_sequences = state.ui_state.disable_png_caching_dna_sequences
@@ -156,6 +157,7 @@ mixin MenuPropsMixin on UiProps {
   bool display_reverse_DNA_right_side_up;
   bool default_crossover_type_scaffold_for_setting_helix_rolls;
   bool default_crossover_type_staple_for_setting_helix_rolls;
+  bool export_svg_text_separately;
   LocalStorageDesignChoice local_storage_design_choice;
   bool clear_helix_selection_when_loading_new_design;
   bool show_slice_bar;
@@ -1180,6 +1182,19 @@ A highlighting effect will still appear.
         ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.selected)))
         ..tooltip = "Export SVG figure of selected strands"
         ..display = 'SVG of selected strands')(),
+      (MenuBoolean()
+        ..value = props.export_svg_text_separately
+        ..display = 'export svg text separately (PPT)'
+        ..tooltip = '''\
+When selected, every symbol of the text in a DNA sequence is exported as a separate
+SVG text element. This is useful if the SVG will be imported into Powerpoint, which 
+is less expressive than SVG and can render the text strangely.'''
+        ..name = 'export-svg-text-separately'
+        ..onChange = (_) {
+          props.dispatch(actions.ExportSvgTextSeparatelySet(!props.export_svg_text_separately));
+        }
+        ..key = 'export-svg-text-separately')(),
+      DropdownDivider({'key': 'divider-export-svg'}),
       (MenuDropdownItem()
         ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna_sequences.export_dna))
         ..tooltip = "Export DNA sequences of strands to a file."
@@ -1189,7 +1204,7 @@ A highlighting effect will still appear.
         ..tooltip = "Export design's DNA sequences as a CSV in the same way as cadnano v2.\n"
             "This is useful, for example, with CanDo's atomic model generator."
         ..display = 'DNA sequences (cadnano v2 format)')(),
-      DropdownDivider({'key': 'divider-not-full-design'}),
+      DropdownDivider({'key': 'divider-export-dna'}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile(whitespace: true)))
         ..tooltip = "Export design to cadnano (version 2) .json file."
@@ -1216,6 +1231,7 @@ cadnano files that have whitespace. ("Bad .json file format is detected in
 'structure.json'. Or no dsDNA or strand crossovers exist.")"""
         ..display = 'cadnano v2 no whitespace'
         ..key = 'export-cadnano-no-whitespace')(),
+      DropdownDivider({'key': 'divider-cadnano'}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.OxdnaExport()))
         ..tooltip = "Export design to oxDNA .dat and .top files, which can be loaded in oxDNA or oxView."

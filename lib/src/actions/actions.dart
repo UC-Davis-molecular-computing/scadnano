@@ -2154,6 +2154,27 @@ abstract class ExportSvg with BuiltJsonSerializable implements Action, Built<Exp
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Export every text in a DNA sequence separately
+
+abstract class ExportSvgTextSeparatelySet
+    with BuiltJsonSerializable
+    implements Action, Built<ExportSvgTextSeparatelySet, ExportSvgTextSeparatelySetBuilder> {
+  bool get export_svg_text_separately;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExportSvgTextSeparatelySet(bool export_svg_text_separately) =>
+      ExportSvgTextSeparatelySet.from((b) => b..export_svg_text_separately = export_svg_text_separately);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExportSvgTextSeparatelySet.from([void Function(ExportSvgTextSeparatelySetBuilder) updates]) =
+      _$ExportSvgTextSeparatelySet;
+
+  ExportSvgTextSeparatelySet._();
+
+  static Serializer<ExportSvgTextSeparatelySet> get serializer => _$exportSvgTextSeparatelySetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Strand part action
 
 // reducer takes a part of a strand and looks up the strand it's in by strand_id,
