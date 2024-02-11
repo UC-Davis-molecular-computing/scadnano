@@ -670,12 +670,15 @@ Future<void> ask_for_select_all_with_same_as_selected() async {
   }
 
   var all_traits = List<SelectableTrait>.from(SelectableTrait.values);
-  var items = List<DialogItem>.filled(all_traits.length, null);
+  var items = List<DialogItem>.filled(all_traits.length + 1, null);
 
   for (int idx = 0; idx < all_traits.length; idx++) {
     var trait = all_traits[idx];
     items[idx] = DialogCheckbox(label: trait.description, value: false);
   }
+  items[all_traits.length] = DialogCheckbox(label: '(Exclude scaffold(s))', value: false, tooltip: '''\
+If checked, then only strands that are not scaffolds will be selected. 
+However, *currently* selected scaffold strands will remain selected.''');
 
   var dialog = Dialog(
     title: "Select all strands with same traits as currently selected strand(s)",
@@ -693,10 +696,12 @@ Future<void> ask_for_select_all_with_same_as_selected() async {
       traits_for_selection.add(trait);
     }
   }
+  bool exclude_scaffolds = (results[all_traits.length] as DialogCheckbox).value;
 
   var action = actions.SelectAllWithSameAsSelected(
     templates: selected_strands,
     traits: traits_for_selection.build(),
+    exclude_scaffolds: exclude_scaffolds,
   );
   app.dispatch(action);
 }

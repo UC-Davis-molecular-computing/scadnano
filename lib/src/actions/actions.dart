@@ -1571,9 +1571,13 @@ abstract class SelectAllWithSameAsSelected
 
   BuiltList<SelectableTrait> get traits;
 
+  bool get exclude_scaffolds;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory SelectAllWithSameAsSelected({BuiltList<Selectable> templates, BuiltList<SelectableTrait> traits}) =
-      _$SelectAllWithSameAsSelected._;
+  factory SelectAllWithSameAsSelected(
+      {BuiltList<Selectable> templates,
+      BuiltList<SelectableTrait> traits,
+      bool exclude_scaffolds}) = _$SelectAllWithSameAsSelected._;
 
   SelectAllWithSameAsSelected._();
 

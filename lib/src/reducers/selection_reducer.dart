@@ -159,6 +159,7 @@ SelectablesStore select_all_with_same_reducer(
   var selected_strands = selectables_store.selected_strands.toList();
   for (var strand in state.design.strands) {
     if (selected_strands.contains(strand)) continue;
+    if (action.exclude_scaffolds && strand.is_scaffold) continue;
     bool include_strand = true;
     // by default include the strand; now go looking for a trait where it doesn't match
     for (var trait in trait_values.keys) {
