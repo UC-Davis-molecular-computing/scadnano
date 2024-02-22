@@ -2080,6 +2080,8 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
 
   bool get include_only_selected_strands;
 
+  bool get exclude_selected_strands;
+
   ExportDNAFormat get export_dna_format;
 
   @nullable
@@ -2097,6 +2099,7 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
   factory ExportDNA({
     bool include_scaffold,
     bool include_only_selected_strands,
+    bool exclude_selected_strands,
     ExportDNAFormat export_dna_format,
     String delimiter,
     String domain_delimiter,
@@ -2104,9 +2107,11 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
     bool column_major_strand = true,
     bool column_major_plate = true,
   }) {
+    assert(!(include_only_selected_strands && exclude_selected_strands));
     return ExportDNA.from((b) => b
       ..include_scaffold = include_scaffold
       ..include_only_selected_strands = include_only_selected_strands
+      ..exclude_selected_strands = exclude_selected_strands
       ..export_dna_format = export_dna_format
       ..delimiter = delimiter
       ..domain_delimiter = domain_delimiter
