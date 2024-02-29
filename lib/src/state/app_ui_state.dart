@@ -7,6 +7,7 @@ import 'package:built_value/built_value.dart';
 import 'package:scadnano/src/state/design_side_rotation_data.dart';
 import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/copy_info.dart';
+import 'package:tuple/tuple.dart';
 import '../actions/actions.dart' as actions;
 import '../state/local_storage_design_choice.dart';
 
@@ -238,6 +239,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get show_mouseover_data => storables.show_mouseover_data;
 
   bool get selection_box_intersection => storables.selection_box_intersection;
+
+  BuiltMap<int, Tuple2> get original_helix_offsets;
 
   static void _initializeBuilder(AppUIStateBuilder b) {
     b.copy_info = null;

@@ -4,12 +4,14 @@ import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/reducers/design_reducer.dart';
 import 'package:scadnano/src/reducers/strands_copy_info_reducer.dart';
+import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/dna_assign_options.dart';
 import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/copy_info.dart';
 import 'package:scadnano/src/state/substrand.dart';
 import 'package:scadnano/src/util.dart';
+import 'package:tuple/tuple.dart';
 import '../reducers/context_menu_reducer.dart';
 import '../state/example_designs.dart';
 import '../state/grid_position.dart';
@@ -583,7 +585,22 @@ AppUIState ui_state_global_reducer(AppUIState ui_state, AppState state, action) 
   ..strands_move = strands_move_global_reducer(ui_state.strands_move, state, action)?.toBuilder()
   ..domains_move = domains_move_global_reducer(ui_state.domains_move, state, action)?.toBuilder()
   ..strand_creation = strand_creation_global_reducer(ui_state.strand_creation, state, action)?.toBuilder()
-  ..copy_info = copy_info_global_reducer(ui_state.copy_info, state, action)?.toBuilder());
+  ..copy_info = copy_info_global_reducer(ui_state.copy_info, state, action)?.toBuilder()
+  ..original_helix_offsets =
+      original_helix_offsets_reducer(ui_state.original_helix_offsets, state, action).toBuilder());
+
+BuiltMap<int, Tuple2> original_helix_offsets_reducer(
+    BuiltMap<int, Tuple2> original_helix_offsets, AppState state, action) {
+  if (action is actions.StrandsMoveStartSelectedStrands || action is actions.StrandCreateStart) {
+    var helix_offsets = original_helix_offsets.toMap();
+    for (int key in state.design.helices.keys) {
+      var helix = state.design.helices[key];
+      helix_offsets[state.design.helices[key].idx] = Tuple2.fromList([helix.min_offset, helix.max_offset]);
+    }
+    return helix_offsets.build();
+  }
+  return original_helix_offsets;
+}
 
 GlobalReducer<BuiltList<MouseoverData>, AppState> mouseover_datas_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.HelixRollSetAtOther>(

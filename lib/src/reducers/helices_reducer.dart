@@ -6,7 +6,9 @@ import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/reducers/groups_reducer.dart';
 import 'package:scadnano/src/reducers/strands_move_reducer.dart';
 import 'package:scadnano/src/state/group.dart';
+import 'package:scadnano/src/state/strand_creation.dart';
 import 'package:scadnano/src/state/strands_move.dart';
+import 'package:scadnano/src/state/substrand.dart';
 import '../reducers/util_reducer.dart';
 import '../state/app_state.dart';
 
@@ -55,6 +57,11 @@ GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGl
   ),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.StrandsMoveAdjustAddress>(
       helix_offset_change_all_with_moving_strands_reducer),
+  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.StrandCreateAdjustOffset>(
+      helix_offset_change_all_while_creating_strand_reducer),
+  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.ReplaceStrands>(first_replace_strands_reducer),
+  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.SelectionsClear>(
+      reset_helices_offsets_after_selections_clear)
 ]);
 
 BuiltMap<int, Helix> helix_individual_reducer(
@@ -209,6 +216,112 @@ BuiltMap<int, Helix> helix_offset_change_all_with_moving_strands_reducer(
   }
   return helices;
 }
+
+BuiltMap<int, Helix> helix_offset_change_all_while_creating_strand_reducer(
+    BuiltMap<int, Helix> helices, AppState state, actions.StrandCreateAdjustOffset action) {
+  StrandCreation strand_creation = state.ui_state.strand_creation;
+  if (strand_creation != null) {
+    var helices_map = helices.toMap();
+    var original_helix_offsets = state.ui_state.original_helix_offsets;
+
+    // Increase helix size according to strand movement
+    if (helices_map[strand_creation.helix.idx].min_offset > action.offset) {
+      helices_map[strand_creation.helix.idx] =
+          helices_map[strand_creation.helix.idx].rebuild((b) => b..min_offset = action.offset);
+      return helices_map.build();
+    }
+    if (helices_map[strand_creation.helix.idx].max_offset <= action.offset) {
+      helices_map[strand_creation.helix.idx] =
+          helices_map[strand_creation.helix.idx].rebuild((b) => b..max_offset = action.offset + 1);
+      return helices_map.build();
+    }
+
+    // Decrease helix size according to strand movement
+    if (action.offset > helices_map[strand_creation.helix.idx].min_offset &&
+        helices_map[strand_creation.helix.idx].min_offset <
+            original_helix_offsets[strand_creation.helix.idx].item1) {
+      helices_map[strand_creation.helix.idx] =
+          helices_map[strand_creation.helix.idx].rebuild((b) => b..min_offset = action.offset);
+      return helices_map.build();
+    }
+    if (action.offset < helices_map[strand_creation.helix.idx].max_offset + 1 &&
+        helices_map[strand_creation.helix.idx].max_offset >
+            original_helix_offsets[strand_creation.helix.idx].item2) {
+      helices_map[strand_creation.helix.idx] =
+          helices_map[strand_creation.helix.idx].rebuild((b) => b.max_offset = action.offset + 1);
+      return helices_map.build();
+    }
+  }
+  return helices;
+}
+
+BuiltMap<int, Helix> first_replace_strands_reducer(
+    BuiltMap<int, Helix> helices, AppState state, actions.ReplaceStrands action) {
+  Map changed_strands = action.new_strands.toMap();
+  Map<int, int> min_offsets = {};
+  Map<int, int> max_offsets = {};
+  for (int key in changed_strands.keys) {
+    Strand strand = changed_strands[key];
+    List<Substrand> substrands = strand.substrands.toList();
+    for (var domain in substrands) {
+      if (domain is Domain) {
+        int helix_idx = domain.helix;
+        if (domain.start < helices[helix_idx].min_offset) {
+          if (min_offsets.containsKey(helix_idx))
+            min_offsets[helix_idx] = [min_offsets[helix_idx], domain.start].min;
+          else
+            min_offsets[helix_idx] = domain.start;
+        }
+        if (domain.end > helices[helix_idx].max_offset) {
+          if (max_offsets.containsKey(helix_idx))
+            max_offsets[helix_idx] = [max_offsets[helix_idx], domain.end].max;
+          else
+            max_offsets[helix_idx] = domain.end;
+        }
+      }
+    }
+  }
+  var helices_map = helices.toMap();
+  if (min_offsets.length > 0) {
+    for (int helix_idx in min_offsets.keys) {
+      helices_map[helix_idx] = helices_map[helix_idx].rebuild((b) => b..min_offset = min_offsets[helix_idx]);
+    }
+  }
+  if (max_offsets.length > 0) {
+    for (int helix_idx in max_offsets.keys) {
+      helices_map[helix_idx] = helices_map[helix_idx].rebuild((b) => b..max_offset = max_offsets[helix_idx]);
+    }
+  }
+  return helices_map.build();
+}
+
+BuiltMap<int, Helix> reset_helices_offsets(BuiltMap<int, Helix> helices, AppState state) {
+  var helices_updated = helices.toMap();
+  var original_helix_offsets = state.ui_state.original_helix_offsets;
+  for (int idx in original_helix_offsets.keys) {
+    int current_helix_min_offset = state.design.min_offset_of_strands_at(idx);
+    if (current_helix_min_offset >= original_helix_offsets[idx].item1) {
+      helices_updated[idx] =
+          helices_updated[idx].rebuild((b) => b.min_offset = original_helix_offsets[idx].item1);
+    }
+    int current_helix_max_offset = state.design.max_offset_of_strands_at(idx);
+    if (current_helix_max_offset <= original_helix_offsets[idx].item2) {
+      helices_updated[idx] =
+          helices_updated[idx].rebuild((b) => b.max_offset = original_helix_offsets[idx].item2);
+    }
+  }
+  return helices_updated.build();
+}
+
+BuiltMap<int, Helix> reset_helices_offsets_after_selections_clear(
+    BuiltMap<int, Helix> helices, AppState state, actions.SelectionsClear action) {
+  return reset_helices_offsets(helices, state);
+}
+
+// BuiltMap<int, Helix> reset_helices_offsets_after_creation(
+//     BuiltMap<int, Helix> helices, AppState state, actions.StrandCreateStop action) {
+//   return reset_helices_offsets(helices, state);
+// }
 
 BuiltMap<int, Helix> helix_offset_change_all_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.HelixOffsetChangeAll action) {

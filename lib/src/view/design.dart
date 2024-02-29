@@ -387,23 +387,22 @@ class DesignViewComponent {
       // move strand creation
       StrandCreation strand_creation = app.state.ui_state.strand_creation;
       if (strand_creation != null) {
-        int old_offset = strand_creation.current_offset;
         var group = app.state.design.groups[strand_creation.helix.group];
         var geometry = app.state.design.geometry;
-        int new_offset = util
-            .get_address_on_helix(event, strand_creation.helix, group, geometry,
-                app.state.helix_idx_to_svg_position_map[strand_creation.helix.idx])
-            .offset;
-        var new_address = Address(
-            helix_idx: strand_creation.helix.idx, offset: new_offset, forward: strand_creation.forward);
-        if (old_offset != new_offset &&
-            !app.state.design
-                .is_occupied(new_address, strand_creation) && // can't draw strand over existing strand
-            new_offset != strand_creation.original_offset && // can't put start and end at same offset
-            strand_creation.helix.min_offset <= new_offset && // can't go off end of helix
-            new_offset < strand_creation.helix.max_offset) {
-          app.dispatch(actions.StrandCreateAdjustOffset(offset: new_offset));
-        }
+        // int new_offset = util
+        //     .get_address_on_helix(event, strand_creation.helix, group, geometry,
+        //         app.state.helix_idx_to_svg_position_map[strand_creation.helix.idx])
+        //     .offset;
+        Helix strand_creation_helix = app.state.design.helices.toMap()[strand_creation.helix.idx];
+        Address updated_function_offset = util.find_closest_address_with_infinite_helix_boundaries(
+            event,
+            strand_creation_helix,
+            {strand_creation.helix.group: group}.build(),
+            geometry,
+            {strand_creation.helix.idx: app.state.helix_idx_to_svg_position_map[strand_creation.helix.idx]}
+                .build(),
+            strand_creation);
+        app.dispatch(actions.StrandCreateAdjustOffset(offset: updated_function_offset.offset));
       }
     });
 

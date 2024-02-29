@@ -1,3 +1,4 @@
+import 'package:scadnano/src/state/address.dart';
 import '../reducers/util_reducer.dart';
 import '../state/app_state.dart';
 import '../state/strand_creation.dart';
@@ -19,8 +20,22 @@ StrandCreation strand_create_start_reducer(
         color: action.color);
 
 StrandCreation strand_create_adjust_offset_reducer(
-        StrandCreation strand_creation, AppState state, actions.StrandCreateAdjustOffset action) =>
-    strand_creation.rebuild((b) => b..current_offset = action.offset);
+    StrandCreation strand_creation, AppState state, actions.StrandCreateAdjustOffset action) {
+  int new_offset = action.offset;
+  int old_offset = strand_creation.current_offset;
+
+  var new_address =
+      Address(helix_idx: strand_creation.helix.idx, offset: new_offset, forward: strand_creation.forward);
+  if (old_offset != new_offset &&
+          !state.design.is_occupied(new_address, strand_creation) && // can't draw strand over existing strand
+          new_offset != strand_creation.original_offset // can't put start and end at same offset
+      // state.design.helices[strand_creation.helix.idx].min_offset <= new_offset && // can't go off end of helix
+      // new_offset < state.design.helices[strand_creation.helix.idx].max_offset
+      ) {
+    return strand_creation.rebuild((b) => b..current_offset = action.offset);
+  }
+  return strand_creation;
+}
 
 StrandCreation strand_create_stop_reducer(StrandCreation _, AppState __, actions.StrandCreateStop action) =>
     null;

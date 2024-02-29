@@ -136,6 +136,8 @@ Map get_strand_bounds_details(Design design, StrandsMove strands_move,
     int outOfBoundsNewMaxOffset = helix.max_offset;
     int inBoundsNewMinOffset = helix.min_offset;
     int inBoundsNewMaxOffset = helix.max_offset;
+    int originalMinOffset = strands_move.helices[helix.idx].min_offset;
+    int originalMaxOffset = strands_move.helices[helix.idx].max_offset;
     int max_offset_of_helix = design.max_offset_of_strands_at(helix.idx);
     int min_offset_of_helix = design.min_offset_of_strands_at(helix.idx);
 
@@ -145,7 +147,7 @@ Map get_strand_bounds_details(Design design, StrandsMove strands_move,
       else if (domain.start + delta_offset > helix.min_offset)
         inBoundsNewMinOffset = [
           [inBoundsNewMinOffset, domain.start + delta_offset].max,
-          0,
+          originalMinOffset,
           min_offset_of_helix
         ].min;
       if (domain.end + delta_offset > helix.max_offset)
@@ -153,7 +155,7 @@ Map get_strand_bounds_details(Design design, StrandsMove strands_move,
       else if (domain.end + delta_offset < helix.max_offset)
         inBoundsNewMaxOffset = [
           [inBoundsNewMaxOffset, domain.end + delta_offset].min,
-          48,
+          originalMaxOffset,
           max_offset_of_helix
         ].max;
       // if (domain.start + delta_offset < helix.min_offset) return "min_offset_out_of_bounds";
