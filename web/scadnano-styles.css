@@ -668,7 +668,8 @@ label + select {
     fill: lightgray;
 }
 
-.selected {
+/* .selected { */
+.selected:not(.domain-line) {
     filter: url("#shadow");
 }
 
@@ -683,7 +684,6 @@ label + select {
     fill: lightgray;
 }
 
-
 /* https://www.w3schools.com/cssref/css_selectors.asp */
 /* These are needed to make parts pink when they are selected individually. */
 .selected.crossover-curve,
@@ -692,7 +692,31 @@ label + select {
 .selected.deletion-cross,
 .selected.modification,
 .selected.domain-line,
-.selected.extension-line {
+.selected.extension-line,
+.selected .crossover-curve,
+.selected .loopout-curve,
+.selected .insertion-curve,
+.selected .deletion-cross,
+.selected .modification,
+.selected .domain-line,
+.selected .extension-line {
+    stroke-width: 5pt;
+}
+
+.selected-pink.crossover-curve,
+.selected-pink.loopout-curve,
+.selected-pink.insertion-curve,
+.selected-pink.deletion-cross,
+.selected-pink.modification,
+.selected-pink.domain-line,
+.selected-pink.extension-line,
+.selected-pink .crossover-curve,
+.selected-pink .loopout-curve,
+.selected-pink .insertion-curve,
+.selected-pink .deletion-cross,
+.selected-pink .modification,
+.selected-pink .domain-line,
+.selected-pink .extension-line {
     stroke: hotpink;
     stroke-width: 5pt;
 }
@@ -701,35 +725,35 @@ label + select {
 .selected.three-prime-end,
 .selected.five-prime-end-first-substrand,
 .selected.three-prime-end-last-substrand {
+    visibility: visible;
+    stroke-width: 1pt;
+}
+
+.selected-pink.five-prime-end,
+.selected-pink.three-prime-end,
+.selected-pink.five-prime-end-first-substrand,
+.selected-pink.three-prime-end-last-substrand {
     stroke: red;
     fill: hotpink;
     visibility: visible;
     stroke-width: 1pt;
 }
 
-/* https://www.w3schools.com/cssref/css_selectors.asp */
-/* These are needed to make all parts pink when whole strand is selected, */
-/* i.e., a parent of these components is selected */
-.selected .crossover-curve,
-.selected .loopout-curve,
-.selected .insertion-curve,
-.selected .deletion-cross,
-.selected .modification,
-.selected .domain-line,
-.selected .extension-line {
-    stroke: hotpink;
-    stroke-width: 5pt;
-}
-
 .selected .five-prime-end,
 .selected .three-prime-end,
 .selected .five-prime-end-first-substrand,
 .selected .three-prime-end-last-substrand {
+    stroke-width: 1pt;
+}
+
+.selected-pink .five-prime-end,
+.selected-pink .three-prime-end,
+.selected-pink .five-prime-end-first-substrand,
+.selected-pink .three-prime-end-last-substrand {
     stroke: red;
     fill: hotpink;
     stroke-width: 1pt;
 }
-
 
 /* end formatting of Strand elements when selected/selectable/not selectable */
 /*****************************************************************************/
@@ -739,6 +763,10 @@ label + select {
     stroke-width: 4;
     stroke-opacity: 0.3;
     fill: none;
+}
+
+.crossover-curve-same-helix {
+    stroke-opacity: 0.55;
 }
 
 .potential-vertical-crossover-curve {

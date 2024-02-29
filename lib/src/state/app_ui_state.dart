@@ -215,6 +215,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get show_loopout_extension_length => storables.show_loopout_extension_length;
 
+  bool get export_svg_text_separately => storables.export_svg_text_separately;
+
   bool get default_crossover_type_scaffold_for_setting_helix_rolls =>
       storables.default_crossover_type_scaffold_for_setting_helix_rolls;
 
@@ -233,6 +235,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   int get slice_bar_offset => storables.slice_bar_offset;
 
   bool get disable_png_caching_dna_sequences => storables.disable_png_caching_dna_sequences;
+
+  bool get retain_strand_color_on_selection => storables.retain_strand_color_on_selection;
 
   bool get display_reverse_DNA_right_side_up => storables.display_reverse_DNA_right_side_up;
 

@@ -1409,17 +1409,61 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       return;
     }
 
+    // lots of ugly checks below for backwards compatibility since we used to write
+    // "5'-" or "3'-" or "internal-" at the start of keys in the modifications map
     for (int i = 0; i < strands.length; i++) {
       var strand = strands[i];
       var strand_json = strand_jsons[i];
       if (strand_json.containsKey(constants.modification_5p_key)) {
         var mod_name = strand_json[constants.modification_5p_key];
-        Modification5Prime mod = legacy ? all_mods[mod_name] : mods_5p[mod_name];
+        Modification5Prime mod;
+        if (legacy) {
+          var key = mod_name;
+          if (!all_mods.containsKey(mod_name)) {
+            if (key.substring(0, 3) == "5'-") {
+              key = mod_name.substring(3);
+            } else {
+              key = "5'-${mod_name}";
+            }
+          }
+          mod = all_mods[key];
+        } else {
+          var key = mod_name;
+          if (!mods_5p.containsKey(mod_name)) {
+            if (key.substring(0, 3) == "5'-") {
+              key = mod_name.substring(3);
+            } else {
+              key = "5'-${mod_name}";
+            }
+          }
+          mod = mods_5p[key];
+        }
         strand = strand.rebuild((b) => b..modification_5p.replace(mod));
       }
       if (strand_json.containsKey(constants.modification_3p_key)) {
         var mod_name = strand_json[constants.modification_3p_key];
-        Modification3Prime mod = legacy ? all_mods[mod_name] : mods_3p[mod_name];
+        Modification3Prime mod;
+        if (legacy) {
+          var key = mod_name;
+          if (!all_mods.containsKey(mod_name)) {
+            if (key.substring(0, 3) == "3'-") {
+              key = mod_name.substring(3);
+            } else {
+              key = "3'-${mod_name}";
+            }
+          }
+          mod = all_mods[key];
+        } else {
+          var key = mod_name;
+          if (!mods_3p.containsKey(mod_name)) {
+            if (key.substring(0, 3) == "3'-") {
+              key = mod_name.substring(3);
+            } else {
+              key = "3'-${mod_name}";
+            }
+          }
+          mod = mods_3p[key];
+        }
         strand = strand.rebuild((b) => b..modification_3p.replace(mod));
       }
       if (strand_json.containsKey(constants.modifications_int_key)) {
@@ -1428,7 +1472,24 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         for (var idx_str in mod_names_by_idx_json.keys) {
           int offset = int.parse(idx_str);
           String mod_name = mod_names_by_idx_json[idx_str];
-          ModificationInternal mod = legacy ? all_mods[mod_name] : mods_int[mod_name];
+          ModificationInternal mod;
+          if (legacy) {
+            var key = mod_name;
+            if (!all_mods.containsKey(mod_name)) {
+              if (key.substring(0, 9) == "internal-") {
+                key = mod_name.substring(9);
+              } else {
+                key = "internal-${mod_name}";
+              }
+            }
+            mod = all_mods[key];
+          } else {
+            var key = mod_name;
+            if (!mods_int.containsKey(mod_name)) {
+              key = "internal-${mod_name}";
+            }
+            mod = mods_int[key];
+          }
           mods_by_idx[offset] = mod;
         }
         strand = strand.rebuild((b) => b..modifications_int.replace(mods_by_idx));
@@ -2040,21 +2101,39 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   /// maps each helix_idx to a list of offsets where there is a complementary base pair on each strand
   @memoized
-  BuiltMap<int, BuiltList<int>> get base_pairs => this._base_pairs(false);
+  BuiltMap<int, BuiltList<int>> get base_pairs => this._base_pairs(false, strands.toBuiltSet());
 
   /// maps each helix_idx to a list of offsets where there is a base on each strand,
   /// NOT necessarily complementary
   @memoized
-  BuiltMap<int, BuiltList<int>> get base_pairs_with_mismatches => this._base_pairs(true);
+  BuiltMap<int, BuiltList<int>> get base_pairs_with_mismatches =>
+      this._base_pairs(true, strands.toBuiltSet());
 
-  BuiltMap<int, BuiltList<int>> _base_pairs(bool allow_mismatches) {
+  // returns a subset of base_pairs that is connected to selected_strands
+  BuiltMap<int, BuiltList<int>> selected_base_pairs(BuiltSet<Strand> selected_strands) =>
+      this._base_pairs(false, selected_strands);
+
+  // returns a subset of base_pairs_with_mismatches that is connected to selected_strands
+  BuiltMap<int, BuiltList<int>> selected_base_pairs_with_mismatches(BuiltSet<Strand> selected_strands) =>
+      this._base_pairs(true, selected_strands);
+
+  BuiltMap<int, BuiltList<int>> _base_pairs(bool allow_mismatches, BuiltSet<Strand> selected_strands) {
     var base_pairs = Map<int, BuiltList<int>>();
+    BuiltSet<Domain> selected_domains = selected_strands
+        .map((s) => s.substrands)
+        .expand((x) => x)
+        .where((x) => x is Domain)
+        .map((x) => x as Domain)
+        .toBuiltSet();
     for (int idx in this.helices.keys) {
       List<int> offsets = [];
       List<Tuple2<Domain, Domain>> overlapping_domains = find_overlapping_domains_on_helix(idx);
       for (var domain_pair in overlapping_domains) {
         Domain dom1 = domain_pair.item1;
         Domain dom2 = domain_pair.item2;
+        if (!selected_domains.contains(dom1) || !selected_domains.contains(dom2)) {
+          continue;
+        }
         var start_and_end = dom1.compute_overlap(dom2);
         int start = start_and_end.item1;
         int end = start_and_end.item2;

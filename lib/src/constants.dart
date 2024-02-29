@@ -8,12 +8,12 @@ import 'state/grid.dart';
 
 // WARNING: Do not modify line below, except for the version string
 //          (and also add new version string to scadnano_versions_to_link).
-const String CURRENT_VERSION = "0.19.1";
+const String CURRENT_VERSION = "0.19.2";
 const String INITIAL_VERSION = "0.1.0";
 
 // scadnano versions that we deploy so that older versions can be used.
 final scadnano_older_versions_to_link = [
-  "0.19.0",
+  "0.19.1",
   "0.18.10",
   "0.17.14",
   // "0.17.13",
@@ -430,6 +430,7 @@ const css_selector_domain = 'domain-line';
 const css_selector_base_pair_line = 'base-pair-line';
 const css_selector_extension = 'extension-line';
 const css_selector_crossover = 'crossover-curve';
+const css_selector_crossover_same_helix = 'crossover-curve-same-helix';
 const css_selector_loopout = 'loopout-curve';
 const css_selector_end_5p_strand = 'five-prime-end-first-substrand';
 const css_selector_end_3p_strand = 'three-prime-end-last-substrand';
@@ -465,6 +466,7 @@ const css_selector_deletion = 'deletion-cross';
 const css_selector_insertion_group = 'insertion-group';
 const css_selector_deletion_group = 'deletion-group';
 const css_selector_selected = 'selected';
+const css_selector_selected_pink = 'selected-pink';
 
 const css_selector_context_menu_item_disabled = 'context_menu_item_disabled';
 

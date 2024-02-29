@@ -26,6 +26,7 @@ mixin DesignMainStrandDeletionPropsMixin on UiProps {
   Domain get domain => selectable_deletion.domain;
   int get deletion => selectable_deletion.offset;
   num svg_position_y;
+  bool retain_strand_color_on_selection;
 }
 
 class DesignMainStrandDeletionProps = UiProps with DesignMainStrandDeletionPropsMixin;
@@ -55,7 +56,11 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
 
     var classname = constants.css_selector_deletion_group;
     if (props.selected) {
-      classname += ' ' + constants.css_selector_selected;
+      if (props.retain_strand_color_on_selection) {
+        classname += ' ' + constants.css_selector_selected;
+      } else {
+        classname += ' ' + constants.css_selector_selected_pink;
+      }
     }
     if (props.selectable_deletion.is_scaffold) {
       classname += ' ' + constants.css_selector_scaffold;

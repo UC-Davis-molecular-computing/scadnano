@@ -119,9 +119,13 @@ abstract class AppUIStateStorables
 
   bool get disable_png_caching_dna_sequences;
 
+  bool get retain_strand_color_on_selection;
+
   bool get display_reverse_DNA_right_side_up;
 
   bool get selection_box_intersection;
+
+  bool get export_svg_text_separately;
 
   static void _initializeBuilder(AppUIStateStorablesBuilder b) {
     // This ensures that even if these keys are not in localStorage (e.g., due to upgrading),
@@ -173,11 +177,13 @@ abstract class AppUIStateStorables
     b.show_slice_bar = false;
     b.slice_bar_offset = null;
     b.disable_png_caching_dna_sequences = false;
+    b.retain_strand_color_on_selection = false;
     b.display_reverse_DNA_right_side_up = false;
     b.local_storage_design_choice = LocalStorageDesignChoice().toBuilder();
     b.clear_helix_selection_when_loading_new_design = false;
     b.show_mouseover_data = false;
     b.selection_box_intersection = false;
+    b.export_svg_text_separately = false;
   }
 
   /************************ begin BuiltValue boilerplate ************************/

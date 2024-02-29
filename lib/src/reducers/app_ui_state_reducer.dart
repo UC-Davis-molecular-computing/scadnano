@@ -215,6 +215,9 @@ int slice_bar_offset_set_reducer(int _, actions.SliceBarOffsetSet action) => act
 bool disable_png_caching_dna_sequences_reducer(bool _, actions.DisablePngCachingDnaSequencesSet action) =>
     action.disable_png_caching_dna_sequences;
 
+bool retain_strand_color_on_selection_reducer(bool _, actions.RetainStrandColorOnSelectionSet action) =>
+    action.retain_strand_color_on_selection;
+
 bool display_reverse_DNA_right_side_up_reducer(bool _, actions.DisplayReverseDNARightSideUpSet action) =>
     action.display_reverse_DNA_right_side_up;
 
@@ -234,6 +237,9 @@ bool show_base_pair_lines_reducer(bool _, actions.ShowBasePairLinesSet action) =
 bool show_base_pair_lines_with_mismatches_reducer(
         bool _, actions.ShowBasePairLinesWithMismatchesSet action) =>
     action.show_base_pair_lines_with_mismatches;
+
+bool export_svg_text_separately_reducer(bool _, actions.ExportSvgTextSeparatelySet action) =>
+    action.export_svg_text_separately;
 
 bool display_major_tick_widths_reducer(bool _, actions.SetDisplayMajorTickWidths action) => action.show;
 
@@ -436,6 +442,7 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..show_slice_bar = TypedReducer<bool, actions.ShowSliceBarSet>(show_slice_bar_reducer)(storables.show_slice_bar, action)
     ..slice_bar_offset = TypedReducer<int, actions.SliceBarOffsetSet>(slice_bar_offset_set_reducer)(storables.slice_bar_offset, action)
     ..disable_png_caching_dna_sequences = TypedReducer<bool, actions.DisablePngCachingDnaSequencesSet>(disable_png_caching_dna_sequences_reducer)(storables.disable_png_caching_dna_sequences, action)
+    ..retain_strand_color_on_selection = TypedReducer<bool, actions.RetainStrandColorOnSelectionSet>(retain_strand_color_on_selection_reducer)(storables.retain_strand_color_on_selection, action)
     ..display_reverse_DNA_right_side_up = TypedReducer<bool, actions.DisplayReverseDNARightSideUpSet>(display_reverse_DNA_right_side_up_reducer)(storables.display_reverse_DNA_right_side_up, action)
     ..local_storage_design_choice = TypedReducer<LocalStorageDesignChoice, actions.LocalStorageDesignChoiceSet>(local_storage_design_choice_reducer)(storables.local_storage_design_choice, action).toBuilder()
     ..clear_helix_selection_when_loading_new_design = TypedReducer<bool, actions.ClearHelixSelectionWhenLoadingNewDesignSet>(clear_helix_selection_when_loading_new_design_set_reducer)(storables.clear_helix_selection_when_loading_new_design, action)
@@ -448,6 +455,7 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..display_major_tick_widths_all_helices = TypedReducer<bool, actions.SetDisplayMajorTickWidthsAllHelices>(display_major_tick_widths_all_helices_reducer)(storables.display_major_tick_widths_all_helices, action)
     ..show_base_pair_lines = TypedReducer<bool, actions.ShowBasePairLinesSet>(show_base_pair_lines_reducer)(storables.show_base_pair_lines, action)
     ..show_base_pair_lines_with_mismatches = TypedReducer<bool, actions.ShowBasePairLinesWithMismatchesSet>(show_base_pair_lines_with_mismatches_reducer)(storables.show_base_pair_lines_with_mismatches, action)
+    ..export_svg_text_separately = TypedReducer<bool, actions.ExportSvgTextSeparatelySet>(export_svg_text_separately_reducer)(storables.export_svg_text_separately, action)
     ..only_display_selected_helices = TypedReducer<bool, actions.SetOnlyDisplaySelectedHelices>(only_display_selected_helices_reducer)(storables.only_display_selected_helices, action)
     ..default_crossover_type_scaffold_for_setting_helix_rolls = TypedReducer<bool, actions.DefaultCrossoverTypeForSettingHelixRollsSet>(default_crossover_type_scaffold_for_setting_helix_rolls_reducer)(storables.default_crossover_type_scaffold_for_setting_helix_rolls, action)
     ..default_crossover_type_staple_for_setting_helix_rolls = TypedReducer<bool, actions.DefaultCrossoverTypeForSettingHelixRollsSet>(default_crossover_type_staple_for_setting_helix_rolls_reducer)(storables.default_crossover_type_staple_for_setting_helix_rolls, action)

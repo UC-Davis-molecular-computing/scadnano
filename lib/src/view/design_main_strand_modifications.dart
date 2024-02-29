@@ -34,6 +34,8 @@ mixin DesignMainStrandModificationsPropsMixin on UiProps {
 
   BuiltSet<SelectableModification> selected_modifications_in_strand;
   BuiltMap<int, num> helix_idx_to_svg_position_y_map;
+
+  bool retain_strand_color_on_selection;
 }
 
 class DesignMainStrandModificationsProps = UiProps
@@ -65,6 +67,7 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
           ..helix_svg_position_y = props.helix_idx_to_svg_position_y_map[helix_5p.idx]
           ..ext = ext
           ..geometry = props.geometry
+          ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
           ..key = "5'")());
       }
     }
@@ -88,6 +91,7 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
           ..helix_svg_position_y = props.helix_idx_to_svg_position_y_map[helix_3p.idx]
           ..ext = ext
           ..geometry = props.geometry
+          ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
           ..key = "3'")());
       }
     }
@@ -125,6 +129,7 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
             ..dna_idx_mod = dna_idx_mod
             ..helix_svg_position_y = props.helix_idx_to_svg_position_y_map[helix.idx]
             ..geometry = props.geometry
+            ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
             ..key = "internal-${dna_idx_mod}")());
         }
       } else if (ss_with_mod is Loopout) {

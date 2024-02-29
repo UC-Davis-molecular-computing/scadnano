@@ -33,6 +33,7 @@ mixin DesignMainDNASequencesProps on UiProps {
   bool only_display_selected_helices;
   BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
   bool disable_png_caching_dna_sequences;
+  bool retain_strand_color_on_selection;
   bool display_reverse_DNA_right_side_up;
 }
 
