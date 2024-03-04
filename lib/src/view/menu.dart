@@ -48,6 +48,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..no_grid_is_none =
           state.design == null ? false : state.design.groups.values.every((group) => group.grid != Grid.none)
       ..show_dna = state.ui_state.show_dna
+      ..base_pair_display_type = state.ui_state.base_pair_display_type
       ..show_strand_names = state.ui_state.show_strand_names
       ..show_strand_labels = state.ui_state.show_strand_labels
       ..show_domain_names = state.ui_state.show_domain_names
@@ -135,7 +136,7 @@ mixin MenuPropsMixin on UiProps {
   bool autofit;
   bool only_display_selected_helices;
   ExampleDesigns example_designs;
-  // SetBasePairDisplay base_pair_display_types;
+  BasePairDisplayType base_pair_display_type;
   bool design_has_insertions_or_deletions;
   bool undo_stack_empty;
   bool redo_stack_empty;
@@ -1007,24 +1008,6 @@ or real coordinates in nanometers, depending on whether a grid is selected).'''
         ..on_click = ((_) => app.disable_keyboard_shortcuts_while(base_pair_display_dialog))
         ..display = 'Base pair display'
         ..key = 'base-pair-display')(),
-      (MenuBoolean()
-        ..value = props.show_base_pair_lines
-        ..display = 'Base pair lines'
-        ..tooltip = 'Draw vertical lines between pairs of bases at the same offset on the same helix.'
-        ..onChange = ((_) =>
-            props.dispatch(actions.ShowBasePairLinesSet(show_base_pair_lines: !props.show_base_pair_lines)))
-        ..key = 'base_pair_lines')(),
-      (MenuBoolean()
-        ..value = props.show_base_pair_lines_with_mismatches
-        ..hide = !props.show_base_pair_lines
-        ..display = '... even if bases mismatch'
-        ..tooltip = '''\
-Lines are drawn between all pairs of bases at the same offset on the same helix, 
-regardless of whether the bases are complementary. If unchecked then lines are 
-only shown between pairs of complementary bases.'''
-        ..onChange = ((_) => props.dispatch(actions.ShowBasePairLinesWithMismatchesSet(
-            show_base_pair_lines_with_mismatches: !props.show_base_pair_lines_with_mismatches)))
-        ..key = 'base_pair_lines_mismatches')(),
     ]);
   }
 
@@ -1448,13 +1431,24 @@ However, it may be less stable than the main site.'''
       DialogRadio(
         label: 'types',
         options: BasePairDisplayType.types.map((v) => v.display_name()),
+        selected_idx: props.base_pair_display_type.toIndex(),
       ),
+      DialogCheckbox(
+        label: 'display even if bases mismatch',
+        value: props.show_base_pair_lines_with_mismatches,
+        tooltip: '''\
+Lines are drawn between all pairs of bases at the same offset on the same helix, 
+regardless of whether the bases are complementary. If unchecked then lines are 
+only shown between pairs of complementary bases.''',
+      )
     ]);
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
     int selected_idx = (results[0] as DialogRadio).selected_idx;
     props.dispatch(actions.BasePairTypeSet(selected_idx: selected_idx));
+    props.dispatch((actions.ShowBasePairLinesWithMismatchesSet(
+        show_base_pair_lines_with_mismatches: (results[1] as DialogCheckbox).value)));
   }
 }
 

@@ -7,6 +7,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/middleware/system_clipboard.dart';
+import 'package:scadnano/src/state/base_pair_display_type.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/view/design_main_dna_sequence.dart';
 
@@ -80,7 +81,7 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
 List<Element> get_selected_svg_elements(AppState state) {
   BuiltSet<Strand> selected_strands = state.ui_state.selectables_store.selected_strands;
   List<Element> selected_elts = [];
-  if (app.state.ui_state.show_base_pair_lines) {
+  if (app.state.ui_state.base_pair_display_type != BasePairDisplayType.none) {
     var base_pairs = state.ui_state.show_base_pair_lines_with_mismatches
         ? state.design.selected_base_pairs_with_mismatches(selected_strands)
         : state.design.selected_base_pairs(selected_strands);

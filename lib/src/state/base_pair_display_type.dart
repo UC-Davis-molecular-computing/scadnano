@@ -27,6 +27,18 @@ class BasePairDisplayType extends EnumClass {
 
   String to_json() => name;
 
+  int toIndex() {
+    switch (this) {
+      case none:
+        return 0;
+      case lines:
+        return 1;
+      case rectangle:
+        return 2;
+    }
+    return 0;
+  }
+
   String display_name() {
     // edit this to display a different string than the identifier name above
     switch (this) {
