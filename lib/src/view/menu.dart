@@ -4,6 +4,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:scadnano/src/state/base_pair_display_type.dart';
 
 import 'react_bootstrap.dart';
 
@@ -134,6 +135,7 @@ mixin MenuPropsMixin on UiProps {
   bool autofit;
   bool only_display_selected_helices;
   ExampleDesigns example_designs;
+  // SetBasePairDisplay base_pair_display_types;
   bool design_has_insertions_or_deletions;
   bool undo_stack_empty;
   bool redo_stack_empty;
@@ -1001,6 +1003,10 @@ or real coordinates in nanometers, depending on whether a grid is selected).'''
       ..id = 'view_menu_base_pairs'
       ..key = 'view_menu_base_pairs-dropdown'
       ..className = 'submenu_item')([
+      (MenuDropdownItem()
+        ..on_click = ((_) => app.disable_keyboard_shortcuts_while(base_pair_display_dialog))
+        ..display = 'Base pair display'
+        ..key = 'base-pair-display')(),
       (MenuBoolean()
         ..value = props.show_base_pair_lines
         ..display = 'Base pair lines'
@@ -1435,6 +1441,20 @@ However, it may be less stable than the main site.'''
 
     int selected_idx = (results[0] as DialogRadio).selected_idx;
     props.dispatch(actions.ExampleDesignsLoad(selected_idx: selected_idx));
+  }
+
+  Future<void> base_pair_display_dialog() async {
+    var dialog = Dialog(title: 'Base pair display', type: DialogType.base_pair_display, items: [
+      DialogRadio(
+        label: 'types',
+        options: BasePairDisplayType.types.map((v) => v.display_name()),
+      ),
+    ]);
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+
+    int selected_idx = (results[0] as DialogRadio).selected_idx;
+    props.dispatch(actions.BasePairTypeSet(selected_idx: selected_idx));
   }
 }
 

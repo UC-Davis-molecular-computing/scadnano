@@ -12,6 +12,7 @@ import '../state/local_storage_design_choice.dart';
 
 import 'app_ui_state_storables.dart';
 import '../serializers.dart';
+import 'base_pair_display_type.dart';
 import 'context_menu.dart';
 import 'dialog.dart';
 import 'design.dart';
@@ -161,6 +162,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get show_domain_names => storables.show_domain_names;
 
   bool get show_domain_labels => storables.show_domain_labels;
+
+  BasePairDisplayType get base_pair_display_type => storables.base_pair_display_type;
 
   bool get show_base_pair_lines => storables.show_base_pair_lines;
 

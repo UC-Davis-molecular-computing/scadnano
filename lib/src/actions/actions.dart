@@ -4012,6 +4012,22 @@ abstract class ExampleDesignsLoad
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// pair lines display
+
+abstract class BasePairTypeSet
+    with BuiltJsonSerializable
+    implements Action, Built<BasePairTypeSet, BasePairTypeSetBuilder> {
+  int get selected_idx;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory BasePairTypeSet({int selected_idx}) = _$BasePairTypeSet._;
+
+  BasePairTypeSet._();
+
+  static Serializer<BasePairTypeSet> get serializer => _$basePairTypeSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // change helix position
 
 abstract class HelixPositionSet
