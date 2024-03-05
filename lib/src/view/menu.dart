@@ -1004,10 +1004,39 @@ or real coordinates in nanometers, depending on whether a grid is selected).'''
       ..id = 'view_menu_base_pairs'
       ..key = 'view_menu_base_pairs-dropdown'
       ..className = 'submenu_item')([
-      (MenuDropdownItem()
-        ..on_click = ((_) => app.disable_keyboard_shortcuts_while(base_pair_display_dialog))
-        ..display = 'Base pair display'
-        ..key = 'base-pair-display')(),
+      (MenuBoolean()
+        ..value = props.base_pair_display_type.toIndex() == 1
+        ..display = 'Display as ${BasePairDisplayType.lines.display_name()}'
+        ..key = 'base-pair-display-lines'
+        ..onChange = (_) {
+          if (props.base_pair_display_type == BasePairDisplayType.lines) {
+            props.dispatch(actions.BasePairTypeSet(selected_idx: BasePairDisplayType.none.toIndex()));
+          } else if (props.base_pair_display_type == BasePairDisplayType.none) {
+            props.dispatch(actions.BasePairTypeSet(selected_idx: BasePairDisplayType.lines.toIndex()));
+          }
+        })(),
+      (MenuBoolean()
+        ..value = props.base_pair_display_type.toIndex() == 2
+        ..display = 'Display as ${BasePairDisplayType.rectangle.display_name()}'
+        ..key = 'base-pair-display-rectangle'
+        ..onChange = (_) {
+          if (props.base_pair_display_type == BasePairDisplayType.rectangle) {
+            props.dispatch(actions.BasePairTypeSet(selected_idx: BasePairDisplayType.none.toIndex()));
+          } else if (props.base_pair_display_type == BasePairDisplayType.none) {
+            props.dispatch(actions.BasePairTypeSet(selected_idx: BasePairDisplayType.rectangle.toIndex()));
+          }
+        })(),
+      (MenuBoolean()
+        ..value = props.show_base_pair_lines_with_mismatches
+        ..display = '... even if bases mismatch'
+        ..key = 'base-pair-display-even-if-bases-mismatch'
+        ..hide = props.base_pair_display_type.toIndex() == 0
+        ..tooltip = '''\
+Lines are drawn between all pairs of bases at the same offset on the same helix, 
+regardless of whether the bases are complementary. If unchecked then lines are 
+only shown between pairs of complementary bases.'''
+        ..onChange = (_) => props.dispatch(actions.ShowBasePairLinesWithMismatchesSet(
+            show_base_pair_lines_with_mismatches: !props.show_base_pair_lines_with_mismatches)))(),
     ]);
   }
 
@@ -1424,31 +1453,6 @@ However, it may be less stable than the main site.'''
 
     int selected_idx = (results[0] as DialogRadio).selected_idx;
     props.dispatch(actions.ExampleDesignsLoad(selected_idx: selected_idx));
-  }
-
-  Future<void> base_pair_display_dialog() async {
-    var dialog = Dialog(title: 'Base pair display', type: DialogType.base_pair_display, items: [
-      DialogRadio(
-        label: 'types',
-        options: BasePairDisplayType.types.map((v) => v.display_name()),
-        selected_idx: props.base_pair_display_type.toIndex(),
-      ),
-      DialogCheckbox(
-        label: 'display even if bases mismatch',
-        value: props.show_base_pair_lines_with_mismatches,
-        tooltip: '''\
-Lines are drawn between all pairs of bases at the same offset on the same helix, 
-regardless of whether the bases are complementary. If unchecked then lines are 
-only shown between pairs of complementary bases.''',
-      )
-    ]);
-    List<DialogItem> results = await util.dialog(dialog);
-    if (results == null) return;
-
-    int selected_idx = (results[0] as DialogRadio).selected_idx;
-    props.dispatch(actions.BasePairTypeSet(selected_idx: selected_idx));
-    props.dispatch((actions.ShowBasePairLinesWithMismatchesSet(
-        show_base_pair_lines_with_mismatches: (results[1] as DialogCheckbox).value)));
   }
 }
 
