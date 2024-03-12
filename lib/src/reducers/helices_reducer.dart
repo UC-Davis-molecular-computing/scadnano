@@ -199,57 +199,61 @@ Helix _change_offset_one_helix(Helix helix, int min_offset, int max_offset) => h
 
 BuiltMap<int, Helix> helix_offset_change_all_with_moving_strands_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.StrandsMoveAdjustAddress action) {
-  StrandsMove new_strands_move =
-      state.ui_state.strands_move.rebuild((b) => b..current_address.replace(action.address));
-  Map strand_bounds_details = get_strand_bounds_details(state.design, new_strands_move);
-  constants.strand_bounds_status status = strand_bounds_details['status'];
+  if (state.ui_state.dynamically_update_helices) {
+    StrandsMove new_strands_move =
+        state.ui_state.strands_move.rebuild((b) => b..current_address.replace(action.address));
+    Map strand_bounds_details = get_strand_bounds_details(state.design, new_strands_move);
+    constants.strand_bounds_status status = strand_bounds_details['status'];
 
-  var offsets = strand_bounds_details['offsets'];
-  if (status == constants.strand_bounds_status.min_offset_out_of_bounds ||
-      status == constants.strand_bounds_status.in_bounds_with_min_offset_changes) {
-    Helix map_func(int idx, Helix helix) => _change_offset_one_helix(helix, offsets[idx], null);
-    helices = helices.map_values(map_func);
-  } else if (status == constants.strand_bounds_status.max_offset_out_of_bounds ||
-      status == constants.strand_bounds_status.in_bounds_with_max_offset_changes) {
-    Helix map_func(int idx, Helix helix) => _change_offset_one_helix(helix, null, offsets[idx]);
-    helices = helices.map_values(map_func);
+    var offsets = strand_bounds_details['offsets'];
+    if (status == constants.strand_bounds_status.min_offset_out_of_bounds ||
+        status == constants.strand_bounds_status.in_bounds_with_min_offset_changes) {
+      Helix map_func(int idx, Helix helix) => _change_offset_one_helix(helix, offsets[idx], null);
+      helices = helices.map_values(map_func);
+    } else if (status == constants.strand_bounds_status.max_offset_out_of_bounds ||
+        status == constants.strand_bounds_status.in_bounds_with_max_offset_changes) {
+      Helix map_func(int idx, Helix helix) => _change_offset_one_helix(helix, null, offsets[idx]);
+      helices = helices.map_values(map_func);
+    }
   }
   return helices;
 }
 
 BuiltMap<int, Helix> helix_offset_change_all_while_creating_strand_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.StrandCreateAdjustOffset action) {
-  StrandCreation strand_creation = state.ui_state.strand_creation;
-  if (strand_creation != null) {
-    var helices_map = helices.toMap();
-    var original_helix_offsets = state.ui_state.original_helix_offsets;
+  if (state.ui_state.dynamically_update_helices) {
+    StrandCreation strand_creation = state.ui_state.strand_creation;
+    if (strand_creation != null) {
+      var helices_map = helices.toMap();
+      var original_helix_offsets = state.ui_state.original_helix_offsets;
 
-    // Increase helix size according to strand movement
-    if (helices_map[strand_creation.helix.idx].min_offset > action.offset) {
-      helices_map[strand_creation.helix.idx] =
-          helices_map[strand_creation.helix.idx].rebuild((b) => b..min_offset = action.offset);
-      return helices_map.build();
-    }
-    if (helices_map[strand_creation.helix.idx].max_offset <= action.offset) {
-      helices_map[strand_creation.helix.idx] =
-          helices_map[strand_creation.helix.idx].rebuild((b) => b..max_offset = action.offset + 1);
-      return helices_map.build();
-    }
+      // Increase helix size according to strand movement
+      if (helices_map[strand_creation.helix.idx].min_offset > action.offset) {
+        helices_map[strand_creation.helix.idx] =
+            helices_map[strand_creation.helix.idx].rebuild((b) => b..min_offset = action.offset);
+        return helices_map.build();
+      }
+      if (helices_map[strand_creation.helix.idx].max_offset <= action.offset) {
+        helices_map[strand_creation.helix.idx] =
+            helices_map[strand_creation.helix.idx].rebuild((b) => b..max_offset = action.offset + 1);
+        return helices_map.build();
+      }
 
-    // Decrease helix size according to strand movement
-    if (action.offset > helices_map[strand_creation.helix.idx].min_offset &&
-        helices_map[strand_creation.helix.idx].min_offset <
-            original_helix_offsets[strand_creation.helix.idx].item1) {
-      helices_map[strand_creation.helix.idx] =
-          helices_map[strand_creation.helix.idx].rebuild((b) => b..min_offset = action.offset);
-      return helices_map.build();
-    }
-    if (action.offset < helices_map[strand_creation.helix.idx].max_offset + 1 &&
-        helices_map[strand_creation.helix.idx].max_offset >
-            original_helix_offsets[strand_creation.helix.idx].item2) {
-      helices_map[strand_creation.helix.idx] =
-          helices_map[strand_creation.helix.idx].rebuild((b) => b.max_offset = action.offset + 1);
-      return helices_map.build();
+      // Decrease helix size according to strand movement
+      if (action.offset > helices_map[strand_creation.helix.idx].min_offset &&
+          helices_map[strand_creation.helix.idx].min_offset <
+              original_helix_offsets[strand_creation.helix.idx].item1) {
+        helices_map[strand_creation.helix.idx] =
+            helices_map[strand_creation.helix.idx].rebuild((b) => b..min_offset = action.offset);
+        return helices_map.build();
+      }
+      if (action.offset < helices_map[strand_creation.helix.idx].max_offset + 1 &&
+          helices_map[strand_creation.helix.idx].max_offset >
+              original_helix_offsets[strand_creation.helix.idx].item2) {
+        helices_map[strand_creation.helix.idx] =
+            helices_map[strand_creation.helix.idx].rebuild((b) => b.max_offset = action.offset + 1);
+        return helices_map.build();
+      }
     }
   }
   return helices;

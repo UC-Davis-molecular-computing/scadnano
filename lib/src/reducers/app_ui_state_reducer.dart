@@ -189,6 +189,9 @@ bool show_unpaired_insertion_deletions_reducer(bool _, actions.ShowUnpairedInser
 
 bool invert_y_reducer(bool _, actions.InvertYSet action) => action.invert_y;
 
+bool dynamic_helix_update_reducer(bool _, actions.DynamicHelixUpdateSet action) =>
+    action.dynamically_update_helices;
+
 bool warn_on_exit_if_unsaved_reducer(bool _, actions.WarnOnExitIfUnsavedSet action) => action.warn;
 
 bool show_helix_circles_main_view_reducer(bool _, actions.ShowHelixCirclesMainViewSet action) =>
@@ -432,6 +435,7 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..show_domain_name_mismatches = TypedReducer<bool, actions.ShowDomainNameMismatchesSet>(show_domain_name_mismatches_reducer)(storables.show_domain_name_mismatches, action)
     ..show_unpaired_insertion_deletions = TypedReducer<bool, actions.ShowUnpairedInsertionDeletionsSet>(show_unpaired_insertion_deletions_reducer)(storables.show_unpaired_insertion_deletions, action)
     ..invert_y = TypedReducer<bool, actions.InvertYSet>(invert_y_reducer)(storables.invert_y, action)
+    ..dynamically_update_helices = TypedReducer<bool, actions.DynamicHelixUpdateSet>(dynamic_helix_update_reducer)(storables.dynamically_update_helices, action)
     ..warn_on_exit_if_unsaved = TypedReducer<bool, actions.WarnOnExitIfUnsavedSet>(warn_on_exit_if_unsaved_reducer)(storables.warn_on_exit_if_unsaved, action)
     ..show_helix_circles_main_view = TypedReducer<bool, actions.ShowHelixCirclesMainViewSet>(show_helix_circles_main_view_reducer)(storables.show_helix_circles_main_view, action)
     ..show_helix_components_main_view = TypedReducer<bool, actions.ShowHelixComponentsMainViewSet>(show_helix_components_main_view_reducer)(storables.show_helix_components_main_view, action)

@@ -90,6 +90,8 @@ abstract class AppUIStateStorables
 
   bool get invert_y;
 
+  bool get dynamically_update_helices;
+
   bool get warn_on_exit_if_unsaved;
 
   bool get show_helix_circles_main_view;
@@ -164,6 +166,7 @@ abstract class AppUIStateStorables
     b.loaded_filename = default_filename();
     b.loaded_script_filename = default_script_filename();
     b.invert_y = false;
+    b.dynamically_update_helices = false;
     b.warn_on_exit_if_unsaved = true;
     b.show_helix_circles_main_view = true;
     b.show_helix_components_main_view = true;

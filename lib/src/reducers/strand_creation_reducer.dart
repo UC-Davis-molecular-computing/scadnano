@@ -26,13 +26,25 @@ StrandCreation strand_create_adjust_offset_reducer(
 
   var new_address =
       Address(helix_idx: strand_creation.helix.idx, offset: new_offset, forward: strand_creation.forward);
-  if (old_offset != new_offset &&
-          !state.design.is_occupied(new_address, strand_creation) && // can't draw strand over existing strand
-          new_offset != strand_creation.original_offset // can't put start and end at same offset
-      // state.design.helices[strand_creation.helix.idx].min_offset <= new_offset && // can't go off end of helix
-      // new_offset < state.design.helices[strand_creation.helix.idx].max_offset
-      ) {
-    return strand_creation.rebuild((b) => b..current_offset = action.offset);
+  if (state.ui_state.dynamically_update_helices) {
+    if (old_offset != new_offset &&
+            !state.design
+                .is_occupied(new_address, strand_creation) && // can't draw strand over existing strand
+            new_offset != strand_creation.original_offset // can't put start and end at same offset
+        // state.design.helices[strand_creation.helix.idx].min_offset <= new_offset && // can't go off end of helix
+        // new_offset < state.design.helices[strand_creation.helix.idx].max_offset
+        ) {
+      return strand_creation.rebuild((b) => b..current_offset = action.offset);
+    }
+  } else {
+    if (old_offset != new_offset &&
+        !state.design.is_occupied(new_address, strand_creation) && // can't draw strand over existing strand
+        new_offset != strand_creation.original_offset && // can't put start and end at same offset
+        state.design.helices[strand_creation.helix.idx].min_offset <=
+            new_offset && // can't go off end of helix
+        new_offset < state.design.helices[strand_creation.helix.idx].max_offset) {
+      return strand_creation.rebuild((b) => b..current_offset = action.offset);
+    }
   }
   return strand_creation;
 }

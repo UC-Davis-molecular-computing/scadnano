@@ -80,6 +80,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..display_major_tick_widths = state.ui_state.display_major_tick_widths
       ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices
       ..invert_y = state.ui_state.invert_y
+      ..dynamically_update_helices = state.ui_state.dynamically_update_helices
       ..show_helix_circles_main_view = state.ui_state.show_helix_circles_main_view
       ..show_helix_components_main_view = state.ui_state.show_helix_components_main_view
       ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
@@ -138,6 +139,7 @@ mixin MenuPropsMixin on UiProps {
   bool undo_stack_empty;
   bool redo_stack_empty;
   bool enable_copy;
+  bool dynamically_update_helices;
   bool show_base_pair_lines;
   bool show_base_pair_lines_with_mismatches;
   bool display_of_major_ticks_offsets;
@@ -364,6 +366,20 @@ that occurred between the last save and a browser crash.'''
         ..disabled = props.redo_stack_empty)(redo_dropdowns),
       DropdownDivider({}),
       edit_menu_copy_paste(),
+      DropdownDivider({}),
+      ///////////////////////////////////////////////////////////////
+      // Dynamic helix updations
+      (MenuBoolean()
+        ..display = 'Dynamically update helices'
+        ..tooltip = '''\
+Expand helices dynamically when strand(s) is moved or created according to the strand(s) movement
+If checked, helices will update with strand movement'''
+        ..name = 'dynamically-update-helices'
+        ..key = 'dynamically-update-helices'
+        ..onChange = ((_) => props.dispatch(
+            actions.DynamicHelixUpdateSet(dynamically_update_helices: !props.dynamically_update_helices)))
+        ..value = props.dynamically_update_helices)(),
+
       DropdownDivider({}),
       ///////////////////////////////////////////////////////////////
       // inline insertions/deletions

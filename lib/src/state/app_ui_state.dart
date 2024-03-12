@@ -201,6 +201,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get invert_y => storables.invert_y;
 
+  bool get dynamically_update_helices => storables.dynamically_update_helices;
+
   bool get warn_on_exit_if_unsaved => storables.warn_on_exit_if_unsaved;
 
   bool get show_helix_circles_main_view => storables.show_helix_circles_main_view;
