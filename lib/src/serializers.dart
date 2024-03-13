@@ -333,6 +333,7 @@ part 'serializers.g.dart';
   DNASequencePredefined,
   SetOnlyDisplaySelectedHelices,
   InvertYSet,
+  DynamicHelixUpdateSet,
   SetModificationDisplayConnector,
   ModificationFontSizeSet,
   StrandNameFontSizeSet,

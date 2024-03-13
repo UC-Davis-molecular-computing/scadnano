@@ -8,6 +8,7 @@ import 'package:scadnano/src/state/clipboard.dart';
 import 'package:scadnano/src/state/group.dart';
 import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/strand.dart';
+import 'package:scadnano/src/reducers/strands_move_reducer.dart';
 
 import '../reducers/strands_move_reducer.dart' as strands_move_reducer;
 import '../actions/actions.dart' as actions;
@@ -78,9 +79,35 @@ void handle_autopaste_initiate(Store<AppState> store, actions.AutoPasteInitiate 
     strands_move = copy_info.create_strands_move(store.state, start_at_copied: false);
   }
 
-  var paste_commit_action = actions.StrandsMoveCommit(strands_move: strands_move, autopaste: true);
+  List<actions.UndoableAction> batch_actions_list = [];
+  Map new_strand_moving_details = get_strand_bounds_details(store.state.design, strands_move);
+  if (store.state.ui_state.dynamically_update_helices) {
+    if (new_strand_moving_details['status'] == constants.strand_bounds_status.min_offset_out_of_bounds ||
+        new_strand_moving_details['status'] == constants.strand_bounds_status.max_offset_out_of_bounds) {
+      var helices_offset_change_action;
+      for (int helix_idx in new_strand_moving_details['offsets'].keys) {
+        if (new_strand_moving_details['status'] == constants.strand_bounds_status.min_offset_out_of_bounds)
+          helices_offset_change_action = actions.HelixOffsetChange(
+              helix_idx: helix_idx, min_offset: new_strand_moving_details['offsets'][helix_idx]);
+        else
+          helices_offset_change_action = actions.HelixOffsetChange(
+              helix_idx: helix_idx, max_offset: new_strand_moving_details['offsets'][helix_idx]);
 
-  store.dispatch(paste_commit_action);
+        batch_actions_list.add(helices_offset_change_action);
+      }
+    }
+  }
+  if (new_strand_moving_details['status'] == constants.strand_bounds_status.in_bounds ||
+      new_strand_moving_details['status'] ==
+          constants.strand_bounds_status.in_bounds_with_min_offset_changes ||
+      new_strand_moving_details['status'] ==
+          constants.strand_bounds_status.in_bounds_with_max_offset_changes) {
+    var paste_commit_action = actions.StrandsMoveCommit(strands_move: strands_move, autopaste: true);
+    batch_actions_list.add(paste_commit_action);
+    var batch_action =
+        actions.BatchAction(batch_actions_list, 'Changing helix offsets and then executing autopaste');
+    store.dispatch(batch_action);
+  }
 }
 
 // either

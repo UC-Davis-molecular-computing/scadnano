@@ -281,15 +281,16 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     return Point<num>(x, y);
   }
 
-  int svg_x_to_offset(num x, num svg_position_x) {
-    var offset = ((x - svg_position_x) / geometry.base_width_svg).floor() + min_offset;
+  int svg_x_to_offset(num x, num helix_svg_position_x) {
+    var offset = ((x - helix_svg_position_x) / geometry.base_width_svg).floor() + min_offset;
     return offset;
   }
 
   // Don't know why but Firefox knows about the SVG translation already so no need to correct for it.
-  bool svg_y_is_forward(num y, num svg_position_y) {
-    var relative_y = (y - svg_position_y).abs();
-    return relative_y < 10;
+  bool svg_y_is_forward(num y, num helix_svg_position_y) {
+    var relative_y = (y - helix_svg_position_y);
+    // return relative_y < 10;
+    return relative_y < geometry.base_height_svg;
   }
 
   static HelixBuilder from_json(Map<String, dynamic> json_map) {

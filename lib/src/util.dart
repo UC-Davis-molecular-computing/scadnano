@@ -17,6 +17,7 @@ import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:scadnano/src/reducers/helices_reducer.dart';
+import 'package:scadnano/src/state/strand_creation.dart';
 
 import 'state/design_side_rotation_data.dart';
 import 'state/modification.dart';
@@ -573,8 +574,37 @@ Address find_closest_address(MouseEvent event, Iterable<Helix> helices, BuiltMap
   bool forward = helix.svg_y_is_forward(closest_point_in_helix_untransformed.y, helix_svg_position.y);
 
 //  print('* get_closest_address *');
+//  print('  forward = ${forward}');
+  return Address(helix_idx: helix.idx, offset: offset, forward: forward);
 //  print('  closest helix: ${helix.idx}');
 //  print('  offset = ${offset}');
+}
+
+/// Return (closest) helix, offset and direction where click event occurred.
+Address find_closest_address_with_infinite_helix_boundaries(
+    MouseEvent event,
+    Helix helix,
+    BuiltMap<String, HelixGroup> groups,
+    Geometry geometry,
+    BuiltMap<num, Point<num>> helix_idx_to_svg_position_map,
+    StrandCreation strand_creation) {
+  var svg_clicked_point = svg_position_of_mouse_click(event);
+
+  // Helix helix = find_closest_helix(event, helices, groups, geometry, helix_idx_to_svg_position_map);
+  var helix_svg_position = helix_idx_to_svg_position_map[helix.idx];
+
+  var group = groups[helix.group];
+  // var helix_upper_left_corner =
+  //     group.transform_point_main_view(helix_idx_to_svg_position_map[helix.idx], geometry);
+
+  var closest_point_in_helix = svg_clicked_point;
+
+  var closest_point_in_helix_untransformed =
+      group.transform_point_main_view(closest_point_in_helix, geometry, inverse: true);
+
+  int offset = helix.svg_x_to_offset(closest_point_in_helix_untransformed.x, helix_svg_position.x);
+  bool forward = helix.svg_y_is_forward(closest_point_in_helix_untransformed.y, helix_svg_position.y);
+
 //  print('  forward = ${forward}');
   return Address(helix_idx: helix.idx, offset: offset, forward: forward);
 }
