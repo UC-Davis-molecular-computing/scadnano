@@ -4,6 +4,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/reducers/design_reducer.dart';
 import 'package:scadnano/src/reducers/strands_copy_info_reducer.dart';
+import 'package:scadnano/src/state/base_pair_display_type.dart';
 import 'package:scadnano/src/state/dna_assign_options.dart';
 import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/strand.dart';
@@ -230,6 +231,10 @@ bool display_major_tick_widths_all_helices_reducer(
         bool _, actions.SetDisplayMajorTickWidthsAllHelices action) =>
     action.show;
 
+BasePairDisplayType base_pair_type_idx_reducer(
+        BasePairDisplayType set_base_pair_display, actions.BasePairTypeSet action) =>
+    BasePairDisplayType.types[action.selected_idx];
+
 bool show_base_pair_lines_reducer(bool _, actions.ShowBasePairLinesSet action) => action.show_base_pair_lines;
 
 bool show_base_pair_lines_with_mismatches_reducer(
@@ -451,6 +456,7 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..display_base_offsets_of_major_ticks_only_first_helix = TypedReducer<bool, actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix>(display_base_offsets_of_major_ticks_only_first_helix_reducer)(storables.display_base_offsets_of_major_ticks_only_first_helix, action)
     ..display_major_tick_widths = TypedReducer<bool, actions.SetDisplayMajorTickWidths>(display_major_tick_widths_reducer)(storables.display_major_tick_widths, action)
     ..display_major_tick_widths_all_helices = TypedReducer<bool, actions.SetDisplayMajorTickWidthsAllHelices>(display_major_tick_widths_all_helices_reducer)(storables.display_major_tick_widths_all_helices, action)
+    ..base_pair_display_type = TypedReducer<BasePairDisplayType, actions.BasePairTypeSet>(base_pair_type_idx_reducer)(storables.base_pair_display_type, action)
     ..show_base_pair_lines = TypedReducer<bool, actions.ShowBasePairLinesSet>(show_base_pair_lines_reducer)(storables.show_base_pair_lines, action)
     ..show_base_pair_lines_with_mismatches = TypedReducer<bool, actions.ShowBasePairLinesWithMismatchesSet>(show_base_pair_lines_with_mismatches_reducer)(storables.show_base_pair_lines_with_mismatches, action)
     ..export_svg_text_separately = TypedReducer<bool, actions.ExportSvgTextSeparatelySet>(export_svg_text_separately_reducer)(storables.export_svg_text_separately, action)

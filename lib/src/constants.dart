@@ -428,6 +428,7 @@ const css_selector_scaffold = 'scaffold';
 const css_selector_staple = 'staple';
 const css_selector_domain = 'domain-line';
 const css_selector_base_pair_line = 'base-pair-line';
+const css_selector_base_pair_rect = 'base-pair-rect';
 const css_selector_extension = 'extension-line';
 const css_selector_crossover = 'crossover-curve';
 const css_selector_crossover_same_helix = 'crossover-curve-same-helix';

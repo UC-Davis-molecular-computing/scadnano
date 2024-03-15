@@ -4,6 +4,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:scadnano/src/state/base_pair_display_type.dart';
 
 import 'react_bootstrap.dart';
 
@@ -47,6 +48,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..no_grid_is_none =
           state.design == null ? false : state.design.groups.values.every((group) => group.grid != Grid.none)
       ..show_dna = state.ui_state.show_dna
+      ..base_pair_display_type = state.ui_state.base_pair_display_type
       ..show_strand_names = state.ui_state.show_strand_names
       ..show_strand_labels = state.ui_state.show_strand_labels
       ..show_domain_names = state.ui_state.show_domain_names
@@ -134,6 +136,7 @@ mixin MenuPropsMixin on UiProps {
   bool autofit;
   bool only_display_selected_helices;
   ExampleDesigns example_designs;
+  BasePairDisplayType base_pair_display_type;
   bool design_has_insertions_or_deletions;
   bool undo_stack_empty;
   bool redo_stack_empty;
@@ -1002,23 +1005,38 @@ or real coordinates in nanometers, depending on whether a grid is selected).'''
       ..key = 'view_menu_base_pairs-dropdown'
       ..className = 'submenu_item')([
       (MenuBoolean()
-        ..value = props.show_base_pair_lines
-        ..display = 'Base pair lines'
-        ..tooltip = 'Draw vertical lines between pairs of bases at the same offset on the same helix.'
-        ..onChange = ((_) =>
-            props.dispatch(actions.ShowBasePairLinesSet(show_base_pair_lines: !props.show_base_pair_lines)))
-        ..key = 'base_pair_lines')(),
+        ..value = props.base_pair_display_type.toIndex() == 1
+        ..display = 'Display as ${BasePairDisplayType.lines.display_name()}'
+        ..key = 'base-pair-display-lines'
+        ..onChange = (_) {
+          if (props.base_pair_display_type == BasePairDisplayType.lines) {
+            props.dispatch(actions.BasePairTypeSet(selected_idx: BasePairDisplayType.none.toIndex()));
+          } else if (props.base_pair_display_type == BasePairDisplayType.none) {
+            props.dispatch(actions.BasePairTypeSet(selected_idx: BasePairDisplayType.lines.toIndex()));
+          }
+        })(),
+      (MenuBoolean()
+        ..value = props.base_pair_display_type.toIndex() == 2
+        ..display = 'Display as ${BasePairDisplayType.rectangle.display_name()}'
+        ..key = 'base-pair-display-rectangle'
+        ..onChange = (_) {
+          if (props.base_pair_display_type == BasePairDisplayType.rectangle) {
+            props.dispatch(actions.BasePairTypeSet(selected_idx: BasePairDisplayType.none.toIndex()));
+          } else if (props.base_pair_display_type == BasePairDisplayType.none) {
+            props.dispatch(actions.BasePairTypeSet(selected_idx: BasePairDisplayType.rectangle.toIndex()));
+          }
+        })(),
       (MenuBoolean()
         ..value = props.show_base_pair_lines_with_mismatches
-        ..hide = !props.show_base_pair_lines
         ..display = '... even if bases mismatch'
+        ..key = 'base-pair-display-even-if-bases-mismatch'
+        ..hide = props.base_pair_display_type.toIndex() == 0
         ..tooltip = '''\
 Lines are drawn between all pairs of bases at the same offset on the same helix, 
 regardless of whether the bases are complementary. If unchecked then lines are 
 only shown between pairs of complementary bases.'''
-        ..onChange = ((_) => props.dispatch(actions.ShowBasePairLinesWithMismatchesSet(
-            show_base_pair_lines_with_mismatches: !props.show_base_pair_lines_with_mismatches)))
-        ..key = 'base_pair_lines_mismatches')(),
+        ..onChange = (_) => props.dispatch(actions.ShowBasePairLinesWithMismatchesSet(
+            show_base_pair_lines_with_mismatches: !props.show_base_pair_lines_with_mismatches)))(),
     ]);
   }
 
