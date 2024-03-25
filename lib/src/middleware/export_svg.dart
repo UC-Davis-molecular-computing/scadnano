@@ -186,7 +186,7 @@ Map point_to_map(svg.Point point) {
 }
 
 // creates a new separate text svg for the jth character on a svg text element
-TextElement create_portable_element(TextContentElement text_ele, int j) {
+TextElement create_portable_text(TextContentElement text_ele, int j) {
   TextElement char_ele = document.createElementNS("http://www.w3.org/2000/svg", "text");
   char_ele.text = text_ele.text[j];
   char_ele.setAttribute("style", text_ele.style.cssText);
@@ -223,19 +223,46 @@ TextElement create_portable_element(TextContentElement text_ele, int j) {
   return char_ele;
 }
 
+// fix the 5' extension rectangle missing
+RectElement create_portable_rect(RectElement ele) {
+  RectElement portableEle = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+
+  portableEle.style.cssText = ele.style.cssText;
+  if (portableEle.style.transformOrigin != "") {
+    portableEle.style.transformOrigin = "";
+  }
+  // remove transform box attribute. dart doesn't support the normal way
+  portableEle.style.cssText = portableEle.style.cssText.replaceAll(RegExp(r'transform-box:[^;]+;'), '');
+  Rect pos = ele.getBBox();
+  portableEle.setAttribute("x", pos.x.toString());
+  portableEle.setAttribute("y", pos.y.toString());
+  portableEle.setAttribute("rx", ele.rx.baseVal.value.toString());
+  portableEle.setAttribute("ry", ele.ry.baseVal.value.toString());
+  portableEle.setAttribute("width", pos.width.toString());
+  portableEle.setAttribute("height", pos.height.toString());
+  for (int i = 0; i < ele.transform.baseVal.numberOfItems; ++i) {
+    Transform item = ele.transform.baseVal.getItem(i);
+    if (item.angle != 0) {
+      portableEle.setAttribute(
+          "transform", "rotate(${item.angle} ${pos.x + pos.width / 2} ${pos.y + pos.height / 2})");
+    }
+  }
+  return portableEle;
+}
+
 // makes a svg compatible for PowerPoint
 Element make_portable(Element src) {
   var src_children = src.querySelectorAll("*");
   document.body.append(src);
   for (int i = 0; i < src_children.length; ++i) {
-    if (src_children[i] is svg.TextContentElement) {
+    if (src_children[i] is TextContentElement) {
       TextContentElement text_ele = src_children[i] as TextContentElement;
       if (text_ele.children.length == 1 && text_ele.children[0].tagName == "textPath") {
         continue;
       }
       List<TextContentElement> portable_eles = [];
       for (int j = 0; j < text_ele.getNumberOfChars(); ++j) {
-        var char_ele = create_portable_element(text_ele, j);
+        var char_ele = create_portable_text(text_ele, j);
         portable_eles.add(char_ele);
       }
       if (text_ele is TextPathElement) {
@@ -248,6 +275,10 @@ Element make_portable(Element src) {
       }
       portable_eles.forEach((v) => text_ele.parentNode.append(v));
       text_ele.remove();
+    } else if (src_children[i] is RectElement) {
+      RectElement portableEle = create_portable_rect(src_children[i] as RectElement);
+      src_children[i].parentNode.append(portableEle);
+      src_children[i].remove();
     }
   }
   src.remove();
@@ -337,6 +368,8 @@ const List<String> path_styles = [
   'stroke-linecap',
   'stroke-opacity',
   'visibility',
+  'transform-box',
+  'transform-origin',
 ];
 
 final relevant_styles = {
