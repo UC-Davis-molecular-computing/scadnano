@@ -244,6 +244,9 @@ bool show_base_pair_lines_with_mismatches_reducer(
 bool export_svg_text_separately_reducer(bool _, actions.ExportSvgTextSeparatelySet action) =>
     action.export_svg_text_separately;
 
+bool ox_export_only_selected_strands_reducer(bool _, actions.OxExportOnlySelectedStrandsSet action) =>
+    action.only_selected;
+
 bool display_major_tick_widths_reducer(bool _, actions.SetDisplayMajorTickWidths action) => action.show;
 
 bool strand_paste_keep_color_reducer(bool _, actions.StrandPasteKeepColorSet action) => action.keep;
@@ -460,6 +463,7 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..show_base_pair_lines = TypedReducer<bool, actions.ShowBasePairLinesSet>(show_base_pair_lines_reducer)(storables.show_base_pair_lines, action)
     ..show_base_pair_lines_with_mismatches = TypedReducer<bool, actions.ShowBasePairLinesWithMismatchesSet>(show_base_pair_lines_with_mismatches_reducer)(storables.show_base_pair_lines_with_mismatches, action)
     ..export_svg_text_separately = TypedReducer<bool, actions.ExportSvgTextSeparatelySet>(export_svg_text_separately_reducer)(storables.export_svg_text_separately, action)
+    ..ox_export_only_selected_strands = TypedReducer<bool, actions.OxExportOnlySelectedStrandsSet>(ox_export_only_selected_strands_reducer)(storables.ox_export_only_selected_strands, action)
     ..only_display_selected_helices = TypedReducer<bool, actions.SetOnlyDisplaySelectedHelices>(only_display_selected_helices_reducer)(storables.only_display_selected_helices, action)
     ..default_crossover_type_scaffold_for_setting_helix_rolls = TypedReducer<bool, actions.DefaultCrossoverTypeForSettingHelixRollsSet>(default_crossover_type_scaffold_for_setting_helix_rolls_reducer)(storables.default_crossover_type_scaffold_for_setting_helix_rolls, action)
     ..default_crossover_type_staple_for_setting_helix_rolls = TypedReducer<bool, actions.DefaultCrossoverTypeForSettingHelixRollsSet>(default_crossover_type_staple_for_setting_helix_rolls_reducer)(storables.default_crossover_type_staple_for_setting_helix_rolls, action)

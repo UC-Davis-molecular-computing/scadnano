@@ -363,6 +363,8 @@ part 'serializers.g.dart';
   ZoomSpeedSet,
   NewDesignSet,
   OxdnaExport,
+  OxviewExport,
+  OxExportOnlySelectedStrandsSet,
   Design,
   AssignDomainNameComplementFromBoundStrands,
   AssignDomainNameComplementFromBoundDomains,

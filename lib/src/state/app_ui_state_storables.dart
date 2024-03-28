@@ -130,6 +130,8 @@ abstract class AppUIStateStorables
 
   bool get export_svg_text_separately;
 
+  bool get ox_export_only_selected_strands;
+
   static void _initializeBuilder(AppUIStateStorablesBuilder b) {
     // This ensures that even if these keys are not in localStorage (e.g., due to upgrading),
     // then they will be populated with a default value instead of raising an exception.
@@ -188,6 +190,7 @@ abstract class AppUIStateStorables
     b.show_mouseover_data = false;
     b.selection_box_intersection = false;
     b.export_svg_text_separately = false;
+    b.ox_export_only_selected_strands = false;
   }
 
   /************************ begin BuiltValue boilerplate ************************/
