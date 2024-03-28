@@ -246,6 +246,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get selection_box_intersection => storables.selection_box_intersection;
 
+  bool get ox_export_only_selected_strands => storables.ox_export_only_selected_strands;
+
   static void _initializeBuilder(AppUIStateBuilder b) {
     b.copy_info = null;
     b.last_mod_5p = null;

@@ -753,6 +753,59 @@ abstract class Strand
     return rebuild((strand) => strand..substrands.replace(substrands_new));
   }
 
+  /// Convert from offset on the given Domain's Helix to string index on the parent Strand's DNA sequence.
+  /// If `offset_closer_to_5p` is ``true``, (this only matters if `offset` contains an insertion)
+  /// then the only leftmost string index corresponding to this offset is included,
+  /// otherwise up to the rightmost string index (including all insertions) is included.
+  int domain_offset_to_strand_dna_idx(Domain domain, int offset, bool offset_closer_to_5p) {
+    if (domain.deletions.contains(offset)) {
+      throw ArgumentError('offset ${offset} illegally contains a deletion from ${domain.deletions}');
+    }
+
+    int len_adjust = this._net_ins_del_length_increase_from_5p_to(domain, offset, offset_closer_to_5p);
+
+    int domain_str_idx;
+    if (domain.forward) {
+      offset += len_adjust;
+      domain_str_idx = offset - domain.start;
+    } else {
+      offset -= len_adjust;
+      domain_str_idx = domain.end - 1 - offset;
+    }
+
+    return domain_str_idx + get_seq_start_idx(domain);
+  }
+
+  /// Net number of insertions from 5'/3' end to offset_edge,
+  /// INCLUSIVE on 5'/3' end, EXCLUSIVE on offset_edge.
+  /// Set `five_p` ``= False`` to test from 3' end to `offset_edge`.
+  int _net_ins_del_length_increase_from_5p_to(Domain domain, int offset_edge, bool offset_closer_to_5p) {
+    int length_increase = 0;
+    for (int deletion in domain.deletions) {
+      if (_between_5p_and_offset(domain, deletion, offset_edge)) {
+        length_increase -= 1;
+      }
+    }
+    for (var insertion in domain.insertions) {
+      if (_between_5p_and_offset(domain, insertion.offset, offset_edge)) {
+        length_increase += insertion.length;
+      }
+    }
+    if (!offset_closer_to_5p) {
+      Map<int, int> insertion_map =
+          Map<int, int>.fromIterable(domain.insertions, key: (e) => e.offset, value: (e) => e.length);
+      if (insertion_map.containsKey(offset_edge)) {
+        int insertion_length = insertion_map[offset_edge];
+        length_increase += insertion_length;
+      }
+    }
+    return length_increase;
+  }
+
+  bool _between_5p_and_offset(Domain domain, int offset_to_test, int offset_edge) =>
+      (domain.forward && domain.start <= offset_to_test && offset_to_test < offset_edge) ||
+      (!domain.forward && offset_edge < offset_to_test && offset_to_test < domain.end);
+
   String _trim_or_pad_sequence_to_desired_length(String dna_sequence_new, int desired_length) {
     // truncate dna_sequence_new if too long; pad with ?'s if to short
     int seq_len = dna_sequence_new.length;

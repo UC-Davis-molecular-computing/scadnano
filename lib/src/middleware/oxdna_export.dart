@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:html';
 import 'dart:math';
 import 'package:path/path.dart' as path;
+import 'package:quiver/iterables.dart' as quiver;
 
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/design.dart';
@@ -16,9 +18,11 @@ import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
 import '../state/helix.dart';
 import '../util.dart' as util;
+import 'export_cadnano_or_codenano_file.dart' as export_cadnano;
+import '../constants.dart' as constants;
 
 oxdna_export_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
-  if (action is actions.OxdnaExport) {
+  if (action is actions.OxdnaExport || action is actions.OxviewExport) {
     AppState state = store.state;
 
     List<Strand> strands_to_export;
@@ -34,18 +38,160 @@ First select some strands, or choose Export🡒oxDNA to export all strands in th
       strands_to_export = state.design.strands.toList();
     }
 
-    Tuple2<String, String> dat_top = to_oxdna_format(state.design, strands_to_export);
-    String dat = dat_top.item1;
-    String top = dat_top.item2;
+    if (action is actions.OxdnaExport) {
+      Tuple2<String, String> dat_top = to_oxdna_format(state.design, strands_to_export);
+      String dat = dat_top.item1;
+      String top = dat_top.item2;
 
-    String default_filename = state.ui_state.loaded_filename;
-    String default_filename_dat = path.setExtension(default_filename, '.dat');
-    String default_filename_top = path.setExtension(default_filename, '.top');
+      String default_filename = state.ui_state.loaded_filename;
+      String default_filename_dat = path.setExtension(default_filename, '.dat');
+      String default_filename_top = path.setExtension(default_filename, '.top');
 
-    util.save_file(default_filename_dat, dat);
-    util.save_file(default_filename_top, top);
+      util.save_file(default_filename_dat, dat);
+      util.save_file(default_filename_top, top);
+    } else if (action is actions.OxviewExport) {
+      String content = to_oxview_format(state.design, strands_to_export);
+      String default_filename = state.ui_state.loaded_filename;
+      String default_filename_ext = path.setExtension(default_filename, '.oxview');
+      util.save_file(default_filename_ext, content);
+    }
   }
   next(action);
+}
+
+String to_oxview_format(Design design, List<Strand> strands_to_export) {
+  OxdnaSystem system = convert_design_to_oxdna_system(design, strands_to_export);
+  List<Map<String, dynamic>> oxview_strands = [];
+  int nuc_count = 0;
+  int strand_count = 0;
+  List<int> strand_nuc_start = [-1];
+  assert(strands_to_export.length == system.strands.length);
+
+  for (int i = 0; i < strands_to_export.length; i++) {
+    Strand sc_strand = strands_to_export[i];
+    OxdnaStrand oxdna_strand = system.strands[i];
+
+    strand_count += 1;
+    List<Map<String, dynamic>> oxvnucs = [];
+    strand_nuc_start.add(nuc_count);
+    Map<String, dynamic> oxvstrand = {
+      'id': strand_count,
+      'class': 'NucleicAcidStrand',
+      'end5': nuc_count,
+      'end3': nuc_count + system.strands[i].nucleotides.length,
+      'monomers': oxvnucs
+    };
+
+    int scolor;
+    if (sc_strand.color != null) {
+      scolor = export_cadnano.to_cadnano_v2_int_hex(sc_strand.color);
+    } else {
+      scolor = null;
+    }
+
+    for (int index_in_strand = 0; index_in_strand < oxdna_strand.nucleotides.length; index_in_strand++) {
+      OxdnaNucleotide nuc = oxdna_strand.nucleotides[index_in_strand];
+      Map<String, dynamic> oxvnuc = {
+        'id': nuc_count,
+        'p': [nuc.r.x, nuc.r.y, nuc.r.z],
+        'a1': [nuc.b.x, nuc.b.y, nuc.b.z],
+        'a3': [nuc.n.x, nuc.n.y, nuc.n.z],
+        'class': 'DNA',
+        'type': nuc.base,
+        'cluster': 1,
+      };
+      if (index_in_strand != 0) {
+        oxvnuc['n5'] = nuc_count - 1;
+      }
+      if (index_in_strand != oxdna_strand.nucleotides.length - 1) {
+        oxvnuc['n3'] = nuc_count + 1;
+      }
+      if (scolor != null) {
+        oxvnuc['color'] = scolor;
+      }
+      nuc_count += 1;
+      oxvnucs.add(oxvnuc);
+    }
+    oxview_strands.add(oxvstrand);
+  }
+
+  for (int si1 = 0; si1 < strands_to_export.length; si1++) {
+    Strand sc_strand1 = strands_to_export[si1];
+    Map<String, dynamic> oxv_strand1 = oxview_strands[si1];
+    for (int si2 = 0; si2 < strands_to_export.length; si2++) {
+      Strand sc_strand2 = strands_to_export[si2];
+      if (!sc_strand1.overlaps(sc_strand2)) {
+        continue;
+      }
+      int s1_nuc_idx = strand_nuc_start[si1 + 1];
+      for (var domain1 in sc_strand1.domains) {
+        if (domain1 is Loopout || domain1 is Extension) {
+          continue;
+        }
+        int s2_nuc_idx = strand_nuc_start[si2 + 1];
+        for (var domain2 in sc_strand2.domains) {
+          if (domain2 is Loopout || domain2 is Extension) {
+            continue;
+          }
+          if (!domain1.overlaps(domain2)) {
+            continue;
+          }
+          Tuple2<int, int> overlap = domain1.compute_overlap(domain2);
+          int overlap_left = overlap.item1;
+          int overlap_right = overlap.item2;
+          int s1_left = sc_strand1.domain_offset_to_strand_dna_idx(domain1, overlap_left, false);
+          int s1_right = sc_strand1.domain_offset_to_strand_dna_idx(domain1, overlap_right, false);
+          int s2_left = sc_strand2.domain_offset_to_strand_dna_idx(domain2, overlap_left, false);
+          int s2_right = sc_strand2.domain_offset_to_strand_dna_idx(domain2, overlap_right, false);
+          List<int> d1range;
+          List<int> d2range;
+          if (domain1.forward) {
+            d1range = List<int>.from(quiver.range(s1_left, s1_right));
+            d2range = List<int>.from(quiver.range(s2_left, s2_right, -1));
+          } else {
+            d1range = List<int>.from(quiver.range(s1_right + 1, s1_left + 1));
+            d2range = List<int>.from(quiver.range(s2_right - 1, s2_left - 1, -1));
+          }
+          assert(d1range.length == d2range.length);
+
+          // Check for mismatches, and do not add a pair if the bases are *known*
+          // to mismatch.  (FIXME: this must be changed if scadnano later supports
+          // degenerate base codes.)
+          for (int i = 0; i < d1range.length; i++) {
+            int d1 = d1range[i];
+            int d2 = d2range[i];
+            if (sc_strand1.dna_sequence != null &&
+                sc_strand2.dna_sequence != null &&
+                sc_strand1.dna_sequence[d1] != constants.DNA_BASE_WILDCARD &&
+                sc_strand2.dna_sequence[d2] != constants.DNA_BASE_WILDCARD &&
+                util.wc(sc_strand1.dna_sequence[d1]) != sc_strand2.dna_sequence[d2]) {
+              continue;
+            }
+            oxv_strand1['monomers'][d1]['bp'] = s2_nuc_idx + d2;
+            if (oxview_strands[si2]['monomers'][d2].containsKey('bp')) {
+              if (oxview_strands[si2]['monomers'][d2]['bp'] != s1_nuc_idx + d1) {
+                print('${s2_nuc_idx + d2} ${s1_nuc_idx + d1} '
+                    '${oxview_strands[si2]['monomers'][d2]['bp']} ${domain1} ${domain2}');
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  var b = system.compute_bounding_box();
+  Map<String, dynamic> oxvsystem = {
+    'box': [b.x, b.y, b.z],
+    'date': DateTime.now().toIso8601String(),
+    'systems': [
+      {'id': 0, 'strands': oxview_strands}
+    ],
+    'forces': [],
+    'selections': [],
+  };
+  String content = jsonEncode(oxvsystem);
+
+  return content;
 }
 
 Tuple2<String, String> to_oxdna_format(Design design, [List<Strand> strands_to_export = null]) {

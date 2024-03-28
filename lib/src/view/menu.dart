@@ -102,6 +102,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..default_crossover_type_staple_for_setting_helix_rolls =
           state.ui_state.default_crossover_type_staple_for_setting_helix_rolls
       ..selection_box_intersection = state.ui_state.selection_box_intersection
+      ..ox_export_only_selected_strands = state.ui_state.ox_export_only_selected_strands
       ..undo_redo = state.undo_redo);
   },
   // Used for component test.
@@ -161,6 +162,7 @@ mixin MenuPropsMixin on UiProps {
   bool default_crossover_type_scaffold_for_setting_helix_rolls;
   bool default_crossover_type_staple_for_setting_helix_rolls;
   bool export_svg_text_separately;
+  bool ox_export_only_selected_strands;
   LocalStorageDesignChoice local_storage_design_choice;
   bool clear_helix_selection_when_loading_new_design;
   bool show_slice_bar;
@@ -1251,22 +1253,28 @@ cadnano files that have whitespace. ("Bad .json file format is detected in
         ..key = 'export-cadnano-no-whitespace')(),
       DropdownDivider({'key': 'divider-cadnano'}),
       (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.OxdnaExport()))
+        ..on_click = ((_) => props
+            .dispatch(actions.OxviewExport(selected_strands_only: props.ox_export_only_selected_strands)))
+        ..tooltip = "Export design to oxView files, which can be loaded in oxView."
+        ..display = 'oxView'
+        ..key = 'export-oxview')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) =>
+            props.dispatch(actions.OxdnaExport(selected_strands_only: props.ox_export_only_selected_strands)))
         ..tooltip = "Export design to oxDNA .dat and .top files, which can be loaded in oxDNA or oxView."
         ..display = 'oxDNA'
         ..key = 'export-oxdna')(),
-      (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.OxdnaExport(selected_strands_only: true)))
-        ..tooltip = "Export design to oxDNA .dat and .top files, which can be loaded in oxDNA or oxView.\n"
-            "Only exports the currently selected strands."
-        ..display = 'oxDNA (selected strands)'
-        ..key = 'export-oxdna-selected-strands')(),
-      //TODO: figure out if ENSnano is close to codenano format; if so this might work for exporting to it.
-      // (MenuDropdownItem()
-      //   ..on_click = ((_) => props.dispatch(actions.ExportCodenanoFile()))
-      //   ..tooltip = "Export design to codenano format."
-      //   ..display = 'codenano'
-      //   ..key = 'export-codenano')(),
+      (MenuBoolean()
+        ..value = props.ox_export_only_selected_strands
+        ..display = 'export only selected strands'
+        ..tooltip = '''\
+When selected, only selected strands will be exported to oxDNA or oxView formats.'''
+        ..name = 'ox-export-only-selected-strands'
+        ..onChange = (_) {
+          props.dispatch(
+              actions.OxExportOnlySelectedStrandsSet(only_selected: !props.ox_export_only_selected_strands));
+        }
+        ..key = 'ox-export-only-selected-strands')(),
     );
   }
 

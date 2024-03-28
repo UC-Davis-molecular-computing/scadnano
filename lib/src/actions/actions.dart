@@ -4523,3 +4523,40 @@ abstract class OxdnaExport
   @memoized
   int get hashCode;
 }
+
+abstract class OxviewExport
+    with BuiltJsonSerializable
+    implements Action, Built<OxviewExport, OxviewExportBuilder> {
+  bool get selected_strands_only;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory OxviewExport({bool selected_strands_only = false}) {
+    return OxviewExport.from((b) => b..selected_strands_only = selected_strands_only);
+  }
+
+  OxviewExport._();
+
+  factory OxviewExport.from([void Function(OxviewExportBuilder) updates]) = _$OxviewExport;
+
+  static Serializer<OxviewExport> get serializer => _$oxviewExportSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class OxExportOnlySelectedStrandsSet
+    with BuiltJsonSerializable
+    implements Action, Built<OxExportOnlySelectedStrandsSet, OxExportOnlySelectedStrandsSetBuilder> {
+  bool get only_selected;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory OxExportOnlySelectedStrandsSet({bool only_selected}) = _$OxExportOnlySelectedStrandsSet._;
+
+  OxExportOnlySelectedStrandsSet._();
+
+  static Serializer<OxExportOnlySelectedStrandsSet> get serializer =>
+      _$oxExportOnlySelectedStrandsSetSerializer;
+
+  @memoized
+  int get hashCode;
+}
