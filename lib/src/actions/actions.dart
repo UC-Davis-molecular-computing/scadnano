@@ -1571,9 +1571,13 @@ abstract class SelectAllWithSameAsSelected
 
   BuiltList<SelectableTrait> get traits;
 
+  bool get exclude_scaffolds;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory SelectAllWithSameAsSelected({BuiltList<Selectable> templates, BuiltList<SelectableTrait> traits}) =
-      _$SelectAllWithSameAsSelected._;
+  factory SelectAllWithSameAsSelected(
+      {BuiltList<Selectable> templates,
+      BuiltList<SelectableTrait> traits,
+      bool exclude_scaffolds}) = _$SelectAllWithSameAsSelected._;
 
   SelectAllWithSameAsSelected._();
 
@@ -2076,6 +2080,8 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
 
   bool get include_only_selected_strands;
 
+  bool get exclude_selected_strands;
+
   ExportDNAFormat get export_dna_format;
 
   @nullable
@@ -2093,6 +2099,7 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
   factory ExportDNA({
     bool include_scaffold,
     bool include_only_selected_strands,
+    bool exclude_selected_strands,
     ExportDNAFormat export_dna_format,
     String delimiter,
     String domain_delimiter,
@@ -2100,9 +2107,11 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
     bool column_major_strand = true,
     bool column_major_plate = true,
   }) {
+    assert(!(include_only_selected_strands && exclude_selected_strands));
     return ExportDNA.from((b) => b
       ..include_scaffold = include_scaffold
       ..include_only_selected_strands = include_only_selected_strands
+      ..exclude_selected_strands = exclude_selected_strands
       ..export_dna_format = export_dna_format
       ..delimiter = delimiter
       ..domain_delimiter = domain_delimiter
@@ -2151,6 +2160,27 @@ abstract class ExportSvg with BuiltJsonSerializable implements Action, Built<Exp
   factory ExportSvg({ExportSvgType type}) = _$ExportSvg._;
 
   ExportSvgType get type;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Export every text in a DNA sequence separately
+
+abstract class ExportSvgTextSeparatelySet
+    with BuiltJsonSerializable
+    implements Action, Built<ExportSvgTextSeparatelySet, ExportSvgTextSeparatelySetBuilder> {
+  bool get export_svg_text_separately;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExportSvgTextSeparatelySet(bool export_svg_text_separately) =>
+      ExportSvgTextSeparatelySet.from((b) => b..export_svg_text_separately = export_svg_text_separately);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExportSvgTextSeparatelySet.from([void Function(ExportSvgTextSeparatelySetBuilder) updates]) =
+      _$ExportSvgTextSeparatelySet;
+
+  ExportSvgTextSeparatelySet._();
+
+  static Serializer<ExportSvgTextSeparatelySet> get serializer => _$exportSvgTextSeparatelySetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3982,6 +4012,22 @@ abstract class ExampleDesignsLoad
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// pair lines display
+
+abstract class BasePairTypeSet
+    with BuiltJsonSerializable
+    implements Action, Built<BasePairTypeSet, BasePairTypeSetBuilder> {
+  int get selected_idx;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory BasePairTypeSet({int selected_idx}) = _$BasePairTypeSet._;
+
+  BasePairTypeSet._();
+
+  static Serializer<BasePairTypeSet> get serializer => _$basePairTypeSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // change helix position
 
 abstract class HelixPositionSet
@@ -4348,6 +4394,25 @@ abstract class DisablePngCachingDnaSequencesSet
       _$disablePngCachingDnaSequencesSetSerializer;
 }
 
+abstract class RetainStrandColorOnSelectionSet
+    with BuiltJsonSerializable
+    implements Action, Built<RetainStrandColorOnSelectionSet, RetainStrandColorOnSelectionSetBuilder> {
+  bool get retain_strand_color_on_selection;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory RetainStrandColorOnSelectionSet(bool retain_strand_color_on_selection) =>
+      RetainStrandColorOnSelectionSet.from(
+          (b) => b..retain_strand_color_on_selection = retain_strand_color_on_selection);
+
+  factory RetainStrandColorOnSelectionSet.from(
+      [void Function(RetainStrandColorOnSelectionSetBuilder) updates]) = _$RetainStrandColorOnSelectionSet;
+
+  RetainStrandColorOnSelectionSet._();
+
+  static Serializer<RetainStrandColorOnSelectionSet> get serializer =>
+      _$retainStrandColorOnSelectionSetSerializer;
+}
+
 abstract class DisplayReverseDNARightSideUpSet
     with BuiltJsonSerializable
     implements Action, Built<DisplayReverseDNARightSideUpSet, DisplayReverseDNARightSideUpSetBuilder> {
@@ -4454,6 +4519,43 @@ abstract class OxdnaExport
   factory OxdnaExport.from([void Function(OxdnaExportBuilder) updates]) = _$OxdnaExport;
 
   static Serializer<OxdnaExport> get serializer => _$oxdnaExportSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class OxviewExport
+    with BuiltJsonSerializable
+    implements Action, Built<OxviewExport, OxviewExportBuilder> {
+  bool get selected_strands_only;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory OxviewExport({bool selected_strands_only = false}) {
+    return OxviewExport.from((b) => b..selected_strands_only = selected_strands_only);
+  }
+
+  OxviewExport._();
+
+  factory OxviewExport.from([void Function(OxviewExportBuilder) updates]) = _$OxviewExport;
+
+  static Serializer<OxviewExport> get serializer => _$oxviewExportSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class OxExportOnlySelectedStrandsSet
+    with BuiltJsonSerializable
+    implements Action, Built<OxExportOnlySelectedStrandsSet, OxExportOnlySelectedStrandsSetBuilder> {
+  bool get only_selected;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory OxExportOnlySelectedStrandsSet({bool only_selected}) = _$OxExportOnlySelectedStrandsSet._;
+
+  OxExportOnlySelectedStrandsSet._();
+
+  static Serializer<OxExportOnlySelectedStrandsSet> get serializer =>
+      _$oxExportOnlySelectedStrandsSetSerializer;
 
   @memoized
   int get hashCode;

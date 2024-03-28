@@ -1053,7 +1053,7 @@ num current_zoom(bool is_main) => is_main ? current_zoom_main_js() : current_zoo
 
 CssStyleSheet get_scadnano_stylesheet() {
   for (var stylesheet in document.styleSheets) {
-    if (stylesheet.href.contains(constants.scadnano_css_stylesheet_name)) {
+    if (stylesheet.href != null && stylesheet.href.contains(constants.scadnano_css_stylesheet_name)) {
       return stylesheet;
     }
   }

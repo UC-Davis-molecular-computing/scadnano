@@ -45,6 +45,11 @@ export_dna_sequences_middleware(Store<AppState> store, action, NextDispatcher ne
     List<Strand> strands;
     if (action.include_only_selected_strands) {
       strands = state.ui_state.selectables_store.selected_strands.toList();
+    } else if (action.exclude_selected_strands) {
+      strands = state.design.strands.toList();
+      for (var strand in state.ui_state.selectables_store.selected_strands) {
+        strands.remove(strand);
+      }
     } else {
       strands = state.design.strands.toList();
     }
@@ -107,15 +112,16 @@ Future<void> export_dna() async {
 
   int idx_include_scaffold = 0;
   int idx_include_only_selected_strands = 1;
-  int idx_format_str = 2;
-  int idx_delimiter = 3;
-  int idx_domain_delimiter = 4;
-  int idx_column_major_plate = 5;
-  int idx_sort = 6;
-  int idx_column_major_strand = 7;
-  int idx_strand_order_str = 8;
+  int idx_exclude_selected_strands = 2;
+  int idx_format_str = 3;
+  int idx_delimiter = 4;
+  int idx_domain_delimiter = 5;
+  int idx_column_major_plate = 6;
+  int idx_sort = 7;
+  int idx_column_major_strand = 8;
+  int idx_strand_order_str = 9;
 
-  List<DialogItem> items = List<DialogItem>.filled(9, null);
+  List<DialogItem> items = List<DialogItem>.filled(idx_strand_order_str + 1, null);
 
   items[idx_delimiter] = DialogText(label: 'delimiter between IDT fields', value: ',', tooltip: '''\
 Delimiter to separate IDT fields in a "bulk input" text file, for instance if set to ";", then a line 
@@ -132,6 +138,7 @@ if it had three domains each of length 5.''');
   items[idx_include_scaffold] = DialogCheckbox(label: 'include scaffold', value: false);
   items[idx_include_only_selected_strands] =
       DialogCheckbox(label: 'include only selected strands', value: false);
+  items[idx_exclude_selected_strands] = DialogCheckbox(label: 'exclude selected strands', value: false);
   items[idx_format_str] = DialogRadio(
     label: 'export format',
     options: export_options,
@@ -178,6 +185,10 @@ which part of the strand to use as the address.
       title: 'export DNA sequences',
       type: DialogType.export_dna_sequences,
       items: items,
+      disable_when_any_checkboxes_on: {
+        idx_include_only_selected_strands: [idx_exclude_selected_strands],
+        idx_exclude_selected_strands: [idx_include_only_selected_strands],
+      },
       disable_when_any_checkboxes_off: {
         idx_column_major_strand: [idx_sort],
         idx_strand_order_str: [idx_sort],
@@ -199,6 +210,7 @@ which part of the strand to use as the address.
 
   bool include_scaffold = (results[idx_include_scaffold] as DialogCheckbox).value;
   bool include_only_selected_strands = (results[idx_include_only_selected_strands] as DialogCheckbox).value;
+  bool exclude_selected_strands = (results[idx_exclude_selected_strands] as DialogCheckbox).value;
   String format_str = (results[idx_format_str] as DialogRadio).value;
   bool sort = (results[idx_sort] as DialogCheckbox).value;
   StrandOrder strand_order = null;
@@ -213,9 +225,12 @@ which part of the strand to use as the address.
   String delimiter = (results[idx_delimiter] as DialogText).value;
   String domain_delimiter = (results[idx_domain_delimiter] as DialogText).value;
 
+  assert(!(include_only_selected_strands && exclude_selected_strands));
+
   app.dispatch(actions.ExportDNA(
     include_scaffold: include_scaffold,
     include_only_selected_strands: include_only_selected_strands,
+    exclude_selected_strands: exclude_selected_strands,
     export_dna_format: format,
     delimiter: delimiter,
     domain_delimiter: domain_delimiter,

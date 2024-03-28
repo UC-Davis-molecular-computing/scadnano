@@ -14,11 +14,11 @@ import 'design_main_warning_star.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 
-part 'design_main_base_pair_lines.over_react.g.dart';
+part 'design_main_base_pair_rectangle.over_react.g.dart';
 
-UiFactory<DesignMainBasePairLinesProps> DesignMainBasePairLines = _$DesignMainBasePairLines;
+UiFactory<DesignMainBasePairRectangleProps> DesignMainBasePairRectangle = _$DesignMainBasePairRectangle;
 
-mixin DesignMainBasePairLinesProps on UiProps {
+mixin DesignMainBasePairRectangleProps on UiProps {
   bool with_mismatches;
   Design design;
   bool only_display_selected_helices;
@@ -26,7 +26,8 @@ mixin DesignMainBasePairLinesProps on UiProps {
   BuiltMap<int, num> helix_idx_to_svg_position_y_map;
 }
 
-class DesignMainBasePairLinesComponent extends UiComponent2<DesignMainBasePairLinesProps> with PureComponent {
+class DesignMainBasePairRectangleComponent extends UiComponent2<DesignMainBasePairRectangleProps>
+    with PureComponent {
   @override
   render() {
     List<ReactElement> base_pair_lines_components =
@@ -50,45 +51,46 @@ class DesignMainBasePairLinesComponent extends UiComponent2<DesignMainBasePairLi
         // however, this makes it easier to associate base pair lines to individual strands,
         // convenient when exporting SVG
         List<ReactElement> helix_components = [];
+        int last_offset = -2;
+        var last_svg_forward_pos = null;
         for (int offset in base_pairs[helix_idx]) {
           var svg_position_y = props.helix_idx_to_svg_position_y_map[helix_idx];
           var base_svg_forward_pos = helix.svg_base_pos(offset, true, svg_position_y);
           var base_svg_reverse_pos = helix.svg_base_pos(offset, false, svg_position_y);
-          var base_pair_line = (Dom.line()
-            ..id = 'base_pair-${helix_idx}-${offset}'
-            ..x1 = base_svg_forward_pos.x
-            ..y1 = base_svg_forward_pos.y
-            ..x2 = base_svg_reverse_pos.x
-            ..y2 = base_svg_reverse_pos.y
-            ..className = constants.css_selector_base_pair_line
-            ..stroke = 'black'
-            ..key = 'base-pair-line-H${helix_idx}-${offset}')();
-          helix_components.add(base_pair_line);
+
+          var base_pair_ele = null;
+
+          if (offset - last_offset == 1) {
+            base_pair_ele = (Dom.rect()
+              ..id = 'base_pair-${helix_idx}-${offset}'
+              ..x = last_svg_forward_pos.x - 0.5
+              ..y = base_svg_forward_pos.y
+              ..width = base_svg_reverse_pos.x - last_svg_forward_pos.x + 0.8
+              ..height = base_svg_reverse_pos.y - base_svg_forward_pos.y
+              ..className = constants.css_selector_base_pair_rect
+              ..fill = 'grey'
+              ..key = 'base-pair-rect-H${helix_idx}-${offset}')();
+          } else {
+            base_pair_ele = (Dom.line()
+              ..id = 'base_pair-${helix_idx}-${offset}'
+              ..x1 = base_svg_forward_pos.x
+              ..y1 = base_svg_forward_pos.y
+              ..x2 = base_svg_reverse_pos.x
+              ..y2 = base_svg_reverse_pos.y
+              ..className = constants.css_selector_base_pair_line
+              ..stroke = 'grey'
+              ..key = 'base-pair-line-H${helix_idx}-${offset}')();
+          }
+
+          helix_components.add(base_pair_ele);
+          last_offset = offset;
+          last_svg_forward_pos = base_svg_forward_pos;
         }
         var helix_dom_group = (Dom.g()
           ..transform = transform_str
           ..className = 'base-pair-lines-components-in-helix'
           ..key = 'base-pair-lines-components-in-helix-H${helix_idx}')(helix_components);
         base_pair_lines_components.add(helix_dom_group);
-
-        // // code below draws one long disconnected path for base pairs in each helix; should render faster
-        // // however, it's not clear how to use this when exporting SVG for only some selected strands
-        // // since it puts all the base pair lines for the whole helix in one single SVG path
-        // var d = StringBuffer();
-        // for (int offset in base_pairs[helix_idx]) {
-        //   var svg_position_y = props.helix_idx_to_svg_position_y_map[helix_idx];
-        //   var base_svg_forward_pos = helix.svg_base_pos(offset, true, svg_position_y);
-        //   var base_svg_reverse_pos = helix.svg_base_pos(offset, false, svg_position_y);
-        //   d.write(" M ${base_svg_forward_pos.x} ${base_svg_forward_pos.y}"
-        //       " L ${base_svg_reverse_pos.x} ${base_svg_reverse_pos.y}");
-        // }
-        // var helix_lines_path = (Dom.path()
-        //   ..d = d.toString()
-        //   ..transform = transform_str
-        //   ..stroke = 'black'
-        //   ..className = constants.css_selector_base_pair_line
-        //   ..key = 'base-pair-lines-H${helix_idx}')();
-        // base_pair_lines_components.add(helix_lines_path);
       }
     }
 

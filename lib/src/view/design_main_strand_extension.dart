@@ -53,6 +53,7 @@ mixin DesignMainExtensionPropsMixin on UiProps {
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
   Geometry geometry;
+  bool retain_strand_color_on_selection;
 }
 
 class DesignMainExtensionProps = UiProps with DesignMainExtensionPropsMixin, TransformByHelixGroupPropsMixin;
@@ -76,7 +77,11 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
 
     var classname = constants.css_selector_extension;
     if (props.selected) {
-      classname += ' ' + constants.css_selector_selected;
+      if (props.retain_strand_color_on_selection) {
+        classname += ' ' + constants.css_selector_selected;
+      } else {
+        classname += ' ' + constants.css_selector_selected_pink;
+      }
     }
     if (props.strand.is_scaffold) {
       classname += ' ' + constants.css_selector_scaffold;
@@ -84,12 +89,24 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
 
     // To ensure that the extension name displays right-side up, we always draw from the
     // left point to the right point, regardless of which is the free end and which is attached.
-    var left_svg = extension_free_end_svg;
-    var right_svg = extension_attached_end_svg;
-    if (left_svg.x > right_svg.x) {
-      var swap = left_svg;
-      left_svg = right_svg;
-      right_svg = swap;
+    //NOTE: this causes the DNA to appear backwards in cases when the 3' end appears to the left
+    // of the 5' end. For now we will ditch this and draw the extension path from 5' to 3'
+    // (see svg_5p and svg_3p below), and figure out later how to display the name properly.
+    // Leaving this code here to help with that later.
+    // var left_svg = extension_free_end_svg;
+    // var right_svg = extension_attached_end_svg;
+    // if (left_svg.x > right_svg.x) {
+    //   var swap = left_svg;
+    //   left_svg = right_svg;
+    //   right_svg = swap;
+    // }
+
+    var svg_5p = extension_free_end_svg;
+    var svg_3p = extension_attached_end_svg;
+    if (!ext.is_5p) {
+      var swap = svg_5p;
+      svg_5p = svg_3p;
+      svg_3p = swap;
     }
 
     var color = ext.color ?? props.strand_color;
@@ -97,8 +114,10 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     // This is just a straight line, but for some reason, for displaying the extension name,
     // it only works to attach a textPath to it if it is a path, not a line.
     // So we use Dom.path() instead of Dom.line()
-    var path_d = 'M ${left_svg.x} ${left_svg.y} '
-        'L ${right_svg.x} ${right_svg.y}';
+    // var path_d = 'M ${left_svg.x} ${left_svg.y} '
+    //     'L ${right_svg.x} ${right_svg.y}';
+    var path_d = 'M ${svg_5p.x} ${svg_5p.y} '
+        'L ${svg_3p.x} ${svg_3p.y}';
     return (Dom.path()
       ..className = classname
       ..onPointerDown = handle_click_down
@@ -173,7 +192,10 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
         if (props.ext.name != null)
           ContextMenuItem(
               title: 'remove extension name',
-              on_click: () => app.dispatch(actions.SubstrandNameSet(name: null, substrand: props.ext))),
+              on_click: () => app.dispatch(actions.BatchAction(
+                  app.state.ui_state.selectables_store.selected_extensions
+                      .map((e) => actions.SubstrandNameSet(name: null, substrand: e)),
+                  "remove extension names"))),
         ContextMenuItem(
           title: 'set extension label',
           on_click: set_extension_label,
@@ -181,7 +203,10 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
         if (props.ext.label != null)
           ContextMenuItem(
               title: 'remove extension label',
-              on_click: () => app.dispatch(actions.SubstrandLabelSet(label: null, substrand: props.ext))),
+              on_click: () => app.dispatch(actions.BatchAction(
+                  app.state.ui_state.selectables_store.selected_extensions
+                      .map((e) => actions.SubstrandLabelSet(label: null, substrand: e)),
+                  "remove extension labels"))),
         ContextMenuItem(
           title: 'set extension color',
           on_click: () => app
@@ -217,7 +242,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
   set_extension_label() => app.disable_keyboard_shortcuts_while(() => design_main_strand.ask_for_label(
         props.strand,
         props.ext,
-        app.state.ui_state.selectables_store.selected_substrands,
+        app.state.ui_state.selectables_store.selected_extensions,
       ));
 
   Future<void> ask_for_extension_name() async {
@@ -230,7 +255,15 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     if (results == null) return;
 
     String name = (results[name_idx] as DialogText).value;
-    actions.UndoableAction action = actions.SubstrandNameSet(name: name, substrand: props.ext);
+    var selected_exts = app.state.ui_state.selectables_store.selected_extensions;
+    var action;
+    if (selected_exts.length > 1) {
+      action = actions.BatchAction(
+          selected_exts.map((e) => actions.SubstrandNameSet(name: name, substrand: e)),
+          "set extension names");
+    } else {
+      action = actions.SubstrandNameSet(name: name, substrand: props.ext);
+    }
     app.dispatch(action);
   }
 

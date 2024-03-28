@@ -4,6 +4,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:scadnano/src/state/base_pair_display_type.dart';
 
 import 'react_bootstrap.dart';
 
@@ -47,6 +48,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..no_grid_is_none =
           state.design == null ? false : state.design.groups.values.every((group) => group.grid != Grid.none)
       ..show_dna = state.ui_state.show_dna
+      ..base_pair_display_type = state.ui_state.base_pair_display_type
       ..show_strand_names = state.ui_state.show_strand_names
       ..show_strand_labels = state.ui_state.show_strand_labels
       ..show_domain_names = state.ui_state.show_domain_names
@@ -86,9 +88,11 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
       ..show_helices_axis_arrows = state.ui_state.show_helices_axis_arrows
       ..show_loopout_extension_length = state.ui_state.show_loopout_extension_length
+      ..export_svg_text_separately = state.ui_state.export_svg_text_separately
       ..show_slice_bar = state.ui_state.show_slice_bar
       ..show_mouseover_data = state.ui_state.show_mouseover_data
       ..disable_png_caching_dna_sequences = state.ui_state.disable_png_caching_dna_sequences
+      ..retain_strand_color_on_selection = state.ui_state.retain_strand_color_on_selection
       ..display_reverse_DNA_right_side_up = state.ui_state.display_reverse_DNA_right_side_up
       ..local_storage_design_choice = state.ui_state.local_storage_design_choice
       ..clear_helix_selection_when_loading_new_design =
@@ -98,6 +102,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..default_crossover_type_staple_for_setting_helix_rolls =
           state.ui_state.default_crossover_type_staple_for_setting_helix_rolls
       ..selection_box_intersection = state.ui_state.selection_box_intersection
+      ..ox_export_only_selected_strands = state.ui_state.ox_export_only_selected_strands
       ..undo_redo = state.undo_redo);
   },
   // Used for component test.
@@ -132,6 +137,7 @@ mixin MenuPropsMixin on UiProps {
   bool autofit;
   bool only_display_selected_helices;
   ExampleDesigns example_designs;
+  BasePairDisplayType base_pair_display_type;
   bool design_has_insertions_or_deletions;
   bool undo_stack_empty;
   bool redo_stack_empty;
@@ -151,9 +157,12 @@ mixin MenuPropsMixin on UiProps {
   bool show_loopout_extension_length;
   bool show_mouseover_data;
   bool disable_png_caching_dna_sequences;
+  bool retain_strand_color_on_selection;
   bool display_reverse_DNA_right_side_up;
   bool default_crossover_type_scaffold_for_setting_helix_rolls;
   bool default_crossover_type_staple_for_setting_helix_rolls;
+  bool export_svg_text_separately;
+  bool ox_export_only_selected_strands;
   LocalStorageDesignChoice local_storage_design_choice;
   bool clear_helix_selection_when_loading_new_design;
   bool show_slice_bar;
@@ -998,23 +1007,38 @@ or real coordinates in nanometers, depending on whether a grid is selected).'''
       ..key = 'view_menu_base_pairs-dropdown'
       ..className = 'submenu_item')([
       (MenuBoolean()
-        ..value = props.show_base_pair_lines
-        ..display = 'Base pair lines'
-        ..tooltip = 'Draw vertical lines between pairs of bases at the same offset on the same helix.'
-        ..onChange = ((_) =>
-            props.dispatch(actions.ShowBasePairLinesSet(show_base_pair_lines: !props.show_base_pair_lines)))
-        ..key = 'base_pair_lines')(),
+        ..value = props.base_pair_display_type.toIndex() == 1
+        ..display = 'Display as ${BasePairDisplayType.lines.display_name()}'
+        ..key = 'base-pair-display-lines'
+        ..onChange = (_) {
+          if (props.base_pair_display_type == BasePairDisplayType.lines) {
+            props.dispatch(actions.BasePairTypeSet(selected_idx: BasePairDisplayType.none.toIndex()));
+          } else if (props.base_pair_display_type == BasePairDisplayType.none) {
+            props.dispatch(actions.BasePairTypeSet(selected_idx: BasePairDisplayType.lines.toIndex()));
+          }
+        })(),
+      (MenuBoolean()
+        ..value = props.base_pair_display_type.toIndex() == 2
+        ..display = 'Display as ${BasePairDisplayType.rectangle.display_name()}'
+        ..key = 'base-pair-display-rectangle'
+        ..onChange = (_) {
+          if (props.base_pair_display_type == BasePairDisplayType.rectangle) {
+            props.dispatch(actions.BasePairTypeSet(selected_idx: BasePairDisplayType.none.toIndex()));
+          } else if (props.base_pair_display_type == BasePairDisplayType.none) {
+            props.dispatch(actions.BasePairTypeSet(selected_idx: BasePairDisplayType.rectangle.toIndex()));
+          }
+        })(),
       (MenuBoolean()
         ..value = props.show_base_pair_lines_with_mismatches
-        ..hide = !props.show_base_pair_lines
         ..display = '... even if bases mismatch'
+        ..key = 'base-pair-display-even-if-bases-mismatch'
+        ..hide = props.base_pair_display_type.toIndex() == 0
         ..tooltip = '''\
 Lines are drawn between all pairs of bases at the same offset on the same helix, 
 regardless of whether the bases are complementary. If unchecked then lines are 
 only shown between pairs of complementary bases.'''
-        ..onChange = ((_) => props.dispatch(actions.ShowBasePairLinesWithMismatchesSet(
-            show_base_pair_lines_with_mismatches: !props.show_base_pair_lines_with_mismatches)))
-        ..key = 'base_pair_lines_mismatches')(),
+        ..onChange = (_) => props.dispatch(actions.ShowBasePairLinesWithMismatchesSet(
+            show_base_pair_lines_with_mismatches: !props.show_base_pair_lines_with_mismatches)))(),
     ]);
   }
 
@@ -1141,6 +1165,19 @@ debugging, but be warned that it will be very slow to render a large number of D
           props.dispatch(actions.DisablePngCachingDnaSequencesSet(!props.disable_png_caching_dna_sequences));
         }
         ..key = 'disable-png-caching-dna-sequences')(),
+      (MenuBoolean()
+        ..value = props.retain_strand_color_on_selection
+        ..display = 'Retain strand color on selection'
+        ..tooltip = '''\
+Selected strands are normally highlighted in hot pink, which overrides the strand's color.
+Select this option to not override the strand's color when it is selected.
+A highlighting effect will still appear.
+        '''
+        ..name = 'retain-strand-color-on-selection'
+        ..onChange = (_) {
+          props.dispatch(actions.RetainStrandColorOnSelectionSet(!props.retain_strand_color_on_selection));
+        }
+        ..key = 'retain-strand-color-on-selection')(),
     ];
   }
 
@@ -1165,6 +1202,19 @@ debugging, but be warned that it will be very slow to render a large number of D
         ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.selected)))
         ..tooltip = "Export SVG figure of selected strands"
         ..display = 'SVG of selected strands')(),
+      (MenuBoolean()
+        ..value = props.export_svg_text_separately
+        ..display = 'export svg text separately (PPT)'
+        ..tooltip = '''\
+When selected, every symbol of the text in a DNA sequence is exported as a separate
+SVG text element. This is useful if the SVG will be imported into Powerpoint, which 
+is less expressive than SVG and can render the text strangely.'''
+        ..name = 'export-svg-text-separately'
+        ..onChange = (_) {
+          props.dispatch(actions.ExportSvgTextSeparatelySet(!props.export_svg_text_separately));
+        }
+        ..key = 'export-svg-text-separately')(),
+      DropdownDivider({'key': 'divider-export-svg'}),
       (MenuDropdownItem()
         ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna_sequences.export_dna))
         ..tooltip = "Export DNA sequences of strands to a file."
@@ -1174,7 +1224,7 @@ debugging, but be warned that it will be very slow to render a large number of D
         ..tooltip = "Export design's DNA sequences as a CSV in the same way as cadnano v2.\n"
             "This is useful, for example, with CanDo's atomic model generator."
         ..display = 'DNA sequences (cadnano v2 format)')(),
-      DropdownDivider({'key': 'divider-not-full-design'}),
+      DropdownDivider({'key': 'divider-export-dna'}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile(whitespace: true)))
         ..tooltip = "Export design to cadnano (version 2) .json file."
@@ -1201,23 +1251,30 @@ cadnano files that have whitespace. ("Bad .json file format is detected in
 'structure.json'. Or no dsDNA or strand crossovers exist.")"""
         ..display = 'cadnano v2 no whitespace'
         ..key = 'export-cadnano-no-whitespace')(),
+      DropdownDivider({'key': 'divider-cadnano'}),
       (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.OxdnaExport()))
+        ..on_click = ((_) => props
+            .dispatch(actions.OxviewExport(selected_strands_only: props.ox_export_only_selected_strands)))
+        ..tooltip = "Export design to oxView files, which can be loaded in oxView."
+        ..display = 'oxView'
+        ..key = 'export-oxview')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) =>
+            props.dispatch(actions.OxdnaExport(selected_strands_only: props.ox_export_only_selected_strands)))
         ..tooltip = "Export design to oxDNA .dat and .top files, which can be loaded in oxDNA or oxView."
         ..display = 'oxDNA'
         ..key = 'export-oxdna')(),
-      (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.OxdnaExport(selected_strands_only: true)))
-        ..tooltip = "Export design to oxDNA .dat and .top files, which can be loaded in oxDNA or oxView.\n"
-            "Only exports the currently selected strands."
-        ..display = 'oxDNA (selected strands)'
-        ..key = 'export-oxdna-selected-strands')(),
-      //TODO: figure out if ENSnano is close to codenano format; if so this might work for exporting to it.
-      // (MenuDropdownItem()
-      //   ..on_click = ((_) => props.dispatch(actions.ExportCodenanoFile()))
-      //   ..tooltip = "Export design to codenano format."
-      //   ..display = 'codenano'
-      //   ..key = 'export-codenano')(),
+      (MenuBoolean()
+        ..value = props.ox_export_only_selected_strands
+        ..display = 'export only selected strands'
+        ..tooltip = '''\
+When selected, only selected strands will be exported to oxDNA or oxView formats.'''
+        ..name = 'ox-export-only-selected-strands'
+        ..onChange = (_) {
+          props.dispatch(
+              actions.OxExportOnlySelectedStrandsSet(only_selected: !props.ox_export_only_selected_strands));
+        }
+        ..key = 'ox-export-only-selected-strands')(),
     );
   }
 

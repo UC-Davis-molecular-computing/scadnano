@@ -12,6 +12,7 @@ import '../state/local_storage_design_choice.dart';
 
 import 'app_ui_state_storables.dart';
 import '../serializers.dart';
+import 'base_pair_display_type.dart';
 import 'context_menu.dart';
 import 'dialog.dart';
 import 'design.dart';
@@ -162,6 +163,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get show_domain_labels => storables.show_domain_labels;
 
+  BasePairDisplayType get base_pair_display_type => storables.base_pair_display_type;
+
   bool get show_base_pair_lines => storables.show_base_pair_lines;
 
   bool get show_base_pair_lines_with_mismatches => storables.show_base_pair_lines_with_mismatches;
@@ -214,6 +217,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get show_loopout_extension_length => storables.show_loopout_extension_length;
 
+  bool get export_svg_text_separately => storables.export_svg_text_separately;
+
   bool get default_crossover_type_scaffold_for_setting_helix_rolls =>
       storables.default_crossover_type_scaffold_for_setting_helix_rolls;
 
@@ -233,11 +238,15 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get disable_png_caching_dna_sequences => storables.disable_png_caching_dna_sequences;
 
+  bool get retain_strand_color_on_selection => storables.retain_strand_color_on_selection;
+
   bool get display_reverse_DNA_right_side_up => storables.display_reverse_DNA_right_side_up;
 
   bool get show_mouseover_data => storables.show_mouseover_data;
 
   bool get selection_box_intersection => storables.selection_box_intersection;
+
+  bool get ox_export_only_selected_strands => storables.ox_export_only_selected_strands;
 
   static void _initializeBuilder(AppUIStateBuilder b) {
     b.copy_info = null;

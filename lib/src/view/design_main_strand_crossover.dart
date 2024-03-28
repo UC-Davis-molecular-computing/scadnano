@@ -38,6 +38,7 @@ mixin DesignMainStrandCrossoverPropsMixin on UiProps {
   Geometry geometry;
   num prev_domain_helix_svg_position_y;
   num next_domain_helix_svg_position_y;
+  bool retain_strand_color_on_selection;
 }
 
 class DesignMainStrandCrossoverProps = UiProps
@@ -63,10 +64,21 @@ class DesignMainStrandCrossoverComponent
 
     var classname = constants.css_selector_crossover;
     if (props.selected) {
-      classname += ' ' + constants.css_selector_selected;
+      if (props.retain_strand_color_on_selection) {
+        classname += ' ' + constants.css_selector_selected;
+      } else {
+        classname += ' ' + constants.css_selector_selected_pink;
+      }
     }
     if (props.strand.is_scaffold) {
       classname += ' ' + constants.css_selector_scaffold;
+    }
+
+    // Want to display crossovers within a helix a little darker since it's hard to see them;
+    // This is for "crossovers" that really are just buffered space between domains on the same helix.
+    if (props.prev_domain.helix == props.next_domain.helix &&
+        props.prev_domain.forward == props.next_domain.forward) {
+      classname += ' ' + constants.css_selector_crossover_same_helix;
     }
 
     var prev_group = props.helices[props.prev_domain.helix].group;

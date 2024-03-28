@@ -6,11 +6,13 @@ import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:react/react_client/react_interop.dart';
+import 'package:scadnano/src/state/base_pair_display_type.dart';
 import 'package:scadnano/src/view/design_main_unpaired_insertion_deletions.dart';
 import 'package:scadnano/src/view/design_main_slice_bar.dart';
 import 'package:scadnano/src/view/potential_extensions_view.dart';
 
 import '../state/selection_rope.dart';
+import 'design_main_base_pair_rectangle.dart';
 import 'design_main_domains_moving.dart';
 import 'selection_rope_view.dart';
 import '../actions/actions.dart' as actions;
@@ -65,6 +67,7 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..show_domain_name_mismatches = state.ui_state.show_domain_name_mismatches
         ..show_unpaired_insertion_deletions = state.ui_state.show_unpaired_insertion_deletions
         ..show_dna = state.ui_state.show_dna
+        ..base_pair_display_type = state.ui_state.base_pair_display_type
         ..show_base_pair_lines = state.ui_state.show_base_pair_lines
         ..show_base_pair_lines_with_mismatches = state.ui_state.show_base_pair_lines_with_mismatches
         ..show_domain_names = state.ui_state.show_domain_names
@@ -88,6 +91,7 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..invert_y = state.ui_state.invert_y
         ..selection_rope = state.ui_state.selection_rope
         ..disable_png_caching_dna_sequences = state.ui_state.disable_png_caching_dna_sequences
+        ..retain_strand_color_on_selection = state.ui_state.retain_strand_color_on_selection
         ..display_reverse_DNA_right_side_up = state.ui_state.display_reverse_DNA_right_side_up);
     }
   },
@@ -109,6 +113,7 @@ mixin DesignMainPropsMixin on UiProps {
   bool show_domain_name_mismatches;
   bool show_unpaired_insertion_deletions;
   bool show_dna;
+  BasePairDisplayType base_pair_display_type;
   bool show_base_pair_lines;
   bool show_base_pair_lines_with_mismatches;
   bool show_domain_names;
@@ -137,6 +142,7 @@ mixin DesignMainPropsMixin on UiProps {
   String displayed_group_name;
   SelectionRope selection_rope;
   bool disable_png_caching_dna_sequences;
+  bool retain_strand_color_on_selection;
   bool display_reverse_DNA_right_side_up;
   BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
   bool invert_y;
@@ -208,7 +214,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
               .map((helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y))
           ..key = 'unpaired-insertion-deletions')(),
 
-      if (props.show_base_pair_lines)
+      if (props.base_pair_display_type == BasePairDisplayType.lines)
         (DesignMainBasePairLines()
           ..with_mismatches = props.show_base_pair_lines_with_mismatches
           ..design = props.design
@@ -217,6 +223,16 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..helix_idx_to_svg_position_y_map = props.helix_idx_to_svg_position_map
               .map((helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y))
           ..key = 'base-pair-lines')(),
+
+      if (props.base_pair_display_type == BasePairDisplayType.rectangle)
+        (DesignMainBasePairRectangle()
+          ..with_mismatches = props.show_base_pair_lines_with_mismatches
+          ..design = props.design
+          ..only_display_selected_helices = props.only_display_selected_helices
+          ..side_selected_helix_idxs = props.side_selected_helix_idxs
+          ..helix_idx_to_svg_position_y_map = props.helix_idx_to_svg_position_map
+              .map((helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y))
+          ..key = 'base-pair-rectangle')(),
 
       (ConnectedDesignMainStrands()..key = 'strands')(),
 
@@ -263,6 +279,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..only_display_selected_helices = props.only_display_selected_helices
           ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
           ..disable_png_caching_dna_sequences = props.disable_png_caching_dna_sequences
+          ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
           ..display_reverse_DNA_right_side_up = props.display_reverse_DNA_right_side_up
           ..key = 'dna-sequences')(),
 
