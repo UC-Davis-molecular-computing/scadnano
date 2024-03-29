@@ -20,14 +20,12 @@ built_value:packages/built_value/
 built_value_generator:packages/built_value_generator/
 charcode:packages/charcode/
 checked_yaml:packages/checked_yaml/
-cli_repl:packages/cli_repl/
 cli_util:packages/cli_util/
 clock:packages/clock/
 code_builder:packages/code_builder/
 codemirror:packages/codemirror/
 collection:packages/collection/
 color:packages/color/
-colorize:packages/colorize/
 convert:packages/convert/
 coverage:packages/coverage/
 crypto:packages/crypto/
@@ -58,11 +56,11 @@ node_preamble:packages/node_preamble/
 over_react:packages/over_react/
 over_react_test:packages/over_react_test/
 package_config:packages/package_config/
-package_resolver:packages/package_resolver/
 path:packages/path/
 pedantic:packages/pedantic/
 petitparser:packages/petitparser/
 platform_detect:packages/platform_detect/
+pointycastle:packages/pointycastle/
 pool:packages/pool/
 protobuf:packages/protobuf/
 pub_semver:packages/pub_semver/
@@ -72,7 +70,6 @@ react:packages/react/
 redux:packages/redux/
 redux_dev_tools:packages/redux_dev_tools/
 reselect:packages/reselect/
-sass:packages/sass/
 scadnano:packages/scadnano/
 scratch_space:packages/scratch_space/
 shelf:packages/shelf/
