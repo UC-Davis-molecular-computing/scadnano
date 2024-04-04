@@ -13,6 +13,7 @@ import '../state/local_storage_design_choice.dart';
 
 import 'app_ui_state_storables.dart';
 import '../serializers.dart';
+import 'base_pair_display_type.dart';
 import 'context_menu.dart';
 import 'dialog.dart';
 import 'design.dart';
@@ -163,6 +164,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get show_domain_labels => storables.show_domain_labels;
 
+  BasePairDisplayType get base_pair_display_type => storables.base_pair_display_type;
+
   bool get show_base_pair_lines => storables.show_base_pair_lines;
 
   bool get show_base_pair_lines_with_mismatches => storables.show_base_pair_lines_with_mismatches;
@@ -247,6 +250,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get selection_box_intersection => storables.selection_box_intersection;
 
   BuiltMap<int, Tuple2> get original_helix_offsets;
+
+  bool get ox_export_only_selected_strands => storables.ox_export_only_selected_strands;
 
   static void _initializeBuilder(AppUIStateBuilder b) {
     b.copy_info = null;

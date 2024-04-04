@@ -4,6 +4,7 @@ import 'package:built_value/built_value.dart';
 
 import '../state/local_storage_design_choice.dart';
 import '../serializers.dart';
+import 'base_pair_display_type.dart';
 import 'select_mode_state.dart';
 import 'edit_mode.dart';
 import '../constants.dart' as constants;
@@ -33,6 +34,8 @@ abstract class AppUIStateStorables
   bool get show_domain_names;
 
   bool get show_domain_labels;
+
+  BasePairDisplayType get base_pair_display_type;
 
   bool get show_base_pair_lines;
 
@@ -129,6 +132,8 @@ abstract class AppUIStateStorables
 
   bool get export_svg_text_separately;
 
+  bool get ox_export_only_selected_strands;
+
   static void _initializeBuilder(AppUIStateStorablesBuilder b) {
     // This ensures that even if these keys are not in localStorage (e.g., due to upgrading),
     // then they will be populated with a default value instead of raising an exception.
@@ -141,6 +146,7 @@ abstract class AppUIStateStorables
     b.show_strand_labels = false;
     b.show_domain_names = false;
     b.show_domain_labels = false;
+    b.base_pair_display_type = BasePairDisplayType.none;
     b.show_base_pair_lines = false;
     b.show_base_pair_lines_with_mismatches = false;
     b.strand_name_font_size = constants.default_strand_name_font_size;
@@ -187,6 +193,7 @@ abstract class AppUIStateStorables
     b.show_mouseover_data = false;
     b.selection_box_intersection = false;
     b.export_svg_text_separately = false;
+    b.ox_export_only_selected_strands = false;
   }
 
   /************************ begin BuiltValue boilerplate ************************/

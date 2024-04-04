@@ -4031,6 +4031,22 @@ abstract class ExampleDesignsLoad
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// pair lines display
+
+abstract class BasePairTypeSet
+    with BuiltJsonSerializable
+    implements Action, Built<BasePairTypeSet, BasePairTypeSetBuilder> {
+  int get selected_idx;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory BasePairTypeSet({int selected_idx}) = _$BasePairTypeSet._;
+
+  BasePairTypeSet._();
+
+  static Serializer<BasePairTypeSet> get serializer => _$basePairTypeSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // change helix position
 
 abstract class HelixPositionSet
@@ -4522,6 +4538,43 @@ abstract class OxdnaExport
   factory OxdnaExport.from([void Function(OxdnaExportBuilder) updates]) = _$OxdnaExport;
 
   static Serializer<OxdnaExport> get serializer => _$oxdnaExportSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class OxviewExport
+    with BuiltJsonSerializable
+    implements Action, Built<OxviewExport, OxviewExportBuilder> {
+  bool get selected_strands_only;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory OxviewExport({bool selected_strands_only = false}) {
+    return OxviewExport.from((b) => b..selected_strands_only = selected_strands_only);
+  }
+
+  OxviewExport._();
+
+  factory OxviewExport.from([void Function(OxviewExportBuilder) updates]) = _$OxviewExport;
+
+  static Serializer<OxviewExport> get serializer => _$oxviewExportSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class OxExportOnlySelectedStrandsSet
+    with BuiltJsonSerializable
+    implements Action, Built<OxExportOnlySelectedStrandsSet, OxExportOnlySelectedStrandsSetBuilder> {
+  bool get only_selected;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory OxExportOnlySelectedStrandsSet({bool only_selected}) = _$OxExportOnlySelectedStrandsSet._;
+
+  OxExportOnlySelectedStrandsSet._();
+
+  static Serializer<OxExportOnlySelectedStrandsSet> get serializer =>
+      _$oxExportOnlySelectedStrandsSetSerializer;
 
   @memoized
   int get hashCode;
