@@ -884,6 +884,25 @@ abstract class InvertYSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// dynamically update helices
+
+abstract class DynamicHelixUpdateSet
+    with BuiltJsonSerializable
+    implements
+        Action,
+        SvgPngCacheInvalidatingAction,
+        Built<DynamicHelixUpdateSet, DynamicHelixUpdateSetBuilder> {
+  bool get dynamically_update_helices;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DynamicHelixUpdateSet({bool dynamically_update_helices}) = _$DynamicHelixUpdateSet._;
+
+  DynamicHelixUpdateSet._();
+
+  static Serializer<DynamicHelixUpdateSet> get serializer => _$dynamicHelixUpdateSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // warn on exit if unsaved
 
 abstract class WarnOnExitIfUnsavedSet

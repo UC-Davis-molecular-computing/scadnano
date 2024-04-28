@@ -4,6 +4,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/reducers/design_reducer.dart';
 import 'package:scadnano/src/reducers/strands_copy_info_reducer.dart';
+import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/base_pair_display_type.dart';
 import 'package:scadnano/src/state/dna_assign_options.dart';
 import 'package:scadnano/src/state/modification.dart';
@@ -11,6 +12,7 @@ import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/copy_info.dart';
 import 'package:scadnano/src/state/substrand.dart';
 import 'package:scadnano/src/util.dart';
+import 'package:tuple/tuple.dart';
 import '../reducers/context_menu_reducer.dart';
 import '../state/example_designs.dart';
 import '../state/grid_position.dart';
@@ -187,6 +189,9 @@ bool show_unpaired_insertion_deletions_reducer(bool _, actions.ShowUnpairedInser
     action.show_unpaired_insertion_deletions;
 
 bool invert_y_reducer(bool _, actions.InvertYSet action) => action.invert_y;
+
+bool dynamic_helix_update_reducer(bool _, actions.DynamicHelixUpdateSet action) =>
+    action.dynamically_update_helices;
 
 bool warn_on_exit_if_unsaved_reducer(bool _, actions.WarnOnExitIfUnsavedSet action) => action.warn;
 
@@ -438,6 +443,7 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..show_domain_name_mismatches = TypedReducer<bool, actions.ShowDomainNameMismatchesSet>(show_domain_name_mismatches_reducer)(storables.show_domain_name_mismatches, action)
     ..show_unpaired_insertion_deletions = TypedReducer<bool, actions.ShowUnpairedInsertionDeletionsSet>(show_unpaired_insertion_deletions_reducer)(storables.show_unpaired_insertion_deletions, action)
     ..invert_y = TypedReducer<bool, actions.InvertYSet>(invert_y_reducer)(storables.invert_y, action)
+    ..dynamically_update_helices = TypedReducer<bool, actions.DynamicHelixUpdateSet>(dynamic_helix_update_reducer)(storables.dynamically_update_helices, action)
     ..warn_on_exit_if_unsaved = TypedReducer<bool, actions.WarnOnExitIfUnsavedSet>(warn_on_exit_if_unsaved_reducer)(storables.warn_on_exit_if_unsaved, action)
     ..show_helix_circles_main_view = TypedReducer<bool, actions.ShowHelixCirclesMainViewSet>(show_helix_circles_main_view_reducer)(storables.show_helix_circles_main_view, action)
     ..show_helix_components_main_view = TypedReducer<bool, actions.ShowHelixComponentsMainViewSet>(show_helix_components_main_view_reducer)(storables.show_helix_components_main_view, action)
@@ -601,7 +607,22 @@ AppUIState ui_state_global_reducer(AppUIState ui_state, AppState state, action) 
   ..strands_move = strands_move_global_reducer(ui_state.strands_move, state, action)?.toBuilder()
   ..domains_move = domains_move_global_reducer(ui_state.domains_move, state, action)?.toBuilder()
   ..strand_creation = strand_creation_global_reducer(ui_state.strand_creation, state, action)?.toBuilder()
-  ..copy_info = copy_info_global_reducer(ui_state.copy_info, state, action)?.toBuilder());
+  ..copy_info = copy_info_global_reducer(ui_state.copy_info, state, action)?.toBuilder()
+  ..original_helix_offsets =
+      original_helix_offsets_reducer(ui_state.original_helix_offsets, state, action).toBuilder());
+
+BuiltMap<int, Tuple2> original_helix_offsets_reducer(
+    BuiltMap<int, Tuple2> original_helix_offsets, AppState state, action) {
+  if (action is actions.StrandsMoveStartSelectedStrands || action is actions.StrandCreateStart) {
+    var helix_offsets = original_helix_offsets.toMap();
+    for (int key in state.design.helices.keys) {
+      var helix = state.design.helices[key];
+      helix_offsets[state.design.helices[key].idx] = Tuple2.fromList([helix.min_offset, helix.max_offset]);
+    }
+    return helix_offsets.build();
+  }
+  return original_helix_offsets;
+}
 
 GlobalReducer<BuiltList<MouseoverData>, AppState> mouseover_datas_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.HelixRollSetAtOther>(

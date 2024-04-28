@@ -474,3 +474,13 @@ const css_selector_context_menu_item_disabled = 'context_menu_item_disabled';
 
 const default_vendor_scale = "25nm";
 const default_vendor_purification = "STD";
+
+enum strand_bounds_status {
+  helix_not_in_design,
+  helix_out_of_bounds,
+  min_offset_out_of_bounds,
+  max_offset_out_of_bounds,
+  in_bounds_with_min_offset_changes,
+  in_bounds_with_max_offset_changes,
+  in_bounds
+}
