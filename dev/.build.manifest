@@ -737,6 +737,7 @@ packages/react/react_dom_server_prod.js
 packages/react/react_prod.js
 packages/react/react_with_addons.js
 packages/react/react_with_react_dom_prod.js
+packages/scadnano/src/.DS_Store
 packages/scadnano/src/.gitignore
 packages/scadnano/src/actions/.gitignore
 packages/scadnano/src/middleware/.gitignore
