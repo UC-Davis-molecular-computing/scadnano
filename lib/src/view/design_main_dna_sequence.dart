@@ -143,8 +143,8 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       ..className = classname_dna_sequence
       ..x = '$x'
       ..y = '$y'
-      // ..textLength = '$text_length'
-      ..letterSpacing = '${(text_length - charWidth * seq_to_draw.length) / (seq_to_draw.length - 1)}'
+      ..textLength = '$text_length'
+      // ..letterSpacing = '${(text_length - charWidth * seq_to_draw.length) / (seq_to_draw.length - 1)}'
       ..transform = 'rotate(${rotate_degrees} ${rotate_x} ${rotate_y})'
       ..dy = '$dy')(seq_to_draw);
   }
