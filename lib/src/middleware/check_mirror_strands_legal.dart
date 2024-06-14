@@ -35,6 +35,7 @@ check_reflect_strands_legal_middleware(Store<AppState> store, action, NextDispat
     var altered_design = design.remove_strands(strands_to_reflect);
     altered_design = altered_design.add_strands(reflected_strands);
 
+    // check overlapping strands
     try {
       altered_design.check_strands_overlap_legally();
     } on IllegalDesignError catch (e) {
@@ -43,6 +44,17 @@ check_reflect_strands_legal_middleware(Store<AppState> store, action, NextDispat
       window.alert(msg);
       return;
     }
+
+    // check out of bounds helix
+    try {
+      altered_design.check_strands_in_bounds();
+    } on IllegalDesignError catch (e) {
+      var msg = 'Cannot mirror these strands ${action.horizontal ? "horizontally" : "vertically"}\n'
+          'Strands would go out of bounds:\n\n${e.cause}';
+      window.alert(msg);
+      return;
+    }
+    
 
     Map<int, Strand> new_strands = {};
     int idx_mirrored_strand = 0;
