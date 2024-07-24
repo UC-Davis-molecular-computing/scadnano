@@ -1,0 +1,1106 @@
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+body {
+    overflow: hidden;
+}
+
+/************************************************
+** BEGIN layout
+************************************************/
+
+input[type=checkbox] {
+    margin-right: 4px;
+}
+
+label + select {
+    margin-left: 4px;
+}
+
+.radio-left {
+    text-align: left;
+}
+
+.error-message {
+    height: 100%;
+    max-height: 100%;
+    overflow: auto;
+    background-color: #eeeeee;
+    word-break: normal !important;
+    word-wrap: normal !important;
+    white-space: pre !important;
+}
+
+.error-pre {
+    overflow: auto;
+}
+
+#top-container {
+    display: flex;
+    height: 100%;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.fixed-horizontal-separator {
+    height: 5px;
+    background: black;
+    position: relative;
+}
+
+.fixed-vertical-separator {
+    width: 5px;
+    background: black;
+    position: relative;
+}
+
+.draggable-separator {
+    width: 15px;
+    height: 100%;
+    background: lightgray;
+    position: relative;
+    cursor: col-resize;
+}
+
+#design-and-modes-buttons-container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+#design-pane {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+#design {
+    display: flex;
+    /*height: 100%;*/
+    flex-grow: 1;
+}
+
+#side-pane {
+    /*width: 8%;*/
+    /*background: #eee;*/
+    position: relative;
+}
+
+#side-pane .navbar {
+    z-index: 1 !important;
+    flex-wrap: wrap !important;
+}
+
+#main-pane {
+    /*width: 90%;*/
+    position: relative;
+}
+
+#side-arrows,
+#main-arrows {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    max-width: 100%;
+    pointer-events: none;
+    filter: drop-shadow(0px 0px 5px rgb(255 255 255));
+}
+
+.arrow-group {
+    pointer-events: bounding-box;
+}
+
+.axis-arrow {
+    stroke-width: 3;
+    stroke-linecap: round;
+}
+
+#design-footer-mouse-over {
+    height: 24px;
+    text-align: left;
+    background: #eee;
+    flex-grow: 0;
+}
+
+.design-footer-mouse-over-paragraph {
+    padding: 5px;
+    text-align: left;
+}
+
+#main-pane {
+    /*flex: auto;*/
+    width: 100%;
+    /*flex-basis: auto;*/
+}
+
+#editor-pane {
+    /*flex: auto;*/
+}
+
+#side-pane,
+#main-pane,
+#design-pane,
+#editor-pane {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.menu-item {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.dialog-form-container,
+.dialog-loading-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.dialog-form-form {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #B2B2B2;
+    background: #F9F9F9;
+    box-shadow: 3px 3px 2px #E9E9E9;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.dialog-form-item {
+    align-self: flex-start;
+    /*float: left;*/
+    /*display: block;*/
+}
+
+.dialog-button {
+    display: inline-block;
+    border-radius: 3px;
+    border-top: none;
+    border-right: none;
+    border-bottom: 1px solid rgb(52, 120, 188);
+    border-left: none;
+    border-image: initial;
+    font-size: 14px;
+    padding: 0.4rem 0.8em;
+    background: rgb(113, 160, 208);
+    color: white;
+    -webkit-font-smoothing: antialiased;
+    font-weight: bold;
+    margin: 10px 0.25em 3px 0.25em;
+    text-align: center;
+    opacity: 0.8;
+    cursor: auto;
+}
+
+.dialog-design-loading {
+    font-size: 1.5rem;
+    padding: 1em;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.dialog-design-loading span {
+    animation: pulse 0.8s infinite alternate;
+}
+
+@keyframes pulse {
+    to {
+        opacity: 0.1;
+    }
+}
+
+.context-menu {
+    display: block;
+    position: absolute;
+    border: 1px solid #B2B2B2;
+    width: auto;
+    background: #F9F9F9;
+    box-shadow: 3px 3px 2px #E9E9E9;
+    border-radius: 4px;
+    z-index: 1;
+}
+
+.context-menu-list {
+    list-style: none;
+    margin: 0px;
+    margin-top: 4px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 3px;
+    font-size: 14px;
+    color: #333333;
+}
+
+.has-submenu {
+    position: relative;
+}
+
+.has-submenu .context-menu {
+    visibility: hidden;
+}
+
+.context-menu.right {
+    left: 100%;
+}
+
+.context-menu.left {
+    right: 100%;
+}
+
+.context-menu.top {
+    bottom: 0;
+}
+
+.context-menu.bottom {
+    top: 0;
+}
+
+.has-submenu:hover > .context-menu {
+    visibility: visible;
+}
+
+.context-menu-item {
+    display: block;
+    min-width: max-content;
+    padding: 3px 10px;
+    position: relative;
+}
+
+.context_menu_item_disabled {
+    color: lightgray;
+    pointer-events: none;
+}
+
+.has-submenu > .context-menu-item::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    border-top: .3em solid transparent;
+    border-right: 0;
+    border-bottom: .3em solid transparent;
+    border-left: .3em solid;
+}
+
+.context-menu-item:hover,
+.has-submenu:hover > .context-menu-item {
+    color: white;
+    background: #284570;
+    border-radius: 2px;
+}
+
+#strand-color-picker-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.chrome-picker {
+    border: none !important;
+    background: #F9F9F9 !important;
+    box-shadow: none !important;
+}
+
+.sketch-picker {
+    border: none !important;
+    background: #F9F9F9 !important;
+    box-shadow: none !important;
+}
+
+/*.panes-container {*/
+/*  display: flex;*/
+/*  width: 100%;*/
+/*  overflow: hidden;*/
+/*}*/
+
+/*.panes-container,*/
+/*.panes-separator {*/
+/*  margin: 0;*/
+/*  padding: 0;*/
+/*  height: 100%;*/
+/*}*/
+
+/*.gutter {*/
+/*  background-color: #eee;*/
+/*}*/
+
+/*.split, .gutter.gutter-horizontal {*/
+/*  float: left;*/
+/*}*/
+
+/*.gutter.gutter-horizontal {*/
+/*  cursor: ew-resize;*/
+/*}*/
+
+/************************************************
+** END layout
+************************************************/
+
+.error-message {
+    color: darkred;
+    border: 10px;
+    padding: 10px;
+}
+
+/************************************************
+** BEGIN CodeMirror layout
+************************************************/
+
+#controls {
+    margin-bottom: 1em;
+}
+
+#editor-pane {
+    flex: 20;
+    height: 100%;
+}
+
+#editor,
+.CodeMirror {
+    border: 0;
+    padding: 0;
+    flex: 20;
+    box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.75);
+}
+
+#editor {
+    height: calc(100% - 60px);
+}
+
+.CodeMirror {
+    height: 100%;
+}
+
+#footer {
+    text-align: center;
+    font-size: 0.8em;
+}
+
+/************************************************
+** END CodeMirror layout
+************************************************/
+
+/************************************************
+** BEGIN mode layout
+************************************************/
+
+
+#modes-buttons {
+    display: flex;
+    position: relative;
+}
+
+#select-mode,
+#edit-mode {
+    overflow-y: auto;
+}
+
+#select-mode label,
+#edit-mode label {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    margin-bottom: 0;
+    padding-bottom: 0.5rem;
+    width: 100%;
+}
+
+.edit-mode-toggle-button {
+    position: absolute;
+    width: 25px;
+    bottom: 24px;
+    border: 1px solid black;
+    right: calc(100% + 20px);
+}
+
+.edit-mode-toggle-button img.appear {
+    transform: rotate(180deg);
+}
+
+.edit-mode-toggle-button img {
+    pointer-events: none;
+    max-width: 100%;
+
+}
+
+.mode-button {
+    border: none;
+    /*outline: #0b0080;*/
+    /*font-weight: bold;*/
+    color: black;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    align-items: center;
+    padding: 5px 10px;
+    border-top: 1px solid black;
+}
+
+.mode-button > img {
+    width: 25px;
+    pointer-events: none;
+}
+
+
+.edit-mode-button-selected {
+    background-color: mediumseagreen;
+}
+
+.edit-mode-button-unselected {
+    background-color: lightgray;
+}
+
+.select-mode-button {
+    border: none;
+    width: 75px;
+    outline: 0;
+    font-weight: bold;
+    color: black;
+    text-align: left;
+}
+
+.helix-change-offsets-button-rect {
+    stroke: black;
+    fill: #dddddd;
+}
+
+.helix-change-offsets-button-rect:hover {
+    stroke: green;
+    fill: limegreen;
+}
+
+.helix-change-offsets-button-text {
+    font-size: smaller;
+    text-anchor: middle;
+    text-align: center;
+    alignment-baseline: middle;
+    pointer-events: none;
+}
+
+.select-mode-button-selected {
+    background-color: #abc0ef;
+}
+
+.select-mode-button-unselected {
+    background-color: lightgray;
+}
+
+
+/************************************************
+** END mode layout
+************************************************/
+
+/************************************************
+** BEGIN SVG layout
+************************************************/
+
+/* show open hand when cursor is over SVG background itself */
+.panzoomable {
+    cursor: move;
+    /* fallback: no `url()` support or images disabled */
+    cursor: url(images/grab.png), auto;
+    /* fallback: Internet Explorer */
+    cursor: -webkit-grab;
+    /* Chrome 1-21, Safari 4+ */
+    cursor: -moz-grab;
+    /* Firefox 1.5-26 */
+    cursor: grab;
+    /* W3C standards syntax, should come least */
+}
+
+/* show regular cursor arrow when cursor is over an element in the SVG, not the SVG background itself */
+:not(svg) {
+    cursor: default;
+}
+
+/* show closed hand when dragging (when mouse left button is down) */
+.panzoomable.dragging {
+    cursor: url(images/grabbing.png), auto;
+    cursor: -webkit-grabbing;
+    cursor: -moz-grabbing;
+    cursor: grabbing;
+}
+
+.selection-box-drawable {
+    cursor: crosshair;
+}
+
+.domain-name,
+.strand-name,
+.strand-label,
+.domain-label {
+    text-anchor: middle;
+}
+
+.loopout-name,
+.extension-name,
+.loopout-label,
+.extension-label {
+    text-anchor: middle;
+    pointer-events: none;
+    dominant-baseline: ideographic;
+    text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
+    0.7px -0.7px 0 #fff,
+    -0.7px 0.7px 0 #fff,
+    0.7px 0.7px 0 #fff;
+    text-rendering: optimizeSpeed;
+    /* doesn't seem to do much to improve rendering speed */
+    white-space: pre;
+    /* needed to display multiple space symbols in a row */
+}
+
+
+.selection-box,
+.selection-rope {
+    stroke: dimgray;
+    fill: gray;
+    fill-opacity: 0.5;
+}
+
+.selection-rope-potential {
+    stroke: dimgray;
+    fill: gray;
+    fill-opacity: 0.25;
+}
+
+.selection-rope-potential-illegal {
+    stroke: darkred;
+    fill: red;
+    fill-opacity: 0.25;
+}
+
+.rotation-line {
+    stroke-width: 3;
+    stroke-linecap: round;
+}
+
+.helix-invisible-rect {
+    visibility: hidden;
+    pointer-events: all;
+}
+
+.helix-mouseover {
+    visibility: hidden;
+    pointer-events: all;
+}
+
+.helix-lines {
+    stroke: #B0B0B0;
+}
+
+.helix-horz-line,
+.helix-vert-minor-line {
+    stroke-width: 0.5;
+}
+
+.helix-vert-end-line,
+.helix-vert-major-line {
+    stroke-width: 3;
+}
+
+/*******************************************************************************/
+/* begin formatting of Strand elements when selected/selectable/not selectable */
+
+.five-prime-end-first-substrand,
+.three-prime-end-last-substrand {
+    stroke: black;
+    stroke-width: 0.5px;
+}
+
+.five-prime-end-moving,
+.three-prime-end-moving {
+    stroke: black;
+    stroke-width: 0.5px;
+    fill-opacity: 0.5;
+    pointer-events: none;
+    /* XXX: need this so we can detect mouse up on non-moving end underneath */
+}
+
+.five-prime-end,
+.three-prime-end {
+    stroke: black;
+    stroke-width: 0.5px;
+    visibility: hidden;
+    pointer-events: all;
+}
+
+.domain-line,
+.loopout-curve,
+.domain-line-moving,
+.extension-line {
+    stroke-width: 4;
+    stroke-linecap: round;
+    fill: none;
+}
+
+.base-pair-line {
+    stroke-width: 2;
+    stroke-linecap: square;
+    fill: none;
+}
+
+.disallowed {
+    stroke: lightgray;
+}
+
+.disallowed-end {
+    stroke: lightgray;
+    fill: lightgray;
+}
+
+/* .selected { */
+.selected:not(.domain-line) {
+    filter: url("#shadow");
+}
+
+.selected.side-view-helix-circle,
+.selected.main-view-helix-circle {
+    stroke: red;
+    fill: hotpink;
+}
+
+.deletable.side-view-helix-circle {
+    stroke: none;
+    fill: lightgray;
+}
+
+/* https://www.w3schools.com/cssref/css_selectors.asp */
+/* These are needed to make parts pink when they are selected individually. */
+.selected.crossover-curve,
+.selected.loopout-curve,
+.selected.insertion-curve,
+.selected.deletion-cross,
+.selected.modification,
+.selected.domain-line,
+.selected.extension-line,
+.selected .crossover-curve,
+.selected .loopout-curve,
+.selected .insertion-curve,
+.selected .deletion-cross,
+.selected .modification,
+.selected .domain-line,
+.selected .extension-line {
+    stroke-width: 5pt;
+}
+
+.selected-pink.crossover-curve,
+.selected-pink.loopout-curve,
+.selected-pink.insertion-curve,
+.selected-pink.deletion-cross,
+.selected-pink.modification,
+.selected-pink.domain-line,
+.selected-pink.extension-line,
+.selected-pink .crossover-curve,
+.selected-pink .loopout-curve,
+.selected-pink .insertion-curve,
+.selected-pink .deletion-cross,
+.selected-pink .modification,
+.selected-pink .domain-line,
+.selected-pink .extension-line {
+    stroke: hotpink;
+    stroke-width: 5pt;
+}
+
+.selected.five-prime-end,
+.selected.three-prime-end,
+.selected.five-prime-end-first-substrand,
+.selected.three-prime-end-last-substrand {
+    visibility: visible;
+    stroke-width: 1pt;
+}
+
+.selected-pink.five-prime-end,
+.selected-pink.three-prime-end,
+.selected-pink.five-prime-end-first-substrand,
+.selected-pink.three-prime-end-last-substrand {
+    stroke: red;
+    fill: hotpink;
+    visibility: visible;
+    stroke-width: 1pt;
+}
+
+.selected .five-prime-end,
+.selected .three-prime-end,
+.selected .five-prime-end-first-substrand,
+.selected .three-prime-end-last-substrand {
+    stroke-width: 1pt;
+}
+
+.selected-pink .five-prime-end,
+.selected-pink .three-prime-end,
+.selected-pink .five-prime-end-first-substrand,
+.selected-pink .three-prime-end-last-substrand {
+    stroke: red;
+    fill: hotpink;
+    stroke-width: 1pt;
+}
+
+/* end formatting of Strand elements when selected/selectable/not selectable */
+/*****************************************************************************/
+
+
+.crossover-curve {
+    stroke-width: 4;
+    stroke-opacity: 0.3;
+    fill: none;
+}
+
+.crossover-curve-same-helix {
+    stroke-opacity: 0.55;
+}
+
+.potential-vertical-crossover-curve {
+    stroke-width: 4;
+    fill: none;
+    visibility: hidden;
+    pointer-events: all;
+}
+
+.potential-vertical-crossover-curve:hover {
+    stroke-width: 4;
+    stroke-opacity: 0.3;
+    fill: none;
+    visibility: visible;
+}
+
+/* potential-segment captures both potential crossovers and potential extensions */
+.potential-segment {
+    stroke-width: 4;
+    stroke-opacity: 0.3;
+    fill: none;
+    pointer-events: none;
+}
+
+.insertion-curve {
+    stroke-width: 2.5px;
+    fill: none;
+}
+
+.warning-star {
+    /*stroke: black;*/
+    stroke: red;
+    fill: red;
+    stroke-width: 0.25;
+}
+
+.deletion-cross {
+    stroke: red;
+    stroke-width: 2px;
+    stroke-linecap: round;
+}
+
+.deletion-background {
+    visibility: hidden;
+    pointer-events: all;
+}
+
+.insertion-background {
+    visibility: hidden;
+    pointer-events: all;
+}
+
+.insertion-length {
+    font-size: 8px;
+    font-weight: bold;
+    text-anchor: middle;
+    dominant-baseline: hanging;
+}
+
+.modification-text {
+    text-anchor: middle;
+    font-weight: bold;
+    text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
+    0.7px -0.7px 0 #fff,
+    -0.7px 0.7px 0 #fff,
+    0.7px 0.7px 0 #fff;
+}
+
+.dna-seq {
+    font-family: "Consolas", "Lucida Console", "Courier New", monospace;
+    font-weight: bold;
+    font-size: 12px;
+    text-anchor: start;
+    pointer-events: none;
+    dominant-baseline: ideographic;
+    text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
+    0.7px -0.7px 0 #fff,
+    -0.7px 0.7px 0 #fff,
+    0.7px 0.7px 0 #fff;
+    text-rendering: optimizeSpeed;
+    /* doesn't seem to do much to improve rendering speed */
+    white-space: pre;
+    /* needed to display multiple space symbols in a row */
+}
+
+.loopout-extension-length,
+.dna-seq-insertion,
+.dna-seq-loopout,
+.dna-seq-extension {
+    font-family: "Consolas", "Lucida Console", "Courier New", monospace;
+    font-weight: bold;
+    text-anchor: middle;
+    pointer-events: none;
+    text-shadow: -0.7px -0.7px 0 #fff,
+    0.7px -0.7px 0 #fff,
+    -0.7px 0.7px 0 #fff,
+    0.7px 0.7px 0 #fff;
+    text-rendering: optimizeSpeed;
+    /* doesn't seem to do much to improve rendering speed */
+    white-space: pre;
+    /* needed to display multiple space symbols in a row */
+}
+
+.loopout-extension-length {
+    dominant-baseline: hanging;
+}
+
+.dna-seq-insertion,
+.dna-seq-loopout,
+.dna-seq-extension {
+    dominant-baseline: ideographic;
+}
+
+/* next is needed so that we can rotate ends on extensions
+around their centers instead of around the origin
+https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-center-in-svg
+*/
+.five-prime-end-first-substrand,
+.three-prime-end-last-substrand,
+.five-prime-end-moving,
+.three-prime-end-moving {
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+.main-view-helix-circle {
+    fill: goldenrod;
+}
+
+.side-view-helix-circle {
+    fill: goldenrod;
+}
+
+.side-view-potential-helix {
+    fill: palegoldenrod;
+    stroke: goldenrod;
+}
+
+.side-view-potential-helix-disallowed-position {
+    fill: red;
+    /*stroke: darkred;*/
+}
+
+.main-view-helix-text {
+    font-family: Helvetica, serif;
+    font-size: 32pt;
+    fill: DarkBlue;
+    stroke: none;
+    /* don't know why this is necessary to prevent a gray stoke from hiding most of the text */
+    text-anchor: middle;
+    dominant-baseline: central;
+}
+
+.side-view-helix-text {
+    font-family: Helvetica, serif;
+    font-size: 32pt;
+    fill: DarkBlue;
+    text-anchor: middle;
+    dominant-baseline: central;
+}
+
+
+/************************************************
+** END SVG layout
+************************************************/
+
+
+/************************************************
+** BEGIN Navbar
+************************************************/
+
+/* Thin the navbar */
+.navbar,
+.dropdown-menu,
+.form-control {
+    font-size: 0.8rem;
+}
+
+/* Thin the navbar */
+.navbar {
+    padding: 0rem 1rem;
+    line-height: 0.8rem;
+}
+
+/* Thicken the dropdown vertical spacing and use flexbox */
+.dropdown-item {
+    padding: .5rem 1.5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    column-gap: 1rem;
+}
+
+/* Since the dropdowns are links, need to overwrite default colors */
+.nav-link:hover {
+    color: rgba(0, 0, 0);
+}
+
+.nav-link {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+/* File checkmarks appear on one line */
+#file-nav-dropdown + .dropdown-menu label {
+    white-space: nowrap;
+}
+
+/* View checkmarks appear on one line */
+#view-nav-dropdown + .dropdown-menu label {
+    white-space: nowrap;
+}
+
+/* Shift dropdown upwards when bottom goes beyond screen. offset-top and overflow-y variables are given by inline css of parent React components */
+.dropdown-menu {
+    transform: translateY(min(0px, calc(-1 * (var(--offset-top, 0) + 100% - 95vh))));
+    max-height: 90vh;
+    overflow-y: var(--overflow-y, visible);
+}
+
+
+/************************************************
+** BEGIN Dropdown Right
+************************************************/
+
+/* Style dropdown buttons that drop to the right so it looks like other dropdown item */
+
+/* Normal style */
+.dropright .dropdown-toggle {
+    width: 100%;
+    padding: .25rem 1.5rem;
+    clear: both;
+    font-weight: 400;
+    font-size: inherit;
+    color: #212529;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+    /*These next three are in case we include a keyboard shortcut, so it is right-justified.*/
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+/* Hover */
+.dropright .dropdown-toggle:hover {
+    color: #16181b;
+    text-decoration: none;
+    background-color: #f8f9fa;
+}
+
+/* Remove btn focus */
+.dropright .dropdown-toggle:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Style right arrow */
+.dropright .dropdown-toggle::after {
+    margin-top: 5px;
+    vertical-align: 0;
+    right: 3px;
+    position: absolute;
+}
+
+/************************************************
+** END Dropdown Right
+************************************************/
+
+/* Style dropdown item of selected grid as well as newly clicked on grid */
+#grid-nav-dropdown + .dropdown-menu .dropdown-item.disabled,
+.dropdown-item:active {
+    color: #fff;
+    text-decoration: none;
+    background-color: #686868;
+}
+
+/* Hides input of Open (only display the label) */
+.form-file-dropdown .custom-file-input {
+    display: none;
+}
+
+/* Styles the label like a DropdownItem */
+.form-file-dropdown .custom-file-input + .custom-file-label {
+    display: block;
+    width: 100%;
+    padding: .25rem 1.5rem;
+    margin-bottom: 0%;
+    /* Removes label browser default */
+    clear: both;
+    font-weight: 400;
+    color: #212529;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+}
+
+/* Styles the label like a DropdownItem (on hover) */
+.form-file-dropdown .custom-file-input + .custom-file-label:hover {
+    color: #16181b;
+    text-decoration: none;
+    background-color: #f8f9fa;
+}
+
+/* Hides the data-browse psuedo-element. */
+.form-file-dropdown .custom-file-input + .custom-file-label::after {
+    content: none;
+}
+
+/************************************************
+** END Navbar
+************************************************/
+
+/************************************************
+** BEGIN Slice Bar
+************************************************/
+
+.slice-bar-rect rect {
+    fill: goldenrod;
+    fill-opacity: 50%;
+    cursor: move;
+    stroke: rgb(131, 97, 3);
+    stroke-width: 0.5;
+}
+
+.slice-bar-rect text {
+    fill: rgb(131, 97, 3);
+    fill-opacity: 100%;
+    font-size: 12px;
+    text-anchor: middle;
+}
+
+
+/************************************************
+** END Slice Bar
+************************************************/
