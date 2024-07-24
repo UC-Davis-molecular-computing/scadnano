@@ -7,6 +7,7 @@ import 'package:built_value/built_value.dart';
 import 'package:scadnano/src/state/design_side_rotation_data.dart';
 import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/copy_info.dart';
+import 'package:tuple/tuple.dart';
 import '../actions/actions.dart' as actions;
 import '../state/local_storage_design_choice.dart';
 
@@ -203,6 +204,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get invert_y => storables.invert_y;
 
+  bool get dynamically_update_helices => storables.dynamically_update_helices;
+
   bool get warn_on_exit_if_unsaved => storables.warn_on_exit_if_unsaved;
 
   bool get show_helix_circles_main_view => storables.show_helix_circles_main_view;
@@ -245,6 +248,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get show_mouseover_data => storables.show_mouseover_data;
 
   bool get selection_box_intersection => storables.selection_box_intersection;
+
+  BuiltMap<int, Tuple2> get original_helix_offsets;
 
   bool get ox_export_only_selected_strands => storables.ox_export_only_selected_strands;
 

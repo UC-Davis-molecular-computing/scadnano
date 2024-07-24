@@ -8,11 +8,12 @@ import 'state/grid.dart';
 
 // WARNING: Do not modify line below, except for the version string
 //          (and also add new version string to scadnano_versions_to_link).
-const String CURRENT_VERSION = "0.19.2";
+const String CURRENT_VERSION = "0.19.3";
 const String INITIAL_VERSION = "0.1.0";
 
 // scadnano versions that we deploy so that older versions can be used.
 final scadnano_older_versions_to_link = [
+  "0.19.2",
   "0.19.1",
   "0.18.10",
   "0.17.14",
@@ -473,3 +474,13 @@ const css_selector_context_menu_item_disabled = 'context_menu_item_disabled';
 
 const default_vendor_scale = "25nm";
 const default_vendor_purification = "STD";
+
+enum strand_bounds_status {
+  helix_not_in_design,
+  helix_out_of_bounds,
+  min_offset_out_of_bounds,
+  max_offset_out_of_bounds,
+  in_bounds_with_min_offset_changes,
+  in_bounds_with_max_offset_changes,
+  in_bounds
+}
