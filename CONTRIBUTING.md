@@ -312,9 +312,7 @@ After installing the Dart SDK, you should see a help menu when you run `dart`.
 Once you have installed Dart, install all the Dart dependencies (from the same directory `scadnano` into which the project was cloned by git):
 
 ```
-
 pub get
-
 ```
 
 ### Installing `webdev`
@@ -322,9 +320,7 @@ pub get
 This project uses an older version of the `webdev` tool, not the latest version, to build and serve the web app. Install it with:
 
 ```
-
 pub global activate webdev 2.5.9
-
 ```
 
 ### Running a Local Server
@@ -332,9 +328,7 @@ pub global activate webdev 2.5.9
 Run
 
 ```
-
 webdev serve
-
 ```
 
 in the `scadnano` directory to compile your code
