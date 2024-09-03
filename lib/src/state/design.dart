@@ -1276,7 +1276,12 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   static Design from_json_str(String json_str, [bool invert_y = false]) {
-    var json_map = jsonDecode(json_str);
+    Map<String, dynamic> json_map;
+    try {
+      json_map = jsonDecode(json_str);
+    } on FormatException catch (e) {
+      throw IllegalDesignError('Error in syntax of scadnano file: ${e.message}');
+    }
     return Design.from_json(json_map, invert_y);
   }
 
@@ -2099,7 +2104,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
   }
 
-  /// maps each helix_idx to a list of offsets where there is a complementary base pair on each strand
+  /// maps each helix_idx to a list of offsets where there is a complementary base pair on each strand,
+  /// or when at least one of the strands lacks DNA (is null or is `?` wildcard)
   @memoized
   BuiltMap<int, BuiltList<int>> get base_pairs => this._base_pairs(false, strands.toBuiltSet());
 
@@ -2178,7 +2184,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   BuiltMap<int, BuiltList<int>> _base_pairs(bool allow_mismatches, BuiltSet<Strand> selected_strands) {
     var base_pairs_with_domain_strand =
-        this.base_pairs_with_domain_strand(allow_mismatches, false, selected_strands);
+        this.base_pairs_with_domain_strand(allow_mismatches, true, selected_strands);
     var base_pairs = Map<int, BuiltList<int>>();
     for (int idx in base_pairs_with_domain_strand.keys) {
       base_pairs[idx] = base_pairs_with_domain_strand[idx].map((x) => x.item1).toList().build();
