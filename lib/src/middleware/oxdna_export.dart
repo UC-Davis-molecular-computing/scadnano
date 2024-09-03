@@ -3,6 +3,8 @@ import 'dart:html';
 import 'dart:math';
 import 'package:path/path.dart' as path;
 import 'package:quiver/iterables.dart' as quiver;
+import 'package:react/react.dart';
+import 'package:built_collection/built_collection.dart';
 
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/design.dart';
@@ -50,7 +52,9 @@ First select some strands, or choose Export🡒oxDNA to export all strands in th
       util.save_file(default_filename_dat, dat);
       util.save_file(default_filename_top, top);
     } else if (action is actions.OxviewExport) {
+      // var start = DateTime.now();
       String content = to_oxview_format(state.design, strands_to_export);
+      // print('to_oxview_format: ${DateTime.now().inMilliseconds} ms');
       String default_filename = state.ui_state.loaded_filename;
       String default_filename_ext = path.setExtension(default_filename, '.oxview');
       util.save_file(default_filename_ext, content);
@@ -60,27 +64,35 @@ First select some strands, or choose Export🡒oxDNA to export all strands in th
 }
 
 String to_oxview_format(Design design, List<Strand> strands_to_export) {
+  // var start = DateTime.now();
   OxdnaSystem system = convert_design_to_oxdna_system(design, strands_to_export);
+  // print('convert_design_to_oxdna_system: ${DateTime.now().difference(start).inMilliseconds} ms');
+
+  // start = DateTime.now();
   List<Map<String, dynamic>> oxview_strands = [];
   int nuc_count = 0;
   int strand_count = 0;
   List<int> strand_nuc_start = [-1];
   assert(strands_to_export.length == system.strands.length);
 
+  Map<String, dynamic> oxview_strand_map = {};
+  Map<String, int> strand_id_to_index = {};
   for (int i = 0; i < strands_to_export.length; i++) {
     Strand sc_strand = strands_to_export[i];
+    strand_id_to_index[sc_strand.id] = i;
     OxdnaStrand oxdna_strand = system.strands[i];
 
     strand_count += 1;
     List<Map<String, dynamic>> oxvnucs = [];
     strand_nuc_start.add(nuc_count);
-    Map<String, dynamic> oxvstrand = {
+    Map<String, dynamic> oxv_strand = {
       'id': strand_count,
       'class': 'NucleicAcidStrand',
       'end5': nuc_count,
       'end3': nuc_count + system.strands[i].nucleotides.length,
       'monomers': oxvnucs
     };
+    oxview_strand_map[sc_strand.id] = oxv_strand;
 
     int scolor;
     if (sc_strand.color != null) {
@@ -112,73 +124,111 @@ String to_oxview_format(Design design, List<Strand> strands_to_export) {
       nuc_count += 1;
       oxvnucs.add(oxvnuc);
     }
-    oxview_strands.add(oxvstrand);
+    oxview_strands.add(oxv_strand);
   }
+  // print('first loop: ${DateTime.now().difference(start).inMilliseconds} ms');
 
-  for (int si1 = 0; si1 < strands_to_export.length; si1++) {
-    Strand sc_strand1 = strands_to_export[si1];
-    Map<String, dynamic> oxv_strand1 = oxview_strands[si1];
-    for (int si2 = 0; si2 < strands_to_export.length; si2++) {
-      Strand sc_strand2 = strands_to_export[si2];
-      if (!sc_strand1.overlaps(sc_strand2)) {
-        continue;
-      }
-      int s1_nuc_idx = strand_nuc_start[si1 + 1];
-      for (var domain1 in sc_strand1.domains) {
-        if (domain1 is Loopout || domain1 is Extension) {
-          continue;
-        }
-        int s2_nuc_idx = strand_nuc_start[si2 + 1];
-        for (var domain2 in sc_strand2.domains) {
-          if (domain2 is Loopout || domain2 is Extension) {
-            continue;
-          }
-          if (!domain1.overlaps(domain2)) {
-            continue;
-          }
-          Tuple2<int, int> overlap = domain1.compute_overlap(domain2);
-          int overlap_left = overlap.item1;
-          int overlap_right = overlap.item2;
-          int s1_left = sc_strand1.domain_offset_to_strand_dna_idx(domain1, overlap_left, false);
-          int s1_right = sc_strand1.domain_offset_to_strand_dna_idx(domain1, overlap_right, false);
-          int s2_left = sc_strand2.domain_offset_to_strand_dna_idx(domain2, overlap_left, false);
-          int s2_right = sc_strand2.domain_offset_to_strand_dna_idx(domain2, overlap_right, false);
-          List<int> d1range;
-          List<int> d2range;
-          if (domain1.forward) {
-            d1range = List<int>.from(quiver.range(s1_left, s1_right));
-            d2range = List<int>.from(quiver.range(s2_left, s2_right, -1));
-          } else {
-            d1range = List<int>.from(quiver.range(s1_right + 1, s1_left + 1));
-            d2range = List<int>.from(quiver.range(s2_right - 1, s2_left - 1, -1));
-          }
-          assert(d1range.length == d2range.length);
+  // start = DateTime.now();
 
-          // Check for mismatches, and do not add a pair if the bases are *known*
-          // to mismatch.  (FIXME: this must be changed if scadnano later supports
-          // degenerate base codes.)
-          for (int i = 0; i < d1range.length; i++) {
-            int d1 = d1range[i];
-            int d2 = d2range[i];
-            if (sc_strand1.dna_sequence != null &&
-                sc_strand2.dna_sequence != null &&
-                sc_strand1.dna_sequence[d1] != constants.DNA_BASE_WILDCARD &&
-                sc_strand2.dna_sequence[d2] != constants.DNA_BASE_WILDCARD &&
-                util.wc(sc_strand1.dna_sequence[d1]) != sc_strand2.dna_sequence[d2]) {
-              continue;
-            }
-            oxv_strand1['monomers'][d1]['bp'] = s2_nuc_idx + d2;
-            if (oxview_strands[si2]['monomers'][d2].containsKey('bp')) {
-              if (oxview_strands[si2]['monomers'][d2]['bp'] != s1_nuc_idx + d1) {
-                print('${s2_nuc_idx + d2} ${s1_nuc_idx + d1} '
-                    '${oxview_strands[si2]['monomers'][d2]['bp']} ${domain1} ${domain2}');
-              }
-            }
-          }
+  // find base pairs
+  //TODO: this is slow; compute this in a memoized getter on the Design,
+  // and make it linear time instead of quadratic by iterating over each helix, since
+  // it's useless to check all these pairs of strands that do not even have domains on the same helix.
+  // for (int i1 = 0; i1 < strands_to_export.length; i1++) {
+  //   Strand sc_strand1 = strands_to_export[i1];
+  //   Map<String, dynamic> oxv_strand1 = oxview_strands[i1];
+  //   for (int i2 = 0; i2 < strands_to_export.length; i2++) {
+  //     Strand sc_strand2 = strands_to_export[i2];
+  //     if (!sc_strand1.overlaps(sc_strand2)) {
+  //       continue;
+  //     }
+  //     int s1_nuc_idx = strand_nuc_start[i1 + 1];
+  //     for (var domain1 in sc_strand1.domains) {
+  //       if (domain1 is Loopout || domain1 is Extension) {
+  //         continue;
+  //       }
+  //       int s2_nuc_idx = strand_nuc_start[i2 + 1];
+  //       for (var domain2 in sc_strand2.domains) {
+  //         if (domain2 is Loopout || domain2 is Extension) {
+  //           continue;
+  //         }
+  //         if (!domain1.overlaps(domain2)) {
+  //           continue;
+  //         }
+  //         Tuple2<int, int> overlap = domain1.compute_overlap(domain2);
+  //         int overlap_left = overlap.item1;
+  //         int overlap_right = overlap.item2;
+  //         int s1_left = sc_strand1.domain_offset_to_strand_dna_idx(domain1, overlap_left, false);
+  //         int s1_right = sc_strand1.domain_offset_to_strand_dna_idx(domain1, overlap_right, false);
+  //         int s2_left = sc_strand2.domain_offset_to_strand_dna_idx(domain2, overlap_left, false);
+  //         int s2_right = sc_strand2.domain_offset_to_strand_dna_idx(domain2, overlap_right, false);
+  //         List<int> d1range;
+  //         List<int> d2range;
+  //         if (domain1.forward) {
+  //           d1range = List<int>.from(quiver.range(s1_left, s1_right));
+  //           d2range = List<int>.from(quiver.range(s2_left, s2_right, -1));
+  //         } else {
+  //           d1range = List<int>.from(quiver.range(s1_right + 1, s1_left + 1));
+  //           d2range = List<int>.from(quiver.range(s2_right - 1, s2_left - 1, -1));
+  //         }
+  //         assert(d1range.length == d2range.length);
+  //
+  //         for (int i = 0; i < d1range.length; i++) {
+  //           int d1 = d1range[i];
+  //           int d2 = d2range[i];
+  //           // Check for mismatches, and do not add a pair if the bases are *known*
+  //           // to mismatch.  (FIXME: this must be changed if scadnano later supports
+  //           // degenerate base codes.)
+  //           // Note that if either strand is *missing* a base (either because `dna_sequence` is null, or the
+  //           // base is assigned `?`, we *do* add the pair.
+  //           if (sc_strand1.dna_sequence != null &&
+  //               sc_strand2.dna_sequence != null &&
+  //               sc_strand1.dna_sequence[d1] != constants.DNA_BASE_WILDCARD &&
+  //               sc_strand2.dna_sequence[d2] != constants.DNA_BASE_WILDCARD &&
+  //               util.wc(sc_strand1.dna_sequence[d1]) != sc_strand2.dna_sequence[d2]) {
+  //             continue;
+  //           }
+  //           oxv_strand1['monomers'][d1]['bp'] = s2_nuc_idx + d2;
+  //           if (oxview_strands[i2]['monomers'][d2].containsKey('bp')) {
+  //             if (oxview_strands[i2]['monomers'][d2]['bp'] != s1_nuc_idx + d1) {
+  //               print('${s2_nuc_idx + d2} ${s1_nuc_idx + d1} '
+  //                   '${oxview_strands[i2]['monomers'][d2]['bp']} ${domain1} ${domain2}');
+  //             }
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+
+  //TODO: this hasn't been tested well
+  var base_pairs_map = design.base_pairs_with_domain_strand(false, true, strands_to_export.toSet().build());
+  for (int helix in base_pairs_map.keys) {
+    for (var offset_dom_strands in base_pairs_map[helix]) {
+      int offset = offset_dom_strands.item1;
+      Domain domain1 = offset_dom_strands.item2;
+      Domain domain2 = offset_dom_strands.item3;
+      Strand sc_strand1 = offset_dom_strands.item4;
+      Strand sc_strand2 = offset_dom_strands.item5;
+      Map<String, dynamic> oxv_strand1 = oxview_strand_map[sc_strand1.id];
+      Map<String, dynamic> oxv_strand2 = oxview_strand_map[sc_strand2.id];
+      int d1 = sc_strand1.domain_offset_to_strand_dna_idx(domain1, offset, false);
+      int d2 = sc_strand2.domain_offset_to_strand_dna_idx(domain2, offset, false);
+      int s1_nuc_idx = strand_nuc_start[strand_id_to_index[sc_strand1.id] + 1];
+      int s2_nuc_idx = strand_nuc_start[strand_id_to_index[sc_strand2.id] + 1];
+      oxv_strand1['monomers'][d1]['bp'] = s2_nuc_idx + d2;
+      if (oxv_strand2['monomers'][d2].containsKey('bp')) {
+        if (oxv_strand2['monomers'][d2]['bp'] != s1_nuc_idx + d1) {
+          print('${s2_nuc_idx + d2} ${s1_nuc_idx + d1} '
+              '${oxv_strand2['monomers'][d2]['bp']} ${domain1} ${domain2}');
+          window.alert("You have found a bug in scadnano, please file a bug report.");
         }
       }
     }
+
   }
+
+  // print('second loop: ${DateTime.now().difference(start).inMilliseconds} ms');
   var b = system.compute_bounding_box();
   Map<String, dynamic> oxvsystem = {
     'box': [b.x, b.y, b.z],
@@ -189,7 +239,10 @@ String to_oxview_format(Design design, List<Strand> strands_to_export) {
     'forces': [],
     'selections': [],
   };
+
+  // start = DateTime.now();
   String content = jsonEncode(oxvsystem);
+  // print('jsonEncode: ${DateTime.now().difference(start).inMilliseconds} ms');
 
   return content;
 }
