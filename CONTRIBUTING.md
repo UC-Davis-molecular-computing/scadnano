@@ -348,6 +348,8 @@ server](https://dart.dev/tools/webdev#serve).
 
 Sometimes it may be necessary to clean out the generated files and cache if this has an error. See the file `clean.sh`, which has this line: `dart run build_runner clean`. Also see `remove_g.sh`, which removes all `.g.dart` files from the project, which can also help to fix compilation errors.
 
+If that does not work, try `dart run build_runner clean --delete-conflicting-outputs`.
+
 Running `webdev serve --release` will compile the project in production mode (instead of development mode), which is claimed to be faster in principle if you are not doing development and just want to run scadnano offline.
 However, in scadnano, it doesn't appear to make a big difference whether development or production mode is used.
 The webdev program will tell you which URL to enter in your browser; it will be something like
