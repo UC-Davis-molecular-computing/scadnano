@@ -248,10 +248,10 @@ This project requires using Dart version **2.13**, not the latest version. Click
 <details><summary><strong>Windows</strong></summary>
 First, install <a href="https://chocolatey.org/install">Chocolatey</a> if you haven't already. If <code>choco help</code> shows a help menu for using Chocolatey, then you've set it up correctly.
 
-Then, install Dart 2.13:
+Then, install Dart 2.13.4:
 
 <pre>
-choco install dart-sdk --version 2.13
+choco install dart-sdk --version 2.13.4
 </pre>
 
 To stop Chocolatey from automatically updating Dart to the latest version, pin it:
