@@ -323,6 +323,16 @@ This project uses an older version of the `webdev` tool, not the latest version,
 pub global activate webdev 2.5.9
 ```
 
+Note that often a message like this appears:
+
+```
+Warning: Pub installs executables into C:\Users\pexat\AppData\Local\Pub\Cache\bin, which is not on your path.
+You can fix that by adding that directory to your system's "Path" environment variable.
+A web search for "configure windows path" will show you how.
+```
+So you may need to add the installation location of `webdev` to your PATH environment variable.
+
+
 ### Running a Local Server
 
 Run
@@ -335,6 +345,9 @@ in the `scadnano` directory to compile your code
 with the [Dart dev compiler](https://dart.dev/tools/dartdevc)
 (dartdevc) and start up a [local
 server](https://dart.dev/tools/webdev#serve).
+
+Sometimes it may be necessary to clean out the generated files and cache if this has an error. See the file `clean.sh`, which has this line: `dart run build_runner clean`. Also see `remove_g.sh`, which removes all `.g.dart` files from the project, which can also help to fix compilation errors.
+
 Running `webdev serve --release` will compile the project in production mode (instead of development mode), which is claimed to be faster in principle if you are not doing development and just want to run scadnano offline.
 However, in scadnano, it doesn't appear to make a big difference whether development or production mode is used.
 The webdev program will tell you which URL to enter in your browser; it will be something like
