@@ -30,7 +30,7 @@ oxview_update_view_middleware(Store<AppState> store, dynamic action, NextDispatc
   next(action);
   if (action is actions.DesignChangingAction) {
     Design design = store.state.design;
-    IFrameElement frame = querySelector('#oxview-frame-1') as IFrameElement;
+    IFrameElement frame = querySelector('#oxview-frame') as IFrameElement;
 
     if (design != null && frame != null) {
       List<Strand> strands_to_export = design.strands.toList();
