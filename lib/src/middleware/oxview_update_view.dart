@@ -26,7 +26,7 @@ import 'export_cadnano_or_codenano_file.dart' as export_cadnano;
 import '../constants.dart' as constants;
 import 'oxdna_export.dart';
 
-oxdna_export_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
+oxview_update_view_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   if (action is actions.DesignChangingAction) {
     AppState state = store.state;
 
