@@ -27,24 +27,32 @@ import '../constants.dart' as constants;
 import 'oxdna_export.dart';
 
 oxview_update_view_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
-  if (action is actions.DesignChangingAction) {
-    AppState state = store.state;
-
-    List<Strand> strands_to_export = state.design.strands.toList();
-    String content = to_oxview_format(state.design, strands_to_export);
-    String blob_type_string = blob_type_to_string(BlobType.text);
-    Blob blob = new Blob([content], blob_type_string);
-
-    IFrameElement frame = querySelector('#oxview-frame-1') as IFrameElement;
-
-    Map<String, dynamic> message = {
-      'message': 'iframe_drop',
-      'files': [blob],
-      'ext': 'oxview',
-      'inbox_settings': ["Monomer", "Origin"],
-    };
-
-    frame.contentWindow?.postMessage(message, 'https://sulcgroup.github.io/oxdna-viewer/');
-  }
   next(action);
+  if (action is actions.DesignChangingAction) {
+    Design design = store.state.design;
+
+    if (design != null) {
+      List<Strand> strands_to_export = design.strands.toList();
+
+      // String content = to_oxview_format(design, strands_to_export);
+      Tuple2<String, String> dat_top = to_oxdna_format(design, strands_to_export);
+      String dat = dat_top.item1;
+      String top = dat_top.item2;
+
+      String blob_type_string = blob_type_to_string(BlobType.text);
+      Blob blob_dat = new Blob([dat], blob_type_string);
+      Blob blob_top = new Blob([top], blob_type_string);
+
+      IFrameElement frame = querySelector('#oxview-frame-1') as IFrameElement;
+
+      Map<String, dynamic> message = {
+        'message': 'iframe_drop',
+        'files': [blob_top, blob_dat],
+        'ext': ['top', 'dat'],
+        'inbox_settings': ["Monomer", "Origin"],
+      };
+
+      frame.contentWindow?.postMessage(message, 'https://sulcgroup.github.io/oxdna-viewer/');
+    }
+  }
 }
