@@ -265,6 +265,8 @@ choco pin --name="'dart-sdk'" --version="'2.13.4'"
 <details><summary><strong>macOS</strong></summary>
 First, install <a href="https://brew.sh/">Homebrew</a> if you haven't already. If <code>brew -v</code> shows some version numbers, then you've set it up correctly.
 
+It may help to run `brew tap dart-lang/dart` first.
+
 Then, install Dart 2.13.4:
 
 <pre>
