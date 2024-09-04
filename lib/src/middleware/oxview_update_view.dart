@@ -30,8 +30,9 @@ oxview_update_view_middleware(Store<AppState> store, dynamic action, NextDispatc
   next(action);
   if (action is actions.DesignChangingAction) {
     Design design = store.state.design;
+    IFrameElement frame = querySelector('#oxview-frame-1') as IFrameElement;
 
-    if (design != null) {
+    if (design != null && frame != null) {
       List<Strand> strands_to_export = design.strands.toList();
 
       // String content = to_oxview_format(design, strands_to_export);
@@ -42,8 +43,6 @@ oxview_update_view_middleware(Store<AppState> store, dynamic action, NextDispatc
       String blob_type_string = blob_type_to_string(BlobType.text);
       Blob blob_dat = new Blob([dat], blob_type_string);
       Blob blob_top = new Blob([top], blob_type_string);
-
-      IFrameElement frame = querySelector('#oxview-frame-1') as IFrameElement;
 
       Map<String, dynamic> message = {
         'message': 'iframe_drop',

@@ -99,18 +99,17 @@
 <!--<button id="compile">Compile</button>-->
 
 
-<div>
+<div id="top-and-oxview">
     <div
-        id="top-container"
-        style="width: 50%;"></div>
-    <div>
-    <iframe
-        width="50%"
-        height="100%"
-        src="https://sulcgroup.github.io/oxdna-viewer/"
-        id="oxview-frame-1">
-    </iframe>
+            id="top-container"
+            style="width: 50%;">
     </div>
+    <iframe
+            width="50%"
+            height="100%"
+            src="https://sulcgroup.github.io/oxdna-viewer/"
+            id="oxview-frame">
+    </iframe>
 </div>
 
 <!--<script src="react_dnd_imports.js"></script>-->
@@ -170,7 +169,7 @@
 
     var allow_pan = true;
     var allow_zoom = true;
-    
+
 
     function set_allow_pan(allow) {
         var prev_allow_pan = allow_pan;
@@ -413,7 +412,7 @@
         zoom_speed = speed;
 
         for (let svg of [side_view_svg_pan_zoom, main_view_svg_pan_zoom]) {
-            if(svg != undefined){
+            if (svg != undefined) {
                 svg.setZoomScaleSensitivity(speed);
             }
         }

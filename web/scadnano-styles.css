@@ -41,7 +41,13 @@ label + select {
     overflow: auto;
 }
 
-#top-container {
+#top-and-oxview {
+    display: flex;
+    height: 100%;
+    overflow: hidden;
+}
+
+#top-container,#oxview-frame {
     display: flex;
     height: 100%;
     overflow: hidden;
