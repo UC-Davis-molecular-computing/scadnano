@@ -91,9 +91,15 @@ label + select {
 
 #design, #nonmenu-panes-container {
     display: flex;
-    /*height: 100%;*/
+    height: 100%;
     flex-grow: 1;
 }
+
+/* I thought this was necessary because clicking on oxview hides the menu,
+ but that's only when devtools is open. Seems to be fine in normal mode.*/
+/*#menu {*/
+/*    height: 30px;*/
+/*}*/
 
 #side-pane {
     /*width: 8%;*/

@@ -15,6 +15,7 @@ class OxviewViewComponent {
     var iframe_element = IFrameElement()
       ..attributes = {
         'height': '100%',
+        'width': '100%',
         'src': 'https://sulcgroup.github.io/oxdna-viewer/',
         'id': 'oxview-frame'
       };

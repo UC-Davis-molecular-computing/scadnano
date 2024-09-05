@@ -1096,7 +1096,12 @@ Displays DNA right-side up on reverse strands.'''
         ..value = props.show_oxview
         ..display = 'Show oxView'
         ..tooltip = '''\
-Displays an embedded oxView window to visualize the 3D structure of the design.'''
+Displays an embedded oxView window to visualize the 3D structure of the design.
+
+Currently the view is "read-only", it will export the scadnano design and show 
+it in the oxView window, but changes made in the oxView window are not propagated
+back to the scadnano design. Any changes will be lost the next time the scadnano
+design is edited.'''
         ..name = 'show-oxview'
         ..onChange = (_) {
           props.dispatch(actions.OxviewShowSet(!props.show_oxview));
