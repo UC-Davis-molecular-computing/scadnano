@@ -48,7 +48,8 @@ save(AppState state, Storable storable) {
 }
 
 String side_pane_width() => window.localStorage[_LOCAL_STORAGE_PREFIX + 'side-pane-width'];
-String design_width() => window.localStorage[_LOCAL_STORAGE_PREFIX + 'design-and-modes-buttons-container-width'];
+String design_width() =>
+    window.localStorage[_LOCAL_STORAGE_PREFIX + 'design-and-modes-buttons-container-width'];
 
 restore(Store<AppState> store, Storable storable) {
   try {

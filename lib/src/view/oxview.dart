@@ -26,7 +26,4 @@ class OxviewViewComponent {
       };
     this.div.children.add(this.frame);
   }
-
-
 }
-

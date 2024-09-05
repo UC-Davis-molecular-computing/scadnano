@@ -102,7 +102,12 @@ class App {
           'files': [blob_js_camera_commands],
           'ext': ['js'],
         };
-        this.view.oxview_view.frame.contentWindow?.postMessage(message_js_commands, 'https://sulcgroup.github.io/oxdna-viewer/');
+        this
+            .view
+            .oxview_view
+            .frame
+            .contentWindow
+            ?.postMessage(message_js_commands, 'https://sulcgroup.github.io/oxdna-viewer/');
         update_oxview_view(app.state.design, this.view.oxview_view.frame);
       });
       // do next after view renders so that JS SVG pan zoom containers are defined

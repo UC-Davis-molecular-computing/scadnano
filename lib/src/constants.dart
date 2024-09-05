@@ -76,7 +76,7 @@ const RIGHT_CLICK_BUTTON = 2;
 const KEY_CODE_SHOW_POTENTIAL_HELIX = KeyCode.H;
 const KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO = KeyCode.W;
 final KEY_CODE_COMMAND_MAC =
-browser.isFirefox ? 224 : 91; // Meta/Command: https://tosbourn.com/cmd-osx-key-code/
+    browser.isFirefox ? 224 : 91; // Meta/Command: https://tosbourn.com/cmd-osx-key-code/
 final KEY_CODE_TOGGLE_SELECT_MAC = KEY_CODE_COMMAND_MAC;
 const KEY_CODE_SELECT = KeyCode.SHIFT;
 const KEY_CODE_TOGGLE_SELECT = KeyCode.CTRL;
@@ -216,18 +216,18 @@ const design_modifications_3p_key = 'modifications_3p_in_design';
 const design_modifications_int_key = 'modifications_int_in_design';
 const groups_key = 'groups';
 final design_keys = [
-  version_key,
-  grid_key,
-  helices_key,
-  helices_view_order_key,
-  potential_helices_key,
-  strands_key,
-  design_modifications_key,
-  design_modifications_5p_key,
-  design_modifications_3p_key,
-  design_modifications_int_key,
-  groups_key,
-] +
+      version_key,
+      grid_key,
+      helices_key,
+      helices_view_order_key,
+      potential_helices_key,
+      strands_key,
+      design_modifications_key,
+      design_modifications_5p_key,
+      design_modifications_3p_key,
+      design_modifications_int_key,
+      groups_key,
+    ] +
     legacy_geometry_keys;
 
 // Geometry keys
@@ -239,12 +239,12 @@ const minor_groove_angle_key = 'minor_groove_angle';
 const legacy_minor_groove_angle_keys = ['groove_angle'];
 const inter_helix_gap_key = 'inter_helix_gap';
 final geometry_keys = [
-  rise_per_base_pair_key,
-  helix_radius_key,
-  bases_per_turn_key,
-  minor_groove_angle_key,
-  inter_helix_gap_key,
-] +
+      rise_per_base_pair_key,
+      helix_radius_key,
+      bases_per_turn_key,
+      minor_groove_angle_key,
+      inter_helix_gap_key,
+    ] +
     legacy_minor_groove_angle_keys +
     legacy_rise_per_base_pair_keys;
 
@@ -265,21 +265,21 @@ const major_tick_start_key = 'major_tick_start';
 const major_tick_periodic_distances_key = 'major_tick_periodic_distances';
 const group_key = 'group';
 final helix_keys = [
-  idx_on_helix_key,
-  max_offset_key,
-  min_offset_key,
-  roll_key,
-  pitch_key,
-  yaw_key,
-  grid_position_key,
-  svg_position_key,
-  position_key,
-  major_ticks_key,
-  major_tick_distance_key,
-  major_tick_start_key,
-  major_tick_periodic_distances_key,
-  group_key,
-] +
+      idx_on_helix_key,
+      max_offset_key,
+      min_offset_key,
+      roll_key,
+      pitch_key,
+      yaw_key,
+      grid_position_key,
+      svg_position_key,
+      position_key,
+      major_ticks_key,
+      major_tick_distance_key,
+      major_tick_start_key,
+      major_tick_periodic_distances_key,
+      group_key,
+    ] +
     legacy_position_keys;
 // Cannot have List concatenation in const expressions.
 // Seems like it won't be fixed soon (related issue):
@@ -307,17 +307,17 @@ const modification_5p_key = '5prime_modification';
 const modification_3p_key = '3prime_modification';
 const modifications_int_key = 'internal_modifications';
 final strand_keys = [
-  color_key,
-  dna_sequence_key,
-  vendor_fields_key,
-  is_scaffold_key,
-  substrands_key,
-  modification_5p_key,
-  modification_3p_key,
-  modifications_int_key,
-  label_key,
-  name_key,
-] +
+      color_key,
+      dna_sequence_key,
+      vendor_fields_key,
+      is_scaffold_key,
+      substrands_key,
+      modification_5p_key,
+      modification_3p_key,
+      modifications_int_key,
+      label_key,
+      name_key,
+    ] +
     legacy_dna_sequence_keys +
     legacy_vendor_fields_keys +
     legacy_substrands_keys;
@@ -330,12 +330,12 @@ const legacy_mod_vendor_code_keys = ['idt_text'];
 const mod_allowed_bases_key = 'allowed_bases';
 const mod_connector_length_key = 'connector_length';
 final modification_keys = [
-  mod_location_key,
-  mod_display_text_key,
-  mod_vendor_code_key,
-  mod_allowed_bases_key,
-  mod_connector_length_key,
-] +
+      mod_location_key,
+      mod_display_text_key,
+      mod_vendor_code_key,
+      mod_allowed_bases_key,
+      mod_connector_length_key,
+    ] +
     legacy_mod_vendor_code_keys;
 
 // VendorFields keys
@@ -361,16 +361,16 @@ const end_key = 'end';
 const deletions_key = 'deletions';
 const insertions_key = 'insertions';
 final domain_keys = [
-  helix_idx_key,
-  forward_key,
-  start_key,
-  end_key,
-  deletions_key,
-  insertions_key,
-  label_key,
-  name_key,
-  color_key,
-] +
+      helix_idx_key,
+      forward_key,
+      start_key,
+      end_key,
+      deletions_key,
+      insertions_key,
+      label_key,
+      name_key,
+      color_key,
+    ] +
     legacy_forward_keys;
 
 // Loopout keys

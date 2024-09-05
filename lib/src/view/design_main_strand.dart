@@ -290,7 +290,8 @@ api.selectElements([base]);''';
       'files': [blob_js_highlight_base],
       'ext': ['js'],
     };
-    app.view.oxview_view.frame.contentWindow?.postMessage(message_js_commands, 'https://sulcgroup.github.io/oxdna-viewer/');
+    app.view.oxview_view.frame.contentWindow
+        ?.postMessage(message_js_commands, 'https://sulcgroup.github.io/oxdna-viewer/');
   }
 
   assign_scale_purification_fields() =>
