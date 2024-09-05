@@ -46,10 +46,12 @@ oxview_update_view_middleware(Store<AppState> store, dynamic action, NextDispatc
   }
 }
 
+const js_reset_commands = 'resetScene(resetCamera = false);';
+
 // frame is optional because usually we get it from app.view.oxview_view.frame,
 // but on startup app.view is not yet allocated (we're in the View constructor
 // the first time), so we send the frame just after creating it.
-void update_oxview_view(Design design, {IFrameElement frame = null}) {
+void update_oxview_view(Design design, [IFrameElement frame = null]) {
   assert(design != null);
   assert(design.strands != null);
   if (frame == null) {
@@ -57,6 +59,18 @@ void update_oxview_view(Design design, {IFrameElement frame = null}) {
   }
   assert(frame != null);
 
+  String text_blob_type = blob_type_to_string(BlobType.text);
+
+  // reset oxview in case it has nucleotides already
+  Blob blob_js_commands = new Blob([js_reset_commands], text_blob_type);
+  Map<String, dynamic> message_js_commands = {
+    'message': 'iframe_drop',
+    'files': [blob_js_commands],
+    'ext': ['js'],
+  };
+  frame.contentWindow?.postMessage(message_js_commands, 'https://sulcgroup.github.io/oxdna-viewer/');
+
+  // send current exported design
   List<Strand> strands_to_export = design.strands.toList();
 
   // String content = to_oxview_format(design, strands_to_export);
@@ -64,9 +78,8 @@ void update_oxview_view(Design design, {IFrameElement frame = null}) {
   String dat = dat_top.item1;
   String top = dat_top.item2;
 
-  String blob_type_string = blob_type_to_string(BlobType.text);
-  Blob blob_dat = new Blob([dat], blob_type_string);
-  Blob blob_top = new Blob([top], blob_type_string);
+  Blob blob_dat = new Blob([dat], text_blob_type);
+  Blob blob_top = new Blob([top], text_blob_type);
 
   Map<String, dynamic> message = {
     'message': 'iframe_drop',
@@ -75,8 +88,5 @@ void update_oxview_view(Design design, {IFrameElement frame = null}) {
     'inbox_settings': ["Monomer", "Origin"],
   };
 
-  print("sending message to iframe");
   frame.contentWindow?.postMessage(message, 'https://sulcgroup.github.io/oxdna-viewer/');
-
-  // frame.src = frame.src;
 }

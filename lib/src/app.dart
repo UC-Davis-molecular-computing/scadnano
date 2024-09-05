@@ -12,6 +12,7 @@ import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:over_react/over_react.dart' as react;
 import 'package:scadnano/src/reducers/dna_extensions_move_reducer.dart';
 import 'package:scadnano/src/state/dna_extensions_move.dart';
+import 'package:scadnano/src/util.dart';
 
 import 'middleware/all_middleware.dart';
 import 'middleware/oxview_update_view.dart';
@@ -93,7 +94,16 @@ class App {
       this.view = View(app_root_element);
       this.view.render(state);
       this.view.oxview_view.frame.onLoad.listen((event) {
-        update_oxview_view(app.state.design, frame: this.view.oxview_view.frame);
+        const js_set_camera_commands = 'camera.up.multiplyScalar(-1)';
+        String text_blob_type = blob_type_to_string(BlobType.text);
+        Blob blob_js_camera_commands = new Blob([js_set_camera_commands], text_blob_type);
+        Map<String, dynamic> message_js_commands = {
+          'message': 'iframe_drop',
+          'files': [blob_js_camera_commands],
+          'ext': ['js'],
+        };
+        this.view.oxview_view.frame.contentWindow?.postMessage(message_js_commands, 'https://sulcgroup.github.io/oxdna-viewer/');
+        update_oxview_view(app.state.design, this.view.oxview_view.frame);
       });
       // do next after view renders so that JS SVG pan zoom containers are defined
       util.set_zoom_speed(store.state.ui_state.zoom_speed);
