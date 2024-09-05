@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:html';
 import 'dart:js';
@@ -27,7 +28,6 @@ import '../constants.dart' as constants;
 import 'oxdna_export.dart';
 import '../app.dart';
 
-
 // This middleware handles sending the new design to the oxview viewer,
 // as well as updating whether it is shown, since it is wired to the
 // view outside of React.
@@ -38,9 +38,19 @@ oxview_update_view_middleware(Store<AppState> store, dynamic action, NextDispatc
     app.view.update_showing_oxview();
   }
 
-  if (store.state.ui_state.show_oxview && action is actions.DesignChangingAction) {
+  if (store.state.ui_state.show_oxview &&
+      (action is actions.DesignChangingAction || (action is actions.OxviewShowSet && action.show))) {
     Design design = store.state.design;
-    IFrameElement frame = querySelector('#oxview-frame') as IFrameElement;
+    IFrameElement frame = app.view.oxview_view.frame;
+
+    print("oxview_update_view_middleware: design changing");
+    print("design is null? ${design == null}");
+    print("frame is null? ${frame == null}");
+    print("triggered by action ${action.runtimeType}");
+    // var start = DateTime.now();
+    // while (DateTime.now().difference(start).inSeconds < 1) {
+    //   // This empty loop will keep the CPU busy
+    // }
 
     if (design != null && frame != null) {
       List<Strand> strands_to_export = design.strands.toList();
@@ -61,7 +71,8 @@ oxview_update_view_middleware(Store<AppState> store, dynamic action, NextDispatc
         'inbox_settings': ["Monomer", "Origin"],
       };
 
-      frame.contentWindow?.postMessage(message, 'https://sulcgroup.github.io/oxdna-viewer/');
+      // print("sending message to iframe");
+      // frame.contentWindow?.postMessage(message, 'https://sulcgroup.github.io/oxdna-viewer/');
     }
   }
 }

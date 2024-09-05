@@ -57,7 +57,6 @@ class View {
     ..attributes = {'id': DESIGN_AND_MODES_BUTTONS_CONTAINER_ID, 'class': 'split'};
   DivElement design_oxview_separator = DivElement()
     ..attributes = {'id': 'design-oxview-separator', 'class': 'draggable-separator'};
-  DivElement oxview_element = DivElement()..attributes = {'id': OXVIEW_ID, 'class': 'split'};
 
   DesignViewComponent design_view;
   OxviewViewComponent oxview_view;
@@ -81,7 +80,9 @@ class View {
     this.design_and_modes_buttons_container_element.children.add(edit_and_select_modes_element);
 
     this.design_view = DesignViewComponent(design_element);
-    this.oxview_view = OxviewViewComponent(oxview_element);
+    this.oxview_view = OxviewViewComponent();
+    this.nonmenu_panes_container_element.children.add(design_oxview_separator);
+    this.nonmenu_panes_container_element.children.add(this.oxview_view.div);
 
     this.update_showing_oxview();
   }
@@ -117,14 +118,19 @@ class View {
   update_showing_oxview() {
     bool show_oxview = app.state.ui_state.show_oxview;
     if (!this.currently_showing_oxview && show_oxview) {
-      this.nonmenu_panes_container_element.children.add(design_oxview_separator);
-      this.nonmenu_panes_container_element.children.add(oxview_element);
+      this.design_oxview_separator.hidden = false;
+      this.oxview_view.div.hidden = false;
+      // this.nonmenu_panes_container_element.children.add(design_oxview_separator);
+      // this.oxview_view = OxviewViewComponent();
+      // this.nonmenu_panes_container_element.children.add(this.oxview_view.div);
       this.currently_showing_oxview = true;
       this.set_design_oxview_pane_widths();
       setup_splits(show_oxview);
     } else if (this.currently_showing_oxview && !show_oxview) {
-      this.nonmenu_panes_container_element.children.remove(design_oxview_separator);
-      this.nonmenu_panes_container_element.children.remove(oxview_element);
+      this.design_oxview_separator.hidden = true;
+      this.oxview_view.div.hidden = true;
+      // this.nonmenu_panes_container_element.children.remove(design_oxview_separator);
+      // this.nonmenu_panes_container_element.children.remove(this.oxview_view.div);
       this.currently_showing_oxview = false;
       setup_splits(show_oxview);
     }
@@ -138,7 +144,7 @@ class View {
     num oxview_width_int = 100.0 - num.parse(design_width.substring(0, design_width.length - 1));
     String oxview_width = '${oxview_width_int.toString()}%';
     design_and_modes_buttons_container_element.setAttribute('style', 'width: $design_width');
-    oxview_element.setAttribute('style', 'width: $oxview_width');
+    this.oxview_view.div.setAttribute('style', 'width: $oxview_width');
   }
 }
 

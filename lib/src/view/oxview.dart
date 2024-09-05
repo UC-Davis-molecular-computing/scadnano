@@ -6,20 +6,26 @@ import 'package:codemirror/codemirror.dart';
 import 'package:codemirror/hints.dart';
 
 import '../app.dart';
+import 'view.dart';
 import '../constants.dart' as constants;
 
 class OxviewViewComponent {
-  DivElement root_element;
+  DivElement div;
+  IFrameElement frame;
 
-  OxviewViewComponent(this.root_element) {
-    var iframe_element = IFrameElement()
+  OxviewViewComponent() {
+    print("creating new OxviewViewComponent");
+    this.div = DivElement()..attributes = {'id': OXVIEW_ID, 'class': 'split'};
+    this.frame = IFrameElement()
       ..attributes = {
         'height': '100%',
         'width': '100%',
         'src': 'https://sulcgroup.github.io/oxdna-viewer/',
         'id': 'oxview-frame'
       };
-    this.root_element.children.add(iframe_element);
+    this.div.children.add(frame);
   }
+
+
 }
 
