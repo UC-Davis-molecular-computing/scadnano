@@ -446,7 +446,7 @@ assigned, assign the complementary DNA sequence to this strand.
       ),
       if (app.state.ui_state.show_oxview)
         ContextMenuItem(
-          title: 'focus in oxview',
+          title: 'focus in oxView',
           on_click: () => focus_base_oxview(props.strand, substrand, address, type),
         ),
       ContextMenuItem(
