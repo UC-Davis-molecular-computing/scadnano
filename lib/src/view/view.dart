@@ -120,17 +120,12 @@ class View {
     if (!this.currently_showing_oxview && show_oxview) {
       this.design_oxview_separator.hidden = false;
       this.oxview_view.div.hidden = false;
-      // this.nonmenu_panes_container_element.children.add(design_oxview_separator);
-      // this.oxview_view = OxviewViewComponent();
-      // this.nonmenu_panes_container_element.children.add(this.oxview_view.div);
       this.currently_showing_oxview = true;
       this.set_design_oxview_pane_widths();
       setup_splits(show_oxview);
     } else if (this.currently_showing_oxview && !show_oxview) {
       this.design_oxview_separator.hidden = true;
       this.oxview_view.div.hidden = true;
-      // this.nonmenu_panes_container_element.children.remove(design_oxview_separator);
-      // this.nonmenu_panes_container_element.children.remove(this.oxview_view.div);
       this.currently_showing_oxview = false;
       setup_splits(show_oxview);
     }
