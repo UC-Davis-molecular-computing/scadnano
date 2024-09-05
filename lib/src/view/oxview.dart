@@ -7,6 +7,7 @@ import 'package:codemirror/hints.dart';
 
 import '../app.dart';
 import 'view.dart';
+import '../middleware/oxview_update_view.dart';
 import '../constants.dart' as constants;
 
 class OxviewViewComponent {
@@ -23,7 +24,7 @@ class OxviewViewComponent {
         'src': 'https://sulcgroup.github.io/oxdna-viewer/',
         'id': 'oxview-frame'
       };
-    this.div.children.add(frame);
+    this.div.children.add(this.frame);
   }
 
 

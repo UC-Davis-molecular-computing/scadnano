@@ -14,6 +14,7 @@ import 'package:scadnano/src/reducers/dna_extensions_move_reducer.dart';
 import 'package:scadnano/src/state/dna_extensions_move.dart';
 
 import 'middleware/all_middleware.dart';
+import 'middleware/oxview_update_view.dart';
 import 'middleware/throttle.dart';
 import 'state/dna_ends_move.dart';
 import 'state/helix_group_move.dart';
@@ -84,7 +85,6 @@ class App {
       setup_undo_redo_keyboard_listeners();
       setup_save_open_dna_file_keyboard_listeners();
       copy_selected_strands_to_clipboard_image_keyboard_listeners();
-//    util.save_editor_content_to_js_context(state.editor_content);
       restore_all_local_storage(app.store);
       setup_warning_before_unload();
       setup_save_design_to_localStorage_before_unload();
@@ -92,6 +92,9 @@ class App {
       DivElement app_root_element = querySelector('#top-container');
       this.view = View(app_root_element);
       this.view.render(state);
+      this.view.oxview_view.frame.onLoad.listen((event) {
+        update_oxview_view(app.state.design, frame: this.view.oxview_view.frame);
+      });
       // do next after view renders so that JS SVG pan zoom containers are defined
       util.set_zoom_speed(store.state.ui_state.zoom_speed);
     }

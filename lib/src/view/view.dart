@@ -123,11 +123,13 @@ class View {
       this.currently_showing_oxview = true;
       this.set_design_oxview_pane_widths();
       setup_splits(show_oxview);
-    } else if (this.currently_showing_oxview && !show_oxview) {
+    } else if (!show_oxview) {
       this.design_oxview_separator.hidden = true;
       this.oxview_view.div.hidden = true;
-      this.currently_showing_oxview = false;
-      setup_splits(show_oxview);
+      if (this.currently_showing_oxview) {
+        this.currently_showing_oxview = false;
+        setup_splits(show_oxview);
+      }
     }
   }
 

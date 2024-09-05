@@ -40,34 +40,43 @@ oxview_update_view_middleware(Store<AppState> store, dynamic action, NextDispatc
 
   if (store.state.ui_state.show_oxview && action is actions.DesignChangingAction) {
     Design design = store.state.design;
-    IFrameElement frame = app.view?.oxview_view?.frame;
-
-    print("oxview_update_view_middleware: design changing");
-    print("design is null? ${design == null}");
-    print("frame is null? ${frame == null}");
-    print("triggered by action ${action.runtimeType}");
-
-    if (design != null && frame != null) {
-      List<Strand> strands_to_export = design.strands.toList();
-
-      // String content = to_oxview_format(design, strands_to_export);
-      Tuple2<String, String> dat_top = to_oxdna_format(design, strands_to_export);
-      String dat = dat_top.item1;
-      String top = dat_top.item2;
-
-      String blob_type_string = blob_type_to_string(BlobType.text);
-      Blob blob_dat = new Blob([dat], blob_type_string);
-      Blob blob_top = new Blob([top], blob_type_string);
-
-      Map<String, dynamic> message = {
-        'message': 'iframe_drop',
-        'files': [blob_top, blob_dat],
-        'ext': ['top', 'dat'],
-        'inbox_settings': ["Monomer", "Origin"],
-      };
-
-      print("sending message to iframe");
-      frame.contentWindow?.postMessage(message, 'https://sulcgroup.github.io/oxdna-viewer/');
+    if (design != null) {
+      update_oxview_view(design);
     }
   }
+}
+
+// frame is optional because usually we get it from app.view.oxview_view.frame,
+// but on startup app.view is not yet allocated (we're in the View constructor
+// the first time), so we send the frame just after creating it.
+void update_oxview_view(Design design, {IFrameElement frame = null}) {
+  assert(design != null);
+  assert(design.strands != null);
+  if (frame == null) {
+    frame = app.view?.oxview_view?.frame;
+  }
+  assert(frame != null);
+
+  List<Strand> strands_to_export = design.strands.toList();
+
+  // String content = to_oxview_format(design, strands_to_export);
+  Tuple2<String, String> dat_top = to_oxdna_format(design, strands_to_export);
+  String dat = dat_top.item1;
+  String top = dat_top.item2;
+
+  String blob_type_string = blob_type_to_string(BlobType.text);
+  Blob blob_dat = new Blob([dat], blob_type_string);
+  Blob blob_top = new Blob([top], blob_type_string);
+
+  Map<String, dynamic> message = {
+    'message': 'iframe_drop',
+    'files': [blob_top, blob_dat],
+    'ext': ['top', 'dat'],
+    'inbox_settings': ["Monomer", "Origin"],
+  };
+
+  print("sending message to iframe");
+  frame.contentWindow?.postMessage(message, 'https://sulcgroup.github.io/oxdna-viewer/');
+
+  // frame.src = frame.src;
 }
