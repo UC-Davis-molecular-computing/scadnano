@@ -15,7 +15,6 @@ class OxviewViewComponent {
   IFrameElement frame;
 
   OxviewViewComponent() {
-    print("creating new OxviewViewComponent");
     this.div = DivElement()..attributes = {'id': OXVIEW_ID, 'class': 'split'};
     this.frame = IFrameElement()
       ..attributes = {

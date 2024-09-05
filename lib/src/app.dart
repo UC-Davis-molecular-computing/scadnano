@@ -253,7 +253,7 @@ String error_message_wrong_browser() {
 setup_undo_redo_keyboard_listeners() {
   // below doesn't work with onKeyPress
   // previous solution with onKeyPress used event.code == 'KeyZ' and worked inconsistently
-  document.body.onKeyDown.listen((KeyboardEvent event) {
+  window.onKeyDown.listen((KeyboardEvent event) {
     int key = event.which;
 //    print('*' * 100);
 //    print('charCode: ${event.charCode}');
@@ -280,7 +280,7 @@ setup_undo_redo_keyboard_listeners() {
 }
 
 setup_save_open_dna_file_keyboard_listeners() {
-  document.body.onKeyDown.listen((KeyboardEvent event) {
+  window.onKeyDown.listen((KeyboardEvent event) {
     int key = event.which;
     // ctrl+S to save
     if ((event.ctrlKey || event.metaKey) && !event.shiftKey && key == KeyCode.S && !event.altKey) {
@@ -297,7 +297,7 @@ setup_save_open_dna_file_keyboard_listeners() {
 }
 
 copy_selected_strands_to_clipboard_image_keyboard_listeners() {
-  document.body.onKeyDown.listen((KeyboardEvent event) {
+  window.onKeyDown.listen((KeyboardEvent event) {
     int key = event.which;
     // Ctrl+I to copy image of selected strands to clipboard
     if ((event.ctrlKey || event.metaKey) && !event.shiftKey && key == KeyCode.I && !event.altKey) {

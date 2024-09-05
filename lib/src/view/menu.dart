@@ -1101,7 +1101,16 @@ Displays an embedded oxView window to visualize the 3D structure of the design.
 Currently the view is "read-only", it will export the scadnano design and show 
 it in the oxView window, but changes made in the oxView window are not propagated
 back to the scadnano design. Any changes will be lost the next time the scadnano
-design is edited.'''
+design is edited.
+
+If you right-click on a base in a Strand's domain and select "focus in oxView",
+the oxView window will zoom in and select that base.
+
+If you want to do more sophisticated things in oxView, click on the oxView 
+window and press `M`, and the full oxView menu will appear. However, recall that
+any changes made in this way will be lost upon editing the scadnano design.
+To make permanent changes it is better to export to oxView via the Export menu
+and then load that design in a separate oxView page.'''
         ..name = 'show-oxview'
         ..onChange = (_) {
           props.dispatch(actions.OxviewShowSet(!props.show_oxview));
