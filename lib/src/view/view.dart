@@ -13,7 +13,7 @@ import '../view/edit_and_select_modes.dart';
 import '../state/app_state.dart';
 import 'design.dart';
 import 'menu.dart';
-import 'editor.dart';
+import 'oxview.dart';
 import '../app.dart';
 import '../util.dart' as util;
 import '../middleware/local_storage.dart' as local_storage;

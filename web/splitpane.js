@@ -44,7 +44,6 @@ function setup_split_drag(left_pane_id, right_pane_id, separator_id) {
 
 function clear_split_drag(pane_id) {
     var pane = document.getElementById(pane_id);
-    // delete pane.style;
     pane.style.width = "100%";
     delete pane.style;
 }

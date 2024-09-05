@@ -69,9 +69,9 @@ label + select {
 .draggable-separator {
     width: 15px;
     height: 100%;
-    background: lightgray;
+    background: gray;
     position: relative;
-    cursor: col-resize;
+    cursor: move;
 }
 
 #design-and-modes-buttons-container {

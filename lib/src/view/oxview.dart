@@ -22,8 +22,6 @@ class OxviewViewComponent {
   DivElement root_element;
 
   OxviewViewComponent(this.root_element) {
-    // var oxview_div_element = DivElement()
-    //   ..attributes = {'id': 'editor'};
     var iframe_element = IFrameElement()
       ..attributes = {
         'height': '100%',
