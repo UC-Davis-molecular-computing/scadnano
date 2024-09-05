@@ -242,14 +242,14 @@ BuiltMap<int, Helix> helix_offset_change_all_while_creating_strand_reducer(
       // Decrease helix size according to strand movement
       if (action.offset > helices_map[strand_creation.helix.idx].min_offset &&
           helices_map[strand_creation.helix.idx].min_offset <
-              original_helix_offsets[strand_creation.helix.idx].item1) {
+              original_helix_offsets[strand_creation.helix.idx][0]) {
         helices_map[strand_creation.helix.idx] =
             helices_map[strand_creation.helix.idx].rebuild((b) => b..min_offset = action.offset);
         return helices_map.build();
       }
       if (action.offset < helices_map[strand_creation.helix.idx].max_offset + 1 &&
           helices_map[strand_creation.helix.idx].max_offset >
-              original_helix_offsets[strand_creation.helix.idx].item2) {
+              original_helix_offsets[strand_creation.helix.idx][1]) {
         helices_map[strand_creation.helix.idx] =
             helices_map[strand_creation.helix.idx].rebuild((b) => b.max_offset = action.offset + 1);
         return helices_map.build();
@@ -304,14 +304,14 @@ BuiltMap<int, Helix> reset_helices_offsets(BuiltMap<int, Helix> helices, AppStat
   var original_helix_offsets = state.ui_state.original_helix_offsets;
   for (int idx in original_helix_offsets.keys) {
     int current_helix_min_offset = state.design.min_offset_of_strands_at(idx);
-    if (current_helix_min_offset >= original_helix_offsets[idx].item1) {
+    if (current_helix_min_offset >= original_helix_offsets[idx][0]) {
       helices_updated[idx] =
-          helices_updated[idx].rebuild((b) => b.min_offset = original_helix_offsets[idx].item1);
+          helices_updated[idx].rebuild((b) => b.min_offset = original_helix_offsets[idx][0]);
     }
     int current_helix_max_offset = state.design.max_offset_of_strands_at(idx);
-    if (current_helix_max_offset <= original_helix_offsets[idx].item2) {
+    if (current_helix_max_offset <= original_helix_offsets[idx][1]) {
       helices_updated[idx] =
-          helices_updated[idx].rebuild((b) => b.max_offset = original_helix_offsets[idx].item2);
+          helices_updated[idx].rebuild((b) => b.max_offset = original_helix_offsets[idx][1]);
     }
   }
   return helices_updated.build();

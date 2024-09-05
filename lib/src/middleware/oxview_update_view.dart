@@ -25,10 +25,20 @@ import '../util.dart';
 import 'export_cadnano_or_codenano_file.dart' as export_cadnano;
 import '../constants.dart' as constants;
 import 'oxdna_export.dart';
+import '../app.dart';
 
+
+// This middleware handles sending the new design to the oxview viewer,
+// as well as updating whether it is shown, since it is wired to the
+// view outside of React.
 oxview_update_view_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   next(action);
-  if (action is actions.DesignChangingAction) {
+
+  if (action is actions.OxviewShowSet) {
+    app.view.update_showing_oxview();
+  }
+
+  if (store.state.ui_state.show_oxview && action is actions.DesignChangingAction) {
     Design design = store.state.design;
     IFrameElement frame = querySelector('#oxview-frame') as IFrameElement;
 

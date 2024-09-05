@@ -184,6 +184,7 @@ const default_display_angle = 35.0;
 const default_display_length = 1.5;
 
 const default_side_pane_width = '8%';
+const default_design_width = "66%";
 
 const default_group_name = 'default_group';
 

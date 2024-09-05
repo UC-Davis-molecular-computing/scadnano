@@ -96,43 +96,7 @@
 
 <body>
 
-<!--<button id="compile">Compile</button>-->
-
-
-<div id="top-and-oxview">
-    <div
-            id="top-container"
-            style="width: 50%;">
-    </div>
-    <iframe
-            width="50%"
-            height="100%"
-            src="https://sulcgroup.github.io/oxdna-viewer/"
-            id="oxview-frame">
-    </iframe>
-</div>
-
-<!--<script src="react_dnd_imports.js"></script>-->
-
-<!--<script type="text/javascript">-->
-<!--    const REACT_VERSION = React.version;-->
-
-<!--    var ReactDnD_DndContext = window.ReactDnD.DndContext;-->
-<!--    var ReactDnD_createDndContext = window.ReactDnD.createDndContext;-->
-<!--    var ReactDnD_DndProvider = window.ReactDnD.DndProvider;-->
-<!--    var ReactDnD_DragPreviewImage = window.ReactDnD.DragPreviewImage;-->
-<!--    var ReactDnD_useDrag = window.ReactDnD.useDrag;-->
-<!--    var ReactDnD_useDrop = window.ReactDnD.useDrop;-->
-<!--    var ReactDnD_useDragLayer = window.ReactDnD.useDragLayer;-->
-<!--    var ReactDnD_DragSource = window.ReactDnD.DragSource;-->
-<!--    var ReactDnD_DropTarget = window.ReactDnD.DropTarget;-->
-<!--    var ReactDnd_DragLayer = window.ReactDnD.DragLayer;-->
-<!--    var ReactDnDHTML5Backend_NativeTypes = window.ReactDnDHTML5Backend.NativeTypes;-->
-<!--    var ReactDnDHTML5Backend_getEmptyImage = window.ReactDnDHTML5Backend.getEmptyImage;-->
-<!--    var ReactDnDHTML5Backend_default = window.ReactDnDHTML5Backend.default;-->
-
-
-<!--</script>-->
+<div id="top-container"></div>
 
 <script type="text/javascript">
 
@@ -149,13 +113,13 @@
         }
     }
 
-    function setup_splits(show_editor) {
+    function setup_splits(show_oxview) {
         setup_split_drag('side-pane', 'main-pane', 'side-main-separator');
-        if (show_editor) {
-            setup_split_drag('design-pane', 'editor-pane', 'design-editor-separator');
+        if (show_oxview) {
+            setup_split_drag('design-and-modes-buttons-container', 'oxview-pane', 'design-oxview-separator');
         } else {
             // need to remove style elements that specify width
-            clear_split_drag('design-pane');
+            clear_split_drag('design-and-modes-buttons-container');
         }
     }
 
