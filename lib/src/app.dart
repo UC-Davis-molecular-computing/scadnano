@@ -12,8 +12,10 @@ import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:over_react/over_react.dart' as react;
 import 'package:scadnano/src/reducers/dna_extensions_move_reducer.dart';
 import 'package:scadnano/src/state/dna_extensions_move.dart';
+import 'package:scadnano/src/util.dart';
 
 import 'middleware/all_middleware.dart';
+import 'middleware/oxview_update_view.dart';
 import 'middleware/throttle.dart';
 import 'state/dna_ends_move.dart';
 import 'state/helix_group_move.dart';
@@ -84,7 +86,6 @@ class App {
       setup_undo_redo_keyboard_listeners();
       setup_save_open_dna_file_keyboard_listeners();
       copy_selected_strands_to_clipboard_image_keyboard_listeners();
-//    util.save_editor_content_to_js_context(state.editor_content);
       restore_all_local_storage(app.store);
       setup_warning_before_unload();
       setup_save_design_to_localStorage_before_unload();
@@ -92,6 +93,23 @@ class App {
       DivElement app_root_element = querySelector('#top-container');
       this.view = View(app_root_element);
       this.view.render(state);
+      this.view.oxview_view.frame.onLoad.listen((event) {
+        const js_set_camera_commands = 'camera.up.multiplyScalar(-1)';
+        String text_blob_type = blob_type_to_string(BlobType.text);
+        Blob blob_js_camera_commands = new Blob([js_set_camera_commands], text_blob_type);
+        Map<String, dynamic> message_js_commands = {
+          'message': 'iframe_drop',
+          'files': [blob_js_camera_commands],
+          'ext': ['js'],
+        };
+        this
+            .view
+            .oxview_view
+            .frame
+            .contentWindow
+            ?.postMessage(message_js_commands, 'https://sulcgroup.github.io/oxdna-viewer/');
+        update_oxview_view(app.state.design, this.view.oxview_view.frame);
+      });
       // do next after view renders so that JS SVG pan zoom containers are defined
       util.set_zoom_speed(store.state.ui_state.zoom_speed);
     }

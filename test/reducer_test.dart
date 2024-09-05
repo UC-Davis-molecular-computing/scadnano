@@ -3173,10 +3173,10 @@ main() {
     test('Test_SetShowEditor', () {
       AppState initial_state = app_state_from_design(two_helices_design);
 
-      AppState final_state = app_state_reducer(initial_state, SetShowEditor(true));
-      expect(final_state.ui_state.show_editor, true);
-      final_state = app_state_reducer(final_state, SetShowEditor(false));
-      expect(final_state.ui_state.show_editor, false);
+      AppState final_state = app_state_reducer(initial_state, OxviewShowSet(true));
+      expect(final_state.ui_state.show_oxview, true);
+      final_state = app_state_reducer(final_state, OxviewShowSet(false));
+      expect(final_state.ui_state.show_oxview, false);
     });
 
     test('Test_SetOnlyDisplaySelectedHelices', () {

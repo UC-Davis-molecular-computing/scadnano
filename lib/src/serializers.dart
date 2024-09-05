@@ -123,7 +123,7 @@ part 'serializers.g.dart';
   ShowDomainLabelsSet,
   ShowModificationsSet,
   ShowMismatchesSet,
-  SetShowEditor,
+  OxviewShowSet,
   ExportSvgTextSeparatelySet,
   SaveDNAFile,
   PrepareToLoadDNAFile,

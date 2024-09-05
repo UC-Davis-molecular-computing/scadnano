@@ -21,6 +21,7 @@ import 'helix_offsets_change.dart';
 import 'insertion_deletion_batching.dart';
 import 'load_file.dart';
 import 'oxdna_export.dart';
+import 'oxview_update_view.dart';
 import 'periodic_save_design_local_storage.dart';
 import 'reselect_moved_dna_ends.dart';
 import 'reselect_moved_copied_strands.dart';
@@ -80,4 +81,5 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   system_clipboard_middleware,
   zoom_speed_middleware,
   oxdna_export_middleware,
+  oxview_update_view_middleware,
 ]);

@@ -186,7 +186,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get show_unpaired_insertion_deletions => storables.show_unpaired_insertion_deletions;
 
-  bool get show_editor => storables.show_editor;
+  bool get show_oxview => storables.show_oxview;
 
   bool get autofit => storables.autofit;
 
@@ -249,7 +249,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get selection_box_intersection => storables.selection_box_intersection;
 
-  BuiltMap<int, Tuple2> get original_helix_offsets;
+  BuiltMap<int, BuiltList<int>> get original_helix_offsets;
 
   bool get ox_export_only_selected_strands => storables.ox_export_only_selected_strands;
 

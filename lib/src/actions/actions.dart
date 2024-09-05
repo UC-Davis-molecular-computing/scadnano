@@ -754,19 +754,19 @@ abstract class ShowUnpairedInsertionDeletionsSet
       _$showUnpairedInsertionDeletionsSetSerializer;
 }
 
-abstract class SetShowEditor
+abstract class OxviewShowSet
     with BuiltJsonSerializable
-    implements Action, Built<SetShowEditor, SetShowEditorBuilder> {
+    implements Action, Built<OxviewShowSet, OxviewShowSetBuilder> {
   bool get show;
 
-  factory SetShowEditor(bool show) => SetShowEditor.from((b) => b..show = show);
+  factory OxviewShowSet(bool show) => OxviewShowSet.from((b) => b..show = show);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SetShowEditor.from([void Function(SetShowEditorBuilder) updates]) = _$SetShowEditor;
+  factory OxviewShowSet.from([void Function(OxviewShowSetBuilder) updates]) = _$OxviewShowSet;
 
-  SetShowEditor._();
+  OxviewShowSet._();
 
-  static Serializer<SetShowEditor> get serializer => _$setShowEditorSerializer;
+  static Serializer<OxviewShowSet> get serializer => _$oxviewShowSetSerializer;
 }
 
 abstract class SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix

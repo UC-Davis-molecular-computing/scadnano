@@ -258,7 +258,7 @@ bool strand_paste_keep_color_reducer(bool _, actions.StrandPasteKeepColorSet act
 
 bool center_on_load_reducer(bool _, actions.AutofitSet action) => action.autofit;
 
-bool show_editor_reducer(bool _, actions.SetShowEditor action) => action.show;
+bool show_oxview_reducer(bool _, actions.OxviewShowSet action) => action.show;
 
 bool show_mouseover_data_set_reducer(bool _, actions.ShowMouseoverDataSet action) => action.show;
 
@@ -460,7 +460,7 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..clear_helix_selection_when_loading_new_design = TypedReducer<bool, actions.ClearHelixSelectionWhenLoadingNewDesignSet>(clear_helix_selection_when_loading_new_design_set_reducer)(storables.clear_helix_selection_when_loading_new_design, action)
     ..strand_paste_keep_color = TypedReducer<bool, actions.StrandPasteKeepColorSet>(strand_paste_keep_color_reducer)(storables.strand_paste_keep_color, action)
     ..autofit = TypedReducer<bool, actions.AutofitSet>(center_on_load_reducer)(storables.autofit, action)
-    ..show_editor = TypedReducer<bool, actions.SetShowEditor>(show_editor_reducer)(storables.show_editor, action)
+    ..show_oxview = TypedReducer<bool, actions.OxviewShowSet>(show_oxview_reducer)(storables.show_oxview, action)
     ..display_base_offsets_of_major_ticks = TypedReducer<bool, actions.DisplayMajorTicksOffsetsSet>(display_base_offsets_of_major_ticks_reducer)(storables.display_base_offsets_of_major_ticks, action)
     ..display_base_offsets_of_major_ticks_only_first_helix = TypedReducer<bool, actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix>(display_base_offsets_of_major_ticks_only_first_helix_reducer)(storables.display_base_offsets_of_major_ticks_only_first_helix, action)
     ..display_major_tick_widths = TypedReducer<bool, actions.SetDisplayMajorTickWidths>(display_major_tick_widths_reducer)(storables.display_major_tick_widths, action)
@@ -611,13 +611,13 @@ AppUIState ui_state_global_reducer(AppUIState ui_state, AppState state, action) 
   ..original_helix_offsets =
       original_helix_offsets_reducer(ui_state.original_helix_offsets, state, action).toBuilder());
 
-BuiltMap<int, Tuple2> original_helix_offsets_reducer(
-    BuiltMap<int, Tuple2> original_helix_offsets, AppState state, action) {
+BuiltMap<int, BuiltList<int>> original_helix_offsets_reducer(
+    BuiltMap<int, BuiltList<int>> original_helix_offsets, AppState state, action) {
   if (action is actions.StrandsMoveStartSelectedStrands || action is actions.StrandCreateStart) {
     var helix_offsets = original_helix_offsets.toMap();
     for (int key in state.design.helices.keys) {
       var helix = state.design.helices[key];
-      helix_offsets[state.design.helices[key].idx] = Tuple2.fromList([helix.min_offset, helix.max_offset]);
+      helix_offsets[state.design.helices[key].idx] = [helix.min_offset, helix.max_offset].build();
     }
     return helix_offsets.build();
   }

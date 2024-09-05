@@ -225,7 +225,6 @@ String to_oxview_format(Design design, List<Strand> strands_to_export) {
         }
       }
     }
-
   }
 
   // print('second loop: ${DateTime.now().difference(start).inMilliseconds} ms');

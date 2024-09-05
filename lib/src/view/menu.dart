@@ -47,6 +47,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..geometry = state.design?.geometry
       ..no_grid_is_none =
           state.design == null ? false : state.design.groups.values.every((group) => group.grid != Grid.none)
+      ..show_oxview = state.ui_state.show_oxview
       ..show_dna = state.ui_state.show_dna
       ..base_pair_display_type = state.ui_state.base_pair_display_type
       ..show_strand_names = state.ui_state.show_strand_names
@@ -116,6 +117,7 @@ mixin MenuPropsMixin on UiProps {
   BuiltSet<DNAEnd> selected_ends;
   bool selection_box_intersection;
   bool no_grid_is_none;
+  bool show_oxview;
   bool show_dna;
   bool show_strand_names;
   bool show_strand_labels;
@@ -711,7 +713,6 @@ Ignored if design is not an origami (i.e., does not have at least one scaffold).
   view_menu() {
     var elts = [
       view_menu_warnings(),
-      // view_menu_show_dna(),
       view_menu_autofit(),
       view_menu_show_labels(),
       view_menu_mods(),
@@ -719,7 +720,9 @@ Ignored if design is not an origami (i.e., does not have at least one scaffold).
       view_menu_display_major_ticks_options(),
       view_menu_base_pairs(),
       view_menu_dna(),
-      DropdownDivider({'key': 'divider-major-tick-widths'}),
+      DropdownDivider({'key': 'divider-dna'}),
+      ...view_menu_show_oxview(),
+      DropdownDivider({'key': 'divider-oxview'}),
       ...view_menu_zoom_speed(),
       DropdownDivider({'key': 'divider-zoom_speed'}),
       ...view_menu_misc(),
@@ -1077,14 +1080,34 @@ to speed up navigation.'''
         ..value = props.display_reverse_DNA_right_side_up
         ..display = 'Display reverse DNA right-side up'
         ..tooltip = '''\
-  Displays DNA right-side up on reverse strands.'''
+Displays DNA right-side up on reverse strands.'''
         ..name = 'display-reverse-DNA-right-side-up'
         ..hide = !props.show_dna
         ..onChange = (_) {
           props.dispatch(actions.DisplayReverseDNARightSideUpSet(!props.display_reverse_DNA_right_side_up));
         }
-        ..key = 'display-reverse-DNA-right-side-up')()
+        ..key = 'display-reverse-DNA-right-side-up')(),
     ]);
+  }
+
+  List<ReactElement> view_menu_show_oxview() {
+    return [
+      (MenuBoolean()
+        ..value = props.show_oxview
+        ..display = 'Show oxView'
+        ..tooltip = '''\
+Displays an embedded oxView window to visualize the 3D structure of the design.
+
+Currently the view is "read-only", it will export the scadnano design and show 
+it in the oxView window, but changes made in the oxView window are not propagated
+back to the scadnano design. Any changes will be lost the next time the scadnano
+design is edited.'''
+        ..name = 'show-oxview'
+        ..onChange = (_) {
+          props.dispatch(actions.OxviewShowSet(!props.show_oxview));
+        }
+        ..key = 'show-oxview')(),
+    ];
   }
 
   List<ReactElement> view_menu_zoom_speed() {
