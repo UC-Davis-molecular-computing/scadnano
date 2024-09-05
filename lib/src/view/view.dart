@@ -48,16 +48,16 @@ const FIXED_HORIZONTAL_SEPARATOR = 'fixed-horizontal-separator';
 /// to call setup_splits() more than once).
 class View {
   final DivElement root_element;
-
-  DivElement design_and_modes_buttons_container_element = DivElement()
-    ..attributes = {'id': DESIGN_AND_MODES_BUTTONS_CONTAINER_ID};
   DivElement edit_and_select_modes_element = DivElement()..attributes = {'id': EDIT_AND_SELECT_MODES_ID};
   DivElement menu_element = DivElement()..attributes = {'id': MENU_ID};
   DivElement nonmenu_panes_container_element = DivElement()..attributes = {'id': NONMENU_PANES_CONTAINED_ID};
   DivElement design_element = DivElement()..attributes = {'id': DESIGN_ID};
+
+  DivElement design_and_modes_buttons_container_element = DivElement()
+    ..attributes = {'id': DESIGN_AND_MODES_BUTTONS_CONTAINER_ID, 'class': 'split'};
   DivElement design_oxview_separator = DivElement()
     ..attributes = {'id': 'design-oxview-separator', 'class': 'draggable-separator'};
-  DivElement oxview_element = DivElement()..attributes = {'id': OXVIEW_ID};
+  DivElement oxview_element = DivElement()..attributes = {'id': OXVIEW_ID, 'class': 'split'};
 
   DesignViewComponent design_view;
   OxviewViewComponent oxview_view;
@@ -114,21 +114,21 @@ class View {
     util.fit_and_center();
   }
 
- update_showing_oxview() {
-   bool show_oxview = app.state.ui_state.show_oxview;
-   if (!this.currently_showing_oxview && show_oxview) {
-     this.nonmenu_panes_container_element.children.add(design_oxview_separator);
-     this.nonmenu_panes_container_element.children.add(oxview_element);
-     this.currently_showing_oxview = true;
-     this.set_design_oxview_pane_widths();
-     setup_splits(show_oxview);
-   } else if (this.currently_showing_oxview && !show_oxview) {
-     this.nonmenu_panes_container_element.children.remove(design_oxview_separator);
-     this.nonmenu_panes_container_element.children.remove(oxview_element);
-     this.currently_showing_oxview = false;
-     setup_splits(show_oxview);
-   }
- }
+  update_showing_oxview() {
+    bool show_oxview = app.state.ui_state.show_oxview;
+    if (!this.currently_showing_oxview && show_oxview) {
+      this.nonmenu_panes_container_element.children.add(design_oxview_separator);
+      this.nonmenu_panes_container_element.children.add(oxview_element);
+      this.currently_showing_oxview = true;
+      this.set_design_oxview_pane_widths();
+      setup_splits(show_oxview);
+    } else if (this.currently_showing_oxview && !show_oxview) {
+      this.nonmenu_panes_container_element.children.remove(design_oxview_separator);
+      this.nonmenu_panes_container_element.children.remove(oxview_element);
+      this.currently_showing_oxview = false;
+      setup_splits(show_oxview);
+    }
+  }
 
   set_design_oxview_pane_widths() {
     String design_width = local_storage.design_width();

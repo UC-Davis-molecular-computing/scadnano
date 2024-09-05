@@ -13,10 +13,7 @@ function setup_split_drag(left_pane_id, right_pane_id, separator_id) {
     var rightPane = document.getElementById(right_pane_id);
     var paneSep = document.getElementById(separator_id);
     var parent = leftPane.parentElement;
-    console.log("leftPane.id: " + leftPane.id + " rightPane.id: " + rightPane.id + " separator_id: " + separator_id);
-    console.log("parent: " + parent.id + " parent.offsetWidth: " + parent.offsetWidth);
     paneSep.sdrag(function (el, pageX, startX, pageY, startY, fix) {
-
         fix.skipX = true;
 
         if (pageX < parent.offsetWidth * leftLimit / 100) {
@@ -42,15 +39,12 @@ function setup_split_drag(left_pane_id, right_pane_id, separator_id) {
 
         var left_pane_width_key = _LOCAL_STORAGE_PREFIX + left_pane_id +'-width';
         window.localStorage[left_pane_width_key] = leftPane.style.width;
-
-        console.log(leftPane.id + " width: " + leftPane.style.width + "; " + rightPane.id + " width: " + rightPane.style.width);
-
     }, null, 'horizontal');
 }
 
 function clear_split_drag(pane_id) {
     var pane = document.getElementById(pane_id);
     // delete pane.style;
-    pane.style = "";
+    pane.style.width = "100%";
     delete pane.style;
 }
