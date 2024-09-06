@@ -240,19 +240,17 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       ];
 
   change_insertion_length() async {
-    int new_length = await ask_for_length(
-      'change insertion length',
-      current_length: props.insertion.length,
-      lower_bound: 1,
-      dialog_type: DialogType.set_insertion_length,
-      tooltip: """\
+    int new_length = await ask_for_length('change insertion length',
+        current_length: props.insertion.length,
+        lower_bound: 1,
+        dialog_type: DialogType.set_insertion_length,
+        tooltip: """\
 Changes the insertion length. 
 
 Keep in mind that the insertion length is the number of *extra* bases.
 So for example an insertion length of 1 would represent at that offset
 2 total bases: the original base and the 1 extra base from the insertion.
-"""
-    );
+""");
     if (new_length == props.insertion.length) {
       return;
     }
