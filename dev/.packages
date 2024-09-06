@@ -76,7 +76,6 @@ shelf:packages/shelf/
 shelf_packages_handler:packages/shelf_packages_handler/
 shelf_static:packages/shelf_static/
 shelf_web_socket:packages/shelf_web_socket/
-smart_dialogs:packages/smart_dialogs/
 source_gen:packages/source_gen/
 source_map_stack_trace:packages/source_map_stack_trace/
 source_maps:packages/source_maps/
