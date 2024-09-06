@@ -158,9 +158,7 @@ abstract class UndoRedoClear
 
 /// [Action] intended for applying >= 2 other [UndoableAction]s at once,
 /// which can be undone/redone in a single step by [UndoRedo].
-abstract class BatchAction
-    with BuiltJsonSerializable, UndoableAction
-    implements Built<BatchAction, BatchActionBuilder> {
+abstract class BatchAction with UndoableAction implements Built<BatchAction, BatchActionBuilder> {
   BuiltList<UndoableAction> get actions;
 
   String get short_description_value;
@@ -3681,8 +3679,9 @@ abstract class Modifications5PrimeEdit
   /************************ begin BuiltValue boilerplate ************************/
   factory Modifications5PrimeEdit(
       {Iterable<SelectableModification5Prime> modifications, Modification5Prime new_modification}) {
-    return Modifications5PrimeEdit.from(
-        (b) => b..modifications.replace(modifications)..new_modification.replace(new_modification));
+    return Modifications5PrimeEdit.from((b) => b
+      ..modifications.replace(modifications)
+      ..new_modification.replace(new_modification));
   }
 
   factory Modifications5PrimeEdit.from([void Function(Modifications5PrimeEditBuilder) updates]) =
@@ -3706,8 +3705,9 @@ abstract class Modifications3PrimeEdit
   /************************ begin BuiltValue boilerplate ************************/
   factory Modifications3PrimeEdit(
       {Iterable<SelectableModification3Prime> modifications, Modification3Prime new_modification}) {
-    return Modifications3PrimeEdit.from(
-        (b) => b..modifications.replace(modifications)..new_modification.replace(new_modification));
+    return Modifications3PrimeEdit.from((b) => b
+      ..modifications.replace(modifications)
+      ..new_modification.replace(new_modification));
   }
 
   factory Modifications3PrimeEdit.from([void Function(Modifications3PrimeEditBuilder) updates]) =
@@ -3731,8 +3731,9 @@ abstract class ModificationsInternalEdit
   /************************ begin BuiltValue boilerplate ************************/
   factory ModificationsInternalEdit(
       {Iterable<SelectableModificationInternal> modifications, ModificationInternal new_modification}) {
-    return ModificationsInternalEdit.from(
-        (b) => b..modifications.replace(modifications)..new_modification.replace(new_modification));
+    return ModificationsInternalEdit.from((b) => b
+      ..modifications.replace(modifications)
+      ..new_modification.replace(new_modification));
   }
 
   factory ModificationsInternalEdit.from([void Function(ModificationsInternalEditBuilder) updates]) =
