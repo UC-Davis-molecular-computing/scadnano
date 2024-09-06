@@ -8,6 +8,7 @@ import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
 
+import '../util.dart';
 import 'design_main_strand_and_domain_texts.dart';
 import 'design_main_strand_dna_end.dart';
 import 'design_main_strand_modification.dart';
@@ -275,6 +276,24 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       app.disable_keyboard_shortcuts_while(
           () => ask_for_add_modification(props.strand, substrand, address, type));
 
+  focus_base_oxview(Strand strand, Substrand substrand, Address address, ModificationType type) {
+    int strand_idx = app.state.design.strands.indexOf(strand);
+    int nt_idx_in_strand = address != null ? clicked_strand_dna_idx(substrand, address, strand) : 0;
+    String js_highlight_base = '''\
+let base = systems[0].strands[${strand_idx}].getMonomers()[${nt_idx_in_strand}];
+api.findElement(base);
+api.selectElements([base]);''';
+    String text_blob_type = blob_type_to_string(BlobType.text);
+    Blob blob_js_highlight_base = new Blob([js_highlight_base], text_blob_type);
+    Map<String, dynamic> message_js_commands = {
+      'message': 'iframe_drop',
+      'files': [blob_js_highlight_base],
+      'ext': ['js'],
+    };
+    app.view.oxview_view.frame.contentWindow
+        ?.postMessage(message_js_commands, 'https://sulcgroup.github.io/oxdna-viewer/');
+  }
+
   assign_scale_purification_fields() =>
       app.disable_keyboard_shortcuts_while(ask_for_assign_scale_purification_fields);
 
@@ -425,6 +444,11 @@ assigned, assign the complementary DNA sequence to this strand.
         title: 'add modification',
         on_click: () => add_modification(substrand, address, type),
       ),
+      if (app.state.ui_state.show_oxview)
+        ContextMenuItem(
+          title: 'focus in oxView',
+          on_click: () => focus_base_oxview(props.strand, substrand, address, type),
+        ),
       ContextMenuItem(
           title: 'edit vendor fields',
           nested: [

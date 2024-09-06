@@ -5,7 +5,6 @@ import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/state/dialog.dart';
-import 'package:smart_dialogs/smart_dialogs.dart';
 
 import 'transform_by_helix_group.dart';
 import '../state/geometry.dart';
@@ -216,7 +215,8 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     int new_length = await app.disable_keyboard_shortcuts_while(() => ask_for_length(
         'change loopout length (0 to convert to crossover)',
         current_length: props.loopout.loopout_num_bases,
-        lower_bound: 0));
+        lower_bound: 0,
+        dialog_type: DialogType.set_loopout_length));
     if (new_length == null || new_length == props.loopout.loopout_num_bases) {
       return;
     }
@@ -435,122 +435,29 @@ String loopout_path_description_same_helix_same_direction(Loopout loopout, Helix
   return path;
 }
 
-// String loopout_path_description_within_group_new(Helix prev_helix, Helix next_helix, Domain prev_domain,
-//     Domain next_domain, Loopout loopout, bool include_start_M) {
-//   Helix top_helix = prev_helix;
-//   Helix bot_helix = next_helix;
-//   Geometry geometry = prev_helix.geometry;
-//   Domain top_domain = prev_domain;
-//   Domain bot_domain = next_domain;
-//   if (top_helix.idx == bot_helix.idx) {
-//     top_helix = bot_helix = next_helix;
-//     if (!prev_domain.forward) {
-//       top_domain = next_domain;
-//       bot_domain = prev_domain;
-//     }
-//   } else if (top_helix.svg_position.y > bot_helix.svg_position.y) {
-//     top_helix = next_helix;
-//     bot_helix = prev_helix;
-//     top_domain = next_domain;
-//     bot_domain = prev_domain;
-//   }
-//   bool top_dom_is_prev = top_domain == prev_domain;
-//
-//   int top_offset = top_dom_is_prev ? top_domain.offset_3p : top_domain.offset_5p;
-//   int bot_offset = top_dom_is_prev ? bot_domain.offset_5p : bot_domain.offset_3p;
-//   int prev_offset = top_dom_is_prev ? top_offset : bot_offset;
-//   int next_offset = top_dom_is_prev ? bot_offset : top_offset;
-//
-//   var prev_svg = prev_helix.svg_base_pos(prev_offset, prev_domain.forward);
-//   var next_svg = next_helix.svg_base_pos(next_offset, next_domain.forward);
-//
-//   var top_svg = prev_svg;
-//   var bot_svg = next_svg;
-//   if (top_helix.idx == bot_helix.idx) {
-//     if (!prev_domain.forward) {
-//       top_svg = next_svg;
-//       bot_svg = prev_svg;
-//     }
-//   } else if (top_helix.svg_position.y > bot_helix.svg_position.y) {
-//     top_svg = next_svg;
-//     bot_svg = prev_svg;
-//   }
-//
-//   var w, h;
-//
-//   if (top_helix.idx == bot_helix.idx) {
-//     w = 1.5 * util.sigmoid(loopout.loopout_length - 1) * geometry.base_width_svg;
-//     // h = 5 * util.sigmoid(loopout.loopout_length - 5) * geometry.base_height_svg;
-//     h = 5 * util.sigmoid(loopout.loopout_length - 1) * geometry.base_height_svg;
-//     print('h = $h');
-//   } else {
-//     w = 2 * util.sigmoid(loopout.loopout_length) * geometry.base_width_svg;
-//     h = 5 * util.sigmoid(loopout.loopout_length - 3) * geometry.base_height_svg;
-//   }
-//
-//   var y_offset_bot = bot_svg.y;
-//   var y_offset_top = top_svg.y;
-//   var x_offset_bot = bot_svg.x;
-//   var x_offset_top = top_svg.x;
-//   if (top_offset == top_domain.start) {
-//     x_offset_top -= w;
-//   } else {
-//     x_offset_top += w;
-//   }
-//   if (bot_offset == bot_domain.start) {
-//     x_offset_bot -= w;
-//   } else {
-//     x_offset_bot += w;
-//   }
-//   y_offset_top += h;
-//   y_offset_bot -= h;
-//
-//   var c_bot = Point<num>(x_offset_bot, y_offset_bot);
-//   var c_top = Point<num>(x_offset_top, y_offset_top);
-//
-//   var vector = bot_svg - top_svg;
-//   num angle_radians_from_x_axis = -atan2(vector.y, vector.x);
-//   num angle_degrees_from_x_axis = util.to_degrees(angle_radians_from_x_axis);
-//   num angle_degrees_from_y_axis = 90 - angle_degrees_from_x_axis;
-//   var c_bot_rot = util.rotate(c_bot, angle_degrees_from_y_axis, origin: prev_svg);
-//   var c_top_rot = util.rotate(c_top, angle_degrees_from_y_axis, origin: next_svg);
-//   print('top offset = ${top_offset}');
-//   print('  angle = ${angle_degrees_from_y_axis}');
-//
-//   var path = (include_start_M ? 'M ${prev_svg.x} ${prev_svg.y} ' : '') +
-//       'C ${c_bot_rot.x} ${c_bot_rot.y} ${c_top_rot.x} ${c_top_rot.y} '
-//           '${next_svg.x} ${next_svg.y}';
-//
-//   return path;
-// }
+Future<int> ask_for_length(String title,
+    {int current_length, int lower_bound, DialogType dialog_type, String tooltip = ""}) async {
+  int length_idx = 0;
+  var items = List<DialogItem>.filled(1, null);
+  items[length_idx] = DialogInteger(
+    label: 'new length:',
+    value: current_length,
+    tooltip: tooltip,
+  );
+  var dialog = Dialog(
+    title: title,
+    type: dialog_type,
+    items: items,
+    use_saved_response: false,
+  );
 
-Future<int> ask_for_length(String title, {int current_length, int lower_bound}) async {
-  // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html
-  String buttontype = DiaAttr.CHECKBOX;
-  String htmlTitleText = title;
-  List<String> textLabels = ['new length:'];
-  List<List<String>> comboInfo = null;
-  List<String> defaultInputTexts = ['${current_length}'];
-  List<int> widths = [1];
-  List<String> isChecked = null;
-  bool alternateRowColor = false;
-  List<String> buttonLabels = ['OK', 'Cancel'];
+  List<DialogItem> results = await util.dialog(dialog);
+  if (results == null) return current_length;
 
-  UserInput result = await Info.get(buttontype, htmlTitleText, textLabels, comboInfo, defaultInputTexts,
-      widths, isChecked, alternateRowColor, buttonLabels);
-
-  if (result.buttonCode != 'DIA_ACT_OK') {
-    return null;
-  }
-
-  String length_str = result.getUserInput(0)[0];
-  int length = int.tryParse(length_str);
-  if (length == null) {
-    Info.show('"$length_str" is not a valid integer');
-    return null;
-  } else if (length < lower_bound) {
-    Info.show('length must be at least ${lower_bound}, but it is $length_str');
-    return null;
+  int length = (results[length_idx] as DialogInteger).value;
+  if (length < lower_bound) {
+    window.alert('length must be at least ${lower_bound}, but you entered $length');
+    return current_length;
   }
 
   return length;

@@ -57,7 +57,7 @@ abstract class AppUIStateStorables
 
   bool get show_unpaired_insertion_deletions;
 
-  bool get show_editor;
+  bool get show_oxview;
 
   bool get show_slice_bar;
 
@@ -157,7 +157,7 @@ abstract class AppUIStateStorables
     b.show_mismatches = false;
     b.show_domain_name_mismatches = false;
     b.show_unpaired_insertion_deletions = true;
-    b.show_editor = false;
+    b.show_oxview = false;
     b.only_display_selected_helices = false;
     b.zoom_speed = 0.3;
     b.modification_font_size = constants.default_modification_font_size;

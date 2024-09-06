@@ -6,7 +6,6 @@ import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
-import 'package:smart_dialogs/smart_dialogs.dart';
 
 import 'package:scadnano/src/state/modification_type.dart';
 import 'package:scadnano/src/view/transform_by_helix_group.dart';
@@ -307,33 +306,24 @@ tooltip_text(Extension ext) =>
     (ext.label == null ? "" : "\n    label=${ext.label.toString()}");
 
 Future<int> ask_for_num_bases(String title, {int current_num_bases, int lower_bound}) async {
-  // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html
-  String buttontype = DiaAttr.CHECKBOX;
-  String htmlTitleText = title;
-  List<String> textLabels = ['new number of bases:'];
-  List<List<String>> comboInfo = null;
-  List<String> defaultInputTexts = ['${current_num_bases}'];
-  List<int> widths = [1];
-  List<String> isChecked = null;
-  bool alternateRowColor = false;
-  List<String> buttonLabels = ['OK', 'Cancel'];
+  int num_bases_idx = 0;
+  var items = List<DialogItem>.filled(1, null);
+  items[num_bases_idx] = DialogInteger(label: 'number of bases:', value: current_num_bases);
+  var dialog = Dialog(
+    title: title,
+    type: DialogType.set_extension_num_bases,
+    items: items,
+    use_saved_response: false,
+  );
 
-  UserInput result = await Info.get(buttontype, htmlTitleText, textLabels, comboInfo, defaultInputTexts,
-      widths, isChecked, alternateRowColor, buttonLabels);
+  List<DialogItem> results = await util.dialog(dialog);
+  if (results == null) return current_num_bases;
 
-  if (result.buttonCode != 'DIA_ACT_OK') {
-    return null;
+  int num_bases = (results[num_bases_idx] as DialogInteger).value;
+  if (num_bases < lower_bound) {
+    window.alert('number of bases must be at least ${lower_bound}, but you entered $num_bases');
+    return current_num_bases;
   }
 
-  String length_str = result.getUserInput(0)[0];
-  int length = int.tryParse(length_str);
-  if (length == null) {
-    Info.show('"$length_str" is not a valid integer');
-    return null;
-  } else if (length < lower_bound) {
-    Info.show('number of bases must be at least ${lower_bound}, but it is $length_str');
-    return null;
-  }
-
-  return length;
+  return num_bases;
 }

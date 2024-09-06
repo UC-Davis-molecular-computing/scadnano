@@ -13,9 +13,10 @@ import '../view/edit_and_select_modes.dart';
 import '../state/app_state.dart';
 import 'design.dart';
 import 'menu.dart';
-import 'editor.dart';
+import 'oxview.dart';
 import '../app.dart';
 import '../util.dart' as util;
+import '../middleware/local_storage.dart' as local_storage;
 
 import '../constants.dart' as constants;
 
@@ -24,7 +25,7 @@ external setup_svg_panzoom_js(void Function() svg_cache_callback,
     void Function(bool) dispatch_zoom_threshold_callback, num zoom_threshold);
 
 @JS(constants.js_function_name_setup_splits)
-external setup_splits(bool show_editor);
+external setup_splits(bool show_oxview);
 
 @JS(constants.js_function_name_sdrag)
 external sdrag_js();
@@ -33,8 +34,9 @@ const MENU_ID = 'menu';
 const EDIT_MODE_ID = 'edit-mode';
 const SELECT_MODE_ID = 'select-mode';
 const DESIGN_ID = 'design-pane';
-const EDITOR_ID = 'editor-pane';
+const OXVIEW_ID = 'oxview-pane';
 const DESIGN_AND_MODES_BUTTONS_CONTAINER_ID = 'design-and-modes-buttons-container';
+const NONMENU_PANES_CONTAINED_ID = 'nonmenu-panes-container';
 const EDIT_AND_SELECT_MODES_ID = 'modes-buttons';
 
 const FIXED_VERTICAL_SEPARATOR = 'fixed-vertical-separator';
@@ -46,32 +48,30 @@ const FIXED_HORIZONTAL_SEPARATOR = 'fixed-horizontal-separator';
 /// to call setup_splits() more than once).
 class View {
   final DivElement root_element;
-
-  DivElement design_and_modes_buttons_container_element = DivElement()
-    ..attributes = {'id': DESIGN_AND_MODES_BUTTONS_CONTAINER_ID};
   DivElement edit_and_select_modes_element = DivElement()..attributes = {'id': EDIT_AND_SELECT_MODES_ID};
   DivElement menu_element = DivElement()..attributes = {'id': MENU_ID};
+  DivElement nonmenu_panes_container_element = DivElement()..attributes = {'id': NONMENU_PANES_CONTAINED_ID};
   DivElement design_element = DivElement()..attributes = {'id': DESIGN_ID};
-  DivElement design_editor_separator = DivElement()
-    ..attributes = {'id': 'design-editor-separator', 'class': 'draggable-separator'};
-  DivElement editor_element = DivElement()..attributes = {'id': EDITOR_ID};
+
+  DivElement design_and_modes_buttons_container_element = DivElement()
+    ..attributes = {'id': DESIGN_AND_MODES_BUTTONS_CONTAINER_ID, 'class': 'split'};
+  DivElement design_oxview_separator = DivElement()
+    ..attributes = {'id': 'design-oxview-separator', 'class': 'draggable-separator'};
 
   DesignViewComponent design_view;
-  EditorViewComponent editor_view;
+  OxviewViewComponent oxview_view;
 
-  bool currently_showing_editor;
+  bool currently_showing_oxview = false;
 
   View(this.root_element) {
     setup_file_drag_and_drop_listener(root_element);
 
-    currently_showing_editor = app.state.ui_state.show_editor;
-
     this.root_element.children.add(menu_element);
     var menu_design_separator = DivElement()..attributes = {'class': FIXED_HORIZONTAL_SEPARATOR};
     this.root_element.children.add(menu_design_separator);
-    this.root_element.children.add(this.design_and_modes_buttons_container_element);
-    // DEBUG the virtual canvas for svg-png-caching, uncomment this, used in utils.dart
-    // this.root_element.children.add(CanvasElement(width: 100, height: 100)..id='canvas-dev');
+    this.root_element.children.add(this.nonmenu_panes_container_element);
+
+    this.nonmenu_panes_container_element.children.add(this.design_and_modes_buttons_container_element);
 
     this.design_and_modes_buttons_container_element.children.add(design_element);
     var design_mode_separator = DivElement()..attributes = {'class': FIXED_VERTICAL_SEPARATOR};
@@ -80,9 +80,16 @@ class View {
     this.design_and_modes_buttons_container_element.children.add(edit_and_select_modes_element);
 
     this.design_view = DesignViewComponent(design_element);
+    this.oxview_view = OxviewViewComponent();
+    this.nonmenu_panes_container_element.children.add(design_oxview_separator);
+    this.nonmenu_panes_container_element.children.add(this.oxview_view.div);
+
+    this.update_showing_oxview();
   }
 
   render(AppState state) {
+    this.update_showing_oxview();
+
     var store = app.store;
 
     react_dom.render(
@@ -108,25 +115,34 @@ class View {
     util.fit_and_center();
   }
 
-//  update_showing_editor() {
-//    //TODO: Firefox won't let editor pane shrink (when pan separator is dragged) to hide text;
-//    // Chrome puts a scrollbar at the bottom when that happens and lets the editor pane shrink
-//    // arbitrarily (which is the desired behavior)
-//
-//    if (!this.currently_showing_editor && app.state.show_editor) {
-//      this.nonmenu_panes_container_element.children.add(design_editor_separator);
-//      this.nonmenu_panes_container_element.children.add(editor_element);
-//      this.currently_showing_editor = true;
-//      setup_splits(app.state.show_editor);
-//      this.editor_view.render();
-//    } else if (this.currently_showing_editor && !app.state.show_editor) {
-//      this.nonmenu_panes_container_element.children.remove(design_editor_separator);
-//      this.nonmenu_panes_container_element.children.remove(editor_element);
-//      this.currently_showing_editor = false;
-//      setup_splits(app.state.show_editor);
-//      this.editor_view.render();
-//    }
-//  }
+  update_showing_oxview() {
+    bool show_oxview = app.state.ui_state.show_oxview;
+    if (!this.currently_showing_oxview && show_oxview) {
+      this.design_oxview_separator.hidden = false;
+      this.oxview_view.div.hidden = false;
+      this.currently_showing_oxview = true;
+      this.set_design_oxview_pane_widths();
+      setup_splits(show_oxview);
+    } else if (!show_oxview) {
+      this.design_oxview_separator.hidden = true;
+      this.oxview_view.div.hidden = true;
+      if (this.currently_showing_oxview) {
+        this.currently_showing_oxview = false;
+        setup_splits(show_oxview);
+      }
+    }
+  }
+
+  set_design_oxview_pane_widths() {
+    String design_width = local_storage.design_width();
+    if (design_width == null) {
+      design_width = constants.default_design_width;
+    }
+    num oxview_width_int = 100.0 - num.parse(design_width.substring(0, design_width.length - 1));
+    String oxview_width = '${oxview_width_int.toString()}%';
+    design_and_modes_buttons_container_element.setAttribute('style', 'width: $design_width');
+    this.oxview_view.div.setAttribute('style', 'width: $oxview_width');
+  }
 }
 
 setup_file_drag_and_drop_listener(Element drop_zone) {

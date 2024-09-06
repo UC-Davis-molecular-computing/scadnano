@@ -137,6 +137,12 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
 
     var id = 'dna-${util.id_domain(domain)}';
 
+    // textLength is the more robust way to space out the letter than letterSpacing
+    // (e.g., in Firefox it displays poorly with letterSpacing),
+    // but it caused problems with exporting to SVG and then importing into Powerpoint.
+    // So we provided an option to export SVG with each DNA base represented as its own text element
+    // to avoid the problems with textLength in Powerpoint. Keeping the commented letterSpacing code
+    // to remember why we don't want to use that anymore. :)
     return (Dom.text()
       ..key = id
       ..id = id

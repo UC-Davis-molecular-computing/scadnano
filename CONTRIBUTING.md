@@ -248,16 +248,16 @@ This project requires using Dart version **2.13**, not the latest version. Click
 <details><summary><strong>Windows</strong></summary>
 First, install <a href="https://chocolatey.org/install">Chocolatey</a> if you haven't already. If <code>choco help</code> shows a help menu for using Chocolatey, then you've set it up correctly.
 
-Then, install Dart 2.13:
+Then, install Dart 2.13.4:
 
 <pre>
-choco install dart-sdk --version 2.13
+choco install dart-sdk --version 2.13.4
 </pre>
 
 To stop Chocolatey from automatically updating Dart to the latest version, pin it:
 
 <pre>
-choco pin --name="'dart-sdk'" --version="'2.13'"
+choco pin --name="'dart-sdk'" --version="'2.13.4'"
 </pre>
 
 </details>
@@ -265,16 +265,18 @@ choco pin --name="'dart-sdk'" --version="'2.13'"
 <details><summary><strong>macOS</strong></summary>
 First, install <a href="https://brew.sh/">Homebrew</a> if you haven't already. If <code>brew -v</code> shows some version numbers, then you've set it up correctly.
 
-Then, install Dart 2.13:
+It may help to run `brew tap dart-lang/dart` first.
+
+Then, install Dart 2.13.4:
 
 <pre>
-brew install dart@2.13
+brew install dart@2.13.4
 </pre>
 
 To stop Homebrew from automatically updating Dart to the latest version, pin it:
 
 <pre>
-brew pin dart@2.13
+brew pin dart@2.13.4
 </pre>
 
 If running `dart` in a terminal now does not work, you may need to follow <a href="https://docs.brew.sh/FAQ#my-mac-apps-dont-find-homebrew-utilities">these instructions</a>.
@@ -290,17 +292,17 @@ wget -qO- https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo gpg --dea
 echo 'deb [signed-by=/usr/share/keyrings/dart.gpg arch=amd64] https://storage.googleapis.com/download.dartlang.org/linux/debian stable main' | sudo tee /etc/apt/sources.list.d/dart_stable.list
 </pre>
 
-Then, install Dart 2.13:
+Then, install Dart 2.13.4:
 
 <pre>
 sudo apt-get update
-sudo apt-get install dart=2.13
+sudo apt-get install dart=2.13.4
 </pre>
 
 To stop apt from automatically updating Dart to the latest version, hold it:
 
 <pre>
-sudo apt-mark hold dart=2.13
+sudo apt-mark hold dart=2.13.4
 </pre>
 
 </details>
@@ -312,9 +314,7 @@ After installing the Dart SDK, you should see a help menu when you run `dart`.
 Once you have installed Dart, install all the Dart dependencies (from the same directory `scadnano` into which the project was cloned by git):
 
 ```
-
 pub get
-
 ```
 
 ### Installing `webdev`
@@ -322,25 +322,36 @@ pub get
 This project uses an older version of the `webdev` tool, not the latest version, to build and serve the web app. Install it with:
 
 ```
-
 pub global activate webdev 2.5.9
+```
+
+Note that often a message like this appears:
 
 ```
+Warning: Pub installs executables into C:\Users\pexat\AppData\Local\Pub\Cache\bin, which is not on your path.
+You can fix that by adding that directory to your system's "Path" environment variable.
+A web search for "configure windows path" will show you how.
+```
+So you may need to add the installation location of `webdev` to your PATH environment variable.
+
 
 ### Running a Local Server
 
 Run
 
 ```
-
 webdev serve
-
 ```
 
 in the `scadnano` directory to compile your code
 with the [Dart dev compiler](https://dart.dev/tools/dartdevc)
 (dartdevc) and start up a [local
 server](https://dart.dev/tools/webdev#serve).
+
+Sometimes it may be necessary to clean out the generated files and cache if this has an error. See the file `clean.sh`, which has this line: `dart run build_runner clean`. Also see `remove_g.sh`, which removes all `.g.dart` files from the project, which can also help to fix compilation errors.
+
+If that does not work, try `dart run build_runner clean --delete-conflicting-outputs`.
+
 Running `webdev serve --release` will compile the project in production mode (instead of development mode), which is claimed to be faster in principle if you are not doing development and just want to run scadnano offline.
 However, in scadnano, it doesn't appear to make a big difference whether development or production mode is used.
 The webdev program will tell you which URL to enter in your browser; it will be something like

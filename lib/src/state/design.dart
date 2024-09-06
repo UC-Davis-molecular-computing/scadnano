@@ -1276,7 +1276,12 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   static Design from_json_str(String json_str, [bool invert_y = false]) {
-    var json_map = jsonDecode(json_str);
+    Map<String, dynamic> json_map;
+    try {
+      json_map = jsonDecode(json_str);
+    } on FormatException catch (e) {
+      throw IllegalDesignError('Error in syntax of scadnano file: ${e.message}');
+    }
     return Design.from_json(json_map, invert_y);
   }
 
@@ -2099,7 +2104,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
   }
 
-  /// maps each helix_idx to a list of offsets where there is a complementary base pair on each strand
+  /// maps each helix_idx to a list of offsets where there is a complementary base pair on each strand,
+  /// or when at least one of the strands lacks DNA (is null or is `?` wildcard)
   @memoized
   BuiltMap<int, BuiltList<int>> get base_pairs => this._base_pairs(false, strands.toBuiltSet());
 
@@ -2117,8 +2123,15 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<int, BuiltList<int>> selected_base_pairs_with_mismatches(BuiltSet<Strand> selected_strands) =>
       this._base_pairs(true, selected_strands);
 
-  BuiltMap<int, BuiltList<int>> _base_pairs(bool allow_mismatches, BuiltSet<Strand> selected_strands) {
-    var base_pairs = Map<int, BuiltList<int>>();
+  // returns a list of tuples (offset, d1, d2, s1, s2), where offset is the offset on the helix
+  // of a base pair, and d1/d2/s1/s2 are the domains/strands in the base pair
+  // allow_unassigned_dna means we consider two domains with a shared offset to be paired if
+  // either of them has unassigned DNA (either no DNA sequence, or a `?` wildcard)
+  // otherwise we only consider them paired if they both have DNA; `allow_mismatches` then determines
+  // whether they need to be complementary to be considered a base pair
+  BuiltMap<int, BuiltList<Tuple5<int, Domain, Domain, Strand, Strand>>> base_pairs_with_domain_strand(
+      bool allow_mismatches, bool allow_unassigned_dna, BuiltSet<Strand> selected_strands) {
+    var base_pairs_with_domain_strand = Map<int, BuiltList<Tuple5<int, Domain, Domain, Strand, Strand>>>();
     BuiltSet<Domain> selected_domains = selected_strands
         .map((s) => s.substrands)
         .expand((x) => x)
@@ -2126,11 +2139,14 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         .map((x) => x as Domain)
         .toBuiltSet();
     for (int idx in this.helices.keys) {
-      List<int> offsets = [];
+      List<Tuple5<int, Domain, Domain, Strand, Strand>> offsets_and_domain_strand = [];
       List<Tuple2<Domain, Domain>> overlapping_domains = find_overlapping_domains_on_helix(idx);
       for (var domain_pair in overlapping_domains) {
         Domain dom1 = domain_pair.item1;
         Domain dom2 = domain_pair.item2;
+        if (!allow_unassigned_dna && (dom1.dna_sequence == null || dom2.dna_sequence == null)) {
+          continue;
+        }
         if (!selected_domains.contains(dom1) || !selected_domains.contains(dom2)) {
           continue;
         }
@@ -2141,21 +2157,38 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
           if (dom1.deletions.contains(offset) || dom2.deletions.contains(offset)) {
             continue;
           }
-          var seq1 = dom1.dna_sequence_in(offset, offset);
-          var seq2 = dom2.dna_sequence_in(offset, offset);
+          var base1 = dom1.dna_sequence_in(offset, offset);
+          var base2 = dom2.dna_sequence_in(offset, offset);
+          if (!allow_unassigned_dna) {
+            assert(base1 != null && base2 != null); // should have continue'd already
+          }
           // we use reverse_complementary instead of base_complementary here to allow for insertions
           // that may give a larger DNA sequence than length 1 at a given offset
+          // if we allow unassigned DNA, then either base being `?` means they are "complementary"
           if (allow_mismatches ||
-              util.reverse_complementary(seq1, seq2, allow_wildcard: true, allow_null: true)) {
-            offsets.add(offset);
+              (allow_unassigned_dna &&
+                  (base1 == constants.DNA_BASE_WILDCARD || base2 == constants.DNA_BASE_WILDCARD)) ||
+              util.reverse_complementary(base1, base2, allow_wildcard: true, allow_null: true)) {
+            offsets_and_domain_strand.add(Tuple5<int, Domain, Domain, Strand, Strand>(
+                offset, dom1, dom2, this.substrand_to_strand[dom1], this.substrand_to_strand[dom2]));
           }
         }
       }
-      if (offsets.isNotEmpty) {
-        base_pairs[idx] = offsets.build();
+      if (offsets_and_domain_strand.isNotEmpty) {
+        base_pairs_with_domain_strand[idx] = offsets_and_domain_strand.build();
       }
     }
 
+    return base_pairs_with_domain_strand.build();
+  }
+
+  BuiltMap<int, BuiltList<int>> _base_pairs(bool allow_mismatches, BuiltSet<Strand> selected_strands) {
+    var base_pairs_with_domain_strand =
+        this.base_pairs_with_domain_strand(allow_mismatches, true, selected_strands);
+    var base_pairs = Map<int, BuiltList<int>>();
+    for (int idx in base_pairs_with_domain_strand.keys) {
+      base_pairs[idx] = base_pairs_with_domain_strand[idx].map((x) => x.item1).toList().build();
+    }
     return base_pairs.build();
   }
 

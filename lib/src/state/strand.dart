@@ -993,9 +993,9 @@ abstract class Strand
   /// Indicates whether `self` overlaps `other_strand`, meaning that the set of offsets occupied
   /// by `self` has nonempty intersection with those occupied by `other_strand`.
   bool overlaps(Strand other) {
-    for (var substrand_self in domains) {
-      for (var substrand_other in other.domains) {
-        if (substrand_self.overlaps(substrand_other)) {
+    for (var domain_self in domains) {
+      for (var domain_other in other.domains) {
+        if (domain_self.overlaps(domain_other)) {
           return true;
         }
       }
