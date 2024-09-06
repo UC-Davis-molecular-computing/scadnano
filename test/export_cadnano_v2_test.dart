@@ -150,8 +150,8 @@ main() {
 
       expect(output_design.helices.length, 2);
       expect(output_design.grid, Grid.square);
-      expect(output_design.helices[0].grid_position, GridPosition(0, 0));
-      expect(output_design.helices[1].grid_position, GridPosition(0, 1));
+      expect(output_design.helices[0]?.grid_position, GridPosition(0, 0));
+      expect(output_design.helices[1]?.grid_position, GridPosition(0, 1));
       expect(output_design.strands.length, 3);
 
       //left staple

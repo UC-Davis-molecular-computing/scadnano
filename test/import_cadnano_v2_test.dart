@@ -69,8 +69,8 @@ main() {
       design = design.rebuild((b) => b..strands.replace(recolor_strands(design.strands)));
       expect(design.helices.length, 2);
       expect(design.grid, Grid.square);
-      expect(design.helices[0].grid_position, GridPosition(0, 0));
-      expect(design.helices[1].grid_position, GridPosition(0, 1));
+      expect(design.helices[0]?.grid_position, GridPosition(0, 0));
+      expect(design.helices[1]?.grid_position, GridPosition(0, 1));
       expect(design.strands.length, 3);
 
       //left staple
