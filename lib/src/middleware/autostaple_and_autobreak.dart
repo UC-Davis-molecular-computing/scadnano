@@ -24,7 +24,7 @@ autostaple_and_autobreak_middleware(Store<AppState> store, dynamic action, NextD
 
 _autostaple(Store<AppState> store) async {
   var response = await http.post(
-    constants.autostaple_url,
+    Uri.parse(constants.autostaple_url),
     body: json_encode(store.state.design),
     headers: {"Content-Type": "application/json"},
   );
@@ -43,7 +43,7 @@ _autobreak(Store<AppState> store, actions.Autobreak action) async {
     'design': store.state.design.to_json_serializable()
   });
   var response = await http.post(
-    constants.autobreak_url,
+    Uri.parse(constants.autobreak_url),
     body: body,
     headers: {"Content-Type": "application/json"},
   );
