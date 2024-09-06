@@ -6,6 +6,7 @@ import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:scadnano/src/state/context_menu.dart';
+import 'package:scadnano/src/state/dialog.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:tuple/tuple.dart';
 
@@ -239,9 +240,20 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       ];
 
   change_insertion_length() async {
-    int new_length = await ask_for_length('change insertion length',
-        current_length: props.insertion.length, lower_bound: 1);
-    if (new_length == null || new_length == props.insertion.length) {
+    int new_length = await ask_for_length(
+      'change insertion length',
+      current_length: props.insertion.length,
+      lower_bound: 1,
+      dialog_type: DialogType.set_insertion_length,
+      tooltip: """\
+Changes the insertion length. 
+
+Keep in mind that the insertion length is the number of *extra* bases.
+So for example an insertion length of 1 would represent at that offset
+2 total bases: the original base and the 1 extra base from the insertion.
+"""
+    );
+    if (new_length == props.insertion.length) {
       return;
     }
 

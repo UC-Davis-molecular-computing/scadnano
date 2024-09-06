@@ -2,6 +2,7 @@ import 'dart:html';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/dialog.dart';
 import '../state/geometry.dart';
 
 import 'transform_by_helix_group.dart';
@@ -211,7 +212,12 @@ class DesignMainStrandCrossoverComponent
   }
 
   convert_crossover_to_loopout() async {
-    int new_length = await ask_for_length('change loopout length', current_length: 1, lower_bound: 1);
+    int new_length = await ask_for_length(
+      'set loopout length',
+      current_length: 1,
+      lower_bound: 1,
+      dialog_type: DialogType.set_loopout_length,
+    );
     if (new_length == null || new_length == 0) {
       return;
     }

@@ -37,6 +37,9 @@ class DialogType extends EnumClass {
   static const DialogType edit_modification = _$edit_modification;
   static const DialogType set_color = _$set_color;
   static const DialogType set_loopout_name = _$set_loopout_name;
+  static const DialogType set_loopout_length = _$set_loopout_length;
+  static const DialogType set_insertion_length = _$set_insertion_length;
+  static const DialogType set_extension_num_bases = _$set_extension_num_bases;
   static const DialogType set_helix_minimum_offset = _$set_helix_minimum_offset;
   static const DialogType set_helix_maximum_offset = _$set_helix_maximum_offset;
   static const DialogType set_helix_index = _$set_helix_index;
