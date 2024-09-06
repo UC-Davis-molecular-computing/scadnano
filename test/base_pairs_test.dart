@@ -95,15 +95,15 @@ main() {
       var d01f = design.strands[0].domains[0];
       var d02f = design.strands[1].domains[0];
       var d03f = design.strands[2].domains[0];
-      var d04f = design.strands[3].domains[0];
+      // var d04f = design.strands[3].domains[0];
       var d05f = design.strands[4].domains[0];
 
       var d01r = design.strands[5].domains[0];
       var d02r = design.strands[6].domains[0];
-      var d03r = design.strands[7].domains[0];
+      // var d03r = design.strands[7].domains[0];
       var d04r = design.strands[8].domains[0];
-      var d05r = design.strands[9].domains[0];
-      var d06r = design.strands[10].domains[0];
+      // var d05r = design.strands[9].domains[0];
+      // var d06r = design.strands[10].domains[0];
 
       var d11f = design.strands[11].domains[0];
       var d12f = design.strands[12].domains[0];

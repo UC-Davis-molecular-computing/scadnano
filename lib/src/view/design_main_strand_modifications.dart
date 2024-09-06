@@ -97,8 +97,6 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
       }
     }
 
-    var sel_mod = props.strand.selectable_modifications_int_by_dna_idx;
-
     // for (int dna_idx_mod in props.strand.modifications_int.keys) {
     for (int dna_idx_mod in props.strand.selectable_modifications_int_by_dna_idx.keys) {
       // find substrand with modification, and the DNA index of its 5' end
@@ -143,5 +141,3 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
     return modifications.isEmpty ? null : (Dom.g()..className = 'modifications')(modifications);
   }
 }
-
-bool mod_5p_is_in_extension(Strand strand) {}

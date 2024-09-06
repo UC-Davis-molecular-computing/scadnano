@@ -236,8 +236,8 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
 
         if (!eq(chosen_sorted.toList(), helices_view_order_chosen_sorted)) {
           // finding duplicate values in helices_view_order_chosen_sorted
-          List unique_vals = List();
-          List duplicates = List();
+          List<int> unique_vals = [];
+          List<int> duplicates = [];
           for (int i in helices_view_order_chosen_sorted) {
             if (unique_vals.contains(i))
               duplicates.add(i);
@@ -276,7 +276,6 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
 
   Future<void> ask_new_helix_indices_for_current_group() async {
     var group = props.groups[props.displayed_group_name];
-    var existing_grid = group.grid;
 
     List<DialogItem> items = [];
     items.add(DialogLabel(label: 'current view order: ' + group.helices_view_order.join(' ')));

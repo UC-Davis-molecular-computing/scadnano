@@ -82,7 +82,7 @@ class App {
       await test_stuff();
     } else {
       warn_wrong_browser();
-      react.setClientConfiguration();
+      // react.setClientConfiguration(); //FIXME: says this is no longer required but let's double-check
       initialize_state();
       setup_undo_redo_keyboard_listeners();
       setup_save_open_dna_file_keyboard_listeners();

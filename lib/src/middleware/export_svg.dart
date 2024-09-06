@@ -428,7 +428,6 @@ clone_and_apply_style_rec(Element elt_styled, Element elt_orig, {int depth = 0})
 //        children_styled_to_remove.add(child_styled);
 //      }
 
-    var style_strings = [];
     for (var style_name in relevant_styles[tag_name]) {
       var style_value = style_def.getPropertyValue(style_name);
       if (style_value != '') {

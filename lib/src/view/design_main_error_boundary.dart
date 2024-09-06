@@ -104,11 +104,7 @@ class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
     return props.loggerName ?? defaultErrorBoundaryLoggerName;
   }
 
-  void _logErrorCaughtByErrorBoundary(
-    /*Error|Exception*/ dynamic error,
-    ReactErrorInfo info, {
-    bool isRecoverable = true,
-  }) {
+  void _logErrorCaughtByErrorBoundary(/*Error|Exception*/ dynamic error, ReactErrorInfo info) {
     if (!props.shouldLogErrors) return;
 
     final message =

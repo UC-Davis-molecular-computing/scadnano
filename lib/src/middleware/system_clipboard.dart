@@ -160,7 +160,6 @@ void put_strand_info_on_clipboard(Store<AppState> store) {
 
     //Get modifcations from all strands
     var modifications = all_modifications(strands.toBuiltList());
-    List<String> mod_clipboard_strings = [];
     var encoder = SuppressableIndentEncoder(Replacer(), suppress: true);
     Map<String, dynamic> mods_map = {};
     if (modifications.length > 0) {

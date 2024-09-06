@@ -1,11 +1,9 @@
 // @dart=2.9
-import 'dart:html';
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:platform_detect/platform_detect.dart';
-import 'package:react/react_client/react_interop.dart';
 import 'package:scadnano/src/state/group.dart';
 import 'package:scadnano/src/view/transform_by_helix_group.dart';
 import 'package:tuple/tuple.dart';

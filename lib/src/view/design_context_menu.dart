@@ -1,6 +1,5 @@
 // @dart=2.9
 import 'dart:html';
-import 'dart:math';
 
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
@@ -11,6 +10,7 @@ import '../app.dart';
 import 'pure_component.dart';
 import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
+
 part 'design_context_menu.over_react.g.dart';
 
 UiFactory<DesignContextMenuProps> ConnectedDesignContextMenu =

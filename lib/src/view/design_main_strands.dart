@@ -4,7 +4,6 @@ import 'dart:html';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:react/react_client/react_interop.dart';
 import 'package:scadnano/src/state/dna_assign_options.dart';
 
 import '../state/group.dart';

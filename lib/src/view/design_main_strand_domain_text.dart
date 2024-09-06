@@ -1,6 +1,5 @@
 // @dart=2.9
 import 'dart:html';
-import 'dart:math';
 
 import 'package:meta/meta.dart';
 import 'package:over_react/over_react.dart';

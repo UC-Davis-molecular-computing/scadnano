@@ -1,12 +1,10 @@
 // @dart=2.9
 import 'dart:html';
-import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:quiver/iterables.dart' as iter;
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
-import 'package:react/react_client.dart';
 
 import '../state/context_menu.dart';
 import '../state/geometry.dart';

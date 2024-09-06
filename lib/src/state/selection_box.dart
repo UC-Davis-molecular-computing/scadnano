@@ -1,5 +1,4 @@
 // @dart=2.9
-import 'dart:html';
 import 'dart:svg' hide Point;
 import 'dart:math';
 

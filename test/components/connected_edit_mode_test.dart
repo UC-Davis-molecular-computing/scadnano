@@ -1,15 +1,10 @@
 // @dart=2.9
 
 @TestOn('browser')
-// import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:over_react_test/jacket.dart';
 import 'package:over_react_test/over_react_test.dart';
 import 'package:react/react_client/react_interop.dart';
-// import 'package:react/react_client.dart';
-// import 'package:redux/redux.dart';
 import 'package:scadnano/src/app.dart';
-// import '../reducers/app_state_reducer.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/view/edit_mode.dart';
