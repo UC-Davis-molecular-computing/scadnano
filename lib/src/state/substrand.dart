@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'package:color/color.dart';
 
 import '../json_serializable.dart';

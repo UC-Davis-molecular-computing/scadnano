@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'package:redux/redux.dart';
 
 import '../state/dialog.dart';

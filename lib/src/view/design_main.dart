@@ -1,3 +1,4 @@
+// @dart=2.9
 library view_main;
 
 import 'dart:html';

@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'package:built_value/serializer.dart';
 import '../state/strand_part.dart';
 

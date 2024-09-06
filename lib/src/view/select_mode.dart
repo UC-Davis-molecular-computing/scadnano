@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import '../view/redraw_counter_component_mixin.dart';

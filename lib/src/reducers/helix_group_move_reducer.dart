@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/design.dart';

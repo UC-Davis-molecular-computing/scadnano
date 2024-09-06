@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'package:logging/logging.dart';
 import 'package:over_react/over_react.dart' hide ErrorBoundaryState, ErrorBoundaryProps;
 import 'package:over_react/src/component/error_boundary.dart';

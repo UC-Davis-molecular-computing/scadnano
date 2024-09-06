@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'package:built_collection/built_collection.dart';
 import 'dart:math';
 import 'package:scadnano/src/state/edit_mode.dart';

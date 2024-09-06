@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'package:redux/redux.dart';
 import '../state/dna_ends_move.dart';
 

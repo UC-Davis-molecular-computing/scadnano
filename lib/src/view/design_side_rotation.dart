@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/state/design_side_rotation_data.dart';
 

@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'package:redux/redux.dart';
 import 'app_ui_state_reducer.dart';
 import 'design_reducer.dart';

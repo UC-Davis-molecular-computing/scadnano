@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'package:scadnano/src/state/address.dart';
 import '../reducers/util_reducer.dart';
 import '../state/app_state.dart';

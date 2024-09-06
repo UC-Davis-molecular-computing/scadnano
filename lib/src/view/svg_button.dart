@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'package:over_react/over_react.dart';
 
 part 'svg_button.over_react.g.dart';

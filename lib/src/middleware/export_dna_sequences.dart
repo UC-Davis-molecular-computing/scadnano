@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/dialog.dart';
 import 'package:scadnano/src/state/export_dna_format.dart';

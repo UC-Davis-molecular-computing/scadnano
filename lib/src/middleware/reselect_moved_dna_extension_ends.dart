@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'package:react/react.dart';
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';

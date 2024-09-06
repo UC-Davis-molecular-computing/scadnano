@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/crossover.dart';

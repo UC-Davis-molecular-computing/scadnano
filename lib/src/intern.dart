@@ -1,3 +1,4 @@
+// @dart=2.9
 Set _cache = {};
 
 V intern<V>(V value) {
