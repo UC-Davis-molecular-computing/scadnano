@@ -89,36 +89,31 @@ class App {
     if (RUN_TEST_CODE_INSTEAD_OF_APP) {
       await test_stuff();
     } else {
+      print("1");
       warn_wrong_browser();
+      print("2");
       initialize_state();
+      print("3");
       setup_undo_redo_keyboard_listeners();
+      print("4");
       setup_save_open_dna_file_keyboard_listeners();
+      print("5");
       copy_selected_strands_to_clipboard_image_keyboard_listeners();
+      print("6");
       restore_all_local_storage(app.store);
+      print("7");
       setup_warning_before_unload();
+      print("8");
       setup_save_design_to_localStorage_before_unload();
+      print("9");
       make_dart_functions_available_to_js(state);
+      print("10");
       setup_view();
+      print("11");
       // do next after view renders so that JS SVG pan zoom containers are defined
       util.set_zoom_speed(store.state.ui_state.zoom_speed);
+      print("12");
     }
-  }
-
-  void setup_view() {
-    DivElement app_root_element = querySelector('#top-container') as DivElement;
-    this.view = View(app_root_element);
-    this.view.render(state);
-    this.view.oxview_view.frame.onLoad.listen((event) {
-      Blob blob_js_camera_commands =
-          new Blob(['camera.up.multiplyScalar(-1)'], blob_type_to_string(BlobType.text));
-      Map<String, dynamic> message = {
-        'message': 'iframe_drop',
-        'files': [blob_js_camera_commands],
-        'ext': ['js'],
-      };
-      this.view.oxview_view.frame.contentWindow?.postMessage(message, constants.OXVIEW_URL);
-      update_oxview_view(app.state.design, this.view.oxview_view.frame);
-    });
   }
 
   initialize_state() {
@@ -126,7 +121,8 @@ class App {
 
     if (USE_REDUX_DEV_TOOLS) {
       print('SCADNANO_PROD = "${SCADNANO_PROD}", so Redux Devtools enabled; disable it to boost performance');
-      var middleware_plus = all_middleware + [overReactReduxDevToolsMiddleware];
+      // var middleware_plus = all_middleware + [overReactReduxDevToolsMiddleware];
+      var middleware_plus = all_middleware + [overReactReduxDevToolsMiddlewareFactory(name: 'scadnano')];
       store = DevToolsStore<AppState>(app_state_reducer, initialState: state, middleware: middleware_plus);
     } else {
       print('SCADNANO_PROD = "${SCADNANO_PROD}", so Redux Devtools disabled');
@@ -234,6 +230,25 @@ class App {
 
   make_dart_functions_available_to_js(AppState state) {
     util.make_dart_function_available_to_js('dart_main_view_pointer_up', main_view_pointer_up);
+  }
+
+  setup_view() {
+    DivElement app_root_element = querySelector('#top-container') as DivElement;
+    this.view = View(app_root_element);
+    this.view.render(state);
+    // Each time the oxView frame loads, tell it to adjust the camera to be the same angle as the
+    // main view in scadnano: y down, z right, x out of the screen.
+    this.view.oxview_view.frame.onLoad.listen((event) {
+      Blob blob_js_camera_commands =
+          new Blob(['camera.up.multiplyScalar(-1)'], blob_type_to_string(BlobType.text));
+      Map<String, dynamic> message = {
+        'message': 'iframe_drop',
+        'files': [blob_js_camera_commands],
+        'ext': ['js'],
+      };
+      this.view.oxview_view.frame.contentWindow?.postMessage(message, constants.OXVIEW_URL);
+      update_oxview_view(app.state.design, this.view.oxview_view.frame);
+    });
   }
 }
 

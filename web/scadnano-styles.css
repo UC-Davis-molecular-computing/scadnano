@@ -47,7 +47,7 @@ label + select {
     overflow: hidden;
 }
 
-#top-container,#oxview-frame {
+#top-container, #oxview-frame {
     display: flex;
     height: 100%;
     overflow: hidden;
@@ -955,6 +955,10 @@ https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-cen
 .dropdown-menu,
 .form-control {
     font-size: 0.8rem;
+}
+
+.dropdown-menu.show {
+    overflow-y: auto;
 }
 
 /* Thin the navbar */
