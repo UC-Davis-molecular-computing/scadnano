@@ -17,11 +17,11 @@ final DEFAULT_AppState = AppStateBuilder().build();
 abstract class AppState implements Built<AppState, AppStateBuilder> {
   // This is a bit hacky. When we migrated to null safety, I didn't want to have to put
   // ! operators every time `app.state.design` is read, so I made `design` into a "true"
-  // getter and let maybe_design be the nullable Design. There were a few bugs where some
+  // getter and let `maybe_design` be the nullable `Design`. There were a few bugs where some
   // code was checking whether `design` is null, which now didn't work (accessing the getter
-  // raised an exception). But since almost all the code executes only when a proper design
-  // is loaded, this is much more ergonomic. But we need to be careful in the rare
-  // circumstances (loading the app initially, some testing) when `state.maybe_design`
+  // raised an exception). But since almost all the code in this repo executes only when a
+  // proper design is loaded, this is much more ergonomic. But we need to be careful in the
+  // rare circumstances (loading the app initially, some testing) when `state.maybe_design`
   // might be null.
   Design? get maybe_design;
 
