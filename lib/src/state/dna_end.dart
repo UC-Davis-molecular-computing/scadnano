@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
@@ -11,14 +10,14 @@ part 'dna_end.g.dart';
 
 abstract class DNAEnd with SelectableMixin, BuiltJsonSerializable implements Built<DNAEnd, DNAEndBuilder> {
   factory DNAEnd(
-          {int offset,
-          bool is_5p,
-          bool is_start,
-          bool substrand_is_first,
-          bool substrand_is_last,
-          String substrand_id,
-          bool is_scaffold,
-          bool is_on_extension}) =>
+          {required int offset,
+          required bool is_5p,
+          required bool is_start,
+          required bool substrand_is_first,
+          required bool substrand_is_last,
+          required String substrand_id,
+          required bool is_scaffold,
+          required bool is_on_extension}) =>
       DNAEnd.from((b) => b
         ..offset = offset
         ..is_5p = is_5p
@@ -41,11 +40,10 @@ abstract class DNAEnd with SelectableMixin, BuiltJsonSerializable implements Bui
   /************************ end BuiltValue boilerplate ************************/
 
   // null if an extension free end
-  @nullable
-  int get offset;
+  int? get offset;
 
   // offset is exclusive if this is an end (right side); offset_inclusive is always the exact offset
-  int get offset_inclusive => is_start ? offset : offset - 1;
+  int get offset_inclusive => is_start ? offset! : offset! - 1;
 
   bool get is_5p;
 

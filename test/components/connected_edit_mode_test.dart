@@ -57,7 +57,7 @@ void main() {
         final select_button = getByTestId(component, testIdEditModeChoiceButton(EditModeChoice.select));
         expect(select_button, isNotNull);
       });
-      test('that renders the pencil button', () {
+      test('that_renders_the_pencil_button', () {
         final pencil_button = getByTestId(component, testIdEditModeChoiceButton(EditModeChoice.pencil));
         expect(pencil_button, isNotNull);
       });

@@ -1222,7 +1222,7 @@ abstract class RelaxHelixRolls
 abstract class ErrorMessageSet
     with BuiltJsonSerializable
     implements Action, Built<ErrorMessageSet, ErrorMessageSetBuilder> {
-  String get error_message;
+  String? get error_message;
 
   /************************ begin BuiltValue boilerplate ************************/
   factory ErrorMessageSet(String error_message) =>
@@ -2506,7 +2506,7 @@ abstract class MoveLinker
 
   @override
   String short_description() {
-    Linker l = potential_crossover.linker;
+    Linker? l = potential_crossover.linker;
     String linker_description;
     if (l is Crossover) {
       linker_description = "crossover";
@@ -4540,10 +4540,10 @@ abstract class Autobreak with BuiltJsonSerializable implements Action, Built<Aut
 abstract class ZoomSpeedSet
     with BuiltJsonSerializable
     implements Action, Built<ZoomSpeedSet, ZoomSpeedSetBuilder> {
-  num get speed;
+  double get speed;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ZoomSpeedSet({required num speed}) = _$ZoomSpeedSet._;
+  factory ZoomSpeedSet({required double speed}) = _$ZoomSpeedSet._;
 
   ZoomSpeedSet._();
 

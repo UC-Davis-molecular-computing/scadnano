@@ -25,7 +25,7 @@ part 'menu_side.over_react.g.dart';
 
 UiFactory<SideMenuProps> ConnectedSideMenu = connect<AppState, SideMenuProps>(
   mapStateToProps: (state) => (SideMenu()
-    ..groups = state.design?.groups
+    ..groups = state.maybe_design?.groups
     ..displayed_group_name = state.ui_state.displayed_group_name),
   // Used for component test.
   forwardRef: true,

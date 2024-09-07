@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:html' hide Rectangle;
 import 'dart:math';
 import 'dart:svg' as svg;
@@ -67,7 +66,7 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
     var selectable_by_id = state.design.selectable_by_id;
     List<Selectable> overlapping_now = [
       for (var elt in elts_overlapping)
-        if (selectable_by_id.containsKey(elt.id)) selectable_by_id[elt.id]
+        if (selectable_by_id.containsKey(elt.id)) selectable_by_id[elt.id]!
     ];
 
     List<Selectable> overlapping_now_select_mode_enabled = [];
@@ -88,8 +87,8 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
 /// Note that rope_elt.points are after the SVG transforms have been applied, so we have to undo them.
 List<Point<num>> points_of_polygon_elt(svg.PolygonElement rope_elt) {
   svg.PointList point_list = rope_elt.points; // SVG representation
-  List<svg.Point> points_svg = [for (int i = 0; i < point_list.length; i++) point_list.getItem(i)];
-  List<Point<num>> points = [for (var point_svg in points_svg) Point<num>(point_svg.x, point_svg.y)];
+  List<svg.Point> points_svg = [for (int i = 0; i < point_list.length!; i++) point_list.getItem(i)];
+  List<Point<num>> points = [for (var point_svg in points_svg) Point<num>(point_svg.x!, point_svg.y!)];
   return points;
 }
 
@@ -116,7 +115,7 @@ generalized_intersection_list_polygon(
     bool is_origami,
     bool overlap(List<Point<num>> polygon, Rectangle<num> rect)) {
   List<svg.SvgElement> elts_intersecting = [];
-  List<Element> selectable_elts = find_selectable_elements(select_modes, is_origami);
+  List<svg.GraphicsElement> selectable_elts = find_selectable_elements(select_modes, is_origami);
 
   for (svg.GraphicsElement elt in selectable_elts) {
     // getBBox uses SVG coordinates, same as those in the polygon, whereas get getBoundingClientRect()
@@ -140,7 +139,7 @@ generalized_intersection_list_polygon(
 generalized_intersection_list_box(String classname, Rectangle<num> select_box_bbox,
     Iterable<SelectModeChoice> select_modes, bool is_origami, bool overlap(num l1, num h1, num l2, num h2)) {
   List<svg.SvgElement> elts_intersecting = [];
-  List<Element> selectable_elts = find_selectable_elements(select_modes, is_origami);
+  List<svg.GraphicsElement> selectable_elts = find_selectable_elements(select_modes, is_origami);
 
   for (svg.GraphicsElement elt in selectable_elts) {
     Rectangle<num> elt_bbox = elt.getBoundingClientRect();
@@ -287,7 +286,7 @@ List<Line> lines_of_rect(Rectangle<num> rect) {
   return [top_line, bot_line, left_line, right_line];
 }
 
-List<Element> find_selectable_elements(Iterable<SelectModeChoice> select_modes, bool is_origami) {
+List<svg.GraphicsElement> find_selectable_elements(Iterable<SelectModeChoice> select_modes, bool is_origami) {
   List<SelectModeChoice> select_modes_not_scaffold_or_staple = [
     for (var mode in select_modes)
       if (mode != SelectModeChoice.scaffold && mode != SelectModeChoice.staple) mode
@@ -317,7 +316,7 @@ List<Element> find_selectable_elements(Iterable<SelectModeChoice> select_modes, 
       selectors.add('.${mode.css_selector()}');
     }
   }
-  List<Element> selectable_elts = querySelectorAll(selectors.join(', '));
+  List<svg.GraphicsElement> selectable_elts = querySelectorAll(selectors.join(', '));
   return selectable_elts;
 }
 
@@ -325,31 +324,37 @@ List<Element> find_selectable_elements(Iterable<SelectModeChoice> select_modes, 
 // intersection geometry
 
 class Box {
-  num height;
-  num width;
+  num height = -1; // This is guaranteed to be assigned but Dart can't tell that.
+  num width = -1; // This is guaranteed to be assigned but Dart can't tell that.
   num x;
   num y;
 
   factory Box.from(svg.Rect svg_rect) =>
-      Box(svg_rect.x, svg_rect.y, width: svg_rect.width, height: svg_rect.height);
+      Box(svg_rect.x!, svg_rect.y!, width: svg_rect.width!, height: svg_rect.height!);
 
   factory Box.from_selection_box(SelectionBox box) => Box(box.x, box.y, width: box.width, height: box.height);
 
-  Box(this.x, this.y, {num height = null, num width = null, num x2 = null, num y2 = null}) {
+  Box(this.x, this.y, {num? height = null, num? width = null, num? x2 = null, num? y2 = null}) {
     if (width == null && x2 == null) {
-      throw ArgumentError('at least one of height or x2 must be non-null');
+      throw ArgumentError('at least one of width or x2 must be non-null');
     } else if (x2 == null) {
-      this.width = width;
+      // width cannot be null by the logic of these if statements
+      this.width = width!;
     } else if (width == null) {
       this.width = x2 - x;
+    } else {
+      throw AssertionError("unreachable");
     }
 
     if (height == null && y2 == null) {
       throw ArgumentError('at least one of height or x2 must be non-null');
     } else if (y2 == null) {
-      this.height = height;
+      // height cannot be null by the logic of these if statements
+      this.height = height!;
     } else if (height == null) {
       this.height = y2 - y;
+    } else {
+      throw AssertionError("unreachable");
     }
   }
 

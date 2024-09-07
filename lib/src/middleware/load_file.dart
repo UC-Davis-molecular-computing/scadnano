@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:html';
 
 import 'package:quiver/async.dart';
@@ -31,14 +30,17 @@ load_file_middleware(Store<AppState> store, action, NextDispatcher next) {
   } else if (action is actions.LoadDNAFile && !action.unit_testing) {
     next(action);
 
-    document.title = action.filename;
-    var design_view = app?.view?.design_view;
+    var fn = action.filename;
+    if (fn != null) {
+      document.title = fn;
+    }
+    var design_view = app.view.design_view;
     if (design_view != null) {
       design_view.render(store.state);
     }
 
     // re-center if necessary
-    if (store.state.ui_state.autofit && store.state.design != null) {
+    if (store.state.ui_state.autofit && store.state.maybe_design != null) {
       util.fit_and_center();
     }
     store.dispatch(actions.LoadingDialogHide());

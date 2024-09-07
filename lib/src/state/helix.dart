@@ -50,8 +50,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     Geometry geometry,
     GridPosition grid_position = null,
     num roll = constants.default_roll,
-    num pitch = constants.default_pitch,
-    num yaw = constants.default_yaw,
     int min_offset = 0,
     int major_tick_start = null,
     int max_offset = constants.default_max_offset,

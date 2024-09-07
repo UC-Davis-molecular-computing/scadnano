@@ -65,7 +65,7 @@ ${util.stack_trace_message_bug_report(stack_trace)}''';
   if (error_message != null) {
     new_state = state.rebuild((m) => m
       ..undo_redo.replace(UndoRedo())
-      ..design = null
+      ..maybe_design = null
       ..ui_state.changed_since_last_save = false
       ..error_message = error_message);
   } else if (design_new != null) {
@@ -76,7 +76,7 @@ ${util.stack_trace_message_bug_report(stack_trace)}''';
       side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs;
 
       // remove selected helices from
-      if (state.design != null && design_new.helices.length < state.design.helices.length) {
+      if (state.maybe_design != null && design_new.helices.length < state.design.helices.length) {
         side_selected_helix_idxs =
             side_selected_helix_idxs.rebuild((s) => s.removeWhere((idx) => idx >= design_new.helices.length));
       }
@@ -94,7 +94,7 @@ ${util.stack_trace_message_bug_report(stack_trace)}''';
 
     new_state = state.rebuild((m) => m
       ..undo_redo.replace(UndoRedo())
-      ..design = design_new.toBuilder()
+      ..maybe_design = design_new.toBuilder()
       ..ui_state.update((u) => u
         ..storables.replace(storables)
         ..selectables_store.replace(new_selectables_store)

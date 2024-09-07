@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
@@ -19,5 +18,6 @@ class DNAFileType extends EnumClass {
   static const DNAFileType cadnano_file = _$cadnano_file;
 
   static BuiltSet<DNAFileType> get values => _$values;
+
   static DNAFileType valueOf(String name) => _$valueOf(name);
 }

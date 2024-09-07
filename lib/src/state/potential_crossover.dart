@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:math';
 
 import 'package:built_value/built_value.dart';
@@ -23,12 +22,12 @@ abstract class PotentialCrossover
   static Serializer<PotentialCrossover> get serializer => _$potentialCrossoverSerializer;
 
   factory PotentialCrossover({
-    Address address,
-    String color,
-    DNAEnd dna_end_first_click,
-    Point<num> start_point,
-    Point<num> current_point,
-    Linker linker = null,
+    required Address address,
+    required String color,
+    required DNAEnd dna_end_first_click,
+    required Point<num> start_point,
+    required Point<num> current_point,
+    Linker? linker = null,
   }) {
     // need this because Linker is not a Built type, but its two subclasses Crossover and Loopout are,
     // so need this to satisfy the compiler that they have a toBuilder() method
@@ -58,6 +57,5 @@ abstract class PotentialCrossover
 
   // are we exchanging DNA ends of an existing crossover or loopout?
   // If not this is null, otherwise it is the existing crossover/loopout
-  @nullable
-  Linker get linker;
+  Linker? get linker;
 }

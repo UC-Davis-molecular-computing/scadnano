@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:html';
 
 import 'package:redux/redux.dart';
@@ -10,7 +9,7 @@ import '../state/app_state.dart';
 /// Check whether user wants to remove helix that has strands on it.
 group_remove_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   if (action is actions.GroupRemove) {
-    var helix_idxs_in_group = store.state.design.helix_idxs_in_group[action.name];
+    var helix_idxs_in_group = store.state.design.helix_idxs_in_group[action.name]!;
     if (helix_idxs_in_group.isNotEmpty) {
       var confirm_remove = window.confirm('Group "${action.name}" has helices in it. '
           'If you delete the group, the helices will be removed, '

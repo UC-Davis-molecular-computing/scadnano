@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:html';
 
 import 'package:redux/redux.dart';
@@ -27,7 +26,7 @@ check_reflect_strands_legal_middleware(Store<AppState> store, action, NextDispat
       return;
     }
     String group_name = group_names.first;
-    HelixGroup group = design.groups[group_name];
+    HelixGroup group = design.groups[group_name]!;
 
     List<Strand> reflected_strands = action.horizontal
         ? horizontal_reflection_of_strands(design, strands_to_reflect, action.reverse_polarity)
@@ -142,7 +141,7 @@ List<Strand> vertical_reflection_of_strands(
       for (var domain in strand.domains) domain.helix
   };
   // vertical display order of those helices, sorted
-  var helix_orders_involved = [for (int idx in helix_idxs_involved) group.helices_view_order_inverse[idx]];
+  var helix_orders_involved = [for (int idx in helix_idxs_involved) group.helices_view_order_inverse[idx]!];
   helix_orders_involved.sort();
 
   int min_order = helix_orders_involved.first;
@@ -155,7 +154,7 @@ List<Strand> vertical_reflection_of_strands(
       var domain = mirrored_substrands[i];
       if (domain is Domain) {
         int helix_idx = domain.helix;
-        int order = group.helices_view_order_inverse[helix_idx];
+        int order = group.helices_view_order_inverse[helix_idx]!;
         int reflected_order = reflect_between_min_and_max(order, min_order, max_order);
         int reflected_helix_idx = group.helices_view_order[reflected_order];
 

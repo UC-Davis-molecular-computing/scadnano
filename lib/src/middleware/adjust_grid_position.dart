@@ -7,7 +7,7 @@ import '../state/helix.dart';
 /// Disallows setting grid_position of Helix to overlap with existing helix.
 adjust_grid_position_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   if (action is actions.HelixGridPositionSet) {
-    if (!is_grid_position_occupied(store.state.design!.helices.values, action.grid_position)) {
+    if (!is_grid_position_occupied(store.state.design.helices.values, action.grid_position)) {
       next(action);
     }
   } else {

@@ -1,9 +1,10 @@
-// @dart=2.9
 @JS()
 library app;
 
 import 'dart:html';
 
+import 'package:built_collection/built_collection.dart';
+import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
@@ -12,13 +13,19 @@ import 'package:redux/redux.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:over_react/over_react.dart' as react;
 import 'package:scadnano/src/reducers/dna_extensions_move_reducer.dart';
+import 'package:scadnano/src/state/address.dart';
+import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/dna_extensions_move.dart';
+import 'package:scadnano/src/state/grid.dart';
+import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/util.dart';
 
 import 'middleware/all_middleware.dart';
 import 'middleware/oxview_update_view.dart';
 import 'middleware/throttle.dart';
 import 'state/dna_ends_move.dart';
+import 'state/grid_position.dart';
+import 'state/group.dart';
 import 'state/helix_group_move.dart';
 import 'state/local_storage_design_choice.dart';
 import 'state/potential_crossover.dart';
@@ -38,7 +45,7 @@ import 'util.dart' as util;
 import 'actions/actions.dart' as actions;
 
 // global variable for whole program
-App app;
+late App app;
 
 const SCADNANO_PROD = bool.fromEnvironment('SCADNANO_PROD');
 const USE_REDUX_DEV_TOOLS = !SCADNANO_PROD;
@@ -52,22 +59,22 @@ test_stuff() async {}
 /// One instance of this class contains the global variables needed by all parts of the app.
 class App {
   AppState get state => store.state;
-  View view;
+  late final View view;
 
-  Store<AppState> store;
+  late final Store<AppState> store;
 
   // for optimization; too slow to store in Model since it's updated 60 times/sec
-  Store<SelectionRope> store_selection_rope;
+  late final Store<SelectionRope?> store_selection_rope;
   var context_selection_rope = createContext();
-  Store<SelectionBox> store_selection_box;
+  late final Store<SelectionBox?> store_selection_box;
   var context_selection_box = createContext();
-  Store<PotentialCrossover> store_potential_crossover;
+  late final Store<PotentialCrossover?> store_potential_crossover;
   var context_potential_crossover = createContext();
-  Store<DNAExtensionsMove> store_extensions_move;
+  late final Store<DNAExtensionsMove?> store_extensions_move;
   var context_extensions_move = createContext();
-  Store<DNAEndsMove> store_dna_ends_move;
+  late final Store<DNAEndsMove?> store_dna_ends_move;
   var context_dna_ends_move = createContext();
-  Store<HelixGroupMove> store_helix_group_move;
+  late final Store<HelixGroupMove?> store_helix_group_move;
   var context_helix_group_move = createContext();
 
   // for optimization; don't want to dispatch Actions changing model on every keypress
@@ -82,7 +89,6 @@ class App {
       await test_stuff();
     } else {
       warn_wrong_browser();
-      // react.setClientConfiguration(); //FIXME: says this is no longer required but let's double-check
       initialize_state();
       setup_undo_redo_keyboard_listeners();
       setup_save_open_dna_file_keyboard_listeners();
@@ -91,7 +97,7 @@ class App {
       setup_warning_before_unload();
       setup_save_design_to_localStorage_before_unload();
       make_dart_functions_available_to_js(state);
-      DivElement app_root_element = querySelector('#top-container');
+      DivElement app_root_element = querySelector('#top-container') as DivElement;
       this.view = View(app_root_element);
       this.view.render(state);
       this.view.oxview_view.frame.onLoad.listen((event) {
@@ -128,22 +134,25 @@ class App {
       store = Store<AppState>(app_state_reducer, initialState: state, middleware: all_middleware);
     }
 
-    store_selection_rope = Store<SelectionRope>(optimized_selection_rope_reducer,
+    // for null-safety we need to make up default values here, but the reducer code
+    // assumes that the first time the reducer is called it could be null, meaning
+    // it won't matter what non-null state we assign to initialState
+    store_selection_rope = Store<SelectionRope?>(optimized_selection_rope_reducer,
         initialState: null, middleware: [throttle_middleware]);
 
-    store_selection_box = Store<SelectionBox>(optimized_selection_box_reducer,
+    store_selection_box = Store<SelectionBox?>(optimized_selection_box_reducer,
         initialState: null, middleware: [throttle_middleware]);
 
-    store_potential_crossover = Store<PotentialCrossover>(optimized_potential_crossover_reducer,
+    store_potential_crossover = Store<PotentialCrossover?>(optimized_potential_crossover_reducer,
         initialState: null, middleware: [throttle_middleware]);
 
-    store_extensions_move = Store<DNAExtensionsMove>(optimized_dna_extensions_move_reducer,
+    store_extensions_move = Store<DNAExtensionsMove?>(optimized_dna_extensions_move_reducer,
         initialState: null, middleware: [throttle_middleware]);
 
-    store_dna_ends_move = Store<DNAEndsMove>(optimized_dna_ends_move_reducer,
+    store_dna_ends_move = Store<DNAEndsMove?>(optimized_dna_ends_move_reducer,
         initialState: null, middleware: [throttle_middleware]);
 
-    store_helix_group_move = Store<HelixGroupMove>(optimized_helix_group_move_reducer,
+    store_helix_group_move = Store<HelixGroupMove?>(optimized_helix_group_move_reducer,
         initialState: null, middleware: [throttle_middleware]);
   }
 
@@ -207,9 +216,9 @@ class App {
   }
 
   setup_warning_before_unload() {
-    window.onBeforeUnload.listen((Event event) {
+    window.onBeforeUnload.listen((event) {
       if (state.ui_state.warn_on_exit_if_unsaved && state.undo_redo.undo_stack.isNotEmpty) {
-        BeforeUnloadEvent e = event;
+        BeforeUnloadEvent e = event as BeforeUnloadEvent;
         e.returnValue = 'You have unsaved work. Are you sure you want to leave?';
       }
     });
@@ -239,23 +248,11 @@ warn_wrong_browser() {
   }
 }
 
-/// Return null if browser is fine.
-String error_message_wrong_browser() {
-  String error_message = null;
-  if (browser.isSafari) {
-    error_message = 'You appear to be using the Safari browser. '
-        'scadnano does not currently support Safari. '
-        'Please use Chrome or Firefox instead.';
-    print(error_message);
-  }
-  return error_message;
-}
-
 setup_undo_redo_keyboard_listeners() {
   // below doesn't work with onKeyPress
   // previous solution with onKeyPress used event.code == 'KeyZ' and worked inconsistently
-  document.body.onKeyDown.listen((KeyboardEvent event) {
-    int key = event.which;
+  window.onKeyDown.listen((KeyboardEvent event) {
+    int key = event.which!;
 //    print('*' * 100);
 //    print('charCode: ${event.charCode}');
 //    print(' keyCode: ${event.keyCode}');
@@ -281,8 +278,8 @@ setup_undo_redo_keyboard_listeners() {
 }
 
 setup_save_open_dna_file_keyboard_listeners() {
-  document.body.onKeyDown.listen((KeyboardEvent event) {
-    int key = event.which;
+  window.onKeyDown.listen((KeyboardEvent event) {
+    int key = event.which!;
     // ctrl+S to save
     if ((event.ctrlKey || event.metaKey) && !event.shiftKey && key == KeyCode.S && !event.altKey) {
       event.preventDefault();
@@ -292,14 +289,14 @@ setup_save_open_dna_file_keyboard_listeners() {
     if ((event.ctrlKey || event.metaKey) && !event.shiftKey && key == KeyCode.O && !event.altKey) {
       event.preventDefault();
       // TODO(benlee12): maybe this is slightly hacky.
-      document.getElementById('open-form-file').click();
+      document.getElementById('open-form-file')!.click();
     }
   });
 }
 
 copy_selected_strands_to_clipboard_image_keyboard_listeners() {
-  document.body.onKeyDown.listen((KeyboardEvent event) {
-    int key = event.which;
+  window.onKeyDown.listen((KeyboardEvent event) {
+    int key = event.which!;
     // Ctrl+I to copy image of selected strands to clipboard
     if ((event.ctrlKey || event.metaKey) && !event.shiftKey && key == KeyCode.I && !event.altKey) {
       event.preventDefault();

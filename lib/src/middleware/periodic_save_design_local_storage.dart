@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:async';
 
 import 'package:redux/redux.dart';
@@ -9,7 +8,7 @@ import '../actions/actions.dart' as actions;
 import '../app.dart';
 import 'local_storage.dart';
 
-Timer timer;
+Timer? timer = null;
 
 periodic_design_save_local_storage_middleware(Store<AppState> store, action, NextDispatcher next) {
   next(action);
@@ -20,6 +19,8 @@ periodic_design_save_local_storage_middleware(Store<AppState> store, action, Nex
       choice = action.choice;
     } else if (action is actions.SetAppUIStateStorable) {
       choice = action.storables.local_storage_design_choice;
+    } else {
+      throw AssertionError("unreachable");
     }
 
     if (choice.option == LocalStorageDesignOption.periodic) {
@@ -44,7 +45,7 @@ start_timer_periodic_design_save_local_storage(int period_seconds) {
 
 stop_timer_periodic_design_save_local_storage() {
   if (timer != null) {
-    timer.cancel();
+    timer!.cancel();
     timer = null;
   }
 }

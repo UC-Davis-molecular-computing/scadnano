@@ -137,9 +137,9 @@ class View {
   set_design_oxview_pane_widths() {
     String design_width = local_storage.design_width();
     if (design_width == null) {
-      design_width = constants.default_design_width;
+      design_width = '${constants.default_design_width_percent}%';
     }
-    num oxview_width_int = 100.0 - num.parse(design_width.substring(0, design_width.length - 1));
+    num oxview_width_int = 100.0 - constants.default_design_width_percent;
     String oxview_width = '${oxview_width_int.toString()}%';
     design_and_modes_buttons_container_element.setAttribute('style', 'width: $design_width');
     this.oxview_view.div.setAttribute('style', 'width: $oxview_width');

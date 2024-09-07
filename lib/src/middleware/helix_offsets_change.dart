@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:html';
 
 import 'package:redux/redux.dart';
@@ -13,36 +12,40 @@ helix_change_offsets_middleware(Store<AppState> store, dynamic action, NextDispa
     var design = store.state.design;
     int helix_idx = action.helix_idx;
     bool helix_has_domains = design.domains_on_helix(helix_idx).isNotEmpty;
-    if (action.min_offset != null && helix_has_domains) {
+    var min_offset = action.min_offset;
+    var max_offset = action.max_offset;
+    if (min_offset != null && helix_has_domains) {
       int min_offset_of_strand = store.state.design.min_offset_of_strands_at(helix_idx);
-      if (action.min_offset > min_offset_of_strand) {
-        window.alert(message_too_small(helix_idx, action.min_offset, min_offset_of_strand));
+      if (min_offset > min_offset_of_strand) {
+        window.alert(message_too_small(helix_idx, min_offset, min_offset_of_strand));
         return;
       }
     }
-    if (action.max_offset != null && helix_has_domains) {
+    if (max_offset != null && helix_has_domains) {
       int max_offset_of_strand = store.state.design.max_offset_of_strands_at(helix_idx);
-      if (action.max_offset < max_offset_of_strand) {
-        window.alert(message_too_large(helix_idx, action.max_offset, max_offset_of_strand));
+      if (max_offset < max_offset_of_strand) {
+        window.alert(message_too_large(helix_idx, max_offset, max_offset_of_strand));
         return;
       }
     }
   } else if (action is actions.HelixOffsetChangeAll) {
+    var min_offset = action.min_offset;
+    var max_offset = action.max_offset;
     Design design = store.state.design;
     for (int helix_idx in design.helices.keys) {
       var domains_on_helix = design.domains_on_helix(helix_idx);
       bool helix_has_domains = domains_on_helix.isNotEmpty;
-      if (action.min_offset != null && helix_has_domains) {
+      if (min_offset != null && helix_has_domains) {
         int min_offset_of_strand = store.state.design.min_offset_of_strands_at(helix_idx);
-        if (action.min_offset > min_offset_of_strand) {
-          window.alert(message_too_small(helix_idx, action.min_offset, min_offset_of_strand));
+        if (min_offset > min_offset_of_strand) {
+          window.alert(message_too_small(helix_idx, min_offset, min_offset_of_strand));
           return;
         }
       }
-      if (action.max_offset != null && helix_has_domains) {
+      if (max_offset != null && helix_has_domains) {
         int max_offset_of_strand = store.state.design.max_offset_of_strands_at(helix_idx);
-        if (action.max_offset < max_offset_of_strand) {
-          window.alert(message_too_large(helix_idx, action.max_offset, max_offset_of_strand));
+        if (max_offset < max_offset_of_strand) {
+          window.alert(message_too_large(helix_idx, max_offset, max_offset_of_strand));
           return;
         }
       }

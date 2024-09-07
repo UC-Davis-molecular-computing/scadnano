@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:html';
 import 'dart:svg' as svg;
 import 'dart:svg';
@@ -45,7 +44,7 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
         if (action.type == actions.ExportSvgType.main ||
             action.type == actions.ExportSvgType.both ||
             action.type == actions.ExportSvgType.selected) {
-          var elt = document.getElementById("main-view-svg");
+          var elt = document.getElementById("main-view-svg")!;
           if (action.type == actions.ExportSvgType.selected) {
             List<Element> selected_elts = get_selected_svg_elements(store.state);
             if (selected_elts.length == 0) {
@@ -64,7 +63,7 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
           }
         }
         if (action.type == actions.ExportSvgType.side || action.type == actions.ExportSvgType.both) {
-          var elt = document.getElementById("side-view-svg");
+          var elt = document.getElementById("side-view-svg")!;
           _export_from_element(elt, 'side');
         }
       } else if (action is actions.CopySelectedStandsToClipboardImage) {
@@ -96,9 +95,9 @@ List<Element> get_svg_elements_of_strands(BuiltSet<Strand> strands) {
   List<Element> elts = [];
   if (strands.length != 0) {
     for (var strand in strands) {
-      var strand_elt = document.getElementById(strand.id);
+      var strand_elt = document.getElementById(strand.id)!;
       var dna_seq_elt = document.getElementById('dna-sequence-${strand.id}');
-      var mismatch_elts = document.getElementsByClassName('mismatch-${strand.id}');
+      var mismatch_elts = document.querySelectorAll('.mismatch-${strand.id}');
       elts.addAll([strand_elt, if (dna_seq_elt != null) dna_seq_elt, ...mismatch_elts]);
     }
   }
@@ -108,7 +107,7 @@ List<Element> get_svg_elements_of_strands(BuiltSet<Strand> strands) {
 List<Element> get_svg_elements_of_base_pairs(BuiltMap<int, BuiltList<int>> base_pairs) {
   List<Element> elts = [];
   for (int helix in base_pairs.keys) {
-    elts.addAll(base_pairs[helix].map((offset) => document.getElementById('base_pair-${helix}-${offset}')));
+    elts.addAll(base_pairs[helix]!.map((offset) => document.getElementById('base_pair-${helix}-${offset}')!));
   }
   return elts;
 }
@@ -122,10 +121,10 @@ List<double> rotate_vector(List<double> vec, double ang) {
 
 // gets the height of a character in font in px
 double get_text_height(String font) {
-  CanvasElement element = document.createElement("canvas");
-  CanvasRenderingContext2D context = element.getContext("2d");
+  CanvasElement element = document.createElement("canvas") as CanvasElement;
+  CanvasRenderingContext2D context = element.getContext("2d") as CanvasRenderingContext2D;
   context.font = font;
-  return double.tryParse(context.font.replaceAll(RegExp(r'[^0-9\.]'), ''));
+  return double.tryParse(context.font.replaceAll(RegExp(r'[^0-9\.]'), ''))!;
 }
 
 // returns a matrix that represents the change made by dominant-baseline css property
@@ -188,16 +187,16 @@ Map point_to_map(svg.Point point) {
 
 // creates a new separate text svg for the jth character on a svg text element
 TextElement create_portable_text(TextContentElement text_ele, int j) {
-  TextElement char_ele = document.createElementNS("http://www.w3.org/2000/svg", "text");
-  char_ele.text = text_ele.text[j];
-  char_ele.setAttribute("style", text_ele.style.cssText);
+  TextElement char_ele = document.createElementNS("http://www.w3.org/2000/svg", "text") as TextElement;
+  char_ele.text = text_ele.text![j];
+  char_ele.setAttribute("style", text_ele.style.cssText!);
   var pos = DomPoint.fromPoint(point_to_map(text_ele.getStartPositionOfChar(j)));
-  var rot = text_ele.getRotationOfChar(j);
+  double rot = text_ele.getRotationOfChar(j);
 
-  for (int i = 0; i < text_ele.transform.baseVal.numberOfItems; ++i) {
-    var item = text_ele.transform.baseVal.getItem(i);
-    pos = pos.matrixTransform(matrix_to_map(item.matrix));
-    rot = item.angle;
+  for (int i = 0; i < text_ele.transform!.baseVal!.numberOfItems!; ++i) {
+    var item = text_ele.transform!.baseVal!.getItem(i);
+    pos = pos.matrixTransform(matrix_to_map(item.matrix!));
+    rot = item.angle! as double;
   }
   if (char_ele.style.getPropertyValue("dominant-baseline") != "") {
     pos = pos.matrixTransform(dom_matrix_to_map(dominant_baseline_matrix(
@@ -226,35 +225,35 @@ TextElement create_portable_text(TextContentElement text_ele, int j) {
 
 // fix the 5' extension rectangle missing
 RectElement create_portable_rect(RectElement ele) {
-  RectElement portableEle = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+  RectElement portableEle = document.createElementNS("http://www.w3.org/2000/svg", "rect") as RectElement;
 
   portableEle.style.cssText = ele.style.cssText;
   if (portableEle.style.transformOrigin != "") {
     portableEle.style.transformOrigin = "";
   }
   // remove transform box attribute. dart doesn't support the normal way
-  portableEle.style.cssText = portableEle.style.cssText.replaceAll(RegExp(r'transform-box:[^;]+;'), '');
+  portableEle.style.cssText = portableEle.style.cssText!.replaceAll(RegExp(r'transform-box:[^;]+;'), '');
   Rect pos = ele.getBBox();
   portableEle.setAttribute("x", pos.x.toString());
   portableEle.setAttribute("y", pos.y.toString());
-  portableEle.setAttribute("rx", ele.rx.baseVal.value.toString());
-  portableEle.setAttribute("ry", ele.ry.baseVal.value.toString());
+  portableEle.setAttribute("rx", ele.rx!.baseVal!.value!.toString());
+  portableEle.setAttribute("ry", ele.ry!.baseVal!.value!.toString());
   portableEle.setAttribute("width", pos.width.toString());
   portableEle.setAttribute("height", pos.height.toString());
-  for (int i = 0; i < ele.transform.baseVal.numberOfItems; ++i) {
-    Transform item = ele.transform.baseVal.getItem(i);
+  for (int i = 0; i < ele.transform!.baseVal!.numberOfItems!; ++i) {
+    Transform item = ele.transform!.baseVal!.getItem(i);
     if (item.angle != 0) {
       portableEle.setAttribute(
-          "transform", "rotate(${item.angle} ${pos.x + pos.width / 2} ${pos.y + pos.height / 2})");
+          "transform", "rotate(${item.angle} ${pos.x! + pos.width! / 2} ${pos.y! + pos.height! / 2})");
     }
   }
   return portableEle;
 }
 
 // makes a svg compatible for PowerPoint
-Element make_portable(Element src) {
+SvgSvgElement make_portable(SvgSvgElement src) {
   var src_children = src.querySelectorAll("*");
-  document.body.append(src);
+  document.body!.append(src);
   for (int i = 0; i < src_children.length; ++i) {
     if (src_children[i] is TextContentElement) {
       TextContentElement text_ele = src_children[i] as TextContentElement;
@@ -268,17 +267,17 @@ Element make_portable(Element src) {
       }
       if (text_ele is TextPathElement) {
         // move TextPath children up and delete the TextPath
-        var parent = text_ele.parent;
+        var parent = text_ele.parent!;
         var new_parent = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        parent.parent.append(new_parent);
+        parent.parent!.append(new_parent);
         new_parent.append(text_ele);
         parent.remove();
       }
-      portable_eles.forEach((v) => text_ele.parentNode.append(v));
+      portable_eles.forEach((v) => text_ele.parentNode!.append(v));
       text_ele.remove();
     } else if (src_children[i] is RectElement) {
       RectElement portableEle = create_portable_rect(src_children[i] as RectElement);
-      src_children[i].parentNode.append(portableEle);
+      src_children[i].parentNode!.append(portableEle);
       src_children[i].remove();
     }
   }
@@ -294,13 +293,13 @@ SvgSvgElement get_cloned_svg_element_with_style(List<Element> selected_elts, boo
   }
 
   // we can't get bbox without it being added to the DOM first
-  document.body.append(cloned_svg_element_with_style);
+  document.body!.append(cloned_svg_element_with_style);
   var bbox = cloned_svg_element_with_style.getBBox();
   cloned_svg_element_with_style.remove();
 
   // have to add some padding to viewbox, for some reason bbox doesn't always fit it by a few pixels??
   cloned_svg_element_with_style.setAttribute('viewBox',
-      '${bbox.x.floor() - 1} ${bbox.y.floor() - 1} ${bbox.width.ceil() + 3} ${bbox.height.ceil() + 6}');
+      '${bbox.x!.floor() - 1} ${bbox.y!.floor() - 1} ${bbox.width!.ceil() + 3} ${bbox.height!.ceil() + 6}');
 
   return cloned_svg_element_with_style;
 }
@@ -384,7 +383,7 @@ final relevant_styles = {
 };
 
 Element clone_and_apply_style(Element elt_orig) {
-  Element elt_styled = elt_orig.clone(true);
+  Element elt_styled = elt_orig.clone(true) as Element;
 
   bool selected = elt_orig.classes.contains('selected-pink');
 
@@ -428,7 +427,7 @@ clone_and_apply_style_rec(Element elt_styled, Element elt_orig, {int depth = 0})
 //        children_styled_to_remove.add(child_styled);
 //      }
 
-    for (var style_name in relevant_styles[tag_name]) {
+    for (var style_name in relevant_styles[tag_name]!) {
       var style_value = style_def.getPropertyValue(style_name);
       if (style_value != '') {
         // correcting for this bug in InkScape that causes it to render hidden SVG objects:
@@ -458,8 +457,8 @@ clone_and_apply_style_rec(Element elt_styled, Element elt_orig, {int depth = 0})
     if (!(children_orig[cd] is Element)) {
       continue;
     }
-    Element child_orig = children_orig[cd];
-    Element child_styled = children_styled[cd];
+    Element child_orig = children_orig[cd] as Element;
+    Element child_styled = children_styled[cd] as Element;
     clone_and_apply_style_rec(child_styled, child_orig, depth: depth + 1);
   }
 

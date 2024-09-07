@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:async';
 import 'dart:convert';
 import 'dart:html';
@@ -40,10 +39,7 @@ oxview_update_view_middleware(Store<AppState> store, dynamic action, NextDispatc
   }
 
   if (store.state.ui_state.show_oxview && action is actions.DesignChangingAction) {
-    Design design = store.state.design;
-    if (design != null) {
-      update_oxview_view(design);
-    }
+    update_oxview_view(store.state.design);
   }
 }
 
@@ -52,13 +48,13 @@ const js_reset_commands = 'resetScene(resetCamera = false);';
 // frame is optional because usually we get it from app.view.oxview_view.frame,
 // but on startup app.view is not yet allocated (we're in the View constructor
 // the first time), so we send the frame just after creating it.
-void update_oxview_view(Design design, [IFrameElement frame = null]) {
-  assert(design != null);
-  assert(design.strands != null);
+void update_oxview_view(Design design, [IFrameElement? frame = null]) {
   if (frame == null) {
-    frame = app.view?.oxview_view?.frame;
+    frame = app.view.oxview_view?.frame;
   }
-  assert(frame != null);
+  if (frame == null) {
+    throw AssertionError("frame cannot be null");
+  }
 
   String text_blob_type = blob_type_to_string(BlobType.text);
 

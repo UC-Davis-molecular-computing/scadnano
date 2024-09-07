@@ -45,9 +45,10 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
   mapStateToProps: (AppState state) {
     return (Menu()
       ..selected_ends = state.ui_state.selectables_store.selected_dna_ends
-      ..geometry = state.design?.geometry
-      ..no_grid_is_none =
-          state.design == null ? false : state.design.groups.values.every((group) => group.grid != Grid.none)
+      ..geometry = state.maybe_design?.geometry
+      ..no_grid_is_none = state.maybe_design == null
+          ? false
+          : state.design.groups.values.every((group) => group.grid != Grid.none)
       ..show_oxview = state.ui_state.show_oxview
       ..show_dna = state.ui_state.show_dna
       ..base_pair_display_type = state.ui_state.base_pair_display_type
@@ -70,7 +71,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..show_base_pair_lines = state.ui_state.show_base_pair_lines
       ..show_base_pair_lines_with_mismatches = state.ui_state.show_base_pair_lines_with_mismatches
       ..example_designs = state.ui_state.example_designs
-      ..design_has_insertions_or_deletions = state.design?.has_insertions_or_deletions == true
+      ..design_has_insertions_or_deletions = state.maybe_design?.has_insertions_or_deletions == true
       ..undo_stack_empty = state.undo_redo.undo_stack.isEmpty
       ..redo_stack_empty = state.undo_redo.redo_stack.isEmpty
       ..enable_copy = app.state.ui_state.selectables_store.selected_strands.isNotEmpty
@@ -1119,7 +1120,8 @@ design is edited.'''
         ..min_value = 0
         ..step = 0.05
         ..tooltip = 'The speed at which the mouse wheel or two-finger scroll zooms the view in and out.'
-        ..on_new_value = ((num new_zoom_speed) => props.dispatch(actions.ZoomSpeedSet(speed: new_zoom_speed)))
+        ..on_new_value =
+            ((num new_zoom_speed) => props.dispatch(actions.ZoomSpeedSet(speed: new_zoom_speed as double)))
         ..key = 'zoom-speed')(),
     ];
   }

@@ -1141,7 +1141,6 @@ copy_svg_as_png(SvgSvgElement svg_element) async {
     svgImage.src = svgUrl;
 
     // window.navigator.clipboard.write(DataTransfer()..setData(blob_type_string, content));
-
   } on Exception catch (e, stackTrace) {
     print(stackTrace);
   } on Error catch (e, stackTrace) {
@@ -1510,9 +1509,8 @@ AppState default_state({Grid grid = Grid.none}) {
   var design = Design(grid: grid);
   var ui_state = AppUIState.from_design(design);
   var state = (DEFAULT_AppState.toBuilder()
-        ..design = design.toBuilder()
-        ..ui_state.replace(ui_state)
-        ..editor_content = '')
+        ..maybe_design = design.toBuilder()
+        ..ui_state.replace(ui_state))
       .build();
   return state;
 }
@@ -1957,4 +1955,75 @@ double round(double x, int precision) {
   int x_big_int = x_big.round();
   x = x_big_int / pow(10, precision);
   return x;
+}
+
+// This is used primarily with Dialog and DialogItem, so that I can pre-allocate
+// a fixed-size list and lazily initialize its elements, without assigning them
+// null initially and having to declare the type of items is DialogItem?,
+// which would require later using ! to assert that they are not null.
+// Instead, this class checks at runtime that each item is initialized before
+// being read.
+class FixedList<T> extends Iterable<T> {
+  //TODO: change this and initial value below to be List<T?>
+  final List<T> _items;
+  final List<bool> _initialized;
+
+  FixedList(int length)
+      : _items = List<T>.filled(length, null),
+        _initialized = List<bool>.filled(length, false);
+
+  void _set(int index, T value) {
+    _items[index] = value;
+    _initialized[index] = true;
+  }
+
+  T _get(int index) {
+    if (!_initialized[index]) {
+      throw StateError('Item at index $index has not been initialized');
+    }
+    return _items[index]; //TODO: add !
+  }
+
+  // Operator overloading for setting elements
+  void operator []=(int index, T value) => _set(index, value);
+
+  // Operator overloading for getting elements
+  T operator [](int index) => _get(index);
+
+  @override
+  int get length => _items.length;
+
+  @override
+  Iterator<T> get iterator => _FixedListIterator(this);
+
+  // Implement elementAt to ensure safe access during iteration
+  @override
+  T elementAt(int index) => _get(index);
+}
+
+class _FixedListIterator<T> implements Iterator<T> {
+  final FixedList<T> _list;
+  int _index = -1;
+
+  _FixedListIterator(this._list);
+
+  @override
+  T get current {
+    if (_index < 0 || _index >= _list.length) {
+      throw StateError('No element');
+    }
+    return _list[_index];
+  }
+
+  @override
+  bool moveNext() {
+    if (_index >= _list.length - 1) {
+      return false;
+    }
+    _index++;
+    if (!_list._initialized[_index]) {
+      throw StateError('Uninitialized element encountered at index $_index during iteration');
+    }
+    return true;
+  }
 }

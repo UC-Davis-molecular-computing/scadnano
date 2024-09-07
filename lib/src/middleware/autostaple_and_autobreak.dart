@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:convert';
 import 'dart:html';
 import 'package:http/http.dart' as http;

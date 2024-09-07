@@ -20,7 +20,7 @@ AppState initializeTestState() {
   return util.default_state().rebuild((b) => b
     ..ui_state.storables.show_dna = false
     ..ui_state.storables.show_mismatches = true
-    ..design.replace(two_helices_design));
+    ..maybe_design.replace(two_helices_design));
 }
 
 const MenuTestId = 'scadnano.MenuComponent';

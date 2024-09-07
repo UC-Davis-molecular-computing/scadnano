@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:convert';
 
 //TODO: to_json_serializable gets called very often by overReactReduxDevToolsMiddleware
@@ -15,14 +14,12 @@ class NoIndent implements JSONSerializable {
 
   dynamic to_json_serializable({bool suppress_indent = false}) => this.value;
 
-//  dynamic toJson() => this.value;
-
   String toString() => 'NoIndent(\n  ${value}\n)';
 }
 
-String json_encode(JSONSerializable obj, [bool suppress_indent = true]) {
+String json_encode(JSONSerializable? obj, [bool suppress_indent = true]) {
   if (obj == null) {
-    return null;
+    return "null";
   }
   var encoder = SuppressableIndentEncoder(Replacer(), suppress: suppress_indent);
   var serializable = obj.to_json_serializable(suppress_indent: suppress_indent);
@@ -42,7 +39,7 @@ class SuppressableIndentEncoder extends JsonEncoder {
         this.encoder_indent = JsonEncoder.withIndent(indent),
         super(replacer.default_encode);
 
-  String convert(Object obj) {
+  String convert(Object? obj) {
     String result = super.convert(obj);
     for (var key in this.replacer.replacement_map.keys) {
       String val = this.replacer.replacement_map[key];

@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
@@ -58,7 +57,7 @@ class DNASequencePredefined extends EnumClass {
     }
   }
 
-  static String dna_sequence_by_name(String name, bool display_name, [int rotation = null]) {
+  static String dna_sequence_by_name(String name, bool display_name, [int? rotation = null]) {
     DNASequencePredefined dna_sequence_predefined;
     if (display_name) {
       dna_sequence_predefined = DNASequencePredefined.display_name_to_variant(name);

@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:math';
 import 'dart:convert' as convert;
 
@@ -435,7 +434,7 @@ class PointSerializer<T extends num> implements PrimitiveSerializer<Point<T>> {
   Point<T> deserialize(Serializers serializers, Object serialized,
       {FullType specifiedType = FullType.unspecified}) {
     Map map = serialized as Map;
-    return Point<T>(num.parse(map['x']), num.parse(map['y']));
+    return Point<T>(num.parse(map['x']) as T, num.parse(map['y']) as T);
   }
 }
 

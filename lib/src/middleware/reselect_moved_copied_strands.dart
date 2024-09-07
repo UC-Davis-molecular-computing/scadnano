@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
 
@@ -31,8 +30,8 @@ reselect_moved_copied_strands_middleware(Store<AppState> store, action, NextDisp
     StrandsMove strands_move = action.strands_move;
 
     var new_address_helix_idx = strands_move.current_address.helix_idx;
-    var new_helix = design.helices[new_address_helix_idx];
-    var new_group = design.groups[new_helix.group];
+    var new_helix = design.helices[new_address_helix_idx]!;
+    var new_group = design.groups[new_helix.group]!;
 
     // var old_address_helix_idx = strands_move.original_address.helix_idx;
     // var old_helix = design.helices[old_address_helix_idx];
@@ -47,7 +46,7 @@ reselect_moved_copied_strands_middleware(Store<AppState> store, action, NextDisp
     for (Strand strand in strands_move.strands_moving) {
       Domain old_domain = strand.first_domain;
       DNAEnd old_5p_end = old_domain.dnaend_5p;
-      int old_helix_view_order = old_helices_view_order_inverse[old_domain.helix];
+      int old_helix_view_order = old_helices_view_order_inverse[old_domain.helix]!;
       int new_helix_view_order = old_helix_view_order + strands_move.delta_view_order;
       int new_helix_idx = new_helices_view_order[new_helix_view_order];
       int new_offset = old_5p_end.offset_inclusive + strands_move.delta_offset;
@@ -66,7 +65,7 @@ reselect_moved_copied_strands_middleware(Store<AppState> store, action, NextDisp
     BuiltMap<Address, Strand> address_to_strand =
         strands_move.delta_forward ? new_design.address_3p_to_strand : new_design.address_5p_to_strand;
     for (var address in addresses) {
-      Strand new_strand = address_to_strand[address];
+      Strand new_strand = address_to_strand[address]!;
       new_strands.add(new_strand);
     }
     store.dispatch(actions.SelectAll(selectables: new_strands.toBuiltList(), only: true));

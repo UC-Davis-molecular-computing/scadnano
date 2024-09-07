@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:react/react.dart';
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
@@ -22,7 +21,7 @@ reselect_moved_dna_extension_ends_middleware(Store<AppState> store, action, Next
     // first collect addresses while design.end_to_substrand is still valid
     for (DNAExtensionMove move in action.dna_extensions_move.moves) {
       DNAEnd old_end = move.dna_end;
-      Extension old_extension = store.state.design.end_to_extension[old_end];
+      Extension old_extension = store.state.design.end_to_extension[old_end]!;
       extension_ids.add(old_extension.id);
     }
 
@@ -32,7 +31,7 @@ reselect_moved_dna_extension_ends_middleware(Store<AppState> store, action, Next
     // now find new ends at given addresses
     List<DNAEnd> new_ends = [];
     for (var extension_id in extension_ids) {
-      Extension extension = store.state.design.extensions_by_id[extension_id];
+      Extension extension = store.state.design.extensions_by_id[extension_id]!;
       new_ends.add(extension.dnaend_free);
     }
     store.dispatch(actions.SelectAll(selectables: new_ends.toBuiltList(), only: true));

@@ -1856,8 +1856,9 @@ main() {
     Helix helix1 = two_helices_design.helices[1];
 
     BuiltList<Strand> new_strands = two_helices_design.strands.rebuild((b) => b..removeRange(0, 2));
-    Design expected_design =
-        two_helices_design.rebuild((b) => b..helices.replace({1: helix1})..strands.replace(new_strands));
+    Design expected_design = two_helices_design.rebuild((b) => b
+      ..helices.replace({1: helix1})
+      ..strands.replace(new_strands));
 
     expect_design_equal(final_design, expected_design);
   });
@@ -3276,7 +3277,7 @@ main() {
       AppState final_state = app_state_reducer(state, LoadDNAFile(content: 'not json', filename: filename));
 
       expect(final_state.error_message != null, true);
-      expect(final_state.design == null, true);
+      expect(final_state.maybe_design == null, true);
     });
 
     test('load_and_save_design_with_unused_fields', () {

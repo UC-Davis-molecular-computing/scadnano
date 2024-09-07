@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:convert';
 import 'dart:html';
 import 'dart:math';
@@ -95,7 +94,7 @@ String to_oxview_format(Design design, List<Strand> strands_to_export) {
     };
     oxview_strand_map[sc_strand.id] = oxv_strand;
 
-    int scolor;
+    int? scolor;
     if (sc_strand.color != null) {
       scolor = export_cadnano.to_cadnano_v2_int_hex(sc_strand.color);
     } else {
@@ -205,7 +204,7 @@ String to_oxview_format(Design design, List<Strand> strands_to_export) {
   //TODO: this hasn't been tested well
   var base_pairs_map = design.base_pairs_with_domain_strand(false, true, strands_to_export.toSet().build());
   for (int helix in base_pairs_map.keys) {
-    for (var offset_dom_strands in base_pairs_map[helix]) {
+    for (var offset_dom_strands in base_pairs_map[helix]!) {
       int offset = offset_dom_strands.item1;
       Domain domain1 = offset_dom_strands.item2;
       Domain domain2 = offset_dom_strands.item3;
@@ -215,8 +214,8 @@ String to_oxview_format(Design design, List<Strand> strands_to_export) {
       Map<String, dynamic> oxv_strand2 = oxview_strand_map[sc_strand2.id];
       int d1 = sc_strand1.domain_offset_to_strand_dna_idx(domain1, offset, false);
       int d2 = sc_strand2.domain_offset_to_strand_dna_idx(domain2, offset, false);
-      int s1_nuc_idx = strand_nuc_start[strand_id_to_index[sc_strand1.id] + 1];
-      int s2_nuc_idx = strand_nuc_start[strand_id_to_index[sc_strand2.id] + 1];
+      int s1_nuc_idx = strand_nuc_start[strand_id_to_index[sc_strand1.id]! + 1];
+      int s2_nuc_idx = strand_nuc_start[strand_id_to_index[sc_strand2.id]! + 1];
       oxv_strand1['monomers'][d1]['bp'] = s2_nuc_idx + d2;
       if (oxv_strand2['monomers'][d2].containsKey('bp')) {
         if (oxv_strand2['monomers'][d2]['bp'] != s1_nuc_idx + d1) {
@@ -247,7 +246,7 @@ String to_oxview_format(Design design, List<Strand> strands_to_export) {
   return content;
 }
 
-Tuple2<String, String> to_oxdna_format(Design design, [List<Strand> strands_to_export = null]) {
+Tuple2<String, String> to_oxdna_format(Design design, [List<Strand>? strands_to_export = null]) {
   OxdnaSystem system = convert_design_to_oxdna_system(design, strands_to_export);
   Tuple2<String, String> dat_top = system.oxdna_output();
   return dat_top;
@@ -341,8 +340,8 @@ class OxdnaSystem {
   List<OxdnaStrand> strands = [];
 
   OxdnaVector compute_bounding_box([bool cubic = true]) {
-    OxdnaVector min_vec = null;
-    OxdnaVector max_vec = null;
+    OxdnaVector? min_vec = null;
+    OxdnaVector? max_vec = null;
 
     for (var strand in strands) {
       for (var nuc in strand.nucleotides) {
@@ -351,7 +350,8 @@ class OxdnaSystem {
           max_vec = nuc.center;
         } else {
           min_vec = min_vec.coord_min(nuc.center);
-          max_vec = max_vec.coord_max(nuc.center);
+          // we know max_vec got assigned with mix_vec if we are here
+          max_vec = max_vec!.coord_max(nuc.center);
         }
       }
     }
@@ -428,7 +428,7 @@ Tuple3<OxdnaVector, OxdnaVector, OxdnaVector> oxdna_get_helix_vectors(Design des
       normal  -- a direction perpendicular to forward which represents the angle to the backbone at offset 0
           for the forward Domain on the Helix.
   */
-  var group = design.groups[helix.group];
+  var group = design.groups[helix.group]!;
   var grid = group.grid;
   var geometry = design.geometry;
 
@@ -479,11 +479,11 @@ Tuple3<OxdnaVector, OxdnaVector, OxdnaVector> oxdna_get_helix_vectors(Design des
 
   position = position + group.position;
 
-  var origin = OxdnaVector(position.x, position.y, position.z) * NM_TO_OX_UNITS;
+  var origin = OxdnaVector(position.x as double, position.y as double, position.z as double) * NM_TO_OX_UNITS;
   return Tuple3<OxdnaVector, OxdnaVector, OxdnaVector>(origin, forward, normal);
 }
 
-OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand> strands_to_export = null]) {
+OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand>? strands_to_export = null]) {
   if (strands_to_export == null) {
     strands_to_export = design.strands.toList();
   }
@@ -495,7 +495,7 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand> strands_
   // each entry is the number of insertions - deletions since the start of a given helix
   Map<int, List<int>> mod_map = {};
   for (int idx in design.helices.keys) {
-    var helix = design.helices[idx];
+    var helix = design.helices[idx]!;
     mod_map[idx] = List<int>.filled(helix.max_offset - helix.min_offset, 0);
   }
 
@@ -503,23 +503,21 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand> strands_
   // TODO: report error if there is an insertion/deletion on one Domain and not the other
   for (var strand in strands_to_export) {
     for (var domain in strand.domains) {
-      if (domain is Domain) {
-        var helix = design.helices[domain.helix];
-        for (var insertion in domain.insertions) {
-          mod_map[domain.helix][insertion.offset - helix.min_offset] = insertion.length;
-        }
-        for (int deletion in domain.deletions) {
-          mod_map[domain.helix][deletion - helix.min_offset] = -1;
-        }
+      var helix = design.helices[domain.helix]!;
+      for (var insertion in domain.insertions) {
+        mod_map[domain.helix]![insertion.offset - helix.min_offset] = insertion.length;
+      }
+      for (int deletion in domain.deletions) {
+        mod_map[domain.helix]![deletion - helix.min_offset] = -1;
       }
     }
   }
 
   // propagate the modifier so it stays consistent across domains
   for (int idx in design.helices.keys) {
-    var helix = design.helices[idx];
+    var helix = design.helices[idx]!;
     for (int offset = helix.min_offset + 1; offset < helix.max_offset; offset++) {
-      mod_map[idx][offset] += mod_map[idx][offset - 1];
+      mod_map[idx]![offset] += mod_map[idx]![offset - 1];
     }
   }
 
@@ -541,8 +539,8 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand> strands_
 
       // handle normal domains
       if (domain is Domain) {
-        var helix = design.helices[domain.helix];
-        var origin_forward_normal = helix_vectors[helix.idx];
+        var helix = design.helices[domain.helix]!;
+        var origin_forward_normal = helix_vectors[helix.idx]!;
         var origin = origin_forward_normal.item1;
         var forward = origin_forward_normal.item2;
         var normal = origin_forward_normal.item3;
@@ -570,11 +568,11 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand> strands_
         int index = 0;
         for (int offset = domain.start; offset < domain.end; offset++) {
           if (!deletions.contains(offset)) {
-            var mod = mod_map[domain.helix][offset - helix.min_offset];
+            var mod = mod_map[domain.helix]![offset - helix.min_offset];
 
             // we have to check insertions first because they affect the index
             if (insertions.containsKey(offset)) {
-              int num = insertions[offset];
+              int num = insertions[offset]!;
               for (int i = 0; i < num; i++) {
                 var cen = origin +
                     forward * (offset + mod - num + i) * geometry.rise_per_base_pair * NM_TO_OX_UNITS;
@@ -659,19 +657,19 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand> strands_
 }
 
 List<OxdnaNucleotide> _compute_extension_nucleotides(
-    {Design design,
-    Strand strand,
-    bool is_5p,
-    Map<int, Tuple3<OxdnaVector, OxdnaVector, OxdnaVector>> helix_vectors,
-    Map<int, List<int>> mod_map}) {
+    {required Design design,
+    required Strand strand,
+    required bool is_5p,
+    required Map<int, Tuple3<OxdnaVector, OxdnaVector, OxdnaVector>> helix_vectors,
+    required Map<int, List<int>> mod_map}) {
   var geometry = design.geometry;
   var step_rot = -360 / geometry.bases_per_turn;
 
   var adj_dom = is_5p ? strand.domains.first : strand.domains.last;
-  var adj_helix = design.helices[adj_dom.helix];
+  var adj_helix = design.helices[adj_dom.helix]!;
   var offset = is_5p ? adj_dom.offset_5p : adj_dom.offset_3p; // offset of attached end of domain
 
-  var origin_forward_normal = helix_vectors[adj_dom.helix];
+  var origin_forward_normal = helix_vectors[adj_dom.helix]!;
   var origin_ = origin_forward_normal.item1;
   var forward = origin_forward_normal.item2;
   var normal = origin_forward_normal.item3;
@@ -685,7 +683,7 @@ List<OxdnaNucleotide> _compute_extension_nucleotides(
   normal = normal.rotate(groove_gamma_correction, forward).normalize();
 
   // rotate normal by angle about the forward vector to get vector pointing at backbone at attached_offset
-  var mod = mod_map[adj_dom.helix][offset - adj_helix.min_offset];
+  var mod = mod_map[adj_dom.helix]![offset - adj_helix.min_offset];
   var cen = origin_ + forward * (offset + mod) * geometry.rise_per_base_pair * NM_TO_OX_UNITS;
   var norm = normal.rotate(step_rot * (offset + mod), forward);
   // note oxDNA n vector points 3' to 5' opposite of scadnano forward vector

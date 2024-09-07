@@ -462,10 +462,10 @@ Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop
               .map((i) => i.offset)
               .toList();
           for (var offset in deletions_removed + insertion_offsets_removed) {
-            Domain other_ss = find_paired_domain(design, bound_ss, offset);
-            if (other_ss != null) {
-              Strand other_strand = design.substrand_to_strand[other_ss];
-              int other_ss_idx = other_strand.substrands.indexOf(other_ss);
+            var other_dom = find_paired_domain(design, bound_ss, offset);
+            if (other_dom != null) {
+              Strand other_strand = design.substrand_to_strand[other_dom];
+              int other_ss_idx = other_strand.substrands.indexOf(other_dom);
               int other_strand_idx = design.strands.indexOf(other_strand);
               records.add(InsertionDeletionRecord(
                   offset: offset, strand_idx: other_strand_idx, substrand_idx: other_ss_idx));
@@ -474,8 +474,9 @@ Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop
 
           bound_ss = bound_ss.rebuild(
               (b) => dnaend == substrand.dnaend_start ? (b..start = new_offset) : (b..end = new_offset + 1));
-          bound_ss = bound_ss.rebuild(
-              (b) => b..deletions.replace(remaining_deletions)..insertions.replace(remaining_insertions));
+          bound_ss = bound_ss.rebuild((b) => b
+            ..deletions.replace(remaining_deletions)
+            ..insertions.replace(remaining_insertions));
         }
       }
       new_substrand = bound_ss;

@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
@@ -150,7 +149,7 @@ void put_strand_info_on_clipboard(Store<AppState> store) {
 
     // if strand domains are all on same group, output helices_view_order to JSON as well
     // helices_view_order will be null if not all copied strands came from same HelixGroup
-    List<int> helices_view_order = null;
+    List<int>? helices_view_order = null;
     var design = store.state.design;
     var group_names = design.group_names_of_strands(strands);
     if (group_names.length == 1) {
