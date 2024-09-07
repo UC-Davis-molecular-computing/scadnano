@@ -68,6 +68,8 @@ Try loading an example by selecting <em>File&rarr;Load example</em>,
 or select <em>File&rarr;Open</em> to load a .sc file from your local drive.
 You can also drag and drop a .sc file from your file system to the browser.</p>''';
 
+const OXVIEW_URL = 'https://sulcgroup.github.io/oxdna-viewer/';
+
 // https://www.w3schools.com/jsref/event_button.asp
 const LEFT_CLICK_BUTTON = 0;
 const MIDDLE_CLICK_BUTTON = 1;

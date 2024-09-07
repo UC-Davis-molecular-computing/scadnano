@@ -43,6 +43,7 @@ import 'reducers/app_state_reducer.dart';
 import 'middleware/local_storage.dart';
 import 'util.dart' as util;
 import 'actions/actions.dart' as actions;
+import 'constants.dart' as constants;
 
 // global variable for whole program
 late App app;
@@ -97,29 +98,27 @@ class App {
       setup_warning_before_unload();
       setup_save_design_to_localStorage_before_unload();
       make_dart_functions_available_to_js(state);
-      DivElement app_root_element = querySelector('#top-container') as DivElement;
-      this.view = View(app_root_element);
-      this.view.render(state);
-      this.view.oxview_view.frame.onLoad.listen((event) {
-        const js_set_camera_commands = 'camera.up.multiplyScalar(-1)';
-        String text_blob_type = blob_type_to_string(BlobType.text);
-        Blob blob_js_camera_commands = new Blob([js_set_camera_commands], text_blob_type);
-        Map<String, dynamic> message_js_commands = {
-          'message': 'iframe_drop',
-          'files': [blob_js_camera_commands],
-          'ext': ['js'],
-        };
-        this
-            .view
-            .oxview_view
-            .frame
-            .contentWindow
-            ?.postMessage(message_js_commands, 'https://sulcgroup.github.io/oxdna-viewer/');
-        update_oxview_view(app.state.design, this.view.oxview_view.frame);
-      });
+      setup_view();
       // do next after view renders so that JS SVG pan zoom containers are defined
       util.set_zoom_speed(store.state.ui_state.zoom_speed);
     }
+  }
+
+  void setup_view() {
+    DivElement app_root_element = querySelector('#top-container') as DivElement;
+    this.view = View(app_root_element);
+    this.view.render(state);
+    this.view.oxview_view.frame.onLoad.listen((event) {
+      Blob blob_js_camera_commands =
+          new Blob(['camera.up.multiplyScalar(-1)'], blob_type_to_string(BlobType.text));
+      Map<String, dynamic> message = {
+        'message': 'iframe_drop',
+        'files': [blob_js_camera_commands],
+        'ext': ['js'],
+      };
+      this.view.oxview_view.frame.contentWindow?.postMessage(message, constants.OXVIEW_URL);
+      update_oxview_view(app.state.design, this.view.oxview_view.frame);
+    });
   }
 
   initialize_state() {

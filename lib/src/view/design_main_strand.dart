@@ -284,15 +284,13 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 let base = systems[0].strands[${strand_idx}].getMonomers()[${nt_idx_in_strand}];
 api.findElement(base);
 api.selectElements([base]);''';
-    String text_blob_type = blob_type_to_string(BlobType.text);
-    Blob blob_js_highlight_base = new Blob([js_highlight_base], text_blob_type);
+    Blob blob_js_highlight_base = new Blob([js_highlight_base], blob_type_to_string(BlobType.text));
     Map<String, dynamic> message_js_commands = {
       'message': 'iframe_drop',
       'files': [blob_js_highlight_base],
       'ext': ['js'],
     };
-    app.view.oxview_view.frame.contentWindow
-        ?.postMessage(message_js_commands, 'https://sulcgroup.github.io/oxdna-viewer/');
+    app.view.oxview_view.frame.contentWindow?.postMessage(message_js_commands, constants.OXVIEW_URL);
   }
 
   assign_scale_purification_fields() =>
