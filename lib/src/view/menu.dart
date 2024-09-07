@@ -1103,7 +1103,17 @@ Displays an embedded oxView window to visualize the 3D structure of the design.
 Currently the view is "read-only", it will export the scadnano design and show 
 it in the oxView window, but changes made in the oxView window are not propagated
 back to the scadnano design. Any changes will be lost the next time the scadnano
-design is edited.'''
+design is edited.
+
+The oxView window will just show the structure at first, but if you press the `m`
+key, it will show the oxView controls. (But bear in mind any edits will be lost
+upon the next scadnano design change.)
+
+After clicking in the oxView window, the focus is lost from the scadnano app,
+and keyboard shortcuts (e.g., Ctrl+Z to undo, or Delete to delete selected strands)
+will not be recognized by scadnano, even if you click in the scadnano main view.
+Clicking on the menu or the slider bars will return focus to scadnano so that
+keyboard shortcuts will be recognized by scadnano again.'''
         ..name = 'show-oxview'
         ..onChange = (_) {
           props.dispatch(actions.OxviewShowSet(!props.show_oxview));
