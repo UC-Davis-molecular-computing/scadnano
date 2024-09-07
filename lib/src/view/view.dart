@@ -139,7 +139,7 @@ class View {
     if (design_width == null) {
       design_width = '${constants.default_design_width_percent}%';
     }
-    num oxview_width_int = 100.0 - constants.default_design_width_percent;
+    num oxview_width_int = 100.0 - num.parse(design_width.substring(0, design_width.length - 1));
     String oxview_width = '${oxview_width_int.toString()}%';
     design_and_modes_buttons_container_element.setAttribute('style', 'width: $design_width');
     this.oxview_view.div.setAttribute('style', 'width: $oxview_width');
