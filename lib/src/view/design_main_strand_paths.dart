@@ -53,9 +53,9 @@ mixin DesignMainStrandPathsPropsMixin on UiProps {
   bool origami_type_is_selectable;
   String strand_tooltip;
   bool only_display_selected_helices;
-  List<ContextMenuItem> Function(Strand strand, {Substrand substrand, Address address, ModificationType type})
+  List<ContextMenuItem> Function(Strand strand, {Domain domain, Address address, ModificationType type})
       context_menu_strand;
-  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
+  BuiltMap<int, Point<double>> helix_idx_to_svg_position_map;
   bool retain_strand_color_on_selection;
 }
 
@@ -324,7 +324,7 @@ String crossover_path_description_within_group(
   return path;
 }
 
-Point<num> control_point_for_crossover_bezier_curve(Domain from_ss, Domain to_ss,
+Point<double> control_point_for_crossover_bezier_curve(Domain from_ss, Domain to_ss,
     BuiltMap<int, Helix> helices, num from_helix_svg_position_y, num to_helix_svg_position_y,
     {int delta = 0, Geometry geometry}) {
   var from_helix = helices[from_ss.helix];
@@ -340,18 +340,18 @@ Point<num> control_point_for_crossover_bezier_curve(Domain from_ss, Domain to_ss
   bool from_strand_below = from_helix_svg_position_y > to_helix_svg_position_y;
   num midX = (start_pos.x + end_pos.x) / 2;
   num midY = (start_pos.y + end_pos.y) / 2;
-  Point<num> mid = Point<num>(midX, midY);
-  Point<num> control;
-  Point<num> vector = end_pos - start_pos;
-  Point<num> normal = Point<num>(vector.y, -vector.x);
+  Point<double> mid = Point<double>(midX, midY);
+  Point<double> control;
+  Point<double> vector = end_pos - start_pos;
+  Point<double> normal = Point<double>(vector.y, -vector.x);
   if ((!from_ss.forward && from_strand_below) || (from_ss.forward && !from_strand_below)) {
-    normal = Point<num>(-vector.y, vector.x);
+    normal = Point<double>(-vector.y, vector.x);
   }
-  Point<num> unit_normal = normal * (1 / normal.magnitude);
+  Point<double> unit_normal = normal * (1 / normal.magnitude);
   // This scale seems to look good even with many crossovers at same column,
   // e.g., long_range_crossovers.py in the examples directory.
   double scale = helix_distance_normalized * 0.5;
-  Point<num> scale_normal = unit_normal * scale;
+  Point<double> scale_normal = unit_normal * scale;
   control = mid + scale_normal * (geometry.base_width_svg / 2);
   return control;
 }

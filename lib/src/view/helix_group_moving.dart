@@ -31,7 +31,7 @@ mixin HelixGroupMovingProps on UiProps {
   BuiltSet<int> side_selected_helix_idxs;
   bool only_display_selected_helices;
   bool show_helix_circles;
-  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
+  BuiltMap<int, Point<double>> helix_idx_to_svg_position_map;
 }
 
 class HelixGroupMovingComponent extends UiComponent2<HelixGroupMovingProps> with PureComponent {

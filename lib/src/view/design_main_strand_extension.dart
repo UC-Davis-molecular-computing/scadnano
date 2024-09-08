@@ -45,7 +45,7 @@ mixin DesignMainExtensionPropsMixin on UiProps {
   Strand strand;
   String strand_tooltip;
   String transform;
-  Point<num> adjacent_helix_svg_position;
+  Point<double> adjacent_helix_svg_position;
 
   bool selected;
 
@@ -68,10 +68,10 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     var adj_helix = props.adjacent_helix;
     var adj_helix_svg_y = props.adjacent_helix_svg_position.y;
 
-    Point<num> extension_attached_end_svg =
+    Point<double> extension_attached_end_svg =
         util.compute_extension_attached_end_svg(ext, adj_dom, adj_helix, adj_helix_svg_y);
 
-    Point<num> extension_free_end_svg =
+    Point<double> extension_free_end_svg =
         util.compute_extension_free_end_svg(extension_attached_end_svg, ext, adj_dom, props.geometry);
 
     var classname = constants.css_selector_extension;
@@ -171,7 +171,8 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
       event.preventDefault();
       event.stopPropagation(); // needed to prevent strand context menu from popping up
       app.dispatch(actions.ContextMenuShow(
-          context_menu: ContextMenu(items: context_menu_extension().build(), position: event.page)));
+          context_menu: ContextMenu(
+              items: context_menu_extension().build(), position: util.from_point_num(event.page))));
     }
   }
 

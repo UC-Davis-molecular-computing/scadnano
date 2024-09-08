@@ -231,7 +231,7 @@ main() {
         1 <---]<--------]
       */
       List<Helix> helices = [];
-      var initial_roll = 30;
+      double initial_roll = 30.0;
       for (int i = 0; i < 2; i++) {
         var helix = Helix(
             max_offset: 60, grid: Grid.square, idx: i, grid_position: GridPosition(0, i), roll: initial_roll);

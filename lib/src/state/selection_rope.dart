@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:math';
 
 import 'package:built_value/built_value.dart';
@@ -36,29 +35,21 @@ abstract class SelectionRope
   // when we first create the selection box, there are no points
   // (the user just clicked Ctrl or Shift in rope select mode),
   // and we don't know whether it is the main view yet or not
-  BuiltList<Point<num>> get points; // points in polygon
+  BuiltList<Point<double>> get points; // points in polygon
 
-  @nullable
-  Point<num> get current_point; // point where mouse is, on click it is added to points if legal
+  // This is null initially, before any points have been added, since the `SelectionRope` object it made
+  // in response to a keyboard event (pressing the Ctrl or Shift key while in the main or side view).
+  // After the first SelectionRopeMouseMove action, it is set to the current point, but we have to wait
+  // for a MouseEvent before we can access the cursor position to set this, i.e., the first time the
+  // mouse moves after the Ctrl or Shift keys were pressed.
+  Point<double>? get current_point; // point where mouse is, on click it is added to points if legal
 
-  @nullable
-  bool get is_main; // in main view or side view?
+  bool? get is_main; // in main view or side view?
+  // Once a reducer first encounters the
+  // SelectionRope object with is_main == null, it will set is_main based on the value of
+  // actions.SelectionRopeAddPoint.is_main.
 
   static const DECIMAL_PLACES = 1;
-
-// static rect_to_string(Rect bbox) => ''
-//     '${bbox.x.toStringAsFixed(DECIMAL_PLACES)} '
-//     '${bbox.y.toStringAsFixed(DECIMAL_PLACES)} '
-//     '${bbox.width.toStringAsFixed(DECIMAL_PLACES)} '
-//     '${bbox.height.toStringAsFixed(DECIMAL_PLACES)}';
-//
-// String toString() => 'start=('
-//     '${start.x.toStringAsFixed(DECIMAL_PLACES)}, '
-//     '${start.y.toStringAsFixed(DECIMAL_PLACES)})'
-//     '  current=('
-//     '${current.x.toStringAsFixed(DECIMAL_PLACES)}, '
-//     '${current.y.toStringAsFixed(DECIMAL_PLACES)}), '
-//     '  is_main=${is_main}';
 
   @memoized
   BuiltList<Line> get lines {
@@ -97,7 +88,7 @@ abstract class SelectionRope
   }
 
   // check if adding new_point would cause self-intersection
-  bool creates_self_intersection(Point<num> new_point) {
+  bool creates_self_intersection(Point<double> new_point) {
     if (points.isEmpty) {
       return false;
     }
@@ -138,17 +129,25 @@ abstract class SelectionRope
   /// Indicates if the "potential" selection rope, the one we'd get by appending current_point to
   /// the list points, is illegal.
   bool potential_is_illegal() {
-    if (current_point != null) {
-      return creates_self_intersection(current_point);
+    if (this.current_point != null) {
+      return creates_self_intersection(this.current_point!);
     } else {
       return false;
     }
   }
 }
 
+int f(int? i) {
+  if (i != null) {
+    return i + 1;
+  } else {
+    return 0;
+  }
+}
+
 // line from (x1,y1) to (x2,y2)
 abstract class Line with BuiltJsonSerializable implements Built<Line, LineBuilder> {
-  factory Line(Point<num> p1, Point<num> p2) => Line.from((b) => b
+  factory Line(Point<double> p1, Point<double> p2) => Line.from((b) => b
     ..p1 = p1
     ..p2 = p2);
 
@@ -163,9 +162,9 @@ abstract class Line with BuiltJsonSerializable implements Built<Line, LineBuilde
 
   /************************ end BuiltValue boilerplate ************************/
 
-  Point<num> get p1;
+  Point<double> get p1;
 
-  Point<num> get p2;
+  Point<double> get p2;
 
   // https://www.tutorialspoint.com/Check-if-two-line-segments-intersect
   bool intersects(Line line2) {
@@ -205,11 +204,11 @@ abstract class Line with BuiltJsonSerializable implements Built<Line, LineBuilde
 
   /// check whether p is on this line or not, including endpoints,
   /// unless [interior] is true, in which case endpoints are excluded
-  bool contains_point(Point<num> p) =>
+  bool contains_point(Point<double> p) =>
       p.x < max(p1.x, p2.x) && p.x < min(p1.x, p2.x) && p.y < max(p1.y, p2.y) && p.y < min(p1.y, p2.y);
 
   /// Gives direction of cycle a --> b --> c --> a in the plane.
-  static Orientation orientation(Point<num> a, Point<num> b, Point<num> c) {
+  static Orientation orientation(Point<double> a, Point<double> b, Point<double> c) {
     num val = (b.y - a.y) * (c.x - b.x) - (b.x - a.x) * (c.y - b.y);
     if (val == 0) {
       return Orientation.collinear;
@@ -223,7 +222,7 @@ abstract class Line with BuiltJsonSerializable implements Built<Line, LineBuilde
   /// Indicates if this line intersects the line drawn from p2 to new_point at a point other than p2.
   /// This is true if and only if the points p1, p2, and new_point are collinear, and the vector from
   /// p2 to new_point points in the opposite direction as the vector from p1 to p2.
-  bool intersects_line_to_new_point(Point<num> new_point) {
+  bool intersects_line_to_new_point(Point<double> new_point) {
     if (orientation(p1, p2, new_point) != Orientation.collinear) {
       return false;
     }
@@ -235,7 +234,7 @@ abstract class Line with BuiltJsonSerializable implements Built<Line, LineBuilde
   /// Indicates if this line intersects the line drawn from new_point to p1 at a point other than p1.
   /// This is true if and only if the points p1, p2, and new_point are collinear, and the vector from
   /// new_point to p1 points in the opposite direction as the vector from p1 to p2.
-  bool intersects_line_from_new_point(Point<num> new_point) {
+  bool intersects_line_from_new_point(Point<double> new_point) {
     if (orientation(new_point, p1, p2) != Orientation.collinear) {
       return false;
     }
@@ -247,7 +246,7 @@ abstract class Line with BuiltJsonSerializable implements Built<Line, LineBuilde
 
 /// Indicate if vector from p1 to p2 points in the same direction (positive dot product) as
 /// the vector from p3 to p4.
-bool vectors_point_same_direction(Point<num> v1, Point<num> v2) => v1.x * v2.x + v1.y * v2.y > 0;
+bool vectors_point_same_direction(Point<double> v1, Point<double> v2) => v1.x * v2.x + v1.y * v2.y > 0;
 
 enum Orientation {
   collinear,

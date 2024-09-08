@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
@@ -239,7 +238,8 @@ abstract class SelectableDeletion
 
   /************************ begin BuiltValue boilerplate ************************/
 
-  factory SelectableDeletion({int offset, Domain domain, bool is_scaffold}) = _$SelectableDeletion._;
+  factory SelectableDeletion({required int offset, required Domain domain, required bool is_scaffold}) =
+      _$SelectableDeletion._;
 
   factory SelectableDeletion.from([void Function(SelectableDeletionBuilder) updates]) = _$SelectableDeletion;
 
@@ -278,8 +278,10 @@ abstract class SelectableInsertion
 
   /************************ begin BuiltValue boilerplate ************************/
 
-  factory SelectableInsertion({Insertion insertion, Domain domain, bool is_scaffold}) =
-      _$SelectableInsertion._;
+  factory SelectableInsertion(
+      {required Insertion insertion,
+      required Domain domain,
+      required bool is_scaffold}) = _$SelectableInsertion._;
 
   factory SelectableInsertion.from([void Function(SelectableInsertionBuilder) updates]) =
       _$SelectableInsertion;
@@ -326,7 +328,7 @@ abstract class SelectableModification5Prime
 
   /************************ begin BuiltValue boilerplate ************************/
 
-  factory SelectableModification5Prime({Modification5Prime modification, Strand strand}) =
+  factory SelectableModification5Prime({required Modification5Prime modification, required Strand strand}) =
       _$SelectableModification5Prime._;
 
   factory SelectableModification5Prime.from([void Function(SelectableModification5PrimeBuilder) updates]) =
@@ -358,7 +360,7 @@ abstract class SelectableModification3Prime
 
   /************************ begin BuiltValue boilerplate ************************/
 
-  factory SelectableModification3Prime({Modification3Prime modification, Strand strand}) =
+  factory SelectableModification3Prime({required Modification3Prime modification, required Strand strand}) =
       _$SelectableModification3Prime._;
 
   factory SelectableModification3Prime.from([void Function(SelectableModification3PrimeBuilder) updates]) =
@@ -397,10 +399,10 @@ abstract class SelectableModificationInternal
   /************************ begin BuiltValue boilerplate ************************/
 
   factory SelectableModificationInternal(
-      {ModificationInternal modification,
-      Strand strand,
-      Domain domain,
-      int dna_idx}) = _$SelectableModificationInternal._;
+      {required ModificationInternal modification,
+      required Strand strand,
+      required Domain domain,
+      required int dna_idx}) = _$SelectableModificationInternal._;
 
   factory SelectableModificationInternal.from(
       [void Function(SelectableModificationInternalBuilder) updates]) = _$SelectableModificationInternal;
@@ -671,7 +673,7 @@ Future<void> ask_for_select_all_with_same_as_selected() async {
   }
 
   var all_traits = List<SelectableTrait>.from(SelectableTrait.values);
-  var items = List<DialogItem>.filled(all_traits.length + 1, null);
+  util.FixedList<DialogItem> items = util.FixedList<DialogItem>(all_traits.length + 1);
 
   for (int idx = 0; idx < all_traits.length; idx++) {
     var trait = all_traits[idx];

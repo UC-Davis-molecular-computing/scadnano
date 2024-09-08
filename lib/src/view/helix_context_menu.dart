@@ -338,8 +338,8 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
-    num h = (results[0] as DialogInteger).value;
-    num v = (results[1] as DialogInteger).value;
+    int h = (results[0] as DialogInteger).value;
+    int v = (results[1] as DialogInteger).value;
 
     app.dispatch(actions.HelixGridPositionSet(helix: helix, grid_position: GridPosition(h, v)));
   }
@@ -360,9 +360,9 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
-    num x = (results[0] as DialogFloat).value;
-    num y = (results[1] as DialogFloat).value;
-    num z = (results[2] as DialogFloat).value;
+    double x = (results[0] as DialogFloat).value;
+    double y = (results[1] as DialogFloat).value;
+    double z = (results[2] as DialogFloat).value;
 
     // TODO: (check validity)
     app.dispatch(actions.HelixPositionSet(

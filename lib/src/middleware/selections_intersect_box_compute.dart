@@ -56,7 +56,7 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
         return;
       }
 
-      List<Point<num>> points = points_of_polygon_elt(rope_elt);
+      List<Point<double>> points = points_of_polygon_elt(rope_elt);
       bool selection_box_intersection = store.state.ui_state.selection_box_intersection;
       elts_overlapping = elements_intersecting_polygon(
               MAIN_VIEW_SVG_ID, points, select_modes, is_origami, selection_box_intersection)
@@ -83,18 +83,20 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
   }
 }
 
-/// Get points in SVG polygon element as list of math.Point<num>
+/// Get points in SVG polygon element as list of math.Point<double>
 /// Note that rope_elt.points are after the SVG transforms have been applied, so we have to undo them.
-List<Point<num>> points_of_polygon_elt(svg.PolygonElement rope_elt) {
+List<Point<double>> points_of_polygon_elt(svg.PolygonElement rope_elt) {
   svg.PointList point_list = rope_elt.points; // SVG representation
   List<svg.Point> points_svg = [for (int i = 0; i < point_list.length!; i++) point_list.getItem(i)];
-  List<Point<num>> points = [for (var point_svg in points_svg) Point<num>(point_svg.x!, point_svg.y!)];
+  List<Point<double>> points = [
+    for (var point_svg in points_svg) Point<double>(point_svg.x! as double, point_svg.y! as double)
+  ];
   return points;
 }
 
 /// gets list of elements associated to Selectables that intersect selection rope [rope]
 /// (described as list of points in non-self-intersecting polygon) in elements with classname
-List<svg.SvgElement> elements_intersecting_polygon(String classname, List<Point<num>> polygon,
+List<svg.SvgElement> elements_intersecting_polygon(String classname, List<Point<double>> polygon,
     Iterable<SelectModeChoice> select_modes, bool is_origami, bool selection_box_intersection) {
   var overlap = selection_box_intersection ? polygon_intersects_rect : polygon_contains_rect;
   return generalized_intersection_list_polygon(classname, polygon, select_modes, is_origami, overlap);
@@ -110,10 +112,10 @@ List<svg.SvgElement> elements_intersecting_box(String classname, Rectangle<num> 
 /// Like generalized_intersection_list_box, but where selection is described by a polygon instead of rect.
 generalized_intersection_list_polygon(
     String classname,
-    List<Point<num>> polygon,
+    List<Point<double>> polygon,
     Iterable<SelectModeChoice> select_modes,
     bool is_origami,
-    bool overlap(List<Point<num>> polygon, Rectangle<num> rect)) {
+    bool overlap(List<Point<double>> polygon, Rectangle<num> rect)) {
   List<svg.SvgElement> elts_intersecting = [];
   List<svg.GraphicsElement> selectable_elts = find_selectable_elements(select_modes, is_origami);
 
@@ -171,15 +173,15 @@ bool interval_intersect(num l1, num h1, num l2, num h2) {
 }
 
 /// indicates if polygon completely contains rectangle, i.e., it contains all 4 corner points
-bool polygon_contains_rect(List<Point<num>> polygon, Rectangle<num> rect) {
-  num x1 = rect.left;
-  num y1 = rect.top;
-  num x2 = x1 + rect.width;
-  num y2 = y1 + rect.height;
-  var up_left = Point<num>(x1, y1);
-  var up_right = Point<num>(x2, y1);
-  var low_left = Point<num>(x1, y2);
-  var low_right = Point<num>(x2, y2);
+bool polygon_contains_rect(List<Point<double>> polygon, Rectangle<num> rect) {
+  double x1 = rect.left as double;
+  double y1 = rect.top as double;
+  double x2 = x1 + rect.width;
+  double y2 = y1 + rect.height;
+  var up_left = Point<double>(x1, y1);
+  var up_right = Point<double>(x2, y1);
+  var low_left = Point<double>(x1, y2);
+  var low_right = Point<double>(x2, y2);
 
   for (var corner in [up_left, up_right, low_left, low_right]) {
     if (!polygon_contains_point(polygon, corner)) {
@@ -191,7 +193,7 @@ bool polygon_contains_rect(List<Point<num>> polygon, Rectangle<num> rect) {
 }
 
 /// indicates if rectangle completely contains polygon, i.e., it contains all 4 corner points
-bool rect_contains_polygon(Rectangle<num> rect, List<Point<num>> polygon) {
+bool rect_contains_polygon(Rectangle<num> rect, List<Point<double>> polygon) {
   for (var polygon_vertex in polygon) {
     if (!rect_contains_point(rect, polygon_vertex)) {
       return false;
@@ -202,7 +204,7 @@ bool rect_contains_polygon(Rectangle<num> rect, List<Point<num>> polygon) {
 }
 
 /// indicates if polygon intersects rectangle
-bool polygon_intersects_rect(List<Point<num>> polygon, Rectangle<num> rect) {
+bool polygon_intersects_rect(List<Point<double>> polygon, Rectangle<num> rect) {
   // Three ways for polygon to intersect rectangle:
   // (1) rectangle entirely within polygon
   // (2) polygon entirely within rectangle
@@ -225,11 +227,11 @@ bool polygon_intersects_rect(List<Point<num>> polygon, Rectangle<num> rect) {
 
 /// indicates if [polygon] contains point
 /// https://www.geeksforgeeks.org/how-to-check-if-a-given-point-lies-inside-a-polygon/
-bool polygon_contains_point(List<Point<num>> polygon, Point<num> point) {
+bool polygon_contains_point(List<Point<double>> polygon, Point<double> point) {
   // create ray "infinitely" far to the right (really just 1 beyond max x of polygon) from point
   List<num> xs = [for (var polygon_point in polygon) polygon_point.x];
   num max_x = xs.max;
-  var point_infinite_to_right = Point<num>(max_x + 1, point.y);
+  var point_infinite_to_right = Point<double>(max_x + 1, point.y);
   Line infinite_line_from_point = Line(point, point_infinite_to_right);
 
   var lines = lines_of_polygon(polygon);
@@ -244,7 +246,7 @@ bool polygon_contains_point(List<Point<num>> polygon, Point<num> point) {
 }
 
 /// indicates if [rect] contains point
-bool rect_contains_point(Rectangle<num> rect, Point<num> point) {
+bool rect_contains_point(Rectangle<num> rect, Point<double> point) {
   num x1 = rect.left;
   num y1 = rect.top;
   num x2 = x1 + rect.width;
@@ -254,7 +256,7 @@ bool rect_contains_point(Rectangle<num> rect, Point<num> point) {
 }
 
 /// returns the lines in [polygon]
-List<Line> lines_of_polygon(List<Point<num>> polygon) {
+List<Line> lines_of_polygon(List<Point<double>> polygon) {
   List<Line> lines = [];
   for (int i = 0; i < polygon.length - 1; i++) {
     var p1 = polygon[i];
@@ -270,14 +272,14 @@ List<Line> lines_of_polygon(List<Point<num>> polygon) {
 
 /// returns the lines in [rect]
 List<Line> lines_of_rect(Rectangle<num> rect) {
-  num x1 = rect.left;
-  num y1 = rect.top;
-  num x2 = x1 + rect.width;
-  num y2 = y1 + rect.height;
-  var up_left = Point<num>(x1, y1);
-  var up_right = Point<num>(x2, y1);
-  var bot_left = Point<num>(x1, y2);
-  var bot_right = Point<num>(x2, y2);
+  double x1 = rect.left as double;
+  double y1 = rect.top as double;
+  double x2 = x1 + rect.width;
+  double y2 = y1 + rect.height;
+  var up_left = Point<double>(x1, y1);
+  var up_right = Point<double>(x2, y1);
+  var bot_left = Point<double>(x1, y2);
+  var bot_right = Point<double>(x2, y2);
   var top_line = Line(up_left, up_right);
   var bot_line = Line(bot_left, bot_right);
   var left_line = Line(up_left, bot_left);

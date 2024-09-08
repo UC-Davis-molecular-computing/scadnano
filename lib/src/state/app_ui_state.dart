@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:html';
 import 'dart:math';
 
@@ -40,14 +39,11 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   /// For selected objects in main view
   SelectablesStore get selectables_store;
 
-  @nullable
-  StrandsMove get strands_move;
+  StrandsMove? get strands_move;
 
-  @nullable
-  DomainsMove get domains_move;
+  DomainsMove? get domains_move;
 
-  @nullable
-  CopyInfo get copy_info;
+  CopyInfo? get copy_info;
 
   bool get potential_crossover_is_drawing;
 
@@ -67,52 +63,44 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get helix_change_apply_to_all;
 
-  @nullable
-  SelectionRope get selection_rope;
+  SelectionRope? get selection_rope;
 
   // last 5' modification that was added (for populating new add modification dialogs)
-  @nullable
-  Modification5Prime get last_mod_5p;
+  Modification5Prime? get last_mod_5p;
 
   // last 3' modification that was added (for populating new add modification dialogs)
-  @nullable
-  Modification3Prime get last_mod_3p;
+  Modification3Prime? get last_mod_3p;
 
   // last internal modification that was added (for populating new add modification dialogs)
-  @nullable
-  ModificationInternal get last_mod_int;
+  ModificationInternal? get last_mod_int;
 
   BuiltList<MouseoverData> get mouseover_datas;
 
   ExampleDesigns get example_designs;
 
-  @nullable
-  Dialog get dialog;
+  Dialog? get dialog;
 
-  @nullable // null indicates that strand color picker is not being used
-  Strand get color_picker_strand;
+  // null indicates that strand color picker is not being used
+  Strand? get color_picker_strand;
 
-  @nullable // null indicates that strand color picker is not being used
-  Substrand get color_picker_substrand;
+  // null indicates that strand color picker is not being used
+  Substrand? get color_picker_substrand;
 
-  @nullable
-  StrandCreation get strand_creation;
+  StrandCreation? get strand_creation;
 
-  @nullable // null when mouse outside of side view or helix edit mode not enabled
-  GridPosition get side_view_grid_position_mouse_cursor;
+  // null when mouse outside of side view or helix edit mode not enabled
+  GridPosition? get side_view_grid_position_mouse_cursor;
 
-  @nullable // null when mouse outside of side view or helix edit mode not enabled
-  Point<num> get side_view_position_mouse_cursor;
+  // null when mouse outside of side view or helix edit mode not enabled
+  Point<double>? get side_view_position_mouse_cursor;
 
-  @nullable
-  ContextMenu get context_menu;
+  ContextMenu? get context_menu;
 
   /// Save button is enabled iff this is true
   bool get changed_since_last_save;
 
   /// PNG image of dna sequence used for svg caching
-  @nullable
-  String get dna_sequence_png_uri;
+  String? get dna_sequence_png_uri;
 
   num get dna_sequence_png_horizontal_offset;
 
@@ -121,8 +109,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   /// If this is `null`, png-caching runs normally.
   /// Otherwise, disable png-caching (if a png would otherwise be used)
   /// until action is dispatched.
-  @nullable
-  actions.ExportSvg get export_svg_action_delayed_for_png_cache;
+  actions.ExportSvg? get export_svg_action_delayed_for_png_cache;
 
   /// PNG image should be used (if available) if false.
   bool get is_zoom_above_threshold;
@@ -238,7 +225,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get show_slice_bar => storables.show_slice_bar;
 
-  int get slice_bar_offset => storables.slice_bar_offset;
+  int? get slice_bar_offset => storables.slice_bar_offset;
 
   bool get disable_png_caching_dna_sequences => storables.disable_png_caching_dna_sequences;
 
@@ -299,7 +286,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
     return DEFAULT_AppUIState.rebuild((s) => s..selectables_store.replace(selectables_store));
   }
 
-  factory AppUIState([void Function(AppUIStateBuilder) updates]) =>
+  factory AppUIState(void Function(AppUIStateBuilder) updates) =>
       _$AppUIState((u) => u..replace(DEFAULT_AppUIState));
 
   static Serializer<AppUIState> get serializer => _$appUIStateSerializer;

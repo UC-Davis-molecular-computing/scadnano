@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
@@ -31,11 +30,11 @@ abstract class Geometry with BuiltJsonSerializable, UnusedFields implements Buil
 
   /************************ end BuiltValue boilerplate ************************/
   factory Geometry({
-    num rise_per_base_pair = constants.default_rise_per_base_pair,
-    num helix_radius = constants.default_helix_radius,
-    num inter_helix_gap = constants.default_inter_helix_gap,
-    num bases_per_turn = constants.default_bases_per_turn,
-    num minor_groove_angle = constants.default_minor_groove_angle,
+    double rise_per_base_pair = constants.default_rise_per_base_pair,
+    double helix_radius = constants.default_helix_radius,
+    double inter_helix_gap = constants.default_inter_helix_gap,
+    double bases_per_turn = constants.default_bases_per_turn,
+    double minor_groove_angle = constants.default_minor_groove_angle,
   }) =>
       Geometry.from((b) => b
         ..rise_per_base_pair = rise_per_base_pair
@@ -114,7 +113,7 @@ abstract class Geometry with BuiltJsonSerializable, UnusedFields implements Buil
     double minor_groove_angle = util.optional_field(
         json_map, constants.minor_groove_angle_key, constants.default_minor_groove_angle,
         legacy_keys: constants.legacy_minor_groove_angle_keys,
-        legacy_transformer: (num angle_radians) => util.to_degrees(angle_radians));
+        legacy_transformer: (double angle_radians) => util.to_degrees(angle_radians));
 
     var geometry = Geometry(
       rise_per_base_pair: rise_per_base_pair,

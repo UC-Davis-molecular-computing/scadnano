@@ -32,8 +32,8 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
       throw AssertionError("""\
 You have discovered a bug in scadnano.
 
-Please file a bug report at https://github.com/UC-Davis-molecular-computing/scadnano/issues
-and include as much detail as possible, including any information currently displayed 
+Please file a bug report at https://github.com/UC-Davis-molecular-computing/scadnano/issues.
+Include as much detail as possible, including any information currently displayed 
 in the app. Thank you!""");
     }
   }
@@ -67,7 +67,7 @@ in the app. Thank you!""");
   /// changed that required them to be recomputed (e.g., moving helices to a new group). It was also more
   /// code to maintain; several reducers had to call util.helices_assign_svg.
   @memoized
-  BuiltMap<int, Point<num>> get helix_idx_to_svg_position_map {
+  BuiltMap<int, Point<double>> get helix_idx_to_svg_position_map {
     // var sw = Stopwatch()..start();
 
     BuiltSet<int>? helix_idxs_to_calculate = ui_state.side_selected_helix_idxs;
@@ -75,7 +75,7 @@ in the app. Thank you!""");
       helix_idxs_to_calculate = null; // let helices_assign_svg automatically set this to all helices
     }
 
-    BuiltMap<int, Point<num>> ret = util
+    BuiltMap<int, Point<double>> ret = util
         .helices_assign_svg(design.geometry, ui_state.invert_y, design.helices, design.groups,
             helix_idxs_to_calculate: helix_idxs_to_calculate)
         .build();

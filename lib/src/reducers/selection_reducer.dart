@@ -339,7 +339,7 @@ SelectionRope selection_rope_add_point_reducer(SelectionRope rope, actions.Selec
 
   // otherwise, add the point, as long as it keeps the polygon's lines non-self-intersecting;
   // otherwise ignore it
-  List<Point<num>> points = rope.points.toList();
+  List<Point<double>> points = rope.points.toList();
   if (points.length <= 1 || !rope.creates_self_intersection(action.point)) {
     points.add(action.point);
     rope = rope.rebuild((b) => b..points.replace(points));

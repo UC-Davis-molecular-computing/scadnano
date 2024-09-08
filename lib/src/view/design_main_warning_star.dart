@@ -10,7 +10,7 @@ part 'design_main_warning_star.over_react.g.dart';
 UiFactory<DesignMainWarningStarProps> DesignMainWarningStar = _$DesignMainWarningStar;
 
 mixin DesignMainWarningStarProps on UiProps {
-  Point<num> base_svg_pos;
+  Point<double> base_svg_pos;
   bool forward;
   Geometry geometry;
   String color;

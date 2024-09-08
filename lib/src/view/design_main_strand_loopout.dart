@@ -155,7 +155,8 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
       event.preventDefault();
       event.stopPropagation(); // needed to prevent strand context menu from popping up
       app.dispatch(actions.ContextMenuShow(
-          context_menu: ContextMenu(items: context_menu_loopout().build(), position: event.page)));
+          context_menu:
+              ContextMenu(items: context_menu_loopout().build(), position: util.from_point_num(event.page))));
     }
   }
 
@@ -249,10 +250,14 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     if (results == null) return;
 
     String name = (results[name_idx] as DialogText).value;
-    app.dispatch(actions.BatchAction(
-        app.state.ui_state.selectables_store.selected_loopouts
-            .map((l) => actions.SubstrandNameSet(name: name, substrand: l)),
-        "set loopout names"));
+    var loopouts = app.state.ui_state.selectables_store.selected_loopouts.toSet();
+    loopouts.add(props.loopout);
+
+    var action = loopouts.isNotEmpty
+        ? actions.BatchAction(
+            loopouts.map((l) => actions.SubstrandNameSet(name: name, substrand: l)), "set loopout names")
+        : actions.SubstrandNameSet(name: name, substrand: props.loopout);
+    app.dispatch(action);
   }
 
   String loopout_path_description_between_groups() {
@@ -278,8 +283,8 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     var next_y_offset = next_svg.y - h;
     var prev_x_offset = prev_svg.x + w;
     var next_x_offset = next_svg.x + w;
-    var prev_c_unrotated = Point<num>(prev_x_offset, prev_y_offset);
-    var next_c_unrotated = Point<num>(next_x_offset, next_y_offset);
+    var prev_c_unrotated = Point<double>(prev_x_offset, prev_y_offset);
+    var next_c_unrotated = Point<double>(next_x_offset, next_y_offset);
 
     // rotated
     var prev_c = util.rotate(prev_c_unrotated, prev_group.pitch, origin: prev_svg);
@@ -370,8 +375,8 @@ String loopout_path_description_within_group(
     y_offset2 -= h;
   }
 
-  var c1 = Point<num>(x_offset1, y_offset1);
-  var c2 = Point<num>(x_offset2, y_offset2);
+  var c1 = Point<double>(x_offset1, y_offset1);
+  var c2 = Point<double>(x_offset2, y_offset2);
 
   var path = (include_start_M ? 'M ${prev_svg.x} ${prev_svg.y} ' : '') +
       'C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${next_svg.x} ${next_svg.y}';
@@ -421,8 +426,8 @@ String loopout_path_description_same_helix_same_direction(Loopout loopout, Helix
     y += h;
   }
 
-  var c1 = Point<num>(left_x, y);
-  var c2 = Point<num>(right_x, y);
+  var c1 = Point<double>(left_x, y);
+  var c2 = Point<double>(right_x, y);
 
   if (!left_is_prev) {
     var swap = c1;

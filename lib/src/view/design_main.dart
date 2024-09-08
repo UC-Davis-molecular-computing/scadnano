@@ -145,7 +145,7 @@ mixin DesignMainPropsMixin on UiProps {
   bool disable_png_caching_dna_sequences;
   bool retain_strand_color_on_selection;
   bool display_reverse_DNA_right_side_up;
-  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
+  BuiltMap<int, Point<double>> helix_idx_to_svg_position_map;
   bool invert_y;
 }
 

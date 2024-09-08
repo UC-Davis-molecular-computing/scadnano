@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
@@ -61,13 +60,13 @@ abstract class DesignSideRotationData
       int offset = param.offset;
       Color color_forward = constants.color_forward_rotation_arrow_no_strand;
       Color color_reverse = constants.color_forward_rotation_arrow_no_strand;
-      Helix helix = design.helices[helix_idx];
+      Helix helix = design.helices[helix_idx]!;
       double roll_forward = design.helix_rotation_forward(helix.idx, offset);
       int num_domains_found = 0;
       for (Domain domain in design.domains_on_helix(helix_idx)) {
         if (domain.contains_offset(offset)) {
           num_domains_found++;
-          Strand strand = design.substrand_to_strand[domain];
+          Strand strand = design.substrand_to_strand[domain]!;
           if (domain.forward) {
             color_forward = domain.color ?? strand.color;
           } else {

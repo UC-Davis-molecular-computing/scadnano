@@ -32,7 +32,7 @@ mixin DesignMainDNASequencesProps on UiProps {
   bool is_zoom_above_threshold;
   actions.ExportSvg export_svg_action_delayed_for_png_cache;
   bool only_display_selected_helices;
-  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
+  BuiltMap<int, Point<double>> helix_idx_to_svg_position_map;
   bool disable_png_caching_dna_sequences;
   bool retain_strand_color_on_selection;
   bool display_reverse_DNA_right_side_up;

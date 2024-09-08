@@ -29,7 +29,7 @@ mixin DesignMainSliceBarProps on UiProps {
   BuiltMap<int, Helix> helices;
   bool only_display_selected_helices;
   Geometry geometry;
-  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
+  BuiltMap<int, Point<double>> helix_idx_to_svg_position_map;
 }
 
 class DesignMainSliceBarComponent extends UiComponent2<DesignMainSliceBarProps> with PureComponent {

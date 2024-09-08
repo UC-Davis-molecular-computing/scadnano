@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:svg' hide Point;
 import 'dart:math';
 
@@ -12,12 +11,12 @@ import 'package:built_value/built_value.dart';
 
 part 'selection_box.g.dart';
 
-const ORIGIN = Point<num>(0, 0);
+const ORIGIN = Point<double>(0.0, 0.0);
 
 abstract class SelectionBox with BuiltJsonSerializable implements Built<SelectionBox, SelectionBoxBuilder> {
   SelectionBox._();
 
-  factory SelectionBox(Point<num> start, bool toggle, bool is_main) => SelectionBox.from((b) => b
+  factory SelectionBox(Point<double> start, bool toggle, bool is_main) => SelectionBox.from((b) => b
     ..start = start
     ..toggle = toggle
     ..is_main = is_main
@@ -32,8 +31,8 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
 
   /************************ end BuiltValue boilerplate ************************/
 
-  Point<num> get start; // starting coordinate of drag
-  Point<num> get current; // current coordinate of drag
+  Point<double> get start; // starting coordinate of drag
+  Point<double> get current; // current coordinate of drag
   bool get toggle; // toggle if Ctrl pressed, otherwise selecting
   bool get is_main; // in main view or side view?
 
@@ -50,10 +49,10 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
   static const DECIMAL_PLACES = 1;
 
   static rect_to_string(Rect bbox) => ''
-      '${bbox.x.toStringAsFixed(DECIMAL_PLACES)} '
-      '${bbox.y.toStringAsFixed(DECIMAL_PLACES)} '
-      '${bbox.width.toStringAsFixed(DECIMAL_PLACES)} '
-      '${bbox.height.toStringAsFixed(DECIMAL_PLACES)}';
+      '${bbox.x!.toStringAsFixed(DECIMAL_PLACES)} '
+      '${bbox.y!.toStringAsFixed(DECIMAL_PLACES)} '
+      '${bbox.width!.toStringAsFixed(DECIMAL_PLACES)} '
+      '${bbox.height!.toStringAsFixed(DECIMAL_PLACES)}';
 
   String toString() => 'start=('
       '${start.x.toStringAsFixed(DECIMAL_PLACES)}, '

@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:built_value/built_value.dart';
 
 import 'select_mode.dart';

@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:math';
 
 import 'package:built_value/built_value.dart';
@@ -44,43 +43,35 @@ abstract class Extension
 
   double get display_angle;
 
-  // not really nullable but this helps in creating extensions programmatically
-  // and it gets set automatically by Strand.initialize() anyway
-  @nullable
   bool get is_5p;
 
-  @nullable
-  String get label;
+  String? get label;
 
-  @nullable
-  String get name;
+  String? get name;
 
-  @nullable
-  String get dna_sequence;
+  String? get dna_sequence;
 
-  @nullable
-  Color get color;
+  Color? get color;
 
-  @nullable
   String get strand_id;
 
   bool get is_scaffold;
 
-  @nullable
   Domain get adjacent_domain;
 
   factory Extension(
-      {int num_bases,
+      {required int num_bases,
+      required bool is_5p,
+      required Domain adjacent_domain,
       double display_length = constants.default_display_length,
       double display_angle = constants.default_display_angle,
-      bool is_5p,
-      String label = null,
-      String name = null,
-      String dna_sequence = null,
+      String? label = null,
+      String? name = null,
+      String? dna_sequence = null,
       bool is_scaffold = false,
-      Color color = null,
-      Domain adjacent_domain = null,
-      Map<String, dynamic> unused_fields = null}) {
+      Color? color = null,
+      String strand_id = 'NONE YET',
+      Map<String, dynamic>? unused_fields = null}) {
     if (unused_fields == null) {
       unused_fields = {};
     }
@@ -94,8 +85,9 @@ abstract class Extension
       ..dna_sequence = dna_sequence
       ..color = color
       ..is_scaffold = is_scaffold
-      ..adjacent_domain = adjacent_domain?.toBuilder()
-      ..unused_fields.replace(unused_fields));
+      ..adjacent_domain.replace(adjacent_domain)
+      ..unused_fields.replace(unused_fields!)
+      ..strand_id = strand_id);
   }
 
   dynamic to_json_serializable({bool suppress_indent = false}) {
@@ -110,7 +102,7 @@ abstract class Extension
       json_map[constants.name_key] = name;
     }
     if (this.color != null) {
-      json_map[constants.color_key] = color.toHexColor().toCssString();
+      json_map[constants.color_key] = color!.toHexColor().toCssString();
     }
     if (label != null) {
       json_map[constants.label_key] = label;
@@ -134,15 +126,18 @@ abstract class Extension
 
     String dna_sequence = util.optional_field_with_null_default(json_map, constants.dna_sequence_key);
 
-    Color color = json_map.containsKey(constants.color_key)
-        ? util.parse_json_color(json_map[constants.color_key])
+    Color? color = json_map.containsKey(constants.color_key)
+        ? util.parse_json_color(json_map[constants.color_key]!)
         : null;
 
     var unused_fields = util.unused_fields_map(json_map, constants.extension_keys);
 
     return Extension(
         num_bases: num_bases,
-        is_5p: null,
+        // next two are placeholders; will be set by Strand.initialize(), but we don't want to make the
+        // fields nullable since in "normal" usage they are never null
+        is_5p: false,
+        adjacent_domain: Domain(helix: 0, forward: true, start: 0, end: 0),
         // let Strand calculate it based on position
         display_length: display_length,
         display_angle: display_angle,
@@ -174,7 +169,7 @@ abstract class Extension
 
   @memoized
   DNAEnd get dnaend_free => DNAEnd(
-      is_5p: is_5p,
+      is_5p: this.is_5p,
       is_start: true,
       offset: null,
       is_scaffold: is_scaffold,

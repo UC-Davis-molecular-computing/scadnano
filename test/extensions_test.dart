@@ -78,9 +78,10 @@ main() {
     test('3p_extension', () {
       design = design.draw_strand(0, 0).to(10).extension_3p(5).with_color(color).commit();
 
+      var domain = Domain(helix: 0, forward: true, start: 0, end: 10);
       var expected_strand = Strand([
-        Domain(helix: 0, forward: true, start: 0, end: 10),
-        Extension(num_bases: 5, is_5p: false),
+        domain,
+        Extension(num_bases: 5, is_5p: false, adjacent_domain: domain),
       ], color: color);
       expect(design.strands.length, 1);
       expect(design.strands[0], expected_strand);
@@ -89,9 +90,10 @@ main() {
     test('5p_extension', () {
       design = design.draw_strand(0, 0).extension_5p(5).to(10).with_color(color).commit();
 
+      var domain = Domain(helix: 0, forward: true, start: 0, end: 10);
       var expected_strand = Strand([
-        Extension(num_bases: 5, is_5p: true),
-        Domain(helix: 0, forward: true, start: 0, end: 10),
+        Extension(num_bases: 5, is_5p: true, adjacent_domain: domain),
+        domain,
       ], color: color);
       expect(design.strands.length, 1);
       expect(design.strands[0], expected_strand);
@@ -100,9 +102,10 @@ main() {
     test('move_after_5p_extension_ok', () {
       design = design.draw_strand(0, 0).extension_5p(5).move(15).with_color(color).commit();
 
+      var domain = Domain(helix: 0, forward: true, start: 0, end: 15);
       var expected_strand = Strand([
-        Extension(num_bases: 5, is_5p: true),
-        Domain(helix: 0, forward: true, start: 0, end: 15),
+        Extension(num_bases: 5, is_5p: true, adjacent_domain: domain),
+        domain,
       ], color: color);
       expect(design.strands.length, 1);
       expect(design.strands[0], expected_strand);
@@ -117,9 +120,10 @@ main() {
           .with_color(color)
           .commit();
 
+      var domain = Domain(helix: 0, forward: true, start: 0, end: 10);
       var expected_strand = Strand([
-        Domain(helix: 0, forward: true, start: 0, end: 10),
-        Extension(num_bases: 5, label: 'ext1'),
+        domain,
+        Extension(num_bases: 5, label: 'ext1', adjacent_domain: domain, is_5p: false),
       ], color: color);
       expect(design.strands.length, 1);
       expect(design.strands[0], expected_strand);
@@ -134,9 +138,10 @@ main() {
           .with_color(color)
           .commit();
 
+      var domain = Domain(helix: 0, forward: true, start: 0, end: 10);
       var expected_strand = Strand([
-        Extension(num_bases: 5, label: 'ext1'),
-        Domain(helix: 0, forward: true, start: 0, end: 10),
+        Extension(num_bases: 5, label: 'ext1', adjacent_domain: domain, is_5p: true),
+        domain,
       ], color: color);
       expect(design.strands.length, 1);
       expect(design.strands[0], expected_strand);
@@ -151,9 +156,10 @@ main() {
           .with_color(color)
           .commit();
 
+      var domain = Domain(helix: 0, forward: true, start: 0, end: 10, dna_sequence: 'A' * 10);
       var expected_strand = Strand([
-        Domain(helix: 0, forward: true, start: 0, end: 10, dna_sequence: 'A' * 10),
-        Extension(num_bases: 5, dna_sequence: 'G' * 5),
+        domain,
+        Extension(num_bases: 5, dna_sequence: 'G' * 5, adjacent_domain: domain, is_5p: false),
       ], color: color);
       expect(design.strands.length, 1);
       expect(design.strands[0], expected_strand);
@@ -168,9 +174,10 @@ main() {
           .with_color(color)
           .commit();
 
+      var domain = Domain(helix: 0, forward: true, start: 0, end: 10, dna_sequence: 'T' * 10);
       var expected_strand = Strand([
-        Extension(num_bases: 5, dna_sequence: 'C' * 5),
-        Domain(helix: 0, forward: true, start: 0, end: 10, dna_sequence: 'T' * 10),
+        Extension(num_bases: 5, dna_sequence: 'C' * 5, adjacent_domain: domain, is_5p: true),
+        domain,
       ], color: color);
       expect(design.strands.length, 1);
       expect(design.strands[0], expected_strand);
@@ -185,9 +192,10 @@ main() {
           .with_color(color)
           .commit();
 
+      var domain = Domain(helix: 0, forward: true, start: 0, end: 10, dna_sequence: '?' * 10);
       var expected_strand = Strand([
-        Domain(helix: 0, forward: true, start: 0, end: 10, dna_sequence: '?' * 10),
-        Extension(num_bases: 5, dna_sequence: 'G' * 5),
+        domain,
+        Extension(num_bases: 5, dna_sequence: 'G' * 5, adjacent_domain: domain, is_5p: false),
       ], color: color);
       expect(design.strands.length, 1);
       expect(design.strands[0], expected_strand);
@@ -206,11 +214,12 @@ main() {
       sb.with_color(color);
       design = sb.commit();
 
+      var last_domain = Domain(helix: 1, forward: false, start: 0, end: 3, dna_sequence: 'GGG');
       var expected_strand = Strand([
         Domain(helix: 0, forward: true, start: 0, end: 3, dna_sequence: 'AAA'),
         Loopout(loopout_num_bases: 2, dna_sequence: 'CC', prev_domain_idx: 0),
-        Domain(helix: 1, forward: false, start: 0, end: 3, dna_sequence: 'GGG'),
-        Extension(num_bases: 4, dna_sequence: 'TTTT'),
+        last_domain,
+        Extension(num_bases: 4, dna_sequence: 'TTTT', adjacent_domain: last_domain, is_5p: false),
       ], color: color);
       expect(design.strands.length, 1);
       expect(design.strands[0], expected_strand);
@@ -220,9 +229,10 @@ main() {
       design =
           design.draw_strand(0, 0).to(10).extension_3p(5).with_domain_name('ext1').with_color(color).commit();
 
+      var domain = Domain(helix: 0, forward: true, start: 0, end: 10);
       var expected_strand = Strand([
-        Domain(helix: 0, forward: true, start: 0, end: 10),
-        Extension(num_bases: 5, name: 'ext1'),
+        domain,
+        Extension(num_bases: 5, name: 'ext1', adjacent_domain: domain, is_5p: false),
       ], color: color);
       expect(design.strands.length, 1);
       expect(design.strands[0], expected_strand);
@@ -254,13 +264,16 @@ main() {
 }
 ''';
       var design = Design.from_json_str(json_str);
+      var first_domain = Domain(helix: 0, forward: true, start: 0, end: 16);
+      var last_domain = Domain(helix: 2, forward: true, start: 0, end: 16);
       var expected_strand = Strand([
-        Extension(num_bases: 5, display_length: 2, display_angle: 30),
-        Domain(helix: 0, forward: true, start: 0, end: 16),
+        Extension(
+            num_bases: 5, display_length: 2, display_angle: 30, adjacent_domain: first_domain, is_5p: true),
+        first_domain,
         Domain(helix: 1, forward: false, start: 0, end: 16),
         Loopout(loopout_num_bases: 3, prev_domain_idx: 2),
-        Domain(helix: 2, forward: true, start: 0, end: 16),
-        Extension(num_bases: 7, name: 'ext_3p'),
+        last_domain,
+        Extension(num_bases: 7, name: 'ext_3p', adjacent_domain: last_domain, is_5p: false),
       ], color: color);
       expect(design.strands.length, 1);
       expect(design.strands[0], expected_strand);

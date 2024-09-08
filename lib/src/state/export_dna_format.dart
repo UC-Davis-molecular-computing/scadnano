@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:typed_data';
 import 'dart:math';
 
@@ -143,12 +142,12 @@ Simple CSV (comma-separated value) format. Not a format used by any biotech comp
     idt_plates384: 'IDT 384-well plate(s) (.xlsx)',
   };
 
-  String toString() => _toString_map[this];
+  String toString() => _toString_map[this]!;
 
   /// Inverse of toString()
   static ExportDNAFormat fromString(String str) {
     for (var format in _toString_map.keys) {
-      String val_str = _toString_map[format];
+      String val_str = _toString_map[format]!;
       if (val_str == str) {
         return format;
       }
@@ -192,7 +191,7 @@ Simple CSV (comma-separated value) format. Not a format used by any biotech comp
     Iterable<Strand> strands, {
     String delimiter = ',',
     String domain_delimiter = '',
-    StrandOrder strand_order = null,
+    StrandOrder? strand_order = null,
     bool column_major_strand = true,
     bool column_major_plate = true,
   }) {
@@ -259,7 +258,7 @@ String idt_bulk_export(Iterable<Strand> strands,
 }
 
 Future<List<int>> idt_plates_export(Iterable<Strand> strands, PlateType plate_type, bool column_major_plate,
-    {String domain_delimiter}) async {
+    {required String domain_delimiter}) async {
   var plate_coord = _PlateCoordinate(plate_type);
   int plate = 1;
   int excel_row = 1;

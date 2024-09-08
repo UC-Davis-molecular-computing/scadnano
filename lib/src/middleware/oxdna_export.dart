@@ -474,7 +474,7 @@ Tuple3<OxdnaVector, OxdnaVector, OxdnaVector> oxdna_get_helix_vectors(Design des
       position = helix.position;
     }
   } else {
-    position = util.grid_position_to_position3d(helix.grid_position, grid, geometry);
+    position = util.grid_position_to_position3d(helix.grid_position!, grid, geometry);
   }
 
   position = position + group.position;
@@ -532,7 +532,7 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand>? strands
     for (int ss_idx = 0; ss_idx < strand.substrands.length; ss_idx++) {
       var domain = strand.substrands[ss_idx];
       var ox_strand = OxdnaStrand();
-      String seq = domain.dna_sequence;
+      String? seq = domain.dna_sequence;
       if (seq == null) {
         seq = 'T' * domain.dna_length();
       }

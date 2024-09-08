@@ -246,6 +246,8 @@ label + select {
     box-shadow: 3px 3px 2px #E9E9E9;
     border-radius: 4px;
     z-index: 1;
+    /* I don't know why the following doesn't work here like it does with dropdown-item, for instance. */
+    /*overflow-y: auto;*/
 }
 
 .context-menu-list {
@@ -958,7 +960,9 @@ https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-cen
 }
 
 .dropdown-menu.show {
-    overflow-y: auto;
+    /* TODO: This works but sometimes causes the submenus not to show easily; it makes a horizontal
+         scrollbar and you have to click it to see; e.g., View-->DNA-->DNA sequences*/
+    /*overflow-y: auto;*/
 }
 
 /* Thin the navbar */

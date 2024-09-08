@@ -56,13 +56,13 @@ mixin DesignMainDNAEndPropsMixin on UiProps {
   bool selected;
 
   List<ContextMenuItem> Function(Strand strand,
-      {@required Substrand substrand,
+      {Domain domain,
       @required Address address,
       @required ModificationType type}) context_menu_strand;
 
   bool drawing_potential_crossover;
   bool moving_this_dna_end;
-  Point<num> helix_svg_position;
+  Point<double> helix_svg_position;
   bool retain_strand_color_on_selection;
 }
 
@@ -116,11 +116,11 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
 
     DNAEnd dna_end;
     int offset;
-    Point<num> pos;
+    Point<double> pos;
     bool forward;
     double rotation_degrees = 0;
 
-    Point<num> extension_attached_end_svg;
+    Point<double> extension_attached_end_svg;
     var color = props.strand_color;
 
     if (!props.is_on_extension) {
@@ -236,11 +236,11 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
           context_menu: ContextMenu(
               items: props
                   .context_menu_strand(props.strand,
-                      substrand: props.domain ?? props.ext,
+                      domain: props.domain,
                       address: address,
                       type: (props.is_5p ? ModificationType.five_prime : ModificationType.three_prime))
                   .build(),
-              position: event.page)));
+              position: util.from_point_num(event.page))));
     }
   }
 
@@ -269,14 +269,14 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         }
         dna_end.handle_selection_mouse_down(event);
         // set up drag detection for moving DNA ends
-        Point<num> extension_attached_end_svg = util.compute_extension_attached_end_svg(
+        Point<double> extension_attached_end_svg = util.compute_extension_attached_end_svg(
             props.ext, props.ext.adjacent_domain, props.helix, props.helix_svg_position.y);
 
         // extension_start_point is in helix group coordinate space, so add it with helix group position
         // to get canvas coordinate space
         extension_attached_end_svg += props.group.translation(props.geometry);
 
-        Point<num> pos = util.compute_extension_free_end_svg(
+        Point<double> pos = util.compute_extension_free_end_svg(
             extension_attached_end_svg, props.ext, props.ext.adjacent_domain, props.geometry);
         app.dispatch(actions.DNAExtensionsMoveStart(start_point: pos, helix: props.helix));
       }
@@ -356,7 +356,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       }
       int other_offset = other_end.offset_inclusive;
       int other_helix_idx = other_domain.helix;
-      Point<num> other_helix_svg = app.state.helix_idx_to_svg_position_map[other_helix_idx];
+      Point<double> other_helix_svg = app.state.helix_idx_to_svg_position_map[other_helix_idx];
       var start_point_untransformed =
           props.helix.svg_base_pos(other_offset, other_domain.forward, other_helix_svg.y);
       var start_point = props.group.transform_point_main_view(start_point_untransformed, props.geometry);

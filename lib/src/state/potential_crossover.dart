@@ -25,8 +25,8 @@ abstract class PotentialCrossover
     required Address address,
     required String color,
     required DNAEnd dna_end_first_click,
-    required Point<num> start_point,
-    required Point<num> current_point,
+    required Point<double> start_point,
+    required Point<double> current_point,
     Linker? linker = null,
   }) {
     // need this because Linker is not a Built type, but its two subclasses Crossover and Loopout are,
@@ -51,9 +51,9 @@ abstract class PotentialCrossover
 
   DNAEnd get dna_end_first_click;
 
-  Point<num> get start_point;
+  Point<double> get start_point;
 
-  Point<num> get current_point;
+  Point<double> get current_point;
 
   // are we exchanging DNA ends of an existing crossover or loopout?
   // If not this is null, otherwise it is the existing crossover/loopout

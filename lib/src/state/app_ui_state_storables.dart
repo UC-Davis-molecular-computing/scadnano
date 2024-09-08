@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/built_value.dart';
@@ -74,7 +73,7 @@ abstract class AppUIStateStorables
 
   num get major_tick_width_font_size;
 
-  num get zoom_speed;
+  double get zoom_speed;
 
   bool get modification_display_connector;
 
@@ -120,8 +119,7 @@ abstract class AppUIStateStorables
 
   String get displayed_group_name;
 
-  @nullable
-  int get slice_bar_offset;
+  int? get slice_bar_offset;
 
   bool get disable_png_caching_dna_sequences;
 

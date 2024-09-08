@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
@@ -11,9 +10,9 @@ abstract class DomainNameMismatch
     with BuiltJsonSerializable
     implements Built<DomainNameMismatch, DomainNameMismatchBuilder> {
   factory DomainNameMismatch({
-    int helix_idx,
-    Domain forward_domain,
-    Domain reverse_domain,
+    required int helix_idx,
+    required Domain forward_domain,
+    required Domain reverse_domain,
   }) = _$DomainNameMismatch._;
 
   factory DomainNameMismatch.from([void Function(DomainNameMismatchBuilder) updates]) = _$DomainNameMismatch;

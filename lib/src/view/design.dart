@@ -95,8 +95,8 @@ class DesignViewComponent {
 
   bool svg_panzoom_has_been_set_up = false;
 
-  Point<num> side_view_mouse_position = Point<num>(0, 0);
-  Point<num> main_view_mouse_position = Point<num>(0, 0);
+  Point<double> side_view_mouse_position = Point<double>(0, 0);
+  Point<double> main_view_mouse_position = Point<double>(0, 0);
 
   DesignViewComponent(this.root_element) {
     this.side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
@@ -218,7 +218,7 @@ class DesignViewComponent {
 
     side_view_svg.onMouseLeave.listen((_) => side_view_mouse_leave_update_mouseover());
     side_view_svg.onMouseMove.listen((event) {
-      side_view_mouse_position = event.client;
+      side_view_mouse_position = util.from_point_num(event.client);
       side_view_update_position(event: event);
     });
 
@@ -245,7 +245,7 @@ class DesignViewComponent {
       bool left_mouse_button_is_down = util.left_mouse_button_pressed_during_mouse_event(event);
 
       // move potential crossover
-      main_view_mouse_position = event.client;
+      main_view_mouse_position = util.from_point_num(event.client);
       main_view_move_potential_crossover(event);
 
       // redraw potential next point for selection rope
@@ -254,7 +254,7 @@ class DesignViewComponent {
           (event.ctrlKey || event.metaKey || event.shiftKey)) {
         bool is_main_view = true;
         var view_svg = main_view_svg;
-        Point<num> point =
+        Point<double> point =
             util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
         var action = actions.SelectionRopeMouseMove(point: point, is_main_view: is_main_view);
         app.dispatch(actions.ThrottledActionFast(action, 1 / 60.0));
@@ -306,8 +306,8 @@ class DesignViewComponent {
                 'The selected ends occupy the following helix groups: ${group_names?.join(", ")}';
             window.alert(msg);
           } else {
-            Point<num> old_point = extensions_move_store.current_point;
-            Point<num> point =
+            Point<double> old_point = extensions_move_store.current_point;
+            Point<double> point =
                 util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, true, main_view_svg);
             if (point != old_point) {
               app.dispatch(actions.DNAExtensionsMoveAdjustPosition(position: point));
@@ -489,7 +489,7 @@ class DesignViewComponent {
         bool left_click = util.left_mouse_button_caused_mouse_event(event);
         bool selection_rope_exists = app.state.ui_state.selection_rope != null;
         if (selection_rope_exists && left_click && edit_mode_is_rope_select()) {
-          Point<num> point =
+          Point<double> point =
               util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, svg_elt);
           app.dispatch(actions.SelectionRopeAddPoint(point: point, is_main_view: is_main_view));
         }
@@ -673,7 +673,7 @@ class DesignViewComponent {
 
   drag_start(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
     MouseEvent event = draggable_event.originalEvent;
-    Point<num> point =
+    Point<double> point =
         util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
     if (app.state.ui_state.edit_modes.contains(EditModeChoice.select)) {
       bool toggle;
@@ -692,7 +692,7 @@ class DesignViewComponent {
 
   drag(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
     MouseEvent event = draggable_event.originalEvent;
-    Point<num> point =
+    Point<double> point =
         util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
     if (edit_mode_is_select()) {
       if (event.ctrlKey || event.metaKey || event.shiftKey) {
@@ -949,7 +949,7 @@ class DesignViewComponent {
 
   main_view_move_potential_crossover(MouseEvent event) {
     if (app.store_potential_crossover.state != null) {
-      Point<num> point =
+      Point<double> point =
           util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, true, main_view_svg);
       var action = actions.PotentialCrossoverMove(point: point);
       app.dispatch(actions.ThrottledActionFast(action, 1 / 60.0));
@@ -965,7 +965,7 @@ class DesignViewComponent {
     }
   }
 
-  side_view_update_position({Point<num> mouse_pos = null, MouseEvent event = null}) {
+  side_view_update_position({Point<double> mouse_pos = null, MouseEvent event = null}) {
     assert(!(mouse_pos == null && event == null));
     if (edit_mode_is_pencil()) {
       var displayed_group_name = app.state.ui_state.displayed_group_name;
@@ -1023,15 +1023,17 @@ paste_strands_auto() {
   });
 }
 
-group_names_of_strands(StrandsMove strands_move) =>
+//TODO: add ? to the next four return types
+BuiltSet<String> group_names_of_strands(StrandsMove strands_move) =>
     app.state.design.group_names_of_strands(strands_move.strands_moving);
 
-group_names_of_domains(DomainsMove domains_move) =>
+BuiltSet<String> group_names_of_domains(DomainsMove domains_move) =>
     app.state.design.group_names_of_domains(domains_move.domains_moving);
 
-group_names_of_ends(DNAEndsMove ends_move) => app.state.design.group_names_of_ends(ends_move.ends_moving);
+BuiltSet<String> group_names_of_ends(DNAEndsMove ends_move) =>
+    app.state.design.group_names_of_ends(ends_move.ends_moving);
 
-group_names_of_extensions(DNAExtensionsMove extensions_move) =>
+BuiltSet<String> group_names_of_extensions(DNAExtensionsMove extensions_move) =>
     app.state.design.group_names_of_ends(extensions_move.ends_moving);
 
 main_view_pointer_up(MouseEvent event) {

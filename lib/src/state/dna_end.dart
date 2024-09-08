@@ -10,7 +10,7 @@ part 'dna_end.g.dart';
 
 abstract class DNAEnd with SelectableMixin, BuiltJsonSerializable implements Built<DNAEnd, DNAEndBuilder> {
   factory DNAEnd(
-          {required int offset,
+          {int? offset = null,
           required bool is_5p,
           required bool is_start,
           required bool substrand_is_first,

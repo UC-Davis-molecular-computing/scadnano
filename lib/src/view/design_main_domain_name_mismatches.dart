@@ -21,7 +21,7 @@ mixin DesignMainDomainNameMismatchesProps on UiProps {
   Design design;
   bool only_display_selected_helices;
   BuiltSet<int> side_selected_helix_idxs;
-  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
+  BuiltMap<int, Point<double>> helix_idx_to_svg_position_map;
 }
 
 class DesignMainDomainNameMismatchesComponent extends UiComponent2<DesignMainDomainNameMismatchesProps>

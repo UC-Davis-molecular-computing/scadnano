@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
@@ -24,16 +23,17 @@ abstract class DomainsMove with BuiltJsonSerializable implements Built<DomainsMo
 
   /************************ end BuiltValue boilerplate ************************/
 
-  factory DomainsMove(
-      {BuiltList<Domain> domains_moving,
-      BuiltList<Domain> all_domains,
-      BuiltList<Strand> strands_with_domains_moving,
-      BuiltMap<int, Helix> helices,
-      BuiltMap<String, HelixGroup> groups,
-      BuiltMap<int, int> original_helices_view_order_inverse,
-      Address original_address,
-      bool copy = false,
-      bool keep_color = true}) {
+  factory DomainsMove({
+    required BuiltList<Domain> domains_moving,
+    required BuiltList<Domain> all_domains,
+    required BuiltList<Strand> strands_with_domains_moving,
+    required BuiltMap<int, Helix> helices,
+    required BuiltMap<String, HelixGroup> groups,
+    required BuiltMap<int, int> original_helices_view_order_inverse,
+    required Address original_address,
+    bool copy = false,
+    bool keep_color = true,
+  }) {
     var domains_fixed = copy
         ? all_domains
         : [
@@ -78,13 +78,14 @@ abstract class DomainsMove with BuiltJsonSerializable implements Built<DomainsMo
 
   bool get keep_color;
 
-  Helix get original_helix => helices[original_address.helix_idx];
+  Helix get original_helix => helices[original_address.helix_idx]!;
 
-  Helix get current_helix => helices[current_address.helix_idx];
+  Helix get current_helix => helices[current_address.helix_idx]!;
 
-  int get original_view_order => groups[original_helix.group].helices_view_order_inverse[original_helix.idx];
+  int get original_view_order =>
+      groups[original_helix.group]!.helices_view_order_inverse[original_helix.idx]!;
 
-  int get current_view_order => groups[current_helix.group].helices_view_order_inverse[current_helix.idx];
+  int get current_view_order => groups[current_helix.group]!.helices_view_order_inverse[current_helix.idx]!;
 
   int get delta_offset => current_address.offset - original_address.offset;
 
@@ -98,7 +99,7 @@ abstract class DomainsMove with BuiltJsonSerializable implements Built<DomainsMo
   Map<int, List<Domain>> get domains_moving_on_helix {
     Map<int, List<Domain>> map = {for (int idx in helices.keys) idx: []};
     for (var domain in domains_moving) {
-      map[domain.helix].add(domain);
+      map[domain.helix]!.add(domain);
     }
     return map;
   }
@@ -107,7 +108,7 @@ abstract class DomainsMove with BuiltJsonSerializable implements Built<DomainsMo
   Map<int, List<Domain>> get domains_fixed_on_helix {
     Map<int, List<Domain>> map = {for (int idx in helices.keys) idx: []};
     for (var domain in domains_fixed) {
-      map[domain.helix].add(domain);
+      map[domain.helix]!.add(domain);
     }
     return map;
   }
@@ -119,7 +120,7 @@ abstract class DomainsMove with BuiltJsonSerializable implements Built<DomainsMo
     for (var strand in map.keys) {
       for (var domain in strand.domains) {
         if (domains_moving_set.contains(domain)) {
-          map[strand].add(domain);
+          map[strand]!.add(domain);
         }
       }
     }

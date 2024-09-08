@@ -49,9 +49,9 @@ mixin DesignMainStrandAndDomainTextsPropsMixin on UiProps {
   int domain_name_font_size;
   int domain_label_font_size;
 
-  BuiltMap<int, Point<num>> helix_idx_to_svg_position;
+  BuiltMap<int, Point<double>> helix_idx_to_svg_position;
 
-  List<ContextMenuItem> Function(Strand strand, {Substrand substrand, Address address, ModificationType type})
+  List<ContextMenuItem> Function(Strand strand, {Domain domain, Address address, ModificationType type})
       context_menu_strand;
 }
 

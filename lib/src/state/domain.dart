@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:math';
 
 import 'package:built_value/built_value.dart';
@@ -30,6 +29,8 @@ abstract class Insertion
 
   int get length;
 
+  String get strand_id;
+
   dynamic toJson() => [offset, length];
 
   dynamic to_json_serializable({bool suppress_indent = false}) => toJson();
@@ -37,9 +38,10 @@ abstract class Insertion
   Insertion fromJson(List list) => Insertion(list[0], list[1]);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory Insertion(int offset, int count) => Insertion.from((b) => b
+  factory Insertion(int offset, int count, [String strand_id = 'NONE YET']) => Insertion.from((b) => b
     ..offset = offset
-    ..length = count);
+    ..length = count
+    ..strand_id = strand_id);
 
   factory Insertion.from([void Function(InsertionBuilder) updates]) = _$Insertion;
 
@@ -70,18 +72,18 @@ abstract class Domain
 
   // named argument constructor
   factory Domain(
-      {int helix,
-      bool forward,
-      int start,
-      int end,
-      Iterable<int> deletions,
-      Iterable<Insertion> insertions,
-      String strand_id,
-      String dna_sequence = null,
-      Color color = null,
+      {required int helix,
+      required bool forward,
+      required int start,
+      required int end,
+      Iterable<int>? deletions = null,
+      Iterable<Insertion>? insertions = null,
+      String strand_id = 'NONE YET',
+      String? dna_sequence = null,
+      Color? color = null,
       bool is_scaffold = false,
-      String name = null,
-      String label = null,
+      String? name = null,
+      String? label = null,
       bool is_first = false,
       bool is_last = false}) {
     if (deletions == null) {
@@ -95,8 +97,8 @@ abstract class Domain
       ..forward = forward
       ..start = start
       ..end = end
-      ..deletions.replace(deletions)
-      ..insertions.replace(insertions)
+      ..deletions.replace(deletions!)
+      ..insertions.replace(insertions!)
       ..name = name
       ..label = label
       ..dna_sequence = dna_sequence
@@ -126,20 +128,15 @@ abstract class Domain
 
   bool get is_scaffold;
 
-  @nullable
-  String get name;
+  String? get name;
 
-  @nullable
-  String get label;
+  String? get label;
 
   // properties below here not stored in JSON, but computed from containing Strand
-  @nullable
-  String get dna_sequence;
+  String? get dna_sequence;
 
-  @nullable
-  Color get color;
+  Color? get color;
 
-  @nullable
   String get strand_id;
 
   @memoized
@@ -237,10 +234,10 @@ abstract class Domain
           .map((insertion) => insertion.to_json_serializable(suppress_indent: suppress_indent)));
     }
     if (this.color != null) {
-      json_map[constants.color_key] = color.toHexColor().toCssString();
+      json_map[constants.color_key] = this.color!.toHexColor().toCssString();
     }
-    if (label != null) {
-      json_map[constants.label_key] = label;
+    if (this.label != null) {
+      json_map[constants.label_key] = this.label;
     }
 
     json_map.addAll(unused_fields.toMap());
@@ -258,8 +255,8 @@ abstract class Domain
     var deletions = List<int>.from(util.optional_field(json_map, constants.deletions_key, []));
     var insertions = parse_json_insertions(util.optional_field(json_map, constants.insertions_key, []));
 
-    Color color = json_map.containsKey(constants.color_key)
-        ? util.parse_json_color(json_map[constants.color_key])
+    Color? color = json_map.containsKey(constants.color_key)
+        ? util.parse_json_color(json_map[constants.color_key]!)
         : null;
 
     String name = util.optional_field_with_null_default(json_map, constants.name_key);
@@ -322,6 +319,7 @@ abstract class Domain
       ..color = color
       ..name = name
       ..label = label
+      ..strand_id = 'NONE YET'
       ..unused_fields = unused_fields;
   }
 
@@ -414,7 +412,7 @@ abstract class Domain
   /// (including the first one that would be represented even if there were no insertion)
   /// are replaced with a single space.
   String dna_sequence_deletions_insertions_to_spaces({bool reverse = false}) {
-    String seq = this.dna_sequence;
+    String seq = this.dna_sequence!;
     List<int> codeunits = [];
 
     var deletions_set = this.deletions.toSet();
@@ -436,7 +434,7 @@ abstract class Domain
         offset += forward;
       } else if (insertions_map.containsKey(offset)) {
         codeunits.add(space_codeunit);
-        int insertion_length = insertions_map[offset];
+        int insertion_length = insertions_map[offset]!;
         int forward_insertion = insertion_length + 1;
         seq_idx += forward_insertion;
         offset += forward;
@@ -459,8 +457,8 @@ abstract class Domain
   ///  unlike other parts of this API where the right endpoint is exclusive.
   ///  This is to make the notion well-defined when one of the endpoints is on an offset with a
   ///  deletion or insertion.
-  String dna_sequence_in(int offset_low, int offset_high, {bool reverse = false}) {
-    if (dna_sequence == null) {
+  String? dna_sequence_in(int offset_low, int offset_high, {bool reverse = false}) {
+    if (this.dna_sequence == null) {
       return null;
     }
     // if on a deletion, move inward until we are off of it
@@ -490,7 +488,7 @@ abstract class Domain
       str_idx_high = swap;
     }
 
-    String subseq = dna_sequence.substring(str_idx_low, str_idx_high + 1);
+    String subseq = this.dna_sequence!.substring(str_idx_low, str_idx_high + 1);
     if (reverse) {
       subseq = subseq.split('').reversed.join();
     }
@@ -521,7 +519,7 @@ abstract class Domain
         value: (insertion) => insertion.length,
       );
       if (insertion_map.containsKey(offset_edge)) {
-        int insertion_length = insertion_map[offset_edge];
+        int insertion_length = insertion_map[offset_edge]!;
         length_increase += insertion_length;
       }
     }
@@ -551,7 +549,7 @@ abstract class Domain
         this.compute_overlap(other) != null);
   }
 
-  Tuple2<int, int> compute_overlap(Domain other) {
+  Tuple2<int, int>? compute_overlap(Domain other) {
     int overlap_start = max(this.start, other.start);
     int overlap_end = min(this.end, other.end);
     if (overlap_start >= overlap_end) {
@@ -581,7 +579,7 @@ abstract class Domain
     int len_adjust = this.net_ins_del_length_increase_from_5p_to(offset, forward);
 
     // get string index assuming this Substrand is first on Strand
-    int ss_str_idx = null;
+    int ss_str_idx;
     if (this.forward) {
       //account for insertions and deletions
       offset += len_adjust;
@@ -605,7 +603,7 @@ abstract class Domain
         dna_idx_cur++;
       }
       if (this.insertion_offset_to_length.containsKey(offset)) {
-        int insertion_length = this.insertion_offset_to_length[offset];
+        int insertion_length = this.insertion_offset_to_length[offset]!;
         dna_idx_cur += insertion_length;
       }
       offset += this.forward ? 1 : -1;

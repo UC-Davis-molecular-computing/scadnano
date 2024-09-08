@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
@@ -23,7 +22,7 @@ abstract class UndoRedo with BuiltJsonSerializable implements Built<UndoRedo, Un
 
   /************************ begin BuiltValue boilerplate ************************/
 
-  factory UndoRedo([void Function(UndoRedoBuilder) updates]) =>
+  factory UndoRedo([void Function(UndoRedoBuilder)? updates]) =>
       _$UndoRedo((u) => u..replace(DEFAULT_UndoRedo));
 
   UndoRedo._();

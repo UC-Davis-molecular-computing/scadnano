@@ -56,7 +56,7 @@ mixin DesignMainStrandModificationProps on UiProps {
 class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStrandModificationProps> {
   @override
   render() {
-    Point<num> pos;
+    Point<double> pos;
     if (props.ext == null) {
       pos = props.helix.svg_base_pos(props.address.offset, props.address.forward, props.helix_svg_position_y);
       // if internal modification that goes between bases, adjust x offset to be after the given base,
@@ -65,7 +65,7 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
         var mod = (props.modification as ModificationInternal);
         if (!mod.attached_to_base) {
           var delta = props.helix.geometry.base_width_svg / 2;
-          pos = Point<num>(pos.x + delta, pos.y);
+          pos = Point<double>(pos.x + delta, pos.y);
         }
       }
     } else {
@@ -73,7 +73,7 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
       var adj_dom = props.ext.adjacent_domain;
       var adj_helix = props.helix;
       var adj_helix_svg_y = props.helix_svg_position_y;
-      Point<num> extension_attached_end_svg =
+      Point<double> extension_attached_end_svg =
           util.compute_extension_attached_end_svg(ext, adj_dom, adj_helix, adj_helix_svg_y);
       pos = util.compute_extension_free_end_svg(extension_attached_end_svg, ext, adj_dom, props.geometry);
     }
@@ -175,7 +175,7 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
     app.dispatch(action);
   }
 
-  ReactElement _end_connector(Point<num> pos, bool forward, int connector_length) {
+  ReactElement _end_connector(Point<double> pos, bool forward, int connector_length) {
     num y_delta = y_delta_mod();
     double y_del_small = (forward ? -y_delta : y_delta);
     double x = -x_delta_mod();
@@ -195,7 +195,8 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
       ..key = 'connector')();
   }
 
-  ReactElement _modification_svg(Point<num> pos, bool forward, bool display_connector, int connector_length) {
+  ReactElement _modification_svg(
+      Point<double> pos, bool forward, bool display_connector, int connector_length) {
     num y_delta = y_delta_mod();
     double y_del_small = (forward ? -y_delta : y_delta).toDouble();
     int font_size = props.font_size;

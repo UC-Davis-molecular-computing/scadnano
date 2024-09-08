@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:color/color.dart';
 
 import '../json_serializable.dart';
@@ -14,21 +13,21 @@ abstract class Substrand implements JSONSerializable, StrandPart {
 
   bool is_extension();
 
-  String get dna_sequence;
+  String? get dna_sequence;
 
   Substrand set_dna_sequence(String seq);
 
   toJson();
 
-  String get name;
+  String? get name;
 
-  String get label;
+  String? get label;
 
   String type_description();
 
   String get id;
 
-  Color get color;
+  Color? get color;
 
   toBuilder();
 }

@@ -18,7 +18,7 @@ mixin End3PrimeProps on UiProps implements EndEitherPrimeProps {
   MouseUpHandler on_mouse_enter;
   MouseUpHandler on_mouse_leave;
   String classname;
-  Point<num> pos;
+  Point<double> pos;
   Color color;
   bool forward;
   String id;
@@ -32,7 +32,7 @@ class End3PrimeComponent extends UiComponent2<End3PrimeProps> {
     // if they are specified in CSS, but it will if they are specified here.
     var points;
     num scale = 3.7;
-    Point<num> pos = props.pos;
+    Point<double> pos = props.pos;
     if (!props.forward) {
       points = '${pos.x - scale},${pos.y} '
           '${pos.x + 0.9 * scale},${pos.y + scale} '

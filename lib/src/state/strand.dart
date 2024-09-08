@@ -448,15 +448,15 @@ abstract class Strand
   }
 
   @memoized
-  BuiltList<Selectable> get selectable_modifications {
-    List<Selectable> mods = [];
+  BuiltList<SelectableModification> get selectable_modifications {
+    List<SelectableModification> mods = [];
     if (selectable_modification_5p != null) {
       mods.add(selectable_modification_5p);
     }
     if (selectable_modification_3p != null) {
       mods.add(selectable_modification_3p);
     }
-    var mods_int = List<Selectable>.from(selectable_modifications_int_by_dna_idx.values);
+    var mods_int = List<SelectableModification>.from(selectable_modifications_int_by_dna_idx.values);
     mods.addAll(mods_int);
     return mods.build();
   }
@@ -594,7 +594,7 @@ abstract class Strand
     for (int i = 0; i < substrands.length - 1; i++) {
       if (substrands[i] is Domain) {
         if (substrands[i + 1] is Domain) {
-          linkers.add(Crossover(i, i + 1, id, is_scaffold));
+          linkers.add(Crossover(i, i + 1, is_scaffold, this.id));
         } else if (substrands[i + 1] is Loopout) {
           var loopout = substrands[i + 1];
           assert(loopout is Loopout);
@@ -606,7 +606,7 @@ abstract class Strand
     }
 
     if (circular) {
-      linkers.add(Crossover(substrands.length - 1, 0, id, is_scaffold));
+      linkers.add(Crossover(this.substrands.length - 1, 0, this.is_scaffold, this.id));
     }
 
     return linkers.build();

@@ -89,30 +89,30 @@ class App {
     if (RUN_TEST_CODE_INSTEAD_OF_APP) {
       await test_stuff();
     } else {
-      print("1");
+      // print("1");
       warn_wrong_browser();
-      print("2");
+      // print("2");
       initialize_state();
-      print("3");
+      // print("3");
       setup_undo_redo_keyboard_listeners();
-      print("4");
+      // print("4");
       setup_save_open_dna_file_keyboard_listeners();
-      print("5");
+      // print("5");
       copy_selected_strands_to_clipboard_image_keyboard_listeners();
-      print("6");
+      // print("6");
       restore_all_local_storage(app.store);
-      print("7");
+      // print("7");
       setup_warning_before_unload();
-      print("8");
+      // print("8");
       setup_save_design_to_localStorage_before_unload();
-      print("9");
+      // print("9");
       make_dart_functions_available_to_js(state);
-      print("10");
+      // print("10");
       setup_view();
-      print("11");
+      // print("11");
       // do next after view renders so that JS SVG pan zoom containers are defined
       util.set_zoom_speed(store.state.ui_state.zoom_speed);
-      print("12");
+      // print("12");
     }
   }
 
@@ -247,7 +247,9 @@ class App {
         'ext': ['js'],
       };
       this.view.oxview_view.frame.contentWindow?.postMessage(message, constants.OXVIEW_URL);
-      update_oxview_view(app.state.design, this.view.oxview_view.frame);
+      if (app.state.maybe_design != null) {
+        update_oxview_view(app.state.design, this.view.oxview_view.frame);
+      }
     });
   }
 }

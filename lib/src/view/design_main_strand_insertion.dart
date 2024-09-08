@@ -63,7 +63,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       classname += ' ' + constants.css_selector_scaffold;
     }
 
-    Point<num> pos =
+    Point<double> pos =
         props.helix.svg_base_pos(props.insertion.offset, props.domain.forward, props.svg_position_y);
     ReactElement insertion_background = _insertion_background(pos);
     ReactElement insertion_path = _insertion_path();
@@ -93,7 +93,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
     int offset = props.insertion.offset;
     Color color = props.color;
 
-    Point<num> pos = props.helix.svg_base_pos(offset, props.domain.forward, props.svg_position_y);
+    Point<double> pos = props.helix.svg_base_pos(offset, props.domain.forward, props.svg_position_y);
 
     num dx1 = geometry.base_width_svg;
     num dx2 = 0.5 * geometry.base_width_svg;
@@ -134,7 +134,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
     return insertion_path;
   }
 
-  ReactElement _text_number_of_insertions(Point<num> pos) {
+  ReactElement _text_number_of_insertions(Point<double> pos) {
     Geometry geometry = props.helix.geometry;
     int offset = props.insertion.offset;
     Insertion insertion = props.insertion;
@@ -187,7 +187,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
           ..key = 'text')(text_path_props('${length}')));
   }
 
-  ReactElement _insertion_background(Point<num> pos) {
+  ReactElement _insertion_background(Point<double> pos) {
     Geometry geometry = props.helix.geometry;
     String key_background = 'insertion-background-H${props.domain.helix}-${props.insertion.offset}';
     num background_width = geometry.base_width_svg;
@@ -228,7 +228,8 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       event.preventDefault();
       event.stopPropagation(); // needed to prevent strand context menu from popping up
       app.dispatch(actions.ContextMenuShow(
-          context_menu: ContextMenu(items: context_menu_insertion().build(), position: event.page)));
+          context_menu: ContextMenu(
+              items: context_menu_insertion().build(), position: util.from_point_num(event.page))));
     }
   }
 

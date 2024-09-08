@@ -32,7 +32,7 @@ mixin DesignMainHelicesProps on UiProps {
   bool display_major_tick_widths_all_helices;
   Geometry geometry;
   bool show_helix_circles;
-  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
+  BuiltMap<int, Point<double>> helix_idx_to_svg_position_map;
   bool invert_y;
 }
 

@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:convert';
 import 'dart:html';
 
@@ -130,7 +129,7 @@ abstract class SelectModeState implements Built<SelectModeState, SelectModeState
 
   SelectModeState._();
 
-  factory SelectModeState([void Function(SelectModeStateBuilder) updates]) =>
+  factory SelectModeState([void Function(SelectModeStateBuilder)? updates]) =>
       _$SelectModeState((s) => s..replace(DEFAULT_SelectModeStateBuilder.build()));
 
   static Serializer<SelectModeState> get serializer => _$selectModeStateSerializer;

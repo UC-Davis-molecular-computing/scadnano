@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 
@@ -15,13 +14,14 @@ part 'vendor_fields.g.dart';
 abstract class VendorFields
     with BuiltJsonSerializable, UnusedFields
     implements Built<VendorFields, VendorFieldsBuilder> {
-  factory VendorFields({String scale, String purification, String plate = null, String well = null}) =>
+  factory VendorFields(
+          {required String scale, required String purification, String? plate = null, String? well = null}) =>
       VendorFields.from((b) => b
         ..scale = scale
         ..purification = purification
         ..plate = plate
         ..well = well
-        ..unused_fields = MapBuilder<String, Object>({}));
+        ..unused_fields = MapBuilder<String, dynamic>({}));
 
   factory VendorFields.from([void Function(VendorFieldsBuilder) updates]) = _$VendorFields;
 
@@ -35,11 +35,9 @@ abstract class VendorFields
 
   String get purification;
 
-  @nullable
-  String get plate;
+  String? get plate;
 
-  @nullable
-  String get well;
+  String? get well;
 
   @memoized
   int get hashCode;

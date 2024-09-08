@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:math';
 
 import 'package:built_value/serializer.dart';
@@ -23,7 +22,7 @@ abstract class DNAAssignOptions
   static Serializer<DNAAssignOptions> get serializer => _$dNAAssignOptionsSerializer;
 
   factory DNAAssignOptions(
-      {String dna_sequence,
+      {required String dna_sequence,
       bool use_predefined_dna_sequence = false,
       bool assign_complements = true,
       bool disable_change_sequence_bound_strand = true,
@@ -41,7 +40,6 @@ abstract class DNAAssignOptions
 
   /************************ end BuiltValue boilerplate ************************/
 
-  @nullable
   String get dna_sequence;
 
   bool get use_predefined_dna_sequence;
@@ -53,7 +51,7 @@ abstract class DNAAssignOptions
   int get m13_rotation;
 
   static void _initializeBuilder(DNAAssignOptionsBuilder b) {
-    b.dna_sequence = null;
+    b.dna_sequence = '';
     b.use_predefined_dna_sequence = false;
     b.assign_complements = true;
     b.disable_change_sequence_bound_strand = true;

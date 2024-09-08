@@ -18,7 +18,7 @@ abstract class EndEitherPrimeProps implements UiProps {
   MouseUpHandler on_mouse_enter;
   MouseUpHandler on_mouse_leave;
   String classname;
-  Point<num> pos;
+  Point<double> pos;
   Color color;
   bool forward;
   String id;
@@ -35,7 +35,7 @@ mixin End5PrimeProps on UiProps implements EndEitherPrimeProps {
   MouseUpHandler on_mouse_enter;
   MouseUpHandler on_mouse_leave;
   String classname;
-  Point<num> pos;
+  Point<double> pos;
   Color color;
   bool forward;
   String id;

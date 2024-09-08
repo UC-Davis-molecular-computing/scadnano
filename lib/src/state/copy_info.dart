@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
@@ -53,32 +52,30 @@ abstract class CopyInfo with BuiltJsonSerializable implements Built<CopyInfo, Co
 
   // Address of most recently pasted strands,
   // or originally copied strands if no paste has happened yet
-  @nullable
-  Address get prev_paste_address;
+  Address? get prev_paste_address;
 
-  @nullable
-  AddressDifference get translation;
+  AddressDifference? get translation;
 
   // next address to paste into (no strands exist at this Address yet)
-  Address get next_paste_address => translation == null || prev_paste_address == null
+  Address? get next_paste_address => this.translation == null || this.prev_paste_address == null
       ? null
-      : prev_paste_address.sum(translation, helices_view_order, helices_view_order_inverse);
+      : prev_paste_address!.sum(this.translation!, helices_view_order, helices_view_order_inverse);
 
   // first address to paste into based on translation
-  Address get first_paste_address => translation == null
+  Address? get first_paste_address => this.translation == null
       ? null
-      : copied_address.sum(translation, helices_view_order, helices_view_order_inverse);
+      : copied_address.sum(this.translation!, helices_view_order, helices_view_order_inverse);
 
   BuiltList<int> get helices_view_order;
 
   BuiltMap<int, int> get helices_view_order_inverse;
 
   factory CopyInfo({
-    BuiltList<Strand> strands,
-    Address copied_address,
-    AddressDifference translation,
-    BuiltList<int> helices_view_order,
-    BuiltMap<int, int> helices_view_order_inverse,
+    required BuiltList<Strand> strands,
+    required Address copied_address,
+    required AddressDifference? translation,
+    required BuiltList<int> helices_view_order,
+    required BuiltMap<int, int> helices_view_order_inverse,
   }) {
     return CopyInfo.from((b) => b
       ..strands.replace(strands)
@@ -92,7 +89,7 @@ abstract class CopyInfo with BuiltJsonSerializable implements Built<CopyInfo, Co
     assert(has_translation());
 
     if (next_translation_in_bounds_and_legal(state)) {
-      return rebuild((b) => b..prev_paste_address.replace(next_paste_address));
+      return rebuild((b) => b..prev_paste_address = this.next_paste_address?.toBuilder());
     } else {
       return this;
     }
@@ -130,12 +127,12 @@ abstract class CopyInfo with BuiltJsonSerializable implements Built<CopyInfo, Co
       // If we've already pasted (prev_paste_address is defined) and translation is defined,
       // and we are not pasting in the original copied address,
       // then we should paste into next_paste_address (calculated from translation and prev_paste_address)
-      strands_move = strands_move.rebuild((b) => b..current_address.replace(next_paste_address));
+      strands_move = strands_move.rebuild((b) => b..current_address.replace(this.next_paste_address!));
     } else if (translation != null && !start_at_copied) {
       // If we have not yet pasted, but translation is defined,
       // and we are not starting at original copied address,
       // then paste into copied_address + translation
-      strands_move = strands_move.rebuild((b) => b..current_address.replace(first_paste_address));
+      strands_move = strands_move.rebuild((b) => b..current_address.replace(this.first_paste_address!));
     }
     return strands_move;
   }

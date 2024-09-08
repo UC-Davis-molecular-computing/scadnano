@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:math';
 
 import 'package:built_value/serializer.dart';
@@ -38,14 +37,14 @@ abstract class GridPosition with BuiltJsonSerializable implements Built<GridPosi
 
   /// Distance in nanometers between two grid positions,
   /// assuming each position is a circle of diameter 2.5 nm.
-  num distance_nm(GridPosition other, Grid grid) {
+  double distance_nm(GridPosition other, Grid grid) {
     return distance_lattice(other, grid) * 2.5;
   }
 
   /// Unitless distance between between two grid positions, assuming each position is a circle of diameter 1.
-  num distance_lattice(GridPosition other, Grid grid) {
-    num x_diff;
-    num y_diff;
+  double distance_lattice(GridPosition other, Grid grid) {
+    int x_diff;
+    int y_diff;
     if (grid == Grid.square) {
       x_diff = h - other.h;
       y_diff = v - other.v;

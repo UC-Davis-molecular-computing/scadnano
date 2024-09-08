@@ -37,7 +37,7 @@ mixin DesignMainStrandMovingPropsMixin on UiProps {
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
   Geometry geometry;
-  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
+  BuiltMap<int, Point<double>> helix_idx_to_svg_position_map;
 }
 
 class DesignMainStrandMovingProps = UiProps

@@ -28,7 +28,7 @@ typedef MouseUpHandler = void Function(react.SyntheticMouseEvent);
 UiFactory<ExtensionEndMovingProps> ConnectedExtensionEndMoving =
     connect<DNAExtensionsMove, ExtensionEndMovingProps>(
   mapStateToPropsWithOwnProps: (dna_extensions_move, props) {
-    Point<num> current_point = dna_extensions_move?.current_point_of(props.dna_end);
+    Point<double> current_point = dna_extensions_move?.current_point_of(props.dna_end);
     if (current_point == null) {
       return ExtensionEndMoving()..render = false;
     }
@@ -43,7 +43,7 @@ mixin ExtensionEndMovingProps on UiProps {
   DNAEnd dna_end;
   Extension ext;
   Geometry geometry;
-  Point<num> attached_end_svg;
+  Point<double> attached_end_svg;
   Helix helix;
   HelixGroup group;
   Color color;
@@ -51,7 +51,7 @@ mixin ExtensionEndMovingProps on UiProps {
   bool is_5p;
   bool allowable;
 
-  Point<num> current_point;
+  Point<double> current_point;
   bool render;
 }
 
@@ -69,7 +69,7 @@ class ExtensionEndMovingComponent extends UiComponent2<ExtensionEndMovingProps> 
 
     // current_point is in canvas coordinate space, so subtract it with helix group position
     // to get helix group coordinate space (since translation transform is already applied to DesignMainDNAEndComponent))
-    Point<num> pos = props.current_point - props.group.translation(props.geometry);
+    Point<double> pos = props.current_point - props.group.translation(props.geometry);
 
     EndEitherPrimeProps end_props = (props.is_5p ? End5Prime() : End3Prime());
     String classname = (props.is_5p ? 'five-prime-end-moving' : 'three-prime-end-moving') +

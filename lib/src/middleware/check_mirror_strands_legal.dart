@@ -18,7 +18,8 @@ check_reflect_strands_legal_middleware(Store<AppState> store, action, NextDispat
     List<Strand> strands_to_reflect = action.strands.toList();
     Design design = store.state.design;
 
-    var group_names = design.group_names_of_strands(strands_to_reflect);
+    var group_names = design.group_names_of_strands(strands_to_reflect)!;
+
     if (group_names.length != 1) {
       var msg = 'Cannot reflect selected strands unless they are all on the same helix group.\n'
           '3 These strands occupy the following helix groups: ${group_names.join(", ")}';

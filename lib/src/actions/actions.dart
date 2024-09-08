@@ -1241,17 +1241,18 @@ abstract class ErrorMessageSet
 abstract class SelectionBoxCreate
     with BuiltJsonSerializable
     implements Action, Built<SelectionBoxCreate, SelectionBoxCreateBuilder> {
-  Point<num> get point;
+  Point<double> get point;
 
   bool get toggle;
 
   bool get is_main;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SelectionBoxCreate(Point<num> point, bool toggle, bool is_main) => SelectionBoxCreate.from((b) => b
-    ..point = point
-    ..toggle = toggle
-    ..is_main = is_main);
+  factory SelectionBoxCreate(Point<double> point, bool toggle, bool is_main) =>
+      SelectionBoxCreate.from((b) => b
+        ..point = point
+        ..toggle = toggle
+        ..is_main = is_main);
 
   factory SelectionBoxCreate.from([void Function(SelectionBoxCreateBuilder) updates]) = _$SelectionBoxCreate;
 
@@ -1263,12 +1264,12 @@ abstract class SelectionBoxCreate
 abstract class SelectionBoxSizeChange
     with BuiltJsonSerializable
     implements FastAction, Built<SelectionBoxSizeChange, SelectionBoxSizeChangeBuilder> {
-  Point<num> get point;
+  Point<double> get point;
 
   bool get is_main;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SelectionBoxSizeChange(Point<num> point, bool is_main) => SelectionBoxSizeChange.from((b) => b
+  factory SelectionBoxSizeChange(Point<double> point, bool is_main) => SelectionBoxSizeChange.from((b) => b
     ..point = point
     ..is_main = is_main);
 
@@ -1321,12 +1322,12 @@ abstract class SelectionRopeCreate
 abstract class SelectionRopeMouseMove
     with BuiltJsonSerializable
     implements FastAction, Built<SelectionRopeMouseMove, SelectionRopeMouseMoveBuilder> {
-  Point<num> get point;
+  Point<double> get point;
 
   bool get is_main_view;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SelectionRopeMouseMove({required Point<num> point, required bool is_main_view}) =
+  factory SelectionRopeMouseMove({required Point<double> point, required bool is_main_view}) =
       _$SelectionRopeMouseMove._;
 
   SelectionRopeMouseMove._();
@@ -1340,12 +1341,12 @@ abstract class SelectionRopeMouseMove
 abstract class SelectionRopeAddPoint
     with BuiltJsonSerializable
     implements Action, Built<SelectionRopeAddPoint, SelectionRopeAddPointBuilder> {
-  Point<num> get point;
+  Point<double> get point;
 
   bool get is_main_view;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SelectionRopeAddPoint({required Point<num> point, required bool is_main_view}) =
+  factory SelectionRopeAddPoint({required Point<double> point, required bool is_main_view}) =
       _$SelectionRopeAddPoint._;
 
   SelectionRopeAddPoint._();
@@ -1407,10 +1408,10 @@ abstract class MouseGridPositionSideClear
 abstract class MousePositionSideUpdate
     with BuiltJsonSerializable
     implements Action, Built<MousePositionSideUpdate, MousePositionSideUpdateBuilder> {
-  Point<num> get svg_pos;
+  Point<double> get svg_pos;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory MousePositionSideUpdate({required Point<num> svg_pos}) = _$MousePositionSideUpdate._;
+  factory MousePositionSideUpdate({required Point<double> svg_pos}) = _$MousePositionSideUpdate._;
 
   MousePositionSideUpdate._();
 
@@ -2670,10 +2671,10 @@ abstract class PotentialCrossoverCreate
 abstract class PotentialCrossoverMove
     with BuiltJsonSerializable
     implements FastAction, Built<PotentialCrossoverMove, PotentialCrossoverMoveBuilder> {
-  Point<num> get point;
+  Point<double> get point;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory PotentialCrossoverMove({required Point<num> point}) = _$PotentialCrossoverMove._;
+  factory PotentialCrossoverMove({required Point<double> point}) = _$PotentialCrossoverMove._;
 
   PotentialCrossoverMove._();
 
@@ -3007,12 +3008,12 @@ abstract class DNAEndsMoveCommit
 abstract class DNAExtensionsMoveStart
     with BuiltJsonSerializable
     implements Action, Built<DNAExtensionsMoveStart, DNAExtensionsMoveStartBuilder> {
-  Point<num> get start_point;
+  Point<double> get start_point;
 
   Helix get helix;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory DNAExtensionsMoveStart({required Point<num> start_point, required Helix helix}) =
+  factory DNAExtensionsMoveStart({required Point<double> start_point, required Helix helix}) =
       _$DNAExtensionsMoveStart._;
 
   DNAExtensionsMoveStart._();
@@ -3027,7 +3028,7 @@ abstract class DNAExtensionsMoveSetSelectedExtensionEnds
         Built<DNAExtensionsMoveSetSelectedExtensionEnds, DNAExtensionsMoveSetSelectedExtensionEndsBuilder> {
   BuiltList<DNAExtensionMove> get moves;
 
-  Point<num> get original_point;
+  Point<double> get original_point;
 
   BuiltSet<Strand> get strands_affected;
 
@@ -3036,7 +3037,7 @@ abstract class DNAExtensionsMoveSetSelectedExtensionEnds
   /************************ begin BuiltValue boilerplate ************************/
   factory DNAExtensionsMoveSetSelectedExtensionEnds(
       {required BuiltList<DNAExtensionMove> moves,
-      required Point<num> original_point,
+      required Point<double> original_point,
       required BuiltSet<Strand> strands_affected,
       required Helix helix}) = _$DNAExtensionsMoveSetSelectedExtensionEnds._;
 
@@ -3049,10 +3050,10 @@ abstract class DNAExtensionsMoveSetSelectedExtensionEnds
 abstract class DNAExtensionsMoveAdjustPosition
     with BuiltJsonSerializable
     implements FastAction, Built<DNAExtensionsMoveAdjustPosition, DNAExtensionsMoveAdjustPositionBuilder> {
-  Point<num> get position;
+  Point<double> get position;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory DNAExtensionsMoveAdjustPosition({required Point<num> position}) =
+  factory DNAExtensionsMoveAdjustPosition({required Point<double> position}) =
       _$DNAExtensionsMoveAdjustPosition._;
 
   DNAExtensionsMoveAdjustPosition._();
@@ -3097,10 +3098,10 @@ abstract class DNAExtensionsMoveCommit
 abstract class HelixGroupMoveStart
     with BuiltJsonSerializable
     implements Action, Built<HelixGroupMoveStart, HelixGroupMoveStartBuilder> {
-  Point<num> get mouse_point;
+  Point<double> get mouse_point;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory HelixGroupMoveStart({required Point<num> mouse_point}) = _$HelixGroupMoveStart._;
+  factory HelixGroupMoveStart({required Point<double> mouse_point}) = _$HelixGroupMoveStart._;
 
   HelixGroupMoveStart._();
 
@@ -3124,10 +3125,10 @@ abstract class HelixGroupMoveCreate
 abstract class HelixGroupMoveAdjustTranslation
     with BuiltJsonSerializable
     implements FastAction, Built<HelixGroupMoveAdjustTranslation, HelixGroupMoveAdjustTranslationBuilder> {
-  Point<num> get mouse_point;
+  Point<double> get mouse_point;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory HelixGroupMoveAdjustTranslation({required Point<num> mouse_point}) =
+  factory HelixGroupMoveAdjustTranslation({required Point<double> mouse_point}) =
       _$HelixGroupMoveAdjustTranslation._;
 
   HelixGroupMoveAdjustTranslation._();

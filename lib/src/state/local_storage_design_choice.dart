@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
@@ -62,5 +61,5 @@ abstract class LocalStorageDesignChoice
 
   LocalStorageDesignChoice to_periodic() => rebuild((b) => b..option = LocalStorageDesignOption.periodic);
 
-  LocalStorageDesignChoice change_period(num new_period) => rebuild((b) => b..period_seconds = new_period);
+  LocalStorageDesignChoice change_period(int new_period) => rebuild((b) => b..period_seconds = new_period);
 }

@@ -34,10 +34,10 @@ abstract class TransformByHelixGroup<P extends TransformByHelixGroupPropsMixin> 
     return transform_str;
   }
 
-  Point<num> translation_of_helix(int helix_idx) {
+  Point<double> translation_of_helix(int helix_idx) {
     Helix helix = props.helices[helix_idx];
     var group = props.groups[helix.group];
-    Point<num> translation = group.translation(props.geometry);
+    Point<double> translation = group.translation(props.geometry);
     return translation;
   }
 }

@@ -49,7 +49,7 @@ _save_file_cadnano(AppState state, bool whitespace) async {
 }
 
 _save_file_codenano(AppState state) async {
-  Design design = state.design;
+  Design? design = state.maybe_design;
   if (design == null) {
     return;
   }
@@ -80,7 +80,7 @@ _save_file_codenano(AppState state) async {
   for (Map helix_json in helices_json) {
     // add pitch, roll, and yaw defaults explicitly, and convert to radians
     for (var angle_key in [constants.pitch_key, constants.roll_key, constants.yaw_key]) {
-      num degrees = helix_json[angle_key];
+      double degrees = helix_json[angle_key];
       helix_json[angle_key] = degrees == null ? 0.0 : util.to_radians(degrees);
     }
     // change "position" to "origin"
@@ -237,8 +237,8 @@ Map<int, int> _cadnano_v2_fill_blank(
 
     if (design_grid == Grid.square || design_grid == Grid.honeycomb) {
       assert(helix.grid_position != null);
-      helix_dct['row'] = helix.grid_position.v;
-      helix_dct['col'] = helix.grid_position.h;
+      helix_dct['row'] = helix.grid_position!.v;
+      helix_dct['col'] = helix.grid_position!.h;
     }
 
     helix_dct['scaf'] = [];

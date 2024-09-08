@@ -57,7 +57,7 @@ class EndMovingComponent extends UiComponent2<EndMovingProps> {
     if (!props.render) {
       return null;
     }
-    Point<num> pos = props.helix.svg_base_pos(props.current_offset, props.forward, props.svg_position_y);
+    Point<double> pos = props.helix.svg_base_pos(props.current_offset, props.forward, props.svg_position_y);
     EndEitherPrimeProps end_props = (props.is_5p ? End5Prime() : End3Prime());
     String classname = (props.is_5p ? 'five-prime-end-moving' : 'three-prime-end-moving') +
         (props.allowable ? '' : ' disallowed-end');

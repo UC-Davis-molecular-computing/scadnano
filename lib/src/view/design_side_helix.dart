@@ -118,7 +118,7 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
     }
 
     Position3D pos3d = props.helix.position3d;
-    Point<num> center = util.position3d_to_side_view_svg(pos3d, props.invert_y, props.helix.geometry);
+    Point<double> center = util.position3d_to_side_view_svg(pos3d, props.invert_y, props.helix.geometry);
 
     return (Dom.g()
       ..transform = 'translate(${center.x} ${center.y})'
@@ -161,7 +161,7 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
               items: context_menu_helix(props.helix, props.helix_change_apply_to_all).build(),
-              position: event.page)));
+              position: util.from_point_num(event.page))));
     }
   }
 

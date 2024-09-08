@@ -53,7 +53,7 @@ mixin DesignMainStrandsMovingProps on UiProps {
   BuiltMap<String, HelixGroup> groups;
   BuiltSet<int> side_selected_helix_idxs;
   Geometry geometry;
-  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
+  BuiltMap<int, Point<double>> helix_idx_to_svg_position_map;
 }
 
 class DesignMainStrandsMovingComponent extends UiComponent2<DesignMainStrandsMovingProps> {

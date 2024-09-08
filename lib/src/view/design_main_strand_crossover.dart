@@ -21,6 +21,7 @@ import 'pure_component.dart';
 import '../state/selectable.dart';
 import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
+import '../util.dart' as util;
 
 part 'design_main_strand_crossover.over_react.g.dart';
 
@@ -168,8 +169,9 @@ class DesignMainStrandCrossoverComponent
       event.preventDefault();
       event.stopPropagation(); // needed to prevent strand context menu from popping up
       app.dispatch(actions.ContextMenuShow(
-          context_menu:
-              ContextMenu(items: context_menu_crossover(props.strand).build(), position: event.page)));
+          context_menu: ContextMenu(
+              items: context_menu_crossover(props.strand).build(),
+              position: util.from_point_num(event.page))));
     }
   }
 

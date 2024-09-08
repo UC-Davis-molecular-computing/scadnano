@@ -35,7 +35,7 @@ mixin DesignMainHelixProps on UiProps {
   bool display_base_offsets_of_major_ticks;
   bool display_major_tick_widths;
   bool show_helix_circles;
-  Point<num> helix_svg_position;
+  Point<double> helix_svg_position;
 }
 
 class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with PureComponent {
@@ -153,7 +153,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
               items: context_menu_helix(props.helix, props.helix_change_apply_to_all).build(),
-              position: event.page)));
+              position: util.from_point_num(event.page))));
     }
   }
 

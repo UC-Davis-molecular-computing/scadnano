@@ -408,7 +408,7 @@ BuiltList<Strand> strands_dna_extensions_move_commit_reducer(
     var extension_start_point = move.attached_end_position;
 
     var length_and_angle = util.compute_extension_length_and_angle_from_point(
-        action.dna_extensions_move.current_point_of(move.dna_end),
+        action.dna_extensions_move.current_point_of(move.dna_end), //TODO: add ! when migrating
         extension_start_point,
         extension,
         extension.adjacent_domain,
@@ -449,7 +449,7 @@ Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop
       for (var dnaend in [substrand.dnaend_start, substrand.dnaend_end]) {
         DNAEndMove move = find_move(all_move.moves, dnaend);
         if (move != null) {
-          int new_offset = all_move.current_capped_offset_of(dnaend);
+          int new_offset = all_move.current_capped_offset_of(dnaend); // TODO: when migrating, add !
 
           List<int> remaining_deletions = get_remaining_deletions(substrand, new_offset, dnaend);
           List<Insertion> remaining_insertions = get_remaining_insertions(substrand, new_offset, dnaend);

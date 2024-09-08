@@ -73,7 +73,7 @@ mixin DesignMainStrandsProps on UiProps {
   bool modification_display_connector;
   bool display_reverse_DNA_right_side_up;
   Geometry geometry;
-  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
+  BuiltMap<int, Point<double>> helix_idx_to_svg_position_map;
   bool retain_strand_color_on_selection;
 }
 

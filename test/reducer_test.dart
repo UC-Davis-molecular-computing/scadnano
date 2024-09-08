@@ -1661,7 +1661,7 @@ main() {
   //   Strand h0_forward_strand = two_helices_design.strands[0];
   //   Strand h1_forward_strand = two_helices_design.strands[2];
   //   Helix h0 = two_helices_design.helices[0];
-  //   Point<num> start_point = h0.svg_base_pos(0, true);
+  //   Point<double> start_point = h0.svg_base_pos(0, true);
   //   PotentialCrossover helix_0_5p_end_potential_crossover = PotentialCrossover(
   //     helix_idx: 0,
   //     forward: true,
@@ -1702,7 +1702,7 @@ main() {
   //   Strand h0_forward_strand = two_helices_design.strands[0];
   //   Strand h1_forward_strand = two_helices_design.strands[2];
   //   Helix h0 = two_helices_design.helices[0];
-  //   Point<num> start_point = h0.svg_base_pos(15, true); // 3p is located on offset = 15 and forward = true
+  //   Point<double> start_point = h0.svg_base_pos(15, true); // 3p is located on offset = 15 and forward = true
   //   PotentialCrossover helix_0_5p_end_potential_crossover = PotentialCrossover(
   //     helix_idx: 0,
   //     forward: true,
@@ -1760,13 +1760,13 @@ main() {
   Design two_helices_join_inner_strands = Design.from_json(jsonDecode(two_helices_join_inner_strands_json));
   test('pencil should connect a 3p end to a 5p end', () {
     AppState state = app_state_from_design(two_helices_design);
-    Map<int, Point<num>> svg_position_map = util.helices_assign_svg(two_helices_design.geometry,
+    Map<int, Point<double>> svg_position_map = util.helices_assign_svg(two_helices_design.geometry,
         state.ui_state.invert_y, two_helices_design.helices, two_helices_design.groups);
 
     Strand h0_reverse_strand = two_helices_design.strands[1];
     Strand h1_forward_strand = two_helices_design.strands[2];
     Helix h0 = two_helices_design.helices[0];
-    Point<num> start_point =
+    Point<double> start_point =
         h0.svg_base_pos(0, false, svg_position_map[0].y); // 3p end is 0 offset and forward is false.
     PotentialCrossover helix_0_3p_end_potential_crossover = PotentialCrossover(
       address: Address(
@@ -1792,13 +1792,13 @@ main() {
   });
   test('pencil should connect a 5p end to a 3p end', () {
     AppState state = app_state_from_design(two_helices_design);
-    Map<int, Point<num>> svg_position_map = util.helices_assign_svg(two_helices_design.geometry,
+    Map<int, Point<double>> svg_position_map = util.helices_assign_svg(two_helices_design.geometry,
         state.ui_state.invert_y, two_helices_design.helices, two_helices_design.groups);
 
     Strand h0_reverse_strand = two_helices_design.strands[1];
     Strand h1_forward_strand = two_helices_design.strands[2];
     Helix h1 = two_helices_design.helices[1];
-    Point<num> start_point =
+    Point<double> start_point =
         h1.svg_base_pos(0, true, svg_position_map[1].y); // 5p end is 0 offset and forward is true.
     PotentialCrossover helix_1_5p_end_potential_crossover = PotentialCrossover(
       address: Address(
@@ -3581,7 +3581,7 @@ main() {
   });
 
   group('Selection box (side view) tests: ', () {
-    Point point = new Point(0, 0);
+    Point point = new Point<double>(0, 0);
     bool toggle = true;
     bool is_main = false;
     SelectionBox selectionBox;
@@ -3593,7 +3593,7 @@ main() {
     });
 
     test('SelectionBoxSizeChange', () {
-      Point dragPoint = new Point(5, 10);
+      Point dragPoint = new Point<double>(5, 10);
       selectionBox =
           optimized_selection_box_reducer(selectionBox, SelectionBoxSizeChange(dragPoint, is_main));
 
@@ -4047,7 +4047,8 @@ main() {
       // Create box that wraps around the grid from (-radius, -radius) to (radius, radius) to select helix 0
       var x = state.design.geometry.distance_between_helices_svg / 2.0 + MARGIN;
       var y = state.design.geometry.distance_between_helices_svg / 2.0 + MARGIN;
-      SelectionBox box = SelectionBox(Point(-x, -y), false, false).rebuild((b) => b..current = Point(x, y));
+      SelectionBox box =
+          SelectionBox(Point<double>(-x, -y), false, false).rebuild((b) => b..current = Point<double>(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
       expect(state.ui_state.side_selected_helix_idxs, [0].toBuiltList());
     });
@@ -4056,7 +4057,8 @@ main() {
       // Currently, 0 is selected, so selecting all helices should unselect 0 and select 1 and 2
       var x = state.design.geometry.distance_between_helices_svg / 2.0 + MARGIN;
       var y = state.design.geometry.distance_between_helices_svg * 3.0 + MARGIN;
-      SelectionBox box = SelectionBox(Point(-x, -x), false, false).rebuild((b) => b..current = Point(x, y));
+      SelectionBox box =
+          SelectionBox(Point<double>(-x, -x), false, false).rebuild((b) => b..current = Point<double>(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
       expect(state.ui_state.side_selected_helix_idxs, [1, 2].toBuiltList());
     });
@@ -4070,7 +4072,8 @@ main() {
       // Unselect 0 and select 1 and 2
       var x = state.design.geometry.distance_between_helices_svg / 2.0 + MARGIN;
       var y = state.design.geometry.distance_between_helices_svg * 3 + MARGIN;
-      SelectionBox box = SelectionBox(Point(-x, -x), false, false).rebuild((b) => b..current = Point(x, y));
+      SelectionBox box =
+          SelectionBox(Point<double>(-x, -x), false, false).rebuild((b) => b..current = Point<double>(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
 
       expect(state.ui_state.only_display_selected_helices, true);
@@ -4456,12 +4459,12 @@ main() {
     //
     // 1 [------------------->
     //   <-------------------]
-    Map<int, Point<num>> svg_position_map = util.helices_assign_svg(
+    Map<int, Point<double>> svg_position_map = util.helices_assign_svg(
         two_helices_design.geometry, false, two_helices_design.helices, two_helices_design.groups);
 
     DNAEnd dnaEnd = two_helices_design.strands.first.dnaend_5p;
     Helix helix0 = two_helices_design.helices.values.first;
-    Point<num> start_point = helix0.svg_base_pos(0, true, svg_position_map[helix0.idx].y);
+    Point<double> start_point = helix0.svg_base_pos(0, true, svg_position_map[helix0.idx].y);
 
     // The two states of the two store's reducers we want to test:
     AppState state = app_state_from_design(two_helices_design);
@@ -4500,7 +4503,7 @@ main() {
     });
 
     test('PotentialCrossoverMove', () {
-      Point<num> movePoint = Point(42, 24);
+      Point<double> movePoint = Point<double>(42, 24);
       Action action = PotentialCrossoverMove(point: movePoint);
 
       // Test potential_crossover store's reducer
@@ -7560,8 +7563,8 @@ main() {
     helix0 = design.helices[0];
     helix1 = design.helices[1];
     AppState state = app_state_from_design(design);
-    // Point<num> original_helix0_svg_position = state.design.helices[0].svg_position;
-    Point<num> original_helix1_svg_position = state.helix_idx_to_svg_position_map[1];
+    // Point<double> original_helix0_svg_position = state.design.helices[0].svg_position;
+    Point<double> original_helix1_svg_position = state.helix_idx_to_svg_position_map[1];
 
     HelixGroup new_group = HelixGroup(helices_view_order: [1, 0], grid: Grid.square);
     AppState new_state =
@@ -7607,10 +7610,10 @@ main() {
     AppState new_state = app_state_reducer(state, SetOnlyDisplaySelectedHelices(true));
 
     // Verify Expected Result:
-    Point<num> helix0_svg = state.helix_idx_to_svg_position_map[0];
-    Point<num> helix1_svg = state.helix_idx_to_svg_position_map[1];
-    Point<num> new_helix0_svg = new_state.helix_idx_to_svg_position_map[0];
-    Point<num> new_helix2_svg = new_state.helix_idx_to_svg_position_map[2];
+    Point<double> helix0_svg = state.helix_idx_to_svg_position_map[0];
+    Point<double> helix1_svg = state.helix_idx_to_svg_position_map[1];
+    Point<double> new_helix0_svg = new_state.helix_idx_to_svg_position_map[0];
+    Point<double> new_helix2_svg = new_state.helix_idx_to_svg_position_map[2];
 
     expect(new_helix0_svg.y, closeTo(helix0_svg.y, 0.001));
     expect(new_helix2_svg.y, closeTo(helix1_svg.y, 0.001));

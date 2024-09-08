@@ -86,7 +86,7 @@ mixin DesignMainStrandPropsMixin on UiProps {
   num domain_label_font_size;
   num modification_font_size;
   bool invert_y;
-  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
+  BuiltMap<int, Point<double>> helix_idx_to_svg_position_map;
   bool retain_strand_color_on_selection;
 }
 
@@ -114,7 +114,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     }
 
     // only store enough of helix svg positions for helices this strand has
-    Map<int, Point<num>> helix_idx_to_svg_position_y_map_on_strand_unbuilt = {};
+    Map<int, Point<double>> helix_idx_to_svg_position_y_map_on_strand_unbuilt = {};
     var helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map;
     for (var domain in props.strand.domains) {
       int helix_idx = domain.helix;
@@ -129,7 +129,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         helix_idx_to_svg_position_y_map_on_strand_unbuilt[domain.helix] = svg_pos;
       }
     }
-    BuiltMap<int, Point<num>> helix_idx_to_svg_position_y_map_on_strand =
+    BuiltMap<int, Point<double>> helix_idx_to_svg_position_y_map_on_strand =
         helix_idx_to_svg_position_y_map_on_strand_unbuilt.build();
 
     return (Dom.g()
@@ -410,9 +410,7 @@ api.selectElements([base]);''';
   }
 
   List<ContextMenuItem> context_menu_strand(Strand strand,
-      {@required Substrand substrand,
-      @required Address address,
-      ModificationType type = ModificationType.internal}) {
+      {Domain domain, @required Address address, ModificationType type = ModificationType.internal}) {
     var items = [
       ContextMenuItem(
           title: 'edit DNA',
@@ -441,12 +439,12 @@ assigned, assign the complementary DNA sequence to this strand.
           ].build()),
       ContextMenuItem(
         title: 'add modification',
-        on_click: () => add_modification(substrand, address, type),
+        on_click: () => add_modification(domain, address, type),
       ),
       if (app.state.ui_state.show_oxview)
         ContextMenuItem(
           title: 'focus in oxView',
-          on_click: () => focus_base_oxview(props.strand, substrand, address, type),
+          on_click: () => focus_base_oxview(props.strand, domain, address, type),
         ),
       ContextMenuItem(
           title: 'edit vendor fields',
@@ -492,12 +490,12 @@ assigned, assign the complementary DNA sequence to this strand.
             ContextMenuItem(
                 title: 'set domain color',
                 on_click: () => app.dispatch(
-                    actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: substrand))),
-            if (substrand.color != null)
+                    actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: domain))),
+            if (domain.color != null)
               ContextMenuItem(
                   title: 'remove domain color',
                   on_click: () => app.dispatch(actions.StrandOrSubstrandColorSet(
-                      strand: props.strand, substrand: substrand, color: null))),
+                      strand: props.strand, substrand: domain, color: null))),
           ].build()),
       ContextMenuItem(
           title: 'edit name',
@@ -516,7 +514,8 @@ assigned, assign the complementary DNA sequence to this strand.
                       'remove strand name'))),
             ContextMenuItem(
               title: 'set domain name',
-              on_click: () => set_domain_names(get_selected_domains()),
+              on_click: () => set_domain_names(
+                  util.add_if_not_null(app.state.ui_state.selectables_store.selected_domains, domain)),
             ),
             ContextMenuItem(
               title: 'assign domain name complement from bound strands',
@@ -525,9 +524,9 @@ If other strands bound to this strand (or the selected strands) have domain name
 assigned, assign the complementary domain names sequence to this strand. To use this
 feature for individual domains, set select mode to domain.
 ''',
-              on_click: () => assign_domain_name_complement_from_bound_strands(domain: substrand),
+              on_click: () => assign_domain_name_complement_from_bound_strands(domain: domain),
             ),
-            if (substrand.name != null)
+            if (domain.name != null)
               ContextMenuItem(
                   title: 'remove domain name',
                   on_click: () => app.dispatch(actions.BatchAction(
@@ -551,9 +550,9 @@ feature for individual domains, set select mode to domain.
                       'remove strand label'))),
             ContextMenuItem(
               title: 'set domain label',
-              on_click: () => set_domain_labels(substrand, get_selected_domains()),
+              on_click: () => set_domain_labels(domain, get_selected_domains()),
             ),
-            if (substrand.label != null)
+            if (domain.label != null)
               ContextMenuItem(
                   title: 'remove domain label',
                   on_click: () => app.dispatch(actions.BatchAction(
@@ -968,8 +967,9 @@ PAGEHPLC : Dual PAGE & HPLC
     int name_idx = 0;
     var items = List<DialogItem>.filled(1, null);
     items[name_idx] = DialogText(label: 'name', value: "");
+    var first_domain = domains.first;
     var dialog = Dialog(
-        title: 'set ${domains.first.type_description()} name',
+        title: 'set ${first_domain.type_description()} name',
         items: items,
         type: DialogType.set_domain_name,
         use_saved_response: false);
@@ -984,7 +984,7 @@ PAGEHPLC : Dual PAGE & HPLC
 }
 
 Future<void> ask_for_label<T extends SelectableMixin>(
-    Strand strand, Substrand substrand, BuiltSet<T> selected_strands) async {
+    Strand strand, Substrand substrand, BuiltSet<T> selected) async {
   String part_name = 'strand';
   if (substrand != null) {
     part_name = substrand.type_description();
@@ -1020,11 +1020,11 @@ Future<void> ask_for_label<T extends SelectableMixin>(
 
   actions.UndoableAction action;
   if (substrand == null) {
-    action = batch_if_multiple_selected(label_set_strand_action_creator(label), strand,
-        selected_strands as BuiltSet<Strand>, "set strand label");
+    action = batch_if_multiple_selected(
+        label_set_strand_action_creator(label), strand, selected as BuiltSet<Strand>, "set strand label");
   } else {
     action = actions.BatchAction(
-        selected_strands.map((s) => actions.SubstrandLabelSet(label: label, substrand: (s as Substrand))),
+        selected.map((s) => actions.SubstrandLabelSet(label: label, substrand: (s as Substrand))),
         "set substrand labels");
   }
 
@@ -1052,7 +1052,7 @@ actions.UndoableAction batch_if_multiple_selected(StrandActionCreator action_cre
 // as opposed to just using "selected_strands"
 BuiltSet<Domain> get_selected_domains() {
   return BuiltSet<Domain>(app.state.ui_state.selectables_store.selected_strands
-          .map((s) => s.substrands)
+          .map((s) => s.domains)
           .expand((l) => l)
           .toBuiltSet())
       .union(app.state.ui_state.selectables_store.selected_domains);

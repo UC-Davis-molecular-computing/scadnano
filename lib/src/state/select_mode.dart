@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
@@ -92,7 +91,8 @@ class SelectModeChoice extends EnumClass {
     // returns a toolip description
     switch (this) {
       case end_5p_strand:
-        return '''5' strand: Allows one to select the 5'
+        return '''\
+5' strand: Allows one to select the 5'
 end (square) of a whole strand. If many
 5' ends are selected, then one can
 add a 5' modification to all of them
@@ -104,7 +104,8 @@ selected, and a 5' modification is
 added, then only the 5' ends are
 modified.''';
       case end_3p_strand:
-        return '''3' strand: Allows one to select the 3'
+        return '''\
+3' strand: Allows one to select the 3'
 end (triangle) of a whole strand. If many
 3' ends are selected, then one can
 add a 3' modification to all of them
@@ -116,47 +117,49 @@ selected, and a 3' modification is
 added, then only the 3' ends are
 modified.''';
       case end_5p_domain:
-        return '''5' domain: Each strand is
-composed of one or more bound domains,
-defined to be a portion of a strand
-that exists on a single helix. A 5'/3'
-end of a bound domain that is not the
-5'/3' end of the whole strand is one of
-these. They are not normally visible,
-but when these select modes are
-enabled, they become visible on
-mouseover and can be selected and
-dragged. Deleting a 5'/3' end of a
-bound domain deletes the whole bound
-domain. Ends can be moved, but unlike
-strands and domains, they can only be
-moved back and forth along their
+        return '''\
+5' domain: Each strand is composed of 
+one or more bound domains, defined to 
+be a portion of a strand that exists on 
+a single helix. A 5'/3' end of a bound 
+domain that is not the 5'/3' end of the 
+whole strand is one of these. They are 
+not normally visible, but when these 
+select modes are enabled, they become 
+visible on mouseover and can be 
+selected and dragged. Deleting a 5'/3' 
+end of a bound domain deletes the whole 
+bound domain. Ends can be moved, but 
+unlike strands and domains, they can 
+only be moved back and forth along their
 current helix.''';
       case end_3p_domain:
-        return '''3' domain: Each strand is
-composed of one or more bound domains,
-defined to be a portion of a strand
-that exists on a single helix. A 5'/3'
-end of a bound domain that is not the
-5'/3' end of the whole strand is one of
-these. They are not normally visible,
-but when these select modes are
-enabled, they become visible on
-mouseover and can be selected and
-dragged. Deleting a 5'/3' end of a
-bound domain deletes the whole bound
-domain. Ends can be moved, but unlike
-strands and domains, they can only be
-moved back and forth along their
+        return '''\
+3' domain: Each strand is composed of 
+one or more bound domains, defined to 
+be a portion of a strand that exists on 
+a single helix. A 5'/3' end of a bound 
+domain that is not the 5'/3' end of the 
+whole strand is one of these. They are 
+not normally visible, but when these 
+select modes are enabled, they become 
+visible on mouseover and can be 
+selected and dragged. Deleting a 5'/3' 
+end of a bound domain deletes the whole 
+bound domain. Ends can be moved, but 
+unlike strands and domains, they can 
+only be moved back and forth along their
 current helix.''';
       case domain:
-        return '''domain: A single bound domain can be
+        return '''\
+domain: A single bound domain can be
 selected. Groups of domains can be
 moved, but only if they are all in the
 same helix group. (Though they can be
 moved to a different helix group.)''';
       case crossover:
-        return '''crossover: Two consecutive bound
+        return '''\
+crossover: Two consecutive bound
 domains on a strand can be joined by a
 crossover, which consists of no DNA
 bases (Technically bound domains do not
@@ -175,7 +178,8 @@ picking "convert to loopout" (or
 changing to length 0 converts it to a
 crossover).''';
       case loopout:
-        return '''loopout: Two consecutive bound domains
+        return '''\
+loopout: Two consecutive bound domains
 on a strand can be joined by a loopout,
 which is a single-stranded portion of
 the strand with one or more DNA bases.
@@ -203,11 +207,12 @@ the end of a strand, useful for modeling
 toeholds for DNA strand displacement, 
 for instance.''';
       case deletion:
-        return '''deletion: Deletions can be selected and
-deleted in batch by pressing the Delete
-key.''';
+        return '''\
+deletion: Deletions can be selected and
+deleted in batch by pressing the Delete key.''';
       case insertion:
-        return '''insertion: Insertions can be selected
+        return '''\
+insertion: Insertions can be selected
 and deleted in batch by pressing the
 Delete key. Also, one can change the
 length of all selected insertions by
@@ -215,7 +220,8 @@ right-clicking on one of them and
 selecting the option to change
 insertion length.''';
       case modification:
-        return '''modification: If many modifications are
+        return '''\
+modification: If many modifications are
 selected, they can be deleted at once
 by pressing the Delete key (or
 right-clicking and selecting "remove
@@ -225,19 +231,20 @@ in batch by right-clicking on one of
 them and selecting "edit
 modification".''';
       case strand:
-        return '''strand: The whole strand can be
-selected. Groups of strands can be
-copy/pasted or moved, but only if they
-are all in the same helix group.
-(Though they can be copied/moved to a
-different helix group.)''';
+        return '''\
+strand: The whole strand can be selected. 
+Groups of strands can be copy/pasted or 
+moved, but only if they are all in the 
+same helix group. (Though they can be 
+copied/moved to a different helix group.)''';
       case scaffold:
-        return '''scaffold: This option allows one to
-select scaffold strands. The
-option is not shown in a non-origami
-design.''';
+        return '''\
+scaffold: This option allows one to
+select scaffold strands. The option is 
+not shown in a non-origami design.''';
       case staple:
-        return '''staple: All non-scaffold strands are
+        return '''\
+staple: All non-scaffold strands are
 called staples. This option allows one
 to select staples. The option is not
 shown in a non-origami design.''';
@@ -246,6 +253,7 @@ shown in a non-origami design.''';
   }
 
   static String get all_ends_image_file => 'images/select_mode_icons/allends.svg';
+
   static String get all_ends_tooltip => '''all ends: Selects all of 5' strand, 3'
 strand, 5' domain, 3' domain.''';
 

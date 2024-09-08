@@ -39,11 +39,11 @@ class PotentialExtensionsViewComponent extends UiComponent2<PotentialExtensionsV
     return (Dom.g())(potential_extensions.moves.map((move) => (Dom.line()
       ..x1 = '${move.attached_end_position.x}'
       ..y1 = '${move.attached_end_position.y}'
-      ..x2 = '${potential_extensions.current_point_of(move.dna_end).x}'
-      ..y2 = '${potential_extensions.current_point_of(move.dna_end).y}'
+      ..x2 = '${potential_extensions.current_point_of(move.dna_end).x}' //TODO: add ! when migrating
+      ..y2 = '${potential_extensions.current_point_of(move.dna_end).y}' //TODO: add ! when migrating
       ..className = 'potential-segment'
       ..stroke = move.color.toHexColor().toCssString()
-      ..key = props.id
-      ..id = props.id)()));
+      ..key = '${props.id}-${move.dna_end.id}'
+      ..id = '${props.id}-${move.dna_end.id}')()));
   }
 }

@@ -37,10 +37,10 @@ mixin DesignMainStrandDomainTextPropsMixin on UiProps {
   int font_size;
   int num_stacked;
   String transform;
-  Point<num> helix_svg_position;
+  Point<double> helix_svg_position;
 
   List<ContextMenuItem> Function(Strand strand,
-      {@required Substrand substrand,
+      {Domain domain,
       @required Address address,
       @required ModificationType type}) context_menu_strand;
 }
@@ -51,11 +51,11 @@ class DesignMainStrandDomainTextComponent extends UiComponent2<DesignMainStrandD
     with PureComponent {
   @override
   render() {
-    Point<num> start_svg =
+    Point<double> start_svg =
         props.helix.svg_base_pos(props.domain.start, props.domain.forward, props.helix_svg_position.y);
-    Point<num> end_svg =
+    Point<double> end_svg =
         props.helix.svg_base_pos(props.domain.end - 1, props.domain.forward, props.helix_svg_position.y);
-    Point<num> mid_svg = (start_svg + end_svg) * 0.5;
+    Point<double> mid_svg = (start_svg + end_svg) * 0.5;
 
     String baseline = props.domain.forward ? 'baseline' : 'hanging';
 
@@ -105,8 +105,8 @@ class DesignMainStrandDomainTextComponent extends UiComponent2<DesignMainStrandD
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
               items:
-                  props.context_menu_strand(props.strand, substrand: props.domain, address: address).build(),
-              position: event.page)));
+                  props.context_menu_strand(props.strand, domain: props.domain, address: address).build(),
+              position: util.from_point_num(event.page))));
     }
   }
 }

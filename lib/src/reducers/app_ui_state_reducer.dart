@@ -636,15 +636,16 @@ GridPosition side_view_mouse_grid_pos_clear_reducer(
         GridPosition _, actions.MouseGridPositionSideClear action) =>
     null;
 
-Reducer<Point<num>> side_view_position_mouse_cursor_reducer = combineReducers([
-  TypedReducer<Point<num>, actions.MousePositionSideUpdate>(side_view_mouse_pos_update_reducer),
-  TypedReducer<Point<num>, actions.MousePositionSideClear>(side_view_mouse_pos_clear_reducer),
+Reducer<Point<double>> side_view_position_mouse_cursor_reducer = combineReducers([
+  TypedReducer<Point<double>, actions.MousePositionSideUpdate>(side_view_mouse_pos_update_reducer),
+  TypedReducer<Point<double>, actions.MousePositionSideClear>(side_view_mouse_pos_clear_reducer),
 ]);
 
-Point<num> side_view_mouse_pos_update_reducer(Point<num> _, actions.MousePositionSideUpdate action) =>
+Point<double> side_view_mouse_pos_update_reducer(Point<double> _, actions.MousePositionSideUpdate action) =>
     action.svg_pos;
 
-Point<num> side_view_mouse_pos_clear_reducer(Point<num> _, actions.MousePositionSideClear action) => null;
+Point<double> side_view_mouse_pos_clear_reducer(Point<double> _, actions.MousePositionSideClear action) =>
+    null;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // strand color picker

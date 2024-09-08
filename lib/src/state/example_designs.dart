@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
@@ -37,18 +36,18 @@ abstract class ExampleDesigns
 
   bool get example_is_selected => selected_idx >= 0;
 
-  String get selected_filename =>
+  String? get selected_filename =>
       example_is_selected ? '${selected_filename_no_ext}.${constants.default_scadnano_file_extension}' : null;
 
-  String get selected_filename_no_ext => example_is_selected ? filenames[selected_idx] : null;
+  String? get selected_filename_no_ext => example_is_selected ? filenames[selected_idx] : null;
 
-  String get selected_full_filename => example_is_selected ? '${directory}/${selected_filename}' : null;
+  String? get selected_full_filename => example_is_selected ? '${directory}/${selected_filename}' : null;
 
-  String get selected_full_filename_no_ext =>
+  String? get selected_full_filename_no_ext =>
       example_is_selected ? '${directory}/${selected_filename_no_ext}' : null;
 
   /// url of currently selected file
-  String get url => selected_full_filename;
+  String? get url => selected_full_filename;
 
   /************************ begin BuiltValue boilerplate ************************/
   factory ExampleDesigns.from([void Function(ExampleDesignsBuilder) updates]) = _$ExampleDesigns;
@@ -57,8 +56,10 @@ abstract class ExampleDesigns
 
   static Serializer<ExampleDesigns> get serializer => _$exampleDesignsSerializer;
 
-  factory ExampleDesigns({BuiltList<String> filenames, String directory, int selected_idx}) =
-      _$ExampleDesigns._;
+  factory ExampleDesigns(
+      {required BuiltList<String> filenames,
+      required String directory,
+      required int selected_idx}) = _$ExampleDesigns._;
 
   @memoized
   int get hashCode;

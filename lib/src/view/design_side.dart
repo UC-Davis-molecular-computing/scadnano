@@ -61,7 +61,7 @@ mixin DesignSideProps on UiProps {
   Geometry geometry;
   int slice_bar_offset;
 
-  Point<num> mouse_svg_pos;
+  Point<double> mouse_svg_pos;
   GridPosition grid_position_mouse_cursor;
   bool invert_y;
   bool helix_change_apply_to_all;

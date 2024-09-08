@@ -39,10 +39,10 @@ mixin DesignMainDomainPropsMixin on UiProps {
   String strand_tooltip;
   Strand strand;
   String transform;
-  Point<num> helix_svg_position;
+  Point<double> helix_svg_position;
 
   List<ContextMenuItem> Function(Strand strand,
-      {@required Substrand substrand,
+      {Domain domain,
       @required Address address,
       @required ModificationType type}) context_menu_strand;
 
@@ -64,9 +64,9 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
     Domain domain = props.domain;
     String id = domain.id;
 
-    Point<num> start_svg =
+    Point<double> start_svg =
         props.helix.svg_base_pos(domain.offset_5p, domain.forward, props.helix_svg_position.y);
-    Point<num> end_svg =
+    Point<double> end_svg =
         props.helix.svg_base_pos(domain.offset_3p, domain.forward, props.helix_svg_position.y);
 
     var classname = constants.css_selector_domain;
@@ -190,11 +190,11 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
       event.stopPropagation();
       Address address = util.get_address_on_helix(
           event, props.helix, props.groups[props.helix.group], props.geometry, props.helix_svg_position);
+      var items = props.context_menu_strand(props.strand, domain: props.domain, address: address).build();
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
-              items:
-                  props.context_menu_strand(props.strand, substrand: props.domain, address: address).build(),
-              position: event.page)));
+              items: items,
+              position: util.from_point_num(event.page))));
     }
   }
 }

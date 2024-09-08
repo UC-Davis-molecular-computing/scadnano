@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
@@ -18,7 +17,8 @@ abstract class ContextMenu with BuiltJsonSerializable implements Built<ContextMe
 
   static Serializer<ContextMenu> get serializer => _$contextMenuSerializer;
 
-  factory ContextMenu({BuiltList<ContextMenuItem> items, Point<num> position}) = _$ContextMenu._;
+  factory ContextMenu({required BuiltList<ContextMenuItem> items, required Point<double> position}) =
+      _$ContextMenu._;
 
   @memoized
   int get hashCode;
@@ -27,7 +27,7 @@ abstract class ContextMenu with BuiltJsonSerializable implements Built<ContextMe
 
   BuiltList<ContextMenuItem> get items;
 
-  Point<num> get position;
+  Point<double> get position;
 }
 
 abstract class ContextMenuItem
@@ -40,19 +40,11 @@ abstract class ContextMenuItem
   static Serializer<ContextMenuItem> get serializer => _$contextMenuItemSerializer;
 
   factory ContextMenuItem(
-      {
-      // required String title,
-      // required Callback on_click,
-      // required String tooltip,
-      // BuiltList<ContextMenuItem>? nested = null,
-      String title,
-      Callback on_click,
-      String tooltip,
-      BuiltList<ContextMenuItem> nested,
+      {required String title,
+      Callback? on_click = null,
+      String tooltip = '',
+      BuiltList<ContextMenuItem>? nested = null,
       bool disabled = false}) {
-    if (nested == null) {
-      nested = BuiltList<ContextMenuItem>();
-    }
     return ContextMenuItem.from((b) => b
       ..title = title
       ..on_click = on_click
@@ -68,14 +60,12 @@ abstract class ContextMenuItem
 
   String get title;
 
-  @nullable
   @BuiltValueField(serialize: false, compare: false)
-  Callback get on_click;
+  Callback? get on_click;
 
-  @nullable
   String get tooltip;
 
-  BuiltList<ContextMenuItem> get nested;
+  BuiltList<ContextMenuItem>? get nested;
 
   bool get disabled;
 }

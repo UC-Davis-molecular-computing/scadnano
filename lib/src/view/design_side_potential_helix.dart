@@ -19,7 +19,7 @@ UiFactory<DesignSidePotentialHelixProps> DesignSidePotentialHelix = _$DesignSide
 mixin DesignSidePotentialHelixProps on UiProps {
   Grid grid;
   GridPosition grid_position;
-  Point<num> mouse_svg_pos;
+  Point<double> mouse_svg_pos;
   bool invert_y;
   Geometry geometry;
 }
@@ -33,7 +33,7 @@ class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotential
       }
     }
 
-    Point<num> svg_ideal_pos;
+    Point<double> svg_ideal_pos;
     Grid grid = props.grid;
 
     if (grid.is_none) {

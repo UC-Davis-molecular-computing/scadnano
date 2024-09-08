@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 
@@ -12,7 +11,7 @@ part 'address.g.dart';
 // "Address" of a base; (helix, offset, direction)
 // can be treated like a vector, i.e., difference between Addresses is itself an Address
 abstract class Address with BuiltJsonSerializable implements Built<Address, AddressBuilder> {
-  factory Address({int helix_idx, int offset, bool forward}) = _$Address._;
+  factory Address({required int helix_idx, required int offset, required bool forward}) = _$Address._;
 
   factory Address.from([void Function(AddressBuilder) updates]) = _$Address;
 
@@ -32,7 +31,7 @@ abstract class Address with BuiltJsonSerializable implements Built<Address, Addr
 
   Address sum(AddressDifference diff, BuiltList<int> helices_view_order,
       BuiltMap<int, int> helices_view_order_inverse) {
-    int order_this = helices_view_order_inverse[helix_idx];
+    int order_this = helices_view_order_inverse[helix_idx]!;
     int order_sum = order_this + diff.helix_idx_delta;
 
     // if off the end, compute as though there are more helices there with indices
@@ -56,8 +55,8 @@ abstract class Address with BuiltJsonSerializable implements Built<Address, Addr
   }
 
   AddressDifference difference(Address other, BuiltMap<int, int> helices_view_order_inverse) {
-    int order_this = helices_view_order_inverse[helix_idx];
-    int order_other = helices_view_order_inverse[other.helix_idx];
+    int order_this = helices_view_order_inverse[helix_idx]!;
+    int order_other = helices_view_order_inverse[other.helix_idx]!;
     int helix_idx_delta = order_this - order_other;
     int offset_delta = offset - other.offset;
     bool forward_delta = (forward != other.forward);
@@ -70,8 +69,10 @@ abstract class Address with BuiltJsonSerializable implements Built<Address, Addr
 abstract class AddressDifference
     with BuiltJsonSerializable
     implements Built<AddressDifference, AddressDifferenceBuilder> {
-  factory AddressDifference({int helix_idx_delta, int offset_delta, bool forward_delta}) =
-      _$AddressDifference._;
+  factory AddressDifference(
+      {required int helix_idx_delta,
+      required int offset_delta,
+      required bool forward_delta}) = _$AddressDifference._;
 
   factory AddressDifference.from([void Function(AddressDifferenceBuilder) updates]) = _$AddressDifference;
 

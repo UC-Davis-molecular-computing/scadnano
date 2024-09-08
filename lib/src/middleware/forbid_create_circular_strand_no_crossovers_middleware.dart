@@ -70,7 +70,7 @@ ${msg_generic}""";
     var domain = design.end_to_domain[dna_end]!;
     var address_end = dna_end.is_start ? domain.address_start : domain.address_end;
     int delta = dna_end.is_start ? -1 : 1;
-    var address_other_end = address_end.rebuild((b) => b..offset = b.offset + delta);
+    var address_other_end = address_end.rebuild((b) => b..offset = b.offset! + delta);
     var domain_other = design.domain_on_helix_at(address_other_end);
     var strand_other = design.substrand_to_strand[domain_other];
 

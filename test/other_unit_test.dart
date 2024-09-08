@@ -373,7 +373,7 @@ main() {
                   display_text: 'Cy3',
                   vendor_code: '/iCy3/',
                   allowed_bases: null,
-                  unused_fields: BuiltMap<String, Object>()))
+                  unused_fields: BuiltMap<String, dynamic>()))
           .commit();
       actual_design = actual_design
           .draw_strand(0, 10)
@@ -381,7 +381,7 @@ main() {
           .cross(1)
           .to(10)
           .with_modification_5p(Modification5Prime(
-              display_text: 'B', vendor_code: '/5Biosg/', unused_fields: BuiltMap<String, Object>()))
+              display_text: 'B', vendor_code: '/5Biosg/', unused_fields: BuiltMap<String, dynamic>()))
           .commit();
 
       Design expected_design = new Design(grid: Grid.square, helices: helices);
@@ -397,7 +397,7 @@ main() {
                 display_text: 'Cy3',
                 vendor_code: '/iCy3/',
                 allowed_bases: null,
-                unused_fields: BuiltMap<String, Object>())
+                unused_fields: BuiltMap<String, dynamic>())
           },
           is_scaffold: true,
         )));
@@ -408,7 +408,7 @@ main() {
         ],
             color: Color.rgb(247, 67, 8),
             modification_5p: Modification5Prime(
-                display_text: 'B', vendor_code: '/5Biosg/', unused_fields: BuiltMap<String, Object>()))));
+                display_text: 'B', vendor_code: '/5Biosg/', unused_fields: BuiltMap<String, dynamic>()))));
       expect(actual_design.strands, expected_design.strands);
     });
     test('test_strand__call_to_twice_legally', () {

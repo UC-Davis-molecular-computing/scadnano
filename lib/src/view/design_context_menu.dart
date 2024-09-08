@@ -75,8 +75,8 @@ class DesignContextMenuComponent extends UiStatefulComponent2<DesignContextMenuP
     }
   }
 
-  Point<num> calculate_menu_position() {
-    int left = props.context_menu.position.x, top = props.context_menu.position.y;
+  Point<double> calculate_menu_position() {
+    double left = props.context_menu.position.x, top = props.context_menu.position.y;
 
     if (left + state.width > window.innerWidth) left -= left + state.width - window.innerWidth + MENU_PADDING;
     if (top + state.height > window.innerHeight)

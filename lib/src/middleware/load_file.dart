@@ -44,8 +44,10 @@ load_file_middleware(Store<AppState> store, action, NextDispatcher next) {
       util.fit_and_center();
     }
     store.dispatch(actions.LoadingDialogHide());
-    set_selectables_css_style_rules(
-        store.state.design, store.state.ui_state.edit_modes, store.state.ui_state.select_mode_state.modes);
+    if (store.state.maybe_design != null) {
+      set_selectables_css_style_rules(
+          store.state.design, store.state.ui_state.edit_modes, store.state.ui_state.select_mode_state.modes);
+    }
   } else {
     next(action);
   }
