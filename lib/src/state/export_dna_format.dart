@@ -339,7 +339,6 @@ int num_wells_per_plate(PlateType plate_type) {
     case PlateType.none:
       throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
   }
-  throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
 }
 
 int min_wells_per_plate(PlateType plate_type) {
@@ -351,7 +350,6 @@ int min_wells_per_plate(PlateType plate_type) {
     case PlateType.none:
       throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
   }
-  throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
 }
 
 List<String> rows_of(PlateType plate_type) {
@@ -363,7 +361,6 @@ List<String> rows_of(PlateType plate_type) {
     case PlateType.none:
       throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
   }
-  throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
 }
 
 List<int> cols_of(PlateType plate_type) {
@@ -375,7 +372,6 @@ List<int> cols_of(PlateType plate_type) {
     case PlateType.none:
       throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
   }
-  throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
 }
 
 class _PlateCoordinate {

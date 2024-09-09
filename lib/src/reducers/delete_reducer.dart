@@ -194,13 +194,13 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
         internal_mods_on_these_substrands[dna_length_cur_substrands + idx_within_ss] = mod;
       }
       if (substrand is Loopout) {
-        substrand = (substrand as Loopout).rebuild((loopout) => loopout..prev_domain_idx = i - 1);
+        substrand = substrand.rebuild((loopout) => loopout..prev_domain_idx = i - 1);
       }
       if (i == 0 && (substrand is Domain)) {
-        substrand = (substrand as Domain).rebuild((s) => s..is_first = true);
+        substrand = substrand.rebuild((s) => s..is_first = true);
       }
       if (i == substrands.length - 1 && (substrand is Domain)) {
-        substrand = (substrand as Domain).rebuild((s) => s..is_last = true);
+        substrand = substrand.rebuild((s) => s..is_last = true);
       }
       substrands[i] = substrand;
       dna_length_cur_substrands += substrand.dna_length();

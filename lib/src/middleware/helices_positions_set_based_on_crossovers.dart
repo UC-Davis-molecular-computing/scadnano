@@ -283,8 +283,8 @@ List<RollXY> _calculate_rolls_and_positions(
 
   Geometry geometry = design.geometry;
 
-  double x = helices[0].position3d.z as double;
-  double y = helices[0].position3d.y as double;
+  double x = helices[0].position3d.z;
+  double y = helices[0].position3d.y;
   List<RollXY> rollxys = [RollXY(roll: first_roll, x: x, y: y)];
 
   for (int i = 0; i < addresses.length; i++) {

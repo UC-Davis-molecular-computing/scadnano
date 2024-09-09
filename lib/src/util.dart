@@ -638,7 +638,7 @@ SvgSvgElement svg_ancestor(SvgElement elt) {
   while (!(elt is SvgSvgElement)) {
     elt = elt.parent as SvgElement;
   }
-  return elt as SvgSvgElement;
+  return elt;
 }
 
 Point<double> rect_to_point(Rect rect) => Point<double>(rect.x! as double, rect.y! as double);

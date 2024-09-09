@@ -479,7 +479,7 @@ Tuple3<OxdnaVector, OxdnaVector, OxdnaVector> oxdna_get_helix_vectors(Design des
 
   position = position + group.position;
 
-  var origin = OxdnaVector(position.x as double, position.y as double, position.z as double) * NM_TO_OX_UNITS;
+  var origin = OxdnaVector(position.x, position.y, position.z) * NM_TO_OX_UNITS;
   return Tuple3<OxdnaVector, OxdnaVector, OxdnaVector>(origin, forward, normal);
 }
 

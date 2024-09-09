@@ -32,7 +32,7 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
     Set<svg.SvgElement> elts_overlapping;
     if (action.box) {
       // use selection box
-      svg.RectElement select_box = querySelector('#selection-box-main') as svg.RectElement;
+      svg.RectElement? select_box = querySelector('#selection-box-main') as svg.RectElement?;
       if (select_box == null) {
         return selectables_store;
       }
