@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
@@ -43,15 +42,15 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebui
   ..storables.replace(app_ui_state_storable_local_reducer(ui_state.storables, action))
   ..changed_since_last_save = changed_since_last_save_reducer(ui_state.changed_since_last_save, action)
   ..last_mod_5p =
-      TypedReducer<Modification5Prime, actions.ModificationAdd>(last_mod_5p_modification_add_reducer)(
+      TypedReducer<Modification5Prime?, actions.ModificationAdd>(last_mod_5p_modification_add_reducer)(
               ui_state.last_mod_5p, action)
           ?.toBuilder()
   ..last_mod_3p =
-      TypedReducer<Modification3Prime, actions.ModificationAdd>(last_mod_3p_modification_add_reducer)(
+      TypedReducer<Modification3Prime?, actions.ModificationAdd>(last_mod_3p_modification_add_reducer)(
               ui_state.last_mod_3p, action)
           ?.toBuilder()
   ..last_mod_int =
-      TypedReducer<ModificationInternal, actions.ModificationAdd>(last_mod_int_modification_add_reducer)(
+      TypedReducer<ModificationInternal?, actions.ModificationAdd>(last_mod_int_modification_add_reducer)(
               ui_state.last_mod_int, action)
           ?.toBuilder()
   ..selection_rope = optimized_selection_rope_reducer(ui_state.selection_rope, action)?.toBuilder()
@@ -172,21 +171,23 @@ bool show_modifications_reducer(bool _, actions.ShowModificationsSet action) => 
 bool modification_display_connector_reducer(bool _, actions.SetModificationDisplayConnector action) =>
     action.show;
 
-num modification_font_size_reducer(num _, actions.ModificationFontSizeSet action) => action.font_size;
+double modification_font_size_reducer(double _, actions.ModificationFontSizeSet action) => action.font_size;
 
-num zoom_speed_reducer(num _, actions.ZoomSpeedSet action) => action.speed;
+double zoom_speed_reducer(double _, actions.ZoomSpeedSet action) => action.speed;
 
-num strand_name_font_size_reducer(num _, actions.StrandNameFontSizeSet action) => action.font_size;
+double strand_name_font_size_reducer(double _, actions.StrandNameFontSizeSet action) => action.font_size;
 
-num domain_name_font_size_reducer(num _, actions.DomainNameFontSizeSet action) => action.font_size;
+double domain_name_font_size_reducer(double _, actions.DomainNameFontSizeSet action) => action.font_size;
 
-num strand_label_font_size_reducer(num _, actions.StrandLabelFontSizeSet action) => action.font_size;
+double strand_label_font_size_reducer(double _, actions.StrandLabelFontSizeSet action) => action.font_size;
 
-num domain_label_font_size_reducer(num _, actions.DomainLabelFontSizeSet action) => action.font_size;
+double domain_label_font_size_reducer(double _, actions.DomainLabelFontSizeSet action) => action.font_size;
 
-num major_tick_offset_font_size_reducer(num _, actions.MajorTickOffsetFontSizeSet action) => action.font_size;
+double major_tick_offset_font_size_reducer(double _, actions.MajorTickOffsetFontSizeSet action) =>
+    action.font_size;
 
-num major_tick_width_font_size_reducer(num _, actions.MajorTickWidthFontSizeSet action) => action.font_size;
+double major_tick_width_font_size_reducer(double _, actions.MajorTickWidthFontSizeSet action) =>
+    action.font_size;
 
 bool show_mismatches_reducer(bool _, actions.ShowMismatchesSet action) => action.show;
 
@@ -222,7 +223,7 @@ bool show_loopout_extension_length_reducer(bool _, actions.ShowLoopoutExtensionL
 
 bool show_slice_bar_reducer(bool _, actions.ShowSliceBarSet action) => action.show;
 
-int slice_bar_offset_set_reducer(int _, actions.SliceBarOffsetSet action) => action.offset;
+int? slice_bar_offset_set_reducer(int? _, actions.SliceBarOffsetSet action) => action.offset;
 
 bool disable_png_caching_dna_sequences_reducer(bool _, actions.DisablePngCachingDnaSequencesSet action) =>
     action.disable_png_caching_dna_sequences;
@@ -336,7 +337,7 @@ AppUIStateStorables app_ui_state_storable_global_reducer(
       storables = storables.rebuild((b) => b..displayed_group_name = state.design.groups.keys.first);
     }
     // It's possible the the slice bar being set is not valid.
-    int slice_bar_offset = 0;
+    int? slice_bar_offset = 0;
     if (state.maybe_design != null) {
       var helices_in_first_group = state.design.helices_in_group(state.design.groups.keys.first).values;
       if (helices_in_first_group.isNotEmpty) {
@@ -365,17 +366,18 @@ String displayed_group_name_group_remove_reducer(String _, AppState state, actio
   return name != first ? first : last;
 }
 
-GlobalReducer<int, AppState> slice_bar_offset_global_reducer = combineGlobalReducers([
-  TypedGlobalReducer<int, AppState, actions.ShowSliceBarSet>(slice_bar_offset_show_slice_bar_set_reducer),
-  TypedGlobalReducer<int, AppState, actions.GroupDisplayedChange>(
+GlobalReducer<int?, AppState> slice_bar_offset_global_reducer = combineGlobalReducers([
+  TypedGlobalReducer<int?, AppState, actions.ShowSliceBarSet>(slice_bar_offset_show_slice_bar_set_reducer),
+  TypedGlobalReducer<int?, AppState, actions.GroupDisplayedChange>(
       slice_bar_offset_group_displayed_change_reducer),
-  TypedGlobalReducer<int, AppState, actions.GroupRemove>(slice_bar_offset_group_remove_reducer),
-  TypedGlobalReducer<int, AppState, actions.HelixOffsetChange>(slice_bar_offset_helix_offset_change_reducer),
-  TypedGlobalReducer<int, AppState, actions.HelixOffsetChangeAll>(
+  TypedGlobalReducer<int?, AppState, actions.GroupRemove>(slice_bar_offset_group_remove_reducer),
+  TypedGlobalReducer<int?, AppState, actions.HelixOffsetChange>(slice_bar_offset_helix_offset_change_reducer),
+  TypedGlobalReducer<int?, AppState, actions.HelixOffsetChangeAll>(
       slice_bar_offset_helix_offset_change_all_reducer),
 ]);
 
-int slice_bar_offset_show_slice_bar_set_reducer(int offset, AppState state, actions.ShowSliceBarSet action) {
+int? slice_bar_offset_show_slice_bar_set_reducer(
+    int? offset, AppState state, actions.ShowSliceBarSet action) {
   if (action.show) {
     return bounded_offset_in_helices_group(
         offset, state.design.helices_in_group(state.ui_state.displayed_group_name).values);
@@ -385,26 +387,26 @@ int slice_bar_offset_show_slice_bar_set_reducer(int offset, AppState state, acti
   }
 }
 
-int slice_bar_offset_group_displayed_change_reducer(
-    int offset, AppState state, actions.GroupDisplayedChange action) {
+int? slice_bar_offset_group_displayed_change_reducer(
+    int? offset, AppState state, actions.GroupDisplayedChange action) {
   return bounded_offset_in_helices_group(offset, state.design.helices_in_group(action.group_name).values);
 }
 
-int slice_bar_offset_group_remove_reducer(int offset, AppState state, actions.GroupRemove action) {
-  String new_group_name = displayed_group_name_group_remove_reducer(null, state, action);
+int? slice_bar_offset_group_remove_reducer(int? offset, AppState state, actions.GroupRemove action) {
+  String new_group_name = displayed_group_name_group_remove_reducer("NO GROUP NAME DISPLAYED", state, action);
   return bounded_offset_in_helices_group(offset, state.design.helices_in_group(new_group_name).values);
 }
 
-int slice_bar_offset_helix_offset_change_reducer(
-    int offset, AppState state, actions.HelixOffsetChange action) {
-  var new_design = design_global_reducer(state.design, state, action);
+int? slice_bar_offset_helix_offset_change_reducer(
+    int? offset, AppState state, actions.HelixOffsetChange action) {
+  var new_design = design_global_reducer(state.design, state, action)!;
   return bounded_offset_in_helices_group(
       offset, new_design.helices_in_group(state.ui_state.displayed_group_name).values);
 }
 
-int slice_bar_offset_helix_offset_change_all_reducer(
-    int offset, AppState state, actions.HelixOffsetChangeAll action) {
-  var new_design = design_global_reducer(state.design, state, action);
+int? slice_bar_offset_helix_offset_change_all_reducer(
+    int? offset, AppState state, actions.HelixOffsetChangeAll action) {
+  var new_design = design_global_reducer(state.design, state, action)!;
   return bounded_offset_in_helices_group(
       offset, new_design.helices_in_group(state.ui_state.displayed_group_name).values);
 }
@@ -423,19 +425,21 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
         storables.show_strand_names, action)
     ..show_strand_labels = TypedReducer<bool, actions.ShowStrandLabelsSet>(show_strand_labels_reducer)(
         storables.show_strand_labels, action)
-    ..strand_name_font_size = TypedReducer<num, actions.StrandNameFontSizeSet>(strand_name_font_size_reducer)(
-        storables.strand_name_font_size, action)
+    ..strand_name_font_size =
+        TypedReducer<double, actions.StrandNameFontSizeSet>(strand_name_font_size_reducer)(
+            storables.strand_name_font_size, action)
     ..strand_label_font_size =
-        TypedReducer<num, actions.StrandLabelFontSizeSet>(strand_label_font_size_reducer)(
+        TypedReducer<double, actions.StrandLabelFontSizeSet>(strand_label_font_size_reducer)(
             storables.strand_label_font_size, action)
     ..show_domain_names = TypedReducer<bool, actions.ShowDomainNamesSet>(show_domain_names_reducer)(
         storables.show_domain_names, action)
-    ..domain_name_font_size = TypedReducer<num, actions.DomainNameFontSizeSet>(domain_name_font_size_reducer)(
-        storables.domain_name_font_size, action)
+    ..domain_name_font_size =
+        TypedReducer<double, actions.DomainNameFontSizeSet>(domain_name_font_size_reducer)(
+            storables.domain_name_font_size, action)
     ..show_domain_labels = TypedReducer<bool, actions.ShowDomainLabelsSet>(show_domain_labels_reducer)(
         storables.show_domain_labels, action)
     ..domain_label_font_size =
-        TypedReducer<num, actions.DomainLabelFontSizeSet>(domain_label_font_size_reducer)(
+        TypedReducer<double, actions.DomainLabelFontSizeSet>(domain_label_font_size_reducer)(
             storables.domain_label_font_size, action)
     ..show_modifications = TypedReducer<bool, actions.ShowModificationsSet>(show_modifications_reducer)(
         storables.show_modifications, action)
@@ -443,14 +447,15 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
         TypedReducer<bool, actions.SetModificationDisplayConnector>(modification_display_connector_reducer)(
             storables.modification_display_connector, action)
     ..modification_font_size =
-        TypedReducer<num, actions.ModificationFontSizeSet>(modification_font_size_reducer)(
+        TypedReducer<double, actions.ModificationFontSizeSet>(modification_font_size_reducer)(
             storables.modification_font_size, action)
-    ..zoom_speed = TypedReducer<num, actions.ZoomSpeedSet>(zoom_speed_reducer)(storables.zoom_speed, action)
+    ..zoom_speed =
+        TypedReducer<double, actions.ZoomSpeedSet>(zoom_speed_reducer)(storables.zoom_speed, action)
     ..major_tick_offset_font_size =
-        TypedReducer<num, actions.MajorTickOffsetFontSizeSet>(major_tick_offset_font_size_reducer)(
+        TypedReducer<double, actions.MajorTickOffsetFontSizeSet>(major_tick_offset_font_size_reducer)(
             storables.major_tick_offset_font_size, action)
     ..major_tick_width_font_size =
-        TypedReducer<num, actions.MajorTickWidthFontSizeSet>(major_tick_width_font_size_reducer)(
+        TypedReducer<double, actions.MajorTickWidthFontSizeSet>(major_tick_width_font_size_reducer)(
             storables.major_tick_width_font_size, action)
     ..show_mismatches = TypedReducer<bool, actions.ShowMismatchesSet>(show_mismatches_reducer)(
         storables.show_mismatches, action)
@@ -485,7 +490,7 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
             storables.show_loopout_extension_length, action)
     ..show_slice_bar =
         TypedReducer<bool, actions.ShowSliceBarSet>(show_slice_bar_reducer)(storables.show_slice_bar, action)
-    ..slice_bar_offset = TypedReducer<int, actions.SliceBarOffsetSet>(slice_bar_offset_set_reducer)(
+    ..slice_bar_offset = TypedReducer<int?, actions.SliceBarOffsetSet>(slice_bar_offset_set_reducer)(
         storables.slice_bar_offset, action)
     ..disable_png_caching_dna_sequences = TypedReducer<bool, actions.DisablePngCachingDnaSequencesSet>(
         disable_png_caching_dna_sequences_reducer)(storables.disable_png_caching_dna_sequences, action)
@@ -563,55 +568,55 @@ String displayed_group_name_change_displayed_group_reducer(String _, actions.Gro
 String displayed_group_name_change_name_reducer(String displayed_group_name, actions.GroupChange action) =>
     displayed_group_name == action.old_name ? action.new_name : displayed_group_name;
 
-Modification5Prime last_mod_5p_modification_add_reducer(
-        Modification5Prime modification, actions.ModificationAdd action) =>
-    action.modification is Modification5Prime ? action.modification : modification;
+Modification5Prime? last_mod_5p_modification_add_reducer(
+        Modification5Prime? modification, actions.ModificationAdd action) =>
+    action.modification is Modification5Prime ? action.modification as Modification5Prime : modification;
 
-Modification3Prime last_mod_3p_modification_add_reducer(
-        Modification3Prime modification, actions.ModificationAdd action) =>
-    action.modification is Modification3Prime ? action.modification : modification;
+Modification3Prime? last_mod_3p_modification_add_reducer(
+        Modification3Prime? modification, actions.ModificationAdd action) =>
+    action.modification is Modification3Prime ? action.modification as Modification3Prime : modification;
 
-ModificationInternal last_mod_int_modification_add_reducer(
-        ModificationInternal modification, actions.ModificationAdd action) =>
-    action.modification is ModificationInternal ? action.modification : modification;
+ModificationInternal? last_mod_int_modification_add_reducer(
+        ModificationInternal? modification, actions.ModificationAdd action) =>
+    action.modification is ModificationInternal ? action.modification as ModificationInternal : modification;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // svg-png-caching
 
-String load_dna_sequence_image_uri(String _, actions.LoadDnaSequenceImageUri action) {
+String? load_dna_sequence_image_uri(String? _, actions.LoadDnaSequenceImageUri action) {
   return action.uri;
 }
 
-num load_dna_sequence_png_horizontal_offset(num _, actions.LoadDnaSequenceImageUri action) {
+double load_dna_sequence_png_horizontal_offset(double _, actions.LoadDnaSequenceImageUri action) {
   return action.dna_sequence_png_horizontal_offset;
 }
 
-num load_dna_sequence_png_vertical_offset(num _, actions.LoadDnaSequenceImageUri action) {
+double load_dna_sequence_png_vertical_offset(double _, actions.LoadDnaSequenceImageUri action) {
   return action.dna_sequence_png_vertical_offset;
 }
 
-Reducer<String> dna_sequence_png_uri_reducer = combineReducers([
-  TypedReducer<String, actions.LoadDnaSequenceImageUri>(load_dna_sequence_image_uri),
+Reducer<String?> dna_sequence_png_uri_reducer = combineReducers([
+  TypedReducer<String?, actions.LoadDnaSequenceImageUri>(load_dna_sequence_image_uri),
 ]);
 
-Reducer<num> dna_sequence_horizontal_offset_reducer = combineReducers([
-  TypedReducer<num, actions.LoadDnaSequenceImageUri>(load_dna_sequence_png_horizontal_offset),
+Reducer<double> dna_sequence_horizontal_offset_reducer = combineReducers([
+  TypedReducer<double, actions.LoadDnaSequenceImageUri>(load_dna_sequence_png_horizontal_offset),
 ]);
 
-Reducer<num> dna_sequence_vertical_offset_reducer = combineReducers([
-  TypedReducer<num, actions.LoadDnaSequenceImageUri>(load_dna_sequence_png_vertical_offset),
+Reducer<double> dna_sequence_vertical_offset_reducer = combineReducers([
+  TypedReducer<double, actions.LoadDnaSequenceImageUri>(load_dna_sequence_png_vertical_offset),
 ]);
 
-actions.ExportSvg set_export_svg_action_delayed_for_png_cache(
-    actions.ExportSvg _, actions.SetExportSvgActionDelayedForPngCache action) {
+actions.ExportSvg? set_export_svg_action_delayed_for_png_cache(
+    actions.ExportSvg? _, actions.SetExportSvgActionDelayedForPngCache action) {
   return action.export_svg_action_delayed_for_png_cache;
 }
 
-Reducer<actions.ExportSvg> export_svg_action_delayed_for_png_cache_reducer = combineReducers(([
-  TypedReducer<actions.ExportSvg, actions.SetExportSvgActionDelayedForPngCache>(
-    set_export_svg_action_delayed_for_png_cache,
-  )
-]));
+Reducer<actions.ExportSvg?> export_svg_action_delayed_for_png_cache_reducer = //combineReducers(([
+    TypedReducer<actions.ExportSvg?, actions.SetExportSvgActionDelayedForPngCache>(
+  set_export_svg_action_delayed_for_png_cache,
+);
+// ]));
 
 bool set_is_zoom_above_threshold(bool _, actions.SetIsZoomAboveThreshold action) {
   return action.is_zoom_above_threshold;
@@ -623,52 +628,54 @@ Reducer<bool> is_zoom_above_threshold_reducer =
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // side view mouse position/grid position reducers
 
-Reducer<GridPosition> side_view_mouse_grid_pos_reducer = combineReducers([
-  TypedReducer<GridPosition, actions.MouseGridPositionSideUpdate>(side_view_mouse_grid_pos_update_reducer),
-  TypedReducer<GridPosition, actions.MouseGridPositionSideClear>(side_view_mouse_grid_pos_clear_reducer),
+Reducer<GridPosition?> side_view_mouse_grid_pos_reducer = combineReducers([
+  TypedReducer<GridPosition?, actions.MouseGridPositionSideUpdate>(side_view_mouse_grid_pos_update_reducer),
+  TypedReducer<GridPosition?, actions.MouseGridPositionSideClear>(side_view_mouse_grid_pos_clear_reducer),
 ]);
 
-GridPosition side_view_mouse_grid_pos_update_reducer(
-        GridPosition _, actions.MouseGridPositionSideUpdate action) =>
+GridPosition? side_view_mouse_grid_pos_update_reducer(
+        GridPosition? _, actions.MouseGridPositionSideUpdate action) =>
     action.grid_position;
 
-GridPosition side_view_mouse_grid_pos_clear_reducer(
-        GridPosition _, actions.MouseGridPositionSideClear action) =>
+GridPosition? side_view_mouse_grid_pos_clear_reducer(
+        GridPosition? _, actions.MouseGridPositionSideClear action) =>
     null;
 
-Reducer<Point<double>> side_view_position_mouse_cursor_reducer = combineReducers([
-  TypedReducer<Point<double>, actions.MousePositionSideUpdate>(side_view_mouse_pos_update_reducer),
-  TypedReducer<Point<double>, actions.MousePositionSideClear>(side_view_mouse_pos_clear_reducer),
+Reducer<Point<double>?> side_view_position_mouse_cursor_reducer = combineReducers([
+  TypedReducer<Point<double>?, actions.MousePositionSideUpdate>(side_view_mouse_pos_update_reducer),
+  TypedReducer<Point<double>?, actions.MousePositionSideClear>(side_view_mouse_pos_clear_reducer),
 ]);
 
-Point<double> side_view_mouse_pos_update_reducer(Point<double> _, actions.MousePositionSideUpdate action) =>
+Point<double>? side_view_mouse_pos_update_reducer(Point<double>? _, actions.MousePositionSideUpdate action) =>
     action.svg_pos;
 
-Point<double> side_view_mouse_pos_clear_reducer(Point<double> _, actions.MousePositionSideClear action) =>
+Point<double>? side_view_mouse_pos_clear_reducer(Point<double>? _, actions.MousePositionSideClear action) =>
     null;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // strand color picker
 
-Reducer<Strand> color_picker_strand_reducer = combineReducers([
-  TypedReducer<Strand, actions.StrandOrSubstrandColorPickerShow>(color_picker_strand_show_reducer),
-  TypedReducer<Strand, actions.StrandOrSubstrandColorPickerHide>(color_picker_strand_hide_reducer),
+Reducer<Strand?> color_picker_strand_reducer = combineReducers([
+  TypedReducer<Strand?, actions.StrandOrSubstrandColorPickerShow>(color_picker_strand_show_reducer),
+  TypedReducer<Strand?, actions.StrandOrSubstrandColorPickerHide>(color_picker_strand_hide_reducer),
 ]);
 
-Strand color_picker_strand_show_reducer(Strand _, actions.StrandOrSubstrandColorPickerShow action) =>
+Strand? color_picker_strand_show_reducer(Strand? _, actions.StrandOrSubstrandColorPickerShow action) =>
     action.strand;
 
-Strand color_picker_strand_hide_reducer(Strand _, actions.StrandOrSubstrandColorPickerHide action) => null;
+Strand? color_picker_strand_hide_reducer(Strand? _, actions.StrandOrSubstrandColorPickerHide action) => null;
 
-Reducer<Substrand> color_picker_substrand_reducer = combineReducers([
-  TypedReducer<Substrand, actions.StrandOrSubstrandColorPickerShow>(color_picker_substrand_show_reducer),
-  TypedReducer<Substrand, actions.StrandOrSubstrandColorPickerHide>(color_picker_substrand_hide_reducer),
+Reducer<Substrand?> color_picker_substrand_reducer = combineReducers([
+  TypedReducer<Substrand?, actions.StrandOrSubstrandColorPickerShow>(color_picker_substrand_show_reducer),
+  TypedReducer<Substrand?, actions.StrandOrSubstrandColorPickerHide>(color_picker_substrand_hide_reducer),
 ]);
 
-Substrand color_picker_substrand_show_reducer(Substrand _, actions.StrandOrSubstrandColorPickerShow action) =>
+Substrand? color_picker_substrand_show_reducer(
+        Substrand? _, actions.StrandOrSubstrandColorPickerShow action) =>
     action.substrand;
 
-Substrand color_picker_substrand_hide_reducer(Substrand _, actions.StrandOrSubstrandColorPickerHide action) =>
+Substrand? color_picker_substrand_hide_reducer(
+        Substrand? _, actions.StrandOrSubstrandColorPickerHide action) =>
     null;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -692,8 +699,8 @@ BuiltMap<int, BuiltList<int>> original_helix_offsets_reducer(
   if (action is actions.StrandsMoveStartSelectedStrands || action is actions.StrandCreateStart) {
     var helix_offsets = original_helix_offsets.toMap();
     for (int key in state.design.helices.keys) {
-      var helix = state.design.helices[key];
-      helix_offsets[state.design.helices[key].idx] = [helix.min_offset, helix.max_offset].build();
+      var helix = state.design.helices[key]!;
+      helix_offsets[helix.idx] = [helix.min_offset, helix.max_offset].build();
     }
     return helix_offsets.build();
   }

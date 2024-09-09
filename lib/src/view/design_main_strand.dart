@@ -521,17 +521,25 @@ assigned, assign the complementary DNA sequence to this strand.
               title: 'assign domain name complement from bound strands',
               tooltip: '''\
 If other strands bound to this strand (or the selected strands) have domain names already 
-assigned, assign the complementary domain names sequence to this strand. To use this
-feature for individual domains, set select mode to domain.
-''',
+assigned, assign the complementary domain names sequence to this strand.
+
+To use this feature for individual domains instead of all domains on the strand, 
+set select mode to domain. Then only clicked and selected domains will be affected.''',
               on_click: () => assign_domain_name_complement_from_bound_strands(domain: domain),
             ),
             if (domain.name != null)
               ContextMenuItem(
                   title: 'remove domain name',
-                  on_click: () => app.dispatch(actions.BatchAction(
-                      get_selected_domains().map((d) => actions.SubstrandNameSet(name: null, substrand: d)),
-                      'remove domain names'))),
+                  on_click: () {
+                    var domains =
+                        util.add_if_not_null(app.state.ui_state.selectables_store.selected_domains, domain);
+                    var action = domains.length > 1
+                        ? actions.BatchAction(
+                            domains.map((d) => actions.SubstrandNameSet(name: null, substrand: d)).toList(),
+                            'remove domain names')
+                        : actions.SubstrandNameSet(name: null, substrand: domain);
+                    app.dispatch(action);
+                  }),
           ].build()),
       ContextMenuItem(
           title: 'edit label',
@@ -555,9 +563,16 @@ feature for individual domains, set select mode to domain.
             if (domain.label != null)
               ContextMenuItem(
                   title: 'remove domain label',
-                  on_click: () => app.dispatch(actions.BatchAction(
-                      get_selected_domains().map((d) => actions.SubstrandLabelSet(label: null, substrand: d)),
-                      'remove domain labels'))),
+                  on_click: () {
+                    var domains =
+                        util.add_if_not_null(app.state.ui_state.selectables_store.selected_domains, domain);
+                    var action = domains.length > 1
+                        ? actions.BatchAction(
+                            domains.map((d) => actions.SubstrandLabelSet(label: null, substrand: d)).toList(),
+                            'remove domain labels')
+                        : actions.SubstrandLabelSet(label: null, substrand: domain);
+                    app.dispatch(action);
+                  }),
           ].build()),
       ContextMenuItem(
           title: 'reflect',

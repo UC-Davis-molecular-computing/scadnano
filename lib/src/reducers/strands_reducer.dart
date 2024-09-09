@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
@@ -84,7 +83,7 @@ GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGloba
 BuiltList<Strand> replace_strands_reducer(BuiltList<Strand> strands, actions.ReplaceStrands action) {
   var strands_builder = strands.toBuilder();
   for (int idx in action.new_strands.keys) {
-    var new_strand = action.new_strands[idx];
+    var new_strand = action.new_strands[idx]!;
     strands_builder[idx] = new_strand;
   }
   return strands_builder.build();
@@ -94,7 +93,7 @@ BuiltList<Strand> replace_strands_reducer(BuiltList<Strand> strands, actions.Rep
 // action may not have the strand itself
 BuiltList<Strand> strands_part_reducer(
     BuiltList<Strand> strands, AppState state, actions.StrandPartAction action) {
-  Strand strand = state.design.strands_by_id[action.strand_part.strand_id];
+  Strand strand = state.design.strands_by_id[action.strand_part.strand_id]!;
   int strand_idx = strands.indexOf(strand);
 
   if (strand_idx < 0) {
@@ -125,11 +124,11 @@ Strand substrand_name_set_reducer(Strand strand, actions.SubstrandNameSet action
   // we do the same thing no matter if its Domain, Loopout, or Extension, but need to cast to call rebuild
   Substrand substrand = action.substrand;
   if (substrand is Domain) {
-    substrand = (substrand as Domain).rebuild((b) => b..name = action.name);
+    substrand = substrand.rebuild((b) => b..name = action.name);
   } else if (substrand is Loopout) {
-    substrand = (substrand as Loopout).rebuild((b) => b..name = action.name);
+    substrand = substrand.rebuild((b) => b..name = action.name);
   } else if (substrand is Extension) {
-    substrand = (substrand as Extension).rebuild((b) => b..name = action.name);
+    substrand = substrand.rebuild((b) => b..name = action.name);
   } else {
     throw AssertionError('substrand must be Domain, Loopout, or Extension');
   }
@@ -146,11 +145,11 @@ Strand substrand_label_set_reducer(Strand strand, actions.SubstrandLabelSet acti
   // we do the same thing no matter if its Domain, Loopout, or Extension, but need to cast to call rebuild
   Substrand substrand = action.substrand;
   if (substrand is Domain) {
-    substrand = (substrand as Domain).rebuild((b) => b..label = action.label);
+    substrand = substrand.rebuild((b) => b..label = action.label);
   } else if (substrand is Loopout) {
-    substrand = (substrand as Loopout).rebuild((b) => b..label = action.label);
+    substrand = substrand.rebuild((b) => b..label = action.label);
   } else if (substrand is Extension) {
-    substrand = (substrand as Extension).rebuild((b) => b..label = action.label);
+    substrand = substrand.rebuild((b) => b..label = action.label);
   } else {
     throw AssertionError('substrand must be Domain, Loopout, or Extension');
   }
@@ -222,7 +221,7 @@ Strand one_strand_strands_move_copy_commit_reducer(Design design, Strand strand,
   var original_helices_view_order_inverse = strands_move.original_helices_view_order_inverse;
   var current_group = util.current_group_from_strands_move(design, strands_move);
 
-  var moved_strand = move_strand(
+  Strand? moved_strand = move_strand(
       strand: strand,
       original_helices_view_order_inverse: original_helices_view_order_inverse,
       current_group: current_group,
@@ -243,13 +242,13 @@ Strand one_strand_strands_move_copy_commit_reducer(Design design, Strand strand,
   return moved_strand;
 }
 
-Strand move_strand(
-    {Strand strand,
-    BuiltMap<int, int> original_helices_view_order_inverse,
-    HelixGroup current_group,
-    int delta_view_order,
-    int delta_offset,
-    bool delta_forward}) {
+Strand? move_strand(
+    {required Strand strand,
+    required BuiltMap<int, int> original_helices_view_order_inverse,
+    required HelixGroup current_group,
+    required int delta_view_order,
+    required int delta_offset,
+    required bool delta_forward}) {
   List<Substrand> substrands = strand.substrands.toList();
 
   //Don't reverse domains, this is to preserve the original order of domain names
@@ -271,15 +270,15 @@ Strand move_strand(
       }
       int new_helix_idx = substrand.helix;
       if (is_moving) {
-        num original_view_order = original_helices_view_order_inverse[substrand.helix];
-        num new_view_order = original_view_order + delta_view_order;
+        int original_view_order = original_helices_view_order_inverse[substrand.helix]!;
+        int new_view_order = original_view_order + delta_view_order;
         if (new_view_order >= current_group.helices_view_order.length) {
           // avoid the crash
           return null;
         }
         new_helix_idx = current_group.helices_view_order[new_view_order];
       }
-      assert(new_helix_idx != null);
+
       Domain domain_moved = substrand.rebuild(
         (b) => b
           ..is_first = i == 0
@@ -307,7 +306,7 @@ BuiltList<Strand> domains_move_commit_reducer(
   if (action.domains_move.allowable && action.domains_move.is_nontrivial) {
     var strands_builder = strands.toBuilder();
     for (var strand in action.domains_move.domains_moving_from_strand.keys) {
-      var domains = action.domains_move.domains_moving_from_strand[strand].toSet();
+      var domains = action.domains_move.domains_moving_from_strand[strand]!.toSet();
       int strand_idx = strands.indexOf(strand);
       Strand new_strand =
           one_strand_domains_move_commit_reducer(state.design, strand, domains, action.domains_move);
@@ -397,18 +396,18 @@ BuiltList<Strand> strands_dna_extensions_move_commit_reducer(
   var strands_builder = strands.toBuilder();
 
   for (var move in action.dna_extensions_move.moves) {
-    var strand = state.design.substrand_to_strand[state.design.end_to_extension[move.dna_end]];
+    Strand strand = state.design.substrand_to_strand[state.design.end_to_extension[move.dna_end]!]!;
 
     int strand_idx = strands.indexOf(strand);
     strand = strands_builder[strand_idx];
 
-    var extension = state.design.end_to_extension[move.dna_end];
+    var extension = state.design.end_to_extension[move.dna_end]!;
     int substrand_idx = strand.substrands.indexOf(extension);
     var substrands_builder = strand.substrands.toBuilder();
     var extension_start_point = move.attached_end_position;
 
     var length_and_angle = util.compute_extension_length_and_angle_from_point(
-        action.dna_extensions_move.current_point_of(move.dna_end), //TODO: add ! when migrating
+        action.dna_extensions_move.current_point_of(move.dna_end)!,
         extension_start_point,
         extension,
         extension.adjacent_domain,
@@ -430,7 +429,7 @@ class InsertionDeletionRecord {
   int strand_idx;
   int substrand_idx;
 
-  InsertionDeletionRecord({this.offset, this.strand_idx, this.substrand_idx});
+  InsertionDeletionRecord({required this.offset, required this.strand_idx, required this.substrand_idx});
 
   String toString() =>
       'InsertionDeletionRecord(offset=${offset}, strand_idx=$strand_idx, substrand_idx=$substrand_idx)';
@@ -447,9 +446,9 @@ Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop
     if (substrand is Domain) {
       Domain bound_ss = substrand;
       for (var dnaend in [substrand.dnaend_start, substrand.dnaend_end]) {
-        DNAEndMove move = find_move(all_move.moves, dnaend);
+        DNAEndMove? move = find_move(all_move.moves, dnaend);
         if (move != null) {
-          int new_offset = all_move.current_capped_offset_of(dnaend); // TODO: when migrating, add !
+          int new_offset = all_move.current_capped_offset_of(dnaend)!;
 
           List<int> remaining_deletions = get_remaining_deletions(substrand, new_offset, dnaend);
           List<Insertion> remaining_insertions = get_remaining_insertions(substrand, new_offset, dnaend);
@@ -464,7 +463,7 @@ Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop
           for (var offset in deletions_removed + insertion_offsets_removed) {
             var other_dom = find_paired_domain(design, bound_ss, offset);
             if (other_dom != null) {
-              Strand other_strand = design.substrand_to_strand[other_dom];
+              Strand other_strand = design.substrand_to_strand[other_dom]!;
               int other_ss_idx = other_strand.substrands.indexOf(other_dom);
               int other_strand_idx = design.strands.indexOf(other_strand);
               records.add(InsertionDeletionRecord(
@@ -498,15 +497,17 @@ List<Insertion> get_remaining_insertions(Domain substrand, int new_offset, DNAEn
 
 int adjust_offset(DNAEnd end, DNAEndMove move, int delta) {
   int new_offset = end.offset_inclusive + delta;
-  if (move.highest_offset != null && delta > 0) {
+  // if (move.highest_offset != null && delta > 0) {
+  if (delta > 0) {
     new_offset = min(move.highest_offset, new_offset);
-  } else if (move.lowest_offset != null && delta < 0) {
+    // } else if (move.lowest_offset != null && delta < 0) {
+  } else if (delta < 0) {
     new_offset = max(move.lowest_offset, new_offset);
   }
   return new_offset;
 }
 
-DNAEndMove find_move(BuiltList<DNAEndMove> moves, DNAEnd end) {
+DNAEndMove? find_move(BuiltList<DNAEndMove> moves, DNAEnd end) {
   for (DNAEndMove move in moves) {
     if (end == move.dna_end) {
       return move;
@@ -626,9 +627,9 @@ Strand extension_add_reducer(Strand strand, actions.ExtensionAdd action) {
   var substrands = strand.substrands.toList();
   Domain adjacent_domain;
   if (action.is_5p) {
-    adjacent_domain = substrands.first;
+    adjacent_domain = substrands.first as Domain;
   } else {
-    adjacent_domain = substrands.last;
+    adjacent_domain = substrands.last as Domain;
   }
 
   Extension ext = Extension(
@@ -647,14 +648,17 @@ Strand extension_add_reducer(Strand strand, actions.ExtensionAdd action) {
 
 Strand modification_add_reducer(Strand strand, actions.ModificationAdd action) {
   Strand strand_with_new_modification;
+  Modification mod = action.modification;
   // first overwrite this strand in the builder list
-  if (action.modification is ModificationInternal) {
-    strand_with_new_modification =
-        strand.rebuild((m) => m.modifications_int[action.strand_dna_idx] = action.modification);
-  } else if (action.modification is Modification3Prime) {
-    strand_with_new_modification = strand.rebuild((m) => m.modification_3p.replace(action.modification));
-  } else if (action.modification is Modification5Prime) {
-    strand_with_new_modification = strand.rebuild((m) => m.modification_5p.replace(action.modification));
+  if (mod is ModificationInternal) {
+    strand_with_new_modification = strand.rebuild((m) => m.modifications_int[action.strand_dna_idx!] = mod);
+  } else if (mod is Modification3Prime) {
+    strand_with_new_modification = strand.rebuild((m) => m.modification_3p.replace(mod));
+  } else if (mod is Modification5Prime) {
+    strand_with_new_modification = strand.rebuild((m) => m.modification_5p.replace(mod));
+  } else {
+    throw AssertionError(
+        'modification must be ModificationInternal, Modification3Prime, or Modification5Prime');
   }
   return strand_with_new_modification;
 }
@@ -662,12 +666,16 @@ Strand modification_add_reducer(Strand strand, actions.ModificationAdd action) {
 Strand modification_remove_reducer(Strand strand, actions.ModificationRemove action) {
   Strand strand_with_new_modification;
   // first overwrite this strand in the builder list
-  if (action.modification is ModificationInternal) {
+  var mod = action.modification;
+  if (mod is ModificationInternal) {
     strand_with_new_modification = strand.rebuild((m) => m.modifications_int.remove(action.strand_dna_idx));
-  } else if (action.modification is Modification3Prime) {
+  } else if (mod is Modification3Prime) {
     strand_with_new_modification = strand.rebuild((m) => m.modification_3p = null);
-  } else if (action.modification is Modification5Prime) {
+  } else if (mod is Modification5Prime) {
     strand_with_new_modification = strand.rebuild((m) => m.modification_5p = null);
+  } else {
+    throw AssertionError(
+        'modification must be ModificationInternal, Modification3Prime, or Modification5Prime');
   }
   return strand_with_new_modification;
 }
@@ -675,13 +683,17 @@ Strand modification_remove_reducer(Strand strand, actions.ModificationRemove act
 Strand modification_edit_reducer(Strand strand, actions.ModificationEdit action) {
   Strand strand_with_edited_modification;
   // first overwrite this strand in the builder list
-  if (action.modification is ModificationInternal) {
+  var mod = action.modification;
+  if (mod is ModificationInternal) {
     strand_with_edited_modification =
-        strand.rebuild((m) => m.modifications_int[action.strand_dna_idx] = action.modification);
-  } else if (action.modification is Modification3Prime) {
-    strand_with_edited_modification = strand.rebuild((m) => m.modification_3p.replace(action.modification));
-  } else if (action.modification is Modification5Prime) {
-    strand_with_edited_modification = strand.rebuild((m) => m.modification_5p.replace(action.modification));
+        strand.rebuild((m) => m.modifications_int[action.strand_dna_idx!] = mod);
+  } else if (mod is Modification3Prime) {
+    strand_with_edited_modification = strand.rebuild((m) => m.modification_3p.replace(mod));
+  } else if (mod is Modification5Prime) {
+    strand_with_edited_modification = strand.rebuild((m) => m.modification_5p.replace(mod));
+  } else {
+    throw AssertionError(
+        'modification must be ModificationInternal, Modification3Prime, or Modification5Prime');
   }
   return strand_with_edited_modification;
 }
@@ -695,19 +707,19 @@ Strand scaffold_set_reducer(Strand strand, actions.ScaffoldSet action) {
 }
 
 Strand strand_or_substrand_color_set_reducer(Strand strand, actions.StrandOrSubstrandColorSet action) {
-  if (action.substrand == null) {
+  Substrand? substrand = action.substrand;
+  if (substrand == null) {
     strand = strand.rebuild((b) => b..color = action.color);
   } else {
-    int substrand_idx = strand.substrands.indexOf(action.substrand);
+    int substrand_idx = strand.substrands.indexOf(substrand);
 
     // we do the same thing no matter if it's Domain, Loopout, or Extension, but need to cast to call rebuild
-    Substrand substrand = action.substrand;
     if (substrand is Domain) {
-      substrand = (substrand as Domain).rebuild((b) => b..color = action.color);
+      substrand = substrand.rebuild((b) => b..color = action.color);
     } else if (substrand is Loopout) {
-      substrand = (substrand as Loopout).rebuild((b) => b..color = action.color);
+      substrand = substrand.rebuild((b) => b..color = action.color);
     } else if (substrand is Extension) {
-      substrand = (substrand as Extension).rebuild((b) => b..color = action.color);
+      substrand = substrand.rebuild((b) => b..color = action.color);
     } else {
       throw AssertionError('substrand must be Domain, Loopout, or Extension');
     }
@@ -759,13 +771,13 @@ BuiltList<Strand> modifications_int_edit_reducer(
     if (!strand_id_to_mods.containsKey(mod.strand.id)) {
       strand_id_to_mods[mod.strand.id] = {};
     }
-    strand_id_to_mods[mod.strand.id].add(mod);
+    strand_id_to_mods[mod.strand.id]!.add(mod);
   }
 
   var new_strands = strands.toList();
   List<String> strand_ids = [for (var strand in strands) strand.id];
   for (String strand_id in strand_id_to_mods.keys) {
-    Set<SelectableModificationInternal> selectable_mods = strand_id_to_mods[strand_id];
+    Set<SelectableModificationInternal> selectable_mods = strand_id_to_mods[strand_id]!;
     int strand_idx = strand_ids.indexOf(strand_id);
     Strand strand = strands[strand_idx];
 

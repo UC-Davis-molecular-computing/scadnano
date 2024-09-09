@@ -187,7 +187,7 @@ part 'serializers.g.dart';
   SelectionBoxIntersectionRuleSet,
   SelectAll,
   SelectAllSelectable,
-  SelectAllWithSameAsSelected,
+  SelectAllStrandsWithSameAsSelected,
   SelectableTrait,
   Select,
   Loopout,

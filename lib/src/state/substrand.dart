@@ -15,7 +15,7 @@ abstract class Substrand implements JSONSerializable, StrandPart {
 
   String? get dna_sequence;
 
-  Substrand set_dna_sequence(String seq);
+  Substrand set_dna_sequence(String? seq);
 
   toJson();
 

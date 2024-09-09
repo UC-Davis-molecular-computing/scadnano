@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:math';
 
 import 'package:redux/redux.dart';
@@ -30,7 +29,7 @@ GlobalReducer<SelectablesStore, AppState> selectables_store_global_reducer = com
   TypedGlobalReducer<SelectablesStore, AppState, actions.Select>(select_reducer),
   TypedGlobalReducer<SelectablesStore, AppState, actions.SelectOrToggleItems>(select_or_toggle_items_reducer),
   TypedGlobalReducer<SelectablesStore, AppState, actions.SelectAllSelectable>(select_all_selectables_reducer),
-  TypedGlobalReducer<SelectablesStore, AppState, actions.SelectAllWithSameAsSelected>(
+  TypedGlobalReducer<SelectablesStore, AppState, actions.SelectAllStrandsWithSameAsSelected>(
       select_all_with_same_reducer),
 ]);
 
@@ -145,12 +144,12 @@ SelectablesStore select_all_reducer(SelectablesStore selectables_store, actions.
 SelectablesStore selections_clear_reducer(SelectablesStore selectables_store, _) => selectables_store.clear();
 
 SelectablesStore select_all_with_same_reducer(
-    SelectablesStore selectables_store, AppState state, actions.SelectAllWithSameAsSelected action) {
+    SelectablesStore selectables_store, AppState state, actions.SelectAllStrandsWithSameAsSelected action) {
   // gather values of traits of selected strands
-  Map<SelectableTrait, List<Object>> trait_values = {for (var trait in action.traits) trait: []};
-  for (var strand in action.templates) {
+  Map<SelectableTrait, List<Object?>> trait_values = {for (var trait in action.traits) trait: []};
+  for (var strand in action.template_strands) {
     for (var trait in action.traits) {
-      trait_values[trait].add(trait.trait_of_strand(strand));
+      trait_values[trait]!.add(trait.trait_of_strand(strand));
     }
   }
 
@@ -164,7 +163,7 @@ SelectablesStore select_all_with_same_reducer(
     bool include_strand = true;
     // by default include the strand; now go looking for a trait where it doesn't match
     for (var trait in trait_values.keys) {
-      var trait_values_selected = trait_values[trait];
+      var trait_values_selected = trait_values[trait]!;
       var trait_value_strand = trait.trait_of_strand(strand);
       bool found_matching_trait = false;
       for (var trait_value in trait_values_selected) {
@@ -274,43 +273,47 @@ BuiltSet<int> helix_remove_selected_reducer(BuiltSet<int> selected_helices, acti
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // selection box reducer
 
-Reducer<SelectionBox> optimized_selection_box_reducer = combineReducers([
-  selection_box_reducer,
+Reducer<SelectionBox?> optimized_selection_box_reducer = //combineReducers([
+    selection_box_reducer;
+// ]);
+
+Reducer<SelectionBox?> selection_box_reducer = combineReducers([
+  TypedReducer<SelectionBox?, actions.SelectionBoxCreate>(selection_box_create_reducer),
+  TypedReducer<SelectionBox?, actions.SelectionBoxSizeChange>(selection_box_size_changed_reducer),
+  TypedReducer<SelectionBox?, actions.SelectionBoxRemove>(selection_box_remove_reducer),
 ]);
 
-Reducer<SelectionBox> selection_box_reducer = combineReducers([
-  TypedReducer<SelectionBox, actions.SelectionBoxCreate>(selection_box_create_reducer),
-  TypedReducer<SelectionBox, actions.SelectionBoxSizeChange>(selection_box_size_changed_reducer),
-  TypedReducer<SelectionBox, actions.SelectionBoxRemove>(selection_box_remove_reducer),
-]);
-
-SelectionBox selection_box_create_reducer(SelectionBox _, actions.SelectionBoxCreate action) =>
+SelectionBox? selection_box_create_reducer(SelectionBox? _, actions.SelectionBoxCreate action) =>
     SelectionBox(action.point, action.toggle, action.is_main);
 
-SelectionBox selection_box_size_changed_reducer(
-        SelectionBox selection_box, actions.SelectionBoxSizeChange action) =>
-    selection_box.rebuild((s) => s..current = action.point);
+SelectionBox? selection_box_size_changed_reducer(
+        SelectionBox? selection_box, actions.SelectionBoxSizeChange action) =>
+    selection_box!.rebuild((s) => s..current = action.point);
 
-SelectionBox selection_box_remove_reducer(SelectionBox _, actions.SelectionBoxRemove __) => null;
+SelectionBox? selection_box_remove_reducer(SelectionBox? _, actions.SelectionBoxRemove __) => null;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // selection rope reducer
 
-Reducer<SelectionRope> optimized_selection_rope_reducer = combineReducers([
-  selection_rope_reducer,
+Reducer<SelectionRope?> optimized_selection_rope_reducer = //combineReducers([
+    selection_rope_reducer;
+// ]);
+
+Reducer<SelectionRope?> selection_rope_reducer = combineReducers([
+  TypedReducer<SelectionRope?, actions.SelectionRopeCreate>(selection_rope_create_reducer),
+  TypedReducer<SelectionRope?, actions.SelectionRopeMouseMove>(selection_rope_mouse_move_reducer),
+  TypedReducer<SelectionRope?, actions.SelectionRopeAddPoint>(selection_rope_add_point_reducer),
+  TypedReducer<SelectionRope?, actions.SelectionRopeRemove>(selection_rope_remove_reducer),
 ]);
 
-Reducer<SelectionRope> selection_rope_reducer = combineReducers([
-  TypedReducer<SelectionRope, actions.SelectionRopeCreate>(selection_rope_create_reducer),
-  TypedReducer<SelectionRope, actions.SelectionRopeMouseMove>(selection_rope_mouse_move_reducer),
-  TypedReducer<SelectionRope, actions.SelectionRopeAddPoint>(selection_rope_add_point_reducer),
-  TypedReducer<SelectionRope, actions.SelectionRopeRemove>(selection_rope_remove_reducer),
-]);
-
-SelectionRope selection_rope_create_reducer(SelectionRope _, actions.SelectionRopeCreate action) =>
+SelectionRope? selection_rope_create_reducer(SelectionRope? _, actions.SelectionRopeCreate action) =>
     SelectionRope(action.toggle);
 
-SelectionRope selection_rope_mouse_move_reducer(SelectionRope rope, actions.SelectionRopeMouseMove action) {
+SelectionRope? selection_rope_mouse_move_reducer(SelectionRope? rope, actions.SelectionRopeMouseMove action) {
+  if (rope == null) {
+    return null;
+  }
+
   // if no points have been added, is_main should be null; if so we set it according to the action
   if (rope.is_main == null) {
     rope = rope.rebuild((b) => b..is_main = action.is_main_view);
@@ -325,7 +328,10 @@ SelectionRope selection_rope_mouse_move_reducer(SelectionRope rope, actions.Sele
   return rope.rebuild((b) => b..current_point = action.point);
 }
 
-SelectionRope selection_rope_add_point_reducer(SelectionRope rope, actions.SelectionRopeAddPoint action) {
+SelectionRope? selection_rope_add_point_reducer(SelectionRope? rope, actions.SelectionRopeAddPoint action) {
+  if (rope == null) {
+    return null;
+  }
   // if no points have been added, is_main should be null; if so we set it according to the action
   if (rope.is_main == null) {
     rope = rope.rebuild((b) => b..is_main = action.is_main_view);
@@ -348,4 +354,4 @@ SelectionRope selection_rope_add_point_reducer(SelectionRope rope, actions.Selec
   return rope;
 }
 
-SelectionRope selection_rope_remove_reducer(SelectionRope _, actions.SelectionRopeRemove __) => null;
+SelectionRope? selection_rope_remove_reducer(SelectionRope? _, actions.SelectionRopeRemove __) => null;

@@ -122,13 +122,13 @@ const NUM_DIGITS_PRECISION_POSITION_DISPLAYED = 1;
 const Grid default_grid = Grid.none;
 //const Grid default_grid = Grid.square;
 
-const default_modification_font_size = 12;
-const default_strand_name_font_size = 16;
-const default_strand_label_font_size = 16;
-const default_domain_name_font_size = 10;
-const default_domain_label_font_size = 10;
-const default_major_tick_offset_font_size = 12;
-const default_major_tick_width_font_size = 8;
+const default_modification_font_size = 12.0;
+const default_strand_name_font_size = 16.0;
+const default_strand_label_font_size = 16.0;
+const default_domain_name_font_size = 10.0;
+const default_domain_label_font_size = 10.0;
+const default_major_tick_offset_font_size = 12.0;
+const default_major_tick_width_font_size = 8.0;
 
 const default_modification_connector_length = 4;
 
@@ -204,6 +204,7 @@ const default_inter_helix_gap = 1.0;
 
 // Design keys
 const version_key = 'version';
+const color_cycler_idx_key = 'color_cycler_idx';
 const grid_key = 'grid';
 const geometry_key = 'geometry';
 const legacy_geometry_keys = ['parameters'];
@@ -405,15 +406,15 @@ const extension_keys = [
 // This is needed because dna sequences on the first helix gets
 // cut off at the top of the window, so they do not get rendered
 // in the svg data uri.
-const int DNA_SEQUENCE_VERTICAL_OFFSET = 50;
+const DNA_SEQUENCE_VERTICAL_OFFSET = 50.0;
 // Horizontally shifts dna sequence used for caching the svg as png.
 // This is needed because dna sequences on loopouts gets
 // cut off. In the future, there may need to be a dynamic method
 // for getting these offsets.
-const int DNA_SEQUENCE_HORIZONTAL_OFFSET = 50;
+const DNA_SEQUENCE_HORIZONTAL_OFFSET = 50.0;
 
 // Zoom threshold used for caching the svg as png.
-const num ZOOM_THRESHOLD = 0.5;
+const double ZOOM_THRESHOLD = 0.5;
 
 /////////////////////////////////////////////////////////////
 // Backend

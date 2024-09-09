@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:built_collection/built_collection.dart';
 import 'dart:math';
 import 'package:scadnano/src/state/edit_mode.dart';
@@ -46,10 +45,10 @@ BuiltList<MouseoverData> mouseover_data_update_reducer(
 
 BuiltList<MouseoverData> helix_rotation_set_at_other_mouseover_reducer(
     BuiltList<MouseoverData> mouseover_datas, AppState state, actions.HelixRollSetAtOther action) {
-  Helix helix = state.design.helices[action.helix_idx];
-  Helix helix_other = state.design.helices[action.helix_other_idx];
+  Helix helix = state.design.helices[action.helix_idx]!;
+  Helix helix_other = state.design.helices[action.helix_other_idx]!;
   var geometry = state.design.geometry;
-  num rotation = util.rotation_between_helices(helix, helix_other, action.forward, geometry);
+  double rotation = util.rotation_between_helices(helix, helix_other, action.forward, geometry);
   return _update_mouseover_datas_with_helix_rotation(
     model: state,
     helix_idx: action.helix_idx,
@@ -60,12 +59,12 @@ BuiltList<MouseoverData> helix_rotation_set_at_other_mouseover_reducer(
 }
 
 BuiltList<MouseoverData> _update_mouseover_datas_with_helix_rotation(
-    {AppState model,
-    int helix_idx,
-    num rotation,
-    int rotation_anchor,
-    BuiltList<MouseoverData> mouseover_datas}) {
-  Helix old_helix = model.design.helices[helix_idx];
+    {required AppState model,
+    required int helix_idx,
+    required double rotation,
+    required int rotation_anchor,
+    required BuiltList<MouseoverData> mouseover_datas}) {
+  Helix old_helix = model.design.helices[helix_idx]!;
   double old_rotation_at_rotation_anchor =
       model.design.helix_rotation_forward(old_helix.idx, rotation_anchor);
   double delta_roll = rotation - old_rotation_at_rotation_anchor;

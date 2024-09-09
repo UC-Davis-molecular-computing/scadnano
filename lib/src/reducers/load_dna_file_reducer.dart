@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:convert';
 import 'dart:html';
 
@@ -17,8 +16,8 @@ import '../util.dart' as util;
 var hline = '*' * 100;
 
 AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
-  String error_message;
-  Design design_new;
+  String? error_message;
+  Design? design_new;
 
   try {
     switch (action.dna_file_type) {
@@ -69,6 +68,7 @@ ${util.stack_trace_message_bug_report(stack_trace)}''';
       ..ui_state.changed_since_last_save = false
       ..error_message = error_message);
   } else if (design_new != null) {
+    Design design = design_new;
     BuiltSet<int> side_selected_helix_idxs = BuiltSet<int>();
 
     // Select helices if "clear helix selection when loading new design" is disabled
@@ -76,9 +76,9 @@ ${util.stack_trace_message_bug_report(stack_trace)}''';
       side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs;
 
       // remove selected helices from
-      if (state.maybe_design != null && design_new.helices.length < state.design.helices.length) {
+      if (state.maybe_design != null && design.helices.length < state.design.helices.length) {
         side_selected_helix_idxs =
-            side_selected_helix_idxs.rebuild((s) => s.removeWhere((idx) => idx >= design_new.helices.length));
+            side_selected_helix_idxs.rebuild((s) => s.removeWhere((idx) => idx >= design.helices.length));
       }
     }
 
@@ -89,12 +89,12 @@ ${util.stack_trace_message_bug_report(stack_trace)}''';
     var storables = state.ui_state.storables;
     var displayed_group_name = storables.displayed_group_name;
     if (!design_new.groups.containsKey(displayed_group_name)) {
-      storables = storables.rebuild((b) => b..displayed_group_name = design_new.groups.keys.first);
+      storables = storables.rebuild((b) => b..displayed_group_name = design.groups.keys.first);
     }
 
     new_state = state.rebuild((m) => m
       ..undo_redo.replace(UndoRedo())
-      ..maybe_design = design_new.toBuilder()
+      ..maybe_design = design.toBuilder()
       ..ui_state.update((u) => u
         ..storables.replace(storables)
         ..selectables_store.replace(new_selectables_store)

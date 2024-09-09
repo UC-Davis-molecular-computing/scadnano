@@ -193,7 +193,7 @@ abstract class BatchAction with UndoableAction implements Built<BatchAction, Bat
 abstract class ThrottledAction implements Action {
   Action get action;
 
-  num get interval_sec;
+  double get interval_sec;
 }
 
 abstract class ThrottledActionFast
@@ -201,10 +201,10 @@ abstract class ThrottledActionFast
     implements ThrottledAction, FastAction, Built<ThrottledActionFast, ThrottledActionFastBuilder> {
   Action get action;
 
-  num get interval_sec;
+  double get interval_sec;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ThrottledActionFast(Action action, num interval_sec) => ThrottledActionFast.from((b) => b
+  factory ThrottledActionFast(Action action, double interval_sec) => ThrottledActionFast.from((b) => b
     ..action = action
     ..interval_sec = interval_sec);
 
@@ -221,10 +221,10 @@ abstract class ThrottledActionNonFast
     implements ThrottledAction, Built<ThrottledActionNonFast, ThrottledActionNonFastBuilder> {
   Action get action;
 
-  num get interval_sec;
+  double get interval_sec;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ThrottledActionNonFast(Action action, num interval_sec) => ThrottledActionNonFast.from((b) => b
+  factory ThrottledActionNonFast(Action action, double interval_sec) => ThrottledActionNonFast.from((b) => b
     ..action = action
     ..interval_sec = interval_sec);
 
@@ -438,7 +438,8 @@ abstract class SubstrandNameSet
   int get hashCode;
 
   @override
-  String short_description() => "set ${substrand.type_description()} name";
+  String short_description() =>
+      "${this.name == null ? 'remove' : 'set'} ${substrand.type_description()} name";
 }
 
 // used to set or remove (set name=null to remove)
@@ -463,7 +464,8 @@ abstract class SubstrandLabelSet
   int get hashCode;
 
   @override
-  String short_description() => "set ${substrand.type_description()} label";
+  String short_description() =>
+      "${this.label == null ? 'remove' : 'set'} ${substrand.type_description()} label";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -579,10 +581,10 @@ abstract class ShowModificationsSet
 abstract class DomainNameFontSizeSet
     with BuiltJsonSerializable
     implements Action, Built<DomainNameFontSizeSet, DomainNameFontSizeSetBuilder> {
-  num get font_size;
+  double get font_size;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory DomainNameFontSizeSet({required num font_size}) = _$DomainNameFontSizeSet._;
+  factory DomainNameFontSizeSet({required double font_size}) = _$DomainNameFontSizeSet._;
 
   DomainNameFontSizeSet._();
 
@@ -592,10 +594,10 @@ abstract class DomainNameFontSizeSet
 abstract class DomainLabelFontSizeSet
     with BuiltJsonSerializable
     implements Action, Built<DomainLabelFontSizeSet, DomainLabelFontSizeSetBuilder> {
-  num get font_size;
+  double get font_size;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory DomainLabelFontSizeSet({required num font_size}) = _$DomainLabelFontSizeSet._;
+  factory DomainLabelFontSizeSet({required double font_size}) = _$DomainLabelFontSizeSet._;
 
   DomainLabelFontSizeSet._();
 
@@ -605,10 +607,10 @@ abstract class DomainLabelFontSizeSet
 abstract class StrandNameFontSizeSet
     with BuiltJsonSerializable
     implements Action, Built<StrandNameFontSizeSet, StrandNameFontSizeSetBuilder> {
-  num get font_size;
+  double get font_size;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandNameFontSizeSet({required num font_size}) = _$StrandNameFontSizeSet._;
+  factory StrandNameFontSizeSet({required double font_size}) = _$StrandNameFontSizeSet._;
 
   StrandNameFontSizeSet._();
 
@@ -618,10 +620,10 @@ abstract class StrandNameFontSizeSet
 abstract class StrandLabelFontSizeSet
     with BuiltJsonSerializable
     implements Action, Built<StrandLabelFontSizeSet, StrandLabelFontSizeSetBuilder> {
-  num get font_size;
+  double get font_size;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandLabelFontSizeSet({required num font_size}) = _$StrandLabelFontSizeSet._;
+  factory StrandLabelFontSizeSet({required double font_size}) = _$StrandLabelFontSizeSet._;
 
   StrandLabelFontSizeSet._();
 
@@ -631,9 +633,9 @@ abstract class StrandLabelFontSizeSet
 abstract class ModificationFontSizeSet
     with BuiltJsonSerializable
     implements Action, Built<ModificationFontSizeSet, ModificationFontSizeSetBuilder> {
-  num get font_size;
+  double get font_size;
 
-  factory ModificationFontSizeSet(num font_size) =>
+  factory ModificationFontSizeSet(double font_size) =>
       ModificationFontSizeSet.from((b) => b..font_size = font_size);
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -648,9 +650,9 @@ abstract class ModificationFontSizeSet
 abstract class MajorTickOffsetFontSizeSet
     with BuiltJsonSerializable
     implements Action, Built<MajorTickOffsetFontSizeSet, MajorTickOffsetFontSizeSetBuilder> {
-  num get font_size;
+  double get font_size;
 
-  factory MajorTickOffsetFontSizeSet(num font_size) =>
+  factory MajorTickOffsetFontSizeSet(double font_size) =>
       MajorTickOffsetFontSizeSet.from((b) => b..font_size = font_size);
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -665,9 +667,9 @@ abstract class MajorTickOffsetFontSizeSet
 abstract class MajorTickWidthFontSizeSet
     with BuiltJsonSerializable
     implements Action, Built<MajorTickWidthFontSizeSet, MajorTickWidthFontSizeSetBuilder> {
-  num get font_size;
+  double get font_size;
 
-  factory MajorTickWidthFontSizeSet(num font_size) =>
+  factory MajorTickWidthFontSizeSet(double font_size) =>
       MajorTickWidthFontSizeSet.from((b) => b..font_size = font_size);
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -1580,24 +1582,25 @@ abstract class SelectAllSelectable
 
 // used to select all strands (and maybe someday extended to other objects like Domains)
 // with the same "trait" (e.g., name, label, color) as already selected strand(s)
-abstract class SelectAllWithSameAsSelected
+abstract class SelectAllStrandsWithSameAsSelected
     with BuiltJsonSerializable
-    implements Action, Built<SelectAllWithSameAsSelected, SelectAllWithSameAsSelectedBuilder> {
-  BuiltList<Selectable> get templates;
+    implements Action, Built<SelectAllStrandsWithSameAsSelected, SelectAllStrandsWithSameAsSelectedBuilder> {
+  BuiltList<Strand> get template_strands;
 
   BuiltList<SelectableTrait> get traits;
 
   bool get exclude_scaffolds;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SelectAllWithSameAsSelected(
-      {required BuiltList<Selectable> templates,
+  factory SelectAllStrandsWithSameAsSelected(
+      {required BuiltList<Strand> template_strands,
       required BuiltList<SelectableTrait> traits,
-      required bool exclude_scaffolds}) = _$SelectAllWithSameAsSelected._;
+      required bool exclude_scaffolds}) = _$SelectAllStrandsWithSameAsSelected._;
 
-  SelectAllWithSameAsSelected._();
+  SelectAllStrandsWithSameAsSelected._();
 
-  static Serializer<SelectAllWithSameAsSelected> get serializer => _$selectAllWithSameAsSelectedSerializer;
+  static Serializer<SelectAllStrandsWithSameAsSelected> get serializer =>
+      _$selectAllStrandsWithSameAsSelectedSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2218,15 +2221,15 @@ abstract class ExtensionDisplayLengthAngleSet
         Built<ExtensionDisplayLengthAngleSet, ExtensionDisplayLengthAngleSetBuilder> {
   Extension get ext;
 
-  num get display_length;
+  double get display_length;
 
-  num get display_angle;
+  double get display_angle;
 
   StrandPart get strand_part => ext;
 
   /************************ begin BuiltValue boilerplate ************************/
   factory ExtensionDisplayLengthAngleSet(
-          {required Extension ext, required num display_length, required num display_angle}) =>
+          {required Extension ext, required double display_length, required double display_angle}) =>
       ExtensionDisplayLengthAngleSet.from((b) => b
         ..ext.replace(ext)
         ..display_length = display_length
@@ -3600,7 +3603,7 @@ abstract class ModificationAdd
 
   Modification get modification;
 
-  int? get strand_dna_idx;
+  int? get strand_dna_idx; // only specified if internal modification
 
   /************************ begin BuiltValue boilerplate ************************/
   factory ModificationAdd({required Strand strand, required Modification modification, int? strand_dna_idx}) =
@@ -4295,13 +4298,13 @@ abstract class LoadDnaSequenceImageUri
     implements Action, Built<LoadDnaSequenceImageUri, LoadDnaSequenceImageUriBuilder> {
   String? get uri;
 
-  num get dna_sequence_png_horizontal_offset;
+  double get dna_sequence_png_horizontal_offset;
 
-  num get dna_sequence_png_vertical_offset;
+  double get dna_sequence_png_vertical_offset;
 
   /************************ begin BuiltValue boilerplate ************************/
   factory LoadDnaSequenceImageUri(
-          String? uri, num dna_sequence_png_horizontal_offset, num dna_sequence_png_vertical_offset) =>
+          String? uri, double dna_sequence_png_horizontal_offset, double dna_sequence_png_vertical_offset) =>
       LoadDnaSequenceImageUri.from((b) => b
         ..uri = uri
         ..dna_sequence_png_horizontal_offset = dna_sequence_png_horizontal_offset
@@ -4337,12 +4340,12 @@ abstract class SetExportSvgActionDelayedForPngCache
     implements
         Action,
         Built<SetExportSvgActionDelayedForPngCache, SetExportSvgActionDelayedForPngCacheBuilder> {
-  Action? get export_svg_action_delayed_for_png_cache;
+  ExportSvg? get export_svg_action_delayed_for_png_cache;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SetExportSvgActionDelayedForPngCache(Action? export_svg_action_delayed_for_png_cache) =>
-      SetExportSvgActionDelayedForPngCache.from(
-          (b) => b..export_svg_action_delayed_for_png_cache = export_svg_action_delayed_for_png_cache);
+  factory SetExportSvgActionDelayedForPngCache(ExportSvg? export_svg_action_delayed_for_png_cache) =>
+      SetExportSvgActionDelayedForPngCache.from((b) =>
+          b..export_svg_action_delayed_for_png_cache = export_svg_action_delayed_for_png_cache?.toBuilder());
 
   factory SetExportSvgActionDelayedForPngCache.from(
           [void Function(SetExportSvgActionDelayedForPngCacheBuilder) updates]) =

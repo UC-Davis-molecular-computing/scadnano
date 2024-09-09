@@ -148,7 +148,7 @@ abstract class Extension
         unused_fields: unused_fields.build().toMap());
   }
 
-  Extension set_dna_sequence(String seq) => rebuild((ext) => ext..dna_sequence = seq);
+  Extension set_dna_sequence(String? seq) => rebuild((ext) => ext..dna_sequence = seq);
 
   bool is_domain() => false;
 

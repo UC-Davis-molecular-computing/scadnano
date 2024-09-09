@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/app_state.dart';
@@ -101,23 +100,23 @@ BuiltList<Strand> insertions_length_change_reducer(
       insertions_on_strand_id_domain[strand_id] = {};
     }
 
-    Map<Domain, List<Insertion>> insertions_on_domain = insertions_on_strand_id_domain[strand_id];
+    Map<Domain, List<Insertion>> insertions_on_domain = insertions_on_strand_id_domain[strand_id]!;
     if (!insertions_on_domain.containsKey(domain)) {
       insertions_on_domain[domain] = [];
     }
-    insertions_on_domain[domain].add(insertion);
+    insertions_on_domain[domain]!.add(insertion);
   }
 
   var strands_builder = strands.toBuilder();
   for (String strand_id in insertions_on_strand_id_domain.keys) {
-    Strand strand = state.design.strands_by_id[strand_id];
+    Strand strand = state.design.strands_by_id[strand_id]!;
     int strand_idx = strands.indexOf(strand);
 
     var substrands = strand.substrands.toList();
 
-    Map<Domain, List<Insertion>> insertions_on_domains = insertions_on_strand_id_domain[strand_id];
+    Map<Domain, List<Insertion>> insertions_on_domains = insertions_on_strand_id_domain[strand_id]!;
     for (Domain domain in insertions_on_domains.keys) {
-      List<Insertion> insertions_to_change = insertions_on_domains[domain];
+      List<Insertion> insertions_to_change = insertions_on_domains[domain]!;
       List<Insertion> existing_insertions = domain.insertions.toList();
       for (Insertion insertion in insertions_to_change) {
         int idx = existing_insertions.indexOf(insertion);

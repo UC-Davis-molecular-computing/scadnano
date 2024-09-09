@@ -69,7 +69,7 @@ abstract class Loopout
 
   String get strand_id;
 
-  Loopout set_dna_sequence(String seq) => rebuild((loopout) => loopout..dna_sequence = seq);
+  Loopout set_dna_sequence(String? seq) => rebuild((loopout) => loopout..dna_sequence = seq);
 
   bool is_domain() => false;
 

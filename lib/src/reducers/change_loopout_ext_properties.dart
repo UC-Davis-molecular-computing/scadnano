@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/crossover.dart';
@@ -57,16 +56,16 @@ BuiltList<Strand> convert_crossovers_to_loopouts_reducer(
     if (!crossovers_on_strand_id.containsKey(strand_id)) {
       crossovers_on_strand_id[strand_id] = [];
     }
-    crossovers_on_strand_id[strand_id].add(crossover);
+    crossovers_on_strand_id[strand_id]!.add(crossover);
   }
 
   var strands_builder = strands.toBuilder();
   for (String strand_id in crossovers_on_strand_id.keys) {
-    Strand strand = state.design.strands_by_id[strand_id];
+    Strand strand = state.design.strands_by_id[strand_id]!;
     int strand_idx = strands.indexOf(strand);
     var substrands_builder = strand.substrands.toBuilder();
 
-    List<Crossover> crossovers = crossovers_on_strand_id[strand_id];
+    List<Crossover> crossovers = crossovers_on_strand_id[strand_id]!;
     // must sort by crossover order for this logic to work with num_crossovers_processed_on_strand variable
     crossovers.sort((c1, c2) => c1.prev_domain_idx - c2.prev_domain_idx);
     int num_crossovers_processed_on_strand = 0;
@@ -97,16 +96,16 @@ BuiltList<Strand> loopouts_length_change_reducer(
     if (!loopouts_on_strand_id.containsKey(strand_id)) {
       loopouts_on_strand_id[strand_id] = [];
     }
-    loopouts_on_strand_id[strand_id].add(loopout);
+    loopouts_on_strand_id[strand_id]!.add(loopout);
   }
 
   var strands_builder = strands.toBuilder();
   for (String strand_id in loopouts_on_strand_id.keys) {
-    Strand strand = state.design.strands_by_id[strand_id];
+    Strand strand = state.design.strands_by_id[strand_id]!;
     int strand_idx = strands.indexOf(strand);
     var substrands = strand.substrands.toList();
 
-    List<Loopout> loopouts = loopouts_on_strand_id[strand_id];
+    List<Loopout> loopouts = loopouts_on_strand_id[strand_id]!;
 
     // sorting probably not necessary; it was needed with earlier logic
     loopouts.sort((c1, c2) => c1.prev_domain_idx - c2.prev_domain_idx);
@@ -137,16 +136,16 @@ BuiltList<Strand> extensions_num_bases_change_reducer(
     if (!exts_on_strand_id.containsKey(strand_id)) {
       exts_on_strand_id[strand_id] = [];
     }
-    exts_on_strand_id[strand_id].add(ext);
+    exts_on_strand_id[strand_id]!.add(ext);
   }
 
   var strands_builder = strands.toBuilder();
   for (String strand_id in exts_on_strand_id.keys) {
-    Strand strand = state.design.strands_by_id[strand_id];
+    Strand strand = state.design.strands_by_id[strand_id]!;
     int strand_idx = strands.indexOf(strand);
     var substrands = strand.substrands.toList();
 
-    List<Extension> exts = exts_on_strand_id[strand_id];
+    List<Extension> exts = exts_on_strand_id[strand_id]!;
 
     for (var ext in exts) {
       int idx = substrands.indexOf(ext);

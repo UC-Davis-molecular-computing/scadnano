@@ -102,9 +102,9 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   /// PNG image of dna sequence used for svg caching
   String? get dna_sequence_png_uri;
 
-  num get dna_sequence_png_horizontal_offset;
+  double get dna_sequence_png_horizontal_offset;
 
-  num get dna_sequence_png_vertical_offset;
+  double get dna_sequence_png_vertical_offset;
 
   /// If this is `null`, png-caching runs normally.
   /// Otherwise, disable png-caching (if a png would otherwise be used)
@@ -118,7 +118,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   /// main view. False means all helices should be drawn.
   bool get only_display_selected_helices => storables.only_display_selected_helices;
 
-  num get modification_font_size => storables.modification_font_size;
+  double get modification_font_size => storables.modification_font_size;
 
   bool get modification_display_connector => storables.modification_display_connector;
 
@@ -158,13 +158,13 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get show_base_pair_lines_with_mismatches => storables.show_base_pair_lines_with_mismatches;
 
-  num get strand_name_font_size => storables.strand_name_font_size;
+  double get strand_name_font_size => storables.strand_name_font_size;
 
-  num get strand_label_font_size => storables.strand_label_font_size;
+  double get strand_label_font_size => storables.strand_label_font_size;
 
-  num get domain_name_font_size => storables.domain_name_font_size;
+  double get domain_name_font_size => storables.domain_name_font_size;
 
-  num get domain_label_font_size => storables.domain_label_font_size;
+  double get domain_label_font_size => storables.domain_label_font_size;
 
   bool get show_modifications => storables.show_modifications;
 
@@ -182,9 +182,9 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   double get zoom_speed => storables.zoom_speed;
 
-  num get major_tick_offset_font_size => storables.major_tick_offset_font_size;
+  double get major_tick_offset_font_size => storables.major_tick_offset_font_size;
 
-  num get major_tick_width_font_size => storables.major_tick_width_font_size;
+  double get major_tick_width_font_size => storables.major_tick_width_font_size;
 
   SelectModeState get select_mode_state => storables.select_mode_state;
 

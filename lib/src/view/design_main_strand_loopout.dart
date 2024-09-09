@@ -172,10 +172,16 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
         if (props.loopout.name != null)
           ContextMenuItem(
               title: 'remove loopout name',
-              on_click: () => app.dispatch(actions.BatchAction(
-                  app.state.ui_state.selectables_store.selected_loopouts
-                      .map((l) => actions.SubstrandNameSet(name: null, substrand: l)),
-                  "remove loopout names"))),
+              on_click: () {
+                var loopouts = util.add_if_not_null(
+                    app.state.ui_state.selectables_store.selected_loopouts, props.loopout);
+                var action = loopouts.length > 1
+                    ? actions.BatchAction(
+                        loopouts.map((l) => actions.SubstrandNameSet(name: null, substrand: l)),
+                        "remove loopout names")
+                    : actions.SubstrandNameSet(name: null, substrand: props.loopout);
+                app.dispatch(action);
+              }),
         ContextMenuItem(
           title: 'set loopout label',
           on_click: set_loopout_label,
@@ -183,10 +189,16 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
         if (props.loopout.label != null)
           ContextMenuItem(
               title: 'remove loopout label',
-              on_click: () => app.dispatch(actions.BatchAction(
-                  app.state.ui_state.selectables_store.selected_loopouts
-                      .map((l) => actions.SubstrandLabelSet(label: null, substrand: l)),
-                  "remove loopout names"))),
+              on_click: () {
+                var loopouts = util.add_if_not_null(
+                    app.state.ui_state.selectables_store.selected_loopouts, props.loopout);
+                var action = loopouts.length > 1
+                    ? actions.BatchAction(
+                        loopouts.map((l) => actions.SubstrandLabelSet(label: null, substrand: l)),
+                        "remove loopout labels")
+                    : actions.SubstrandLabelSet(label: null, substrand: props.loopout);
+                app.dispatch(action);
+              }),
         ContextMenuItem(
           title: 'set loopout color',
           on_click: () => app.dispatch(

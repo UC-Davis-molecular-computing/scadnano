@@ -192,10 +192,15 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
         if (props.ext.name != null)
           ContextMenuItem(
               title: 'remove extension name',
-              on_click: () => app.dispatch(actions.BatchAction(
-                  app.state.ui_state.selectables_store.selected_extensions
-                      .map((e) => actions.SubstrandNameSet(name: null, substrand: e)),
-                  "remove extension names"))),
+              on_click: () {
+                var exts =
+                    util.add_if_not_null(app.state.ui_state.selectables_store.selected_extensions, props.ext);
+                var action = exts.length > 1
+                    ? actions.BatchAction(exts.map((l) => actions.SubstrandNameSet(name: null, substrand: l)),
+                        "remove extension names")
+                    : actions.SubstrandNameSet(name: null, substrand: props.ext);
+                app.dispatch(action);
+              }),
         ContextMenuItem(
           title: 'set extension label',
           on_click: set_extension_label,
@@ -203,10 +208,16 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
         if (props.ext.label != null)
           ContextMenuItem(
               title: 'remove extension label',
-              on_click: () => app.dispatch(actions.BatchAction(
-                  app.state.ui_state.selectables_store.selected_extensions
-                      .map((e) => actions.SubstrandLabelSet(label: null, substrand: e)),
-                  "remove extension labels"))),
+              on_click: () {
+                var exts =
+                    util.add_if_not_null(app.state.ui_state.selectables_store.selected_extensions, props.ext);
+                var action = exts.length > 1
+                    ? actions.BatchAction(
+                        exts.map((l) => actions.SubstrandLabelSet(label: null, substrand: l)),
+                        "remove extension labels")
+                    : actions.SubstrandLabelSet(label: null, substrand: props.ext);
+                app.dispatch(action);
+              }),
         ContextMenuItem(
           title: 'set extension color',
           on_click: () => app

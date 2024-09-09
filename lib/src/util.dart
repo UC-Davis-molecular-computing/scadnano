@@ -489,7 +489,7 @@ Helix find_closest_helix(MouseEvent event, Iterable<Helix> helices, BuiltMap<Str
 /// If `offset` is too low, returns the lower bound offset.
 /// If `offset` is null, returns the lower bound offset.
 /// If no helices in `helices_in_group` returns null.
-int? bounded_offset_in_helices_group(int offset, Iterable<Helix> helices_in_group) {
+int? bounded_offset_in_helices_group(int? offset, Iterable<Helix> helices_in_group) {
   var range = find_helix_group_min_max(helices_in_group);
   if (range == null) {
     return null;
@@ -1259,8 +1259,8 @@ double to_radians(double degrees) => degrees * 2 * pi / 360;
 //  return rotation;
 //}
 
-num rotation_between_helices(Helix helix, Helix helix_other, bool forward, Geometry geometry) {
-  num rotation = helix.angle_to(helix_other);
+double rotation_between_helices(Helix helix, Helix helix_other, bool forward, Geometry geometry) {
+  double rotation = helix.angle_to(helix_other);
   if (!forward) {
     rotation = (rotation - geometry.minor_groove_angle) % 360;
   }
@@ -1566,8 +1566,8 @@ void svg_to_png_data() {
   // Translates dna_sequence_element_copy down so that it's Blob uri captures the topmost dna sequence
   // inside of it's view box.
   Rect bbox = dna_sequence_element.getBBox();
-  num dna_sequence_png_horizontal_offset = constants.DNA_SEQUENCE_HORIZONTAL_OFFSET - bbox.x!;
-  num dna_sequence_png_vertical_offset = constants.DNA_SEQUENCE_VERTICAL_OFFSET - bbox.y!;
+  double dna_sequence_png_horizontal_offset = constants.DNA_SEQUENCE_HORIZONTAL_OFFSET - bbox.x!;
+  double dna_sequence_png_vertical_offset = constants.DNA_SEQUENCE_VERTICAL_OFFSET - bbox.y!;
   dna_sequence_element_copy.setAttribute(
       'transform', 'translate(${dna_sequence_png_horizontal_offset}, ${dna_sequence_png_vertical_offset})');
 
@@ -1961,8 +1961,8 @@ double round(double x, int precision) {
   return x;
 }
 
-/// This is used primarily with [Dialog] and [DialogItem], so that I can pre-allocate
-/// a fixed-size list and lazily initialize its elements, without assigning them
+/// This is used primarily with [Dialog] and [DialogItem] (but also in a few other places in the codebase),
+/// so that I can pre-allocate a fixed-size list and lazily initialize its elements, without assigning them
 /// null initially and having to declare the type of items is [DialogItem]?,
 /// which would require later using `!` to assert that they are not null.
 /// Instead, this class checks at runtime that each item is initialized before

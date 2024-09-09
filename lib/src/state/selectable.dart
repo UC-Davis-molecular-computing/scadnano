@@ -597,7 +597,7 @@ class SelectableTrait extends EnumClass {
     throw AssertionError('unrecognized trait ${this}');
   }
 
-  Object trait_of_strand(Strand strand) {
+  Object? trait_of_strand(Strand strand) {
     if (this == strand_name) return strand.name;
     if (this == strand_label) return strand.label;
     if (this == color) return strand.color;
@@ -613,7 +613,7 @@ class SelectableTrait extends EnumClass {
 
   // generic way to check if two trait values "match" that generalizes beyond ==,
   // for instance two Modifications match if their IDs match (but not perhaps their position if internal).
-  bool matches(Object v1, Object v2) {
+  bool matches(Object? v1, Object? v2) {
     if (v1 == null && v2 == null) {
       return true;
     } else if (v1 == null && v2 != null) {
@@ -666,7 +666,7 @@ class SelectableTrait extends EnumClass {
 }
 
 Future<void> ask_for_select_all_with_same_as_selected() async {
-  var selected_strands = BuiltList<Selectable>.from(app.state.ui_state.selectables_store.selected_strands);
+  var selected_strands = app.state.ui_state.selectables_store.selected_strands.toBuiltList();
   if (selected_strands.length == 0) {
     window.alert('No strands are selected. Select at least one strand before choosing this option.');
     return;
@@ -701,8 +701,8 @@ However, *currently* selected scaffold strands will remain selected.''');
   }
   bool exclude_scaffolds = (results[all_traits.length] as DialogCheckbox).value;
 
-  var action = actions.SelectAllWithSameAsSelected(
-    templates: selected_strands,
+  var action = actions.SelectAllStrandsWithSameAsSelected(
+    template_strands: selected_strands,
     traits: traits_for_selection.build(),
     exclude_scaffolds: exclude_scaffolds,
   );

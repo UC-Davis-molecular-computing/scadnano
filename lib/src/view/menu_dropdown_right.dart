@@ -59,6 +59,7 @@ class MenuDropdownRightComponent
       'variant': 'none',
       'disabled': props.disabled,
       'ref': state.HTML_element,
+      'key': props.id,
       /* set some custom CSS props so dropright divs know how much to shift themselves upwards */
       'style': state.top != null
           ? {

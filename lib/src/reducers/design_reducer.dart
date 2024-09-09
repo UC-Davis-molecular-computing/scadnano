@@ -60,18 +60,21 @@ Design? design_error_message_set_reducer(Design? design, actions.ErrorMessageSet
 
 // whole: operate on the whole DNADesign
 // global: need the whole AppState
-GlobalReducer<Design, AppState> design_whole_global_reducer = combineGlobalReducers([
-  TypedGlobalReducer<Design, AppState, actions.GeometrySet>(design_geometry_set_reducer),
-  TypedGlobalReducer<Design, AppState, actions.HelixIdxsChange>(helix_idx_change_reducer),
-  TypedGlobalReducer<Design, AppState, actions.HelixAdd>(helix_add_design_reducer),
-  TypedGlobalReducer<Design, AppState, actions.HelixRemove>(helix_remove_design_global_reducer),
-  TypedGlobalReducer<Design, AppState, actions.HelixRemoveAllSelected>(
+GlobalReducer<Design?, AppState> design_whole_global_reducer = combineGlobalReducers([
+  TypedGlobalReducer<Design?, AppState, actions.GeometrySet>(design_geometry_set_reducer),
+  TypedGlobalReducer<Design?, AppState, actions.HelixIdxsChange>(helix_idx_change_reducer),
+  TypedGlobalReducer<Design?, AppState, actions.HelixAdd>(helix_add_design_reducer),
+  TypedGlobalReducer<Design?, AppState, actions.HelixRemove>(helix_remove_design_global_reducer),
+  TypedGlobalReducer<Design?, AppState, actions.HelixRemoveAllSelected>(
       helix_remove_all_selected_design_global_reducer),
-  TypedGlobalReducer<Design, AppState, actions.HelixGroupMoveCommit>(helix_group_move_commit_global_reducer),
+  TypedGlobalReducer<Design?, AppState, actions.HelixGroupMoveCommit>(helix_group_move_commit_global_reducer),
 ]);
 
 // need to operate on Design so we can re-set helix svg coordinates
-Design design_geometry_set_reducer(Design design, AppState state, actions.GeometrySet action) {
+Design? design_geometry_set_reducer(Design? design, AppState state, actions.GeometrySet action) {
+  if (design == null) {
+    return null;
+  }
   var new_helices = design.helices.toMap();
   for (var key in new_helices.keys) {
     new_helices[key] = new_helices[key]!.rebuild((b) => b..geometry.replace(action.geometry));
@@ -82,4 +85,4 @@ Design design_geometry_set_reducer(Design design, AppState state, actions.Geomet
     ..geometry.replace(action.geometry));
 }
 
-Design new_design_set_reducer(Design? design, actions.NewDesignSet action) => action.design;
+Design? new_design_set_reducer(Design? design, actions.NewDesignSet action) => action.design;

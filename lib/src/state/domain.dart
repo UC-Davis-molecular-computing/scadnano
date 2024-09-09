@@ -187,7 +187,7 @@ abstract class Domain
 
   Domain set_end(int end_new) => rebuild((ss) => ss..end = end_new);
 
-  Domain set_dna_sequence(String seq) => rebuild((ss) => ss..dna_sequence = seq);
+  Domain set_dna_sequence(String? seq) => rebuild((ss) => ss..dna_sequence = seq);
 
   bool is_domain() => true;
 

@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:scadnano/src/json_serializable.dart';
+import 'package:scadnano/src/reducers/app_state_reducer.dart';
 import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
 import 'package:scadnano/src/reducers/delete_reducer.dart';
 import 'package:scadnano/src/reducers/nick_ligate_join_by_crossover_reducers.dart';
@@ -21,6 +22,33 @@ import 'utils.dart';
 
 //TODO: Add Unit Tests for different cases of strand names
 main() {
+  group('DomainName', () {
+    /* 0       8   12
+       |-------|---|
+         ABC
+    0  [------>[--->
+
+    */
+    test('assign_domain_name_then_remove', () {
+      var helices = [Helix(idx: 0, max_offset: 16, grid: Grid.square)];
+      var design = Design(helices: helices, grid: Grid.square);
+
+      design = design.draw_strand(0, 0).move(8).with_name("strand").commit();
+      var state = app_state_from_design(design);
+
+      var action = actions.SubstrandNameSet(name: "x", substrand: design.strands[0].substrands[0]);
+      state = app_state_reducer(state, action);
+      design = state.design;
+
+      expect(state.design.strands[0].substrands[0].name, "x");
+
+      action = actions.SubstrandNameSet(name: null, substrand: design.strands[0].substrands[0]);
+      state = app_state_reducer(state, action);
+
+      expect(state.design.strands[0].substrands[0].name, null);
+    });
+  });
+
   group('StrandName', () {
     /* 0       8   12
        |-------|---|
@@ -46,6 +74,7 @@ main() {
       expect(all_strands[0].name, "Scaf");
       expect(all_strands.length, 1);
     });
+
     test('ligate__one_scaffold__one_named', () {
       var helices = [Helix(idx: 0, max_offset: 16, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);

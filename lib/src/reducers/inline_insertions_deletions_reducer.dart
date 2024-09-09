@@ -1,4 +1,3 @@
-// @dart=2.9
 import '../state/domain.dart';
 import '../state/helix.dart';
 import '../state/strand.dart';
@@ -13,7 +12,10 @@ import '../actions/actions.dart' as actions;
 ///
 /// We assume that a major tick mark appears just to the LEFT of the offset it encodes, e.g.,
 /// with minimum offset set, a major tick mark at offset 0 is the leftmost tick mark that could appear.
-Design inline_insertions_deletions_reducer(Design design, actions.InlineInsertionsDeletions _) {
+Design? inline_insertions_deletions_reducer(Design? design, actions.InlineInsertionsDeletions _) {
+  if (design == null) {
+    return null;
+  }
   Map<int, Helix> helices_new = design.helices.toMap();
   List<StrandBuilder> strand_builders_new = design.strands.map((s) => s.toBuilder()).toList();
   for (int helix_idx = 0; helix_idx < design.helices.length; helix_idx++) {
@@ -23,7 +25,9 @@ Design inline_insertions_deletions_reducer(Design design, actions.InlineInsertio
   for (int i = 0; i < strands.length; i++) {
     strands[i] = strands[i].initialize();
   }
-  return design.rebuild((b) => b..helices.replace(helices_new)..strands.replace(strands));
+  return design.rebuild((b) => b
+    ..helices.replace(helices_new)
+    ..strands.replace(strands));
 }
 
 _inline_deletions_insertions_on_helix(
@@ -32,7 +36,7 @@ _inline_deletions_insertions_on_helix(
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // first gather information before changing anything
 
-  Helix helix = helices[helix_idx];
+  Helix helix = helices[helix_idx]!;
 
   // gather all mods on helix
   var deletions = [
@@ -70,7 +74,7 @@ _inline_deletions_insertions_on_helix(
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // now that info is gathered, start changing things
 
-  helix = helix.rebuild((b) => b.max_offset = b.max_offset + delta_length);
+  helix = helix.rebuild((b) => b.max_offset = b.max_offset! + delta_length);
   if (major_ticks.length > 0) {
     int major_tick_idx = 0;
     int delta_acc = 0; // accumulated delta; insertions add to this and deletions subtract from it
@@ -80,7 +84,7 @@ _inline_deletions_insertions_on_helix(
         major_ticks[major_tick_idx] += delta_acc;
         major_tick_idx++;
       }
-      delta_acc += dels_ins[offset];
+      delta_acc += dels_ins[offset]!;
     }
     // if necessary, update major ticks beyond last ins/del
     while (major_tick_idx < major_ticks.length) {
@@ -102,7 +106,7 @@ _inline_deletions_insertions_on_helix(
     false: substrands_both_directions.where((ss) => !ss.forward),
   };
   for (bool forward in [true, false]) {
-    var substrands = substrands_one_direction[forward].toList();
+    var substrands = substrands_one_direction[forward]!.toList();
     int delta_acc = 0;
     substrands.sort((ss1, ss2) => ss1.start - ss2.start);
     for (var substrand in substrands) {
@@ -116,8 +120,8 @@ _inline_deletions_insertions_on_helix(
         ..deletions.replace([]));
 
       // find strand where this substrand resides and replace it
-      Strand strand = design.substrand_to_strand[substrand];
-      int strand_idx = design.strand_to_index[strand];
+      Strand strand = design.substrand_to_strand[substrand]!;
+      int strand_idx = design.strand_to_index[strand]!;
       for (int ss_idx = 0; ss_idx < strand.substrands.length; ss_idx++) {
         if (strand.substrands[ss_idx] is Domain && strand.substrands[ss_idx] == substrand) {
           strands_new[strand_idx].substrands[ss_idx] = new_substrand;

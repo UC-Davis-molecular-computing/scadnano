@@ -119,7 +119,7 @@ bool paste_is_impossible_from_clipboard(String clipboard_content, bool in_browse
   if (strands_and_helices_view_order == null) return true;
 
   List<Strand> strands = strands_and_helices_view_order.item1;
-  List<int> helices_view_order = strands_and_helices_view_order.item2;
+  List<int>? helices_view_order = strands_and_helices_view_order.item2;
 
   if (strands.isEmpty) return true;
 
