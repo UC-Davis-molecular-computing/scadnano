@@ -255,10 +255,10 @@ class App {
 }
 
 warn_wrong_browser() {
-  if (!(browser.isChrome || browser.isFirefox)) {
+  if (!(browser.isChrome || browser.isFirefox) || browser.isEdgeChrome) {
     var msg = 'You appear to be using ${browser.name}. '
         'scadnano does not currently support this browser. '
-        'Please use Chrome or Firefox instead.';
+        'Please use Chrome, Firefox, or Edge instead.';
     window.alert(msg);
     print('current browser: ${browser.name}');
   }
