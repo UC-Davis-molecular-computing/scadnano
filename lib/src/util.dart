@@ -9,6 +9,8 @@ import 'dart:async';
 import 'dart:svg' hide Point, ImageElement;
 import 'dart:typed_data';
 
+import 'package:xml/xml.dart';
+
 import 'package:collection/collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
@@ -1124,10 +1126,36 @@ String blob_type_to_string(BlobType blob_type) {
   }
 }
 
+String serialize_svg(SvgSvgElement svg_element, {bool pretty = true}) {
+  // Clone the SVG element to avoid modifying the original
+  var cloned_svg = svg_element.clone(true) as SvgSvgElement;
+
+  // Ensure the svg namespace is declared
+  cloned_svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+
+  // Find all elements that use xlink
+  var xlink_elements = cloned_svg.querySelectorAll('[*|href]');
+  for (var element in xlink_elements) {
+    element.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+  }
+
+  // Serialize to string
+  var serialized = cloned_svg.outerHtml!;
+
+  // Pretty print if requested
+  if (pretty) {
+    // from xml package; note that you have to be careful to import it because there's an
+    // XmlDocument in the standard library as well, with no `parse` static method.
+    var document = XmlDocument.parse(serialized);
+    serialized = document.toXmlString(pretty: true, indent: '  ');
+  }
+
+  return serialized;
+}
+
 copy_svg_as_png(SvgSvgElement svg_element) async {
   try {
-    var serializer = new XmlSerializer();
-    var source = serializer.serializeToString(svg_element);
+    String source = serialize_svg(svg_element);
     var svgUrl = Url.createObjectUrlFromBlob(new Blob([source], 'image/svg+xml'));
     var svgImage = new ImageElement(src: svgUrl);
     document.body!.append(svgImage);
@@ -1581,7 +1609,7 @@ void svg_to_png_data() {
   svg.setAttribute('height', svg_height.toString());
 
   // Serializes svg into a string containing XML.
-  String data = XmlSerializer().serializeToString(svg);
+  String data = serialize_svg(svg);
 
   // Constructs a Blob that contains `data` as MIME type of svg.
   Blob svg_blob = Blob([data], blob_type_to_string(BlobType.image));

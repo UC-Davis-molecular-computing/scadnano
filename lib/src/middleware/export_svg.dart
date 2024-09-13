@@ -3,6 +3,8 @@ import 'dart:svg' as svg;
 import 'dart:svg';
 import 'dart:math' as math;
 
+import 'package:xml/xml.dart';
+
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:redux/redux.dart';
@@ -305,24 +307,7 @@ SvgSvgElement get_cloned_svg_element_with_style(List<Element> selected_elts, boo
 }
 
 _export_svg(svg.SvgSvgElement svg_element, String filename_append) {
-  var serializer = new XmlSerializer();
-  var source = serializer.serializeToString(svg_element);
-  //clipboard.write(source);
-  //add name spaces.
-  //    if(!source.match(r'/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)') {
-  //      source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
-  //    }
-  //    if(!source.match(/^<svg[^>]+"http\:\/\/www\.w3\.org\/1999\/xlink"/)){
-  //      source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
-  //    }
-
-  //add xml declaration
-  //  source = '<?xml version="1.1" standalone="no"?>\r\n' + source;
-
-  //convert svg source to URI data scheme.
-  //  var url = "data:image/svg+xml;charset=utf-8," + Uri.encodeComponent(source);
-
-  //  String blob_type = "data:image/svg+xml;charset=utf-8,";
+  String source = util.serialize_svg(svg_element);
 
   String filename = app.state.ui_state.loaded_filename;
   filename = filename.substring(0, filename.lastIndexOf('.'));
