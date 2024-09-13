@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'dart:convert';
 import 'dart:html';
 
@@ -30,46 +28,46 @@ String two_helices_json = r"""
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true , "start": 0, "end": 16}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false , "start": 0, "end": 16}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 1, "forward": true , "start": 0, "end": 16}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 1, "forward": false , "start": 0, "end": 16}
       ]
     }
   ]
  }
   """;
-Design two_helices_design = Design.from_json_str(two_helices_json, false);
+Design two_helices_design = Design.from_json_str(two_helices_json, false)!;
 
 main() {
   utils.initializeComponentTests();
 
   group('ConnectedSelectModes', () {
-    Ref<MenuComponent> menuRef;
-    MenuComponent component;
+    Ref<MenuComponent?>? menuRef;
+    MenuComponent? component;
 
     setUp(() {
       utils.initialize_test_store(initializeTestState());
-      menuRef = createRef();
+      menuRef = createRef<MenuComponent>();
       mount((ReduxProvider()..store = app.store)(
         (set_menu_props(ConnectedMenu(), app.state)
           ..addTestId(MenuTestId)
           ..ref = menuRef)(),
       ));
-      component = menuRef.current;
+      component = menuRef!.current;
       // component = getComponentByTestId(testJacket.getInstance(), MenuTestId);
       expect(component, isNotNull, reason: 'ConnectedMenu should be mounted');
     });

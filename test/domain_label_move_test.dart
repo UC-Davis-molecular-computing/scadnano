@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'dart:convert';
 
 import 'package:built_collection/built_collection.dart';
@@ -58,7 +56,6 @@ main() {
           .commit();
 
       AppState state = app_state_from_design(design);
-      StrandsMove strandsMove = null;
       //Select Strands
       BuiltList<Selectable> selectables = [design.strands[0]].toBuiltList();
       int offset = 4;
@@ -80,7 +77,7 @@ main() {
       forward = false;
       address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
       state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
-      strandsMove = state.ui_state.strands_move;
+      StrandsMove strandsMove = state.ui_state.strands_move!;
 
       //Stop Moving
       state = app_state_reducer(state, StrandsMoveStop());
@@ -88,15 +85,15 @@ main() {
       //Commit the Move
       state = app_state_reducer(state, StrandsMoveCommit(strands_move: strandsMove, autopaste: false));
       /* 0       8
-       |-------| 
-       
+       |-------|
+
     0
        <------\
          ABC  |
          XYZ  |
     1  [------/
 
- 
+
     */
       expect(state.design.all_domains[0].name, "XYZ");
       expect(state.design.all_domains[0].helix, 1);
@@ -108,14 +105,14 @@ main() {
     test('self_complementary_strand__with_loopouts', () {
       /* 0       8
        |-------|
-         ABC        
+         ABC
     0  [------\
                 )
                  )
                  )
     1           )
        <------/
-         XYZ      
+         XYZ
     */
       var helices = [
         Helix(idx: 0, max_offset: 100, grid: Grid.square),
@@ -133,7 +130,6 @@ main() {
           .commit();
 
       AppState state = app_state_from_design(design);
-      StrandsMove strandsMove = null;
       //Select Strands
       BuiltList<Selectable> selectables = [design.strands[0]].toBuiltList();
       int offset = 4;
@@ -155,7 +151,7 @@ main() {
       forward = false;
       address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
       state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
-      strandsMove = state.ui_state.strands_move;
+      StrandsMove strandsMove = state.ui_state.strands_move!;
 
       //Stop Moving
       state = app_state_reducer(state, StrandsMoveStop());
@@ -164,14 +160,14 @@ main() {
       state = app_state_reducer(state, StrandsMoveCommit(strands_move: strandsMove, autopaste: false));
       /* 0       8
        |-------|
-       
-    0  
+
+    0
        <------\
           ABC   )
           XYZ   )
     1  [------/
 
- 
+
     */
       expect(state.design.all_domains[0].name, "XYZ");
       expect(state.design.all_domains[0].helix, 1);
@@ -182,14 +178,14 @@ main() {
     test('circular_strand__no_loopouts', () {
       /* 0       8
        |-------|
-         ABC        
+         ABC
     0  /------\
        |      |
        |      |
        |      |
     1  |      |
        \------/
-         XYZ      
+         XYZ
     */
       var helices = [
         Helix(idx: 0, max_offset: 100, grid: Grid.square),
@@ -207,7 +203,6 @@ main() {
           .as_circular()
           .commit();
       AppState state = app_state_from_design(design);
-      StrandsMove strandsMove = null;
       //Select Strands
       BuiltList<Selectable> selectables = [design.strands[0]].toBuiltList();
       int offset = 4;
@@ -229,7 +224,7 @@ main() {
       forward = false;
       address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
       state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
-      strandsMove = state.ui_state.strands_move;
+      StrandsMove strandsMove = state.ui_state.strands_move!;
 
       //Stop Moving
       state = app_state_reducer(state, StrandsMoveStop());
@@ -239,13 +234,13 @@ main() {
       /* 0       8
        |-------|
 
-    0   
+    0
        /------\
        | ABC  |
        | XYZ  |
     1  \------/
-    
-    
+
+
     */
       expect(state.design.all_domains[0].name, "XYZ");
       expect(state.design.all_domains[0].helix, 1);
@@ -257,14 +252,14 @@ main() {
     test('circular_strand__with_loopouts', () {
       /* 0       8
        |-------|
-         ABC        
+         ABC
     0  /------\
        |        )
        |         )
        |         )
     1  |        )
        \------/
-         XYZ      
+         XYZ
     */
       var helices = [
         Helix(idx: 0, max_offset: 100, grid: Grid.square),
@@ -282,7 +277,6 @@ main() {
           .as_circular()
           .commit();
       AppState state = app_state_from_design(design);
-      StrandsMove strandsMove = null;
       //Select Strands
       BuiltList<Selectable> selectables = [design.strands[0]].toBuiltList();
       int offset = 4;
@@ -304,7 +298,7 @@ main() {
       forward = false;
       address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
       state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
-      strandsMove = state.ui_state.strands_move;
+      StrandsMove strandsMove = state.ui_state.strands_move!;
 
       //Stop Moving
       state = app_state_reducer(state, StrandsMoveStop());
@@ -314,7 +308,7 @@ main() {
       /* 0       8
        |-------|
 
-    0     
+    0
        /------\
        | ABC    )
        | XYZ    )
@@ -332,10 +326,10 @@ main() {
     test('self_complementary_strand__no_loopouts__move_right', () {
       /* 0       8
        |-------|
-         ABC        
+         ABC
     0  [------\
     1  <------/
-         XYZ      
+         XYZ
     */
       var helices = [
         Helix(idx: 0, max_offset: 100, grid: Grid.square),
@@ -353,7 +347,6 @@ main() {
           .commit();
 
       AppState state = app_state_from_design(design);
-      StrandsMove strandsMove = null;
       //Select Strands
       BuiltList<Selectable> selectables = [design.strands[0]].toBuiltList();
       int offset = 4;
@@ -375,7 +368,7 @@ main() {
       forward = true;
       address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
       state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
-      strandsMove = state.ui_state.strands_move;
+      StrandsMove strandsMove = state.ui_state.strands_move!;
 
       //Stop Moving
       state = app_state_reducer(state, StrandsMoveStop());

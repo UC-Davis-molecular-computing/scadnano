@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
 import 'package:scadnano/src/reducers/delete_reducer.dart';
 import 'package:scadnano/src/reducers/design_reducer.dart';
@@ -19,9 +17,10 @@ import 'utils.dart';
 
 main() {
   group('JoinStrandsByMultipleCrossovers', () {
-    List<Helix> helices;
-    Design design;
-    actions.JoinStrandsByMultipleCrossovers join_action;
+    List<Helix> helices = [];
+    Design design = Design(helices: helices, grid: Grid.square);
+    actions.JoinStrandsByMultipleCrossovers join_action = actions.JoinStrandsByMultipleCrossovers();
+
     setUp(() {
       helices = [
         for (int helix in [0, 1, 2, 3]) Helix(idx: helix, max_offset: 100, grid: Grid.square)
@@ -110,7 +109,7 @@ main() {
       }
       state = state.rebuild((b) => b..ui_state.selectables_store.selected_items.replace(selected_ends));
 
-      design = design_global_reducer(design, state, join_action);
+      design = design_global_reducer(design, state, join_action)!;
 
       expect(design.strands.length, 17);
 
@@ -154,7 +153,7 @@ main() {
       }
       state = state.rebuild((b) => b..ui_state.selectables_store.selected_items.replace(selected_ends));
 
-      design = design_global_reducer(design, state, join_action);
+      design = design_global_reducer(design, state, join_action)!;
 
       expect(design.strands.length, 15);
 
@@ -197,7 +196,7 @@ main() {
       }
       state = state.rebuild((b) => b..ui_state.selectables_store.selected_items.replace(selected_ends));
 
-      design = design_global_reducer(design, state, join_action);
+      design = design_global_reducer(design, state, join_action)!;
 
       expect(design.strands.length, 9);
 

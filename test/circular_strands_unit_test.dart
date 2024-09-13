@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
 import 'package:scadnano/src/reducers/delete_reducer.dart';
 import 'package:scadnano/src/reducers/nick_ligate_join_by_crossover_reducers.dart';
@@ -66,9 +64,10 @@ main() {
   // });
 
   group('CircularStrandEdits', () {
-    List<Helix> helices;
-    Design design;
-    int num_strands;
+    // mocks to make dart compiler happy; these get set in setUp
+    List<Helix> helices = [];
+    Design design = Design(helices: helices, grid: Grid.square);
+    int num_strands = 0;
 
     setUp(() {
       helices = [for (int i = 0; i < 3; i++) Helix(idx: i, max_offset: 100, grid: Grid.square)];
@@ -722,7 +721,7 @@ main() {
       expect(design.strands[5].circular, true);
       expect(design.strands[5].substrands.length, 2);
 
-      var action = actions.Nick(domain: design.strands[5].substrands[0], offset: 45);
+      var action = actions.Nick(domain: design.strands[5].substrands[0] as Domain, offset: 45);
       var state = app_state_from_design(design);
       var strands = nick_reducer(design.strands, state, action);
 
@@ -733,9 +732,9 @@ main() {
       expect(strand.substrands.length, 3);
       expect(strand.domains.length, 3);
 
-      Domain d0 = strand.substrands[0];
-      Domain d1 = strand.substrands[1];
-      Domain d2 = strand.substrands[2];
+      Domain d0 = strand.substrands[0] as Domain;
+      Domain d1 = strand.substrands[1] as Domain;
+      Domain d2 = strand.substrands[2] as Domain;
       expect(d0.helix, 0);
       expect(d0.forward, true);
       expect(d0.start, 45);
@@ -769,7 +768,7 @@ main() {
       expect(design.strands[5].circular, true);
       expect(design.strands[5].substrands.length, 2);
 
-      var action = actions.Nick(domain: design.strands[5].substrands[1], offset: 45);
+      var action = actions.Nick(domain: design.strands[5].substrands[1] as Domain, offset: 45);
       var state = app_state_from_design(design);
       var strands = nick_reducer(design.strands, state, action);
 
@@ -780,9 +779,9 @@ main() {
       expect(strand.substrands.length, 3);
       expect(strand.domains.length, 3);
 
-      Domain d0 = strand.substrands[0];
-      Domain d1 = strand.substrands[1];
-      Domain d2 = strand.substrands[2];
+      Domain d0 = strand.substrands[0] as Domain;
+      Domain d1 = strand.substrands[1] as Domain;
+      Domain d2 = strand.substrands[2] as Domain;
       expect(d0.helix, 1);
       expect(d0.forward, false);
       expect(d0.start, 40);
@@ -832,11 +831,11 @@ main() {
       expect(strand.substrands.length, 5);
       expect(strand.domains.length, 4);
 
-      Domain d0 = strand.substrands[0];
-      Loopout loopout = strand.substrands[1];
-      Domain d1 = strand.substrands[2];
-      Domain d2 = strand.substrands[3];
-      Domain d3 = strand.substrands[4];
+      Domain d0 = strand.substrands[0] as Domain;
+      Loopout loopout = strand.substrands[1] as Loopout;
+      Domain d1 = strand.substrands[2] as Domain;
+      Domain d2 = strand.substrands[3] as Domain;
+      Domain d3 = strand.substrands[4] as Domain;
 
       expect(loopout.loopout_num_bases, 5);
 
@@ -894,11 +893,11 @@ main() {
       expect(strand.substrands.length, 5);
       expect(strand.domains.length, 4);
 
-      Domain d0 = strand.substrands[0];
-      Domain d1 = strand.substrands[1];
-      Domain d2 = strand.substrands[2];
-      Loopout loopout = strand.substrands[3];
-      Domain d3 = strand.substrands[4];
+      Domain d0 = strand.substrands[0] as Domain;
+      Domain d1 = strand.substrands[1] as Domain;
+      Domain d2 = strand.substrands[2] as Domain;
+      Loopout loopout = strand.substrands[3] as Loopout;
+      Domain d3 = strand.substrands[4] as Domain;
 
       expect(loopout.loopout_num_bases, 5);
 
@@ -956,11 +955,11 @@ main() {
       expect(strand.substrands.length, 5);
       expect(strand.domains.length, 4);
 
-      Domain d0 = strand.substrands[0];
-      Domain d1 = strand.substrands[1];
-      Loopout loopout = strand.substrands[2];
-      Domain d2 = strand.substrands[3];
-      Domain d3 = strand.substrands[4];
+      Domain d0 = strand.substrands[0] as Domain;
+      Domain d1 = strand.substrands[1] as Domain;
+      Loopout loopout = strand.substrands[2] as Loopout;
+      Domain d2 = strand.substrands[3] as Domain;
+      Domain d3 = strand.substrands[4] as Domain;
 
       expect(loopout.loopout_num_bases, 5);
 

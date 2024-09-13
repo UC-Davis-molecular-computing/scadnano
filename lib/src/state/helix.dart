@@ -312,7 +312,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     }
 
     if (json_map.containsKey(constants.grid_position_key)) {
-      List<Object> gp_list = json_map[constants.grid_position_key]! as List<Object>;
+      List<dynamic> gp_list = json_map[constants.grid_position_key]!;
       if (!(gp_list.length == 2)) {
         throw ArgumentError(
             "list of grid_position coordinates must be length 2 but this is the list: ${gp_list}");

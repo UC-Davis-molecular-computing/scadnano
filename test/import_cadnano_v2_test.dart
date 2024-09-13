@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/grid.dart';

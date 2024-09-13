@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'dart:convert';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
@@ -282,14 +280,14 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
     }
     ''';
 
-    var design = Design.from_json_str(json_str);
+    var design = Design.from_json_str(json_str)!;
     expect(design.strands.length, 1);
     var strand = design.strands[0];
     expect(strand.name, 'staple1');
-    expect(strand.vendor_fields.scale, '100nm');
-    expect(strand.vendor_fields.purification, 'HPLC');
-    expect(strand.vendor_fields.plate, 'plate1');
-    expect(strand.vendor_fields.well, 'A1');
+    expect(strand.vendor_fields!.scale, '100nm');
+    expect(strand.vendor_fields!.purification, 'HPLC');
+    expect(strand.vendor_fields!.plate, 'plate1');
+    expect(strand.vendor_fields!.well, 'A1');
   });
 
   test('from_json__legacy_idt_name__strand_name_exists', () {
@@ -318,7 +316,7 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
     }
     ''';
 
-    var design = Design.from_json_str(json_str);
+    var design = Design.from_json_str(json_str)!;
     expect(design.strands.length, 1);
     var strand = design.strands[0];
     expect(strand.name, 'staple1 strand level');

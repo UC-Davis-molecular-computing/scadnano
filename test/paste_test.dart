@@ -1,7 +1,4 @@
-// @dart=2.9
-
 @Timeout(Duration(seconds: 5))
-
 import 'package:scadnano/src/state/clipboard.dart';
 import 'package:test/test.dart';
 
@@ -15,6 +12,7 @@ import 'package:scadnano/src/state/group.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/strand.dart';
+import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/middleware/system_clipboard.dart' as system_clipboard;
 
 import 'package:scadnano/src/state/design.dart';
@@ -30,13 +28,13 @@ main() {
   // paste strands from one design to a newly loaded design
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   group('PasteToNewDesign', () {
-    List<Helix> helices;
-    Strand orig_strand;
-    Strand second_strand;
-    AppState state;
+    List<Helix> helices = [];
+    Strand orig_strand = Strand([Domain(helix: 0, forward: true, start: 0, end: 10)]);
+    Strand second_strand = Strand([Domain(helix: 0, forward: true, start: 0, end: 10)]);
+    AppState state = app_state_from_design(Design(helices: [], grid: Grid.square));
     List<int> all_helices = [0, 1];
     var origin_address = Address(helix_idx: 0, offset: 0, forward: true);
-    Store<AppState> store;
+    Store<AppState> store = Store<AppState>(app_state_reducer, initialState: state);
     // need Store.dispatch for middleware side effects of copying to (mock) system clipboard
     //  app_state_from_design by default uses mock Clipboard object with write and read functions,
     //  which can be used for unit testing, since dart:html window object
@@ -108,7 +106,7 @@ main() {
       var manual_paste_initiate_action =
           actions.ManualPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
       state = test_dispatch(store, manual_paste_initiate_action);
-      copy_info = state.ui_state.copy_info;
+      copy_info = state.ui_state.copy_info!;
       expect(copy_info.copied_address, origin_address);
       expect(copy_info.prev_paste_address, null);
 
@@ -124,7 +122,7 @@ main() {
       strands_move = strands_move.rebuild((b) => b..current_address = manual_pasted_address.toBuilder());
       var manual_paste_action = actions.StrandsMoveCommit(strands_move: strands_move, autopaste: false);
       state = test_dispatch(store, manual_paste_action);
-      copy_info = state.ui_state.copy_info;
+      copy_info = state.ui_state.copy_info!;
       expect(copy_info.copied_address, origin_address);
       expect(copy_info.prev_paste_address, manual_pasted_address);
       expect(copy_info.translation, manual_pasted_translation);
@@ -188,7 +186,7 @@ main() {
           actions.ManualPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
       test_dispatch(store, manual_paste_initiate_action);
       state = store.state;
-      copy_info = state.ui_state.copy_info;
+      copy_info = state.ui_state.copy_info!;
       expect(copy_info.copied_address, origin_address);
       expect(copy_info.prev_paste_address, null);
 
@@ -201,7 +199,7 @@ main() {
       strands_move = strands_move.rebuild((b) => b..current_address = manual_pasted_address.toBuilder());
       var manual_paste_action = actions.StrandsMoveCommit(strands_move: strands_move, autopaste: false);
       state = test_dispatch(store, manual_paste_action);
-      copy_info = state.ui_state.copy_info;
+      copy_info = state.ui_state.copy_info!;
       expect(copy_info.copied_address, origin_address);
       expect(copy_info.prev_paste_address, manual_pasted_address);
       expect(copy_info.translation, null);
@@ -275,7 +273,7 @@ main() {
           actions.ManualPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
       test_dispatch(store, manual_paste_initiate_action);
       state = store.state;
-      copy_info = state.ui_state.copy_info;
+      copy_info = state.ui_state.copy_info!;
       expect(copy_info.copied_address, origin_address);
       expect(copy_info.prev_paste_address, null);
 
@@ -288,7 +286,7 @@ main() {
       strands_move = strands_move.rebuild((b) => b..current_address = manual_pasted_address.toBuilder());
       var manual_paste_action = actions.StrandsMoveCommit(strands_move: strands_move, autopaste: false);
       state = test_dispatch(store, manual_paste_action);
-      copy_info = state.ui_state.copy_info;
+      copy_info = state.ui_state.copy_info!;
       expect(copy_info.copied_address, origin_address);
       expect(copy_info.prev_paste_address, null);
       expect(copy_info.translation, null);
@@ -354,7 +352,7 @@ main() {
       var manual_paste_initiate_action =
           actions.ManualPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
       state = test_dispatch(store, manual_paste_initiate_action);
-      copy_info = state.ui_state.copy_info;
+      copy_info = state.ui_state.copy_info!;
       expect(copy_info.copied_address, origin_address);
       expect(copy_info.prev_paste_address, null);
 
@@ -367,7 +365,7 @@ main() {
       strands_move = strands_move.rebuild((b) => b..current_address = manual_pasted_address.toBuilder());
       var manual_paste_action = actions.StrandsMoveCommit(strands_move: strands_move, autopaste: false);
       state = test_dispatch(store, manual_paste_action);
-      copy_info = state.ui_state.copy_info;
+      copy_info = state.ui_state.copy_info!;
       expect(copy_info.copied_address, origin_address);
       expect(copy_info.prev_paste_address, null);
       expect(copy_info.translation, null);
@@ -450,11 +448,12 @@ main() {
   // manual paste to other HelixGroup
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   group('manual_paste_to_other_HelixGroup', () {
-    List<Helix> helices;
-    Strand orig_strand;
+    List<Helix> helices = [];
+    Strand orig_strand = Strand([Domain(helix: 0, forward: true, start: 0, end: 10)]);
     var origin_address = Address(helix_idx: 0, offset: 0, forward: true);
     List<int> all_helices = [0, 1, 2, 3, 4, 5, 6, 7];
-    Store<AppState> store;
+    Store<AppState> store = Store<AppState>(app_state_reducer,
+        initialState: app_state_from_design(Design(helices: [], grid: Grid.square)));
 
     setUp(() {
       helices = [
@@ -559,7 +558,7 @@ main() {
       var manual_paste_initiate_action =
           actions.ManualPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
       state = test_dispatch(store, manual_paste_initiate_action);
-      copy_info = state.ui_state.copy_info;
+      copy_info = state.ui_state.copy_info!;
       expect(copy_info.copied_address, origin_address);
       expect(copy_info.prev_paste_address, null);
 
@@ -573,7 +572,7 @@ main() {
       var manual_paste_action = actions.StrandsMoveCommit(strands_move: strands_move, autopaste: false);
       state = test_dispatch(store, manual_paste_action);
 
-      copy_info = state.ui_state.copy_info;
+      copy_info = state.ui_state.copy_info!;
       expect(copy_info.copied_address, origin_address);
       expect(copy_info.prev_paste_address, manual_pasted_address);
       expect(state.design.strands.length, 2);
@@ -601,12 +600,12 @@ main() {
   // Autopaste
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   group('AutoPaste', () {
-    List<Helix> helices;
-    Strand orig_strand;
-    AppState state;
+    List<Helix> helices = [];
+    Strand orig_strand = Strand([Domain(helix: 0, forward: true, start: 0, end: 10)]);
+    AppState state = app_state_from_design(Design(helices: [], grid: Grid.square));
     // var origin_address = Address(helix_idx: 0, offset: 0, forward: true);
     List<int> all_helices = [0, 1, 2, 3];
-    Store<AppState> store;
+    Store<AppState> store = Store<AppState>(app_state_reducer, initialState: state);
 
     setUp(() {
       helices = [for (int helix in all_helices) Helix(idx: helix, max_offset: 40, grid: Grid.square)];
@@ -668,7 +667,7 @@ main() {
       var manual_paste_initiate_action =
           actions.ManualPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
       state = test_dispatch(store, manual_paste_initiate_action);
-      copy_info = state.ui_state.copy_info;
+      copy_info = state.ui_state.copy_info!;
 
       expect(state.design.strands.length, 1);
 
@@ -1003,7 +1002,7 @@ main() {
       // we need to synchronously mock it here for unit testing
       state = test_dispatch(
           store, actions.ManualPasteInitiate(clipboard_content: clipboard.content, in_browser: false));
-      var copy_info = state.ui_state.copy_info;
+      var copy_info = state.ui_state.copy_info!;
 
       expect(state.design.strands.length, 1);
 

@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react_test/over_react_test.dart';
 import 'package:react/react_client/react_interop.dart';
@@ -35,18 +33,20 @@ main() {
   utils.initializeComponentTests();
 
   group('ConnectedSelectModes', () {
-    Ref<SelectModeComponent> selectModeRef;
-    SelectModeComponent component;
+    Ref<SelectModeComponent?>? selectModeRef;
+    SelectModeComponent? component;
 
     setUp(() {
       utils.initialize_test_store(initializeTestState());
-      selectModeRef = createRef();
+      selectModeRef = createRef<SelectModeComponent>();
       mount((ReduxProvider()..store = app.store)(
         (ConnectedSelectMode()
+          ..is_origami = false
+          ..select_mode_state = app.state.ui_state.select_mode_state
           ..addTestId(SelectModeTestId)
           ..ref = selectModeRef)(),
       ));
-      component = selectModeRef.current;
+      component = selectModeRef!.current;
       // component = getComponentByTestId(testJacket.getInstance(), SelectModeTestId);
       expect(component, isNotNull, reason: 'ConnectedSelectMode should be mounted');
     });

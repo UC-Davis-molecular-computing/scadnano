@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'dart:convert';
 
 import 'package:tuple/tuple.dart';
@@ -29,7 +27,7 @@ import 'utils.dart';
 
 main() {
   group('Base pairs: ', () {
-    Design design;
+    Design design = Design(helices: []); // mock to make dart compiler happy; gets set in setUp
 
     setUp(() {
       /*
@@ -130,8 +128,8 @@ main() {
     test('design_base_pairs_mismatches', () {
       var base_pairs = design.base_pairs_with_mismatches;
       expect(base_pairs.length, 2);
-      expect(base_pairs[0].length, 9);
-      expect(base_pairs[1].length, 12);
+      expect(base_pairs[0]!.length, 9);
+      expect(base_pairs[1]!.length, 12);
 
       // d01f, d01r
       expect(base_pairs[0], contains(1));
@@ -172,8 +170,8 @@ main() {
     test('design_base_pairs_no_mismatches', () {
       var base_pairs = design.base_pairs;
       expect(base_pairs.length, 2);
-      expect(base_pairs[0].length, 8);
-      expect(base_pairs[1].length, 11);
+      expect(base_pairs[0]!.length, 8);
+      expect(base_pairs[1]!.length, 11);
 
       // d01f, d01r
       expect(base_pairs[0], contains(1));
@@ -238,7 +236,7 @@ main() {
 
       var base_pairs = design.base_pairs;
       expect(base_pairs.length, 1);
-      expect(base_pairs[0].length, 10);
+      expect(base_pairs[0]!.length, 10);
 
       for (int offset = 0; offset < 10; offset++) {
         expect(base_pairs[0], contains(offset));
@@ -260,7 +258,7 @@ main() {
 
       var base_pairs = design.base_pairs;
       expect(base_pairs.length, 1);
-      expect(base_pairs[0].length, 9);
+      expect(base_pairs[0]!.length, 9);
 
       for (int offset = 0; offset < 10; offset++) {
         if (offset != 2) {
@@ -297,7 +295,7 @@ main() {
 
       var base_pairs = design.base_pairs;
       expect(base_pairs.length, 1);
-      expect(base_pairs[0].length, 5);
+      expect(base_pairs[0]!.length, 5);
 
       for (var offset in [0, 4, 5, 7, 9]) {
         expect(base_pairs[0], contains(offset));
@@ -332,7 +330,7 @@ main() {
 
       var base_pairs = design.base_pairs;
       expect(base_pairs.length, 1);
-      expect(base_pairs[0].length, 4);
+      expect(base_pairs[0]!.length, 4);
 
       for (var offset in [0, 4, 5, 9]) {
         expect(base_pairs[0], contains(offset));

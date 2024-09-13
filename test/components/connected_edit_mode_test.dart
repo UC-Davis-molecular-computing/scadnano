@@ -1,5 +1,3 @@
-// @dart=2.9
-
 @TestOn('browser')
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react_test/over_react_test.dart';
@@ -29,12 +27,12 @@ void main() {
   utils.initializeComponentTests();
 
   group('ConnectedEditModes', () {
-    Ref<EditModeComponent> editModeRef;
-    EditModeComponent component;
+    Ref<EditModeComponent?>? editModeRef;
+    EditModeComponent? component;
 
     setUp(() {
       utils.initialize_test_store(initialize_test_state());
-      editModeRef = createRef();
+      editModeRef = createRef<EditModeComponent>();
       mount((ReduxProvider()..store = app.store)(
         ((ConnectedEditMode()..modes = app.state.ui_state.edit_modes)
           ..addTestId(EditModeComponentTestID)
@@ -42,7 +40,7 @@ void main() {
       ));
       // final editModeComponent = editModeRef.current;
       // component = getComponentByTestId(editModeComponent, EditModeComponentTestID);
-      component = editModeRef.current;
+      component = editModeRef!.current;
 
       expect(component, isNotNull, reason: 'ConnectedEditMode should be mounted');
     });
@@ -88,7 +86,7 @@ void main() {
         click(nick_button);
         expect(app.state.ui_state.edit_modes.contains(EditModeChoice.nick), false);
 
-        final redrawCount = await component.didRedraw().future.timeout(Duration(milliseconds: 20));
+        final redrawCount = await component!.didRedraw().future.timeout(Duration(milliseconds: 20));
         expect(redrawCount, 1);
         ClassNameMatcher matcher = ClassNameMatcher.expected('edit-mode-button-unselected');
         expect(nick_button.className, matcher);

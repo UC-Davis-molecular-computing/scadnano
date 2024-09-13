@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'dart:math';
 
 import 'package:scadnano/src/state/grid_position.dart';
@@ -21,13 +19,13 @@ num sum(List<num> lst) => lst.reduce((a, b) => a + b);
 
 main() {
   group('OxDNAExport', () {
-    double OX_UNITS_TO_NM;
-    double NM_TO_OX_UNITS;
-    double OX_BASE_DIST;
-    double BASES_PER_TURN;
-    double HELIX_ANGLE;
-    double RISE_PER_BASE_PAIR;
-    double EXPECTED_ADJ_NUC_CM_DIST2;
+    double OX_UNITS_TO_NM = 0.0;
+    double NM_TO_OX_UNITS = 0.0;
+    double OX_BASE_DIST = 0.0;
+    double BASES_PER_TURN = 0.0;
+    double HELIX_ANGLE = 0.0;
+    double RISE_PER_BASE_PAIR = 0.0;
+    double EXPECTED_ADJ_NUC_CM_DIST2 = 0.0;
     const eps = 0.0001;
 
     setUp(() {
@@ -38,8 +36,8 @@ main() {
       HELIX_ANGLE = pi * 2 / BASES_PER_TURN;
       RISE_PER_BASE_PAIR = 0.332;
       // square of expected distance between adjacent nucleotide centers of mass
-      EXPECTED_ADJ_NUC_CM_DIST2 =
-          pow(2 * OX_BASE_DIST * sin(HELIX_ANGLE / 2), 2) + pow(RISE_PER_BASE_PAIR * NM_TO_OX_UNITS, 2);
+      EXPECTED_ADJ_NUC_CM_DIST2 = pow(2 * OX_BASE_DIST * sin(HELIX_ANGLE / 2), 2) +
+          pow(RISE_PER_BASE_PAIR * NM_TO_OX_UNITS, 2).toDouble();
     });
 
     test('oxdna_export_basic_design', () {
@@ -101,8 +99,8 @@ main() {
       List<int> strand1_idxs = [];
       List<int> strand2_idxs = [];
       int nuc_idx = 0;
-      int strand1_start = null;
-      int strand2_start = null;
+      int? strand1_start = null;
+      int? strand2_start = null;
       for (var line in top_lines.sublist(1)) {
         var data = split_ws(line);
         // make sure there are 4 values per line: strand, base, 3' neighbor, 5' neighbor
@@ -137,13 +135,13 @@ main() {
       expect(strand2_start, isNotNull);
 
       // reconstruct strands using indices from oxDNA files
-      int next_idx = nbrs_3p[strand1_start];
+      int next_idx = nbrs_3p[strand1_start!];
       while (next_idx >= 0) {
         strand1_idxs.add(next_idx);
         next_idx = nbrs_3p[strand1_idxs.last];
       }
 
-      next_idx = nbrs_3p[strand2_start];
+      next_idx = nbrs_3p[strand2_start!];
       while (next_idx >= 0) {
         strand2_idxs.add(next_idx);
         next_idx = nbrs_3p[strand2_idxs.last];
@@ -255,8 +253,8 @@ main() {
       List<int> strand1_idxs = [];
       List<int> strand2_idxs = [];
       int nuc_idx = 0;
-      int strand1_start = null;
-      int strand2_start = null;
+      int? strand1_start = null;
+      int? strand2_start = null;
       for (var line in top_lines.sublist(1)) {
         var data = split_ws(line);
         // make sure there are 4 values per line: strand, base, 3' neighbor, 5' neighbor
@@ -291,13 +289,13 @@ main() {
       expect(strand2_start, isNotNull);
 
       // reconstruct strands using indices from oxDNA files
-      int next_idx = nbrs_3p[strand1_start];
+      int next_idx = nbrs_3p[strand1_start!];
       while (next_idx >= 0) {
         strand1_idxs.add(next_idx);
         next_idx = nbrs_3p[strand1_idxs.last];
       }
 
-      next_idx = nbrs_3p[strand2_start];
+      next_idx = nbrs_3p[strand2_start!];
       while (next_idx >= 0) {
         strand2_idxs.add(next_idx);
         next_idx = nbrs_3p[strand2_idxs.last];
@@ -403,7 +401,7 @@ main() {
 
       List<int> strand1_idxs = [];
       int nuc_idx = 0;
-      int strand1_start = null;
+      int? strand1_start = null;
       for (var line in top_lines.sublist(1)) {
         var data = split_ws(line);
         // make sure there are 4 values per line: strand, base, 3' neighbor, 5' neighbor
@@ -429,7 +427,7 @@ main() {
       expect(strand1_start, isNotNull);
 
       // reconstruct strands using indices from oxDNA files
-      int next_idx = nbrs_3p[strand1_start];
+      int next_idx = nbrs_3p[strand1_start!];
       while (next_idx >= 0) {
         strand1_idxs.add(next_idx);
         next_idx = nbrs_3p[strand1_idxs.last];
@@ -508,7 +506,7 @@ main() {
 
       List<int> strand1_idxs = [];
       int nuc_idx = 0;
-      int strand1_start = null;
+      int? strand1_start = null;
       for (var line in top_lines.sublist(1)) {
         var data = split_ws(line);
         // make sure there are 4 values per line: strand, base, 3' neighbor, 5' neighbor
@@ -534,7 +532,7 @@ main() {
       expect(strand1_start, isNotNull);
 
       // reconstruct strands using indices from oxDNA files
-      int next_idx = nbrs_3p[strand1_start];
+      int next_idx = nbrs_3p[strand1_start!];
       while (next_idx >= 0) {
         strand1_idxs.add(next_idx);
         next_idx = nbrs_3p[strand1_idxs.last];
@@ -611,7 +609,7 @@ main() {
 
       List<int> strand1_idxs = [];
       int nuc_idx = 0;
-      int strand1_start = null;
+      int? strand1_start = null;
       for (var line in top_lines.sublist(1)) {
         var data = split_ws(line);
         // make sure there are 4 values per line: strand, base, 3' neighbor, 5' neighbor
@@ -637,7 +635,7 @@ main() {
       expect(strand1_start, isNotNull);
 
       // reconstruct strands using indices from oxDNA files
-      int next_idx = nbrs_3p[strand1_start];
+      int next_idx = nbrs_3p[strand1_start!];
       while (next_idx >= 0) {
         strand1_idxs.add(next_idx);
         next_idx = nbrs_3p[strand1_idxs.last];
@@ -718,8 +716,8 @@ main() {
       List<int> strand1_idxs = [];
       List<int> strand2_idxs = [];
       int nuc_idx = 0;
-      int strand1_start = null;
-      int strand2_start = null;
+      int? strand1_start = null;
+      int? strand2_start = null;
       for (var line in top_lines.sublist(1)) {
         var data = split_ws(line);
         // make sure there are 4 values per line: strand, base, 3' neighbor, 5' neighbor
@@ -751,13 +749,13 @@ main() {
       expect(strand2_start, isNotNull);
 
       // reconstruct strands using indices from oxDNA files
-      int next_idx = nbrs_3p[strand1_start];
+      int next_idx = nbrs_3p[strand1_start!];
       while (next_idx >= 0) {
         strand1_idxs.add(next_idx);
         next_idx = nbrs_3p[strand1_idxs.last];
       }
 
-      next_idx = nbrs_3p[strand2_start];
+      next_idx = nbrs_3p[strand2_start!];
       while (next_idx >= 0) {
         strand2_idxs.add(next_idx);
         next_idx = nbrs_3p[strand2_idxs.last];

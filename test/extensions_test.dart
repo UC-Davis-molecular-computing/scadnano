@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'package:color/color.dart';
 import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
 import 'package:scadnano/src/reducers/delete_reducer.dart';
@@ -20,9 +18,10 @@ import 'utils.dart';
 
 main() {
   group('ExtensionsOnStrands', () {
-    List<Helix> helices;
-    Design design;
-    Color color;
+    // mock data; real data set in setUp
+    List<Helix> helices = [];
+    Design design = Design(helices: [], grid: Grid.square);
+    Color color = Color.rgb(0, 0, 0);
 
     setUp(() {
       helices = [for (int i = 0; i < 6; i++) Helix(idx: i, max_offset: 100, grid: Grid.square)];
@@ -266,7 +265,7 @@ main() {
   ]
 }
 ''';
-      var design = Design.from_json_str(json_str);
+      var design = Design.from_json_str(json_str)!;
       var first_domain = Domain(helix: 0, forward: true, start: 0, end: 16);
       var last_domain = Domain(helix: 2, forward: true, start: 0, end: 16);
       var expected_strand = Strand([
