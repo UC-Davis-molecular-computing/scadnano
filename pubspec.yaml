@@ -8,33 +8,32 @@ environment:
 
 dependencies:
   analyzer: ^5.13.0
-  spreadsheet_decoder: ^2.2.0
-  dialog: ^0.8.0
-  meta: ^1.15.0
-  js: ^0.6.7
-  codemirror: ^0.7.11+5.65.13
-  color: ^3.0.0
-  tuple: ^2.0.2
-  quiver: ^3.2.2
-  test: ^1.24.3
-  path: ^1.8.3
-  platform_detect: ^2.1.0
-  dnd: ^2.0.1
   built_value: ^8.5.0
   built_collection: ^5.1.1
-  reselect: ^0.5.0
-  redux: ^5.0.0
-  react: ^7.1.3
-  over_react: ^5.3.0
-  http: ^0.13.6
-  xml: ^6.3.0
   collection: ^1.15.0-nullsafety.4
+  color: ^3.0.0
+  dialog: ^0.8.0
+  dnd: ^2.0.1
+  js: ^0.6.7
+  http: ^0.13.6
+  meta: ^1.15.0
+  quiver: ^3.2.2
+  path: ^1.8.3
+  platform_detect: ^2.1.0
+  react: ^7.1.3
+  redux: ^5.0.0
+  reselect: ^0.5.0
+  over_react: ^5.3.0
+  spreadsheet_decoder: ^2.2.0
+  test: ^1.24.3
+  tuple: ^2.0.2
+  xml: ^6.3.0
 
 dev_dependencies:
-  built_value_generator: ^8.5.0
   build_runner: ^2.3.3
   build_test: ^2.2.1
   build_web_compilers: ^3.2.7
+  built_value_generator: ^8.5.0
   over_react_test: ^3.0.0
   test_html_builder: ^3.0.5
   redux_dev_tools: ^0.7.0

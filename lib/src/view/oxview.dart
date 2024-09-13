@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:html';
 
 import 'package:path/path.dart' as path;
-import 'package:codemirror/codemirror.dart';
-import 'package:codemirror/hints.dart';
 
 import '../app.dart';
 import 'view.dart';
