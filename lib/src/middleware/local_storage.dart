@@ -12,6 +12,7 @@ import '../state/local_storage_design_choice.dart';
 import '../json_serializable.dart';
 import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
+import '../constants.dart' as constants;
 import '../util.dart' as util;
 
 part 'local_storage.g.dart';
@@ -45,10 +46,13 @@ save(AppState state, Storable storable) {
   if (value_string != null) window.localStorage[storable_key] = value_string;
 }
 
-String side_pane_width() => window.localStorage[_LOCAL_STORAGE_PREFIX + 'side-pane-width'] ?? "10%";
+String side_pane_width() =>
+    window.localStorage[_LOCAL_STORAGE_PREFIX + 'side-pane-width'] ??
+    '${constants.default_side_pane_width_percent}%';
 
 String design_width() =>
-    window.localStorage[_LOCAL_STORAGE_PREFIX + 'design-and-modes-buttons-container-width'] ?? "90%";
+    window.localStorage[_LOCAL_STORAGE_PREFIX + 'design-and-modes-buttons-container-width'] ??
+    '${constants.default_design_width_percent}%';
 
 restore(Store<AppState> store, Storable storable) {
   try {
