@@ -79,11 +79,7 @@ class MenuDropdownRightComponent
           : {}
     }, props.children);
 
-    if (props.tooltip == null) {
-      return menu_dropdown_right;
-    } else {
-      return (Dom.span() // had to put outside of DropdownItem to make tooltip show up when disabled
-        ..title = props.tooltip)(menu_dropdown_right);
-    }
+    return (Dom.span() // had to put outside of DropdownItem to make tooltip show up when disabled
+      ..title = props.tooltip)(menu_dropdown_right);
   }
 }
