@@ -49,7 +49,7 @@ AppState test_dispatch(Store<AppState> store, actions.Action action) {
 
 /// Returns a [Design] based on JSON string.
 Design design_from_string(String str) {
-  return Design.from_json(jsonDecode(str))!;
+  return Design.from_json(jsonDecode(str));
 }
 
 /// Returns an [AppState] based on design.

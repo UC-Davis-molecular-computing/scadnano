@@ -50,7 +50,7 @@ String two_helices_json = r"""
   ]
  }
   """;
-Design two_helices_design = Design.from_json_str(two_helices_json, false)!;
+Design two_helices_design = Design.from_json_str(two_helices_json, false);
 
 main() {
   utils.initializeComponentTests();

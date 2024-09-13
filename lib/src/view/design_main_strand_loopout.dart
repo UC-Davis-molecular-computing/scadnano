@@ -225,7 +225,7 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
         current_length: props.loopout.loopout_num_bases,
         lower_bound: 0,
         dialog_type: DialogType.set_loopout_length));
-    if (new_length == null || new_length == props.loopout.loopout_num_bases) {
+    if (new_length == props.loopout.loopout_num_bases) {
       return;
     }
     var selected_loopouts = app.state.ui_state.selectables_store.selected_loopouts;

@@ -37,9 +37,6 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
             for (var strand in all_strands)
               if (!strands_moving.contains(strand)) strand
           ];
-    if (original_helices_view_order_inverse == null) {
-      throw ArgumentError('original_helices_view_order_inverse must be specified');
-    }
     return StrandsMove.from((b) => b
       ..strands_moving.replace(strands_moving)
       ..strands_fixed.replace(strands_fixed)

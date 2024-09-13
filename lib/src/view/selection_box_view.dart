@@ -38,10 +38,7 @@ class SelectionBoxViewComponent extends UiComponent2<SelectionBoxViewProps> {
     SelectionBox box = props.selection_box!;
     num stroke_width = props.stroke_width_getter!();
 
-    if (box == null) {
-      return null;
-    }
-    if (props.is_main! != box.is_main) {
+    if (props.is_main != box.is_main) {
       return null;
     }
 

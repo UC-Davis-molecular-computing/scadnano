@@ -846,9 +846,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       throw ArgumentError('cannot access Design.helices_view_order when groups are used. '
           'Access group.helices_view_order for each group instead.');
     }
-    if (groups == null) {
-      throw AssertionError('Design.groups should not be None by this point');
-    }
     var all_groups = List<HelixGroup>.from(groups.values);
     var group = all_groups.first;
     return group;
@@ -1287,7 +1284,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return Tuple2(helix_builders_map, group_builders_map);
   }
 
-  static Design? from_json_str(String json_str, [bool invert_y = false]) {
+  static Design from_json_str(String json_str, [bool invert_y = false]) {
     Map<String, dynamic> json_map;
     try {
       json_map = jsonDecode(json_str);
@@ -1297,11 +1294,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return Design.from_json(json_map, invert_y);
   }
 
-  static Design? from_json(Map<String, dynamic> json_map, [bool invert_y = false]) {
-    if (json_map == null) {
-      return null;
-    }
-
+  static Design from_json(Map<String, dynamic> json_map, [bool invert_y = false]) {
     _check_mutually_exclusive_fields(json_map);
 
     var version = util.optional_field(json_map, constants.version_key, constants.CURRENT_VERSION);
@@ -1883,7 +1876,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     if (forward_domain.end != reverse_domain.end) {
       return true;
     }
-    if (forward_domain.name == null || reverse_domain == null) {
+    if (forward_domain.name == null) {
       return false;
     }
     return !domain_names_complementary(forward_domain.name!, reverse_domain.name!);

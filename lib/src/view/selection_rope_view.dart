@@ -35,9 +35,6 @@ class SelectionRopeViewComponent extends UiComponent2<SelectionRopeViewProps> {
     }
     num stroke_width = props.stroke_width_getter!();
 
-    if (rope == null) {
-      return null;
-    }
     if (props.is_main! != rope.is_main) {
       return null;
     }

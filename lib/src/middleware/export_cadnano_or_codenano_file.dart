@@ -77,10 +77,10 @@ _save_file_codenano(AppState state) async {
   design_json[constants.version_key] = '0.4.12';
 
   List helices_json = design_json[constants.helices_key];
-  for (Map helix_json in helices_json) {
+  for (Map<String, dynamic> helix_json in helices_json) {
     // add pitch, roll, and yaw defaults explicitly, and convert to radians
     for (var angle_key in [constants.pitch_key, constants.roll_key, constants.yaw_key]) {
-      double degrees = helix_json[angle_key];
+      double? degrees = helix_json[angle_key];
       helix_json[angle_key] = degrees == null ? 0.0 : util.to_radians(degrees);
     }
     // change "position" to "origin"
@@ -155,9 +155,6 @@ Map<String, dynamic> to_cadnano_v2_serializable(Design design, [String name = ""
   //     if num_bases % 21 == 0: then we are on grid honey
   int num_bases = 0;
   for (Helix helix in design.helices.values) {
-    if (helix.max_offset == null) {
-      throw new IllegalCadnanoDesignError('must have helix.max_offset set');
-    }
     num_bases = max(num_bases, helix.max_offset);
   }
 

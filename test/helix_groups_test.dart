@@ -298,7 +298,7 @@ main() {
   ]
 }
     ''';
-    var design = Design.from_json_str(json_str)!;
+    var design = Design.from_json_str(json_str);
     var json_map_export = design.to_json_serializable(suppress_indent: false);
     expect(json_map_export.containsKey(constants.grid_key), true);
     expect(json_map_export.containsKey(constants.groups_key), false);
@@ -328,7 +328,7 @@ main() {
 }
     ''';
     var json_map = jsonDecode(json_str);
-    var design = Design.from_json(json_map)!;
+    var design = Design.from_json(json_map);
     var json_map_export = design.to_json_serializable(suppress_indent: false);
     expect(json_map_export.containsKey(constants.grid_key), false);
     expect(json_map_export.containsKey(constants.helices_view_order_key), false);
@@ -537,7 +537,7 @@ main() {
 }
         ''';
     var json_map = jsonDecode(json_str);
-    var design = Design.from_json(json_map)!;
+    var design = Design.from_json(json_map);
     var state = app_state_from_design(design);
     var n = 'north';
     var s = 'south';
@@ -684,7 +684,7 @@ main() {
   ]
  }
   ''';
-    Design design = Design.from_json(jsonDecode(two_helices_with_helix_idx_gap_json))!;
+    Design design = Design.from_json(jsonDecode(two_helices_with_helix_idx_gap_json));
     expect(design.groups.length, 1);
     expect(design.default_group().grid, Grid.square);
     expect(design.default_group().helices_view_order, [0, 4]);
@@ -704,7 +704,7 @@ main() {
     "strands": []
   }
   ''';
-    Design design = Design.from_json(jsonDecode(two_helices_with_helix_idx_gap_json))!;
+    Design design = Design.from_json(jsonDecode(two_helices_with_helix_idx_gap_json));
     expect(design.groups.length, 1);
     expect(design.default_group().grid, Grid.square);
     expect(design.default_group().helices_view_order, [12, 15, 17, 13].build());
@@ -746,7 +746,7 @@ main() {
       }
     ''';
     var json_map = jsonDecode(json_str);
-    var design = Design.from_json(json_map)!;
+    var design = Design.from_json(json_map);
     var e = 'east';
     var w = 'west';
     var groups = design.groups;

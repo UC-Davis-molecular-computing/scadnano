@@ -50,7 +50,7 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
           .toSet();
     } else {
       // use selection rope
-      svg.PolygonElement? rope_elt = querySelector('#selection-rope-main') as svg.PolygonElement;
+      svg.PolygonElement? rope_elt = querySelector('#selection-rope-main') as svg.PolygonElement?;
       if (rope_elt == null) {
         print('no selection rope found, so not changing selections');
         return;

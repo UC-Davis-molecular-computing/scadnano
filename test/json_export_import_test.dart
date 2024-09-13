@@ -56,7 +56,7 @@ main() {
 
       var design_json = design.to_json_serializable();
       // print(design_json);
-      design = Design.from_json(design_json)!;
+      design = Design.from_json(design_json);
       expect(design.strands.length, 1);
       var strand = design.strands[0];
       expect(strand.substrands.length, 6);
@@ -93,7 +93,7 @@ main() {
 
       var design_json = design.to_json_serializable();
       // print(design_json);
-      design = Design.from_json(design_json)!;
+      design = Design.from_json(design_json);
       expect(design.strands.length, 1);
       var strand = design.strands[0];
       expect(strand.substrands.length, 3);

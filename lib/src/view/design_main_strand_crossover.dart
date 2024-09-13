@@ -217,7 +217,7 @@ class DesignMainStrandCrossoverComponent
       lower_bound: 1,
       dialog_type: DialogType.set_loopout_length,
     );
-    if (new_length == null || new_length == 0) {
+    if (new_length == 0) {
       return;
     }
 

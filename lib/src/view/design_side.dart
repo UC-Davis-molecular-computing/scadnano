@@ -72,11 +72,6 @@ mixin DesignSideProps on UiProps {
 class DesignSideComponent extends UiComponent2<DesignSideProps> with PureComponent {
   @override
   render() {
-    if (props.helices == null) {
-      // This means there is an error message to display instead of a DNADesign.
-      return null;
-    }
-
     BuiltList<DesignSideRotationData> rotation_datas = props.rotation_datas;
     Map<int, DesignSideRotationData> helix_idx_to_rotation_data = {
       for (var rotation_data in rotation_datas) rotation_data.helix.idx: rotation_data
