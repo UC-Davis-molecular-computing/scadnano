@@ -20,7 +20,6 @@ built_value_generator:packages/built_value_generator/
 checked_yaml:packages/checked_yaml/
 clock:packages/clock/
 code_builder:packages/code_builder/
-codemirror:packages/codemirror/
 collection:packages/collection/
 color:packages/color/
 convert:packages/convert/
