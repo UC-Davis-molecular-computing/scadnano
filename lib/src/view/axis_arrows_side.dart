@@ -66,7 +66,6 @@ class AxisArrowsComponent extends UiComponent2<AxisArrowsSideProps> {
         Dom.svgTitle()("⦻ - Into the screen"),
         //inward arrow (Z-axis)
         (Dom.path()
-          ..key = "z_path"
           ..d = x_path
           ..fill = "none"
           ..stroke = 'blue'
@@ -78,7 +77,6 @@ class AxisArrowsComponent extends UiComponent2<AxisArrowsSideProps> {
           ..className = 'axis-arrow')(),
         // horizontal arrow (X-axis)
         (Dom.path()
-          ..key = "x_path"
           ..transform = props.invert_y ? 'rotate(270)' : 'rotate(90)'
           ..d = arrow_path
           ..fill = "none"
@@ -86,7 +84,6 @@ class AxisArrowsComponent extends UiComponent2<AxisArrowsSideProps> {
           ..className = 'axis-arrow')(),
         //downward arrow (Y-axis)
         (Dom.path()
-          ..key = "y_path"
           ..transform = props.invert_y ? 'rotate(0)' : 'rotate(180)'
           ..d = arrow_path
           ..fill = "none"

@@ -78,16 +78,13 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         ..key = 'helix-lines-group')(
         (Dom.path()
           ..className = 'helix-lines helix-horz-line'
-          ..d = horz_line_paths
-          ..key = 'helix-horz-lines')(),
+          ..d = horz_line_paths)(),
         (Dom.path()
           ..className = 'helix-lines helix-vert-minor-line'
-          ..d = vert_line_paths['minor']
-          ..key = 'helix-vert-minor-lines')(),
+          ..d = vert_line_paths['minor'])(),
         (Dom.path()
           ..className = 'helix-lines helix-vert-major-line'
-          ..d = vert_line_paths['major']
-          ..key = 'helix-vert-major-lines')(),
+          ..d = vert_line_paths['major'])(),
       ),
       if (props.display_base_offsets_of_major_ticks) _major_tick_offsets_svg_group(),
       if (props.display_major_tick_widths) _major_tick_widths_svg_group(),
