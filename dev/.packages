@@ -15,12 +15,9 @@ build_runner_core:packages/build_runner_core/
 build_test:packages/build_test/
 build_web_compilers:packages/build_web_compilers/
 built_collection:packages/built_collection/
-built_redux:packages/built_redux/
 built_value:packages/built_value/
 built_value_generator:packages/built_value_generator/
-charcode:packages/charcode/
 checked_yaml:packages/checked_yaml/
-cli_util:packages/cli_util/
 clock:packages/clock/
 code_builder:packages/code_builder/
 codemirror:packages/codemirror/
@@ -35,6 +32,7 @@ dialog:packages/dialog/
 dnd:packages/dnd/
 file:packages/file/
 fixnum:packages/fixnum/
+frontend_server_client:packages/frontend_server_client/
 glob:packages/glob/
 graphs:packages/graphs/
 html:packages/html/
@@ -50,14 +48,11 @@ matcher:packages/matcher/
 memoize:packages/memoize/
 meta:packages/meta/
 mime:packages/mime/
-node_interop:packages/node_interop/
-node_io:packages/node_io/
 node_preamble:packages/node_preamble/
 over_react:packages/over_react/
 over_react_test:packages/over_react_test/
 package_config:packages/package_config/
 path:packages/path/
-pedantic:packages/pedantic/
 petitparser:packages/petitparser/
 platform_detect:packages/platform_detect/
 pointycastle:packages/pointycastle/
