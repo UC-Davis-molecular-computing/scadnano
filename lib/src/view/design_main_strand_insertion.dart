@@ -167,18 +167,18 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
 
     return (Dom.g()..key = key)(
         (Dom.rect()
-          ..x = background_x
-          ..y = background_y
-          ..width = background_width
-          ..height = background_height
-          ..className = 'insertion-background'
-          // ..onClick = ((_) => change_insertion_length())
-          ..key = 'rect')(),
+              ..x = background_x
+              ..y = background_y
+              ..width = background_width
+              ..height = background_height
+              ..className = 'insertion-background'
+            // ..onClick = ((_) => change_insertion_length())
+            )(),
         (Dom.text()
-          // ..onClick = ((_) => change_insertion_length())
-          ..dy = dy_text
-          // ..id = props.selectable_insertion.id()
-          ..key = 'text')(text_path_props('${length}')));
+              // ..onClick = ((_) => change_insertion_length())
+              ..dy = dy_text
+            // ..id = props.selectable_insertion.id()
+            )(text_path_props('${length}')));
   }
 
   ReactElement _insertion_background(Point<double> pos) {

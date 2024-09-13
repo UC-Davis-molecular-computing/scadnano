@@ -106,9 +106,7 @@ class StrandOrSubstrandColorPickerComponent
             'color': state.color ?? props.color,
             'onChangeComplete': handleOnChangeComplete,
           }),
-          (Dom.span()
-            ..className = 'dialog-buttons'
-            ..key = 'buttons')(
+          (Dom.span()..className = 'dialog-buttons')(
             (Dom.input()
               ..type = 'submit'
               ..value = 'OK'

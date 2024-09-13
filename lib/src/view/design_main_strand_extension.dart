@@ -229,7 +229,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
         'change extension number of bases',
         current_num_bases: props.ext.num_bases,
         lower_bound: 1));
-    if (new_num_bases == null || new_num_bases == props.ext.num_bases) {
+    if (new_num_bases == props.ext.num_bases) {
       return;
     }
     var selected_extensions = app.state.ui_state.selectables_store.selected_extensions;

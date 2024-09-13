@@ -70,7 +70,6 @@ class EndMovingComponent extends UiComponent2<EndMovingProps> {
     if (!props.render) {
       return null;
     }
-    DNAEnd dna_end = props.dna_end!;
     Helix helix = props.helix!;
     int current_offset = props.current_offset!;
     bool forward = props.forward!;

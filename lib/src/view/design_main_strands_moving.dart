@@ -41,7 +41,6 @@ DesignMainStrandsMovingProps set_design_main_strands_moving_props(
     ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
     ..helix_idx_to_svg_position_map = state.helix_idx_to_svg_position_map
     ..geometry = state.design.geometry;
-  ;
 }
 
 UiFactory<DesignMainStrandsMovingProps> ConnectedDesignMainStrandsMoving =

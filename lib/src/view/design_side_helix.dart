@@ -21,6 +21,7 @@ import 'helix_context_menu.dart';
 part 'design_side_helix.over_react.g.dart';
 
 const String SIDE_VIEW_PREFIX = 'side-view';
+const SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX = false;
 
 UiFactory<DesignSideHelixProps> DesignSideHelix = _$DesignSideHelix;
 
@@ -51,7 +52,6 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
     // set SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX to true to print helix coordinates in side view instead
     // of idx, which is useful for making figures in the documentation showing how the grids work
 //    bool SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX = true;
-    bool SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX = false;
     int precision = constants.NUM_DIGITS_PRECISION_POSITION_DISPLAYED;
 
     String grid_position_str;
@@ -86,7 +86,7 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
         ..r = '${props.helix.geometry.helix_radius_svg}'
         ..onClick = ((e) => this._handle_click(e, props.helix))
         ..id = helix_circle_id()
-        ..key = 'circle')((Dom.svgTitle()..key = 'circle-tooltip')(tooltip)),
+        ..key = 'circle')((Dom.svgTitle())(tooltip)),
       (Dom.text()
             ..style = SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX ? {'fontSize': 20} : {}
             ..className = '$SIDE_VIEW_PREFIX-helix-text'
@@ -94,7 +94,7 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
             ..onClick = ((e) => this._handle_click(e, props.helix))
             ..key = 'text-idx')(
           SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX ? grid_position_str : props.helix.idx.toString(),
-          (Dom.svgTitle()..key = 'text-idx-tooltip')(tooltip)),
+          (Dom.svgTitle())(tooltip)),
       if (props.show_grid_coordinates)
         (Dom.text()
           ..fontSize = 10

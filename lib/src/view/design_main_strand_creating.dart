@@ -49,7 +49,6 @@ class DesignMainStrandCreatingComponent extends UiComponent2<DesignMainStrandCre
         ..y1 = '${start_svg.y}'
         ..x2 = '${end_svg.x}'
         ..y2 = '${end_svg.y}'
-        ..key = 'line'
         ..className = constants.css_selector_domain)(),
       (End5Prime()
         ..classname = classname_5p

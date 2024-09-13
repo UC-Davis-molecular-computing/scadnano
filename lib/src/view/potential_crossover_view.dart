@@ -11,7 +11,6 @@ PotentialCrossoverViewProps set_potential_crossover_props(
   return elt
     ..potential_crossover = potential_crossover
     ..id_ = 'potential-crossover-main';
-  ;
 }
 
 UiFactory<PotentialCrossoverViewProps> ConnectedPotentialCrossoverView =
