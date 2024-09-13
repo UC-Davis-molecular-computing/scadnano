@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: PATH="$PATH:/usr/lib/dart/bin" dart pub get
       - name: Run tests
-        run: PATH="$PATH:/usr/lib/dart/bin" pub run build_runner test
+        run: PATH="$PATH:/usr/lib/dart/bin" dart build_runner test
 
   fail_if_pull_request_is_draft:
     if: github.event.pull_request.draft == true
