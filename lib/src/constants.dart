@@ -69,7 +69,7 @@ Try loading an example by selecting <em>File&rarr;Load example</em>,
 or select <em>File&rarr;Open</em> to load a .sc file from your local drive.
 You can also drag and drop a .sc file from your file system to the browser.</p>''';
 
-//FIXME: OverReact's defaultErrorBoundaryLoggerName is 'over_react.ErrorBoundary' as of version 5.3.0,
+//FIXME:  OverReact's defaultErrorBoundaryLoggerName is 'over_react.ErrorBoundary' as of version 5.3.0,
 // but if we access it directly, we get a warning
 // "info: The member 'defaultErrorBoundaryLoggerName' can only be used within
 // 'package:over_react/src/component/error_boundary_api.dart' or a test."
