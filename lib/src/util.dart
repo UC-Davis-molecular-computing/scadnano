@@ -1444,13 +1444,7 @@ String wc_base(String base) {
 var set_equality = SetEquality();
 
 /// Indicates if `base1` and `base2` are complementary DNA bases.
-bool bases_complementary(String base1, String base2, {bool allow_wildcard = false, bool allow_null = false}) {
-  if (allow_null && (base1 == null || base2 == null)) {
-    return true;
-  } else if (!allow_null && (base1 == null || base2 == null)) {
-    return false;
-  }
-
+bool bases_complementary(String base1, String base2, {bool allow_wildcard = false}) {
   if (allow_wildcard && (base1 == constants.DNA_BASE_WILDCARD || base2 == constants.DNA_BASE_WILDCARD)) {
     return true;
   }
@@ -1479,7 +1473,7 @@ bool reverse_complementary(String? seq1, String? seq2,
   for (int i = 0, j = seq2.length - 1; i < seq1.length; i++, j--) {
     var b1 = seq1[i];
     var b2 = seq2[j];
-    if (!bases_complementary(b1, b2, allow_wildcard: allow_wildcard, allow_null: allow_null)) {
+    if (!bases_complementary(b1, b2, allow_wildcard: allow_wildcard)) {
       return false;
     }
   }

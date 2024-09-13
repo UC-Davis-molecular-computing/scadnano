@@ -898,13 +898,6 @@ abstract class Strand
       }
     }
 
-    for (int i = 0; i < num_substrands; i++) {
-      if (substrands[i] == null) {
-        throw AssertionError('should not have any null entries in substrands but ${i} is null:\n'
-            'substrands = ${substrands}');
-      }
-    }
-
     // Now that all Substrand dna_lengths are known, we can assign DNA sequences to them
     //XXX: important to do this check after setting substrands so dna_length() is well-defined
     String? dna_sequence = util.optional_field_with_null_default(json_map, constants.dna_sequence_key,

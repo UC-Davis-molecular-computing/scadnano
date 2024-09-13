@@ -5,7 +5,6 @@ import 'dart:html';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:react/react_client/react_interop.dart';
 import 'package:scadnano/src/state/app_ui_state.dart';
 import 'package:scadnano/src/state/base_pair_display_type.dart';
 import 'package:scadnano/src/view/design_main_unpaired_insertion_deletions.dart';

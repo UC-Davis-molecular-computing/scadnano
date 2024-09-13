@@ -182,9 +182,6 @@ class DesignViewComponent {
 
   set_side_main_pane_widths() {
     String side_pane_width = local_storage.side_pane_width();
-    if (side_pane_width == null) {
-      side_pane_width = '${constants.default_side_pane_width_percent}%';
-    }
     num main_pane_width_int = 100.0 - num.parse(side_pane_width.substring(0, side_pane_width.length - 1));
     String main_pane_width = '${main_pane_width_int.toString()}%';
     side_pane.setAttribute('style', 'width: $side_pane_width');
