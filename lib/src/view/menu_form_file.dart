@@ -17,11 +17,6 @@ mixin MenuFormFileProps on UiProps {
 
 class MenuFormFileComponent extends UiComponent2<MenuFormFileProps> {
   @override
-  Map getDefaultProps() {
-    return newProps();
-  }
-
-  @override
   render() {
     return FormFile(
       {
