@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/state/group.dart';
@@ -14,15 +13,15 @@ UiFactory<DesignMainPotentialVerticalCrossoversProps> DesignMainPotentialVertica
     _$DesignMainPotentialVerticalCrossovers;
 
 mixin DesignMainPotentialVerticalCrossoversProps on UiProps {
-  BuiltList<PotentialVerticalCrossover> potential_vertical_crossovers;
+  late BuiltList<PotentialVerticalCrossover> potential_vertical_crossovers;
 
-  BuiltMap<int, Helix> helices;
-  BuiltMap<String, HelixGroup> groups;
-  Geometry geometry;
+  late BuiltMap<int, Helix> helices;
+  late BuiltMap<String, HelixGroup> groups;
+  late Geometry geometry;
 
-  bool only_display_selected_helices;
-  BuiltSet<int> side_selected_helix_idxs;
-  BuiltMap<int, num> helix_idx_to_svg_position_y_map;
+  late bool only_display_selected_helices;
+  late BuiltSet<int> side_selected_helix_idxs;
+  late BuiltMap<int, double> helix_idx_to_svg_position_y_map;
 }
 
 class DesignMainPotentialVerticalCrossoversComponent
@@ -42,12 +41,12 @@ class DesignMainPotentialVerticalCrossoversComponent
       }
       BuiltMap<int, Helix> helices_of_crossover =
           (props.helices.toMap()..removeWhere((idx, _) => !(idx == idx_top || idx == idx_bot))).build();
-      var group_top = helices_of_crossover[idx_top].group;
-      var group_bot = helices_of_crossover[idx_bot].group;
+      var group_top = helices_of_crossover[idx_top]!.group;
+      var group_bot = helices_of_crossover[idx_bot]!.group;
 
       // we only render if both helices are in same group
       if (group_top == group_bot) {
-        BuiltMap<String, HelixGroup> groups_of_crossover = {group_bot: props.groups[group_bot]}.build();
+        BuiltMap<String, HelixGroup> groups_of_crossover = {group_bot: props.groups[group_bot]!}.build();
         crossover_components.add((DesignMainPotentialVerticalCrossover()
           ..potential_vertical_crossover = potential_vertical_crossover
           ..helices = helices_of_crossover

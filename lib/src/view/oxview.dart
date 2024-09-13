@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:async';
 import 'dart:html';
 
@@ -12,8 +11,8 @@ import '../middleware/oxview_update_view.dart';
 import '../constants.dart' as constants;
 
 class OxviewViewComponent {
-  DivElement div;
-  IFrameElement frame;
+  late DivElement div;
+  late IFrameElement frame;
 
   OxviewViewComponent() {
     this.div = DivElement()..attributes = {'id': OXVIEW_ID, 'class': 'split'};

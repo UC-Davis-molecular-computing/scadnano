@@ -8,7 +8,7 @@ import '../serializers.dart';
 
 part 'dialog.g.dart';
 
-typedef OnSubmit = void Function(List<DialogItem> items);
+typedef OnSubmit = void Function(List<DialogItem>? items);
 
 class DialogType extends EnumClass {
   const DialogType._(String name) : super(name);
@@ -151,7 +151,18 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
   @BuiltValueField(serialize: false, compare: false)
   ProcessCallback? get process_saved_response;
 
-  // TODO: document this
+  // This defaults to true, which means that the dialog will use the saved response (what the user
+  // entered the last time they used this dialog) if it exists, i.e., that will be the value auto-populated
+  // in the dialog field. This is useful, but for certain dialogs,
+  // particularly that involve editing a property of an existing object, it is better to use
+  // the existing value, e.g., if they want to edit a HelixGroup, the helices_view_order should be
+  // auto-populated with the existing value (since perhaps they are changing another field such as
+  // the pitch or yaw), not whatever helices_view_order they used the last time (which may have been
+  // on another HelixGroup).
+  // TODO: think about whether it makes sense to make the default false. The tradeoff is then I'd
+  // have to remember to set it to true for many dialogs, but perhaps that is the better tradeoff,
+  // because using a saved response is more like an error when the object has an existing property,
+  // whereas forgetting this just means the user has an annoyance to keep re-typing the same value.
   bool get use_saved_response;
 
   BuiltList<DialogItem> get items;
@@ -198,7 +209,7 @@ abstract class DialogInteger
 
   static Serializer<DialogInteger> get serializer => _$dialogIntegerSerializer;
 
-  factory DialogInteger({required String label, required num value, String tooltip = ''}) {
+  factory DialogInteger({required String label, required int value, String tooltip = ''}) {
     return DialogInteger.from((b) => b
       ..label = label
       ..value = value
@@ -212,7 +223,7 @@ abstract class DialogInteger
 
   String get label;
 
-  num get value;
+  int get value;
 }
 
 abstract class DialogFloat
@@ -224,7 +235,7 @@ abstract class DialogFloat
 
   static Serializer<DialogFloat> get serializer => _$dialogFloatSerializer;
 
-  factory DialogFloat({required String label, required num value, String tooltip = ''}) {
+  factory DialogFloat({required String label, required double value, String tooltip = ''}) {
     return DialogFloat.from((b) => b
       ..label = label
       ..value = value
@@ -235,7 +246,7 @@ abstract class DialogFloat
 
   String get label;
 
-  num get value;
+  double get value;
 }
 
 abstract class DialogText

@@ -1,26 +1,28 @@
-// @dart=2.9
 import 'package:over_react/over_react.dart';
 
 part 'menu_boolean.over_react.g.dart';
 
 UiFactory<MenuBooleanProps> MenuBoolean = _$MenuBoolean;
 
-mixin MenuBooleanPropsMixin on UiProps {
-  bool value;
-  String tooltip;
-  String display;
-  dynamic Function(SyntheticFormEvent) onChange;
+mixin MenuBooleanProps on UiProps {
+  late bool value;
+  late String display;
+  late dynamic Function(SyntheticFormEvent) on_change;
 
   // optional
-  String name;
-  bool hide;
-}
+  String? name;
 
-class MenuBooleanProps = UiProps with MenuBooleanPropsMixin;
+  // optional to specify, but non-nullable since they have default values
+  // https://github.com/Workiva/over_react/blob/master/doc/null_safety_and_required_props.md#defaulting-props-class-components
+  late bool hide;
+  late String tooltip;
+}
 
 class MenuBooleanComponent extends UiComponent2<MenuBooleanProps> {
   @override
-  get defaultProps => (newProps()..hide = false);
+  get defaultProps => (newProps()
+    ..hide = false
+    ..tooltip = '');
 
   @override
   render() {
@@ -28,7 +30,7 @@ class MenuBooleanComponent extends UiComponent2<MenuBooleanProps> {
       return null;
     }
 
-    var name = props.name;
+    String? name = props.name;
     name ??= props.display.toLowerCase().replaceAll(' ', '-');
 
     return (Dom.span()
@@ -39,7 +41,7 @@ class MenuBooleanComponent extends UiComponent2<MenuBooleanProps> {
           (Dom.input()
             ..style = {'marginRight': '1em'}
             ..checked = props.value
-            ..onChange = props.onChange
+            ..onChange = props.on_change
             // TODO(benlee12): Add unit tests that use this.
             // ..addTestId('scadnano.MenuComponent.MenuBooleanComponent.input.${name}')
             ..type = 'checkbox')(),

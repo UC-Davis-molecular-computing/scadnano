@@ -457,8 +457,6 @@ const css_selector_domain_moving = 'domain-line-moving';
 const css_selector_disallowed = 'disallowed';
 
 const css_selector_strand_creating = 'strand-creating';
-const css_selector_end_5p_strand_creating = '5p-strand-creating';
-const css_selector_end_3p_strand_creating = '3p-strand-creating';
 
 const css_selector_helix__mouseover_invisible_rectangle = 'helix-mouseover';
 

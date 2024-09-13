@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:html';
 import 'dart:math';
 
@@ -27,42 +26,36 @@ import '../actions/actions.dart' as actions;
 
 part 'design_main_strand_loopout.over_react.g.dart';
 
-@Factory()
 UiFactory<DesignMainLoopoutProps> DesignMainLoopout = _$DesignMainLoopout;
 
-@Props()
-mixin DesignMainLoopoutPropsMixin on UiProps {
-  Loopout loopout;
-  Strand strand;
-  Color strand_color;
+mixin DesignMainLoopoutProps on UiProps implements TransformByHelixGroupPropsMixin {
+  late Loopout loopout;
+  late Strand strand;
+  late Color strand_color;
 
-  Domain prev_domain;
-  Domain next_domain;
-  Helix prev_helix;
-  Helix next_helix;
-  bool selected;
-  BuiltSet<EditModeChoice> edit_modes;
-  bool show_domain_names;
+  late Domain prev_domain;
+  late Domain next_domain;
+  late Helix prev_helix;
+  late Helix next_helix;
+  late bool selected;
+  late bool show_domain_names;
 
-  BuiltMap<int, Helix> helices;
-  BuiltMap<String, HelixGroup> groups;
-  Geometry geometry;
-  num prev_helix_svg_position_y;
-  num next_helix_svg_position_y;
-  bool retain_strand_color_on_selection;
+  late BuiltMap<int, Helix> helices;
+  late BuiltMap<String, HelixGroup> groups;
+  late Geometry geometry;
+  late double prev_helix_svg_position_y;
+  late double next_helix_svg_position_y;
+  late bool retain_strand_color_on_selection;
 }
 
-class DesignMainLoopoutProps = UiProps with DesignMainLoopoutPropsMixin, TransformByHelixGroupPropsMixin;
-
-@State()
 mixin DesignMainLoopoutState on UiState {
   // making this "local" state for the component (instead of storing in the global store)
   // skips wasteful actions and updating the state just to tell if the mouse is hovering over a loopout
-  bool mouse_hover;
+  late bool mouse_hover;
 }
 
 class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutProps, DesignMainLoopoutState>
-    with PureComponent, TransformByHelixGroup<DesignMainLoopoutProps> {
+    with PureComponent {
   @override
   Map get initialState => (newState()..mouse_hover = false);
 
@@ -131,7 +124,7 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
       ..id = props.loopout.id;
 
     if (within_group) {
-      path_props.transform = transform_of_helix(props.prev_helix.idx);
+      path_props.transform = transform_of_helix2(props, props.prev_helix.idx);
     }
 
     return path_props(Dom.svgTitle()(tooltip));
@@ -139,18 +132,19 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
 
   @override
   componentDidMount() {
-    var element = querySelector('#${props.loopout.id}');
+    var element = querySelector('#${props.loopout.id}')!;
     element.addEventListener('contextmenu', on_context_menu);
   }
 
   @override
   componentWillUnmount() {
-    var element = querySelector('#${props.loopout.id}');
+    super.componentWillUnmount();
+    var element = querySelector('#${props.loopout.id}')!;
     element.removeEventListener('contextmenu', on_context_menu);
   }
 
   on_context_menu(Event ev) {
-    MouseEvent event = ev;
+    MouseEvent event = ev as MouseEvent;
     if (!event.shiftKey) {
       event.preventDefault();
       event.stopPropagation(); // needed to prevent strand context menu from popping up
@@ -254,11 +248,11 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
 
   Future<void> ask_for_loopout_name() async {
     int name_idx = 0;
-    var items = List<DialogItem>.filled(1, null);
+    var items = util.FixedList<DialogItem>(1);
     items[name_idx] = DialogText(label: 'name', value: props.loopout.name ?? '');
     var dialog = Dialog(title: 'set loopout name', type: DialogType.set_loopout_name, items: items);
 
-    List<DialogItem> results = await util.dialog(dialog);
+    List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
 
     String name = (results[name_idx] as DialogText).value;
@@ -276,8 +270,8 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     int prev_offset = props.prev_domain.dnaend_3p.offset_inclusive;
     int next_offset = props.next_domain.dnaend_5p.offset_inclusive;
 
-    var prev_group = props.groups[props.prev_helix.group];
-    var next_group = props.groups[props.next_helix.group];
+    var prev_group = props.groups[props.prev_helix.group]!;
+    var next_group = props.groups[props.next_helix.group]!;
 
     var prev_svg_untransformed = props.prev_helix
         .svg_base_pos(prev_offset, props.prev_domain.forward, props.prev_helix_svg_position_y);
@@ -417,20 +411,20 @@ String loopout_path_description_same_helix_same_direction(Loopout loopout, Helix
     right_svg = prev_svg;
   }
 
-  num x_distance = right_svg.x - left_svg.x;
-  num h = 3 * util.sigmoid(loopout.loopout_num_bases - 1) * geometry.base_height_svg;
-  num length = loopout.loopout_num_bases;
+  double x_distance = right_svg.x - left_svg.x;
+  double h = 3 * util.sigmoid(loopout.loopout_num_bases - 1) * geometry.base_height_svg;
+  int length = loopout.loopout_num_bases;
   if (!show_loopout_labels) {
     length -= 5;
   }
 
   // taking cubed root of x distance for intermediate bezier points seems to place curve at
   // about a constant offset from x coordinates of ends the loopout is connecting
-  num w = 2 * pow(x_distance, 1.0 / 3.0) * util.sigmoid(length) * geometry.base_width_svg;
+  double w = 2 * pow(x_distance, 1.0 / 3.0) * util.sigmoid(length) * geometry.base_width_svg;
 
-  num left_x = left_svg.x - w;
-  num right_x = right_svg.x + w;
-  num y = left_svg.y;
+  double left_x = left_svg.x - w;
+  double right_x = right_svg.x + w;
+  double y = left_svg.y;
 
   if (forward) {
     y -= h;
@@ -454,9 +448,12 @@ String loopout_path_description_same_helix_same_direction(Loopout loopout, Helix
 }
 
 Future<int> ask_for_length(String title,
-    {int current_length, int lower_bound, DialogType dialog_type, String tooltip = ""}) async {
+    {required int current_length,
+    required int lower_bound,
+    required DialogType dialog_type,
+    String tooltip = ""}) async {
   int length_idx = 0;
-  var items = List<DialogItem>.filled(1, null);
+  var items = util.FixedList<DialogItem>(1);
   items[length_idx] = DialogInteger(
     label: 'new length:',
     value: current_length,
@@ -469,7 +466,7 @@ Future<int> ask_for_length(String title,
     use_saved_response: false,
   );
 
-  List<DialogItem> results = await util.dialog(dialog);
+  List<DialogItem>? results = await util.dialog(dialog);
   if (results == null) return current_length;
 
   int length = (results[length_idx] as DialogInteger).value;

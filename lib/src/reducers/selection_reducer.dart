@@ -35,7 +35,7 @@ GlobalReducer<SelectablesStore, AppState> selectables_store_global_reducer = com
 
 // is item currently selectable, given all the information about select modes, whether it's part of
 // a staple or scaffold, whether the design is an origami?
-currently_selectable(AppState state, Selectable item) {
+bool currently_selectable(AppState state, Selectable item) {
   var edit_modes = state.ui_state.edit_modes;
   var select_modes = state.ui_state.select_mode_state.modes;
   if (!(edit_modes.contains(EditModeChoice.select) || edit_modes.contains(EditModeChoice.rope_select))) {

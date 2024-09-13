@@ -206,7 +206,7 @@ which part of the strand to use as the address.
         },
       });
 
-  List<DialogItem> results = await util.dialog(dialog);
+  List<DialogItem>? results = await util.dialog(dialog);
   if (results == null) return;
 
   bool include_scaffold = (results[idx_include_scaffold] as DialogCheckbox).value;

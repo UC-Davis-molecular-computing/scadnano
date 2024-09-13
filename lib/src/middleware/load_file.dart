@@ -1,6 +1,5 @@
 import 'dart:html';
 
-import 'package:quiver/async.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/actions/actions.dart';
 import 'package:scadnano/src/middleware/edit_select_mode_change.dart';
@@ -35,9 +34,7 @@ load_file_middleware(Store<AppState> store, action, NextDispatcher next) {
       document.title = fn;
     }
     var design_view = app.view.design_view;
-    if (design_view != null) {
-      design_view.render(store.state);
-    }
+    design_view.render(store.state);
 
     // re-center if necessary
     if (store.state.ui_state.autofit && store.state.maybe_design != null) {

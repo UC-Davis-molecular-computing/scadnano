@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:html';
 
 import 'package:over_react/over_react.dart';
@@ -9,16 +8,19 @@ UiFactory<MenuNumberProps> MenuNumber = _$MenuNumber;
 
 mixin MenuNumberPropsMixin on UiProps {
   // required
-  String display; // what to display next to number input field (short description)
-  num default_value; // starting value to display
-  dynamic Function(num new_value) on_new_value; // what to do when value changes
+  late String display; // what to display next to number input field (short description)
+  late num default_value; // starting value to display
+  late dynamic Function(num new_value) on_new_value; // what to do when value changes
 
-  //optional
-  num min_value; // minimum value down arrow can go to (user can still type negative values)
-  bool hide; // whether to show (good for hiding if dependent on another value)
-  String tooltip; // what to display on mouse hover (long description)
-  String input_elt_id; // customize id (otherwise default chosen based on display)
-  num step; // amount by which to step when pressing up or down arrows
+  // optional
+  String? input_elt_id; // customize id (otherwise default chosen based on display)
+
+  // optional to specify, but non-nullable since they have default values
+  // https://github.com/Workiva/over_react/blob/master/doc/null_safety_and_required_props.md#defaulting-props-class-components
+  late num min_value; // minimum value down arrow can go to (user can still type negative values)
+  late bool hide; // whether to show (good for hiding if dependent on another value)
+  late String tooltip; // what to display on mouse hover (long description)
+  late num step; // amount by which to step when pressing up or down arrows
 }
 
 class MenuNumberProps = UiProps with MenuNumberPropsMixin;
@@ -26,9 +28,9 @@ class MenuNumberProps = UiProps with MenuNumberPropsMixin;
 class MenuNumberComponent extends UiComponent2<MenuNumberProps> {
   @override
   get defaultProps => (newProps()
+    ..min_value = 1.0
     ..hide = false
     ..tooltip = ''
-    ..min_value = 1.0
     ..step = 1.0);
 
   @override
@@ -38,10 +40,7 @@ class MenuNumberComponent extends UiComponent2<MenuNumberProps> {
     }
 
     var display_no_spaces = props.display.toLowerCase().replaceAll(' ', '-');
-    var input_elt_id = '${display_no_spaces}-number-input';
-    if (props.input_elt_id != null) {
-      input_elt_id = props.input_elt_id;
-    }
+    var input_elt_id = props.input_elt_id ?? '${display_no_spaces}-number-input';
 
     //NOTE: this is an uncontrolled component (https://reactjs.org/docs/uncontrolled-components.html)
     // We use defaultValue instead of value, which lets the user have an empty string.
@@ -59,8 +58,8 @@ class MenuNumberComponent extends UiComponent2<MenuNumberProps> {
             ..step = '${props.step}'
             ..id = input_elt_id
             ..onChange = (_) {
-              InputElement inputElement = document.getElementById(input_elt_id);
-              num new_value = num.tryParse(inputElement.value);
+              InputElement inputElement = document.getElementById(input_elt_id) as InputElement;
+              num? new_value = num.tryParse(inputElement.value ?? '');
               if (new_value != null) {
                 props.on_new_value(new_value);
               }

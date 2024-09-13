@@ -13,6 +13,7 @@ abstract class DNAEnd with SelectableMixin, BuiltJsonSerializable implements Bui
           {int? offset = null,
           required bool is_5p,
           required bool is_start,
+          required bool forward,
           required bool substrand_is_first,
           required bool substrand_is_last,
           required String substrand_id,
@@ -22,6 +23,7 @@ abstract class DNAEnd with SelectableMixin, BuiltJsonSerializable implements Bui
         ..offset = offset
         ..is_5p = is_5p
         ..is_start = is_start
+        ..forward = forward
         ..substrand_is_first = substrand_is_first
         ..substrand_is_last = substrand_is_last
         ..substrand_id = substrand_id
@@ -44,6 +46,8 @@ abstract class DNAEnd with SelectableMixin, BuiltJsonSerializable implements Bui
 
   // offset is exclusive if this is an end (right side); offset_inclusive is always the exact offset
   int get offset_inclusive => is_start ? offset! : offset! - 1;
+
+  bool get forward;
 
   bool get is_5p;
 

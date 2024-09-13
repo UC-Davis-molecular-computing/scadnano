@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/geometry.dart';
@@ -23,9 +22,9 @@ UiFactory<DesignMainLoopoutExtensionLengthsProps> DesignMainLoopoutExtensionLeng
     _$DesignMainLoopoutExtensionLengths;
 
 mixin DesignMainLoopoutExtensionLengthsProps on UiProps {
-  Geometry geometry;
-  BuiltList<Strand> strands;
-  bool show_length;
+  late Geometry geometry;
+  late BuiltList<Strand> strands;
+  late bool show_length;
 }
 
 class DesignMainLoopoutExtensionLengthsComponent extends UiComponent2<DesignMainLoopoutExtensionLengthsProps>
@@ -33,16 +32,18 @@ class DesignMainLoopoutExtensionLengthsComponent extends UiComponent2<DesignMain
   @override
   render() {
     if (props.show_length) {
-      return (Dom.g()..className = 'loopout-extension-lengths-main-view')([
-        for (Strand strand in props.strands)
-          for (Substrand substrand in strand.substrands)
-            if (substrand is Loopout || substrand is Extension)
-              (DesignMainLoopoutExtensionLength()
-                ..geometry = props.geometry
-                ..key = substrand.toString()
-                ..substrand = substrand
-                ..className = 'loopout-extension-length-elts')()
-      ]);
+      var elts = [];
+      int idx = 0;
+      for (Strand strand in props.strands)
+        for (Substrand substrand in strand.substrands)
+          if (substrand is Loopout || substrand is Extension) {
+            elts.add((DesignMainLoopoutExtensionLength()
+              ..geometry = props.geometry
+              ..substrand = substrand
+              ..key = "${idx++}"
+              ..className = 'loopout-extension-length-elts')());
+          }
+      return (Dom.g()..className = 'loopout-extension-lengths-main-view')(elts);
     }
   }
 }

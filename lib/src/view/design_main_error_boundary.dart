@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:logging/logging.dart';
 import 'package:over_react/over_react.dart' hide ErrorBoundaryState, ErrorBoundaryProps;
 import 'package:over_react/src/component/error_boundary.dart';
@@ -47,13 +46,13 @@ class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
   @override
   void componentDidCatch(error, ReactErrorInfo info) {
     if (props.onComponentDidCatch != null) {
-      props.onComponentDidCatch(error, info);
+      props.onComponentDidCatch!(error, info);
     }
 
     _logErrorCaughtByErrorBoundary(error, info);
 
     if (props.onComponentIsUnrecoverable != null) {
-      props.onComponentIsUnrecoverable(error, info);
+      props.onComponentIsUnrecoverable!(error, info);
     }
   }
 
@@ -83,8 +82,8 @@ class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
     // If the child is different, and the error boundary is currently in an error state,
     // give the children a chance to mount.
     if (state.hasError) {
-      final childThatCausedError = typedPropsFactory(prevProps).children.single;
-      if (childThatCausedError != props.children.single) {
+      final childThatCausedError = typedPropsFactory(prevProps).children?.single;
+      if (childThatCausedError != props.children?.single) {
         reset();
       }
     }
@@ -99,13 +98,13 @@ class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
   }
 
   String get _loggerName {
-    if (props.logger != null) return props.logger.name;
+    if (props.logger != null) return props.logger!.name;
 
     return props.loggerName ?? defaultErrorBoundaryLoggerName;
   }
 
   void _logErrorCaughtByErrorBoundary(/*Error|Exception*/ dynamic error, ReactErrorInfo info) {
-    if (!props.shouldLogErrors) return;
+    if (props.shouldLogErrors != null && !props.shouldLogErrors!) return;
 
     final message =
         'An unrecoverable error was caught by an ErrorBoundary (attempting to remount it was unsuccessful): '

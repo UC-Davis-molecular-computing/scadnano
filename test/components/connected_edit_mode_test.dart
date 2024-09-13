@@ -36,7 +36,7 @@ void main() {
       utils.initialize_test_store(initialize_test_state());
       editModeRef = createRef();
       mount((ReduxProvider()..store = app.store)(
-        (ConnectedEditMode()
+        ((ConnectedEditMode()..modes = app.state.ui_state.edit_modes)
           ..addTestId(EditModeComponentTestID)
           ..ref = editModeRef)(),
       ));

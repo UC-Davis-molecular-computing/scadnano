@@ -171,7 +171,6 @@ Domain move_domain(
   int original_view_order = original_group.helices_view_order_inverse[domain.helix]!;
   int new_view_order = original_view_order + delta_view_order;
   int new_helix_idx = current_group.helices_view_order[new_view_order];
-  assert(new_helix_idx != null);
   Domain domain_moved = domain.rebuild(
     (b) => b
       ..is_first = set_first_last_false ? false : b.is_first

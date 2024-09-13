@@ -4495,7 +4495,7 @@ main() {
 
       // Test AppState reducer
       state = app_state_reducer(state, action);
-      expect(state.ui_state.potential_crossover_is_drawing, true);
+      expect(state.ui_state.drawing_potential_crossover, true);
 
       // Test potential_crossover store's reducer
       potentialCrossoverState = optimized_potential_crossover_reducer(potentialCrossoverState, action);

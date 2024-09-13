@@ -280,8 +280,7 @@ void _cadnano_v2_place_strand(Strand strand, Map<String, dynamic> dct, Map<int, 
     Map<String, dynamic> which_helix = dct['vstrands'][which_helix_id];
 
     if (strand_type == 'stap') {
-      Color color = strand.color != null ? strand.color : new RgbColor(0, 0, 0);
-      which_helix['stap_colors'].add(_cadnano_v2_color_of_stap(color, domain));
+      which_helix['stap_colors'].add(_cadnano_v2_color_of_stap(strand.color, domain));
     }
 
     _cadnano_v2_place_strand_segment(which_helix, domain, strand_type);

@@ -68,9 +68,11 @@ abstract class DNAEndsMove with BuiltJsonSerializable implements Built<DNAEndsMo
     for (DNAEndMove move in moves) {
       if (move.dna_end == end) {
         int current_offset_end = move.dna_end.offset_inclusive + delta;
-        if (move.highest_offset != null && delta > 0) {
+        // if (move.highest_offset != null && delta > 0) {
+        if (delta > 0) {
           current_offset_end = min(move.highest_offset, current_offset_end);
-        } else if (move.lowest_offset != null && delta < 0) {
+          // } else if (move.lowest_offset != null && delta < 0) {
+        } else if (delta < 0) {
           current_offset_end = max(move.lowest_offset, current_offset_end);
         }
         return current_offset_end;

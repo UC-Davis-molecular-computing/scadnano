@@ -24,7 +24,6 @@ import '../extension_methods.dart';
 selections_intersect_box_compute_middleware(Store<AppState> store, action, NextDispatcher next) {
   if (action is actions.SelectionsAdjustMainView) {
     var state = store.state;
-    var selectables_store = state.ui_state.selectables_store;
 
     bool is_origami = state.design.is_origami;
     var select_modes = state.ui_state.select_mode_state.modes;
@@ -34,7 +33,8 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
       // use selection box
       svg.RectElement? select_box = querySelector('#selection-box-main') as svg.RectElement?;
       if (select_box == null) {
-        return selectables_store;
+        print('no selection box found, so not changing selections');
+        return;
       }
 
       Rectangle<num> select_box_bbox = select_box.getBoundingClientRect();
@@ -50,7 +50,7 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
           .toSet();
     } else {
       // use selection rope
-      svg.PolygonElement rope_elt = querySelector('#selection-rope-main') as svg.PolygonElement;
+      svg.PolygonElement? rope_elt = querySelector('#selection-rope-main') as svg.PolygonElement;
       if (rope_elt == null) {
         print('no selection rope found, so not changing selections');
         return;

@@ -246,14 +246,18 @@ Future<ByteBuffer> get_binary_file_content(String url) async {
 
 /// Pops up dialog to ask user for information and returns responses.
 /// Returns null if dialog was canceled.
-Future<List<DialogItem>> dialog(Dialog dialog) async {
+/// For some reason we are allowed to declare the return type as Future<List<DialogItem>> (non-nullable)
+/// even though the Dart language specification explicitly states that if the Completer never completes,
+/// then the return value is `null`. So we add the `?` explicitly so that we get
+/// a compiler error if we try to treat the return value as non-nullable.
+Future<List<DialogItem>?> dialog(Dialog dialog) async {
   if (app.state.ui_state.dialog != null) {
     app.dispatch(actions.DialogHide());
   }
   // https://api.dart.dev/stable/2.7.0/dart-async/Completer-class.html
   Completer<List<DialogItem>> completer = Completer<List<DialogItem>>();
   dialog = dialog.rebuild((b) => b
-    ..on_submit = (List<DialogItem> items) {
+    ..on_submit = (List<DialogItem>? items) {
       completer.complete(items);
     });
   app.dispatch(actions.DialogShow(dialog: dialog));
@@ -1008,7 +1012,7 @@ T optional_field<T, U>(Map<String, dynamic> map, String key, T default_value,
 /// This function is needed because calling [optional_field] with default_value = null will result
 /// in a type error, since Dart generics type inference will think the return type should be Null
 /// instead of whatever is the type of the value in the map.
-T? optional_field_with_null_default<T, U>(Map<String, dynamic> map, String key,
+T? optional_field_with_null_default<T extends Object, U extends Object>(Map<String, dynamic> map, String key,
     {T Function(U)? transformer = null, List<String> legacy_keys = const []}) {
   if (!map.containsKey(key)) {
     for (var legacy_key in legacy_keys) {

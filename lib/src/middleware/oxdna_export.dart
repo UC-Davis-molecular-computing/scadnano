@@ -94,12 +94,7 @@ String to_oxview_format(Design design, List<Strand> strands_to_export) {
     };
     oxview_strand_map[sc_strand.id] = oxv_strand;
 
-    int? scolor;
-    if (sc_strand.color != null) {
-      scolor = export_cadnano.to_cadnano_v2_int_hex(sc_strand.color);
-    } else {
-      scolor = null;
-    }
+    int scolor = export_cadnano.to_cadnano_v2_int_hex(sc_strand.color);
 
     for (int index_in_strand = 0; index_in_strand < oxdna_strand.nucleotides.length; index_in_strand++) {
       OxdnaNucleotide nuc = oxdna_strand.nucleotides[index_in_strand];
@@ -118,9 +113,9 @@ String to_oxview_format(Design design, List<Strand> strands_to_export) {
       if (index_in_strand != oxdna_strand.nucleotides.length - 1) {
         oxvnuc['n3'] = nuc_count + 1;
       }
-      if (scolor != null) {
-        oxvnuc['color'] = scolor;
-      }
+      // if (scolor != null) {
+      oxvnuc['color'] = scolor;
+      // }
       nuc_count += 1;
       oxvnucs.add(oxvnuc);
     }
@@ -470,9 +465,7 @@ Tuple3<OxdnaVector, OxdnaVector, OxdnaVector> oxdna_get_helix_vectors(Design des
   if (grid == Grid.none) {
     // unnecessary since this check is done in the position getter, but this way the code exactly mirrors
     // the Python package equivalent
-    if (helix.position != null) {
-      position = helix.position;
-    }
+    position = helix.position;
   } else {
     position = util.grid_position_to_position3d(helix.grid_position!, grid, geometry);
   }

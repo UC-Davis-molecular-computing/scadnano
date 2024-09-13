@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import '../view/redraw_counter_component_mixin.dart';
@@ -28,8 +27,8 @@ UiFactory<SelectModeProps> ConnectedSelectMode = connect<AppState, SelectModePro
 UiFactory<SelectModeProps> SelectMode = _$SelectMode;
 
 mixin SelectModePropsMixin on UiProps {
-  SelectModeState select_mode_state;
-  bool is_origami;
+  late SelectModeState select_mode_state;
+  late bool is_origami;
 }
 
 class SelectModeProps = UiProps with SelectModePropsMixin, ConnectPropsMixin;

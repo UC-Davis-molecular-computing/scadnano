@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:html';
 
 import 'package:over_react/over_react.dart';
@@ -9,34 +8,45 @@ part 'menu_dropdown_right.over_react.g.dart';
 UiFactory<MenuDropdownRightProps> MenuDropdownRight = _$MenuDropdownRight;
 
 mixin MenuDropdownRightProps on UiProps {
-  String tooltip;
-  String title;
-  String id;
-  bool
-      disallow_overflow; // IMPORTANT: only set this to true if you are sure the dropdown won't contain its own dropdowns; otherwise disallowing overflow will cause submenus to not be visible
-  bool disabled;
-  String keyboard_shortcut;
+  // I think title and id are inherited from UiProps; got some error about invalid override without the `_`.
+  late String title_;
+  late String id_;
+
+  // optional
+  String? keyboard_shortcut;
+
+  // optional to specify, but non-nullable since they have default values
+  // https://github.com/Workiva/over_react/blob/master/doc/null_safety_and_required_props.md#defaulting-props-class-components
+  late String tooltip;
+  late bool disabled;
+
+  // IMPORTANT: only set this to true if you are sure the dropdown won't contain its own dropdowns;
+  // otherwise disallowing overflow will cause submenus to not be visible
+  late bool disallow_overflow;
 }
 
 mixin MenuDropdownRightState on UiState {
-  num top;
-  Ref<DivElement> HTML_element;
+  num? top;
+  late Ref<DivElement?> HTML_element;
 }
 
 class MenuDropdownRightComponent
     extends UiStatefulComponent2<MenuDropdownRightProps, MenuDropdownRightState> {
   @override
   Map get initialState => (newState()
-    ..HTML_element = createRef()
+    ..HTML_element = createRef<DivElement>()
     ..top = null);
 
   @override
-  get defaultProps => (newProps()..disabled = false);
+  get defaultProps => (newProps()
+    ..tooltip = ''
+    ..disabled = false
+    ..disallow_overflow = false);
 
   // once component mounts and HTML_element has a reference assigned, save top coord to set proper css styling
   @override
   void componentDidMount() {
-    setState(state..top = state.HTML_element.current.getBoundingClientRect().top);
+    setState(state..top = state.HTML_element.current!.getBoundingClientRect().top);
   }
 
   @override
@@ -48,18 +58,18 @@ class MenuDropdownRightComponent
     // in this case a <span> and a <text> element. We can pass a list of Strings as the value to associate
     // to the 'title' key, but then the keyboard shortcut will be left-justified with the rest of the title.
     bool has_shortcut = props.keyboard_shortcut != null;
-    var title_and_shortcut = [Dom.span()(props.title)];
+    var title_and_shortcut = [Dom.span()(props.title_)];
     if (has_shortcut) {
-      title_and_shortcut.add(Dom.text()(props.keyboard_shortcut));
+      title_and_shortcut.add(Dom.text()(props.keyboard_shortcut!));
     }
     var menu_dropdown_right = DropdownButton({
-      'title': has_shortcut ? title_and_shortcut : props.title,
+      'title': has_shortcut ? title_and_shortcut : props.title_,
       'drop': 'right',
-      'id': props.id,
+      'id': props.id_,
       'variant': 'none',
       'disabled': props.disabled,
       'ref': state.HTML_element,
-      'key': props.id,
+      'key': props.id_,
       /* set some custom CSS props so dropright divs know how much to shift themselves upwards */
       'style': state.top != null
           ? {

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:react/react.dart';
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/reducers/groups_reducer.dart';
@@ -14,6 +15,7 @@ import '../state/app_state.dart';
 
 import '../state/domain.dart';
 import '../state/design.dart';
+import '../state/extension.dart';
 import '../state/geometry.dart';
 import '../state/strand.dart';
 import 'delete_reducer.dart' as delete_reducer;
@@ -100,6 +102,7 @@ Design? helix_idx_change_reducer(Design? design, AppState state, actions.HelixId
   if (design == null) {
     return null;
   }
+
   var helices = design.helices.toMap();
   var strands = design.strands.toList();
 
@@ -114,34 +117,50 @@ Design? helix_idx_change_reducer(Design? design, AppState state, actions.HelixId
     helices[new_idx] = helix;
   }
 
-  // change helix idx refs on domains
+  // change helix idx refs on domains and possibly adjacent_domain on extensions
   for (int s = 0; s < strands.length; s++) {
     var strand = strands[s];
     var substrands = strand.substrands.toList();
     bool changed_strand = false;
-    for (int d = 0; d < strand.substrands.length; d++) {
-      var substrand = strand.substrands[d];
-      if (substrand is Domain) {
+    // change Domain.helix
+    for (int d = 0; d < substrands.length; d++) {
+      var substrand = substrands[d];
+      if (substrand is Domain && action.idx_replacements.containsKey(substrand.helix)) {
+        changed_strand = true;
         Domain domain = substrand;
         int new_idx = action.idx_replacements[domain.helix]!;
-        if (new_idx != null) {
-          domain = domain.rebuild((b) => b..helix = new_idx);
-          substrands[d] = domain;
-          changed_strand = true;
+        domain = domain.rebuild((b) => b..helix = new_idx);
+        substrands[d] = domain;
+        // change adjacent_domain on Extension(s) if present; note there could be two extensions
+        // if the strand is [extension, domain, extension], i.e., domain could be both is_first and is_last
+        if (d == 1 && substrands[0] is Extension) {
+          var extension_5p = substrands[0];
+          if (extension_5p is Extension) {
+            extension_5p = extension_5p.rebuild((b) => b..adjacent_domain.replace(domain));
+            substrands[0] = extension_5p;
+          }
+        }
+        if (d == substrands.length - 2 && substrands[substrands.length - 1] is Extension) {
+          var extension_3p = substrands[substrands.length - 1];
+          if (extension_3p is Extension) {
+            extension_3p = extension_3p.rebuild((b) => b..adjacent_domain.replace(domain));
+            substrands[substrands.length - 1] = extension_3p;
+          }
         }
       }
     }
     if (changed_strand) {
-      strands[s] = strand.rebuild((b) => b..substrands.replace(substrands));
+      strand = strand.rebuild((b) => b..substrands.replace(substrands));
+      strand = strand.initialize();
+      strands[s] = strand;
     }
   }
-
-  //TODO: recalculate view order; first figure out if it was non-default by looking at Helix.view_order
 
   design = design.rebuild((b) => b
     ..groups.replace(new_groups)
     ..helices.replace(helices)
     ..strands.replace(strands));
+
   return design;
 }
 
@@ -172,7 +191,7 @@ Map<String, HelixGroup> change_groups(
       // first update helices_view_order to contain new idxs
       List<int> helices_view_order_new = group.helices_view_order.toList();
       for (int old_idx in action.idx_replacements.keys) {
-        int order_old_idx = group.helices_view_order_inverse[old_idx]!;
+        int? order_old_idx = group.helices_view_order_inverse[old_idx];
         if (order_old_idx != null) {
           int new_idx = action.idx_replacements[old_idx]!;
           helices_view_order_new[order_old_idx] = new_idx;
@@ -227,7 +246,7 @@ BuiltMap<int, Helix> helix_offset_change_all_with_moving_strands_reducer(
 BuiltMap<int, Helix> helix_offset_change_all_while_creating_strand_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.StrandCreateAdjustOffset action) {
   if (state.ui_state.dynamically_update_helices) {
-    StrandCreation strand_creation = state.ui_state.strand_creation!;
+    StrandCreation? strand_creation = state.ui_state.strand_creation;
     if (strand_creation != null) {
       var helices_map = helices.toMap();
       var original_helix_offsets = state.ui_state.original_helix_offsets;

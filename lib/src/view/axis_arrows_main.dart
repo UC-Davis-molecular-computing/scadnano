@@ -1,4 +1,3 @@
-// @dart=2.9
 @JS()
 library scadnano;
 
@@ -9,30 +8,27 @@ import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:scadnano/src/actions/actions.dart' as actions;
 
+import 'axis_arrows_side.dart';
 import '../app.dart';
 import '../state/app_state.dart';
 import '../state/strand.dart';
 
-part 'design_main_arrows.over_react.g.dart';
+part 'axis_arrows_main.over_react.g.dart';
 
-UiFactory<DesignMainArrowsProps> ConnectedDesignMainArrows =
-    connect<AppState, DesignMainArrowsProps>(mapStateToProps: (state) {
-  return DesignMainArrows()
-    ..invert_y = state.ui_state.invert_y
-    ..show_helices_axis_arrows = state.ui_state.show_helices_axis_arrows;
-})(DesignMainArrows);
+UiFactory<AxisArrowsMainProps> ConnectedAxisArrowsMain = connect<AppState, AxisArrowsMainProps>(
+    mapStateToProps: (state) => set_axis_arrows_props(AxisArrowsMain(), state))(AxisArrowsMain);
 
-UiFactory<DesignMainArrowsProps> DesignMainArrows = _$DesignMainArrows;
+UiFactory<AxisArrowsMainProps> AxisArrowsMain = _$AxisArrowsMain;
 
-mixin DesignMainArrowsProps on UiProps {
-  bool invert_y;
-  bool show_helices_axis_arrows;
+mixin AxisArrowsMainProps on UiProps implements AxisArrowsProps {
+  late bool invert_y;
+  late bool show_helices_axis_arrows;
 }
 
-class DesignMainArrowsComponent extends UiComponent2<DesignMainArrowsProps> {
+class DesignMainArrowsComponent extends UiComponent2<AxisArrowsMainProps> {
   @override
   render() {
-    num mag = 50 * 0.93, circle_rad = 10, x_end_offset = circle_rad * 0.632, arrow_padding = 10;
+    double mag = 50 * 0.93, circle_rad = 10, x_end_offset = circle_rad * 0.632, arrow_padding = 10;
 
     var arrow_path = 'M 0 0 '
         'v -$mag ' //vertical line to
@@ -43,10 +39,10 @@ class DesignMainArrowsComponent extends UiComponent2<DesignMainArrowsProps> {
     var x_path =
         'M -$x_end_offset -$x_end_offset L $x_end_offset $x_end_offset M $x_end_offset -$x_end_offset L -$x_end_offset $x_end_offset';
 
-    num svg_center_x = circle_rad + arrow_padding,
-        svg_center_y = props.invert_y ? mag + circle_rad + arrow_padding : circle_rad + arrow_padding;
+    double svg_center_x = circle_rad + arrow_padding;
+    double svg_center_y = props.invert_y ? mag + circle_rad + arrow_padding : circle_rad + arrow_padding;
 
-    num font_width = 12, font_height = 17; // arbitrary dimensions found through web inspector
+    double font_width = 12, font_height = 17; // arbitrary dimensions found through web inspector
 
 //RGB XYZ
     if (props.show_helices_axis_arrows == true) {

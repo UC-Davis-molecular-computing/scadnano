@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:html';
 
 import 'package:collection/collection.dart';
@@ -23,42 +22,45 @@ import 'menu_dropdown_item.dart';
 
 part 'menu_side.over_react.g.dart';
 
-UiFactory<SideMenuProps> ConnectedSideMenu = connect<AppState, SideMenuProps>(
-  mapStateToProps: (state) => (SideMenu()
+SideMenuProps set_side_menu_props(SideMenuProps elt, AppState state) {
+  return elt
     ..groups = state.maybe_design?.groups
-    ..displayed_group_name = state.ui_state.displayed_group_name),
+    ..displayed_group_name = state.ui_state.displayed_group_name;
+}
+
+UiFactory<SideMenuProps> ConnectedSideMenu = connect<AppState, SideMenuProps>(
+  mapStateToProps: (state) => set_side_menu_props(SideMenu(), state),
   // Used for component test.
   forwardRef: true,
 )(SideMenu);
 
 UiFactory<SideMenuProps> SideMenu = _$SideMenu;
 
-mixin SideMenuPropsMixin on UiProps {
-  BuiltMap<String, HelixGroup> groups;
-  String displayed_group_name;
+mixin SideMenuProps on UiProps {
+  BuiltMap<String, HelixGroup>? groups;
+  late String displayed_group_name;
 }
 
-class SideMenuProps = UiProps with SideMenuPropsMixin, ConnectPropsMixin;
-
-class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMixin {
-  @override
-  get consumedProps => propsMeta.forMixins({SideMenuPropsMixin});
+class SideMenuComponent extends UiComponent2<SideMenuProps> {
+  // @override
+  // get consumedProps => propsMeta.forMixins({SideMenuPropsMixin});
 
   @override
   render() {
-    if (props.groups == null) {
+    var groups = props.groups;
+    if (groups == null) {
       return null;
     }
 
-    if (props.groups.length > 1 || props.displayed_group_name != constants.default_group_name) {
+    if (groups.length > 1 || props.displayed_group_name != constants.default_group_name) {
       return Navbar(
         {
           'bg': 'light',
           'expand': 'lg',
         },
         NavbarBrand({'key': 'side-menu-display-title'}, props.displayed_group_name),
-        groups_menu(),
-        grid_menu(),
+        groups_menu(groups),
+        grid_menu(groups),
       );
     } else {
       return Navbar(
@@ -66,15 +68,15 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
           'bg': 'light',
           'expand': 'lg',
         },
-        groups_menu(),
-        grid_menu(),
+        groups_menu(groups),
+        grid_menu(groups),
       );
     }
   }
 
-  groups_menu() {
+  groups_menu(BuiltMap<String, HelixGroup> groups) {
     var options = [];
-    for (var name in props.groups.keys) {
+    for (var name in groups.keys) {
       options.add((MenuDropdownItem()
         ..on_click = ((ev) => app.dispatch(actions.GroupDisplayedChange(group_name: name)))
         ..display = name
@@ -86,21 +88,21 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
       DropdownDivider({'key': 'divider-add-remove'}),
       (MenuDropdownItem()
         ..display = 'adjust current group'
-        ..on_click = ((ev) => set_new_parameters_for_current_group())
+        ..on_click = ((ev) => set_new_parameters_for_current_group(groups))
         ..key = 'adjust-current-group')(),
       (MenuDropdownItem()
         ..display = 'new group'
-        ..on_click = ((ev) => add_new_group(props.groups.keys))
+        ..on_click = ((ev) => add_new_group(groups.keys))
         ..key = 'new-group')(),
       (MenuDropdownItem()
         ..display = 'remove current group'
-        ..disabled = props.groups.length == 1
+        ..disabled = groups.length == 1
         ..on_click = ((ev) => app.dispatch(actions.GroupRemove(name: props.displayed_group_name)))
         ..key = 'remove-current-group')(),
       (MenuDropdownItem()
         ..display = 'adjust helix indices'
-        ..disabled = props.groups[props.displayed_group_name].helices_view_order.length == 0
-        ..on_click = ((ev) => adjust_helix_indices_for_current_group())
+        ..disabled = groups[props.displayed_group_name]!.helices_view_order.length == 0
+        ..on_click = ((ev) => adjust_helix_indices_for_current_group(groups))
         ..key = 'adjust-helix-indices')(),
     ]);
     return NavDropdown({
@@ -109,7 +111,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
     }, options);
   }
 
-  grid_menu() {
+  grid_menu(BuiltMap<String, HelixGroup> groups) {
     return NavDropdown(
       {
         'title': 'Grid',
@@ -119,20 +121,20 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
         for (var grid in Grid.values)
           (MenuDropdownItem()
             ..display = grid.toString()
-            ..active = grid == props.groups[props.displayed_group_name].grid
-            ..disabled = grid == props.groups[props.displayed_group_name].grid
-            ..on_click = ((ev) =>
-                props.dispatch(actions.GridChange(grid: grid, group_name: props.displayed_group_name)))
+            ..active = grid == groups[props.displayed_group_name]!.grid
+            ..disabled = grid == groups[props.displayed_group_name]!.grid
+            ..on_click =
+                ((ev) => app.dispatch(actions.GridChange(grid: grid, group_name: props.displayed_group_name)))
             ..key = grid.toString())()
       ],
     );
   }
 
-  set_new_parameters_for_current_group() =>
-      app.disable_keyboard_shortcuts_while(ask_new_parameters_for_current_group);
+  set_new_parameters_for_current_group(BuiltMap<String, HelixGroup> groups) =>
+      app.disable_keyboard_shortcuts_while(() => ask_new_parameters_for_current_group(groups));
 
-  adjust_helix_indices_for_current_group() =>
-      app.disable_keyboard_shortcuts_while(ask_new_helix_indices_for_current_group);
+  adjust_helix_indices_for_current_group(BuiltMap<String, HelixGroup> groups) =>
+      app.disable_keyboard_shortcuts_while(() => ask_new_helix_indices_for_current_group(groups));
 
   add_new_group(Iterable<String> existing_names) =>
       app.disable_keyboard_shortcuts_while(() => ask_about_new_group(existing_names));
@@ -142,7 +144,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
       DialogText(label: 'name'),
       DialogRadio(label: 'grid', options: ['square', 'honeycomb', 'hex', 'none'], selected_idx: 0),
     ]);
-    List<DialogItem> results = await util.dialog(dialog);
+    List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
 
     // get name
@@ -162,8 +164,8 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
     app.dispatch(actions.GroupAdd(name: name, group: group));
   }
 
-  Future<void> ask_new_parameters_for_current_group() async {
-    var group = props.groups[props.displayed_group_name];
+  Future<void> ask_new_parameters_for_current_group(BuiltMap<String, HelixGroup> groups) async {
+    var group = groups[props.displayed_group_name]!;
     var existing_grid = group.grid;
 
     int name_idx = 0;
@@ -174,7 +176,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
     int roll_idx = 5;
     int yaw_idx = 6;
     int helices_view_order_idx = 7;
-    var items = List<DialogItem>.filled(8, null);
+    var items = util.FixedList<DialogItem>(8);
     items[name_idx] = DialogText(label: 'name', value: props.displayed_group_name);
     items[position_x_idx] = DialogFloat(label: 'x', value: group.position.x);
     items[position_y_idx] = DialogFloat(label: 'y', value: group.position.y);
@@ -188,13 +190,14 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
     var dialog = Dialog(
         title: 'adjust current Helix group (to adjust grid use Grid menu on left)',
         type: DialogType.adjust_current_helix_group,
+        use_saved_response: false,
         items: items);
-    List<DialogItem> results = await util.dialog(dialog);
+    List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
 
     // get name
     String new_name = (results[name_idx] as DialogText).value.trim();
-    var existing_names = props.groups.keys;
+    var existing_names = groups.keys;
     if (new_name != props.displayed_group_name && existing_names.contains(new_name)) {
       var msg = 'Cannot use name ${new_name} for a new group because it is already in use.';
       window.alert(msg);
@@ -210,7 +213,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
       List<String> helices_view_order_strs = helices_view_order_str.split(' ');
 
       for (var order_str in helices_view_order_strs) {
-        int order = int.tryParse(order_str);
+        int? order = int.tryParse(order_str);
         if (order == null) {
           window.alert('${order_str} is not an integer');
           return;
@@ -254,12 +257,12 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
     }
 
     // get position and orientation
-    num position_x = (results[position_x_idx] as DialogFloat).value;
-    num position_y = (results[position_y_idx] as DialogFloat).value;
-    num position_z = (results[position_z_idx] as DialogFloat).value;
-    num pitch = (results[pitch_idx] as DialogFloat).value;
-    num roll = (results[roll_idx] as DialogFloat).value;
-    num yaw = (results[yaw_idx] as DialogFloat).value;
+    double position_x = (results[position_x_idx] as DialogFloat).value;
+    double position_y = (results[position_y_idx] as DialogFloat).value;
+    double position_z = (results[position_z_idx] as DialogFloat).value;
+    double pitch = (results[pitch_idx] as DialogFloat).value;
+    double roll = (results[roll_idx] as DialogFloat).value;
+    double yaw = (results[yaw_idx] as DialogFloat).value;
     var position = Position3D(x: position_x, y: position_y, z: position_z);
 
     HelixGroup new_group = HelixGroup(
@@ -274,8 +277,8 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
         actions.GroupChange(old_name: props.displayed_group_name, new_name: new_name, new_group: new_group));
   }
 
-  Future<void> ask_new_helix_indices_for_current_group() async {
-    var group = props.groups[props.displayed_group_name];
+  Future<void> ask_new_helix_indices_for_current_group(BuiltMap<String, HelixGroup> groups) async {
+    var group = groups[props.displayed_group_name]!;
 
     List<DialogItem> items = [];
     items.add(DialogLabel(label: 'current view order: ' + group.helices_view_order.join(' ')));
@@ -296,7 +299,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
           }
           return saved_items;
         });
-    List<DialogItem> results = await util.dialog(dialog);
+    List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
 
     Map<int, int> new_indices_map = {};

@@ -101,7 +101,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
     set_helices_min_max_offsets(helix_builders_map, strands);
 
-    groups ??= _calculate_groups_from_helix_builder(helix_builders, grid);
+    groups ??= _calculate_groups_from_helix_builders(helix_builders, grid);
 
     assign_grids_to_helix_builders_from_groups(groups, helix_builders_map);
 
@@ -753,30 +753,31 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         DNAEnd? dna_end_bot = null;
         if (address_3p_to_strand.keys.contains(address_3p)) {
           Strand strand_3p = address_3p_to_strand[address_3p]!;
-          if (strand_5p != strand_3p) {
-            if (helix_idx + 1 == address_3p.helix_idx) {
-              // 5' end is on top, 3' is on bottom
-              helix_idx_top = address_5p.helix_idx;
-              forward_top = forward;
-              substrand_top = ss;
-              dna_end_top = substrand_top.dnaend_5p;
+          // we allow circular strands now, so why limit crossovers to be between different strands?
+          // if (strand_5p != strand_3p) {
+          if (helix_idx + 1 == address_3p.helix_idx) {
+            // 5' end is on top, 3' is on bottom
+            helix_idx_top = address_5p.helix_idx;
+            forward_top = forward;
+            substrand_top = ss;
+            dna_end_top = substrand_top.dnaend_5p;
 
-              helix_idx_bot = address_3p.helix_idx;
-              substrand_bot = strand_3p.last_domain;
-              dna_end_bot = substrand_bot.dnaend_3p;
-            } else {
-              // 3' end is on top, 5' is on bottom
-              helix_idx_top = address_3p.helix_idx;
-              forward_top = !forward;
-              substrand_top = strand_3p.last_domain;
-              dna_end_top = substrand_top.dnaend_3p;
+            helix_idx_bot = address_3p.helix_idx;
+            substrand_bot = strand_3p.last_domain;
+            dna_end_bot = substrand_bot.dnaend_3p;
+          } else {
+            // 3' end is on top, 5' is on bottom
+            helix_idx_top = address_3p.helix_idx;
+            forward_top = !forward;
+            substrand_top = strand_3p.last_domain;
+            dna_end_top = substrand_top.dnaend_3p;
 
-              helix_idx_bot = address_5p.helix_idx;
-              substrand_bot = ss;
-              dna_end_bot = substrand_bot.dnaend_5p;
-            }
+            helix_idx_bot = address_5p.helix_idx;
+            substrand_bot = ss;
+            dna_end_bot = substrand_bot.dnaend_5p;
           }
         }
+        // }
         if (helix_idx_top != null &&
             helix_idx_bot != null &&
             forward_top != null &&
@@ -1563,7 +1564,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   _check_helix_offsets() {
     for (var helix in helices.values) {
-      if (helix.min_offset != null && helix.max_offset != null && helix.min_offset >= helix.max_offset) {
+      if (helix.min_offset >= helix.max_offset) {
         var err_msg = 'for helix ${helix.idx}, '
             'helix.min_offset = ${helix.min_offset} must be strictly less than '
             'helix.max_offset = ${helix.max_offset}';
@@ -1907,7 +1908,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       for (Domain forward_domain in forward_domains) {
         List<Domain> reverse_domains = domains_on_helix_overlapping(forward_domain, forward: false);
         for (var reverse_domain in reverse_domains) {
-          if (reverse_domain != null && reverse_domain.name != null) {
+          if (reverse_domain.name != null) {
             if (domains_mismatch(forward_domain, reverse_domain)) {
               var mismatch = DomainNameMismatch(
                 helix_idx: helix_idx,
@@ -2698,7 +2699,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 }
 
-Map<String, HelixGroup> _calculate_groups_from_helix_builder(
+Map<String, HelixGroup> _calculate_groups_from_helix_builders(
     Iterable<HelixBuilder> helix_builders, Grid grid) {
   if (helix_builders.isEmpty) {
     return {constants.default_group_name: HelixGroup(grid: grid, helices_view_order: [])};

@@ -1,4 +1,3 @@
-// @dart=2.9
 @JS()
 library scadnano;
 
@@ -10,12 +9,19 @@ import 'package:react/react_client/react_interop.dart';
 @JS()
 class ReactBootstrap {
   external static ReactClass get Button;
+
   external static ReactClass get DropdownButton;
+
   external static ReactClass get DropdownDivider;
+
   external static ReactClass get DropdownItem;
+
   external static ReactClass get Navbar;
+
   external static ReactClass get NavbarBrand;
+
   external static ReactClass get NavDropdown;
+
   external static ReactClass get FormFile;
 }
 

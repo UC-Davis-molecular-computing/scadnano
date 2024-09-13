@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
@@ -26,16 +25,16 @@ const String SIDE_VIEW_PREFIX = 'side-view';
 UiFactory<DesignSideHelixProps> DesignSideHelix = _$DesignSideHelix;
 
 mixin DesignSideHelixProps on UiProps {
-  Helix helix;
-  int slice_bar_offset;
-  bool selected;
-  bool mouse_is_over;
-  bool helix_change_apply_to_all;
-  bool show_grid_coordinates;
-  bool invert_y;
-  Grid grid;
-  DesignSideRotationData rotation_data;
-  BuiltSet<EditModeChoice> edit_modes;
+  late Helix helix;
+  int? slice_bar_offset;
+  late bool selected;
+  late bool mouse_is_over;
+  late bool helix_change_apply_to_all;
+  late bool show_grid_coordinates;
+  late bool invert_y;
+  late Grid grid;
+  DesignSideRotationData? rotation_data;
+  late BuiltSet<EditModeChoice> edit_modes;
 }
 
 class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with PureComponent {
@@ -62,17 +61,17 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
       position_str = '${pos.x.toStringAsFixed(precision)}, ${pos.y.toStringAsFixed(precision)}';
       grid_position_str = '${pos.x.toStringAsFixed(1)},${pos.y.toStringAsFixed(1)}';
     } else {
-      var pos = props.helix.grid_position;
+      var pos = props.helix.grid_position!;
       position_str = '${pos.h}, ${pos.v}';
       grid_position_str = position_str.replaceAll(' ', '');
     }
 
     // these aren't defined if slice bar is not showing, so check for null
     var forward_angle = props.slice_bar_offset != null
-        ? props.helix.backbone_angle_at_offset(props.slice_bar_offset, true)
+        ? props.helix.backbone_angle_at_offset(props.slice_bar_offset!, true)
         : null;
     var reverse_angle = props.slice_bar_offset != null
-        ? props.helix.backbone_angle_at_offset(props.slice_bar_offset, false)
+        ? props.helix.backbone_angle_at_offset(props.slice_bar_offset!, false)
         : null;
     var tooltip = '''\
 position:  ${position_str}
@@ -107,10 +106,10 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
     ];
 
     if (props.rotation_data != null) {
-      assert(props.rotation_data.helix.idx == this.props.helix.idx);
+      assert(props.rotation_data!.helix.idx == this.props.helix.idx);
       var rot_component = (DesignSideRotation()
         ..radius = props.helix.geometry.helix_radius_svg
-        ..data = props.rotation_data
+        ..data = props.rotation_data!
         ..invert_y = props.invert_y
         ..className = '$SIDE_VIEW_PREFIX-helix-rotation'
         ..key = 'rotation')();
@@ -155,12 +154,12 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
   }
 
   on_context_menu(Event ev) {
-    MouseEvent event = ev;
+    MouseEvent event = ev as MouseEvent;
     if (!event.shiftKey) {
       event.preventDefault();
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
-              items: context_menu_helix(props.helix, props.helix_change_apply_to_all).build(),
+              items: context_menu_helix(props.helix, props.helix_change_apply_to_all),
               position: util.from_point_num(event.page))));
     }
   }

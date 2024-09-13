@@ -1,4 +1,3 @@
-// @dart=2.9
 @JS()
 library react_dnd;
 

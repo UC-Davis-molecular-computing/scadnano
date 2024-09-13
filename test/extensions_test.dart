@@ -78,7 +78,7 @@ main() {
     test('3p_extension', () {
       design = design.draw_strand(0, 0).to(10).extension_3p(5).with_color(color).commit();
 
-      var domain = Domain(helix: 0, forward: true, start: 0, end: 10);
+      var domain = Domain(helix: 0, forward: true, start: 0, end: 10, is_first: true, is_last: false);
       var expected_strand = Strand([
         domain,
         Extension(num_bases: 5, is_5p: false, adjacent_domain: domain),
@@ -90,7 +90,7 @@ main() {
     test('5p_extension', () {
       design = design.draw_strand(0, 0).extension_5p(5).to(10).with_color(color).commit();
 
-      var domain = Domain(helix: 0, forward: true, start: 0, end: 10);
+      var domain = Domain(helix: 0, forward: true, start: 0, end: 10, is_first: false, is_last: true);
       var expected_strand = Strand([
         Extension(num_bases: 5, is_5p: true, adjacent_domain: domain),
         domain,
@@ -102,7 +102,7 @@ main() {
     test('move_after_5p_extension_ok', () {
       design = design.draw_strand(0, 0).extension_5p(5).move(15).with_color(color).commit();
 
-      var domain = Domain(helix: 0, forward: true, start: 0, end: 15);
+      var domain = Domain(helix: 0, forward: true, start: 0, end: 15, is_first: false, is_last: true);
       var expected_strand = Strand([
         Extension(num_bases: 5, is_5p: true, adjacent_domain: domain),
         domain,
@@ -120,7 +120,7 @@ main() {
           .with_color(color)
           .commit();
 
-      var domain = Domain(helix: 0, forward: true, start: 0, end: 10);
+      var domain = Domain(helix: 0, forward: true, start: 0, end: 10, is_first: true, is_last: false);
       var expected_strand = Strand([
         domain,
         Extension(num_bases: 5, label: 'ext1', adjacent_domain: domain, is_5p: false),
@@ -138,7 +138,7 @@ main() {
           .with_color(color)
           .commit();
 
-      var domain = Domain(helix: 0, forward: true, start: 0, end: 10);
+      var domain = Domain(helix: 0, forward: true, start: 0, end: 10, is_first: false, is_last: true);
       var expected_strand = Strand([
         Extension(num_bases: 5, label: 'ext1', adjacent_domain: domain, is_5p: true),
         domain,
@@ -156,7 +156,8 @@ main() {
           .with_color(color)
           .commit();
 
-      var domain = Domain(helix: 0, forward: true, start: 0, end: 10, dna_sequence: 'A' * 10);
+      var domain = Domain(
+          helix: 0, forward: true, start: 0, end: 10, dna_sequence: 'A' * 10, is_first: true, is_last: false);
       var expected_strand = Strand([
         domain,
         Extension(num_bases: 5, dna_sequence: 'G' * 5, adjacent_domain: domain, is_5p: false),
@@ -174,7 +175,8 @@ main() {
           .with_color(color)
           .commit();
 
-      var domain = Domain(helix: 0, forward: true, start: 0, end: 10, dna_sequence: 'T' * 10);
+      var domain = Domain(
+          helix: 0, forward: true, start: 0, end: 10, dna_sequence: 'T' * 10, is_first: false, is_last: true);
       var expected_strand = Strand([
         Extension(num_bases: 5, dna_sequence: 'C' * 5, adjacent_domain: domain, is_5p: true),
         domain,
@@ -192,7 +194,8 @@ main() {
           .with_color(color)
           .commit();
 
-      var domain = Domain(helix: 0, forward: true, start: 0, end: 10, dna_sequence: '?' * 10);
+      var domain = Domain(
+          helix: 0, forward: true, start: 0, end: 10, dna_sequence: '?' * 10, is_first: true, is_last: false);
       var expected_strand = Strand([
         domain,
         Extension(num_bases: 5, dna_sequence: 'G' * 5, adjacent_domain: domain, is_5p: false),
@@ -229,7 +232,7 @@ main() {
       design =
           design.draw_strand(0, 0).to(10).extension_3p(5).with_domain_name('ext1').with_color(color).commit();
 
-      var domain = Domain(helix: 0, forward: true, start: 0, end: 10);
+      var domain = Domain(helix: 0, forward: true, start: 0, end: 10, is_first: true, is_last: false);
       var expected_strand = Strand([
         domain,
         Extension(num_bases: 5, name: 'ext1', adjacent_domain: domain, is_5p: false),

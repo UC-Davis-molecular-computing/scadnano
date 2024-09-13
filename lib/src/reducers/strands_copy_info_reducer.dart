@@ -87,7 +87,7 @@ Tuple2<List<Strand>, List<int>?>? parse_strands_and_helices_view_order_from_clip
   // try to parse JSON as a list
   Map<String, dynamic> clipboard_json;
   try {
-    clipboard_json = jsonDecode(clipboard_content);
+    clipboard_json = jsonDecode(clipboard_content) as Map<String, dynamic>;
   } on Exception {
     print(error_msg);
     return null;
@@ -98,7 +98,7 @@ Tuple2<List<Strand>, List<int>?>? parse_strands_and_helices_view_order_from_clip
 
   // helices_view_order can be null if not all copied strands came from same HelixGroup
   // type of clipboard_json[constants.helices_view_order_key] is List<dynamic>, need to convert
-  List helices_view_order_json = clipboard_json[constants.helices_view_order_key];
+  List? helices_view_order_json = clipboard_json[constants.helices_view_order_key];
   List<int>? helices_view_order = null;
   if (helices_view_order_json != null) {
     helices_view_order = [for (int idx in helices_view_order_json) idx];

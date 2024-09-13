@@ -24,7 +24,7 @@ abstract class Modification with UnusedFields {
   static Map<String, dynamic> mod_to_json_serializable(Modification mod, bool suppress_indent) {
     Map<String, dynamic> map = {
       constants.mod_display_text_key: mod.display_text,
-      if (mod.vendor_code != null) constants.mod_vendor_code_key: mod.vendor_code,
+      constants.mod_vendor_code_key: mod.vendor_code,
       if (mod.connector_length != constants.default_modification_connector_length)
         constants.mod_connector_length_key: mod.connector_length,
     };

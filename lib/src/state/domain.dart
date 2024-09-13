@@ -153,6 +153,7 @@ abstract class Domain
   DNAEnd get dnaend_start => DNAEnd(
       is_5p: forward,
       is_start: true,
+      forward: forward,
       offset: start,
       is_scaffold: is_scaffold,
       substrand_is_first: is_first,
@@ -164,6 +165,7 @@ abstract class Domain
   DNAEnd get dnaend_end => DNAEnd(
       is_5p: !forward,
       is_start: false,
+      forward: forward,
       offset: end,
       is_scaffold: is_scaffold,
       substrand_is_first: is_first,
@@ -259,8 +261,8 @@ abstract class Domain
         ? util.parse_json_color(json_map[constants.color_key]!)
         : null;
 
-    String name = util.optional_field_with_null_default(json_map, constants.name_key);
-    String label = util.optional_field_with_null_default(json_map, constants.label_key);
+    String? name = util.optional_field_with_null_default(json_map, constants.name_key);
+    String? label = util.optional_field_with_null_default(json_map, constants.label_key);
 
     var unused_fields = util.unused_fields_map(json_map, constants.domain_keys);
 

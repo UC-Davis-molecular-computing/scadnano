@@ -54,12 +54,12 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebui
               ui_state.last_mod_int, action)
           ?.toBuilder()
   ..selection_rope = optimized_selection_rope_reducer(ui_state.selection_rope, action)?.toBuilder()
-  ..potential_crossover_is_drawing =
-      drawing_potential_crossover_reducer(ui_state.potential_crossover_is_drawing, action)
+  ..drawing_potential_crossover =
+      drawing_potential_crossover_reducer(ui_state.drawing_potential_crossover, action)
   ..dna_ends_are_moving = moving_dna_ends_reducer(ui_state.dna_ends_are_moving, action)
   ..slice_bar_is_moving = slice_bar_is_moving_reducer(ui_state.slice_bar_is_moving, action)
   ..helix_group_is_moving = helix_group_is_moving_reducer(ui_state.helix_group_is_moving, action)
-  ..load_dialog = load_dialog_reducer(ui_state.load_dialog, action)
+  ..show_load_dialog = load_dialog_reducer(ui_state.show_load_dialog, action)
   ..strands_move = strands_move_local_reducer(ui_state.strands_move, action)?.toBuilder()
   ..domains_move = domains_move_local_reducer(ui_state.domains_move, action)?.toBuilder()
   ..side_view_grid_position_mouse_cursor =

@@ -121,10 +121,10 @@ abstract class Extension
         util.optional_field(json_map, constants.display_length_key, constants.default_display_length);
     double display_angle =
         util.optional_field(json_map, constants.display_angle_key, constants.default_display_angle);
-    String name = util.optional_field_with_null_default(json_map, constants.name_key);
-    String label = util.optional_field_with_null_default(json_map, constants.label_key);
+    String? name = util.optional_field_with_null_default(json_map, constants.name_key);
+    String? label = util.optional_field_with_null_default(json_map, constants.label_key);
 
-    String dna_sequence = util.optional_field_with_null_default(json_map, constants.dna_sequence_key);
+    String? dna_sequence = util.optional_field_with_null_default(json_map, constants.dna_sequence_key);
 
     Color? color = json_map.containsKey(constants.color_key)
         ? util.parse_json_color(json_map[constants.color_key]!)
@@ -171,6 +171,7 @@ abstract class Extension
   DNAEnd get dnaend_free => DNAEnd(
       is_5p: this.is_5p,
       is_start: true,
+      forward: adjacent_domain.forward,
       offset: null,
       is_scaffold: is_scaffold,
       substrand_is_first: is_5p,

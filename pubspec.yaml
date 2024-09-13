@@ -37,7 +37,3 @@ dev_dependencies:
   over_react_test: ^3.0.0
   test_html_builder: ^3.0.5
   redux_dev_tools: ^0.7.0
-
-analyzer:
-  plugins:
-    - over_react

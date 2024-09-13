@@ -1,4 +1,3 @@
-// @dart=2.9
 @JS()
 library view;
 
@@ -59,8 +58,8 @@ class View {
   DivElement design_oxview_separator = DivElement()
     ..attributes = {'id': 'design-oxview-separator', 'class': 'draggable-separator'};
 
-  DesignViewComponent design_view;
-  OxviewViewComponent oxview_view;
+  late DesignViewComponent design_view;
+  late OxviewViewComponent oxview_view;
 
   bool currently_showing_oxview = false;
 
@@ -96,7 +95,7 @@ class View {
     react_dom.render(
       over_react_components.ErrorBoundary()(
         (ReduxProvider()..store = store)(
-          ConnectedMenu()(),
+          set_menu_props(ConnectedMenu(), state)(),
         ),
       ),
       this.menu_element,
@@ -106,9 +105,8 @@ class View {
 
     react_dom.render(
       over_react_components.ErrorBoundary()(
-        (ReduxProvider()..store = store)(
-          ConnectedEditAndSelectModes()(),
-        ),
+        (ReduxProvider()
+          ..store = store)(set_edit_and_select_mode_props(ConnectedEditAndSelectModes(), state)()),
       ),
       this.edit_and_select_modes_element,
     );
@@ -158,7 +156,7 @@ setup_file_drag_and_drop_listener(Element drop_zone) {
     event.preventDefault();
 
     var files = event.dataTransfer.files;
-    if (files.isEmpty) {
+    if (files == null || files.isEmpty) {
       return;
     }
 

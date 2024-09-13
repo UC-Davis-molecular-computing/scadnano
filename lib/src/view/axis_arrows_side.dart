@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:js/js.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
@@ -10,26 +9,40 @@ import '../app.dart';
 import '../state/app_state.dart';
 import '../state/strand.dart';
 
-part 'design_side_arrows.over_react.g.dart';
+part 'axis_arrows_side.over_react.g.dart';
 
-UiFactory<DesignSideArrowsProps> ConnectedDesignSideArrows =
-    connect<AppState, DesignSideArrowsProps>(mapStateToProps: (state) {
-  return DesignSideArrows()
-    ..invert_y = state.ui_state.invert_y
-    ..show_helices_axis_arrows = state.ui_state.show_helices_axis_arrows;
-})(DesignSideArrows);
-
-UiFactory<DesignSideArrowsProps> DesignSideArrows = _$DesignSideArrows;
-
-mixin DesignSideArrowsProps on UiProps {
-  bool invert_y;
-  bool show_helices_axis_arrows;
+///////////////////////////////////////////////////////
+// shared between AxisArrowsMain and AxisArrowsSide
+abstract class AxisArrowsProps implements UiProps {
+  late bool invert_y;
+  late bool show_helices_axis_arrows;
 }
 
-class DesignMainArrowsComponent extends UiComponent2<DesignSideArrowsProps> {
+//FIXME: this (and related functions of the form set_some_props defined near the `connect` function
+// calls for connected OverReact components) are a workaround for a strange
+// behavior in OverReact where in connected components, required props must be set not only
+// in the `mapStateToProps` function, but also when hooking up the connected component to the view
+// as in the file view/design.dart (where ConnectedAxisArrowsSide() is invoked in `react_dom.render`)
+AxisArrowsProps set_axis_arrows_props(AxisArrowsProps elt, AppState state) => elt
+  ..invert_y = state.ui_state.invert_y
+  ..show_helices_axis_arrows = state.ui_state.show_helices_axis_arrows;
+// end shared between AxisArrowsMain and AxisArrowsSide
+///////////////////////////////////////////////////////
+
+UiFactory<AxisArrowsSideProps> ConnectedAxisArrowsSide = connect<AppState, AxisArrowsSideProps>(
+    mapStateToProps: (state) => set_axis_arrows_props(AxisArrowsSide(), state))(AxisArrowsSide);
+
+UiFactory<AxisArrowsSideProps> AxisArrowsSide = _$AxisArrowsSide;
+
+mixin AxisArrowsSideProps on UiProps implements AxisArrowsProps {
+  late bool invert_y;
+  late bool show_helices_axis_arrows;
+}
+
+class AxisArrowsComponent extends UiComponent2<AxisArrowsSideProps> {
   @override
   render() {
-    num mag = 50 * 0.93, circle_rad = 10, x_end_offset = circle_rad * 0.632, arrow_padding = 10;
+    double mag = 50 * 0.93, circle_rad = 10, x_end_offset = circle_rad * 0.632, arrow_padding = 10;
 
     var arrow_path = 'M 0 0 '
         'v -$mag ' //vertical line to
@@ -40,10 +53,10 @@ class DesignMainArrowsComponent extends UiComponent2<DesignSideArrowsProps> {
     var x_path =
         'M -$x_end_offset -$x_end_offset L $x_end_offset $x_end_offset M $x_end_offset -$x_end_offset L -$x_end_offset $x_end_offset';
 
-    num svg_center_x = props.invert_y ? mag + circle_rad + arrow_padding : circle_rad + arrow_padding,
-        svg_center_y = props.invert_y ? mag + circle_rad + arrow_padding : circle_rad + arrow_padding;
+    double svg_center_x = props.invert_y ? mag + circle_rad + arrow_padding : circle_rad + arrow_padding;
+    double svg_center_y = props.invert_y ? mag + circle_rad + arrow_padding : circle_rad + arrow_padding;
 
-    num font_width = 12, font_height = 17; // arbitrary dimensions found through web inspector
+    double font_width = 12, font_height = 17; // arbitrary dimensions found through web inspector
 
 //RGB XYZ
     if (props.show_helices_axis_arrows == true) {

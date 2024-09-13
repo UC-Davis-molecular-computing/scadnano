@@ -49,7 +49,7 @@ oxview_update_view_middleware(Store<AppState> store, dynamic action, NextDispatc
 // to this function just after creating it, but before it can be accessed via `app.view.oxview_view?.frame`.
 void update_oxview_view(Design design, [IFrameElement? frame = null]) {
   if (frame == null) {
-    frame = app.view.oxview_view?.frame;
+    frame = app.view.oxview_view.frame;
   }
   if (frame == null) {
     throw AssertionError("frame cannot be null");

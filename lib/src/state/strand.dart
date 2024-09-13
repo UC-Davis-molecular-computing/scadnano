@@ -329,7 +329,7 @@ abstract class Strand
     List<String> ret_list = [];
 
     // 5' mod
-    if (this.modification_5p != null && this.modification_5p!.vendor_code != null) {
+    if (this.modification_5p != null) {
       ret_list.add(modification_5p!.vendor_code);
     }
 
@@ -343,7 +343,7 @@ abstract class Strand
     }
 
     // 3' mods
-    if (this.modification_3p != null && this.modification_3p!.vendor_code != null) {
+    if (this.modification_3p != null) {
       ret_list.add(modification_3p!.vendor_code);
     }
 
@@ -372,19 +372,17 @@ abstract class Strand
       if (strand.modifications_int.containsKey(strand_pos)) {
         // if internal mod attached to base, replace base
         var mod = strand.modifications_int[strand_pos]!;
-        if (mod.vendor_code != null) {
-          var vendor_code_with_delim = mod.vendor_code;
-          if (mod.allowed_bases != null) {
-            if (!mod.allowed_bases!.contains(base)) {
-              var msg = ('internal modification ${mod} can only replace one of these bases: '
-                  '${mod.allowed_bases!.join(",")}, '
-                  'but the base at position ${strand_pos} is ${base}');
-              throw IllegalDesignError(msg);
-            }
-            new_seq_list.last = vendor_code_with_delim; // replace base with modified base
-          } else {
-            new_seq_list.add(vendor_code_with_delim); // append modification between two bases
+        var vendor_code_with_delim = mod.vendor_code;
+        if (mod.allowed_bases != null) {
+          if (!mod.allowed_bases!.contains(base)) {
+            var msg = ('internal modification ${mod} can only replace one of these bases: '
+                '${mod.allowed_bases!.join(",")}, '
+                'but the base at position ${strand_pos} is ${base}');
+            throw IllegalDesignError(msg);
           }
+          new_seq_list.last = vendor_code_with_delim; // replace base with modified base
+        } else {
+          new_seq_list.add(vendor_code_with_delim); // append modification between two bases
         }
       }
     }
@@ -673,9 +671,7 @@ abstract class Strand
       json_map[constants.circular_key] = circular;
     }
 
-    if (this.color != null) {
-      json_map[constants.color_key] = color.toHexColor().toCssString();
-    }
+    json_map[constants.color_key] = color.toHexColor().toCssString();
 
     if (this.dna_sequence != null) {
       json_map[constants.dna_sequence_key] = this.dna_sequence;
@@ -911,16 +907,16 @@ abstract class Strand
 
     // Now that all Substrand dna_lengths are known, we can assign DNA sequences to them
     //XXX: important to do this check after setting substrands so dna_length() is well-defined
-    var dna_sequence = util.optional_field_with_null_default(json_map, constants.dna_sequence_key,
+    String? dna_sequence = util.optional_field_with_null_default(json_map, constants.dna_sequence_key,
         legacy_keys: constants.legacy_dna_sequence_keys);
 
     Color color = json_map.containsKey(constants.color_key)
         ? util.parse_json_color(json_map[constants.color_key])
         : DEFAULT_STRAND_COLOR;
 
-    String name = util.optional_field_with_null_default(json_map, constants.name_key);
+    String? name = util.optional_field_with_null_default(json_map, constants.name_key);
 
-    String label = util.optional_field_with_null_default(json_map, constants.label_key);
+    String? label = util.optional_field_with_null_default(json_map, constants.label_key);
 
     var unused_fields = util.unused_fields_map(json_map, constants.strand_keys);
 
@@ -930,7 +926,7 @@ abstract class Strand
     //   vendor_fields_dict = json_map[constants.vendor_fields_key];
     //   vendor_fields = VendorFields.from_json(vendor_fields_dict);
     // }
-    Map<String, dynamic> vendor_fields_dict = util.optional_field_with_null_default(
+    Map<String, dynamic>? vendor_fields_dict = util.optional_field_with_null_default(
         json_map, constants.vendor_fields_key,
         legacy_keys: constants.legacy_vendor_fields_keys);
     VendorFields? vendor_fields =

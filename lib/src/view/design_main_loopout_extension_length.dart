@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:over_react/over_react.dart';
 
 import '../constants.dart' as constants;
@@ -13,12 +12,10 @@ part 'design_main_loopout_extension_length.over_react.g.dart';
 UiFactory<DesignMainLoopoutExtensionLengthProps> DesignMainLoopoutExtensionLength =
     _$DesignMainLoopoutExtensionLength;
 
-mixin DesignMainLoopoutExtensionLengthPropsMixin on UiProps {
-  Geometry geometry;
-  Substrand substrand;
+mixin DesignMainLoopoutExtensionLengthProps on UiProps {
+  late Geometry geometry;
+  late Substrand substrand;
 }
-
-class DesignMainLoopoutExtensionLengthProps = UiProps with DesignMainLoopoutExtensionLengthPropsMixin;
 
 class DesignMainLoopoutExtensionLengthComponent extends UiComponent2<DesignMainLoopoutExtensionLengthProps>
     with PureComponent {

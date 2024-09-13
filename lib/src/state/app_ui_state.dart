@@ -45,13 +45,13 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   CopyInfo? get copy_info;
 
-  bool get potential_crossover_is_drawing;
+  bool get drawing_potential_crossover;
 
   bool get dna_ends_are_moving;
 
   bool get helix_group_is_moving;
 
-  bool get load_dialog;
+  bool get show_load_dialog;
 
   bool get slice_bar_is_moving;
 
@@ -83,7 +83,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   // null indicates that strand color picker is not being used
   Strand? get color_picker_strand;
 
-  // null indicates that strand color picker is not being used
+  // null indicates that strand color picker is not being used, or it is but for a strand, not a substrand
   Substrand? get color_picker_substrand;
 
   StrandCreation? get strand_creation;
@@ -250,10 +250,10 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
     b.selection_box_displayed_main = false;
     b.selection_box_displayed_side = false;
     b.selectables_store = SelectablesStoreBuilder();
-    b.potential_crossover_is_drawing = false;
+    b.drawing_potential_crossover = false;
     b.dna_ends_are_moving = false;
     b.helix_group_is_moving = false;
-    b.load_dialog = false;
+    b.show_load_dialog = false;
     b.slice_bar_is_moving = false;
     b.changed_since_last_save = false;
     b.side_view_grid_position_mouse_cursor = null;

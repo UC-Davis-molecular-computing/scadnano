@@ -688,7 +688,7 @@ However, *currently* selected scaffold strands will remain selected.''');
     type: DialogType.select_all_with_same_as_selected,
     items: items,
   );
-  List<DialogItem> results = await util.dialog(dialog);
+  List<DialogItem>? results = await util.dialog(dialog);
   if (results == null) return;
 
   List<SelectableTrait> traits_for_selection = [];

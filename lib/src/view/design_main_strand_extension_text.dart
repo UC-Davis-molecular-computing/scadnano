@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:over_react/over_react.dart';
 
 import '../state/geometry.dart';
@@ -11,17 +10,15 @@ part 'design_main_strand_extension_text.over_react.g.dart';
 
 UiFactory<DesignMainStrandExtensionTextProps> DesignMainStrandExtensionText = _$DesignMainStrandExtensionText;
 
-mixin DesignMainStrandExtensionTextPropsMixin on UiProps {
-  Extension ext;
-  Geometry geometry;
-  String text;
-  String css_selector_text;
-  int num_stacked;
+mixin DesignMainStrandExtensionTextProps on UiProps {
+  late Extension ext;
+  late Geometry geometry;
+  late String text;
+  late String css_selector_text;
+  late int num_stacked;
 
-  int font_size;
+  late double font_size;
 }
-
-class DesignMainStrandExtensionTextProps = UiProps with DesignMainStrandExtensionTextPropsMixin;
 
 class DesignMainStrandExtensionTextComponent extends UiComponent2<DesignMainStrandExtensionTextProps>
     with PureComponent {
@@ -31,15 +28,10 @@ class DesignMainStrandExtensionTextComponent extends UiComponent2<DesignMainStra
     var dy = -0.1 * props.geometry.base_height_svg;
     dy -= props.geometry.base_height_svg * props.num_stacked;
 
-    num letter_spacing = 0.0;
-    num font_size = props.font_size;
+    double letter_spacing = 0.0;
+    double font_size = props.font_size;
 
-    Map<String, dynamic> style_map;
-    if (letter_spacing != null) {
-      style_map = {'letterSpacing': '${letter_spacing}em', 'fontSize': '${font_size}px'};
-    } else {
-      style_map = {'fontSize': '${font_size}px'};
-    }
+    Map<String, dynamic> style_map = {'letterSpacing': '${letter_spacing}em', 'fontSize': '${font_size}px'};
 
     SvgProps text_path_props = (Dom.textPath()
       ..className = props.css_selector_text
