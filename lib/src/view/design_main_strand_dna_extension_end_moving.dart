@@ -25,7 +25,7 @@ typedef PointerDownHandler = void Function(react.SyntheticPointerEvent);
 typedef MouseUpHandler = void Function(react.SyntheticMouseEvent);
 
 UiFactory<ExtensionEndMovingProps> ConnectedExtensionEndMoving =
-    connect<DNAExtensionsMove, ExtensionEndMovingProps>(
+    connect<DNAExtensionsMove?, ExtensionEndMovingProps>(
   mapStateToPropsWithOwnProps: (dna_extensions_move, props) {
     if (dna_extensions_move == null || props.dna_end == null) {
       return ExtensionEndMoving()..render = false;
