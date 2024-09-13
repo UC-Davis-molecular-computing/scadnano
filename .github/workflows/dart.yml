@@ -25,7 +25,7 @@ jobs:
         run: sudo apt install /tmp/dart_2.19.6-1_amd64.deb
       - uses: actions/checkout@v3
       - name: Install dependencies
-        run: PATH="$PATH:/usr/lib/dart/bin" pub get
+        run: PATH="$PATH:/usr/lib/dart/bin" dart pub get
       - name: Run tests
         run: PATH="$PATH:/usr/lib/dart/bin" pub run build_runner test
 

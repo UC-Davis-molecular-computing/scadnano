@@ -25,7 +25,7 @@ jobs:
         run: sudo apt install /tmp/dart_2.19.6-1_amd64.deb
       - uses: actions/checkout@v3
       - name: Install dependencies
-        run: PATH="$PATH:/usr/lib/dart/bin" pub get
+        run: PATH="$PATH:/usr/lib/dart/bin" dart pub get
       - name: Verify formatting
         run: dart format -l 110 --output=none --set-exit-if-changed .
 
