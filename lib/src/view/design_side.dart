@@ -34,7 +34,7 @@ DesignSideProps set_design_side_props(DesignSideProps elt, AppState state) {
     ..helix_idxs_selected = state.ui_state.side_selected_helix_idxs
     ..rotation_datas = state.ui_state.show_slice_bar
         ? util.rotation_datas_at_offset_in_group(
-            state.ui_state.slice_bar_offset!, state.design, state.ui_state.displayed_group_name)
+            state.ui_state.slice_bar_offset, state.design, state.ui_state.displayed_group_name)
         : BuiltList<DesignSideRotationData>()
     ..slice_bar_offset = state.ui_state.slice_bar_offset
     ..edit_modes = state.ui_state.edit_modes

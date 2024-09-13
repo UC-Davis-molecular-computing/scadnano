@@ -10,7 +10,7 @@ class ErrorMessageComponent {
     this.root_element.attributes = {'class': 'error-message'};
   }
 
-  render(String error_message) {
+  render(String? error_message) {
     this.root_element.children.clear();
     if (error_message != null && error_message.length > 0) {
       if (error_message == constants.NO_DESIGN_MESSAGE_HTML) {

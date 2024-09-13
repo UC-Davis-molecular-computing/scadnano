@@ -22,11 +22,13 @@ autostaple_and_autobreak_middleware(Store<AppState> store, dynamic action, NextD
 }
 
 _autostaple(Store<AppState> store) async {
+  print("autostaple, sending design to server ${constants.autostaple_url}");
   var response = await http.post(
     Uri.parse(constants.autostaple_url),
     body: json_encode(store.state.design),
     headers: {"Content-Type": "application/json"},
   );
+  print("response: ${response.body}");
 
   _handle_response(store, response, "autostaple");
 }
@@ -53,12 +55,14 @@ _autobreak(Store<AppState> store, actions.Autobreak action) async {
 void _handle_response(Store<AppState> store, http.Response response, String short_description) {
   if (response.statusCode == 200) {
     var json_model_text = response.body;
-    Design? design_new = Design.from_json_str(json_model_text, store.state.ui_state.invert_y);
-    if (design_new != null) {
-      store.dispatch(actions.NewDesignSet(design_new, short_description));
-    } else {
-      window.alert('Error: Received null design from server');
+    Design design_new;
+    try {
+      design_new = Design.from_json_str(json_model_text, store.state.ui_state.invert_y);
+    } catch (e) {
+      window.alert('Error: Received invalid JSON from server: ${e}');
+      return;
     }
+    store.dispatch(actions.NewDesignSet(design_new, short_description));
   } else {
     Map response_body_json = jsonDecode(response.body);
     window.alert('Error: ${response_body_json['error']}');

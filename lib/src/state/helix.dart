@@ -206,8 +206,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   bool get has_major_ticks => !has_default_major_ticks;
 
   @memoized
-  bool get has_major_tick_periodic_distances =>
-      major_tick_periodic_distances != null && major_tick_periodic_distances.length >= 2;
+  bool get has_major_tick_periodic_distances => major_tick_periodic_distances.length >= 2;
 
   Object to_json_serializable({bool suppress_indent = false}) {
     Map<String, dynamic> json_map = {};

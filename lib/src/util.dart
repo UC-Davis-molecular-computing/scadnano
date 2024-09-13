@@ -544,7 +544,7 @@ int find_closest_offset(MouseEvent event, Iterable<Helix> helices_in_group, Heli
 
 /// Return list of mouseover data about helix group `group_name` at `offset`.
 BuiltList<DesignSideRotationData> rotation_datas_at_offset_in_group(
-    int offset, Design design, String group_name) {
+    int? offset, Design design, String group_name) {
   List<DesignSideRotationParams> rotation_params_list = [];
   if (offset != null) {
     for (var helix_idx in design.helix_idxs_in_group[group_name]!) {

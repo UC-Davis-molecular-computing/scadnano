@@ -229,17 +229,11 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     var start_offset = '50%';
     var dy = '${0.1 * props.geometry.base_height_svg}';
 
-    Tuple2<num, num> ls_fs;
-    ls_fs = _calculate_letter_spacing_and_font_size_extension(ext);
-    num letter_spacing = ls_fs.item1;
-    num font_size = ls_fs.item2;
+    Tuple2<double, int> ls_fs = _calculate_letter_spacing_and_font_size_extension(ext);
+    double letter_spacing = ls_fs.item1;
+    int font_size = ls_fs.item2;
 
-    Map<String, dynamic> style_map;
-    if (letter_spacing != null) {
-      style_map = {'letterSpacing': '${letter_spacing}em', 'fontSize': '${font_size}px'};
-    } else {
-      style_map = {'fontSize': '${font_size}px'};
-    }
+    Map<String, dynamic> style_map = {'letterSpacing': '${letter_spacing}em', 'fontSize': '${font_size}px'};
 
     SvgProps text_path_props = (Dom.textPath()
       ..className = classname_dna_sequence + '-extension'

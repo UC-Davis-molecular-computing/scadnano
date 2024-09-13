@@ -330,7 +330,7 @@ class DesignViewComponent {
           // on copying with Ctrl+C if the original helices were from different groups).
           bool can_paste = true;
           if (!strands_move.copy) {
-            var group_names = group_names_of_strands(strands_move);
+            BuiltSet<String>? group_names = group_names_of_strands(strands_move);
             if (group_names != null && group_names.length != 1) {
               var msg = 'Cannot move or copy strands unless they are all on the same helix group.\n'
                   'These strands occupy the following helix groups: ${group_names.join(", ")}';
@@ -745,7 +745,7 @@ class DesignViewComponent {
         this.root_element.children.add(this.dialog_loading_container);
         this.root_element.children.add(this.strand_color_picker_container);
       }
-      this.error_message_component.render(state.error_message!);
+      this.error_message_component.render(state.error_message);
 
       render_dialog_form();
       render_loading_dialog(state);
@@ -989,7 +989,7 @@ paste_strands_manually() {
   // it was much easier to handle the asynchronous read (seems to be the only way to read the clipboard)
   // here than to handle it in middleware;
   // unit testing especially seemed to be very difficult with all the asynchronous calls
-  clipboard.read().then((String content) {
+  clipboard.read().then((String? content) {
     if (content != null && content.isNotEmpty) {
       app.dispatch(actions.ManualPasteInitiate(clipboard_content: content));
     }
@@ -1000,16 +1000,15 @@ paste_strands_auto() {
   // it was much easier to handle the asynchronous read (seems to be the only way to read the clipboard)
   // here than to handle it in middleware;
   // unit testing especially seemed to be very difficult with all the asynchronous calls
-  clipboard.read().then((String content) {
+  clipboard.read().then((String? content) {
     if (content != null && content.isNotEmpty) {
       app.dispatch(actions.AutoPasteInitiate(clipboard_content: content));
     }
   });
 }
 
-//TODO: add ? to the next four return types
-BuiltSet<String> group_names_of_strands(StrandsMove strands_move) =>
-    app.state.design.group_names_of_strands(strands_move.strands_moving)!;
+BuiltSet<String>? group_names_of_strands(StrandsMove strands_move) =>
+    app.state.design.group_names_of_strands(strands_move.strands_moving);
 
 BuiltSet<String> group_names_of_domains(DomainsMove domains_move) =>
     app.state.design.group_names_of_domains(domains_move.domains_moving);

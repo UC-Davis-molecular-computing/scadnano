@@ -275,7 +275,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
 
   focus_base_oxview(Strand strand, Domain domain, Address address, ModificationType type) {
     int strand_idx = app.state.design.strands.indexOf(strand);
-    int nt_idx_in_strand = address != null ? clicked_strand_dna_idx(domain, address, strand) : 0;
+    int nt_idx_in_strand = clicked_strand_dna_idx(domain, address, strand);
     String js_highlight_base = '''\
 let base = systems[0].strands[${strand_idx}].getMonomers()[${nt_idx_in_strand}];
 api.findElement(base);
