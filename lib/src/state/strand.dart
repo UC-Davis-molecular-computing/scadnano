@@ -28,8 +28,8 @@ import 'unused_fields.dart';
 part 'strand.g.dart';
 
 abstract class Strand
-    with SelectableMixin, BuiltJsonSerializable, UnusedFields, JSONSerializable
-    implements Built<Strand, StrandBuilder> {
+    with SelectableMixin, BuiltJsonSerializable, UnusedFields
+    implements Built<Strand, StrandBuilder>, JSONSerializable {
   Strand._();
 
   factory Strand.from([void Function(StrandBuilder) updates]) = _$Strand;

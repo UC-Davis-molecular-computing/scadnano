@@ -61,7 +61,7 @@ abstract class Action {
 
 // Actions that affect the DNADesign (i.e., not purely UIAppState-affecting actions such as selecting items).
 // Only Undo and Redo implement this directly; all others implement the subtype UndoableAction.
-abstract class DesignChangingAction implements StorableAction, SvgPngCacheInvalidatingAction {
+mixin DesignChangingAction implements StorableAction, SvgPngCacheInvalidatingAction {
   Iterable<Storable> storables() => [Storable.design];
 }
 
@@ -70,7 +70,7 @@ abstract class DesignChangingAction implements StorableAction, SvgPngCacheInvali
 /// the design to localStorage. Now, we just check whether the Design changed, but print a warning
 /// if the action is not a subtype of UndoableAction. However, this subtype relationship IS still
 /// currently used to detect whether to affect the undo stack.
-abstract class UndoableAction implements DesignChangingAction {
+mixin UndoableAction implements DesignChangingAction {
   Iterable<Storable> storables() => [Storable.design];
 
   String short_description();

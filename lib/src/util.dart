@@ -1455,7 +1455,7 @@ String wc_base(String base) {
       return 't';
     case 'C':
       return 'G';
-    case 'C':
+    case 'c':
       return 'g';
     case 'G':
       return 'C';

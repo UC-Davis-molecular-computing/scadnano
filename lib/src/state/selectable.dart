@@ -294,7 +294,7 @@ abstract class SelectableInsertion
   int get hashCode;
 }
 
-abstract class SelectableModification implements Selectable {
+mixin SelectableModification implements Selectable {
   Modification get modification;
 
   Strand get strand;
