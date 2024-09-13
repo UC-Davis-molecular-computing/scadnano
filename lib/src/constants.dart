@@ -1,6 +1,7 @@
 import 'dart:html';
 
 import 'package:color/color.dart';
+import 'package:over_react/components.dart';
 import 'package:platform_detect/platform_detect.dart';
 
 import 'state/geometry.dart';
@@ -67,6 +68,15 @@ No design is loaded.
 Try loading an example by selecting <em>File&rarr;Load example</em>,
 or select <em>File&rarr;Open</em> to load a .sc file from your local drive.
 You can also drag and drop a .sc file from your file system to the browser.</p>''';
+
+//FIXME: OverReact's defaultErrorBoundaryLoggerName is 'over_react.ErrorBoundary' as of version 5.3.0,
+// but if we access it directly, we get a warning
+// "info: The member 'defaultErrorBoundaryLoggerName' can only be used within
+// 'package:over_react/src/component/error_boundary_api.dart' or a test."
+// So to avoid the warning, we hard-code the name. Honestly I don't even really know what an
+// ErrorBoundary logger is, so I'm not sure if this is the right thing to do.
+// const default_error_boundary_logger_name = defaultErrorBoundaryLoggerName;
+const default_error_boundary_logger_name = 'over_react.ErrorBoundary';
 
 const OXVIEW_URL = 'https://sulcgroup.github.io/oxdna-viewer/';
 

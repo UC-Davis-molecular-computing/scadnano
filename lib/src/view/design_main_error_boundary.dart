@@ -29,7 +29,7 @@ class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
   @override
   get defaultProps => (newProps()
     ..identicalErrorFrequencyTolerance = Duration(seconds: 5)
-    ..loggerName = defaultErrorBoundaryLoggerName
+    ..loggerName = constants.default_error_boundary_logger_name
     ..shouldLogErrors = true);
 
   @override
@@ -100,7 +100,7 @@ class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
   String get _loggerName {
     if (props.logger != null) return props.logger!.name;
 
-    return props.loggerName ?? defaultErrorBoundaryLoggerName;
+    return props.loggerName ?? constants.default_error_boundary_logger_name;
   }
 
   void _logErrorCaughtByErrorBoundary(/*Error|Exception*/ dynamic error, ReactErrorInfo info) {
