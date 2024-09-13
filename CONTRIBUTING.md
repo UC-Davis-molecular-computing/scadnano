@@ -241,23 +241,23 @@ git checkout dev
 
 ### Installing Dart
 
-This project requires using Dart version **2.13**, not the latest version. Click on a dropdown below for installation instructions for your operating system.
+This project requires using Dart version **2.19.6**, not the latest version, which is 3.x. Click on a dropdown below for installation instructions for your operating system.
 
 <!--TODO: Find a way to use code blocks with syntax highlighting inside <details>-->
 
 <details><summary><strong>Windows</strong></summary>
 First, install <a href="https://chocolatey.org/install">Chocolatey</a> if you haven't already. If <code>choco help</code> shows a help menu for using Chocolatey, then you've set it up correctly.
 
-Then, install Dart 2.13.4:
+Then, install Dart 2.19.6:
 
 <pre>
-choco install dart-sdk --version 2.13.4
+choco install dart-sdk --version 2.19.6
 </pre>
 
 To stop Chocolatey from automatically updating Dart to the latest version, pin it:
 
 <pre>
-choco pin --name="'dart-sdk'" --version="'2.13.4'"
+choco pin --name="'dart-sdk'" --version="'2.19.6'"
 </pre>
 
 </details>
@@ -267,16 +267,16 @@ First, install <a href="https://brew.sh/">Homebrew</a> if you haven't already. I
 
 It may help to run `brew tap dart-lang/dart` first.
 
-Then, install Dart 2.13.4:
+Then, install Dart 2.19.6:
 
 <pre>
-brew install dart@2.13.4
+brew install dart@2.19.6
 </pre>
 
 To stop Homebrew from automatically updating Dart to the latest version, pin it:
 
 <pre>
-brew pin dart@2.13.4
+brew pin dart@2.19.6
 </pre>
 
 If running `dart` in a terminal now does not work, you may need to follow <a href="https://docs.brew.sh/FAQ#my-mac-apps-dont-find-homebrew-utilities">these instructions</a>.
@@ -292,17 +292,17 @@ wget -qO- https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo gpg --dea
 echo 'deb [signed-by=/usr/share/keyrings/dart.gpg arch=amd64] https://storage.googleapis.com/download.dartlang.org/linux/debian stable main' | sudo tee /etc/apt/sources.list.d/dart_stable.list
 </pre>
 
-Then, install Dart 2.13.4:
+Then, install Dart 2.19.6:
 
 <pre>
 sudo apt-get update
-sudo apt-get install dart=2.13.4
+sudo apt-get install dart=2.19.6
 </pre>
 
 To stop apt from automatically updating Dart to the latest version, hold it:
 
 <pre>
-sudo apt-mark hold dart=2.13.4
+sudo apt-mark hold dart=2.19.6
 </pre>
 
 </details>
@@ -314,15 +314,40 @@ After installing the Dart SDK, you should see a help menu when you run `dart`.
 Once you have installed Dart, install all the Dart dependencies (from the same directory `scadnano` into which the project was cloned by git):
 
 ```
-pub get
+dart pub get
+```
+
+Try running the unit tests like this:
+
+```
+dart run build_runner test
+```
+
+It should report something like this after running the tests:
+
+```
+C:\Dropbox\git\scadnano>dart run build_runner test
+[INFO] Generating build script completed, took 248ms
+[INFO] Reading cached asset graph completed, took 332ms
+[INFO] Checking for updates since last build completed, took 474ms
+[INFO] Running build completed, took 17.0s
+[INFO] Caching finalized dependency graph completed, took 367ms
+[INFO] Creating merged output dir `C:\Users\pexat\AppData\Local\Temp\build_runner_test1a56df4\` completed, took 3.0s
+[INFO] Writing asset manifest completed, took 18ms
+[INFO] Succeeded after 20.4s with 933 outputs (1003 actions)
+Running tests...
+
+Building package executable... (4.0s)
+Built test:test.
+00:11 +491 ~2: All tests passed!
 ```
 
 ### Installing `webdev`
 
-This project uses an older version of the `webdev` tool, not the latest version, to build and serve the web app. Install it with:
+`webdev` is used to run a local server for running scadnano in your browser for testing. Install it with:
 
 ```
-pub global activate webdev 2.5.9
+pub global activate webdev
 ```
 
 Note that often a message like this appears:
@@ -357,9 +382,7 @@ However, in scadnano, it doesn't appear to make a big difference whether develop
 The webdev program will tell you which URL to enter in your browser; it will be something like
 
 ```
-
 [INFO] Serving `web` on http://127.0.0.1:8080
-
 ```
 
 Sometimes you may see an unexpected compilation error even if you haven't changed the code from a state where it was compiling okay. If you've really tried to fix an error and it doesn't seem to be due to a mistake in the code, then as a last resort, try running `./clean.sh`. This will clear out cached files and `.g.dart` files, which can sometimes become stale and need to be regenerated. If you run `./clean.sh`, and the project still does not compile, then it is a genuine syntax error that needs to be fixed.
@@ -384,12 +407,31 @@ extensions helpful for debugging and profiling.
 
 ### Running Tests
 
-Unit tests are contained in the [test](test/) directory.
+Unit tests are contained in the [test](test/) directory. To run them all type `dart run build_runner test`.
 
-The repository provides a test script [test.sh](test.sh), which
-provides common utilities for running unit tests. All unit tests
-can be run by `bash test.sh`. To see more options, run
-`bash test.sh -h`.
+You can also run one file at a time like this: 
+
+```
+dart run build_runner test -- test\assign_dna_unit_test.dart
+```
+
+or even one test at a time like this:
+
+```
+dart run build_runner test -- test\assign_dna_unit_test.dart --plain-name "Assign/remove dna test:  AssignDNA"
+```
+
+That can be useful for debugging a test using the Chrome browser devtools like this:
+
+```
+dart run build_runner test -- test\assign_dna_unit_test.dart --plain-name "Assign/remove dna test:  AssignDNA" -P debug
+```
+
+This opens a browser and lets you set a breakpoint if you open browser dev tools (type Ctrl+Shift+I). It can be a bit hard to find the files, look here:
+
+![alt text](images/location-of-scadnano-sources-unit-testing.png)
+
+
 
 Please add unit tests whenever possible. Currently, there are unit
 tests for [Redux reducers](test/reducer_test.dart) and a few tests for
