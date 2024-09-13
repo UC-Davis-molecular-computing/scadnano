@@ -53,7 +53,7 @@ dna_ends_move_start_middleware(Store<AppState> store, action, NextDispatcher nex
 /// moved to. This depends on what is the closest end that is not selected, and how many selected ends
 /// are in between this end and that one.
 int find_allowable_offset(Design design, DNAEnd end, BuiltSet<DNAEnd> selected_ends, bool highest) {
-  Domain substrand = design.end_to_domain[end];
+  Domain substrand = design.end_to_domain[end]!;
   int helix_idx = substrand.helix;
   Set<int> selected_offsets = selected_ends.map((e) => e.offset_inclusive).toSet();
 
@@ -81,7 +81,7 @@ int find_allowable_offset(Design design, DNAEnd end, BuiltSet<DNAEnd> selected_e
   }
 
   if (unselected_end_offsets_to_one_side.isEmpty) {
-    Helix helix = design.helices[helix_idx];
+    Helix helix = design.helices[helix_idx]!;
     return highest ? helix.max_offset - 1 : helix.min_offset;
   }
 

@@ -17,10 +17,10 @@ part 'design_main_dna_mismatches.over_react.g.dart';
 UiFactory<DesignMainDNAMismatchesProps> DesignMainDNAMismatches = _$DesignMainDNAMismatches;
 
 mixin DesignMainDNAMismatchesProps on UiProps {
-  Design design;
-  bool only_display_selected_helices;
-  BuiltSet<int> side_selected_helix_idxs;
-  BuiltMap<int, num> helix_idx_to_svg_position_y_map;
+  late Design design;
+  late bool only_display_selected_helices;
+  late BuiltSet<int> side_selected_helix_idxs;
+  late BuiltMap<int, num> helix_idx_to_svg_position_y_map;
 }
 
 class DesignMainDNAMismatchesComponent extends UiComponent2<DesignMainDNAMismatchesProps> with PureComponent {
@@ -39,10 +39,10 @@ class DesignMainDNAMismatchesComponent extends UiComponent2<DesignMainDNAMismatc
 
         List<ReactElement> domain_components = [];
         for (Mismatch mismatch in mismatches) {
-          var helix = props.design.helices[domain.helix];
+          var helix = props.design.helices[domain.helix]!;
           if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(helix.idx)) {
             var base_svg_pos = helix.svg_base_pos(
-                mismatch.offset, domain.forward, props.helix_idx_to_svg_position_y_map[helix.idx]);
+                mismatch.offset, domain.forward, props.helix_idx_to_svg_position_y_map[helix.idx]!);
             // For now, if there is a mismatch in an insertion we simply display it for the whole insertion,
             // not for a specific base. We maintain React keys to agree on any mismatches in the same
             // insertion, and we only render one of them.
@@ -61,8 +61,8 @@ class DesignMainDNAMismatchesComponent extends UiComponent2<DesignMainDNAMismatc
           }
         }
 
-        Helix helix = props.design.helices[domain.helix];
-        HelixGroup group = props.design.groups[helix.group];
+        Helix helix = props.design.helices[domain.helix]!;
+        HelixGroup group = props.design.groups[helix.group]!;
         String transform_str = group.transform_str(props.design.geometry);
 
         if (domain_components.isNotEmpty) {

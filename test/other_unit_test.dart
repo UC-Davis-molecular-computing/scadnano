@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'dart:convert';
 import 'dart:html';
 import 'package:built_collection/built_collection.dart';
@@ -64,7 +62,7 @@ main() {
 }    
 ''';
     var json_map = jsonDecode(json_str);
-    var design = Design.from_json(json_map);
+    var design = Design.from_json(json_map)!;
     var deletions = design.strands[0].domains[0].deletions;
     expect(2, deletions.length);
     expect(5, deletions[0]);
@@ -135,7 +133,7 @@ main() {
 }    
 ''';
     var json_map = jsonDecode(json_str);
-    var design = Design.from_json(json_map);
+    var design = Design.from_json(json_map)!;
     var insertions = design.strands[0].domains[0].insertions;
     expect(2, insertions.length);
     expect(5, insertions[0].offset);
@@ -225,16 +223,16 @@ main() {
             ]
           }
       """;
-    Design design = Design.from_json(jsonDecode(no_grid_two_helices_json), false);
+    Design design = Design.from_json(jsonDecode(no_grid_two_helices_json), false)!;
     // ensure x and z are swapped after reading in
     //TODO: test for swapping x and z positions in versions < 0.9.0 temporarily disabled until
     // codenano/scadnano versions are aligned
-    expect(design.helices[0].position3d.x, 30);
-    expect(design.helices[0].position3d.y, 60);
-    expect(design.helices[0].position3d.z, 10);
-    expect(design.helices[1].position3d.x, 50);
-    expect(design.helices[1].position3d.y, 80);
-    expect(design.helices[1].position3d.z, 20);
+    expect(design.helices[0]!.position3d.x, 30);
+    expect(design.helices[0]!.position3d.y, 60);
+    expect(design.helices[0]!.position3d.z, 10);
+    expect(design.helices[1]!.position3d.x, 50);
+    expect(design.helices[1]!.position3d.y, 80);
+    expect(design.helices[1]!.position3d.z, 20);
   });
 
   group('strand_maker_tests', () {
@@ -373,7 +371,7 @@ main() {
                   display_text: 'Cy3',
                   vendor_code: '/iCy3/',
                   allowed_bases: null,
-                  unused_fields: BuiltMap<String, Object>()))
+                  unused_fields: BuiltMap<String, dynamic>()))
           .commit();
       actual_design = actual_design
           .draw_strand(0, 10)
@@ -381,7 +379,7 @@ main() {
           .cross(1)
           .to(10)
           .with_modification_5p(Modification5Prime(
-              display_text: 'B', vendor_code: '/5Biosg/', unused_fields: BuiltMap<String, Object>()))
+              display_text: 'B', vendor_code: '/5Biosg/', unused_fields: BuiltMap<String, dynamic>()))
           .commit();
 
       Design expected_design = new Design(grid: Grid.square, helices: helices);
@@ -397,7 +395,7 @@ main() {
                 display_text: 'Cy3',
                 vendor_code: '/iCy3/',
                 allowed_bases: null,
-                unused_fields: BuiltMap<String, Object>())
+                unused_fields: BuiltMap<String, dynamic>())
           },
           is_scaffold: true,
         )));
@@ -408,7 +406,7 @@ main() {
         ],
             color: Color.rgb(247, 67, 8),
             modification_5p: Modification5Prime(
-                display_text: 'B', vendor_code: '/5Biosg/', unused_fields: BuiltMap<String, Object>()))));
+                display_text: 'B', vendor_code: '/5Biosg/', unused_fields: BuiltMap<String, dynamic>()))));
       expect(actual_design.strands, expected_design.strands);
     });
     test('test_strand__call_to_twice_legally', () {
@@ -440,12 +438,12 @@ main() {
       "strands": []
     }
     """;
-    Design design = Design.from_json(jsonDecode(four_helix_min_offsets_nonzero_design), false);
+    Design design = Design.from_json(jsonDecode(four_helix_min_offsets_nonzero_design), false)!;
 
-    expect(design.helices[0].major_tick_start, 0);
-    expect(design.helices[1].major_tick_start, 1);
-    expect(design.helices[2].major_tick_start, 2);
-    expect(design.helices[3].major_tick_start, 3);
+    expect(design.helices[0]!.major_tick_start, 0);
+    expect(design.helices[1]!.major_tick_start, 1);
+    expect(design.helices[2]!.major_tick_start, 2);
+    expect(design.helices[3]!.major_tick_start, 3);
   });
 
   // See issue #551: https://github.com/UC-Davis-molecular-computing/scadnano/issues/551

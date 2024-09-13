@@ -4,39 +4,36 @@ description: A web-based scriptable cadnano (see https://cadnano.org/ for origin
 #author: David Doty <doty@ucdavis.edu>
 
 environment:
-  sdk: '>=2.11.0 <3.0.0'
+  sdk: '>=2.19.6 <3.0.0'
 
 dependencies:
-  analyzer: '>=0.39.0 <0.42.0'
-  spreadsheet_decoder: ^2.0.0
+  analyzer: ^5.13.0
+  spreadsheet_decoder: ^2.2.0
   dialog: ^0.8.0
-  meta: ^1.1.7
-  js: ^0.6.1+1
-  codemirror: ^0.7.0+5.65.0
+  meta: ^1.15.0
+  js: ^0.6.7
+  codemirror: ^0.7.11+5.65.13
   color: ^3.0.0
-  tuple: ^1.0.2
-  quiver: ^2.0.5
-  test: ^1.14.5
-  path: ^1.6.4
-  platform_detect: ^1.0.0
+  tuple: ^2.0.2
+  quiver: ^3.2.2
+  test: ^1.24.3
+  path: ^1.8.3
+  platform_detect: ^2.1.0
   dnd: ^2.0.1
-  built_value: ^8.1.3
+  built_value: ^8.5.0
   built_collection: ^5.1.1
-  reselect: ^0.4.0
-  redux: ^4.0.0
-  react: ^6.0.0
-  over_react: ^4.0.0
-  http: ^0.12.2
+  reselect: ^0.5.0
+  redux: ^5.0.0
+  react: ^7.1.3
+  over_react: ^5.3.0
+  http: ^0.13.6
+  collection: ^1.15.0-nullsafety.4
 
 dev_dependencies:
-  built_value_generator: ^8.0.0
-  build_runner: ^1.10.1
-  build_test: ^1.0.0
-  build_web_compilers: ^2.11.0
-  over_react_test: ^2.9.0
-  test_html_builder: ^2.0.0
-  redux_dev_tools: ^0.5.0
-
-analyzer:
-  plugins:
-    - over_react
+  built_value_generator: ^8.5.0
+  build_runner: ^2.3.3
+  build_test: ^2.2.1
+  build_web_compilers: ^3.2.7
+  over_react_test: ^3.0.0
+  test_html_builder: ^3.0.5
+  redux_dev_tools: ^0.7.0

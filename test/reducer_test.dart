@@ -1,7 +1,3 @@
-// @dart=2.9
-// import 'dart:convert';
-// import 'dart:io';
-
 import 'dart:math';
 import 'dart:convert';
 import 'dart:html';
@@ -61,7 +57,7 @@ main() {
       ] 
     }
     ''';
-    Design design = Design.from_json(jsonDecode(json_str));
+    Design design = Design.from_json(jsonDecode(json_str))!;
     Strand strand = design.strands.first;
     Color color = strand.color;
     String color_str = color.toHexColor().toCssString();
@@ -96,9 +92,9 @@ main() {
     actual_position = d.helices[0].position3d
     self.assertEqual(expected_position, actual_position)
      */
-    Design design = Design.from_json(jsonDecode(json_str), false);
+    Design design = Design.from_json(jsonDecode(json_str), false)!;
     var expected_position = Position3D(x: 1, y: 2, z: 3);
-    var actual_position = design.helices[0].position3d;
+    var actual_position = design.helices[0]!.position3d;
     expect(actual_position, expected_position);
   });
 
@@ -135,9 +131,9 @@ main() {
     actual_position = d.helices[0].position3d
     self.assertEqual(expected_position, actual_position)
      */
-    Design design = Design.from_json(jsonDecode(json_str), false);
+    Design design = Design.from_json(jsonDecode(json_str), false)!;
     var expected_position = Position3D(x: 1, y: 2, z: 3);
-    var actual_position = design.helices[0].position3d;
+    var actual_position = design.helices[0]!.position3d;
     expect(actual_position, expected_position);
   });
 
@@ -170,9 +166,9 @@ main() {
     actual_position = d.helices[0].position3d
     self.assertEqual(expected_position, actual_position)
      */
-    Design design = Design.from_json(jsonDecode(json_str), false);
+    Design design = Design.from_json(jsonDecode(json_str), false)!;
     var expected_position = Position3D(x: 1, y: 2, z: 3);
-    var actual_position = design.helices[0].position3d;
+    var actual_position = design.helices[0]!.position3d;
     expect(actual_position, expected_position);
   });
 
@@ -207,9 +203,9 @@ main() {
     actual_position = d.helices[0].position3d
     self.assertEqual(expected_position, actual_position)
      */
-    Design design = Design.from_json(jsonDecode(json_str), false);
+    Design design = Design.from_json(jsonDecode(json_str), false)!;
     var expected_position = Position3D(x: 1, y: 2, z: 3);
-    var actual_position = design.helices[0].position3d;
+    var actual_position = design.helices[0]!.position3d;
     expect(actual_position, expected_position);
   });
 
@@ -254,7 +250,7 @@ main() {
   ]
 } 
   ''';
-  Design design_simple_strand = Design.from_json(jsonDecode(simple_strand));
+  Design design_simple_strand = Design.from_json(jsonDecode(simple_strand))!;
 
   //     before
   //     0        8              24
@@ -292,7 +288,7 @@ main() {
     Domain substrand = design_simple_strand.strands[0].substrands[0] as Domain;
     state = app_state_reducer(state, Nick(domain: substrand, offset: 8));
 
-    Design expected_design = Design.from_json(jsonDecode(content_after));
+    Design expected_design = Design.from_json(jsonDecode(content_after))!;
     expect_strands_equal(state.design.strands, expected_design.strands);
   });
 
@@ -339,7 +335,7 @@ main() {
     Domain nicked_substrand2 = state.design.strands[1].substrands[0] as Domain;
     state = app_state_reducer(state, Nick(domain: nicked_substrand2, offset: 16));
 
-    Design expected_design = Design.from_json(jsonDecode(content_after));
+    Design expected_design = Design.from_json(jsonDecode(content_after))!;
     expect_strands_equal(state.design.strands, expected_design.strands);
   });
 
@@ -372,7 +368,7 @@ main() {
   ]
 } 
   ''';
-  Design small_design_h0 = Design.from_json(jsonDecode(smaller_design_h0_json));
+  Design small_design_h0 = Design.from_json(jsonDecode(smaller_design_h0_json))!;
 
   //     ACGTACGA AACCGGTA
   // 0   [------> [------>
@@ -416,7 +412,7 @@ main() {
     Domain nicked_substrand = small_design_h0.strands[0].substrands[0] as Domain;
     state = app_state_reducer(state, Nick(domain: nicked_substrand, offset: 8));
 
-    Design expected_design = Design.from_json(jsonDecode(content_after));
+    Design expected_design = Design.from_json(jsonDecode(content_after))!;
     expect_strands_equal(state.design.strands, expected_design.strands);
   });
 
@@ -462,7 +458,7 @@ main() {
     Domain nicked_substrand = small_design_h0.strands[1].substrands[0] as Domain;
     state = app_state_reducer(state, Nick(domain: nicked_substrand, offset: 8));
 
-    Design expected_design = Design.from_json(jsonDecode(content_after));
+    Design expected_design = Design.from_json(jsonDecode(content_after))!;
     expect_strands_equal(state.design.strands, expected_design.strands);
   });
 
@@ -563,7 +559,7 @@ main() {
   ]
  }
   ''';
-  Design six_helix_rectangle = Design.from_json(jsonDecode(six_helix_rectangle_json));
+  Design six_helix_rectangle = Design.from_json(jsonDecode(six_helix_rectangle_json))!;
 
 //     0        8        16       24       32       40       48       56       64       72       80       88       96
 // 0   [------- -------- -------- -------- -------- -------- -------- -------- -------- -------- -------- ------->
@@ -587,7 +583,7 @@ main() {
     AppState state = app_state_from_design(six_helix_rectangle);
 
     // design.add_nick(helix=5, offset=48, forward=False)
-    Domain h5_reverse = six_helix_rectangle.strands[11].substrands[0];
+    Domain h5_reverse = six_helix_rectangle.strands[11].substrands[0] as Domain;
     state = app_state_reducer(state, Nick(domain: h5_reverse, offset: 48));
 
     String h5_after_nick_json = r'''
@@ -618,7 +614,7 @@ main() {
   ]
  }
   ''';
-    Design h5_after_nick1 = Design.from_json(jsonDecode(h5_after_nick_json));
+    Design h5_after_nick1 = Design.from_json(jsonDecode(h5_after_nick_json))!;
     Strand h5_96_reverse = h5_after_nick1.strands[0];
     Strand h5_48_reverse = h5_after_nick1.strands[1];
 
@@ -626,7 +622,7 @@ main() {
     expect(recolor_strands(state.design.strands).contains(h5_48_reverse), true);
 
     // design.add_nick(helix=0, offset=40, forward=False)
-    Domain h0_reverse = six_helix_rectangle.strands[1].substrands[0];
+    Domain h0_reverse = six_helix_rectangle.strands[1].substrands[0] as Domain;
     state = app_state_reducer(state, Nick(domain: h0_reverse, offset: 40));
     String h0_after_nick_json = r'''
  {
@@ -656,14 +652,14 @@ main() {
   ]
  }
   ''';
-    Design h0_after_nick2 = Design.from_json(jsonDecode(h0_after_nick_json));
+    Design h0_after_nick2 = Design.from_json(jsonDecode(h0_after_nick_json))!;
     Strand h0_96_reverse = h0_after_nick2.strands[0];
     Strand h0_40_reverse = h0_after_nick2.strands[1];
     expect(recolor_strands(state.design.strands).contains(h0_96_reverse), true);
     expect(recolor_strands(state.design.strands).contains(h0_40_reverse), true);
 
     // design.add_nick(helix=0, offset=72, forward=False)
-    Domain h0_reverse_for_nick3 = h0_96_reverse.substrands[0];
+    Domain h0_reverse_for_nick3 = h0_96_reverse.substrands[0] as Domain;
     state = app_state_reducer(state, Nick(domain: h0_reverse_for_nick3, offset: 72));
     String h0_after_nick3_json = r'''
  {
@@ -686,13 +682,13 @@ main() {
   ]
  }
   ''';
-    Design h0_after_nick3 = Design.from_json(jsonDecode(h0_after_nick3_json));
+    Design h0_after_nick3 = Design.from_json(jsonDecode(h0_after_nick3_json))!;
     Strand h0_40_72_reverse = h0_after_nick3.strands[0];
     Strand h0_72_96_reverse = h0_after_nick3.strands[1];
     expect(recolor_strands(state.design.strands).contains(h0_40_72_reverse), true);
     expect(recolor_strands(state.design.strands).contains(h0_72_96_reverse), true);
     // design.add_nick(helix=2, offset=40, forward=False)
-    Domain h2_reverse_for_nick4 = six_helix_rectangle.strands[5].substrands[0];
+    Domain h2_reverse_for_nick4 = six_helix_rectangle.strands[5].substrands[0] as Domain;
     state = app_state_reducer(state, Nick(domain: h2_reverse_for_nick4, offset: 40));
     String h2_after_nick4_json = r'''
  {
@@ -715,13 +711,13 @@ main() {
   ]
  }
   ''';
-    Design h2_after_nick4 = Design.from_json(jsonDecode(h2_after_nick4_json));
+    Design h2_after_nick4 = Design.from_json(jsonDecode(h2_after_nick4_json))!;
     Strand h2_00_40_reverse = h2_after_nick4.strands[0];
     Strand h2_40_96_reverse = h2_after_nick4.strands[1];
     expect(recolor_strands(state.design.strands).contains(h2_00_40_reverse), true);
     expect(recolor_strands(state.design.strands).contains(h2_40_96_reverse), true);
     // design.add_nick(helix=2, offset=72, forward=False)
-    Domain h2_reverse_for_nick5 = h2_40_96_reverse.substrands[0];
+    Domain h2_reverse_for_nick5 = h2_40_96_reverse.substrands[0] as Domain;
     state = app_state_reducer(state, Nick(domain: h2_reverse_for_nick5, offset: 72));
     String h2_after_nick5_json = r'''
  {
@@ -744,13 +740,13 @@ main() {
   ]
  }
   ''';
-    Design h2_after_nick5 = Design.from_json(jsonDecode(h2_after_nick5_json));
+    Design h2_after_nick5 = Design.from_json(jsonDecode(h2_after_nick5_json))!;
     Strand h2_40_72_reverse = h2_after_nick5.strands[0];
     Strand h2_72_96_reverse = h2_after_nick5.strands[1];
     expect(recolor_strands(state.design.strands).contains(h2_40_72_reverse), true);
     expect(recolor_strands(state.design.strands).contains(h2_72_96_reverse), true);
     // design.add_nick(helix=4, offset=40, forward=False)
-    Domain h4_reverse_for_nick6 = six_helix_rectangle.strands[9].substrands[0];
+    Domain h4_reverse_for_nick6 = six_helix_rectangle.strands[9].substrands[0] as Domain;
     state = app_state_reducer(state, Nick(domain: h4_reverse_for_nick6, offset: 40));
     String h4_after_nick6_json = r'''
  {
@@ -773,13 +769,13 @@ main() {
   ]
  }
   ''';
-    Design h4_after_nick6 = Design.from_json(jsonDecode(h4_after_nick6_json));
+    Design h4_after_nick6 = Design.from_json(jsonDecode(h4_after_nick6_json))!;
     Strand h4_00_40_reverse = h4_after_nick6.strands[0];
     Strand h4_40_96_reverse = h4_after_nick6.strands[1];
     expect(recolor_strands(state.design.strands).contains(h4_00_40_reverse), true);
     expect(recolor_strands(state.design.strands).contains(h4_40_96_reverse), true);
     // design.add_nick(helix=4, offset=72, forward=False)
-    Domain h4_reverse_for_nick7 = h4_40_96_reverse.substrands[0];
+    Domain h4_reverse_for_nick7 = h4_40_96_reverse.substrands[0] as Domain;
     state = app_state_reducer(state, Nick(domain: h4_reverse_for_nick7, offset: 72));
     String h4_after_nick7_json = r'''
  {
@@ -802,13 +798,13 @@ main() {
   ]
  }
   ''';
-    Design h4_after_nick7 = Design.from_json(jsonDecode(h4_after_nick7_json));
+    Design h4_after_nick7 = Design.from_json(jsonDecode(h4_after_nick7_json))!;
     Strand h4_40_72_reverse = h4_after_nick7.strands[0];
     Strand h4_72_96_reverse = h4_after_nick7.strands[1];
     expect(recolor_strands(state.design.strands).contains(h4_40_72_reverse), true);
     expect(recolor_strands(state.design.strands).contains(h4_72_96_reverse), true);
     // design.add_nick(helix=1, offset=24, forward=True)
-    Domain h1_forward_for_nick8 = six_helix_rectangle.strands[2].substrands[0];
+    Domain h1_forward_for_nick8 = six_helix_rectangle.strands[2].substrands[0] as Domain;
     state = app_state_reducer(state, Nick(domain: h1_forward_for_nick8, offset: 24));
     String h1_after_nick8_json = r'''
  {
@@ -831,13 +827,13 @@ main() {
   ]
  }
   ''';
-    Design h1_after_nick8 = Design.from_json(jsonDecode(h1_after_nick8_json));
+    Design h1_after_nick8 = Design.from_json(jsonDecode(h1_after_nick8_json))!;
     Strand h1_00_24_forward = h1_after_nick8.strands[0];
     Strand h1_24_96_forward = h1_after_nick8.strands[1];
     expect(recolor_strands(state.design.strands).contains(h1_00_24_forward), true);
     expect(recolor_strands(state.design.strands).contains(h1_24_96_forward), true);
     // design.add_nick(helix=1, offset=56, forward=True)
-    Domain h1_forward_for_nick9 = h1_24_96_forward.substrands[0];
+    Domain h1_forward_for_nick9 = h1_24_96_forward.substrands[0] as Domain;
     state = app_state_reducer(state, Nick(domain: h1_forward_for_nick9, offset: 56));
     String h1_after_nick9_json = r'''
  {
@@ -860,13 +856,13 @@ main() {
   ]
  }
   ''';
-    Design h1_after_nick9 = Design.from_json(jsonDecode(h1_after_nick9_json));
+    Design h1_after_nick9 = Design.from_json(jsonDecode(h1_after_nick9_json))!;
     Strand h1_24_56_forward = h1_after_nick9.strands[0];
     Strand h1_56_96_forward = h1_after_nick9.strands[1];
     expect(recolor_strands(state.design.strands).contains(h1_24_56_forward), true);
     expect(recolor_strands(state.design.strands).contains(h1_56_96_forward), true);
     // design.add_nick(helix=3, offset=24, forward=True)
-    Domain h3_forward_for_nick10 = six_helix_rectangle.strands[6].substrands[0];
+    Domain h3_forward_for_nick10 = six_helix_rectangle.strands[6].substrands[0] as Domain;
     state = app_state_reducer(state, Nick(domain: h3_forward_for_nick10, offset: 24));
     String h3_after_nick10_json = r'''
  {
@@ -889,13 +885,13 @@ main() {
   ]
  }
   ''';
-    Design h3_after_nick10 = Design.from_json(jsonDecode(h3_after_nick10_json));
+    Design h3_after_nick10 = Design.from_json(jsonDecode(h3_after_nick10_json))!;
     Strand h3_00_24_forward = h3_after_nick10.strands[0];
     Strand h3_24_96_forward = h3_after_nick10.strands[1];
     expect(recolor_strands(state.design.strands).contains(h3_00_24_forward), true);
     expect(recolor_strands(state.design.strands).contains(h3_24_96_forward), true);
     // design.add_nick(helix=3, offset=56, forward=True)
-    Domain h3_forward_for_nick11 = h3_24_96_forward.substrands[0];
+    Domain h3_forward_for_nick11 = h3_24_96_forward.substrands[0] as Domain;
     state = app_state_reducer(state, Nick(domain: h3_forward_for_nick11, offset: 56));
     String h3_after_nick11_json = r'''
  {
@@ -918,13 +914,13 @@ main() {
   ]
  }
   ''';
-    Design h3_after_nick11 = Design.from_json(jsonDecode(h3_after_nick11_json));
+    Design h3_after_nick11 = Design.from_json(jsonDecode(h3_after_nick11_json))!;
     Strand h3_24_56_forward = h3_after_nick11.strands[0];
     Strand h3_56_96_forward = h3_after_nick11.strands[1];
     expect(recolor_strands(state.design.strands).contains(h3_24_56_forward), true);
     expect(recolor_strands(state.design.strands).contains(h3_56_96_forward), true);
     // design.add_nick(helix=5, offset=24, forward=True)
-    Domain h5_forward_for_nick12 = six_helix_rectangle.strands[10].substrands[0];
+    Domain h5_forward_for_nick12 = six_helix_rectangle.strands[10].substrands[0] as Domain;
     state = app_state_reducer(state, Nick(domain: h5_forward_for_nick12, offset: 24));
     String h5_after_nick12_json = r'''
  {
@@ -947,13 +943,13 @@ main() {
   ]
  }
   ''';
-    Design h5_after_nick12 = Design.from_json(jsonDecode(h5_after_nick12_json));
+    Design h5_after_nick12 = Design.from_json(jsonDecode(h5_after_nick12_json))!;
     Strand h5_00_24_forward = h5_after_nick12.strands[0];
     Strand h5_24_96_forward = h5_after_nick12.strands[1];
     expect(recolor_strands(state.design.strands).contains(h5_00_24_forward), true);
     expect(recolor_strands(state.design.strands).contains(h5_24_96_forward), true);
     // design.add_nick(helix=5, offset=56, forward=True)
-    Domain h5_forward_for_nick13 = h5_24_96_forward.substrands[0];
+    Domain h5_forward_for_nick13 = h5_24_96_forward.substrands[0] as Domain;
     state = app_state_reducer(state, Nick(domain: h5_forward_for_nick13, offset: 56));
     String h5_after_nick13_json = r'''
  {
@@ -976,7 +972,7 @@ main() {
   ]
  }
   ''';
-    Design h5_after_nick13 = Design.from_json(jsonDecode(h5_after_nick13_json));
+    Design h5_after_nick13 = Design.from_json(jsonDecode(h5_after_nick13_json))!;
     Strand h5_24_56_forward = h5_after_nick13.strands[0];
     Strand h5_56_96_forward = h5_after_nick13.strands[1];
     expect(recolor_strands(state.design.strands).contains(h5_24_56_forward), true);
@@ -1126,7 +1122,7 @@ main() {
  }
     ''';
 
-    Design expected_design = Design.from_json(jsonDecode(content_after));
+    Design expected_design = Design.from_json(jsonDecode(content_after))!;
     expect_strands_equal(state.design.strands, expected_design.strands);
   });
 
@@ -1156,15 +1152,15 @@ main() {
   ]
  }
   ''';
-  Design simple_helix_with_deletion_design = Design.from_json(jsonDecode(simple_helix_with_deletion_json));
+  Design simple_helix_with_deletion_design = Design.from_json(jsonDecode(simple_helix_with_deletion_json))!;
   //     0     8      16      24        32
   // 0  [------>[-----X------->[-------->
   //    <------]<-----X-------]<--------]
   test("two nicks on strand with deletions", () {
     AppState state = app_state_from_design(simple_helix_with_deletion_design);
 
-    Domain strand_to_nick_1 = simple_helix_with_deletion_design.strands[0].substrands[0];
-    Domain strand_to_nick_2 = simple_helix_with_deletion_design.strands[1].substrands[0];
+    Domain strand_to_nick_1 = simple_helix_with_deletion_design.strands[0].substrands[0] as Domain;
+    Domain strand_to_nick_2 = simple_helix_with_deletion_design.strands[1].substrands[0] as Domain;
     state = app_state_reducer(state, Nick(domain: strand_to_nick_1, offset: 8));
     state = app_state_reducer(state, Nick(domain: strand_to_nick_2, offset: 8));
     String content_after = r'''
@@ -1197,11 +1193,11 @@ main() {
   ]
  }
   ''';
-    Design expected_design = Design.from_json(jsonDecode(content_after));
+    Design expected_design = Design.from_json(jsonDecode(content_after))!;
     expect_strands_equal(state.design.strands, expected_design.strands);
 
-    Domain strand_to_nick3 = expected_design.strands[1].substrands[0];
-    Domain strand_to_nick4 = expected_design.strands[3].substrands[0];
+    Domain strand_to_nick3 = expected_design.strands[1].substrands[0] as Domain;
+    Domain strand_to_nick4 = expected_design.strands[3].substrands[0] as Domain;
 
     state = app_state_reducer(state, Nick(domain: strand_to_nick3, offset: 24));
     state = app_state_reducer(state, Nick(domain: strand_to_nick4, offset: 24));
@@ -1247,7 +1243,7 @@ main() {
   ]
  }
   ''';
-    expected_design = Design.from_json(jsonDecode(content_after));
+    expected_design = Design.from_json(jsonDecode(content_after))!;
     expect_strands_equal(state.design.strands, expected_design.strands);
   });
 
@@ -1275,15 +1271,15 @@ main() {
   ]
  }
   ''';
-  Design simple_helix_with_insertion_design = Design.from_json(jsonDecode(simple_helix_with_insertion_json));
+  Design simple_helix_with_insertion_design = Design.from_json(jsonDecode(simple_helix_with_insertion_json))!;
   //     0     8      16      24        32
   // 0  [------>[-----X------->[-------->
   //    <------]<-----X-------]<--------]
   test("two nicks on strand with insertions", () {
     AppState state = app_state_from_design(simple_helix_with_insertion_design);
 
-    Domain strand_to_nick_1 = simple_helix_with_insertion_design.strands[0].substrands[0];
-    Domain strand_to_nick_2 = simple_helix_with_insertion_design.strands[1].substrands[0];
+    Domain strand_to_nick_1 = simple_helix_with_insertion_design.strands[0].substrands[0] as Domain;
+    Domain strand_to_nick_2 = simple_helix_with_insertion_design.strands[1].substrands[0] as Domain;
     state = app_state_reducer(state, Nick(domain: strand_to_nick_1, offset: 8));
     state = app_state_reducer(state, Nick(domain: strand_to_nick_2, offset: 8));
     String content_after = r'''
@@ -1315,11 +1311,11 @@ main() {
   ]
  }
   ''';
-    Design expected_design = Design.from_json(jsonDecode(content_after));
+    Design expected_design = Design.from_json(jsonDecode(content_after))!;
     expect_strands_equal(state.design.strands, expected_design.strands);
 
-    Domain strand_to_nick3 = expected_design.strands[1].substrands[0];
-    Domain strand_to_nick4 = expected_design.strands[3].substrands[0];
+    Domain strand_to_nick3 = expected_design.strands[1].substrands[0] as Domain;
+    Domain strand_to_nick4 = expected_design.strands[3].substrands[0] as Domain;
 
     state = app_state_reducer(state, Nick(domain: strand_to_nick3, offset: 24));
     state = app_state_reducer(state, Nick(domain: strand_to_nick4, offset: 24));
@@ -1363,7 +1359,7 @@ main() {
   ]
  }
   ''';
-    expected_design = Design.from_json(jsonDecode(content_after));
+    expected_design = Design.from_json(jsonDecode(content_after))!;
     expect_strands_equal(state.design.strands, expected_design.strands);
   });
 
@@ -1411,7 +1407,7 @@ main() {
   ]
  }
   ''';
-  Design simple_strand_design = Design.from_json(jsonDecode(simple_strand_json));
+  Design simple_strand_design = Design.from_json(jsonDecode(simple_strand_json))!;
   //
   //     0            16
   //    AGTCAGTCAGTCAGTC
@@ -1434,8 +1430,8 @@ main() {
   test("add nick to a list of substrands", () {
     AppState state = app_state_from_design(simple_strand_design);
 
-    Domain nick1_target = simple_strand_design.strands[0].substrands[1];
-    Domain nick2_target = simple_strand_design.strands[1].substrands[1];
+    Domain nick1_target = simple_strand_design.strands[0].substrands[1] as Domain;
+    Domain nick2_target = simple_strand_design.strands[1].substrands[1] as Domain;
     state = app_state_reducer(state, Nick(domain: nick1_target, offset: 8));
     state = app_state_reducer(state, Nick(domain: nick2_target, offset: 8));
 
@@ -1476,7 +1472,7 @@ main() {
   ]
  }
   ''';
-    Design expected_design = Design.from_json(jsonDecode(content_after));
+    Design expected_design = Design.from_json(jsonDecode(content_after))!;
     expect_strands_equal(state.design.strands, expected_design.strands);
   });
 
@@ -1504,7 +1500,7 @@ main() {
   ]
  }
   ''';
-  Design two_strands_forward = Design.from_json(jsonDecode(two_strands_forward_json));
+  Design two_strands_forward = Design.from_json(jsonDecode(two_strands_forward_json))!;
 
   //   0               16
   // 0 [--------------->
@@ -1524,7 +1520,7 @@ main() {
   ]
  }
   ''';
-  Design ligate_two_strands_forward = Design.from_json(jsonDecode(ligate_two_strands_forward_json));
+  Design ligate_two_strands_forward = Design.from_json(jsonDecode(ligate_two_strands_forward_json))!;
   test("ligate two strands forward using 5p end", () {
     AppState state = app_state_from_design(two_strands_forward);
 
@@ -1566,7 +1562,7 @@ main() {
   ]
  }
   ''';
-  Design two_strands_reverse = Design.from_json(jsonDecode(two_strands_reverse_json));
+  Design two_strands_reverse = Design.from_json(jsonDecode(two_strands_reverse_json))!;
 
   //   0               16
   // 0 <---------------]
@@ -1586,7 +1582,7 @@ main() {
   ]
  }
   ''';
-  Design ligate_two_strands_reverse = Design.from_json(jsonDecode(ligate_two_strands_reverse_json));
+  Design ligate_two_strands_reverse = Design.from_json(jsonDecode(ligate_two_strands_reverse_json))!;
   test("ligate two strands reverse using 5p end", () {
     AppState state = app_state_from_design(two_strands_reverse);
 
@@ -1641,7 +1637,7 @@ main() {
   ]
  }
   ''';
-  Design two_helices_design = Design.from_json(jsonDecode(two_helices_json));
+  Design two_helices_design = Design.from_json(jsonDecode(two_helices_json))!;
 
   //   0                  16
   //   Connect this one
@@ -1661,7 +1657,7 @@ main() {
   //   Strand h0_forward_strand = two_helices_design.strands[0];
   //   Strand h1_forward_strand = two_helices_design.strands[2];
   //   Helix h0 = two_helices_design.helices[0];
-  //   Point<num> start_point = h0.svg_base_pos(0, true);
+  //   Point<double> start_point = h0.svg_base_pos(0, true);
   //   PotentialCrossover helix_0_5p_end_potential_crossover = PotentialCrossover(
   //     helix_idx: 0,
   //     forward: true,
@@ -1702,7 +1698,7 @@ main() {
   //   Strand h0_forward_strand = two_helices_design.strands[0];
   //   Strand h1_forward_strand = two_helices_design.strands[2];
   //   Helix h0 = two_helices_design.helices[0];
-  //   Point<num> start_point = h0.svg_base_pos(15, true); // 3p is located on offset = 15 and forward = true
+  //   Point<double> start_point = h0.svg_base_pos(15, true); // 3p is located on offset = 15 and forward = true
   //   PotentialCrossover helix_0_5p_end_potential_crossover = PotentialCrossover(
   //     helix_idx: 0,
   //     forward: true,
@@ -1757,17 +1753,17 @@ main() {
   ]
  }
   ''';
-  Design two_helices_join_inner_strands = Design.from_json(jsonDecode(two_helices_join_inner_strands_json));
+  Design two_helices_join_inner_strands = Design.from_json(jsonDecode(two_helices_join_inner_strands_json))!;
   test('pencil should connect a 3p end to a 5p end', () {
     AppState state = app_state_from_design(two_helices_design);
-    Map<int, Point<num>> svg_position_map = util.helices_assign_svg(two_helices_design.geometry,
+    Map<int, Point<double>> svg_position_map = util.helices_assign_svg(two_helices_design.geometry,
         state.ui_state.invert_y, two_helices_design.helices, two_helices_design.groups);
 
     Strand h0_reverse_strand = two_helices_design.strands[1];
     Strand h1_forward_strand = two_helices_design.strands[2];
-    Helix h0 = two_helices_design.helices[0];
-    Point<num> start_point =
-        h0.svg_base_pos(0, false, svg_position_map[0].y); // 3p end is 0 offset and forward is false.
+    Helix h0 = two_helices_design.helices[0]!;
+    Point<double> start_point =
+        h0.svg_base_pos(0, false, svg_position_map[0]!.y); // 3p end is 0 offset and forward is false.
     PotentialCrossover helix_0_3p_end_potential_crossover = PotentialCrossover(
       address: Address(
         helix_idx: 0,
@@ -1792,14 +1788,14 @@ main() {
   });
   test('pencil should connect a 5p end to a 3p end', () {
     AppState state = app_state_from_design(two_helices_design);
-    Map<int, Point<num>> svg_position_map = util.helices_assign_svg(two_helices_design.geometry,
+    Map<int, Point<double>> svg_position_map = util.helices_assign_svg(two_helices_design.geometry,
         state.ui_state.invert_y, two_helices_design.helices, two_helices_design.groups);
 
     Strand h0_reverse_strand = two_helices_design.strands[1];
     Strand h1_forward_strand = two_helices_design.strands[2];
-    Helix h1 = two_helices_design.helices[1];
-    Point<num> start_point =
-        h1.svg_base_pos(0, true, svg_position_map[1].y); // 5p end is 0 offset and forward is true.
+    Helix h1 = two_helices_design.helices[1]!;
+    Point<double> start_point =
+        h1.svg_base_pos(0, true, svg_position_map[1]!.y); // 5p end is 0 offset and forward is true.
     PotentialCrossover helix_1_5p_end_potential_crossover = PotentialCrossover(
       address: Address(
         helix_idx: 1,
@@ -1830,7 +1826,7 @@ main() {
     expect(state.design.helices.length, 3);
     expect(state.design.helices[0], two_helices_design.helices[0]);
     expect(state.design.helices[1], two_helices_design.helices[1]);
-    var helix2 = state.design.helices[2];
+    var helix2 = state.design.helices[2]!;
     expect(helix2.idx, 2);
     expect(helix2.grid_position, GridPosition(0, 2));
     expect(helix2.min_offset, 0);
@@ -1853,11 +1849,12 @@ main() {
     AppState final_state = app_state_reducer(original_state, HelixRemove(0));
     Design final_design = final_state.design;
 
-    Helix helix1 = two_helices_design.helices[1];
+    Helix helix1 = two_helices_design.helices[1]!;
 
     BuiltList<Strand> new_strands = two_helices_design.strands.rebuild((b) => b..removeRange(0, 2));
-    Design expected_design =
-        two_helices_design.rebuild((b) => b..helices.replace({1: helix1})..strands.replace(new_strands));
+    Design expected_design = two_helices_design.rebuild((b) => b
+      ..helices.replace({1: helix1})
+      ..strands.replace(new_strands));
 
     expect_design_equal(final_design, expected_design);
   });
@@ -1912,7 +1909,7 @@ main() {
       ]
     }
   ''';
-    Design expected_design = Design.from_json(jsonDecode(expected_json));
+    Design expected_design = Design.from_json(jsonDecode(expected_json))!;
 
     AppState original_state = app_state_from_design(simple_strand_design)
         .rebuild((b) => b..ui_state.storables.side_selected_helix_idxs.replace([0, 2]));
@@ -1972,7 +1969,7 @@ main() {
       ]
     }
   ''';
-    Design expected_design = Design.from_json(jsonDecode(expected_json));
+    Design expected_design = Design.from_json(jsonDecode(expected_json))!;
 
     AppState original_state = app_state_from_design(simple_strand_design)
         .rebuild((b) => b..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([0, 1]));
@@ -2024,7 +2021,7 @@ main() {
  }
   ''';
   Design two_helices_with_helix_idx_gap_design =
-      Design.from_json(jsonDecode(two_helices_with_helix_idx_gap_json));
+      Design.from_json(jsonDecode(two_helices_with_helix_idx_gap_json))!;
 
   test('add_new_helix_be_one_higher_than_max_id', () {
     AppState state = app_state_from_design(two_helices_with_helix_idx_gap_design);
@@ -2061,7 +2058,7 @@ main() {
       ]
     }
     ''';
-    Design expected_design = Design.from_json(jsonDecode(expected_json));
+    Design expected_design = Design.from_json(jsonDecode(expected_json))!;
 
     expect_design_equal(state.design, expected_design);
   });
@@ -2088,11 +2085,11 @@ main() {
 ]
 }
 ''';
-  Design simple_helix_no_seq_design = Design.from_json(jsonDecode(simple_helix_no_seq_json));
+  Design simple_helix_no_seq_design = Design.from_json(jsonDecode(simple_helix_no_seq_json))!;
   test('Testing_DNAEndsMoveStart', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_design);
     AppState actual_state = app_state_reducer(
-        initial_state, DNAEndsMoveStart(offset: 0, helix: simple_helix_no_seq_design.helices[0]));
+        initial_state, DNAEndsMoveStart(offset: 0, helix: simple_helix_no_seq_design.helices[0]!));
 
     expect(actual_state.ui_state.dna_ends_are_moving, true);
     expect_design_equal(actual_state.design, simple_helix_no_seq_design);
@@ -2103,7 +2100,7 @@ main() {
 
     // Starts DNA Ends move.
     AppState actual_state = app_state_reducer(
-        initial_state, DNAEndsMoveStart(offset: 0, helix: simple_helix_no_seq_design.helices[0]));
+        initial_state, DNAEndsMoveStart(offset: 0, helix: simple_helix_no_seq_design.helices[0]!));
     // Stops DNA Ends move.
     actual_state = app_state_reducer(actual_state, DNAEndsMoveStop());
 
@@ -2113,7 +2110,7 @@ main() {
 
   test('Testing_DNAEndsMoveCommit_on_forward_strand_5p_end', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_design);
-    Helix helix0 = simple_helix_no_seq_design.helices[0];
+    Helix helix0 = simple_helix_no_seq_design.helices[0]!;
     Strand forward_strand = simple_helix_no_seq_design.strands[0];
 
     // Starts DNA Ends move.
@@ -2155,7 +2152,7 @@ main() {
 ]
 }
     ''';
-    Design expected_design = Design.from_json(jsonDecode(expected_json));
+    Design expected_design = Design.from_json(jsonDecode(expected_json))!;
 
     expect(actual_state.ui_state.dna_ends_are_moving, false);
     expect_design_equal(actual_state.design, expected_design);
@@ -2163,7 +2160,7 @@ main() {
 
   test('Testing_DNAEndsMoveCommit_on_forward_strand_3p_end', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_design);
-    Helix helix0 = simple_helix_no_seq_design.helices[0];
+    Helix helix0 = simple_helix_no_seq_design.helices[0]!;
     Strand forward_strand = simple_helix_no_seq_design.strands[0];
 
     // Starts DNA Ends move.
@@ -2205,13 +2202,13 @@ main() {
 ]
 }
     ''';
-    Design expected_design = Design.from_json(jsonDecode(expected_json));
+    Design expected_design = Design.from_json(jsonDecode(expected_json))!;
     expect_design_equal(actual_state.design, expected_design);
   });
 
   test('Testing_DNAEndsMoveCommit_on_reverse_strand_5p_end', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_design);
-    Helix helix0 = simple_helix_no_seq_design.helices[0];
+    Helix helix0 = simple_helix_no_seq_design.helices[0]!;
     Strand reverse_strand = simple_helix_no_seq_design.strands.last;
 
     // Starts DNA Ends move.
@@ -2253,14 +2250,14 @@ main() {
 ]
 }
     ''';
-    Design expected_design = Design.from_json(jsonDecode(expected_json));
+    Design expected_design = Design.from_json(jsonDecode(expected_json))!;
     expect(actual_state.ui_state.dna_ends_are_moving, false);
     expect_design_equal(actual_state.design, expected_design);
   });
 
   test('Testing_DNAEndsMoveCommit_on_reverse_strand_3p_end', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_design);
-    Helix helix0 = simple_helix_no_seq_design.helices[0];
+    Helix helix0 = simple_helix_no_seq_design.helices[0]!;
     Strand reverse_strand = simple_helix_no_seq_design.strands.last;
 
     // Starts DNA Ends move.
@@ -2302,14 +2299,14 @@ main() {
 ]
 }
     ''';
-    Design expected_design = Design.from_json(jsonDecode(expected_json));
+    Design expected_design = Design.from_json(jsonDecode(expected_json))!;
     expect(actual_state.ui_state.dna_ends_are_moving, false);
     expect_design_equal(actual_state.design, expected_design);
   });
 
   test('Testing_DNAEndsMoveCommit_on_two_different_strands', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_design);
-    Helix helix0 = simple_helix_no_seq_design.helices[0];
+    Helix helix0 = simple_helix_no_seq_design.helices[0]!;
     Strand forward_strand = simple_helix_no_seq_design.strands.first;
     Strand reverse_strand = simple_helix_no_seq_design.strands.last;
 
@@ -2360,14 +2357,14 @@ main() {
 ]
 }
     ''';
-    Design expected_design = Design.from_json(jsonDecode(expected_json));
+    Design expected_design = Design.from_json(jsonDecode(expected_json))!;
     expect(actual_state.ui_state.dna_ends_are_moving, false);
     expect_design_equal(actual_state.design, expected_design);
   });
 
   test('Moving_Multiple_DNA_Ends', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_design);
-    Helix helix0 = simple_helix_no_seq_design.helices[0];
+    Helix helix0 = simple_helix_no_seq_design.helices[0]!;
     Strand forward_strand = simple_helix_no_seq_design.strands.first;
     Strand reverse_strand = simple_helix_no_seq_design.strands.last;
 
@@ -2429,14 +2426,14 @@ main() {
 ]
 }
     ''';
-    Design expected_design = Design.from_json(jsonDecode(expected_json));
+    Design expected_design = Design.from_json(jsonDecode(expected_json))!;
     expect(final_state.ui_state.dna_ends_are_moving, false);
     expect_design_equal(final_state.design, expected_design);
   });
 
   test('Undoing_multiple_DNA_end_movements', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_design);
-    Helix helix0 = simple_helix_no_seq_design.helices[0];
+    Helix helix0 = simple_helix_no_seq_design.helices[0]!;
     Strand forward_strand = simple_helix_no_seq_design.strands.first;
     Strand reverse_strand = simple_helix_no_seq_design.strands.last;
 
@@ -2498,7 +2495,7 @@ main() {
 ]
 }
     ''';
-    Design expected_design = Design.from_json(jsonDecode(expected_json));
+    Design expected_design = Design.from_json(jsonDecode(expected_json))!;
     UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.addAll([
           new UndoRedoItem("move DNA ends", simple_helix_no_seq_design),
           new UndoRedoItem("move DNA ends", mid_state.design)
@@ -2531,7 +2528,7 @@ main() {
 
   test('Undoing_multiple_DNA_end_movements_with_extra_DNAEndsMoveStop_see_issue_#72', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_design);
-    Helix helix0 = simple_helix_no_seq_design.helices[0];
+    Helix helix0 = simple_helix_no_seq_design.helices[0]!;
     Strand forward_strand = simple_helix_no_seq_design.strands.first;
     Strand reverse_strand = simple_helix_no_seq_design.strands.last;
 
@@ -2602,7 +2599,7 @@ main() {
 ]
 }
     ''';
-    Design expected_design = Design.from_json(jsonDecode(expected_json));
+    Design expected_design = Design.from_json(jsonDecode(expected_json))!;
     UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.addAll([
           new UndoRedoItem("move DNA ends", simple_helix_no_seq_design),
           new UndoRedoItem("move DNA ends", mid_state.design)
@@ -2656,10 +2653,10 @@ main() {
 ]
 }
 ''';
-  Design simple_helix_no_seq_smaller_design = Design.from_json(jsonDecode(simple_helix_no_seq_smaller_json));
+  Design simple_helix_no_seq_smaller_design = Design.from_json(jsonDecode(simple_helix_no_seq_smaller_json))!;
   test('Dragging_end_less_than_helix_min_offset_see_issue_#77', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_smaller_design);
-    Helix helix0 = simple_helix_no_seq_smaller_design.helices[0];
+    Helix helix0 = simple_helix_no_seq_smaller_design.helices[0]!;
     Strand forward_strand = simple_helix_no_seq_smaller_design.strands[0];
 
     // Starts DNA Ends move.
@@ -2700,7 +2697,7 @@ main() {
 ]
 }
     ''';
-    Design expected_design = Design.from_json(jsonDecode(expected_json));
+    Design expected_design = Design.from_json(jsonDecode(expected_json))!;
     expect(actual_state.ui_state.dna_ends_are_moving, false);
     expect_design_equal(actual_state.design, expected_design);
   });
@@ -2711,7 +2708,7 @@ main() {
   //          <------]
   test('Dragging_end_greater_than_helix_max_offset_see_issue_#77', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_smaller_design);
-    Helix helix0 = simple_helix_no_seq_smaller_design.helices[0];
+    Helix helix0 = simple_helix_no_seq_smaller_design.helices[0]!;
     Strand forward_strand = simple_helix_no_seq_smaller_design.strands[0];
 
     // Starts DNA Ends move.
@@ -2753,7 +2750,7 @@ main() {
 ]
 }
     ''';
-    Design expected_design = Design.from_json(jsonDecode(expected_json));
+    Design expected_design = Design.from_json(jsonDecode(expected_json))!;
     expect(actual_state.ui_state.dna_ends_are_moving, false);
     expect_design_equal(actual_state.design, expected_design);
   });
@@ -2761,7 +2758,7 @@ main() {
   // https://github.com/UC-Davis-molecular-computing/scadnano/issues/83#issuecomment-569432526
   test('test_selected_dna_ends_after_undoing_DNAEndMove_see_issue_83)', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_design);
-    Helix helix0 = simple_helix_no_seq_design.helices[0];
+    Helix helix0 = simple_helix_no_seq_design.helices[0]!;
     Strand forward_strand = simple_helix_no_seq_design.strands[0];
     DNAEnd dna_end = forward_strand.dnaend_5p;
     DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end, lowest_offset: 0, highest_offset: 15);
@@ -2876,7 +2873,7 @@ main() {
  }
   ''';
 
-    Design expected_design = Design.from_json(jsonDecode(expected_json));
+    Design expected_design = Design.from_json(jsonDecode(expected_json))!;
     expect(actual_state.ui_state.dna_ends_are_moving, false);
     expect_design_equal(actual_state.design, expected_design);
   });
@@ -2926,7 +2923,7 @@ main() {
   ]
  }
   ''';
-    Design expected_design = Design.from_json(jsonDecode(expected_json));
+    Design expected_design = Design.from_json(jsonDecode(expected_json))!;
     expect(actual_state.ui_state.dna_ends_are_moving, false);
     expect_design_equal(actual_state.design, expected_design);
   });
@@ -3248,7 +3245,7 @@ main() {
   ]
  }
     ''';
-      Design two_helices_helix_add_design = Design.from_json(jsonDecode(two_helices_helix_add_json));
+      Design two_helices_helix_add_design = Design.from_json(jsonDecode(two_helices_helix_add_json))!;
 
       expect(state.ui_state.changed_since_last_save, false);
       expect(state.undo_redo.undo_stack,
@@ -3276,7 +3273,7 @@ main() {
       AppState final_state = app_state_reducer(state, LoadDNAFile(content: 'not json', filename: filename));
 
       expect(final_state.error_message != null, true);
-      expect(final_state.design == null, true);
+      expect(final_state.maybe_design == null, true);
     });
 
     test('load_and_save_design_with_unused_fields', () {
@@ -3417,7 +3414,7 @@ main() {
       state =
           app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
 
-      Helix helix = two_helices_design.helices[1];
+      Helix helix = two_helices_design.helices[1]!;
       int offset = 12;
       Domain domain = two_helices_design.strands[2].domains[0];
 
@@ -3444,7 +3441,7 @@ main() {
       state =
           app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
 
-      Helix helix = two_helices_design.helices[1];
+      Helix helix = two_helices_design.helices[1]!;
       Domain domain = two_helices_design.strands[2].domains[0];
 
       mouseoverParams = MouseoverParams(1, 13, true);
@@ -3479,7 +3476,7 @@ main() {
       state =
           app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
 
-      Helix helix = two_helices_design.helices[1];
+      Helix helix = two_helices_design.helices[1]!;
       int offset = 12;
       Domain domain = two_helices_design.strands[2].domains[0];
 
@@ -3548,7 +3545,7 @@ main() {
   ]
  }
   ''';
-    Design two_helices_crossover_design = Design.from_json(jsonDecode(two_helices_crossover_json));
+    Design two_helices_crossover_design = Design.from_json(jsonDecode(two_helices_crossover_json))!;
     test('HelixRollSetAtOther', () {
       AppState state = app_state_from_design(two_helices_crossover_design);
 
@@ -3580,21 +3577,21 @@ main() {
   });
 
   group('Selection box (side view) tests: ', () {
-    Point point = new Point(0, 0);
+    Point<double> point = new Point<double>(0, 0);
     bool toggle = true;
     bool is_main = false;
-    SelectionBox selectionBox;
+    SelectionBox? selectionBox = SelectionBox(point, toggle, is_main);
     test('SelectionBoxCreate', () {
-      selectionBox = optimized_selection_box_reducer(null, SelectionBoxCreate(point, toggle, is_main));
+      selectionBox = optimized_selection_box_reducer(null, SelectionBoxCreate(point, toggle, is_main))!;
       SelectionBox expected = SelectionBox(point, toggle, is_main);
 
       expect(selectionBox, expected);
     });
 
     test('SelectionBoxSizeChange', () {
-      Point dragPoint = new Point(5, 10);
+      Point<double> dragPoint = new Point<double>(5, 10);
       selectionBox =
-          optimized_selection_box_reducer(selectionBox, SelectionBoxSizeChange(dragPoint, is_main));
+          optimized_selection_box_reducer(selectionBox, SelectionBoxSizeChange(dragPoint, is_main))!;
 
       SelectionBox expected = SelectionBox(point, toggle, is_main).rebuild((b) => b..current = dragPoint);
 
@@ -3768,7 +3765,7 @@ main() {
   ]
  }
   ''';
-  Design simple_loopout_design = Design.from_json(jsonDecode(simple_loopout_json));
+  Design simple_loopout_design = Design.from_json(jsonDecode(simple_loopout_json))!;
 
   group('DeleteAllSelected tests:', () {
     // two_helices_join_inner_strands
@@ -3922,7 +3919,7 @@ main() {
   ]
  }
   ''';
-      Design expected = Design.from_json(jsonDecode(expected_json));
+      Design expected = Design.from_json(jsonDecode(expected_json))!;
 
       expect_design_equal(state.design, expected);
     });
@@ -3972,7 +3969,7 @@ main() {
   ]
  }
   ''';
-      Design expected = Design.from_json(jsonDecode(expected_json));
+      Design expected = Design.from_json(jsonDecode(expected_json))!;
 
       expect_design_equal(state.design, expected);
     });
@@ -4046,7 +4043,8 @@ main() {
       // Create box that wraps around the grid from (-radius, -radius) to (radius, radius) to select helix 0
       var x = state.design.geometry.distance_between_helices_svg / 2.0 + MARGIN;
       var y = state.design.geometry.distance_between_helices_svg / 2.0 + MARGIN;
-      SelectionBox box = SelectionBox(Point(-x, -y), false, false).rebuild((b) => b..current = Point(x, y));
+      SelectionBox box =
+          SelectionBox(Point<double>(-x, -y), false, false).rebuild((b) => b..current = Point<double>(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
       expect(state.ui_state.side_selected_helix_idxs, [0].toBuiltList());
     });
@@ -4055,7 +4053,8 @@ main() {
       // Currently, 0 is selected, so selecting all helices should unselect 0 and select 1 and 2
       var x = state.design.geometry.distance_between_helices_svg / 2.0 + MARGIN;
       var y = state.design.geometry.distance_between_helices_svg * 3.0 + MARGIN;
-      SelectionBox box = SelectionBox(Point(-x, -x), false, false).rebuild((b) => b..current = Point(x, y));
+      SelectionBox box =
+          SelectionBox(Point<double>(-x, -x), false, false).rebuild((b) => b..current = Point<double>(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
       expect(state.ui_state.side_selected_helix_idxs, [1, 2].toBuiltList());
     });
@@ -4069,7 +4068,8 @@ main() {
       // Unselect 0 and select 1 and 2
       var x = state.design.geometry.distance_between_helices_svg / 2.0 + MARGIN;
       var y = state.design.geometry.distance_between_helices_svg * 3 + MARGIN;
-      SelectionBox box = SelectionBox(Point(-x, -x), false, false).rebuild((b) => b..current = Point(x, y));
+      SelectionBox box =
+          SelectionBox(Point<double>(-x, -x), false, false).rebuild((b) => b..current = Point<double>(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
 
       expect(state.ui_state.only_display_selected_helices, true);
@@ -4162,7 +4162,7 @@ main() {
   ]
  }
   ''';
-      Design expected_design = Design.from_json(jsonDecode(expected_json));
+      Design expected_design = Design.from_json(jsonDecode(expected_json))!;
       expect_design_equal(state.design, expected_design);
     });
   });
@@ -4200,7 +4200,7 @@ main() {
   ]
  }
   ''';
-    Design expected_design = Design.from_json(jsonDecode(expected_json));
+    Design expected_design = Design.from_json(jsonDecode(expected_json))!;
     expect_design_equal(state.design, expected_design);
   });
 
@@ -4228,11 +4228,11 @@ main() {
  }
   ''';
   Design design_3helicies_strands_on_1and2 =
-      Design.from_json(jsonDecode(design_3helicies_strands_on_1and2_json));
+      Design.from_json(jsonDecode(design_3helicies_strands_on_1and2_json))!;
   test('default_helix_max_offsets', () {
     for (var helix = 0; helix < 3; helix++) {
       int expected_max_offset_helix = 20;
-      int actual_max_offset_helix = design_3helicies_strands_on_1and2.helices[helix].max_offset;
+      int actual_max_offset_helix = design_3helicies_strands_on_1and2.helices[helix]!.max_offset;
       expect(actual_max_offset_helix, expected_max_offset_helix);
     }
   });
@@ -4268,7 +4268,7 @@ main() {
         ]
       }
       ''';
-      Design expected_design = Design.from_json(jsonDecode(expected_json));
+      Design expected_design = Design.from_json(jsonDecode(expected_json))!;
       expect_design_equal(state.design, expected_design);
 
       // test changing loopout length to 3
@@ -4291,7 +4291,7 @@ main() {
         ]
       }
       ''';
-      expected_design = Design.from_json(jsonDecode(expected_json));
+      expected_design = Design.from_json(jsonDecode(expected_json))!;
       expect_design_equal(state.design, expected_design);
     });
 
@@ -4324,7 +4324,7 @@ main() {
         ]
       }
       ''';
-      Design expected_design = Design.from_json(jsonDecode(expected_json));
+      Design expected_design = Design.from_json(jsonDecode(expected_json))!;
       expect_design_equal(state.design, expected_design);
     });
 
@@ -4370,7 +4370,7 @@ main() {
   ]
  }
   ''';
-      Design expected_design = Design.from_json(jsonDecode(expected_json));
+      Design expected_design = Design.from_json(jsonDecode(expected_json))!;
       expect_design_equal(state.design, expected_design);
     });
   });
@@ -4388,7 +4388,7 @@ main() {
       "strands": []
     }
     ''';
-    Design one_empty_helix_design = Design.from_json(jsonDecode(one_empty_helix_json));
+    Design one_empty_helix_design = Design.from_json(jsonDecode(one_empty_helix_json))!;
     AppState state = app_state_from_design(one_empty_helix_design);
 
     //   0   3       9 10   16
@@ -4455,16 +4455,16 @@ main() {
     //
     // 1 [------------------->
     //   <-------------------]
-    Map<int, Point<num>> svg_position_map = util.helices_assign_svg(
+    Map<int, Point<double>> svg_position_map = util.helices_assign_svg(
         two_helices_design.geometry, false, two_helices_design.helices, two_helices_design.groups);
 
     DNAEnd dnaEnd = two_helices_design.strands.first.dnaend_5p;
     Helix helix0 = two_helices_design.helices.values.first;
-    Point<num> start_point = helix0.svg_base_pos(0, true, svg_position_map[helix0.idx].y);
+    Point<double> start_point = helix0.svg_base_pos(0, true, svg_position_map[helix0.idx]!.y);
 
     // The two states of the two store's reducers we want to test:
     AppState state = app_state_from_design(two_helices_design);
-    PotentialCrossover potentialCrossoverState = null;
+    PotentialCrossover? potentialCrossoverState = null;
 
     //   0                  16
     //   Click this one
@@ -4491,21 +4491,21 @@ main() {
 
       // Test AppState reducer
       state = app_state_reducer(state, action);
-      expect(state.ui_state.potential_crossover_is_drawing, true);
+      expect(state.ui_state.drawing_potential_crossover, true);
 
       // Test potential_crossover store's reducer
-      potentialCrossoverState = optimized_potential_crossover_reducer(potentialCrossoverState, action);
+      potentialCrossoverState = optimized_potential_crossover_reducer(potentialCrossoverState, action)!;
       expect(potentialCrossoverState, potentialCrossover);
     });
 
     test('PotentialCrossoverMove', () {
-      Point<num> movePoint = Point(42, 24);
+      Point<double> movePoint = Point<double>(42, 24);
       Action action = PotentialCrossoverMove(point: movePoint);
 
       // Test potential_crossover store's reducer
       PotentialCrossover expectedPotentialCrossover =
           potentialCrossover.rebuild((b) => b.current_point = movePoint);
-      potentialCrossoverState = optimized_potential_crossover_reducer(potentialCrossoverState, action);
+      potentialCrossoverState = optimized_potential_crossover_reducer(potentialCrossoverState, action)!;
       expect(potentialCrossoverState, expectedPotentialCrossover);
     });
 
@@ -4513,7 +4513,7 @@ main() {
       Action action = PotentialCrossoverRemove();
 
       // Test potential_crossover store's reducer
-      PotentialCrossover expectedPotentialCrossover = null;
+      PotentialCrossover? expectedPotentialCrossover = null;
       potentialCrossoverState = optimized_potential_crossover_reducer(potentialCrossoverState, action);
       expect(potentialCrossoverState, expectedPotentialCrossover);
     });
@@ -4618,9 +4618,10 @@ main() {
       ]
     }
     ''';
-    Design two_helices_with_empty_offsets = Design.from_json(jsonDecode(two_helices_with_empty_offsets_json));
+    Design two_helices_with_empty_offsets =
+        Design.from_json(jsonDecode(two_helices_with_empty_offsets_json))!;
     AppState state = app_state_from_design(two_helices_with_empty_offsets);
-    StrandsMove strandsMove = null;
+    StrandsMove? strandsMove = null;
 
     Strand strand1 = two_helices_with_empty_offsets.strands[1];
     Strand strand2 = two_helices_with_empty_offsets.strands[2];
@@ -4637,7 +4638,7 @@ main() {
       //
       //
       //
-      BuiltList<Selectable> selectables = [strand1, strand2].toBuiltList();
+      BuiltList<Strand> selectables = [strand1, strand2].toBuiltList();
       int offset = 7;
       int helix_idx = 0;
       bool forward = true;
@@ -4707,7 +4708,7 @@ main() {
       int helix_idx = 0;
       bool forward = true;
       Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
-      StrandsMove expected_strands_move = state.ui_state.strands_move.rebuild((b) => b
+      StrandsMove expected_strands_move = state.ui_state.strands_move!.rebuild((b) => b
         ..allowable = true
         ..current_address.replace(address));
       state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
@@ -4733,7 +4734,7 @@ main() {
       //                         \
       // 1                        -------------------->
       //                          <-------------------]
-      state = app_state_reducer(state, StrandsMoveCommit(strands_move: strandsMove, autopaste: false));
+      state = app_state_reducer(state, StrandsMoveCommit(strands_move: strandsMove!, autopaste: false));
 
       String expected_json = r'''
       {
@@ -4763,7 +4764,7 @@ main() {
         ]
       }
       ''';
-      Design expected_design = Design.from_json(jsonDecode(expected_json));
+      Design expected_design = Design.from_json(jsonDecode(expected_json))!;
 
       expect_design_equal(state.design, expected_design);
 
@@ -4784,7 +4785,7 @@ main() {
       //
       //                          copy!
       Strand new_strand2 = state.design.strands[2];
-      BuiltList<Selectable> selectables = [new_strand2].toBuiltList();
+      BuiltList<Strand> selectables = [new_strand2].toBuiltList();
       int offset = 16;
       int helix_idx = 1;
       bool forward = false;
@@ -4833,13 +4834,13 @@ main() {
       Address address = Address(helix_idx: helix_idx, offset: offset, forward: forward);
       state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
 
-      strandsMove = strandsMove.rebuild((b) => b.current_address = address.toBuilder());
+      strandsMove = strandsMove!.rebuild((b) => b.current_address = address.toBuilder());
       expect(state.ui_state.strands_move, strandsMove);
 
       state = app_state_reducer(state, StrandsMoveStop());
       expect(state.ui_state.strands_move, null);
 
-      state = app_state_reducer(state, StrandsMoveCommit(strands_move: strandsMove, autopaste: false));
+      state = app_state_reducer(state, StrandsMoveCommit(strands_move: strandsMove!, autopaste: false));
 
       String expected_json = r'''
       {
@@ -4874,7 +4875,7 @@ main() {
         ]
       }
       ''';
-      Design expected_design = Design.from_json(jsonDecode(expected_json));
+      Design expected_design = Design.from_json(jsonDecode(expected_json))!;
 
       expect_design_equal(state.design, expected_design);
 
@@ -4912,7 +4913,7 @@ main() {
     }
     ''';
     Design two_helices_with_empty_offsets_non_sequential_idx_design =
-        Design.from_json(jsonDecode(two_helices_with_empty_offsets_non_sequential_idx_json));
+        Design.from_json(jsonDecode(two_helices_with_empty_offsets_non_sequential_idx_json))!;
     AppState two_helicies_with_empty_offset_non_sequential_idx_state =
         app_state_from_design(two_helices_with_empty_offsets_non_sequential_idx_design);
     test('StrandsMoveAdjustOffset on out of sequence helices (see issue #240)', () {
@@ -4928,7 +4929,7 @@ main() {
 
       // Setup
       Strand strand0 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[0];
-      BuiltList<Selectable> selectables = [strand0].toBuiltList();
+      BuiltList<Strand> selectables = [strand0].toBuiltList();
       int offset = 0;
       int helix_idx = 3;
       bool forward = true;
@@ -4971,7 +4972,7 @@ main() {
       state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
 
       // Check address after adjusting:
-      expected_strands_move = state.ui_state.strands_move.rebuild((b) => b
+      expected_strands_move = state.ui_state.strands_move!.rebuild((b) => b
         ..allowable = true
         ..current_address.replace(address));
       expect(state.ui_state.strands_move, expected_strands_move);
@@ -5014,7 +5015,7 @@ main() {
       state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
 
       // Check address after adjusting:
-      var expected_strands_move = state.ui_state.strands_move.rebuild((b) => b
+      var expected_strands_move = state.ui_state.strands_move!.rebuild((b) => b
         ..allowable = true
         ..current_address.replace(address));
       expect(state.ui_state.strands_move, expected_strands_move);
@@ -5024,7 +5025,7 @@ main() {
       // select strand1 and strand2
       Strand strand1 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[1];
       Strand strand2 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[2];
-      BuiltList<Selectable> selectables = [strand1, strand2].toBuiltList();
+      BuiltList<Strand> selectables = [strand1, strand2].toBuiltList();
       int offset = 0;
       int helix_idx = 3;
       bool forward = false;
@@ -5075,7 +5076,7 @@ main() {
       // select strand1 and strand2
       Strand strand1 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[1];
       Strand strand2 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[2];
-      BuiltList<Selectable> selectables = [strand1, strand2].toBuiltList();
+      BuiltList<Strand> selectables = [strand1, strand2].toBuiltList();
       int offset = 0;
       int helix_idx = 3;
       bool forward = false;
@@ -5125,7 +5126,7 @@ main() {
       // select strand1 and strand2
       Strand strand1 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[1];
       Strand strand2 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[2];
-      BuiltList<Selectable> selectables = [strand1, strand2].toBuiltList();
+      BuiltList<Strand> selectables = [strand1, strand2].toBuiltList();
       int offset = 0;
       int helix_idx = 3;
       bool forward = false;
@@ -5166,7 +5167,7 @@ main() {
       forward = false;
       address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
       state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
-      expected_strands_move = state.ui_state.strands_move.rebuild((b) => b
+      expected_strands_move = state.ui_state.strands_move!.rebuild((b) => b
         ..allowable = true
         ..current_address.replace(address));
 
@@ -5218,7 +5219,7 @@ main() {
         ]
       }
       ''';
-      Design expected_design = Design.from_json(jsonDecode(expected_json));
+      Design expected_design = Design.from_json(jsonDecode(expected_json))!;
       expect_design_equal(state.design, expected_design);
     });
 
@@ -5261,7 +5262,7 @@ main() {
           ]
         }
       ''';
-      Design expected_design = Design.from_json(jsonDecode(expected_json));
+      Design expected_design = Design.from_json(jsonDecode(expected_json))!;
       expect_design_equal(state.design, expected_design);
     });
 
@@ -5301,7 +5302,7 @@ main() {
         ]
       }
       ''';
-      Design expected_design = Design.from_json(jsonDecode(expected_json));
+      Design expected_design = Design.from_json(jsonDecode(expected_json))!;
       expect_design_equal(state.design, expected_design);
     });
 
@@ -5345,7 +5346,7 @@ main() {
           ]
         }
       ''';
-      Design expected_design = Design.from_json(jsonDecode(expected_json));
+      Design expected_design = Design.from_json(jsonDecode(expected_json))!;
       expect_design_equal(state.design, expected_design);
     });
 
@@ -5386,7 +5387,7 @@ main() {
           ]
         }
       ''';
-      Design expected_design = Design.from_json(jsonDecode(expected_json));
+      Design expected_design = Design.from_json(jsonDecode(expected_json))!;
       expect_design_equal(state.design, expected_design);
     });
   });
@@ -5436,7 +5437,7 @@ main() {
             ]
           }
       ''';
-  Design no_grid_two_helices_design = Design.from_json(jsonDecode(no_grid_two_helices_json));
+  Design no_grid_two_helices_design = Design.from_json(jsonDecode(no_grid_two_helices_json))!;
 
   group('Grid change tests: ', () {
     test('GridChange square to hex', () {
@@ -5449,7 +5450,7 @@ main() {
         helices_builder[i].grid = Grid.hex;
       }
       BuiltMap<int, Helix> new_helices =
-          {for (var helix in helices_builder) helix.idx: helix.build()}.build();
+          {for (var helix in helices_builder) helix.idx!: helix.build()}.build();
       Design expected_design = two_helices_design.rebuild((b) => b..helices.replace(new_helices));
       expected_design = expected_design.set_grid(Grid.hex);
       expect_design_equal(state.design, expected_design);
@@ -5461,18 +5462,18 @@ main() {
       state = app_state_reducer(state, GridChange(grid: grid, group_name: constants.default_group_name));
 
       var expected_position_h0 = util.grid_position_to_position3d(
-          two_helices_design.helices[0].grid_position, Grid.square, two_helices_design.geometry);
+          two_helices_design.helices[0]!.grid_position!, Grid.square, two_helices_design.geometry);
       var expected_position_h1 = util.grid_position_to_position3d(
-          two_helices_design.helices[1].grid_position, Grid.square, two_helices_design.geometry);
+          two_helices_design.helices[1]!.grid_position!, Grid.square, two_helices_design.geometry);
 
       expect(state.design.default_group().grid, Grid.none);
       num eps = 0.0001;
-      expect(state.design.helices[0].position3d.x, closeTo(expected_position_h0.x, eps));
-      expect(state.design.helices[0].position3d.y, closeTo(expected_position_h0.y, eps));
-      expect(state.design.helices[0].position3d.z, closeTo(expected_position_h0.z, eps));
-      expect(state.design.helices[1].position3d.x, closeTo(expected_position_h1.x, eps));
-      expect(state.design.helices[1].position3d.y, closeTo(expected_position_h1.y, eps));
-      expect(state.design.helices[1].position3d.z, closeTo(expected_position_h1.z, eps));
+      expect(state.design.helices[0]!.position3d.x, closeTo(expected_position_h0.x, eps));
+      expect(state.design.helices[0]!.position3d.y, closeTo(expected_position_h0.y, eps));
+      expect(state.design.helices[0]!.position3d.z, closeTo(expected_position_h0.z, eps));
+      expect(state.design.helices[1]!.position3d.x, closeTo(expected_position_h1.x, eps));
+      expect(state.design.helices[1]!.position3d.y, closeTo(expected_position_h1.y, eps));
+      expect(state.design.helices[1]!.position3d.z, closeTo(expected_position_h1.z, eps));
     });
 
     test('GridChange_none_to_square', () {
@@ -5481,8 +5482,8 @@ main() {
 
       state = app_state_reducer(state, GridChange(grid: grid, group_name: constants.default_group_name));
 
-      Helix original_helix0 = no_grid_two_helices_design.helices[0];
-      Helix original_helix1 = no_grid_two_helices_design.helices[1];
+      Helix original_helix0 = no_grid_two_helices_design.helices[0]!;
+      Helix original_helix1 = no_grid_two_helices_design.helices[1]!;
       Geometry geometry = no_grid_two_helices_design.geometry;
       Position3D expected_position0 = original_helix0.position3d;
       Position3D expected_position1 = original_helix1.position3d;
@@ -5545,8 +5546,8 @@ main() {
     // helix 0 old position: Position3D(x: 10, y: 60, z: 30);
     // helix 0 new position: Position3D(x: 40, y: 30, z: 130);
     // helix 1 old position: Position3D(x: 20, y: 80, z: 50);
-    Helix helix0 = no_grid_two_helices_design.helices[0];
-    Helix helix1 = no_grid_two_helices_design.helices[1];
+    Helix helix0 = no_grid_two_helices_design.helices[0]!;
+    Helix helix1 = no_grid_two_helices_design.helices[1]!;
     Position3D new_position0 = Position3D(x: 40, y: 30, z: 130);
 
     Helix expected_helix0 = helix0.rebuild((b) => b..position_.replace(new_position0));
@@ -5563,8 +5564,8 @@ main() {
     // helix 1 old position: Position3D(x: 20, y: 80, z: 50);
     // helix 0 new position: Position3D(x: 200, y: 160, z: 10);
     // helix 1 new position: Position3D(x: 300, y: 280, z: 500);
-    Helix helix0 = no_grid_two_helices_design.helices[0];
-    Helix helix1 = no_grid_two_helices_design.helices[1];
+    Helix helix0 = no_grid_two_helices_design.helices[0]!;
+    Helix helix1 = no_grid_two_helices_design.helices[1]!;
     Position3D position0 = Position3D(x: 200, y: 160, z: 10);
     Position3D position1 = Position3D(x: 300, y: 280, z: 500);
 
@@ -5587,7 +5588,7 @@ main() {
     GridPosition grid_position = GridPosition(5, -3);
     state = app_state_reducer(state, HelixGridPositionSet(helix: helix, grid_position: grid_position));
 
-    Helix helix0 = state.design.helices[0];
+    Helix helix0 = state.design.helices[0]!;
     expect(helix0.grid_position, grid_position);
   });
 
@@ -5612,7 +5613,7 @@ main() {
     test('SetDisablePngCacheUntilActionCompletes', () {
       AppState old_state = app_state_from_design(two_helices_design);
 
-      Action action = ExportSvg(type: ExportSvgType.main);
+      ExportSvg action = ExportSvg(type: ExportSvgType.main);
 
       AppState new_state = app_state_reducer(old_state, SetExportSvgActionDelayedForPngCache(action));
 
@@ -5638,7 +5639,7 @@ main() {
       "strands": []
     }
     ''';
-    Design out_of_order_design = Design.from_json(json.decode(out_of_order_json));
+    Design out_of_order_design = Design.from_json(json.decode(out_of_order_json))!;
     test('helices_view_order', () {
       BuiltList<int> expected_helices_view_order = BuiltList<int>([12, 15, 17, 13]);
       expect(out_of_order_design.default_group().helices_view_order, expected_helices_view_order);
@@ -5744,11 +5745,11 @@ main() {
       ]
     }
     ''';
-    Design many_helices_modification_design = Design.from_json(json.decode(many_helices_modification_json));
+    Design many_helices_modification_design = Design.from_json(json.decode(many_helices_modification_json))!;
     AppState initial_state = app_state_from_design(many_helices_modification_design);
 
     Crossover crossover23 =
-        many_helices_modification_design.crossovers_by_id['crossover-2-3-strand-H0-0-forward'];
+        many_helices_modification_design.crossovers_by_id['crossover-2-3-strand-H0-0-forward']!;
     Strand strand = many_helices_modification_design.strands.first;
     Domain domain6 = many_helices_modification_design.strands.first.substrands[6] as Domain;
     test(
@@ -5850,7 +5851,7 @@ main() {
               }
             ]
           }
-        '''));
+        '''))!;
 
         AppState state = initial_state;
         state = app_state_reducer(state, SelectModesSet([SelectModeChoice.crossover]));
@@ -5859,7 +5860,7 @@ main() {
 
         expect_design_equal(state.design, expected_design1);
 
-        Crossover crossover56 = state.design.crossovers_by_id['crossover-2-3-strand-H3-15-reverse'];
+        Crossover crossover56 = state.design.crossovers_by_id['crossover-2-3-strand-H3-15-reverse']!;
         // Delete crossover between 5 and 6.
         //    B     Cy3   B
         // 0  [-----------------
@@ -5965,7 +5966,7 @@ main() {
               }
             ]
           }
-        '''));
+        '''))!;
 
         state = app_state_reducer(state, Select(crossover56, toggle: false, only: true));
         state = app_state_reducer(state, DeleteAllSelected());
@@ -6016,7 +6017,7 @@ main() {
               }
             ]
           }
-        '''));
+        '''))!;
       AppState initial_state = app_state_from_design(modifications_loopout);
       // 0  <----------------]
       //       B     Cy3
@@ -6063,13 +6064,13 @@ main() {
             }
           ]
         }
-      '''));
+      '''))!;
 
       AppState state = initial_state;
       state = app_state_reducer(state, SelectModesSet([SelectModeChoice.loopout]));
       state = app_state_reducer(
           state,
-          Select(modifications_loopout.loopouts_by_id['loopout-1-strand-H0-15-reverse'],
+          Select(modifications_loopout.loopouts_by_id['loopout-1-strand-H0-15-reverse']!,
               toggle: false, only: true));
       state = app_state_reducer(state, DeleteAllSelected());
 
@@ -6102,7 +6103,7 @@ main() {
             ],
             "strands": []
           }
-        '''));
+        '''))!;
 
       AppState state = initial_state;
       state = app_state_reducer(state, SelectModesSet([SelectModeChoice.strand]));
@@ -6211,7 +6212,7 @@ main() {
               }
             ]
           }
-        '''));
+        '''))!;
 
       AppState state = initial_state;
       state = app_state_reducer(state, Nick(domain: domain6, offset: 4));
@@ -6359,15 +6360,15 @@ main() {
             }
           ]
         }
-      '''));
+      '''))!;
     AppState initial_state = app_state_from_design(many_helices_modifications_split);
     DNAEnd end_3p_H4 =
-        many_helices_modifications_split.ends_3p_strand_by_id['end-3p-substrand-H4-10-16-forward'];
+        many_helices_modifications_split.ends_3p_strand_by_id['end-3p-substrand-H4-10-16-forward']!;
     DNAEnd end_5p_H5 =
-        many_helices_modifications_split.ends_5p_strand_by_id['end-5p-substrand-H5-0-16-reverse'];
+        many_helices_modifications_split.ends_5p_strand_by_id['end-5p-substrand-H5-0-16-reverse']!;
     DNAEnd end_5p_H4 =
-        many_helices_modifications_split.ends_5p_strand_by_id['end-5p-substrand-H4-10-16-forward'];
-    Helix helix5 = many_helices_modifications_split.helices[5];
+        many_helices_modifications_split.ends_5p_strand_by_id['end-5p-substrand-H4-10-16-forward']!;
+    Helix helix5 = many_helices_modifications_split.helices[5]!;
     Strand strand_H4_forward_10 = many_helices_modifications_split.strands[7];
     Strand strand_H4_forward_0 = many_helices_modifications_split.strands[6];
     Strand strand_H3_reverse_0 = many_helices_modifications_split.strands[3];
@@ -6506,7 +6507,7 @@ main() {
               }
             ]
           }
-        '''));
+        '''))!;
 
       AppState state = initial_state;
       state = app_state_reducer(
@@ -6648,7 +6649,7 @@ main() {
               }
             ]
           }
-        '''));
+        '''))!;
 
       AppState state = initial_state;
       state = app_state_reducer(state, Ligate(dna_end: end_5p_H4));
@@ -6797,7 +6798,7 @@ main() {
               }
             ]
           }
-        '''));
+        '''))!;
 
       AppState state = initial_state;
       DNAEndMove move = DNAEndMove(dna_end: end_5p_H5, lowest_offset: 0, highest_offset: 16);
@@ -6952,7 +6953,7 @@ main() {
               }
             ]
           }
-        '''));
+        '''))!;
 
       AppState state = initial_state;
 
@@ -7145,7 +7146,7 @@ main() {
               }
             ]
           }
-        '''));
+        '''))!;
 
       AppState state = initial_state;
 
@@ -7258,14 +7259,14 @@ main() {
           ]
         }
       ''';
-      Design d = Design.from_json_str(json_str);
-      Helix helix0 = d.helices[0];
-      Helix helix1 = d.helices[1];
+      Design d = Design.from_json_str(json_str)!;
+      Helix helix0 = d.helices[0]!;
+      Helix helix1 = d.helices[1]!;
       expect(helix0.position, Position3D(x: 1, y: 2, z: 3));
       expect(helix0.roll, 5);
       // Helix 0 should have been moved to a new helix group
       String pitch_25_yaw_19_group_name = 'pitch_25_yaw_19';
-      HelixGroup pitch_25_yaw_19_group = d.groups[pitch_25_yaw_19_group_name];
+      HelixGroup pitch_25_yaw_19_group = d.groups[pitch_25_yaw_19_group_name]!;
       expect(pitch_25_yaw_19_group.pitch, 25);
       expect(pitch_25_yaw_19_group.yaw, 19);
       expect(helix0.group, pitch_25_yaw_19_group_name);
@@ -7308,13 +7309,13 @@ main() {
         ]
       }
       """;
-      Design d = Design.from_json_str(json_str);
-      Helix helix0 = d.helices[0];
-      Helix helix1 = d.helices[1];
+      Design d = Design.from_json_str(json_str)!;
+      Helix helix0 = d.helices[0]!;
+      Helix helix1 = d.helices[1]!;
 
       // Helix 0 should have been moved to a new helix group
       String pitch_25_yaw_19_group_name = 'pitch_25_yaw_19';
-      HelixGroup pitch_25_yaw_19_group = d.groups[pitch_25_yaw_19_group_name];
+      HelixGroup pitch_25_yaw_19_group = d.groups[pitch_25_yaw_19_group_name]!;
       expect(helix0.position, Position3D(x: 1, y: 2, z: 3));
       expect(pitch_25_yaw_19_group.pitch, 25);
       expect(pitch_25_yaw_19_group.yaw, 19);
@@ -7323,7 +7324,7 @@ main() {
 
       // Helix 1 should have been moved to a new helix group
       String pitch_21_yaw_13_group_name = 'pitch_21_yaw_13';
-      HelixGroup pitch_21_yaw_13_group = d.groups[pitch_21_yaw_13_group_name];
+      HelixGroup pitch_21_yaw_13_group = d.groups[pitch_21_yaw_13_group_name]!;
       expect(helix1.position, Position3D(x: 3, y: 2, z: 3));
       expect(pitch_21_yaw_13_group.pitch, 21);
       expect(pitch_21_yaw_13_group.yaw, 13);
@@ -7369,14 +7370,14 @@ main() {
         ]
       }
       ''';
-      Design d = Design.from_json_str(json_str);
-      Helix helix0 = d.helices[0];
-      Helix helix1 = d.helices[1];
+      Design d = Design.from_json_str(json_str)!;
+      Helix helix0 = d.helices[0]!;
+      Helix helix1 = d.helices[1]!;
 
       String north_str = 'north';
       String south_str = 'south';
-      HelixGroup north_group = d.groups[north_str];
-      HelixGroup south_group = d.groups[south_str];
+      HelixGroup north_group = d.groups[north_str]!;
+      HelixGroup south_group = d.groups[south_str]!;
       expect(d.groups.length, 2);
 
       expect(helix0.position, Position3D(x: 1, y: 2, z: 3));
@@ -7425,14 +7426,14 @@ main() {
         ]
       }
       """;
-      Design d = Design.from_json_str(json_str);
-      Helix helix0 = d.helices[0];
-      Helix helix1 = d.helices[1];
+      Design d = Design.from_json_str(json_str)!;
+      Helix helix0 = d.helices[0]!;
+      Helix helix1 = d.helices[1]!;
 
       String north_str = 'north';
       String south_str = 'south';
-      HelixGroup north_group = d.groups[north_str];
-      HelixGroup south_group = d.groups[south_str];
+      HelixGroup north_group = d.groups[north_str]!;
+      HelixGroup south_group = d.groups[south_str]!;
       expect(d.groups.length, 2);
 
       expect(helix0.position, Position3D(x: 1, y: 2, z: 3));
@@ -7486,14 +7487,14 @@ main() {
         ]
       }
       """;
-      Design d = Design.from_json_str(json_str);
-      Helix helix0 = d.helices[0];
-      Helix helix1 = d.helices[1];
+      Design d = Design.from_json_str(json_str)!;
+      Helix helix0 = d.helices[0]!;
+      Helix helix1 = d.helices[1]!;
 
       String north_str = 'north';
       String south_str = 'south';
-      HelixGroup north_group = d.groups[north_str];
-      HelixGroup south_group = d.groups[south_str];
+      HelixGroup north_group = d.groups[north_str]!;
+      HelixGroup south_group = d.groups[south_str]!;
       expect(d.groups.length, 2);
       expect(helix0.position, Position3D(x: 1, y: 2, z: 3));
       expect(helix0.roll, 5);
@@ -7556,20 +7557,20 @@ main() {
     Helix helix1 = Helix(idx: 1, grid_position: GridPosition(0, 1), group: "foo");
     HelixGroup group = HelixGroup(helices_view_order: [0, 1], grid: Grid.square);
     Design design = Design(helices: [helix0, helix1], groups: {"foo": group});
-    helix0 = design.helices[0];
-    helix1 = design.helices[1];
+    helix0 = design.helices[0]!;
+    helix1 = design.helices[1]!;
     AppState state = app_state_from_design(design);
-    // Point<num> original_helix0_svg_position = state.design.helices[0].svg_position;
-    Point<num> original_helix1_svg_position = state.helix_idx_to_svg_position_map[1];
+    // Point<double> original_helix0_svg_position = state.design.helices[0].svg_position;
+    Point<double> original_helix1_svg_position = state.helix_idx_to_svg_position_map[1]!;
 
     HelixGroup new_group = HelixGroup(helices_view_order: [1, 0], grid: Grid.square);
     AppState new_state =
         app_state_reducer(state, GroupChange(old_name: "foo", new_name: "bar", new_group: new_group));
 
     // New svg position y coordinate should have changed
-    expect(new_state.helix_idx_to_svg_position_map[1].y, closeTo(original_helix1_svg_position.y, 0.001));
+    expect(new_state.helix_idx_to_svg_position_map[1]!.y, closeTo(original_helix1_svg_position.y, 0.001));
     var offset = (helix1.position3d.y - helix0.position3d.y) * design.geometry.nm_to_svg_pixels;
-    expect(new_state.helix_idx_to_svg_position_map[0].y,
+    expect(new_state.helix_idx_to_svg_position_map[0]!.y,
         closeTo(original_helix1_svg_position.y + offset, 0.001));
   });
 
@@ -7606,10 +7607,10 @@ main() {
     AppState new_state = app_state_reducer(state, SetOnlyDisplaySelectedHelices(true));
 
     // Verify Expected Result:
-    Point<num> helix0_svg = state.helix_idx_to_svg_position_map[0];
-    Point<num> helix1_svg = state.helix_idx_to_svg_position_map[1];
-    Point<num> new_helix0_svg = new_state.helix_idx_to_svg_position_map[0];
-    Point<num> new_helix2_svg = new_state.helix_idx_to_svg_position_map[2];
+    Point<double> helix0_svg = state.helix_idx_to_svg_position_map[0]!;
+    Point<double> helix1_svg = state.helix_idx_to_svg_position_map[1]!;
+    Point<double> new_helix0_svg = new_state.helix_idx_to_svg_position_map[0]!;
+    Point<double> new_helix2_svg = new_state.helix_idx_to_svg_position_map[2]!;
 
     expect(new_helix0_svg.y, closeTo(helix0_svg.y, 0.001));
     expect(new_helix2_svg.y, closeTo(helix1_svg.y, 0.001));

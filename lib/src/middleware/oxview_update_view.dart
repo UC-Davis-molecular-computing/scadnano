@@ -39,36 +39,31 @@ oxview_update_view_middleware(Store<AppState> store, dynamic action, NextDispatc
   }
 
   if (store.state.ui_state.show_oxview && action is actions.DesignChangingAction) {
-    Design design = store.state.design;
-    if (design != null) {
-      update_oxview_view(design);
-    }
+    update_oxview_view(store.state.design);
   }
 }
 
-const js_reset_commands = 'resetScene(resetCamera = false);';
-
-// frame is optional because usually we get it from app.view.oxview_view.frame,
-// but on startup app.view is not yet allocated (we're in the View constructor
-// the first time), so we send the frame just after creating it.
-void update_oxview_view(Design design, [IFrameElement frame = null]) {
-  assert(design != null);
-  assert(design.strands != null);
+// `frame` argument is optional because usually we get it from app.view.oxview_view.frame,
+// but on startup, `app.view` is not yet initialized (we're in the View constructor
+// the first time we call `update_oxview_view`), so from that constructor, we send the frame explicitly
+// to this function just after creating it, but before it can be accessed via `app.view.oxview_view?.frame`.
+void update_oxview_view(Design design, [IFrameElement? frame = null]) {
   if (frame == null) {
-    frame = app.view?.oxview_view?.frame;
+    frame = app.view.oxview_view.frame;
   }
-  assert(frame != null);
-
-  String text_blob_type = blob_type_to_string(BlobType.text);
+  if (frame == null) {
+    throw AssertionError("frame cannot be null");
+  }
 
   // reset oxview in case it has nucleotides already
-  Blob blob_js_commands = new Blob([js_reset_commands], text_blob_type);
-  Map<String, dynamic> message_js_commands = {
+  Blob blob_js_reset_commands =
+      new Blob(['resetScene(resetCamera = false);'], blob_type_to_string(BlobType.text));
+  Map<String, dynamic> message = {
     'message': 'iframe_drop',
-    'files': [blob_js_commands],
+    'files': [blob_js_reset_commands],
     'ext': ['js'],
   };
-  frame.contentWindow?.postMessage(message_js_commands, 'https://sulcgroup.github.io/oxdna-viewer/');
+  frame.contentWindow?.postMessage(message, constants.OXVIEW_URL);
 
   // send current exported design
   List<Strand> strands_to_export = design.strands.toList();
@@ -78,15 +73,14 @@ void update_oxview_view(Design design, [IFrameElement frame = null]) {
   String dat = dat_top.item1;
   String top = dat_top.item2;
 
-  Blob blob_dat = new Blob([dat], text_blob_type);
-  Blob blob_top = new Blob([top], text_blob_type);
+  Blob blob_dat = new Blob([dat], blob_type_to_string(BlobType.text));
+  Blob blob_top = new Blob([top], blob_type_to_string(BlobType.text));
 
-  Map<String, dynamic> message = {
+  message = {
     'message': 'iframe_drop',
     'files': [blob_top, blob_dat],
     'ext': ['top', 'dat'],
     'inbox_settings': ["Monomer", "Origin"],
   };
-
-  frame.contentWindow?.postMessage(message, 'https://sulcgroup.github.io/oxdna-viewer/');
+  frame.contentWindow?.postMessage(message, constants.OXVIEW_URL);
 }

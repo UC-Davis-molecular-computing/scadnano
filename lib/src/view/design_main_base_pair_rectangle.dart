@@ -19,11 +19,11 @@ part 'design_main_base_pair_rectangle.over_react.g.dart';
 UiFactory<DesignMainBasePairRectangleProps> DesignMainBasePairRectangle = _$DesignMainBasePairRectangle;
 
 mixin DesignMainBasePairRectangleProps on UiProps {
-  bool with_mismatches;
-  Design design;
-  bool only_display_selected_helices;
-  BuiltSet<int> side_selected_helix_idxs;
-  BuiltMap<int, num> helix_idx_to_svg_position_y_map;
+  late bool with_mismatches;
+  late Design design;
+  late bool only_display_selected_helices;
+  late BuiltSet<int> side_selected_helix_idxs;
+  late BuiltMap<int, num> helix_idx_to_svg_position_y_map;
 }
 
 class DesignMainBasePairRectangleComponent extends UiComponent2<DesignMainBasePairRectangleProps>
@@ -43,8 +43,8 @@ class DesignMainBasePairRectangleComponent extends UiComponent2<DesignMainBasePa
 
     for (int helix_idx in base_pairs.keys) {
       if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(helix_idx)) {
-        var helix = props.design.helices[helix_idx];
-        HelixGroup group = props.design.groups[helix.group];
+        var helix = props.design.helices[helix_idx]!;
+        HelixGroup group = props.design.groups[helix.group]!;
         String transform_str = group.transform_str(props.design.geometry);
 
         // code below draws one line for each base pair, should render somewhat slowly
@@ -53,8 +53,8 @@ class DesignMainBasePairRectangleComponent extends UiComponent2<DesignMainBasePa
         List<ReactElement> helix_components = [];
         int last_offset = -2;
         var last_svg_forward_pos = null;
-        for (int offset in base_pairs[helix_idx]) {
-          var svg_position_y = props.helix_idx_to_svg_position_y_map[helix_idx];
+        for (int offset in base_pairs[helix_idx]!) {
+          var svg_position_y = props.helix_idx_to_svg_position_y_map[helix_idx]!;
           var base_svg_forward_pos = helix.svg_base_pos(offset, true, svg_position_y);
           var base_svg_reverse_pos = helix.svg_base_pos(offset, false, svg_position_y);
 

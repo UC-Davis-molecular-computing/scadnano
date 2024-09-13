@@ -187,7 +187,7 @@ part 'serializers.g.dart';
   SelectionBoxIntersectionRuleSet,
   SelectAll,
   SelectAllSelectable,
-  SelectAllWithSameAsSelected,
+  SelectAllStrandsWithSameAsSelected,
   SelectableTrait,
   Select,
   Loopout,
@@ -426,15 +426,15 @@ class PointSerializer<T extends num> implements PrimitiveSerializer<Point<T>> {
   final String wireName = 'Point';
 
   @override
-  Object serialize(Serializers serializers, Point<T> point, {FullType specifiedType: FullType.unspecified}) {
+  Object serialize(Serializers serializers, Point<T> point, {FullType specifiedType = FullType.unspecified}) {
     return {'x': point.x.toString(), 'y': point.y.toString()};
   }
 
   @override
   Point<T> deserialize(Serializers serializers, Object serialized,
-      {FullType specifiedType: FullType.unspecified}) {
+      {FullType specifiedType = FullType.unspecified}) {
     Map map = serialized as Map;
-    return Point<T>(num.parse(map['x']), num.parse(map['y']));
+    return Point<T>(num.parse(map['x']) as T, num.parse(map['y']) as T);
   }
 }
 
@@ -447,13 +447,13 @@ class ColorSerializer implements PrimitiveSerializer<Color> {
   final String wireName = 'Color';
 
   @override
-  Object serialize(Serializers serializers, Color color, {FullType specifiedType: FullType.unspecified}) {
+  Object serialize(Serializers serializers, Color color, {FullType specifiedType = FullType.unspecified}) {
     return color.toHexColor().toCssString();
   }
 
   @override
   Color deserialize(Serializers serializers, Object serialized,
-      {FullType specifiedType: FullType.unspecified}) {
+      {FullType specifiedType = FullType.unspecified}) {
     String color_hex = serialized as String;
     return Color.hex(color_hex);
   }

@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'package:color/color.dart';
 import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
 import 'package:scadnano/src/reducers/delete_reducer.dart';
@@ -26,8 +24,8 @@ import 'package:scadnano/src/constants.dart' as constants;
 
 main() {
   group('HelixRollRelax', () {
-    Design design2h;
-    Design design3helix3strand;
+    Design design2h = Design(helices: [], grid: Grid.square);
+    Design design3helix3strand = Design(helices: [], grid: Grid.square);
     double epsilon = 0.000000001;
 
     setUp(() {
@@ -91,9 +89,9 @@ main() {
       design3h = design3h.draw_strand(0, 0).move(5).cross(1).move(-5).commit();
       design3h = design3h.draw_strand(0, 5).move(8).cross(2).move(-8).commit();
 
-      var crossover_addresses_h0 = design3h.helix_to_crossover_addresses[0].toList();
-      var crossover_addresses_h1 = design3h.helix_to_crossover_addresses[1].toList();
-      var crossover_addresses_h2 = design3h.helix_to_crossover_addresses[2].toList();
+      var crossover_addresses_h0 = design3h.helix_to_crossover_addresses[0]!.toList();
+      var crossover_addresses_h1 = design3h.helix_to_crossover_addresses[1]!.toList();
+      var crossover_addresses_h2 = design3h.helix_to_crossover_addresses[2]!.toList();
       expect(crossover_addresses_h0.length, 2);
       expect(crossover_addresses_h1.length, 1);
       expect(crossover_addresses_h2.length, 1);
@@ -118,9 +116,9 @@ main() {
 
       design3h = design3h.relax_helix_rolls();
 
-      expect(design3h.helices[0].roll, closeTo(exp_h0_roll, epsilon));
-      expect(design3h.helices[1].roll, closeTo(exp_h1_roll, epsilon));
-      expect(design3h.helices[2].roll, closeTo(exp_h2_roll, epsilon));
+      expect(design3h.helices[0]!.roll, closeTo(exp_h0_roll, epsilon));
+      expect(design3h.helices[1]!.roll, closeTo(exp_h1_roll, epsilon));
+      expect(design3h.helices[2]!.roll, closeTo(exp_h2_roll, epsilon));
     });
 
     test('3_helix_2_crossovers_1_loopout_crossovers_method', () {
@@ -149,9 +147,9 @@ main() {
       design3h = design3h.draw_strand(0, 13).move(8).loopout(2, 3).move(-8).commit();
 
       var crossover_addresses = design3h.helix_to_crossover_addresses;
-      var crossover_addresses_h0 = crossover_addresses[0];
-      var crossover_addresses_h1 = crossover_addresses[1];
-      var crossover_addresses_h2 = crossover_addresses[2];
+      var crossover_addresses_h0 = crossover_addresses[0]!;
+      var crossover_addresses_h1 = crossover_addresses[1]!;
+      var crossover_addresses_h2 = crossover_addresses[2]!;
 
       expect(crossover_addresses_h0.length, 2);
       expect(crossover_addresses_h1.length, 1);
@@ -190,9 +188,9 @@ main() {
       design3h = design3h.draw_strand(0, 5).move(8).cross(2).move(-8).commit();
       design3h = design3h.draw_strand(0, 13).move(8).loopout(2, 3).move(-8).commit();
 
-      var crossover_addresses_h0 = design3h.helix_to_crossover_addresses[0].toList();
-      var crossover_addresses_h1 = design3h.helix_to_crossover_addresses[1].toList();
-      var crossover_addresses_h2 = design3h.helix_to_crossover_addresses[2].toList();
+      var crossover_addresses_h0 = design3h.helix_to_crossover_addresses[0]!.toList();
+      var crossover_addresses_h1 = design3h.helix_to_crossover_addresses[1]!.toList();
+      var crossover_addresses_h2 = design3h.helix_to_crossover_addresses[2]!.toList();
       expect(crossover_addresses_h0.length, 2);
       expect(crossover_addresses_h1.length, 1);
       expect(crossover_addresses_h2.length, 1);
@@ -217,9 +215,9 @@ main() {
 
       design3h = design3h.relax_helix_rolls();
 
-      expect(design3h.helices[0].roll, closeTo(exp_h0_roll, epsilon));
-      expect(design3h.helices[1].roll, closeTo(exp_h1_roll, epsilon));
-      expect(design3h.helices[2].roll, closeTo(exp_h2_roll, epsilon));
+      expect(design3h.helices[0]!.roll, closeTo(exp_h0_roll, epsilon));
+      expect(design3h.helices[1]!.roll, closeTo(exp_h1_roll, epsilon));
+      expect(design3h.helices[2]!.roll, closeTo(exp_h2_roll, epsilon));
     });
 
     test('2_helix_no_crossovers', () {
@@ -231,7 +229,7 @@ main() {
         1 <---]<--------]
       */
       List<Helix> helices = [];
-      var initial_roll = 30;
+      double initial_roll = 30.0;
       for (int i = 0; i < 2; i++) {
         var helix = Helix(
             max_offset: 60, grid: Grid.square, idx: i, grid_position: GridPosition(0, i), roll: initial_roll);
@@ -244,15 +242,15 @@ main() {
       design2h = design2h.draw_strand(1, 5).move(-5).commit();
       design2h = design2h.draw_strand(1, 15).move(-10).commit();
 
-      var crossover_addresses_h0 = design2h.helix_to_crossover_addresses[0].toList();
-      var crossover_addresses_h1 = design2h.helix_to_crossover_addresses[1].toList();
+      var crossover_addresses_h0 = design2h.helix_to_crossover_addresses[0]!.toList();
+      var crossover_addresses_h1 = design2h.helix_to_crossover_addresses[1]!.toList();
       expect(crossover_addresses_h0.length, 0);
       expect(crossover_addresses_h1.length, 0);
 
       design2h = design2h.relax_helix_rolls();
 
-      expect(design2h.helices[0].roll, closeTo(initial_roll, epsilon));
-      expect(design2h.helices[1].roll, closeTo(initial_roll, epsilon));
+      expect(design2h.helices[0]!.roll, closeTo(initial_roll, epsilon));
+      expect(design2h.helices[1]!.roll, closeTo(initial_roll, epsilon));
     });
 
     test('3_helix_6_crossovers', () {
@@ -309,9 +307,9 @@ main() {
 
       design3h = design3h.relax_helix_rolls();
 
-      expect(design3h.helices[0].roll, closeTo(exp_h0_roll, epsilon));
-      expect(design3h.helices[1].roll, closeTo(exp_h1_roll, epsilon));
-      expect(design3h.helices[2].roll, closeTo(exp_h2_roll, epsilon));
+      expect(design3h.helices[0]!.roll, closeTo(exp_h0_roll, epsilon));
+      expect(design3h.helices[1]!.roll, closeTo(exp_h1_roll, epsilon));
+      expect(design3h.helices[2]!.roll, closeTo(exp_h2_roll, epsilon));
     });
 
     test('2_helix_3_crossover', () {
@@ -334,8 +332,8 @@ main() {
 
       design2h = design2h.relax_helix_rolls();
 
-      expect(design2h.helices[0].roll, closeTo(exp_h0_roll, epsilon));
-      expect(design2h.helices[1].roll, closeTo(exp_h1_roll, epsilon));
+      expect(design2h.helices[0]!.roll, closeTo(exp_h0_roll, epsilon));
+      expect(design2h.helices[1]!.roll, closeTo(exp_h1_roll, epsilon));
     });
 
     test('2_helix_3_crossover_and_intrahelix_crossovers', () {
@@ -367,8 +365,8 @@ main() {
 
       design2h = design2h.relax_helix_rolls();
 
-      expect(design2h.helices[0].roll, closeTo(exp_h0_roll, epsilon));
-      expect(design2h.helices[1].roll, closeTo(exp_h1_roll, epsilon));
+      expect(design2h.helices[0]!.roll, closeTo(exp_h0_roll, epsilon));
+      expect(design2h.helices[1]!.roll, closeTo(exp_h1_roll, epsilon));
     });
 
     test('2_helix_2_crossover_call_relax_twice', () {
@@ -393,18 +391,18 @@ main() {
 
       design2h = design2h.relax_helix_rolls();
 
-      expect(exp_h0_roll, design2h.helices[0].roll);
-      expect(exp_h1_roll, design2h.helices[1].roll);
+      expect(exp_h0_roll, design2h.helices[0]!.roll);
+      expect(exp_h1_roll, design2h.helices[1]!.roll);
 
       // test for bug that reset roll; if called twice in a row it should have no effect the second time
       design2h = design2h.relax_helix_rolls();
 
-      expect(exp_h0_roll, design2h.helices[0].roll);
-      expect(exp_h1_roll, design2h.helices[1].roll);
+      expect(exp_h0_roll, design2h.helices[0]!.roll);
+      expect(exp_h1_roll, design2h.helices[1]!.roll);
     });
 
     test('helix_crossover_addresses_3_helix_3_strand', () {
-      var xs0 = design3helix3strand.helix_to_crossover_addresses[0];
+      var xs0 = design3helix3strand.helix_to_crossover_addresses[0]!;
       expect(xs0.length, 3);
       Address a0 = xs0[0];
       Address a1 = xs0[1];
@@ -419,7 +417,7 @@ main() {
       expect(a1.forward, true);
       expect(a2.forward, true);
 
-      var xs1 = design3helix3strand.helix_to_crossover_addresses[1];
+      var xs1 = design3helix3strand.helix_to_crossover_addresses[1]!;
       expect(xs1.length, 2);
       a0 = xs1[0];
       a1 = xs1[1];
@@ -430,7 +428,7 @@ main() {
       expect(a0.forward, false);
       expect(a1.forward, false);
 
-      var xs2 = design3helix3strand.helix_to_crossover_addresses[2];
+      var xs2 = design3helix3strand.helix_to_crossover_addresses[2]!;
       expect(xs2.length, 1);
       a0 = xs2[0];
       expect(a0.offset, 14);
@@ -439,7 +437,7 @@ main() {
     });
 
     test('helix_crossover_addresses_2_helix_3_strand', () {
-      var xs0 = design2h.helix_to_crossover_addresses[0];
+      var xs0 = design2h.helix_to_crossover_addresses[0]!;
       expect(xs0.length, 3);
       var a0 = xs0[0];
       var a1 = xs0[1];
@@ -454,7 +452,7 @@ main() {
       expect(a1.forward, true);
       expect(a2.forward, true);
 
-      var xs1 = design2h.helix_to_crossover_addresses[1];
+      var xs1 = design2h.helix_to_crossover_addresses[1]!;
       expect(xs1.length, 3);
       a0 = xs1[0];
       a1 = xs1[1];
@@ -480,7 +478,7 @@ main() {
       design2h = design2h.draw_strand(0, 27).move(4).cross(0, 32).move(4).commit();
       design2h = design2h.draw_strand(1, 36).move(-4).cross(1, 31).move(-4).commit();
 
-      var xs0 = design2h.helix_to_crossover_addresses_disallow_intrahelix[0];
+      var xs0 = design2h.helix_to_crossover_addresses_disallow_intrahelix[0]!;
       expect(xs0.length, 3);
       var a0 = xs0[0];
       var a1 = xs0[1];
@@ -495,7 +493,7 @@ main() {
       expect(a1.forward, true);
       expect(a2.forward, true);
 
-      var xs1 = design2h.helix_to_crossover_addresses_disallow_intrahelix[1];
+      var xs1 = design2h.helix_to_crossover_addresses_disallow_intrahelix[1]!;
       expect(xs1.length, 3);
       a0 = xs1[0];
       a1 = xs1[1];
@@ -521,7 +519,7 @@ main() {
       design2h = design2h.draw_strand(0, 27).move(4).cross(0, 32).move(4).commit();
       design2h = design2h.draw_strand(1, 36).move(-4).cross(1, 31).move(-4).commit();
 
-      var xs0 = design2h.helix_to_crossover_addresses[0];
+      var xs0 = design2h.helix_to_crossover_addresses[0]!;
       expect(xs0.length, 5);
       var a0 = xs0[0];
       var a1 = xs0[1];
@@ -544,7 +542,7 @@ main() {
       expect(a3.forward, true);
       expect(a4.forward, true);
 
-      var xs1 = design2h.helix_to_crossover_addresses[1];
+      var xs1 = design2h.helix_to_crossover_addresses[1]!;
       expect(xs1.length, 5);
       a0 = xs1[0];
       a1 = xs1[1];
@@ -595,7 +593,7 @@ main() {
       var exp_group_names = List<String>.from(design.groups.keys);
       expect(exp_group_names, [constants.default_group_name, group2name]);
 
-      var xs0 = design.helix_to_crossover_addresses_disallow_intrahelix_disallow_intergroup[0];
+      var xs0 = design.helix_to_crossover_addresses_disallow_intrahelix_disallow_intergroup[0]!;
       expect(xs0.length, 3);
       var a0 = xs0[0];
       var a1 = xs0[1];
@@ -610,7 +608,7 @@ main() {
       expect(a1.forward, true);
       expect(a2.forward, true);
 
-      var xs1 = design.helix_to_crossover_addresses_disallow_intrahelix_disallow_intergroup[1];
+      var xs1 = design.helix_to_crossover_addresses_disallow_intrahelix_disallow_intergroup[1]!;
       expect(xs1.length, 3);
       a0 = xs1[0];
       a1 = xs1[1];
@@ -625,7 +623,7 @@ main() {
       expect(a1.forward, false);
       expect(a2.forward, false);
 
-      var xs2 = design.helix_to_crossover_addresses_disallow_intrahelix_disallow_intergroup[2];
+      var xs2 = design.helix_to_crossover_addresses_disallow_intrahelix_disallow_intergroup[2]!;
       expect(xs2.length, 0);
     });
 

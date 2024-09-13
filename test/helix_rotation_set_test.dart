@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'dart:convert';
 import 'dart:math';
 
@@ -29,8 +27,8 @@ main() {
   num eps = 0.0001;
 
   group('unstrain_backbone_vert_design', () {
-    AppState state_vert;
-    Design design_vert;
+    Design design_vert = Design(helices: [], grid: Grid.square);
+    AppState state_vert = app_state_from_design(design_vert);
 
     // grid positions:
     //  0,0
@@ -50,9 +48,9 @@ main() {
     });
 
     test('rotations_vert_before_setting', () {
-      var helix0 = design_vert.helices[0];
-      var helix1 = design_vert.helices[1];
-      var helix2 = design_vert.helices[2];
+      var helix0 = design_vert.helices[0]!;
+      var helix1 = design_vert.helices[1]!;
+      var helix2 = design_vert.helices[2]!;
 
       expect(helix0.roll, 0);
       expect(helix1.roll, 0);
@@ -120,8 +118,8 @@ main() {
   });
 
   group('unstrain_backbone_horz_design', () {
-    AppState state_horz;
-    Design design_horz;
+    Design design_horz = Design(helices: [], grid: Grid.square);
+    AppState state_horz = app_state_from_design(design_horz);
 
     // design_horz:
     // grid positions:
@@ -146,9 +144,9 @@ main() {
     });
 
     test('rotations_horz_before_setting', () {
-      var helix0 = design_horz.helices[0];
-      var helix1 = design_horz.helices[1];
-      var helix2 = design_horz.helices[2];
+      var helix0 = design_horz.helices[0]!;
+      var helix1 = design_horz.helices[1]!;
+      var helix2 = design_horz.helices[2]!;
 
       expect(helix0.roll, 0);
       expect(helix1.roll, 0);
@@ -212,8 +210,8 @@ main() {
   });
 
   group('helix_rotation_set_based_on_crossovers', () {
-    AppState state;
-    Design design;
+    Design design = Design(helices: [], grid: Grid.none);
+    AppState state = app_state_from_design(design);
 
     // design:
     // positions:
@@ -230,7 +228,7 @@ main() {
     // 2  +----]
     setUp(() async {
       var geometry = Geometry(helix_radius: 1.0, inter_helix_gap: 0.5, bases_per_turn: 10.5);
-      num helix_dist = geometry.distance_between_helices_nm;
+      double helix_dist = geometry.distance_between_helices_nm;
       var helices = [
         Helix(idx: 0, grid: Grid.none, geometry: geometry, position: Position3D(x: 0, z: 0, y: 0), roll: 0),
         Helix(
@@ -253,15 +251,15 @@ main() {
     });
 
     test('rotations_gridless_design_before_setting', () {
-      var helix0 = design.helices[0];
-      var helix1 = design.helices[1];
-      var helix2 = design.helices[2];
+      var helix0 = design.helices[0]!;
+      var helix1 = design.helices[1]!;
+      var helix2 = design.helices[2]!;
 
       expect(helix0.roll, 0);
       expect(helix1.roll, 0);
       expect(helix2.roll, 0);
 
-      num helix_dist = design.geometry.distance_between_helices_nm;
+      double helix_dist = design.geometry.distance_between_helices_nm;
       expect(helix0.position, Position3D(x: 0, z: 0, y: 0));
       expect(helix1.position, Position3D(x: helix_dist, z: 0, y: helix_dist));
       expect(helix2.position, Position3D(x: 2 * helix_dist, z: 0, y: 2 * helix_dist));
@@ -291,9 +289,9 @@ main() {
       var state_after = app_state_reducer(state, batch_action);
       var design_after = state_after.design;
 
-      var helix0 = design_after.helices[0];
-      var helix1 = design_after.helices[1];
-      var helix2 = design_after.helices[2];
+      var helix0 = design_after.helices[0]!;
+      var helix1 = design_after.helices[1]!;
+      var helix2 = design_after.helices[2]!;
 
       expect(helix0.position.x, closeTo(0, eps));
       expect(helix0.position.y, closeTo(0, eps));

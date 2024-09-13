@@ -40,13 +40,22 @@ import '../util.dart' as util;
 
 part 'menu.over_react.g.dart';
 
+MenuProps set_menu_props(MenuProps elt, AppState state) => elt..state = state;
+
 UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
-  mapStateToProps: (AppState state) {
+  mapStateToProps: (AppState state) => set_menu_props(Menu(), state),
+  // Used for component test.
+  forwardRef: true,
+)(Menu);
+
+/*
+mapStateToProps: (AppState state) {
     return (Menu()
       ..selected_ends = state.ui_state.selectables_store.selected_dna_ends
-      ..geometry = state.design?.geometry
-      ..no_grid_is_none =
-          state.design == null ? false : state.design.groups.values.every((group) => group.grid != Grid.none)
+      ..geometry = state.maybe_design?.geometry
+      ..no_grid_is_none = state.maybe_design == null
+          ? false
+          : state.design.groups.values.every((group) => group.grid != Grid.none)
       ..show_oxview = state.ui_state.show_oxview
       ..show_dna = state.ui_state.show_dna
       ..base_pair_display_type = state.ui_state.base_pair_display_type
@@ -69,7 +78,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..show_base_pair_lines = state.ui_state.show_base_pair_lines
       ..show_base_pair_lines_with_mismatches = state.ui_state.show_base_pair_lines_with_mismatches
       ..example_designs = state.ui_state.example_designs
-      ..design_has_insertions_or_deletions = state.design?.has_insertions_or_deletions == true
+      ..design_has_insertions_or_deletions = state.maybe_design?.has_insertions_or_deletions == true
       ..undo_stack_empty = state.undo_redo.undo_stack.isEmpty
       ..redo_stack_empty = state.undo_redo.redo_stack.isEmpty
       ..enable_copy = app.state.ui_state.selectables_store.selected_strands.isNotEmpty
@@ -106,79 +115,20 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..selection_box_intersection = state.ui_state.selection_box_intersection
       ..ox_export_only_selected_strands = state.ui_state.ox_export_only_selected_strands
       ..undo_redo = state.undo_redo);
-  },
-  // Used for component test.
-  forwardRef: true,
-)(Menu);
+ */
 
 UiFactory<MenuProps> Menu = _$Menu;
 
-mixin MenuPropsMixin on UiProps {
-  BuiltSet<DNAEnd> selected_ends;
-  bool selection_box_intersection;
-  bool no_grid_is_none;
-  bool show_oxview;
-  bool show_dna;
-  bool show_strand_names;
-  bool show_strand_labels;
-  bool show_domain_names;
-  bool show_domain_labels;
-  num strand_name_font_size;
-  num strand_label_font_size;
-  num domain_name_font_size;
-  num domain_label_font_size;
-  num zoom_speed;
-  bool show_modifications;
-  num modification_font_size;
-  num major_tick_offset_font_size;
-  num major_tick_width_font_size;
-  bool modification_display_connector;
-  bool show_mismatches;
-  bool show_domain_name_mismatches;
-  bool show_unpaired_insertion_deletions;
-  bool strand_paste_keep_color;
-  bool autofit;
-  bool only_display_selected_helices;
-  ExampleDesigns example_designs;
-  BasePairDisplayType base_pair_display_type;
-  bool design_has_insertions_or_deletions;
-  bool undo_stack_empty;
-  bool redo_stack_empty;
-  bool enable_copy;
-  bool dynamically_update_helices;
-  bool show_base_pair_lines;
-  bool show_base_pair_lines_with_mismatches;
-  bool display_of_major_ticks_offsets;
-  bool display_base_offsets_of_major_ticks_only_first_helix;
-  bool display_major_tick_widths;
-  bool display_major_tick_widths_all_helices;
-  bool invert_y;
-  bool warn_on_exit_if_unsaved;
-  bool show_helix_circles_main_view;
-  bool show_helix_components_main_view;
-  bool show_grid_coordinates_side_view;
-  bool show_helices_axis_arrows;
-  bool show_loopout_extension_length;
-  bool show_mouseover_data;
-  bool disable_png_caching_dna_sequences;
-  bool retain_strand_color_on_selection;
-  bool display_reverse_DNA_right_side_up;
-  bool default_crossover_type_scaffold_for_setting_helix_rolls;
-  bool default_crossover_type_staple_for_setting_helix_rolls;
-  bool export_svg_text_separately;
-  bool ox_export_only_selected_strands;
-  LocalStorageDesignChoice local_storage_design_choice;
-  bool clear_helix_selection_when_loading_new_design;
-  bool show_slice_bar;
-  Geometry geometry;
-  UndoRedo undo_redo;
+mixin MenuProps on UiProps {
+  late AppState state;
 }
 
-class MenuProps = UiProps with MenuPropsMixin, ConnectPropsMixin;
+class MenuComponent extends UiComponent2<MenuProps> {
+  bool get enable_copy => props.state.ui_state.selectables_store.selected_strands.isNotEmpty;
 
-class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
-  @override
-  get consumedProps => propsMeta.forMixins({MenuPropsMixin});
+  bool get no_grid_is_none => props.state.maybe_design == null
+      ? false
+      : props.state.design.groups.values.every((group) => group.grid != Grid.none);
 
   /*
   // this is needed in case the user selects the same filename, to reload the file in case it has changed.
@@ -234,33 +184,33 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
         ..display = '📄 Load example'
         ..key = 'load-example')(),
       (MenuFormFile()
-        ..id = 'open-form-file'
+        ..id_ = 'open-form-file'
         ..accept = constants.all_scadnano_file_extensions.map((ext) => '.' + ext).join(",")
-        ..onChange = ((e) => request_load_file_from_file_chooser(e.target, scadnano_file_loaded))
+        ..on_change = ((e) => request_load_file_from_file_chooser(e.target, scadnano_file_loaded))
         ..display = '📂 Open'
         ..keyboard_shortcut = 'Ctrl+O'
         ..key = 'open-form-file')(),
       DropdownDivider({'key': 'divider-file-load'}),
       (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.SaveDNAFile()))
+        ..on_click = ((_) => app.dispatch(actions.SaveDNAFile()))
         ..display = '💾 Save'
         ..keyboard_shortcut = 'Ctrl+S'
         ..key = 'save-file')(),
       (MenuBoolean()
-        ..value = props.warn_on_exit_if_unsaved
+        ..value = props.state.ui_state.warn_on_exit_if_unsaved
         ..display = 'Warn on exit if unsaved'
         ..tooltip = '''\
 If checked, before attempting to close or refresh the page, if the design has 
 changed since it was last saved, a warning dialog is displayed to ask if you
 really want to exit without saving.'''
-        ..onChange =
-            ((_) => props.dispatch(actions.WarnOnExitIfUnsavedSet(warn: !props.warn_on_exit_if_unsaved)))
+        ..on_change = ((_) =>
+            app.dispatch(actions.WarnOnExitIfUnsavedSet(warn: !props.state.ui_state.warn_on_exit_if_unsaved)))
         ..key = 'warn-on-exit-if-unsaved')(),
       DropdownDivider({'key': 'divider-save'}),
       (MenuFormFile()
-        ..id = 'import-cadnano-form-file'
+        ..id_ = 'import-cadnano-form-file'
         ..accept = '.json'
-        ..onChange = ((e) => request_load_file_from_file_chooser(e.target, cadnano_file_loaded))
+        ..on_change = ((e) => request_load_file_from_file_chooser(e.target, cadnano_file_loaded))
         ..display = 'Import cadnano v2'
         ..key = 'import-cadnano')(),
       DropdownDivider({'key': 'divider-import-cadnano'}),
@@ -272,7 +222,7 @@ including the current design.
 
 Are you sure you want to continue?''');
           if (reset) {
-            props.dispatch(actions.ResetLocalStorage());
+            app.dispatch(actions.ResetLocalStorage());
           }
         })
         ..display = 'Reset local storage'
@@ -282,10 +232,10 @@ Clear the stored design, reset all local settings, and reload the page.'''
       file_menu_save_design_local_storage_options(),
       DropdownDivider({'key': 'divide-clear-helix-selection-when-loading-new-design'}),
       (MenuBoolean()
-        ..value = props.clear_helix_selection_when_loading_new_design
+        ..value = props.state.ui_state.clear_helix_selection_when_loading_new_design
         ..display = 'Clear helix selection when loading new design'
-        ..onChange = ((_) => props.dispatch(actions.ClearHelixSelectionWhenLoadingNewDesignSet(
-            clear: !props.clear_helix_selection_when_loading_new_design)))
+        ..on_change = ((_) => app.dispatch(actions.ClearHelixSelectionWhenLoadingNewDesignSet(
+            clear: !props.state.ui_state.clear_helix_selection_when_loading_new_design)))
         ..tooltip = '''\
 If checked, the selected helices will be clear when loading a new design.
 Otherwise, helix selection is not cleared, meaning that all the selected helices in the current
@@ -295,60 +245,64 @@ design will be selected (based on helix index) on the loaded design.'''
   }
 
   ReactElement file_menu_save_design_local_storage_options() => (MenuDropdownRight()
-        ..title = 'Local storage design save options'
-        ..id = 'file_menu_local-storage-options'
+        ..title_ = 'Local storage design save options'
+        ..id_ = 'file_menu_local-storage-options'
         ..key = 'file_menu_local-storage-options'
         ..className = 'submenu_item')([
         (MenuBoolean()
-          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.on_edit
+          ..value =
+              props.state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.on_edit
           ..display = 'Save design in localStorage on every edit'
           ..tooltip = '''\
 On every edit, save current design in localStorage (in your web browser).
 
 Disabling this minimizes the time needed to render large designs.'''
-          ..onChange = ((_) => props.dispatch(
-              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_on_edit())))
+          ..on_change = ((_) => app.dispatch(actions.LocalStorageDesignChoiceSet(
+              choice: props.state.ui_state.local_storage_design_choice.to_on_edit())))
           ..key = 'save-dna-design-in-local-storage')(),
         (MenuBoolean()
-          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.on_exit
+          ..value =
+              props.state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.on_exit
           ..display = 'Save design in localStorage before exiting'
           ..tooltip = '''\
 Before exiting, save current design in localStorage (in your web browser). 
 For large designs, this is faster than saving on every edit, but if the browser crashes, 
 all changes made will be lost, so it is not as safe as storing on every edit.'''
-          ..onChange = ((_) => props.dispatch(
-              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_on_exit())))
+          ..on_change = ((_) => app.dispatch(actions.LocalStorageDesignChoiceSet(
+              choice: props.state.ui_state.local_storage_design_choice.to_on_exit())))
           ..key = 'save-dna-design-in-local-storage-on-exit')(),
         (MenuBoolean()
-          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.never
+          ..value = props.state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.never
           ..display = 'Do not save design in localStorage'
           ..tooltip = '''\
 Never saves the design in localStorage.
 
 WARNING: you must save your design manually by pressing Ctrl+S or selecting 
 File-->Save, or your design will be lost when you close the browser tab.'''
-          ..onChange = ((_) => props.dispatch(
-              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_never())))
+          ..on_change = ((_) => app.dispatch(actions.LocalStorageDesignChoiceSet(
+              choice: props.state.ui_state.local_storage_design_choice.to_never())))
           ..key = 'never-save-dna-design-in-local-storage')(),
         (MenuBoolean()
-          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.periodic
+          ..value =
+              props.state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.periodic
           ..display = 'Save design in localStorage periodically'
           ..tooltip = '''\
 Every <period> seconds, save current design in localStorage (in your web browser). 
 Also saves before exiting.
 This is safer than never saving, or saving only before exiting, but will not save edits
 that occurred between the last save and a browser crash.'''
-          ..onChange = ((_) => props.dispatch(
-              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_periodic())))
+          ..on_change = ((_) => app.dispatch(actions.LocalStorageDesignChoiceSet(
+              choice: props.state.ui_state.local_storage_design_choice.to_periodic())))
           ..key = 'save-dna-design-in-local-storage-periodically')(),
         (MenuNumber()
           ..display = 'period (seconds)'
           ..min_value = 1
-          ..default_value = props.local_storage_design_choice.period_seconds
-          ..hide = props.local_storage_design_choice.option != LocalStorageDesignOption.periodic
+          ..default_value = props.state.ui_state.local_storage_design_choice.period_seconds
+          ..hide =
+              props.state.ui_state.local_storage_design_choice.option != LocalStorageDesignOption.periodic
           ..tooltip = 'Number of seconds between saving design to localStorage.'
-          ..on_new_value = ((num period) => props.dispatch(actions.LocalStorageDesignChoiceSet(
-              choice: LocalStorageDesignChoice(LocalStorageDesignOption.periodic, period))))
+          ..on_new_value = ((num period) => app.dispatch(actions.LocalStorageDesignChoiceSet(
+              choice: LocalStorageDesignChoice(LocalStorageDesignOption.periodic, period.toInt()))))
           ..key = 'period-of-save-dna-design-in-local-storage-periodically')(),
       ]);
 
@@ -362,15 +316,15 @@ that occurred between the last save and a browser crash.'''
         'id': 'edit-nav-dropdown',
       },
       (MenuDropdownRight()
-        ..title = 'Undo'
-        ..id = "edit_menu_undo-dropdown"
+        ..title_ = 'Undo'
+        ..id_ = "edit_menu_undo-dropdown"
         ..keyboard_shortcut = 'Ctrl+Z'
-        ..disabled = props.undo_stack_empty)(undo_dropdowns),
+        ..disabled = props.state.undo_redo.undo_stack.isEmpty)(undo_dropdowns),
       (MenuDropdownRight()
-        ..title = 'Redo'
-        ..id = "edit_menu_redo-dropdown"
+        ..title_ = 'Redo'
+        ..id_ = "edit_menu_redo-dropdown"
         ..keyboard_shortcut = 'Ctrl+Shift+Z'
-        ..disabled = props.redo_stack_empty)(redo_dropdowns),
+        ..disabled = props.state.undo_redo.redo_stack.isEmpty)(redo_dropdowns),
       DropdownDivider({}),
       edit_menu_copy_paste(),
       DropdownDivider({}),
@@ -383,17 +337,17 @@ Expand helices dynamically when strand(s) is moved or created according to the s
 If checked, helices will update with strand movement'''
         ..name = 'dynamically-update-helices'
         ..key = 'dynamically-update-helices'
-        ..onChange = ((_) => props.dispatch(
-            actions.DynamicHelixUpdateSet(dynamically_update_helices: !props.dynamically_update_helices)))
-        ..value = props.dynamically_update_helices)(),
+        ..on_change = ((_) => app.dispatch(actions.DynamicHelixUpdateSet(
+            dynamically_update_helices: !props.state.ui_state.dynamically_update_helices)))
+        ..value = props.state.ui_state.dynamically_update_helices)(),
 
       DropdownDivider({}),
       ///////////////////////////////////////////////////////////////
       // inline insertions/deletions
       (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.InlineInsertionsDeletions()))
+        ..on_click = ((_) => app.dispatch(actions.InlineInsertionsDeletions()))
         ..display = 'Inline insertions/deletions'
-        ..disabled = !props.design_has_insertions_or_deletions
+        ..disabled = !(props.state.maybe_design?.has_insertions_or_deletions == true)
         ..tooltip = '''\
 Remove insertions and deletions from the design and replace them with domains
 whose lengths correspond to the true strand length. Also moves major tick 
@@ -403,9 +357,9 @@ marks on helices so that they are adjacent to the same bases as before.''')(),
       // Connect selected ends by crossovers
       (MenuDropdownItem()
         // ..on_click = ((_) => connect_ends_by_crossovers(props.selected_ends))
-        ..on_click = ((_) => props.dispatch(actions.JoinStrandsByMultipleCrossovers()))
+        ..on_click = ((_) => app.dispatch(actions.JoinStrandsByMultipleCrossovers()))
         ..display = 'Connect selected ends by crossovers'
-        ..disabled = props.selected_ends.isEmpty
+        ..disabled = props.state.ui_state.selectables_store.selected_dna_ends.isEmpty
         ..tooltip = '''\
 Connect selected ends by crossovers. 
 
@@ -424,7 +378,7 @@ to the first end e2 after it in this order, if
       // Set geometric parameters
       DropdownDivider({}),
       (MenuDropdownItem()
-        ..on_click = ((_) => ask_for_geometry(props.geometry))
+        ..on_click = ((_) => ask_for_geometry(props.state.maybe_design?.geometry))
         ..display = 'Set geometric parameters'
         ..tooltip = '''\
 Set geometric parameters affecting how the design is displayed.
@@ -469,11 +423,11 @@ It will also only work on scadnano designs that are exportable to cadnano.
   }
 
   List<ReactElement> get undo_dropdowns {
-    return undo_or_redo_dropdowns((i) => actions.Undo(i), props.undo_redo.undo_stack, "Undo");
+    return undo_or_redo_dropdowns((i) => actions.Undo(i), props.state.undo_redo.undo_stack, "Undo");
   }
 
   List<ReactElement> get redo_dropdowns {
-    return undo_or_redo_dropdowns((i) => actions.Redo(i), props.undo_redo.redo_stack, "Redo");
+    return undo_or_redo_dropdowns((i) => actions.Redo(i), props.state.undo_redo.redo_stack, "Redo");
   }
 
   List<ReactElement> undo_or_redo_dropdowns(ActionFromIntCreator undo_or_redo_action_creator,
@@ -500,13 +454,13 @@ It will also only work on scadnano designs that are exportable to cadnano.
 
   ReactElement edit_menu_copy_paste() {
     return (MenuDropdownRight()
-      ..title = 'Copy/Paste/Select'
-      ..id = 'edit_menu_copy-paste'
+      ..title_ = 'Copy/Paste/Select'
+      ..id_ = 'edit_menu_copy-paste'
       ..key = 'edit_menu_copy-paste'
       ..className = 'submenu-item')([
       (MenuDropdownItem()
         ..on_click = (_) {
-          if (props.enable_copy) {
+          if (this.enable_copy) {
             window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.C, ctrlKey: true).wrapped);
           }
         }
@@ -517,10 +471,10 @@ It will also only work on scadnano designs that are exportable to cadnano.
 Copy the currently selected strand(s). They can be pasted into this design,
 or into another design in another browser or tab. You can also paste into
 a text document to see a JSON description of the copied strand(s).'''
-        ..disabled = !props.enable_copy)(),
+        ..disabled = !this.enable_copy)(),
       (MenuDropdownItem()
         ..on_click = (_) {
-          if (props.enable_copy) {
+          if (this.enable_copy) {
             app.dispatch(actions.CopySelectedStandsToClipboardImage());
           }
         }
@@ -534,7 +488,7 @@ or Inkscape. Note that the bitmap image will be pixelated on zoom-in, unlike
 SVG (scaled vector graphics). To retain the vector graphics in the image so
 that it stays sharp on zoom-in, use the option Export-->SVG of selected strands
 to save an SVG file of the selected strands.'''
-        ..disabled = !props.enable_copy)(),
+        ..disabled = !this.enable_copy)(),
       (MenuDropdownItem()
         ..on_click =
             ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped))
@@ -575,7 +529,7 @@ with some default direction chosen. Play with it and see!
         ..tooltip = 'Select all strands in the design.'
         ..keyboard_shortcut = 'Ctrl+A')(),
       (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.SelectAllSelectable(current_helix_group_only: true)))
+        ..on_click = ((_) => app.dispatch(actions.SelectAllSelectable(current_helix_group_only: true)))
         ..display = 'Select all in helix group'
         ..key = 'edit_menu_copy-select-all-in-helix-groups'
         ..tooltip = 'Select all selectable strands in the current helix group.'
@@ -587,7 +541,7 @@ with some default direction chosen. Play with it and see!
         ..tooltip = 'Select all strands that share given trait(s) as the currently selected strand(s).'
         ..keyboard_shortcut = 'Alt+Shift+A')(),
       (MenuBoolean()
-        ..value = props.selection_box_intersection
+        ..value = props.state.ui_state.selection_box_intersection
         ..display = 'Selection box intersection'
         ..key = 'edit_menu_copy-paste_Selection box intersection'
         ..tooltip = '''\
@@ -599,28 +553,28 @@ If unchecked, select any object *entirely contained within* the selection box.
 
 If checked, select any object *intersecting* the selection box, even if some parts lie 
 outside the box.'''
-        ..onChange = ((_) => props.dispatch(
-            actions.SelectionBoxIntersectionRuleSet(intersect: !props.selection_box_intersection))))(),
+        ..on_change = ((_) => app.dispatch(actions.SelectionBoxIntersectionRuleSet(
+            intersect: !props.state.ui_state.selection_box_intersection))))(),
       (MenuBoolean()
-        ..value = props.strand_paste_keep_color
+        ..value = props.state.ui_state.strand_paste_keep_color
         ..display = 'Pasted strands keep original color'
         ..key = 'edit_menu_copy-paste_Pasted strands keep original color'
         ..tooltip = '''\
 If checked, when copying and pasting a strand, the color is preserved.
 If unchecked, then a new color is generated.'''
-        ..onChange =
-            ((_) => props.dispatch(actions.StrandPasteKeepColorSet(keep: !props.strand_paste_keep_color))))(),
+        ..on_change = ((_) => app.dispatch(
+            actions.StrandPasteKeepColorSet(keep: !props.state.ui_state.strand_paste_keep_color))))(),
     ]);
   }
 
   ReactElement edit_menu_helix_rolls() {
     return (MenuDropdownRight()
-      ..title = 'Helix rolls'
-      ..id = 'edit_menu_helix-rolls'
+      ..title_ = 'Helix rolls'
+      ..id_ = 'edit_menu_helix-rolls'
       ..key = 'edit_menu_helix-rolls'
       ..className = 'submenu-item')([
       (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.RelaxHelixRolls(only_selected: false)))
+        ..on_click = ((_) => app.dispatch(actions.RelaxHelixRolls(only_selected: false)))
         ..display = 'Set helix rolls to unstrain crossovers'
         ..key = 'edit_menu_helix-rolls_set-helix-rolls'
         ..tooltip = '''\
@@ -635,7 +589,7 @@ This can be used to create a design with "reasonable" crossover locations and
 then set the rolls to match the crossover locations as best as possible.
 ''')(),
       (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.RelaxHelixRolls(only_selected: true)))
+        ..on_click = ((_) => app.dispatch(actions.RelaxHelixRolls(only_selected: true)))
         ..display = 'Set *selected* helix rolls to unstrain crossovers'
         ..key = 'edit_menu_helix-rolls_set-selected-helix-rolls'
         ..tooltip = '''\
@@ -643,12 +597,12 @@ Same as option "Set helix rolls based on crossovers and helix coordinates" above
 but changes the rolls only of selected helices.''')(),
       DropdownDivider({'key': 'dropdown1'}),
       (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers()))
+        ..on_click = ((_) => app.dispatch(actions.HelicesPositionsSetBasedOnCrossovers()))
         ..display = 'Set helix coordinates based on crossovers'
         ..key = 'edit_menu_helix-rolls_set-helix-positions-based-on-crossovers'
-        ..disabled = props.no_grid_is_none
+        ..disabled = this.no_grid_is_none
         ..tooltip = '''\
-The grid must be set to none to enable this.${props.no_grid_is_none ? " (Currently disabled since the grid is not none.)" : ""}
+The grid must be set to none to enable this.${this.no_grid_is_none ? " (Currently disabled since the grid is not none.)" : ""}
 
 Select some crossovers and some helices. If no helices are selected, then all
 helices are processed. At most one crossover between pairs of adjacent (in
@@ -659,7 +613,7 @@ New grid coordinates are calculated based on the crossovers to ensure that each
 pair of adjacent helices has crossover angles that point the backbone angles
 directly at the adjoining helix.''')(),
       (MenuBoolean()
-        ..value = props.default_crossover_type_scaffold_for_setting_helix_rolls
+        ..value = props.state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls
         ..display = 'default to leftmost scaffold crossover'
         ..key = 'edit_menu_helix-rolls_default to leftmost scaffold crossover'
         ..tooltip = '''\
@@ -673,16 +627,16 @@ then the leftmost scaffold crossover will be used.
 If both are checked, the leftmost crossover of any type will be used.
 
 Ignored if design is not an origami (i.e., does not have at least one scaffold).'''
-        ..onChange = (_) {
+        ..on_change = (_) {
           // disallow if both would be unchecked
-          if (props.default_crossover_type_staple_for_setting_helix_rolls) {
-            props.dispatch(actions.DefaultCrossoverTypeForSettingHelixRollsSet(
-                scaffold: !props.default_crossover_type_scaffold_for_setting_helix_rolls,
-                staple: props.default_crossover_type_staple_for_setting_helix_rolls));
+          if (props.state.ui_state.default_crossover_type_staple_for_setting_helix_rolls) {
+            app.dispatch(actions.DefaultCrossoverTypeForSettingHelixRollsSet(
+                scaffold: !props.state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls,
+                staple: props.state.ui_state.default_crossover_type_staple_for_setting_helix_rolls));
           }
         })(),
       (MenuBoolean()
-        ..value = props.default_crossover_type_staple_for_setting_helix_rolls
+        ..value = props.state.ui_state.default_crossover_type_staple_for_setting_helix_rolls
         ..display = 'default to leftmost staple crossover'
         ..key = 'edit_menu_helix-rolls_default to leftmost staple crossover'
         ..tooltip = '''\
@@ -696,12 +650,12 @@ then the leftmost staple crossover will be used.
 If both are checked, the leftmost crossover of any type will be used.
 
 Ignored if design is not an origami (i.e., does not have at least one scaffold).'''
-        ..onChange = (_) {
+        ..on_change = (_) {
           // disallow if both would be unchecked
-          if (props.default_crossover_type_scaffold_for_setting_helix_rolls) {
-            props.dispatch(actions.DefaultCrossoverTypeForSettingHelixRollsSet(
-                scaffold: props.default_crossover_type_scaffold_for_setting_helix_rolls,
-                staple: !props.default_crossover_type_staple_for_setting_helix_rolls));
+          if (props.state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls) {
+            app.dispatch(actions.DefaultCrossoverTypeForSettingHelixRollsSet(
+                scaffold: props.state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls,
+                staple: !props.state.ui_state.default_crossover_type_staple_for_setting_helix_rolls));
           }
         })(),
     ]);
@@ -735,8 +689,8 @@ Ignored if design is not an origami (i.e., does not have at least one scaffold).
 
   ReactElement view_menu_autofit() {
     return (MenuDropdownRight()
-      ..title = 'Autofit'
-      ..id = 'view_menu_autofit-dropdown'
+      ..title_ = 'Autofit'
+      ..id_ = 'view_menu_autofit-dropdown'
       ..key = 'view_menu_autofit-dropdown'
       ..className = 'submenu-item')([
       (MenuDropdownItem()
@@ -750,7 +704,7 @@ The side and main views will be translated to fit the current design in the wind
         }
         ..key = 'autofit-current-design')(),
       (MenuBoolean()
-        ..value = props.autofit
+        ..value = props.state.ui_state.autofit
         ..display = 'Auto-fit on loading new design'
         ..tooltip = '''\
 The side and main views will be translated to fit the current design in the window
@@ -765,47 +719,49 @@ of the design you were looking at before changing the script.
 
 To autofit the current design without reloading, click "Auto-fit current design".'''
         ..name = 'center-on-load'
-        ..onChange = ((_) => props.dispatch(actions.AutofitSet(autofit: !props.autofit)))
+        ..on_change = ((_) => app.dispatch(actions.AutofitSet(autofit: !props.state.ui_state.autofit)))
         ..key = 'autofit-on-loading-new-design')(),
     ]);
   }
 
   ReactElement view_menu_warnings() {
     return (MenuDropdownRight()
-      ..title = 'Warnings'
-      ..id = 'view_menu_show_warnings'
+      ..title_ = 'Warnings'
+      ..id_ = 'view_menu_show_warnings'
       ..key = 'view_menu_show_warnings'
       ..className = 'submenu_item')([
       (MenuBoolean()
-        ..value = props.show_mismatches
+        ..value = props.state.ui_state.show_mismatches
         ..display = 'Show DNA base mismatches'
         ..tooltip = '''\
 Show mismatches between DNA assigned to one strand and the strand on the same
 helix with the opposite orientation.'''
-        ..onChange = (_) {
-          props.dispatch(actions.ShowMismatchesSet(!props.show_mismatches));
+        ..on_change = (_) {
+          app.dispatch(actions.ShowMismatchesSet(!props.state.ui_state.show_mismatches));
         }
         ..key = 'show-mismatches')(),
       (MenuBoolean()
-        ..value = props.show_domain_name_mismatches
+        ..value = props.state.ui_state.show_domain_name_mismatches
         ..display = 'Show domain name mismatches'
         ..tooltip = '''\
 Show mismatches between domain names assigned to one strand and the strand on the same
 helix with the opposite orientation.'''
-        ..onChange = (_) {
-          props.dispatch(actions.ShowDomainNameMismatchesSet(!props.show_domain_name_mismatches));
+        ..on_change = (_) {
+          app.dispatch(
+              actions.ShowDomainNameMismatchesSet(!props.state.ui_state.show_domain_name_mismatches));
         }
         ..key = 'show-domain-name-mismatches')(),
       (MenuBoolean()
-        ..value = props.show_unpaired_insertion_deletions
+        ..value = props.state.ui_state.show_unpaired_insertion_deletions
         ..display = 'Show unpaired insertion/deletions'
         ..tooltip = '''\
 Show unpaired deletions and insertions. This is defined to be an insertion/deletion on
 a strand, where another strand is at the same (helix,offset) (in the opposite direction),
 which lacks the insertion/deletion. It does NOT show a warning if there is no other
 strand at the same (helix,offset).'''
-        ..onChange = (_) {
-          props.dispatch(actions.ShowUnpairedInsertionDeletionsSet(!props.show_unpaired_insertion_deletions));
+        ..on_change = (_) {
+          app.dispatch(actions.ShowUnpairedInsertionDeletionsSet(
+              !props.state.ui_state.show_unpaired_insertion_deletions));
         }
         ..key = 'show-unpaired-insertion-deletions')(),
     ]);
@@ -813,84 +769,89 @@ strand at the same (helix,offset).'''
 
   ReactElement view_menu_show_labels() {
     return (MenuDropdownRight()
-      ..title = 'Strand/domain names/labels'
-      ..id = 'view_menu_show_labels-dropdown'
+      ..title_ = 'Strand/domain names/labels'
+      ..id_ = 'view_menu_show_labels-dropdown'
       ..key = 'view_menu_show_labels-dropdown'
       ..className = 'submenu_item')([
       (MenuBoolean()
-        ..value = props.show_strand_names
+        ..value = props.state.ui_state.show_strand_names
         ..display = 'Show strand names'
         ..tooltip = "Show strand names near 5' domain of strand."
-        ..onChange = ((_) => props.dispatch(actions.ShowStrandNamesSet(!props.show_strand_names)))
+        ..on_change =
+            ((_) => app.dispatch(actions.ShowStrandNamesSet(!props.state.ui_state.show_strand_names)))
         ..key = 'show-strand-name')(),
       (MenuNumber()
         ..display = 'strand name font size'
-        ..default_value = props.strand_name_font_size
-        ..hide = !props.show_strand_names
+        ..default_value = props.state.ui_state.strand_name_font_size
+        ..hide = !props.state.ui_state.show_strand_names
         ..tooltip = 'Adjust the font size of strand names.'
         ..on_new_value =
-            ((num font_size) => props.dispatch(actions.StrandNameFontSizeSet(font_size: font_size)))
+            ((num font_size) => app.dispatch(actions.StrandNameFontSizeSet(font_size: font_size.toDouble())))
         ..key = 'strand-name-font-size')(),
       (MenuBoolean()
-        ..value = props.show_strand_labels
+        ..value = props.state.ui_state.show_strand_labels
         ..display = 'Show strand labels'
         ..tooltip = "Show strand labels near 5' domain of strand."
-        ..onChange = ((_) => props.dispatch(actions.ShowStrandLabelsSet(!props.show_strand_labels)))
+        ..on_change =
+            ((_) => app.dispatch(actions.ShowStrandLabelsSet(!props.state.ui_state.show_strand_labels)))
         ..key = 'show-strand-label')(),
       (MenuNumber()
         ..display = 'strand label font size'
-        ..default_value = props.strand_label_font_size
-        ..hide = !props.show_strand_labels
+        ..default_value = props.state.ui_state.strand_label_font_size
+        ..hide = !props.state.ui_state.show_strand_labels
         ..tooltip = 'Adjust the font size of strand labels.'
         ..on_new_value =
-            ((num font_size) => props.dispatch(actions.StrandLabelFontSizeSet(font_size: font_size)))
+            ((num font_size) => app.dispatch(actions.StrandLabelFontSizeSet(font_size: font_size.toDouble())))
         ..key = 'strand-label-font-size')(),
       (MenuBoolean()
-        ..value = props.show_domain_names
+        ..value = props.state.ui_state.show_domain_names
         ..display = 'Show domain names'
         ..tooltip = 'Show domain and loopout names.'
-        ..onChange = ((_) => props.dispatch(actions.ShowDomainNamesSet(!props.show_domain_names)))
+        ..on_change =
+            ((_) => app.dispatch(actions.ShowDomainNamesSet(!props.state.ui_state.show_domain_names)))
         ..key = 'show-domain-name')(),
       (MenuNumber()
         ..display = 'domain name font size'
-        ..default_value = props.domain_name_font_size
-        ..hide = !props.show_domain_names
+        ..default_value = props.state.ui_state.domain_name_font_size
+        ..hide = !props.state.ui_state.show_domain_names
         ..tooltip = 'Adjust the font size of domain/loopout/extension names.'
         ..on_new_value =
-            ((num font_size) => props.dispatch(actions.DomainNameFontSizeSet(font_size: font_size)))
+            ((num font_size) => app.dispatch(actions.DomainNameFontSizeSet(font_size: font_size.toDouble())))
         ..key = 'domain-name-font-size')(),
       (MenuBoolean()
-        ..value = props.show_domain_labels
+        ..value = props.state.ui_state.show_domain_labels
         ..display = 'Show domain labels'
         ..tooltip = "Show domain labels near 5' domain of strand."
-        ..onChange = ((_) => props.dispatch(actions.ShowDomainLabelsSet(!props.show_domain_labels)))
+        ..on_change =
+            ((_) => app.dispatch(actions.ShowDomainLabelsSet(!props.state.ui_state.show_domain_labels)))
         ..key = 'show-domain-label')(),
       (MenuNumber()
         ..display = 'domain label font size'
-        ..default_value = props.domain_label_font_size
-        ..hide = !props.show_domain_labels
+        ..default_value = props.state.ui_state.domain_label_font_size
+        ..hide = !props.state.ui_state.show_domain_labels
         ..tooltip = 'Adjust the font size of domain labels.'
         ..on_new_value =
-            ((num font_size) => props.dispatch(actions.DomainLabelFontSizeSet(font_size: font_size)))
+            ((num font_size) => app.dispatch(actions.DomainLabelFontSizeSet(font_size: font_size.toDouble())))
         ..key = 'domain-label-font-size')(),
     ]);
   }
 
   ReactElement view_menu_mods() {
     return (MenuDropdownRight()
-      ..title = 'Modifications'
-      ..id = 'view_menu_mods-dropdown'
+      ..title_ = 'Modifications'
+      ..id_ = 'view_menu_mods-dropdown'
       ..key = 'view_menu_mods-dropdown'
       ..className = 'submenu_item')([
       (MenuBoolean()
-        ..value = props.show_modifications
+        ..value = props.state.ui_state.show_modifications
         ..display = 'Show modifications'
         ..tooltip = 'Check to show DNA modifications (e.g., biotins, fluorophores).'
-        ..onChange = ((_) => props.dispatch(actions.ShowModificationsSet(!props.show_modifications)))
+        ..on_change =
+            ((_) => app.dispatch(actions.ShowModificationsSet(!props.state.ui_state.show_modifications)))
         ..key = 'show-mods')(),
       (MenuBoolean()
-        ..value = props.modification_display_connector
-        ..hide = !props.show_modifications
+        ..value = props.state.ui_state.modification_display_connector
+        ..hide = !props.state.ui_state.show_modifications
         ..display = 'Display modification connector'
         ..tooltip = """\
 Check to display DNA modification "connectors", short lines that connect 
@@ -900,46 +861,47 @@ If this is unchecked, then the modification is displayed directly on top of
 the 5'/3' end or the base. This is useful for visualizing the exact position
 of the modifications, e.g., to see where a pattern of biotins will appear on
 the surface of a DNA origami."""
-        ..onChange = ((_) =>
-            props.dispatch(actions.SetModificationDisplayConnector(!props.modification_display_connector)))
+        ..on_change = ((_) => app.dispatch(
+            actions.SetModificationDisplayConnector(!props.state.ui_state.modification_display_connector)))
         ..key = 'display-mod-connector')(),
       (MenuNumber()
         ..display = 'Modification font size'
-        ..default_value = props.modification_font_size
-        ..hide = !props.show_modifications
+        ..default_value = props.state.ui_state.modification_font_size
+        ..hide = !props.state.ui_state.show_modifications
         ..tooltip = 'Adjust the font size of modification text representation.'
-        ..on_new_value = ((num font_size) => props.dispatch(actions.ModificationFontSizeSet(font_size)))
+        ..on_new_value =
+            ((num font_size) => app.dispatch(actions.ModificationFontSizeSet(font_size.toDouble())))
         ..key = 'mod-font-size')(),
     ]);
   }
 
   ReactElement view_menu_helices() {
     return (MenuDropdownRight()
-      ..title = 'Helices'
-      ..id = 'view_menu_helices-dropdown'
+      ..title_ = 'Helices'
+      ..id_ = 'view_menu_helices-dropdown'
       ..key = 'view_menu_helices-dropdown'
       ..className = 'submenu_item')([
       (MenuBoolean()
-        ..value = props.only_display_selected_helices
+        ..value = props.state.ui_state.only_display_selected_helices
         ..display = 'Display only selected helices'
         ..tooltip = 'Only helices selected in the side view are displayed in the main view.'
         ..name = 'display-only-selected-helices'
-        ..onChange = ((_) =>
-            props.dispatch(actions.SetOnlyDisplaySelectedHelices(!props.only_display_selected_helices)))
+        ..on_change = ((_) => app.dispatch(
+            actions.SetOnlyDisplaySelectedHelices(!props.state.ui_state.only_display_selected_helices)))
         ..key = 'display-only-selected-helices')(),
       (MenuBoolean()
-        ..value = props.show_helix_components_main_view
+        ..value = props.state.ui_state.show_helix_components_main_view
         ..display = 'Show main view helices'
         ..tooltip = '''\
 Shows helix representation in main view. Hiding them hides all view elements 
 associated with a helix: grid lines depicting offsets, circles with helix index,
 major tick offsets.'''
         ..name = 'show-helix-components-main-view'
-        ..onChange = ((_) => props.dispatch(actions.ShowHelixComponentsMainViewSet(
-            show_helix_components: !props.show_helix_components_main_view)))
+        ..on_change = ((_) => app.dispatch(actions.ShowHelixComponentsMainViewSet(
+            show_helix_components: !props.state.ui_state.show_helix_components_main_view)))
         ..key = 'show-helix-components-main-view')(),
       (MenuBoolean()
-        ..value = props.show_helix_circles_main_view
+        ..value = props.state.ui_state.show_helix_circles_main_view
         ..display = 'Show main view helix circles/idx'
         ..tooltip = '''\
 Shows helix circles and idx's in main view. You may want to hide them for
@@ -948,143 +910,147 @@ designs that have overlapping non-parallel helices.
 To hide all view elements associated with helices (e.g., major ticks),
 toggle "Show main view helices".'''
         ..name = 'show-helix-circles-main-view'
-        ..onChange = ((_) => props.dispatch(actions.ShowHelixCirclesMainViewSet(
-            show_helix_circles_main_view: !props.show_helix_circles_main_view)))
+        ..on_change = ((_) => app.dispatch(actions.ShowHelixCirclesMainViewSet(
+            show_helix_circles_main_view: !props.state.ui_state.show_helix_circles_main_view)))
         ..key = 'show-helix-circles-main-view')(),
       (MenuBoolean()
-        ..value = props.show_grid_coordinates_side_view
+        ..value = props.state.ui_state.show_grid_coordinates_side_view
         ..display = 'Show helix coordinates in side view'
         ..tooltip = '''\
 Displays coordinates of each helix in the side view (either grid coordinates 
 or real coordinates in nanometers, depending on whether a grid is selected).'''
         ..name = 'show-grid-coordinates-side-view'
-        ..onChange = ((_) => props.dispatch(actions.ShowGridCoordinatesSideViewSet(
-            show_grid_coordinates_side_view: !props.show_grid_coordinates_side_view)))
+        ..on_change = ((_) => app.dispatch(actions.ShowGridCoordinatesSideViewSet(
+            show_grid_coordinates_side_view: !props.state.ui_state.show_grid_coordinates_side_view)))
         ..key = 'show-grid-coordinates-side-view')(),
     ]);
   }
 
   ReactElement view_menu_display_major_ticks_options() {
     return (MenuDropdownRight()
-      ..title = 'Major ticks'
-      ..id = 'view_menu_display_major_tick_offsets-dropdown'
+      ..title_ = 'Major ticks'
+      ..id_ = 'view_menu_display_major_tick_offsets-dropdown'
       ..key = 'view_menu_display_major_tick_offsets-dropdown'
       ..className = 'submenu_item')([
       (MenuBoolean()
-        ..value = props.display_of_major_ticks_offsets
+        ..value = props.state.ui_state.display_base_offsets_of_major_ticks
         ..display = 'Display major tick offsets'
         ..tooltip = 'Display the integer base offset to the right of each major tick, on the first helix.'
-        ..onChange = ((_) =>
-            props.dispatch(actions.DisplayMajorTicksOffsetsSet(!props.display_of_major_ticks_offsets)))
+        ..on_change = ((_) => app.dispatch(
+            actions.DisplayMajorTicksOffsetsSet(!props.state.ui_state.display_base_offsets_of_major_ticks)))
         ..key = 'display-major-tick-offsets')(),
       (MenuBoolean()
-        ..value = !props.display_base_offsets_of_major_ticks_only_first_helix
-        ..hide = !props.display_of_major_ticks_offsets
+        ..value = !props.state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
+        ..hide = !props.state.ui_state.display_base_offsets_of_major_ticks
         ..display = '... on all helices'
         ..tooltip = 'Display the integer base offset to the right of each major tick, for all helices.'
-        ..onChange = ((_) => props.dispatch(actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(
-            !props.display_base_offsets_of_major_ticks_only_first_helix)))
+        ..on_change = ((_) => app.dispatch(actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(
+            !props.state.ui_state.display_base_offsets_of_major_ticks_only_first_helix)))
         ..key = 'display-major-tick-offsets-on-all-helices')(),
       (MenuNumber()
         ..display = 'major tick offset font size'
-        ..default_value = props.major_tick_offset_font_size
-        ..hide = !props.display_of_major_ticks_offsets
+        ..default_value = props.state.ui_state.major_tick_offset_font_size
+        ..hide = !props.state.ui_state.display_base_offsets_of_major_ticks
         ..tooltip = 'Adjust to change the font size of major tick offsets.'
-        ..on_new_value = ((num font_size) => props.dispatch(actions.MajorTickOffsetFontSizeSet(font_size)))
+        ..on_new_value =
+            ((num font_size) => app.dispatch(actions.MajorTickOffsetFontSizeSet(font_size.toDouble())))
         ..key = 'major-tick-offset-font-size')(),
       DropdownDivider({'key': 'divider-major-tick-offset-from-width'}),
       (MenuBoolean()
-        ..value = props.display_major_tick_widths
+        ..value = props.state.ui_state.display_major_tick_widths
         ..display = 'Display major tick widths'
         ..tooltip =
             'Display the number of bases between each adjacent pair of major ticks, on the first helix.'
-        ..onChange =
-            ((_) => props.dispatch(actions.SetDisplayMajorTickWidths(!props.display_major_tick_widths)))
+        ..on_change = ((_) =>
+            app.dispatch(actions.SetDisplayMajorTickWidths(!props.state.ui_state.display_major_tick_widths)))
         ..key = 'display-major-tick-widths')(),
       (MenuBoolean()
-        ..value = props.display_major_tick_widths_all_helices
-        ..hide = !props.display_major_tick_widths
+        ..value = props.state.ui_state.display_major_tick_widths_all_helices
+        ..hide = !props.state.ui_state.display_major_tick_widths
         ..display = '...on all helices'
         ..tooltip = 'Display the number of bases between each adjacent pair of major ticks, on all helices.'
-        ..onChange = ((_) => props.dispatch(
-            actions.SetDisplayMajorTickWidthsAllHelices(!props.display_major_tick_widths_all_helices)))
+        ..on_change = ((_) => app.dispatch(actions.SetDisplayMajorTickWidthsAllHelices(
+            !props.state.ui_state.display_major_tick_widths_all_helices)))
         ..key = 'display-major-tick-widths-on-all-helices')(),
       (MenuNumber()
         ..display = 'Major tick width font size'
-        ..default_value = props.major_tick_width_font_size
-        ..hide = !props.display_major_tick_widths
+        ..default_value = props.state.ui_state.major_tick_width_font_size
+        ..hide = !props.state.ui_state.display_major_tick_widths
         ..tooltip = 'Adjust to change the font size of major tick offsets.'
-        ..on_new_value = ((num font_size) => props.dispatch(actions.MajorTickWidthFontSizeSet(font_size)))
+        ..on_new_value =
+            ((num font_size) => app.dispatch(actions.MajorTickWidthFontSizeSet(font_size.toDouble())))
         ..key = 'major-tick-width-font-size')(),
     ]);
   }
 
   ReactElement view_menu_base_pairs() {
     return (MenuDropdownRight()
-      ..title = 'Base pairs'
-      ..id = 'view_menu_base_pairs'
+      ..title_ = 'Base pairs'
+      ..id_ = 'view_menu_base_pairs'
       ..key = 'view_menu_base_pairs-dropdown'
       ..className = 'submenu_item')([
       (MenuBoolean()
-        ..value = props.base_pair_display_type.toIndex() == 1
+        ..value = props.state.ui_state.base_pair_display_type.toIndex() == 1
         ..display = 'Display as ${BasePairDisplayType.lines.display_name()}'
         ..key = 'base-pair-display-lines'
-        ..onChange = (_) {
-          if (props.base_pair_display_type == BasePairDisplayType.lines) {
-            props.dispatch(actions.BasePairTypeSet(selected_idx: BasePairDisplayType.none.toIndex()));
-          } else if (props.base_pair_display_type == BasePairDisplayType.none) {
-            props.dispatch(actions.BasePairTypeSet(selected_idx: BasePairDisplayType.lines.toIndex()));
+        ..on_change = (_) {
+          if (props.state.ui_state.base_pair_display_type == BasePairDisplayType.lines) {
+            app.dispatch(actions.BasePairTypeSet(selected_idx: BasePairDisplayType.none.toIndex()));
+          } else if (props.state.ui_state.base_pair_display_type == BasePairDisplayType.none) {
+            app.dispatch(actions.BasePairTypeSet(selected_idx: BasePairDisplayType.lines.toIndex()));
           }
         })(),
       (MenuBoolean()
-        ..value = props.base_pair_display_type.toIndex() == 2
+        ..value = props.state.ui_state.base_pair_display_type.toIndex() == 2
         ..display = 'Display as ${BasePairDisplayType.rectangle.display_name()}'
         ..key = 'base-pair-display-rectangle'
-        ..onChange = (_) {
-          if (props.base_pair_display_type == BasePairDisplayType.rectangle) {
-            props.dispatch(actions.BasePairTypeSet(selected_idx: BasePairDisplayType.none.toIndex()));
-          } else if (props.base_pair_display_type == BasePairDisplayType.none) {
-            props.dispatch(actions.BasePairTypeSet(selected_idx: BasePairDisplayType.rectangle.toIndex()));
+        ..on_change = (_) {
+          if (props.state.ui_state.base_pair_display_type == BasePairDisplayType.rectangle) {
+            app.dispatch(actions.BasePairTypeSet(selected_idx: BasePairDisplayType.none.toIndex()));
+          } else if (props.state.ui_state.base_pair_display_type == BasePairDisplayType.none) {
+            app.dispatch(actions.BasePairTypeSet(selected_idx: BasePairDisplayType.rectangle.toIndex()));
           }
         })(),
       (MenuBoolean()
-        ..value = props.show_base_pair_lines_with_mismatches
+        ..value = props.state.ui_state.show_base_pair_lines_with_mismatches
         ..display = '... even if bases mismatch'
         ..key = 'base-pair-display-even-if-bases-mismatch'
-        ..hide = props.base_pair_display_type.toIndex() == 0
+        ..hide = props.state.ui_state.base_pair_display_type.toIndex() == 0
         ..tooltip = '''\
 Lines are drawn between all pairs of bases at the same offset on the same helix, 
 regardless of whether the bases are complementary. If unchecked then lines are 
 only shown between pairs of complementary bases.'''
-        ..onChange = (_) => props.dispatch(actions.ShowBasePairLinesWithMismatchesSet(
-            show_base_pair_lines_with_mismatches: !props.show_base_pair_lines_with_mismatches)))(),
+        ..on_change = (_) => app.dispatch(actions.ShowBasePairLinesWithMismatchesSet(
+            show_base_pair_lines_with_mismatches:
+                !props.state.ui_state.show_base_pair_lines_with_mismatches)))(),
     ]);
   }
 
   ReactElement view_menu_dna() {
     return (MenuDropdownRight()
-      ..title = 'DNA'
-      ..id = 'view_menu_dna'
+      ..title_ = 'DNA'
+      ..id_ = 'view_menu_dna'
       ..key = 'view_menu_dna-dropdown'
       ..className = 'submenu_item')([
       (MenuBoolean()
-        ..value = props.show_dna
+        ..value = props.state.ui_state.show_dna
         ..display = 'DNA sequences'
         ..tooltip = '''\
 Show DNA sequences that have been assigned to strands. In a large design, this
 can slow down the performance of panning and zooming navigation, so uncheck it
 to speed up navigation.'''
-        ..onChange = ((_) => props.dispatch(actions.ShowDNASet(!props.show_dna)))
+        ..on_change = ((_) => app.dispatch(actions.ShowDNASet(!props.state.ui_state.show_dna)))
         ..key = 'show-dna-sequences')(),
       (MenuBoolean()
-        ..value = props.display_reverse_DNA_right_side_up
+        ..value = props.state.ui_state.display_reverse_DNA_right_side_up
         ..display = 'Display reverse DNA right-side up'
         ..tooltip = '''\
 Displays DNA right-side up on reverse strands.'''
         ..name = 'display-reverse-DNA-right-side-up'
-        ..hide = !props.show_dna
-        ..onChange = (_) {
-          props.dispatch(actions.DisplayReverseDNARightSideUpSet(!props.display_reverse_DNA_right_side_up));
+        ..hide = !props.state.ui_state.show_dna
+        ..on_change = (_) {
+          app.dispatch(actions.DisplayReverseDNARightSideUpSet(
+              !props.state.ui_state.display_reverse_DNA_right_side_up));
         }
         ..key = 'display-reverse-DNA-right-side-up')(),
     ]);
@@ -1093,7 +1059,7 @@ Displays DNA right-side up on reverse strands.'''
   List<ReactElement> view_menu_show_oxview() {
     return [
       (MenuBoolean()
-        ..value = props.show_oxview
+        ..value = props.state.ui_state.show_oxview
         ..display = 'Show oxView'
         ..tooltip = '''\
 Displays an embedded oxView window to visualize the 3D structure of the design.
@@ -1101,10 +1067,20 @@ Displays an embedded oxView window to visualize the 3D structure of the design.
 Currently the view is "read-only", it will export the scadnano design and show 
 it in the oxView window, but changes made in the oxView window are not propagated
 back to the scadnano design. Any changes will be lost the next time the scadnano
-design is edited.'''
+design is edited.
+
+The oxView window will just show the structure at first, but if you press the `m`
+key, it will show the oxView controls. (But bear in mind any edits will be lost
+upon the next scadnano design change.)
+
+After clicking in the oxView window, the focus is lost from the scadnano app,
+and keyboard shortcuts (e.g., Ctrl+Z to undo, or Delete to delete selected strands)
+will not be recognized by scadnano, even if you click in the scadnano main view.
+Clicking on the menu or the slider bars will return focus to scadnano so that
+keyboard shortcuts will be recognized by scadnano again.'''
         ..name = 'show-oxview'
-        ..onChange = (_) {
-          props.dispatch(actions.OxviewShowSet(!props.show_oxview));
+        ..on_change = (_) {
+          app.dispatch(actions.OxviewShowSet(!props.state.ui_state.show_oxview));
         }
         ..key = 'show-oxview')(),
     ];
@@ -1114,11 +1090,12 @@ design is edited.'''
     return [
       (MenuNumber()
         ..display = 'Zoom speed'
-        ..default_value = props.zoom_speed
+        ..default_value = props.state.ui_state.zoom_speed
         ..min_value = 0
         ..step = 0.05
         ..tooltip = 'The speed at which the mouse wheel or two-finger scroll zooms the view in and out.'
-        ..on_new_value = ((num new_zoom_speed) => props.dispatch(actions.ZoomSpeedSet(speed: new_zoom_speed)))
+        ..on_new_value =
+            ((num new_zoom_speed) => app.dispatch(actions.ZoomSpeedSet(speed: new_zoom_speed as double)))
         ..key = 'zoom-speed')(),
     ];
   }
@@ -1126,7 +1103,7 @@ design is edited.'''
   List<ReactElement> view_menu_misc() {
     return [
       (MenuBoolean()
-        ..value = props.invert_y
+        ..value = props.state.ui_state.invert_y
         ..display = 'Invert y-axis'
         ..tooltip = '''\
 Invert the y-axis by rotating 180 degrees about the z-axis (within the x/y plane).
@@ -1137,10 +1114,10 @@ If checked, then use Cartesian coordinates where increasing y moves up.
 
 To inspect how all axes change, check View --> Show axis arrows.'''
         ..name = 'invert-y-axis'
-        ..onChange = ((_) => props.dispatch(actions.InvertYSet(invert_y: !props.invert_y)))
+        ..on_change = ((_) => app.dispatch(actions.InvertYSet(invert_y: !props.state.ui_state.invert_y)))
         ..key = 'invert-y-axis')(),
       (MenuBoolean()
-        ..value = props.show_helices_axis_arrows
+        ..value = props.state.ui_state.show_helices_axis_arrows
         ..display = 'Axis arrows'
         ..tooltip = '''\
 Show axis arrows in side and main view
@@ -1148,32 +1125,32 @@ Red : X-axis
 Green : Y-axis
 Blue : Z-axis'''
         ..name = 'show-helices-axis-arrows'
-        ..onChange = ((_) => props
-            .dispatch(actions.ShowAxisArrowsSet(show_helices_axis_arrows: !props.show_helices_axis_arrows)))
+        ..on_change = ((_) => app.dispatch(actions.ShowAxisArrowsSet(
+            show_helices_axis_arrows: !props.state.ui_state.show_helices_axis_arrows)))
         ..key = 'show-helices-axis-arrows')(),
       (MenuBoolean()
-        ..value = props.show_loopout_extension_length
+        ..value = props.state.ui_state.show_loopout_extension_length
         ..display = 'Loopout/extension lengths'
         ..tooltip = '''\
 When selected, the length of each loopout and extension is displayed next to it.'''
         ..name = 'show-loopout-extension-length'
-        ..onChange = ((_) => props.dispatch(
-            actions.ShowLoopoutExtensionLengthSet(show_length: !props.show_loopout_extension_length)))
+        ..on_change = ((_) => app.dispatch(actions.ShowLoopoutExtensionLengthSet(
+            show_length: !props.state.ui_state.show_loopout_extension_length)))
         ..key = 'show-loopout-extension-length')(),
       (MenuBoolean()
-        ..value = props.show_slice_bar
+        ..value = props.state.ui_state.show_slice_bar
         ..display = 'Slice bar'
         ..tooltip = '''\
 When selected, a slicebar is displayed, which users can drag and move to
 display the DNA backbone angle of all helices at a particular offset.
         '''
         ..name = 'show-slice-bar'
-        ..onChange = (_) {
-          props.dispatch(actions.ShowSliceBarSet(!props.show_slice_bar));
+        ..on_change = (_) {
+          app.dispatch(actions.ShowSliceBarSet(!props.state.ui_state.show_slice_bar));
         }
         ..key = 'show-slice-bar')(),
       (MenuBoolean()
-        ..value = props.show_mouseover_data
+        ..value = props.state.ui_state.show_mouseover_data
         ..display = 'Strand and helix details in footer'
         ..tooltip = '''\
 When selected, the footer will display details about the design based
@@ -1184,12 +1161,12 @@ on a strand, then the strand details will also be displayed.
 In a large design, this can slow down the performance, so uncheck it when not in use.
         '''
         ..name = 'show-mouseover-data'
-        ..onChange = (_) {
-          props.dispatch(actions.ShowMouseoverDataSet(!props.show_mouseover_data));
+        ..on_change = (_) {
+          app.dispatch(actions.ShowMouseoverDataSet(!props.state.ui_state.show_mouseover_data));
         }
         ..key = 'show-mouseover-data')(),
       (MenuBoolean()
-        ..value = props.disable_png_caching_dna_sequences
+        ..value = props.state.ui_state.disable_png_caching_dna_sequences
         ..display = 'Disable PNG caching of DNA sequences'
         ..tooltip = '''\
 DNA sequences are displayed as SVG (scaled vector graphics), which slow down the program
@@ -1200,12 +1177,13 @@ to a PNG image when zoomed out sufficiently far, which is much faster to display
 Select this option to disable this PNG caching of DNA sequences. This can be useful when 
 debugging, but be warned that it will be very slow to render a large number of DNA bases.'''
         ..name = 'disable-png-caching-dna-sequences'
-        ..onChange = (_) {
-          props.dispatch(actions.DisablePngCachingDnaSequencesSet(!props.disable_png_caching_dna_sequences));
+        ..on_change = (_) {
+          app.dispatch(actions.DisablePngCachingDnaSequencesSet(
+              !props.state.ui_state.disable_png_caching_dna_sequences));
         }
         ..key = 'disable-png-caching-dna-sequences')(),
       (MenuBoolean()
-        ..value = props.retain_strand_color_on_selection
+        ..value = props.state.ui_state.retain_strand_color_on_selection
         ..display = 'Retain strand color on selection'
         ..tooltip = '''\
 Selected strands are normally highlighted in hot pink, which overrides the strand's color.
@@ -1213,8 +1191,9 @@ Select this option to not override the strand's color when it is selected.
 A highlighting effect will still appear.
         '''
         ..name = 'retain-strand-color-on-selection'
-        ..onChange = (_) {
-          props.dispatch(actions.RetainStrandColorOnSelectionSet(!props.retain_strand_color_on_selection));
+        ..on_change = (_) {
+          app.dispatch(actions.RetainStrandColorOnSelectionSet(
+              !props.state.ui_state.retain_strand_color_on_selection));
         }
         ..key = 'retain-strand-color-on-selection')(),
     ];
@@ -1230,27 +1209,27 @@ A highlighting effect will still appear.
         'id': 'export-nav-dropdown',
       },
       (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.side)))
+        ..on_click = ((_) => app.dispatch(actions.ExportSvg(type: actions.ExportSvgType.side)))
         ..tooltip = "Export SVG figure of side view (cross-section of helices on the left side of screen)."
         ..display = 'SVG side view')(),
       (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.main)))
+        ..on_click = ((_) => app.dispatch(actions.ExportSvg(type: actions.ExportSvgType.main)))
         ..tooltip = "Export SVG figure of main view (design shown in center of screen)."
         ..display = 'SVG main view')(),
       (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.selected)))
+        ..on_click = ((_) => app.dispatch(actions.ExportSvg(type: actions.ExportSvgType.selected)))
         ..tooltip = "Export SVG figure of selected strands"
         ..display = 'SVG of selected strands')(),
       (MenuBoolean()
-        ..value = props.export_svg_text_separately
+        ..value = props.state.ui_state.export_svg_text_separately
         ..display = 'export svg text separately (PPT)'
         ..tooltip = '''\
 When selected, every symbol of the text in a DNA sequence is exported as a separate
 SVG text element. This is useful if the SVG will be imported into Powerpoint, which 
 is less expressive than SVG and can render the text strangely.'''
         ..name = 'export-svg-text-separately'
-        ..onChange = (_) {
-          props.dispatch(actions.ExportSvgTextSeparatelySet(!props.export_svg_text_separately));
+        ..on_change = (_) {
+          app.dispatch(actions.ExportSvgTextSeparatelySet(!props.state.ui_state.export_svg_text_separately));
         }
         ..key = 'export-svg-text-separately')(),
       DropdownDivider({'key': 'divider-export-svg'}),
@@ -1259,13 +1238,13 @@ is less expressive than SVG and can render the text strangely.'''
         ..tooltip = "Export DNA sequences of strands to a file."
         ..display = 'DNA sequences')(),
       (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.ExportCanDoDNA()))
+        ..on_click = ((_) => app.dispatch(actions.ExportCanDoDNA()))
         ..tooltip = "Export design's DNA sequences as a CSV in the same way as cadnano v2.\n"
             "This is useful, for example, with CanDo's atomic model generator."
         ..display = 'DNA sequences (cadnano v2 format)')(),
       DropdownDivider({'key': 'divider-export-dna'}),
       (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile(whitespace: true)))
+        ..on_click = ((_) => app.dispatch(actions.ExportCadnanoFile(whitespace: true)))
         ..tooltip = "Export design to cadnano (version 2) .json file."
         ..display = 'cadnano v2'
         ..key = 'export-cadnano')(),
@@ -1282,7 +1261,7 @@ linked page) as for the web interface.
         'cadnano v2 export instructions',
       ),
       (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile(whitespace: false)))
+        ..on_click = ((_) => app.dispatch(actions.ExportCadnanoFile(whitespace: false)))
         ..tooltip = """\
 Export design to cadnano (version 2) .json file with no whitespace or newlines.
 This is necessary to use the cadnano file with CanDo, which causes a confusing error 
@@ -1292,26 +1271,26 @@ cadnano files that have whitespace. ("Bad .json file format is detected in
         ..key = 'export-cadnano-no-whitespace')(),
       DropdownDivider({'key': 'divider-cadnano'}),
       (MenuDropdownItem()
-        ..on_click = ((_) => props
-            .dispatch(actions.OxviewExport(selected_strands_only: props.ox_export_only_selected_strands)))
+        ..on_click = ((_) => app.dispatch(actions.OxviewExport(
+            selected_strands_only: props.state.ui_state.ox_export_only_selected_strands)))
         ..tooltip = "Export design to oxView files, which can be loaded in oxView."
         ..display = 'oxView'
         ..key = 'export-oxview')(),
       (MenuDropdownItem()
-        ..on_click = ((_) =>
-            props.dispatch(actions.OxdnaExport(selected_strands_only: props.ox_export_only_selected_strands)))
+        ..on_click = ((_) => app.dispatch(
+            actions.OxdnaExport(selected_strands_only: props.state.ui_state.ox_export_only_selected_strands)))
         ..tooltip = "Export design to oxDNA .dat and .top files, which can be loaded in oxDNA or oxView."
         ..display = 'oxDNA'
         ..key = 'export-oxdna')(),
       (MenuBoolean()
-        ..value = props.ox_export_only_selected_strands
+        ..value = props.state.ui_state.ox_export_only_selected_strands
         ..display = 'export only selected strands'
         ..tooltip = '''\
 When selected, only selected strands will be exported to oxDNA or oxView formats.'''
         ..name = 'ox-export-only-selected-strands'
-        ..onChange = (_) {
-          props.dispatch(
-              actions.OxExportOnlySelectedStrandsSet(only_selected: !props.ox_export_only_selected_strands));
+        ..on_change = (_) {
+          app.dispatch(actions.OxExportOnlySelectedStrandsSet(
+              only_selected: !props.state.ui_state.ox_export_only_selected_strands));
         }
         ..key = 'ox-export-only-selected-strands')(),
     );
@@ -1432,8 +1411,8 @@ the .sc file in a .zip file, then it can be uploaded.'''
       ),
       // older_versions_link_dropdown,
       (MenuDropdownRight()
-        ..title = "Other versions"
-        ..id = "older-version-dropdown"
+        ..title_ = "Other versions"
+        ..id_ = "older-version-dropdown"
         ..disallow_overflow = true
         ..tooltip = '''\
 Older versions of scadnano, as well as the newest development version.
@@ -1492,25 +1471,25 @@ However, it may be less stable than the main site.'''
     var dialog = Dialog(title: 'Load example DNA design', type: DialogType.load_example_dna_design, items: [
       DialogRadio(
         label: 'designs',
-        options: props.example_designs.filenames,
+        options: props.state.ui_state.example_designs.filenames,
       ),
     ]);
-    List<DialogItem> results = await util.dialog(dialog);
+    List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
 
     int selected_idx = (results[0] as DialogRadio).selected_idx;
-    props.dispatch(actions.ExampleDesignsLoad(selected_idx: selected_idx));
+    app.dispatch(actions.ExampleDesignsLoad(selected_idx: selected_idx));
   }
 }
 
 typedef ActionFromIntCreator = actions.Action Function(int);
 
 Future<void> ask_for_autobreak_parameters() async {
-  var items = List<DialogItem>.filled(4, null);
   int target_length_idx = 0;
   int min_length_idx = 1;
   int max_length_idx = 2;
   int min_distance_to_xover_idx = 3;
+  var items = util.FixedList<DialogItem>(4);
   items[target_length_idx] = DialogInteger(label: 'target length', value: 49);
   items[min_length_idx] = DialogInteger(label: 'min length', value: 15);
   items[max_length_idx] = DialogInteger(label: 'max length', value: 60);
@@ -1518,7 +1497,7 @@ Future<void> ask_for_autobreak_parameters() async {
 
   var dialog = Dialog(
       title: 'Choose autobreak parameters', type: DialogType.choose_autobreak_parameters, items: items);
-  List<DialogItem> results = await util.dialog(dialog);
+  List<DialogItem>? results = await util.dialog(dialog);
   if (results == null) return;
 
   int target_length = (results[target_length_idx] as DialogInteger).value;
@@ -1533,14 +1512,18 @@ Future<void> ask_for_autobreak_parameters() async {
       min_distance_to_xover: min_distance_to_xover));
 }
 
-Future<void> ask_for_geometry(Geometry geometry) async {
+Future<void> ask_for_geometry(Geometry? geometry) async {
+  if (geometry == null) {
+    // if no design, then use default geometry for default values
+    geometry = Geometry();
+  }
   int rise_per_base_pair_idx = 0;
   int helix_radius_idx = 1;
   int inter_helix_gap_idx = 2;
   int bases_per_turn_idx = 3;
   int minor_groove_angle_idx = 4;
 
-  var items = List<DialogItem>.filled(5, null);
+  var items = util.FixedList<DialogItem>(5);
   items[rise_per_base_pair_idx] =
       DialogFloat(label: 'rise per base pair (nm)', value: geometry.rise_per_base_pair);
   items[helix_radius_idx] = DialogFloat(label: 'helix radius (nm)', value: geometry.helix_radius);
@@ -1551,7 +1534,7 @@ Future<void> ask_for_geometry(Geometry geometry) async {
 
   var dialog = Dialog(
       title: 'adjust geometric parameters', type: DialogType.adjust_geometric_parameters, items: items);
-  List<DialogItem> results = await util.dialog(dialog);
+  List<DialogItem>? results = await util.dialog(dialog);
   if (results == null) return;
 
   double rise_per_base_pair = (results[rise_per_base_pair_idx] as DialogFloat).value;
@@ -1572,7 +1555,11 @@ Future<void> ask_for_geometry(Geometry geometry) async {
 
 request_load_file_from_file_chooser(
     FileUploadInputElement file_chooser, void Function(FileReader, String) onload_callback) {
-  List<File> files = file_chooser.files;
+  List<File>? files = file_chooser.files;
+  if (files == null) {
+    window.alert('No files selected');
+    return;
+  }
   assert(files.isNotEmpty);
   File file = files[0];
 
@@ -1590,13 +1577,13 @@ request_load_file_from_file_chooser(
 }
 
 scadnano_file_loaded(FileReader file_reader, String filename) {
-  var json_model_text = file_reader.result;
+  String json_model_text = file_reader.result as String;
   app.dispatch(actions.PrepareToLoadDNAFile(content: json_model_text, filename: filename));
 }
 
 cadnano_file_loaded(FileReader file_reader, String filename) async {
   try {
-    var json_cadnano_text = file_reader.result;
+    String json_cadnano_text = file_reader.result as String;
     filename = path.setExtension(filename, '.${constants.default_scadnano_file_extension}');
     app.dispatch(actions.PrepareToLoadDNAFile(
         content: json_cadnano_text, filename: filename, dna_file_type: DNAFileType.cadnano_file));

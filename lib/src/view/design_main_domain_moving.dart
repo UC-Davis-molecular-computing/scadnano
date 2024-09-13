@@ -17,31 +17,27 @@ part 'design_main_domain_moving.over_react.g.dart';
 
 UiFactory<DesignMainDomainMovingProps> DesignMainDomainMoving = _$DesignMainDomainMoving;
 
-mixin DesignMainDomainMovingPropsMixin on UiProps {
-  Domain domain_moved;
-  Color color;
-  HelixGroup original_group;
-  HelixGroup current_group;
-  BuiltSet<int> side_selected_helix_idxs;
-  int delta_view_order;
-  int delta_offset;
-  bool delta_forward;
-  bool allowable;
+mixin DesignMainDomainMovingProps on UiProps implements TransformByHelixGroupPropsMixin {
+  late Domain domain_moved;
+  late Color color;
+  late HelixGroup original_group;
+  late HelixGroup current_group;
+  late BuiltSet<int> side_selected_helix_idxs;
+  late int delta_view_order;
+  late int delta_offset;
+  late bool delta_forward;
+  late bool allowable;
 
-  BuiltMap<int, Helix> helices;
-  BuiltMap<String, HelixGroup> groups;
-  Geometry geometry;
-  num domain_helix_svg_position_y;
+  late BuiltMap<int, Helix> helices;
+  late BuiltMap<String, HelixGroup> groups;
+  late Geometry geometry;
+  late num domain_helix_svg_position_y;
 }
 
-class DesignMainDomainMovingProps = UiProps
-    with DesignMainDomainMovingPropsMixin, TransformByHelixGroupPropsMixin;
-
-class DesignMainDomainMovingComponent extends UiComponent2<DesignMainDomainMovingProps>
-    with PureComponent, TransformByHelixGroup<DesignMainDomainMovingProps> {
+class DesignMainDomainMovingComponent extends UiComponent2<DesignMainDomainMovingProps> with PureComponent {
   @override
   render() {
-    Helix helix = props.helices[props.domain_moved.helix];
+    Helix helix = props.helices[props.domain_moved.helix]!;
     var start_svg = helix.svg_base_pos(
         props.domain_moved.offset_5p, props.domain_moved.forward, props.domain_helix_svg_position_y);
     var end_svg = helix.svg_base_pos(
@@ -57,7 +53,7 @@ class DesignMainDomainMovingComponent extends UiComponent2<DesignMainDomainMovin
 
     return (Dom.line()
       ..stroke = hex_color_css
-      ..transform = transform_of_helix(helix.idx)
+      ..transform = transform_of_helix2(props, helix.idx)
       ..x1 = '${start_svg.x}'
       ..y1 = '${start_svg.y}'
       ..x2 = '${end_svg.x}'

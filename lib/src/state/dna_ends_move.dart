@@ -11,8 +11,12 @@ import 'helix.dart';
 part 'dna_ends_move.g.dart';
 
 abstract class DNAEndsMove with BuiltJsonSerializable implements Built<DNAEndsMove, DNAEndsMoveBuilder> {
-  factory DNAEndsMove({BuiltList<DNAEndMove> moves, int original_offset, int current_offset, Helix helix}) =
-      _$DNAEndsMove._;
+  factory DNAEndsMove({
+    required BuiltList<DNAEndMove> moves,
+    required int original_offset,
+    required int current_offset,
+    required Helix helix,
+  }) = _$DNAEndsMove._;
 
   factory DNAEndsMove.from([void Function(DNAEndsMoveBuilder) updates]) = _$DNAEndsMove;
 
@@ -50,7 +54,7 @@ abstract class DNAEndsMove with BuiltJsonSerializable implements Built<DNAEndsMo
       return false;
     }
     for (var move in moves) {
-      if (current_capped_offset_of(move.dna_end) != move.dna_end.offset_inclusive) {
+      if (current_capped_offset_of(move.dna_end)! != move.dna_end.offset_inclusive) {
         return true;
       }
     }
@@ -58,13 +62,17 @@ abstract class DNAEndsMove with BuiltJsonSerializable implements Built<DNAEndsMo
   }
 
   // INCLUSIVE offset
-  int current_capped_offset_of(DNAEnd end) {
+  // returns null if end does not appear in moves; this is used in design_main_strand_dna_end_moving
+  // to determine whether to render the end or not; if null it is not rendered.
+  int? current_capped_offset_of(DNAEnd end) {
     for (DNAEndMove move in moves) {
       if (move.dna_end == end) {
         int current_offset_end = move.dna_end.offset_inclusive + delta;
-        if (move.highest_offset != null && delta > 0) {
+        // if (move.highest_offset != null && delta > 0) {
+        if (delta > 0) {
           current_offset_end = min(move.highest_offset, current_offset_end);
-        } else if (move.lowest_offset != null && delta < 0) {
+          // } else if (move.lowest_offset != null && delta < 0) {
+        } else if (delta < 0) {
           current_offset_end = max(move.lowest_offset, current_offset_end);
         }
         return current_offset_end;
@@ -75,7 +83,8 @@ abstract class DNAEndsMove with BuiltJsonSerializable implements Built<DNAEndsMo
 }
 
 abstract class DNAEndMove with BuiltJsonSerializable implements Built<DNAEndMove, DNAEndMoveBuilder> {
-  factory DNAEndMove({DNAEnd dna_end, int lowest_offset, int highest_offset}) = _$DNAEndMove._;
+  factory DNAEndMove({required DNAEnd dna_end, required int lowest_offset, required int highest_offset}) =
+      _$DNAEndMove._;
 
   factory DNAEndMove.from([void Function(DNAEndMoveBuilder) updates]) = _$DNAEndMove;
 

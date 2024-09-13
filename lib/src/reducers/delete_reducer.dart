@@ -34,7 +34,7 @@ BuiltList<Strand> delete_all_reducer(
   } else if (select_mode_state.ends_selectable) {
     // DNA ends
     var ends = items.where((item) => item is DNAEnd);
-    var domains = ends.map((end) => state.design.end_to_domain[end]);
+    var domains = ends.map((end) => state.design.end_to_domain[end]!);
     strands = remove_domains(strands, state, domains);
   } else if (select_mode_state.domains_selectable) {
     // domains
@@ -74,23 +74,23 @@ BuiltList<Strand> remove_crossovers_and_loopouts(
   // collect all linkers for one strand because we need special case to remove multiple from one strand
   Map<Strand, List<Linker>> strand_to_linkers = {};
   for (var crossover in crossovers) {
-    var strand = state.design.crossover_to_strand[crossover];
+    var strand = state.design.crossover_to_strand[crossover]!;
     if (strand_to_linkers[strand] == null) {
       strand_to_linkers[strand] = [];
     }
-    strand_to_linkers[strand].add(crossover);
+    strand_to_linkers[strand]!.add(crossover);
   }
   for (var loopout in loopouts) {
     var strand = state.design.loopout_to_strand(loopout);
     if (strand_to_linkers[strand] == null) {
       strand_to_linkers[strand] = [];
     }
-    strand_to_linkers[strand].add(loopout);
+    strand_to_linkers[strand]!.add(loopout);
   }
 
   // remove linkers one strand at a time
   for (var strand in strand_to_linkers.keys) {
-    List<Strand> split_strands = remove_linkers_from_strand(strand, strand_to_linkers[strand]);
+    List<Strand> split_strands = remove_linkers_from_strand(strand, strand_to_linkers[strand]!);
     strands_to_replace[strand] = split_strands;
   }
 
@@ -100,7 +100,7 @@ BuiltList<Strand> remove_crossovers_and_loopouts(
   for (var strand in strands_to_replace.keys) {
     int old_strand_idx = new_strands.indexOf(strand);
     new_strands.removeAt(old_strand_idx);
-    List<Strand> split_strands = strands_to_replace[strand];
+    List<Strand> split_strands = strands_to_replace[strand]!;
     new_strands.insertAll(old_strand_idx, split_strands);
   }
 
@@ -142,10 +142,14 @@ List<Strand> remove_linkers_from_strand(Strand strand, List<Linker> linkers) {
   return create_new_strands_from_substrand_lists(substrands_list, strand);
 }
 
-String _dna_seq(List<Substrand> substrands, Strand strand) {
+String? _dna_seq(List<Substrand> substrands, Strand strand) {
   List<String> ret = [];
   for (var ss in substrands) {
-    ret.add(strand.dna_sequence_in(ss));
+    String? ss_seq = strand.dna_sequence_in(ss);
+    if (ss_seq == null) {
+      return null;
+    }
+    ret.add(ss_seq);
   }
   return ret.join('');
 }
@@ -164,8 +168,8 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
       ? [for (var _ in substrands_list) null]
       : [for (var substrands in substrands_list) _dna_seq(substrands, strand)];
 
-  Modification5Prime mod_5p = null;
-  Modification3Prime mod_3p = null;
+  Modification5Prime? mod_5p = null;
+  Modification3Prime? mod_3p = null;
   if (substrands_list.first.first == strand.substrands.first) {
     mod_5p = strand.modification_5p;
   }
@@ -184,19 +188,19 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
     // replace Loopout (prev/next)_substrand_idx's, which are now stale
     for (int i = 0; i < substrands.length; i++) {
       var substrand = substrands[i];
-      BuiltMap<int, ModificationInternal> mods_this_ss = ss_to_mods[substrand];
+      BuiltMap<int, ModificationInternal> mods_this_ss = ss_to_mods[substrand]!;
       for (int idx_within_ss in mods_this_ss.keys) {
-        ModificationInternal mod = mods_this_ss[idx_within_ss];
+        ModificationInternal mod = mods_this_ss[idx_within_ss]!;
         internal_mods_on_these_substrands[dna_length_cur_substrands + idx_within_ss] = mod;
       }
       if (substrand is Loopout) {
-        substrand = (substrand as Loopout).rebuild((loopout) => loopout..prev_domain_idx = i - 1);
+        substrand = substrand.rebuild((loopout) => loopout..prev_domain_idx = i - 1);
       }
       if (i == 0 && (substrand is Domain)) {
-        substrand = (substrand as Domain).rebuild((s) => s..is_first = true);
+        substrand = substrand.rebuild((s) => s..is_first = true);
       }
       if (i == substrands.length - 1 && (substrand is Domain)) {
-        substrand = (substrand as Domain).rebuild((s) => s..is_last = true);
+        substrand = substrand.rebuild((s) => s..is_last = true);
       }
       substrands[i] = substrand;
       dna_length_cur_substrands += substrand.dna_length();
@@ -238,11 +242,11 @@ BuiltList<Strand> remove_extensions(
   // collect all Extensions for one strand
   Map<Strand, Set<Extension>> strand_to_exts = {};
   for (var ext in extensions) {
-    var strand = state.design.substrand_to_strand[ext];
+    var strand = state.design.substrand_to_strand[ext]!;
     if (strand_to_exts[strand] == null) {
       strand_to_exts[strand] = {};
     }
-    strand_to_exts[strand].add(ext);
+    strand_to_exts[strand]!.add(ext);
   }
 
   var new_strands = strands.toList();
@@ -250,7 +254,7 @@ BuiltList<Strand> remove_extensions(
   for (int i = 0; i < new_strands.length; i++) {
     var strand = new_strands[i];
     if (strand_to_exts.keys.contains(strand)) {
-      Strand new_strand = _remove_extensions_from_strand(strand, strand_to_exts[strand]);
+      Strand new_strand = _remove_extensions_from_strand(strand, strand_to_exts[strand]!);
       new_strands[i] = new_strand;
     }
   }
@@ -269,7 +273,7 @@ Strand _remove_extensions_from_strand(Strand strand, Set<Extension> exts) {
   return strand;
 }
 
-Strand _remove_extension_from_strand(Strand strand, {bool is_5p}) {
+Strand _remove_extension_from_strand(Strand strand, {required bool is_5p}) {
   var substrands = strand.substrands.toList();
   int idx = is_5p ? 0 : substrands.length - 1;
   substrands.removeAt(idx);
@@ -284,16 +288,16 @@ BuiltList<Strand> remove_domains(BuiltList<Strand> strands, AppState state, Iter
   // collect all Domains for one strand because we need special case to remove multiple from one strand
   Map<Strand, Set<Domain>> strand_to_domains = {};
   for (var domain in domains) {
-    var strand = state.design.substrand_to_strand[domain];
+    var strand = state.design.substrand_to_strand[domain]!;
     if (strand_to_domains[strand] == null) {
       strand_to_domains[strand] = {};
     }
-    strand_to_domains[strand].add(domain);
+    strand_to_domains[strand]!.add(domain);
   }
 
   // remove domains one strand at a time
   for (var strand in strand_to_domains.keys) {
-    List<Strand> split_strands = _remove_domains_from_strand(strand, strand_to_domains[strand]);
+    List<Strand> split_strands = _remove_domains_from_strand(strand, strand_to_domains[strand]!);
     strands_to_replace[strand] = split_strands;
   }
 
@@ -303,7 +307,7 @@ BuiltList<Strand> remove_domains(BuiltList<Strand> strands, AppState state, Iter
   for (var strand in strands_to_replace.keys) {
     int old_strand_idx = new_strands.indexOf(strand);
     new_strands.removeAt(old_strand_idx);
-    List<Strand> split_strands = strands_to_replace[strand];
+    List<Strand> split_strands = strands_to_replace[strand]!;
     new_strands.insertAll(old_strand_idx, split_strands);
   }
 
@@ -366,17 +370,17 @@ BuiltList<Strand> remove_deletions_and_insertions(BuiltList<Strand> strands, App
     strand_to_deletions[strand] = {};
     strand_to_insertions[strand] = {};
     for (var domain in strand.domains) {
-      strand_to_deletions[strand][domain] = {};
-      strand_to_insertions[strand][domain] = {};
+      strand_to_deletions[strand]![domain] = {};
+      strand_to_insertions[strand]![domain] = {};
     }
   }
   for (var deletion in deletions) {
-    var strand = state.design.substrand_to_strand[deletion.domain];
-    strand_to_deletions[strand][deletion.domain].add(deletion);
+    var strand = state.design.substrand_to_strand[deletion.domain]!;
+    strand_to_deletions[strand]![deletion.domain]!.add(deletion);
   }
   for (var insertion in insertions) {
-    var strand = state.design.substrand_to_strand[insertion.domain];
-    strand_to_insertions[strand][insertion.domain].add(insertion);
+    var strand = state.design.substrand_to_strand[insertion.domain]!;
+    strand_to_insertions[strand]![insertion.domain]!.add(insertion);
   }
 
   // remove deletions/insertions one strand at a time
@@ -389,8 +393,8 @@ BuiltList<Strand> remove_deletions_and_insertions(BuiltList<Strand> strands, App
     for (int j = 0; j < substrands.length; j++) {
       if (substrands[j] is Domain) {
         var domain = substrands[j] as Domain;
-        var deletions = strand_to_deletions[strand][domain];
-        var insertions = strand_to_insertions[strand][domain];
+        var deletions = strand_to_deletions[strand]![domain]!;
+        var insertions = strand_to_insertions[strand]![domain]!;
         var deletions_offsets_to_remove = {for (var deletion in deletions) deletion.offset};
         var insertions_offsets_to_remove = {for (var insertion in insertions) insertion.insertion.offset};
         if (deletions_offsets_to_remove.isNotEmpty || insertions_offsets_to_remove.isNotEmpty) {
@@ -399,8 +403,9 @@ BuiltList<Strand> remove_deletions_and_insertions(BuiltList<Strand> strands, App
           deletions_existing.removeWhere((offset) => deletions_offsets_to_remove.contains(offset));
           insertions_existing
               .removeWhere((insertion) => insertions_offsets_to_remove.contains(insertion.offset));
-          domain = domain.rebuild(
-              (b) => b..deletions.replace(deletions_existing)..insertions.replace(insertions_existing));
+          domain = domain.rebuild((b) => b
+            ..deletions.replace(deletions_existing)
+            ..insertions.replace(insertions_existing));
           substrands[j] = domain;
         }
       }
@@ -421,13 +426,13 @@ BuiltList<Strand> remove_modifications(
     if (!strand_id_to_mods.containsKey(mod.strand.id)) {
       strand_id_to_mods[mod.strand.id] = {};
     }
-    strand_id_to_mods[mod.strand.id].add(mod);
+    strand_id_to_mods[mod.strand.id]!.add(mod);
   }
 
   var new_strands = strands.toList();
   List<String> strand_ids = [for (var strand in strands) strand.id];
   for (String strand_id in strand_id_to_mods.keys) {
-    Set<SelectableModification> selectable_mods = strand_id_to_mods[strand_id];
+    Set<SelectableModification> selectable_mods = strand_id_to_mods[strand_id]!;
     int strand_idx = strand_ids.indexOf(strand_id);
     Strand strand = strands[strand_idx];
 

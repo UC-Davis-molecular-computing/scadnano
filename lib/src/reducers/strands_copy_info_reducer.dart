@@ -19,21 +19,21 @@ import 'util_reducer.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
 
-GlobalReducer<CopyInfo, AppState> copy_info_global_reducer = combineGlobalReducers([
+GlobalReducer<CopyInfo?, AppState> copy_info_global_reducer = combineGlobalReducers([
   // TypedGlobalReducer<StrandsCopyInfo, AppState, actions.CopySelectedStrands>(copy_selected_strands_reducer),
   // TypedGlobalReducer<CopyInfo, AppState, actions.UpdateCopyInfo>(update_copy_info_reducer),
   // TypedGlobalReducer<CopyInfo, AppState, actions.StrandsAutoPaste>(strands_autopaste_copy_info_reducer),
-  TypedGlobalReducer<CopyInfo, AppState, actions.CopySelectedStrands>(copy_selected_strands_reducer),
-  TypedGlobalReducer<CopyInfo, AppState, actions.ManualPasteInitiate>(manual_paste_initiate_reducer),
-  TypedGlobalReducer<CopyInfo, AppState, actions.AutoPasteInitiate>(autopaste_initiate_reducer),
-  TypedGlobalReducer<CopyInfo, AppState, actions.StrandsMoveCommit>(manual_paste_copy_info_reducer),
+  TypedGlobalReducer<CopyInfo?, AppState, actions.CopySelectedStrands>(copy_selected_strands_reducer),
+  TypedGlobalReducer<CopyInfo?, AppState, actions.ManualPasteInitiate>(manual_paste_initiate_reducer),
+  TypedGlobalReducer<CopyInfo?, AppState, actions.AutoPasteInitiate>(autopaste_initiate_reducer),
+  TypedGlobalReducer<CopyInfo?, AppState, actions.StrandsMoveCommit>(manual_paste_copy_info_reducer),
 ]);
 
 // we rely on middleware to parse system clipboard with copied strands info on paste, so when first
 // copying, we reset copy_info to erase any previous state from earlier copy/pastes
-CopyInfo copy_selected_strands_reducer(CopyInfo _, AppState __, actions.CopySelectedStrands ___) => null;
+CopyInfo? copy_selected_strands_reducer(CopyInfo? _, AppState __, actions.CopySelectedStrands ___) => null;
 
-CopyInfo manual_paste_initiate_reducer(CopyInfo _, AppState state, actions.ManualPasteInitiate action) {
+CopyInfo? manual_paste_initiate_reducer(CopyInfo? _, AppState state, actions.ManualPasteInitiate action) {
   String clipboard_content = action.clipboard_content;
   var strands_and_helices_view_order = parse_strands_and_helices_view_order_from_clipboard(clipboard_content);
   if (strands_and_helices_view_order == null) {
@@ -41,13 +41,13 @@ CopyInfo manual_paste_initiate_reducer(CopyInfo _, AppState state, actions.Manua
   }
 
   List<Strand> strands = strands_and_helices_view_order.item1;
-  List<int> helices_view_order = strands_and_helices_view_order.item2;
+  List<int>? helices_view_order = strands_and_helices_view_order.item2;
 
   if (strands.isEmpty) return null;
   // indicates helices came from more than one HelixGroup, so no way to paste
   if (helices_view_order == null) return null;
 
-  CopyInfo copy_info = strands_copy_info_from_strand_list(state, strands, helices_view_order);
+  CopyInfo? copy_info = strands_copy_info_from_strand_list(state, strands, helices_view_order);
   return copy_info;
 }
 
@@ -55,7 +55,7 @@ CopyInfo manual_paste_initiate_reducer(CopyInfo _, AppState state, actions.Manua
 // In manual_paste_initiate_reducer it is calculated from scratch.
 // In auto_paste_initiate_reducer it is updated from existing if copy_info.translate is not null.
 // (since copy_info.translate may have been calculated to be non-default from previous manual paste)
-CopyInfo autopaste_initiate_reducer(CopyInfo copy_info, AppState state, actions.AutoPasteInitiate action) {
+CopyInfo? autopaste_initiate_reducer(CopyInfo? copy_info, AppState state, actions.AutoPasteInitiate action) {
   String clipboard_content = action.clipboard_content;
   var strands_and_helices_view_order = parse_strands_and_helices_view_order_from_clipboard(clipboard_content);
   if (strands_and_helices_view_order == null) {
@@ -63,7 +63,7 @@ CopyInfo autopaste_initiate_reducer(CopyInfo copy_info, AppState state, actions.
   }
 
   List<Strand> strands = strands_and_helices_view_order.item1;
-  List<int> helices_view_order = strands_and_helices_view_order.item2;
+  List<int>? helices_view_order = strands_and_helices_view_order.item2;
 
   if (strands.isEmpty) return null;
   // indicates helices came from more than one HelixGroup, so no way to paste
@@ -79,7 +79,7 @@ CopyInfo autopaste_initiate_reducer(CopyInfo copy_info, AppState state, actions.
 }
 
 /// returns null on JSON decode error
-Tuple2<List<Strand>, List<int>> parse_strands_and_helices_view_order_from_clipboard(
+Tuple2<List<Strand>, List<int>?>? parse_strands_and_helices_view_order_from_clipboard(
     String clipboard_content) {
   String error_msg = 'no strand info found on system clipboard, so nothing to paste; '
       'content of system clipboard: "${clipboard_content}"';
@@ -87,7 +87,7 @@ Tuple2<List<Strand>, List<int>> parse_strands_and_helices_view_order_from_clipbo
   // try to parse JSON as a list
   Map<String, dynamic> clipboard_json;
   try {
-    clipboard_json = jsonDecode(clipboard_content);
+    clipboard_json = jsonDecode(clipboard_content) as Map<String, dynamic>;
   } on Exception {
     print(error_msg);
     return null;
@@ -98,8 +98,8 @@ Tuple2<List<Strand>, List<int>> parse_strands_and_helices_view_order_from_clipbo
 
   // helices_view_order can be null if not all copied strands came from same HelixGroup
   // type of clipboard_json[constants.helices_view_order_key] is List<dynamic>, need to convert
-  List helices_view_order_json = clipboard_json[constants.helices_view_order_key];
-  List<int> helices_view_order = null;
+  List? helices_view_order_json = clipboard_json[constants.helices_view_order_key];
+  List<int>? helices_view_order = null;
   if (helices_view_order_json != null) {
     helices_view_order = [for (int idx in helices_view_order_json) idx];
   }
@@ -140,25 +140,26 @@ Tuple2<List<Strand>, List<int>> parse_strands_and_helices_view_order_from_clipbo
     if (strand_json[constants.modifications_int_key] != null) {
       Map mod_json = strand_json[constants.modifications_int_key];
       for (var mod_ind in mod_json.keys) {
-        modifications_int[int.parse(mod_ind)] = mods[mod_json[mod_ind]];
+        modifications_int[int.parse(mod_ind)] = mods[mod_json[mod_ind]] as ModificationInternal;
       }
     }
 
+    Modification5Prime? mod5p = strand_json[constants.modification_5p_key];
+    Modification3Prime? mod3p = strand_json[constants.modification_3p_key];
+
     strand = strand.rebuild((m) => m
-      ..modification_5p =
-          (mods[strand_json[constants.modification_5p_key]] as Modification5Prime)?.toBuilder()
-      ..modification_3p =
-          (mods[strand_json[constants.modification_3p_key]] as Modification3Prime)?.toBuilder()
+      ..modification_5p = mod5p?.toBuilder()
+      ..modification_3p = mod3p?.toBuilder()
       ..modifications_int.replace(modifications_int));
 
     strands.add(strand);
   }
 
-  return Tuple2<List<Strand>, List<int>>(strands, helices_view_order);
+  return Tuple2<List<Strand>, List<int>?>(strands, helices_view_order);
 }
 
 // need to pass in helices_view_order from clipboard since these strands may be from a different design
-CopyInfo strands_copy_info_from_strand_list(
+CopyInfo? strands_copy_info_from_strand_list(
     AppState state, List<Strand> selected_strands, List<int> helices_view_order) {
   if (selected_strands.isEmpty) {
     return null;
@@ -168,15 +169,15 @@ CopyInfo strands_copy_info_from_strand_list(
   Map<int, int> helices_view_order_inverse = util.invert_helices_view_order(helices_view_order);
 
   // find minimum helix of any selected strand, then minimum starting offset of that strand,
-  int extreme_helix_view_order; // max if invert_y; min if not
-  int extreme_helix_idx;
-  int min_offset;
-  bool min_forward;
+  int? extreme_helix_view_order = null; // max if invert_y; min if not
+  int? extreme_helix_idx = null;
+  int? min_offset = null;
+  bool? min_forward = null;
   for (Strand strand in selected_strands) {
     for (Domain domain in strand.domains) {
       // HelixGroup group = state.design.group_of_domain(domain);
       // int helix_view_order = group.helices_view_order_inverse[domain.helix];
-      int helix_view_order = helices_view_order_inverse[domain.helix];
+      int helix_view_order = helices_view_order_inverse[domain.helix]!;
       bool helix_is_more_extreme = extreme_helix_view_order == null ||
           (state.ui_state.invert_y
               ? extreme_helix_view_order < helix_view_order
@@ -193,14 +194,14 @@ CopyInfo strands_copy_info_from_strand_list(
       }
     }
   }
-  var original_address = Address(helix_idx: extreme_helix_idx, offset: min_offset, forward: min_forward);
+  var original_address = Address(helix_idx: extreme_helix_idx!, offset: min_offset!, forward: min_forward!);
 
   // compute default next Address for repeated pasting without mouse click
   // if null, then we won't use copy_info for autopaste, but we will keep the other
   // information in copy_info for possible manual pasting
-  Address next_address = compute_default_next_address(
+  Address? next_address = compute_default_next_address(
       selected_strands, state.design, original_address, helices_view_order, helices_view_order_inverse);
-  AddressDifference translation =
+  AddressDifference? translation =
       next_address?.difference(original_address, helices_view_order_inverse.build());
 
   var copy_info = CopyInfo(
@@ -224,7 +225,7 @@ CopyInfo strands_copy_info_from_strand_list(
 /// 3. Otherwise return null
 ///
 /// Always returns null if strands come from more than one HelixGroup
-Address compute_default_next_address(List<Strand> selected_strands, Design design, Address start_address,
+Address? compute_default_next_address(List<Strand> selected_strands, Design design, Address start_address,
     List<int> helices_view_order, Map<int, int> helices_view_order_inverse) {
   var group_names = design.group_names_of_strands(selected_strands);
   if (group_names == null) {
@@ -233,7 +234,7 @@ Address compute_default_next_address(List<Strand> selected_strands, Design desig
   }
   if (group_names.length != 1) return null;
   var group_name = group_names.first;
-  var group = design.groups[group_name];
+  var group = design.groups[group_name]!;
   // ensure group.helices_view_order has all indices as helices_view_order from action.
   // If not, then these strands came from a different design and we cannot autopaste.
   // (we do allow it in case
@@ -255,7 +256,7 @@ Address compute_default_next_address(List<Strand> selected_strands, Design desig
   // Look for legal position below start_address
   var strands_move_beneath = strands_move;
   // increase translation_helix_order iteratively until we find that the strands can be pasted
-  int translation_helix_order = helices_view_order_inverse[start_address.helix_idx] + 1;
+  int translation_helix_order = helices_view_order_inverse[start_address.helix_idx]! + 1;
   while (translation_helix_order < helices_view_order.length) {
     // compute next possible address of translation
     int next_helix_idx = helices_view_order[translation_helix_order];
@@ -275,7 +276,7 @@ Address compute_default_next_address(List<Strand> selected_strands, Design desig
 
   // If we don't find a legal translation beneath start_address, now look to the right of start_address.
   var strands_move_right = strands_move;
-  Helix start_helix = design.helices[start_address.helix_idx];
+  Helix start_helix = design.helices[start_address.helix_idx]!;
   int offset = start_address.offset + 1;
   while (offset < start_helix.max_offset) {
     // compute next possible address of translation
@@ -297,13 +298,15 @@ Address compute_default_next_address(List<Strand> selected_strands, Design desig
   return null;
 }
 
-CopyInfo manual_paste_copy_info_reducer(
-    CopyInfo copy_info, AppState state, actions.StrandsMoveCommit action) {
+CopyInfo? manual_paste_copy_info_reducer(
+    CopyInfo? copy_info, AppState state, actions.StrandsMoveCommit action) {
   if (action.strands_move.copy) {
     // if user is pasting, copy_info should have something in it
     // (populated from clipboard by system_clipboard middleware
     // handling ManualPasteInitiate or AutoPasteInitiate)
-    assert(copy_info != null);
+    if (copy_info == null) {
+      throw AssertionError('copy_info should not be null when pasting');
+    }
 
     // translation vector for NEXT paste is *double* that from original to current in manually pasted strand
     var current_address = action.strands_move.current_address;

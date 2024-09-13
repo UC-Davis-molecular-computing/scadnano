@@ -3,7 +3,6 @@ import 'dart:html';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:react/react_client/react_interop.dart';
 import 'package:scadnano/src/state/dna_assign_options.dart';
 
 import '../state/group.dart';
@@ -17,15 +16,14 @@ import 'pure_component.dart';
 
 part 'design_main_strands.over_react.g.dart';
 
-UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands =
-    connect<AppState, DesignMainStrandsProps>(mapStateToProps: (state) {
-  return DesignMainStrands()
+DesignMainStrandsProps set_design_main_strands_props(DesignMainStrandsProps elt, AppState state) {
+  return elt
     ..strands = state.design.strands
     ..helices = state.design.helices
     ..groups = state.design.groups
     ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
     ..selectables_store = state.ui_state.selectables_store
-    ..drawing_potential_crossover = state.ui_state.potential_crossover_is_drawing
+    ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover
     ..moving_dna_ends = state.ui_state.dna_ends_are_moving
     ..dna_assign_options = state.ui_state.dna_assign_options
     ..only_display_selected_helices = state.ui_state.only_display_selected_helices
@@ -45,51 +43,55 @@ UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands =
     ..display_reverse_DNA_right_side_up = state.ui_state.display_reverse_DNA_right_side_up
     ..geometry = state.design.geometry
     ..retain_strand_color_on_selection = state.ui_state.retain_strand_color_on_selection;
-})(DesignMainStrands);
+}
+
+UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands = connect<AppState, DesignMainStrandsProps>(
+    mapStateToProps: (state) => set_design_main_strands_props(DesignMainStrands(), state))(DesignMainStrands);
 
 UiFactory<DesignMainStrandsProps> DesignMainStrands = _$DesignMainStrands;
 
 mixin DesignMainStrandsProps on UiProps {
-  BuiltList<Strand> strands;
-  BuiltMap<int, Helix> helices;
-  BuiltMap<String, HelixGroup> groups;
-  BuiltSet<int> side_selected_helix_idxs;
-  SelectablesStore selectables_store;
-  bool show_dna;
-  bool show_modifications;
-  bool show_strand_names;
-  bool show_strand_labels;
-  bool show_domain_names;
-  bool show_domain_labels;
-  num strand_name_font_size;
-  num strand_label_font_size;
-  num domain_name_font_size;
-  num domain_label_font_size;
-  num modification_font_size;
-  bool drawing_potential_crossover;
-  bool moving_dna_ends;
-  DNAAssignOptions dna_assign_options;
-  bool only_display_selected_helices;
-  bool modification_display_connector;
-  bool display_reverse_DNA_right_side_up;
-  Geometry geometry;
-  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
-  bool retain_strand_color_on_selection;
+  late BuiltList<Strand> strands;
+  late BuiltMap<int, Helix> helices;
+  late BuiltMap<String, HelixGroup> groups;
+  late BuiltSet<int> side_selected_helix_idxs;
+  late SelectablesStore selectables_store;
+  late bool show_dna;
+  late bool show_modifications;
+  late bool show_strand_names;
+  late bool show_strand_labels;
+  late bool show_domain_names;
+  late bool show_domain_labels;
+  late double strand_name_font_size;
+  late double strand_label_font_size;
+  late double domain_name_font_size;
+  late double domain_label_font_size;
+  late double modification_font_size;
+  late bool drawing_potential_crossover;
+  late bool moving_dna_ends;
+  late DNAAssignOptions dna_assign_options;
+  late bool only_display_selected_helices;
+  late bool modification_display_connector;
+  late bool display_reverse_DNA_right_side_up;
+  late Geometry geometry;
+  late BuiltMap<int, Point<double>> helix_idx_to_svg_position_map;
+  late bool retain_strand_color_on_selection;
 }
 
 class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> with PureComponent {
   @override
   render() {
     List<ReactElement> elts = [];
+    int key = 0;
     for (var strand in props.strands) {
       Map<int, Helix> helices_used_in_strand_mutable = {};
       for (var domain in strand.domains) {
-        helices_used_in_strand_mutable[domain.helix] = props.helices[domain.helix];
+        helices_used_in_strand_mutable[domain.helix] = props.helices[domain.helix]!;
       }
       var helices_used_in_strand = helices_used_in_strand_mutable.build();
       var group_names_in_strand = helices_used_in_strand.values.map((helix) => helix.group);
       BuiltMap<String, HelixGroup> groups_in_strand =
-          {for (var name in group_names_in_strand) name: props.groups[name]}.build();
+          {for (var name in group_names_in_strand) name: props.groups[name]!}.build();
       var selected_ends_in_strand = props.selectables_store.selected_ends_in_strand(strand);
       var selected_crossovers_in_strand = props.selectables_store.selected_crossovers_in_strand(strand);
       var selected_loopouts_in_strand = props.selectables_store.selected_loopouts_in_strand(strand);
@@ -134,7 +136,7 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> wi
         ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
         ..display_reverse_DNA_right_side_up = props.display_reverse_DNA_right_side_up
         ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
-        ..key = strand.toString())());
+        ..key = key++)());
     }
 
     return (Dom.g()..className = 'strands-main-view')(elts);

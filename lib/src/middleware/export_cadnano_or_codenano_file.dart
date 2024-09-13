@@ -13,6 +13,7 @@ import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/substrand.dart';
 import '../state/design.dart';
+import '../state/extension.dart';
 import '../state/grid.dart';
 
 import '../json_serializable.dart';
@@ -48,7 +49,7 @@ _save_file_cadnano(AppState state, bool whitespace) async {
 }
 
 _save_file_codenano(AppState state) async {
-  Design design = state.design;
+  Design? design = state.maybe_design;
   if (design == null) {
     return;
   }
@@ -79,7 +80,7 @@ _save_file_codenano(AppState state) async {
   for (Map helix_json in helices_json) {
     // add pitch, roll, and yaw defaults explicitly, and convert to radians
     for (var angle_key in [constants.pitch_key, constants.roll_key, constants.yaw_key]) {
-      num degrees = helix_json[angle_key];
+      double degrees = helix_json[angle_key];
       helix_json[angle_key] = degrees == null ? 0.0 : util.to_radians(degrees);
     }
     // change "position" to "origin"
@@ -136,8 +137,8 @@ Map<String, dynamic> to_cadnano_v2_serializable(Design design, [String name = ""
     assert(design.groups.length > 0);
     Grid grid_type = Grid.none;
     for (String group_name in design.groups.keys) {
-      grid_used[design.groups[group_name].grid] = true;
-      grid_type = design.groups[group_name].grid;
+      grid_used[design.groups[group_name]!.grid] = true;
+      grid_type = design.groups[group_name]!.grid;
     }
     if (grid_used.length > 1) {
       throw new IllegalCadnanoDesignError(
@@ -173,14 +174,14 @@ Map<String, dynamic> to_cadnano_v2_serializable(Design design, [String name = ""
   // have the scaffold go backward.
   for (Strand strand in design.strands) {
     for (Substrand substrand in strand.substrands) {
-      if (substrand is Loopout) {
-        throw new IllegalCadnanoDesignError(
-            'We cannot handle designs with Loopouts as it is not a cadnano v2 concept');
+      if (substrand is Loopout || substrand is Extension) {
+        throw new IllegalCadnanoDesignError('We cannot handle designs with Loopouts or Extensions, '
+            'since they are not cadnano v2 concepts.');
       }
 
       bool right_direction;
 
-      Domain domain = substrand;
+      Domain domain = substrand as Domain;
       if (strand.is_scaffold) {
         if (domain.helix % 2 == 0) {
           right_direction = domain.forward;
@@ -236,8 +237,8 @@ Map<int, int> _cadnano_v2_fill_blank(
 
     if (design_grid == Grid.square || design_grid == Grid.honeycomb) {
       assert(helix.grid_position != null);
-      helix_dct['row'] = helix.grid_position.v;
-      helix_dct['col'] = helix.grid_position.h;
+      helix_dct['row'] = helix.grid_position!.v;
+      helix_dct['col'] = helix.grid_position!.h;
     }
 
     helix_dct['scaf'] = [];
@@ -275,12 +276,11 @@ void _cadnano_v2_place_strand(Strand strand, Map<String, dynamic> dct, Map<int, 
           'cannot convert Strand ${strand} to cadnanov2 format, since it has Loopouts');
     }
 
-    int which_helix_id = helices_ids_reverse[domain.helix];
+    int which_helix_id = helices_ids_reverse[domain.helix]!;
     Map<String, dynamic> which_helix = dct['vstrands'][which_helix_id];
 
     if (strand_type == 'stap') {
-      Color color = strand.color != null ? strand.color : new RgbColor(0, 0, 0);
-      which_helix['stap_colors'].add(_cadnano_v2_color_of_stap(color, domain));
+      which_helix['stap_colors'].add(_cadnano_v2_color_of_stap(strand.color, domain));
     }
 
     _cadnano_v2_place_strand_segment(which_helix, domain, strand_type);
@@ -292,7 +292,7 @@ void _cadnano_v2_place_strand(Strand strand, Map<String, dynamic> dct, Map<int, 
             'cannot convert Strand ${strand} to cadnanov2 format, since it has Loopouts');
       }
 
-      int next_helix_id = helices_ids_reverse[next_domain.helix];
+      int next_helix_id = helices_ids_reverse[next_domain.helix]!;
       Map<String, dynamic> next_helix = dct['vstrands'][next_helix_id];
       _cadnano_v2_place_crossover(which_helix, next_helix, domain, next_domain, strand_type);
     }

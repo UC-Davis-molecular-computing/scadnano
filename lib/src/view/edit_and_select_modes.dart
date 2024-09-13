@@ -16,15 +16,17 @@ import 'view.dart';
 
 part 'edit_and_select_modes.over_react.g.dart';
 
+EditAndSelectModesProps set_edit_and_select_mode_props(EditAndSelectModesProps elt, AppState state) {
+  bool is_origami = (state.maybe_design?.is_origami == true);
+  return elt
+    ..edit_modes = state.ui_state.edit_modes
+    ..select_mode_state = state.ui_state.select_mode_state
+    ..is_origami = is_origami
+    ..edit_mode_menu_visible = state.ui_state.show_edit_mode_menu;
+}
+
 UiFactory<EditAndSelectModesProps> ConnectedEditAndSelectModes = connect<AppState, EditAndSelectModesProps>(
-  mapStateToProps: (state) {
-    bool is_origami = (state.design?.is_origami == true);
-    return EditAndSelectModes()
-      ..edit_modes = state.ui_state.edit_modes
-      ..select_mode_state = state.ui_state.select_mode_state
-      ..is_origami = is_origami
-      ..edit_mode_menu_visible = state.ui_state.show_edit_mode_menu;
-  },
+  mapStateToProps: (state) => set_edit_and_select_mode_props(EditAndSelectModes(), state),
   // Used for component test.
   forwardRef: true,
 )(EditAndSelectModes);
@@ -32,13 +34,14 @@ UiFactory<EditAndSelectModesProps> ConnectedEditAndSelectModes = connect<AppStat
 UiFactory<EditAndSelectModesProps> EditAndSelectModes = _$EditAndSelectModes;
 
 mixin EditAndSelectModesProps on UiProps {
-  BuiltSet<EditModeChoice> edit_modes;
-  SelectModeState select_mode_state;
-  bool is_origami;
-  bool edit_mode_menu_visible;
+  late BuiltSet<EditModeChoice> edit_modes;
+  late SelectModeState select_mode_state;
+  late bool is_origami;
+  late bool edit_mode_menu_visible;
 }
 
-class EditAndSelectModesComponent extends UiComponent2<EditAndSelectModesProps> with RedrawCounterMixin {
+class EditAndSelectModesComponent extends UiComponent2<EditAndSelectModesProps>
+    with RedrawCounterMixin<EditAndSelectModesProps> {
   @override
   render() {
     bool select_mode = props.edit_modes.contains(EditModeChoice.select) ||

@@ -20,6 +20,7 @@ import 'pure_component.dart';
 import '../state/selectable.dart';
 import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
+import '../util.dart' as util;
 
 part 'design_main_strand_crossover.over_react.g.dart';
 
@@ -27,34 +28,31 @@ part 'design_main_strand_crossover.over_react.g.dart';
 UiFactory<DesignMainStrandCrossoverProps> DesignMainStrandCrossover = _$DesignMainStrandCrossover;
 
 @Props()
-mixin DesignMainStrandCrossoverPropsMixin on UiProps {
-  Crossover crossover;
-  Strand strand;
+mixin DesignMainStrandCrossoverProps on UiProps implements TransformByHelixGroupPropsMixin {
+  late Crossover crossover;
+  late Strand strand;
 
-  Domain prev_domain;
-  Domain next_domain;
-  bool selected;
-  BuiltMap<int, Helix> helices;
-  BuiltMap<String, HelixGroup> groups;
-  Geometry geometry;
-  num prev_domain_helix_svg_position_y;
-  num next_domain_helix_svg_position_y;
-  bool retain_strand_color_on_selection;
+  late BuiltMap<int, Helix> helices;
+  late BuiltMap<String, HelixGroup> groups;
+  late bool selected;
+  late Domain prev_domain;
+  late Domain next_domain;
+  late Geometry geometry;
+  late double prev_domain_helix_svg_position_y;
+  late double next_domain_helix_svg_position_y;
+  late bool retain_strand_color_on_selection;
 }
-
-class DesignMainStrandCrossoverProps = UiProps
-    with DesignMainStrandCrossoverPropsMixin, TransformByHelixGroupPropsMixin;
 
 @State()
 mixin DesignMainStrandCrossoverState on UiState {
   // making this "local" state for the component (instead of storing in the global store)
   // skips wasteful actions and updating the state just to tell if the mouse is hovering over a crossover
-  bool mouse_hover;
+  late bool mouse_hover;
 }
 
 class DesignMainStrandCrossoverComponent
     extends UiStatefulComponent2<DesignMainStrandCrossoverProps, DesignMainStrandCrossoverState>
-    with PureComponent, TransformByHelixGroup<DesignMainStrandCrossoverProps> {
+    with PureComponent {
   @override
   Map get initialState => (newState()..mouse_hover = false);
 
@@ -82,8 +80,8 @@ class DesignMainStrandCrossoverComponent
       classname += ' ' + constants.css_selector_crossover_same_helix;
     }
 
-    var prev_group = props.helices[props.prev_domain.helix].group;
-    var next_group = props.helices[props.next_domain.helix].group;
+    var prev_group = props.helices[props.prev_domain.helix]!.group;
+    var next_group = props.helices[props.next_domain.helix]!.group;
     bool within_group = prev_group == next_group;
 
     String path;
@@ -140,7 +138,7 @@ class DesignMainStrandCrossoverComponent
       ..key = id;
 
     if (within_group) {
-      path_props.transform = transform_of_helix(props.prev_domain.helix);
+      path_props.transform = transform_of_helix2(props, props.prev_domain.helix);
     }
 
     return path_props();
@@ -149,26 +147,27 @@ class DesignMainStrandCrossoverComponent
 
   @override
   componentDidMount() {
-    var element = querySelector('#${props.crossover.id}');
+    var element = querySelector('#${props.crossover.id}')!;
     element.addEventListener('contextmenu', on_context_menu);
     super.componentDidMount();
   }
 
   @override
   componentWillUnmount() {
-    var element = querySelector('#${props.crossover.id}');
+    var element = querySelector('#${props.crossover.id}')!;
     element.removeEventListener('contextmenu', on_context_menu);
     super.componentWillUnmount();
   }
 
   on_context_menu(Event ev) {
-    MouseEvent event = ev;
+    MouseEvent event = ev as MouseEvent;
     if (!event.shiftKey) {
       event.preventDefault();
       event.stopPropagation(); // needed to prevent strand context menu from popping up
       app.dispatch(actions.ContextMenuShow(
-          context_menu:
-              ContextMenu(items: context_menu_crossover(props.strand).build(), position: event.page)));
+          context_menu: ContextMenu(
+              items: context_menu_crossover(props.strand).build(),
+              position: util.from_point_num(event.page))));
     }
   }
 

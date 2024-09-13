@@ -10,7 +10,11 @@ part 'strand_creation.g.dart';
 abstract class StrandCreation
     with BuiltJsonSerializable
     implements Built<StrandCreation, StrandCreationBuilder> {
-  factory StrandCreation({Helix helix, bool forward, int original_offset, Color color}) =>
+  factory StrandCreation(
+          {required Helix helix,
+          required bool forward,
+          required int original_offset,
+          required Color color}) =>
       StrandCreation.from((b) => b
         ..helix.replace(helix)
         ..forward = forward

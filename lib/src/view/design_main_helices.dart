@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
-import 'package:react/react_client.dart';
 import 'package:built_collection/built_collection.dart';
 
 import '../state/group.dart';
@@ -16,24 +15,24 @@ part 'design_main_helices.over_react.g.dart';
 UiFactory<DesignMainHelicesProps> DesignMainHelices = _$DesignMainHelices;
 
 mixin DesignMainHelicesProps on UiProps {
-  BuiltMap<int, Helix> helices;
-  BuiltMap<String, BuiltList<int>> helix_idxs_in_group;
-  BuiltMap<String, HelixGroup> groups;
-  BuiltSet<int> side_selected_helix_idxs;
-  num major_tick_offset_font_size;
-  num major_tick_width_font_size;
-  bool only_display_selected_helices;
-  bool helix_change_apply_to_all;
-  bool show_dna;
-  bool show_domain_labels;
-  bool display_base_offsets_of_major_ticks;
-  bool display_base_offsets_of_major_ticks_only_first_helix;
-  bool display_major_tick_widths;
-  bool display_major_tick_widths_all_helices;
-  Geometry geometry;
-  bool show_helix_circles;
-  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
-  bool invert_y;
+  late BuiltMap<int, Helix> helices;
+  late BuiltMap<String, BuiltList<int>> helix_idxs_in_group;
+  late BuiltMap<String, HelixGroup> groups;
+  late BuiltSet<int> side_selected_helix_idxs;
+  late double major_tick_offset_font_size;
+  late double major_tick_width_font_size;
+  late bool only_display_selected_helices;
+  late bool helix_change_apply_to_all;
+  late bool show_dna;
+  late bool show_domain_labels;
+  late bool display_base_offsets_of_major_ticks;
+  late bool display_base_offsets_of_major_ticks_only_first_helix;
+  late bool display_major_tick_widths;
+  late bool display_major_tick_widths_all_helices;
+  late Geometry geometry;
+  late bool show_helix_circles;
+  late BuiltMap<int, Point<double>> helix_idx_to_svg_position_map;
+  late bool invert_y;
 }
 
 class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> with PureComponent {
@@ -47,8 +46,8 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
 
     var group_views = [];
     for (var group_name in props.groups.keys) {
-      var group = props.groups[group_name];
-      var helix_idxs_in_group = props.helix_idxs_in_group[group_name];
+      var group = props.groups[group_name]!;
+      var helix_idxs_in_group = props.helix_idxs_in_group[group_name]!;
 
       if (helix_idxs_in_group.isEmpty) {
         continue;
@@ -58,9 +57,9 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
 
       var children = [];
       for (int helix_idx in helix_idxs_in_group) {
-        var helix = props.helices[helix_idx];
-        var group = props.groups[helix.group];
-        int view_order = group.helices_view_order_inverse[helix.idx];
+        var helix = props.helices[helix_idx]!;
+        var group = props.groups[helix.group]!;
+        int view_order = group.helices_view_order_inverse[helix.idx]!;
 
         if (only_display_selected_helices && side_selected_helix_idxs.contains(helix.idx) ||
             !only_display_selected_helices) {
@@ -79,7 +78,7 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
             ..display_major_tick_widths = props.display_major_tick_widths &&
                 (props.display_major_tick_widths_all_helices || view_order == first_helix_view_order)
             ..key = helix.idx.toString()
-            ..helix_svg_position = props.helix_idx_to_svg_position_map[helix.idx])());
+            ..helix_svg_position = props.helix_idx_to_svg_position_map[helix.idx]!)());
         }
       }
 

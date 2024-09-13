@@ -9,6 +9,7 @@ import 'package:react/react_client/react_interop.dart';
 @JS()
 class ReactColor {
   external static ReactClass get ChromePicker;
+
   external static ReactClass get SketchPicker;
 }
 

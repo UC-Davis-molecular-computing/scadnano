@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'dart:convert';
 
 import 'package:test/test.dart';
@@ -25,7 +23,7 @@ void initializeComponentTests() {
   enableTestMode();
 }
 
-Store<AppState> test_store;
+Store<AppState>? test_store;
 
 void initialize_test_store(AppState state) {
   addTearDown(() {
@@ -41,7 +39,7 @@ void initialize_test_store(AppState state) {
   );
 
   app = App();
-  app.store = test_store;
+  app.store = test_store!;
 }
 
 AppState test_dispatch(Store<AppState> store, actions.Action action) {
@@ -51,17 +49,16 @@ AppState test_dispatch(Store<AppState> store, actions.Action action) {
 
 /// Returns a [Design] based on JSON string.
 Design design_from_string(String str) {
-  return Design.from_json(jsonDecode(str));
+  return Design.from_json(jsonDecode(str))!;
 }
 
 /// Returns an [AppState] based on design.
 AppState app_state_from_design(Design design, {bool in_browser = false}) {
   var ui_state = AppUIState.from_design(design);
   var state = (DEFAULT_AppState.toBuilder()
-        ..design.replace(design)
+        ..maybe_design.replace(design)
         ..ui_state.replace(ui_state)
-        ..error_message = ''
-        ..editor_content = '')
+        ..error_message = '')
       .build();
   return state;
 }

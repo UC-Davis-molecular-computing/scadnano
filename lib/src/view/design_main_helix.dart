@@ -1,11 +1,8 @@
 import 'dart:html';
-import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
-import 'package:quiver/iterables.dart' as iter;
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
-import 'package:react/react_client.dart';
 
 import '../state/context_menu.dart';
 import '../state/geometry.dart';
@@ -24,19 +21,17 @@ part 'design_main_helix.over_react.g.dart';
 UiFactory<DesignMainHelixProps> DesignMainHelix = _$DesignMainHelix;
 
 mixin DesignMainHelixProps on UiProps {
-  Helix helix;
-  bool selected;
-  int view_order;
-  bool strand_create_enabled;
-  num major_tick_offset_font_size;
-  num major_tick_width_font_size;
-  bool helix_change_apply_to_all;
-  bool show_dna;
-  bool show_domain_labels;
-  bool display_base_offsets_of_major_ticks;
-  bool display_major_tick_widths;
-  bool show_helix_circles;
-  Point<num> helix_svg_position;
+  late Helix helix;
+  late bool selected;
+  late double major_tick_offset_font_size;
+  late double major_tick_width_font_size;
+  late bool helix_change_apply_to_all;
+  late bool show_dna;
+  late bool show_domain_labels;
+  late bool display_base_offsets_of_major_ticks;
+  late bool display_major_tick_widths;
+  late bool show_helix_circles;
+  late Point<double> helix_svg_position;
 }
 
 class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with PureComponent {
@@ -102,12 +97,12 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         ..onPointerDown = (react.SyntheticPointerEvent event_syn) {
           // start creating a strand, but only if we are not currently creating a crossover
           if (app.state.ui_state.edit_modes.contains(EditModeChoice.pencil) &&
-              !app.state.ui_state.potential_crossover_is_drawing) {
+              !app.state.ui_state.drawing_potential_crossover) {
             MouseEvent event = event_syn.nativeEvent;
             if (event.button != constants.LEFT_CLICK_BUTTON) return;
-            var group = app.state.design.groups[props.helix.group];
-            var address = util.get_address_on_helix(event, props.helix, group, geometry,
-                app.state.helix_idx_to_svg_position_map[props.helix.idx]);
+            var group = app.state.design.groups[props.helix.group]!;
+            var helix_svg_position = app.state.helix_idx_to_svg_position_map[props.helix.idx]!;
+            var address = util.get_address_on_helix(event, props.helix, group, geometry, helix_svg_position);
             app.dispatch(actions.StrandCreateStart(address: address, color: util.color_cycler.next()));
           }
         }
@@ -116,9 +111,9 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         // this ensures that when subsequent mouse events happen, the most recent mouseover_datas is examined,
         // otherwise the callback is not updated until render executes again
         ..onMouseEnter = ((event) => util.update_mouseover(
-            event, props.helix, app.state.helix_idx_to_svg_position_map[props.helix.idx]))
+            event, props.helix, app.state.helix_idx_to_svg_position_map[props.helix.idx]!))
         ..onMouseMove = ((event) => util.update_mouseover(
-            event, props.helix, app.state.helix_idx_to_svg_position_map[props.helix.idx]))
+            event, props.helix, app.state.helix_idx_to_svg_position_map[props.helix.idx]!))
         ..x = props.helix_svg_position.x
         ..y = props.helix_svg_position.y
         ..width = '$width'
@@ -133,7 +128,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   @override
   componentDidMount() {
     if (props.show_helix_circles) {
-      var elt = querySelector('#${group_id()}');
+      var elt = querySelector('#${group_id()}')!;
       elt.addEventListener('contextmenu', on_context_menu);
     }
   }
@@ -141,20 +136,20 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   @override
   componentWillUnmount() {
     if (props.show_helix_circles) {
-      var elt = querySelector('#${group_id()}');
+      var elt = querySelector('#${group_id()}')!;
       elt.removeEventListener('contextmenu', on_context_menu);
     }
     super.componentWillUnmount();
   }
 
   on_context_menu(Event ev) {
-    MouseEvent event = ev;
+    MouseEvent event = ev as MouseEvent;
     if (!event.shiftKey) {
       event.preventDefault();
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
-              items: context_menu_helix(props.helix, props.helix_change_apply_to_all).build(),
-              position: event.page)));
+              items: context_menu_helix(props.helix, props.helix_change_apply_to_all),
+              position: util.from_point_num(event.page))));
     }
   }
 
@@ -262,12 +257,6 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   /// Return Map {'minor': thin_lines, 'major': thick_lines} to paths describing minor and major vertical lines.
   Map<String, String> _vert_line_paths(Helix helix, num helix_svg_position_y) {
     BuiltList<int> major_ticks = helix.calculate_major_ticks;
-//  var major_tick_distance =
-//      helix.has_major_tick_distance() ? helix.major_tick_distance : design_major_tick_distance;
-//  Set<int> major_ticks = (helix.has_major_ticks()
-//          ? helix.major_ticks
-//          : regularly_spaced_ticks(major_tick_distance, helix.min_offset, helix.max_offset))
-//      .toSet();
 
     List<String> path_cmds_vert_minor = [];
     List<String> path_cmds_vert_major = [];
@@ -292,15 +281,5 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     } else if (event.ctrlKey || event.metaKey) {
       app.dispatch(actions.HelixSelect(helix.idx, true));
     }
-  }
-}
-
-List<int> regularly_spaced_ticks(int distance, int start, int end) {
-  if (distance == null || distance == 0) {
-    return [];
-  } else if (distance < 0) {
-    throw ArgumentError('distance between major ticks must be positive');
-  } else {
-    return [for (int offset in iter.range(start, end + 1, distance)) offset];
   }
 }

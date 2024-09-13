@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'dart:convert';
 
 import 'package:color/color.dart';
@@ -36,7 +34,7 @@ main() {
       var dom1_color = Color.rgb(1, 0, 0);
       var dom2_color = Color.rgb(2, 0, 0);
       var loop_color = Color.rgb(3, 0, 0);
-      Color dom3_color = null;
+      Color? dom3_color = null;
       var ext_3p_color = Color.rgb(4, 0, 0);
       var strand_color = Color.rgb(5, 0, 0);
       design = design
@@ -58,7 +56,7 @@ main() {
 
       var design_json = design.to_json_serializable();
       // print(design_json);
-      design = Design.from_json(design_json);
+      design = Design.from_json(design_json)!;
       expect(design.strands.length, 1);
       var strand = design.strands[0];
       expect(strand.substrands.length, 6);
@@ -95,7 +93,7 @@ main() {
 
       var design_json = design.to_json_serializable();
       // print(design_json);
-      design = Design.from_json(design_json);
+      design = Design.from_json(design_json)!;
       expect(design.strands.length, 1);
       var strand = design.strands[0];
       expect(strand.substrands.length, 3);

@@ -11,9 +11,9 @@ part 'design_side_rotation.over_react.g.dart';
 UiFactory<DesignSideRotationProps> DesignSideRotation = _$DesignSideRotation;
 
 mixin DesignSideRotationProps on UiProps {
-  double radius;
-  DesignSideRotationData data;
-  bool invert_y;
+  late double radius;
+  late DesignSideRotationData data;
+  late bool invert_y;
 }
 
 class DesignSideRotationComponent extends UiComponent2<DesignSideRotationProps> with PureComponent {

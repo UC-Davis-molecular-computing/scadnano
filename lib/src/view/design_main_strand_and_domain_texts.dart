@@ -8,6 +8,7 @@ import 'package:scadnano/src/state/extension.dart';
 import 'package:scadnano/src/state/modification_type.dart';
 import 'package:scadnano/src/state/substrand.dart';
 
+import 'design_main_strand.dart';
 import 'transform_by_helix_group.dart';
 import '../state/geometry.dart';
 import '../state/group.dart';
@@ -28,37 +29,33 @@ UiFactory<DesignMainStrandAndDomainTextsProps> DesignMainStrandAndDomainTexts =
     _$DesignMainStrandAndDomainTexts;
 
 // shows both domain and strand names
-mixin DesignMainStrandAndDomainTextsPropsMixin on UiProps {
-  Strand strand;
+mixin DesignMainStrandAndDomainTextsProps on UiProps implements TransformByHelixGroupPropsMixin {
+  late Strand strand;
 
-  BuiltMap<int, Helix> helices;
-  BuiltMap<String, HelixGroup> groups;
-  Geometry geometry;
+  late BuiltMap<int, Helix> helices;
+  late BuiltMap<String, HelixGroup> groups;
+  late Geometry geometry;
 
-  BuiltSet<int> side_selected_helix_idxs;
-  bool only_display_selected_helices;
-  bool show_dna;
+  BuiltSet<int>? side_selected_helix_idxs; // null if only_display_selected_helices is false
+  late bool only_display_selected_helices;
+  late bool show_dna;
 
-  bool show_strand_names;
-  bool show_strand_labels;
-  bool show_domain_names;
-  bool show_domain_labels;
-  int strand_name_font_size;
-  int strand_label_font_size;
-  int domain_name_font_size;
-  int domain_label_font_size;
+  late bool show_strand_names;
+  late bool show_strand_labels;
+  late bool show_domain_names;
+  late bool show_domain_labels;
+  late double strand_name_font_size;
+  late double strand_label_font_size;
+  late double domain_name_font_size;
+  late double domain_label_font_size;
 
-  BuiltMap<int, Point<num>> helix_idx_to_svg_position;
+  late BuiltMap<int, Point<double>> helix_idx_to_svg_position;
 
-  List<ContextMenuItem> Function(Strand strand, {Substrand substrand, Address address, ModificationType type})
-      context_menu_strand;
+  late ContextMenuStrand context_menu_strand;
 }
 
-class DesignMainStrandAndDomainTextsProps = UiProps
-    with DesignMainStrandAndDomainTextsPropsMixin, TransformByHelixGroupPropsMixin;
-
 class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStrandAndDomainTextsProps>
-    with PureComponent, TransformByHelixGroup<DesignMainStrandAndDomainTextsProps> {
+    with PureComponent {
   @override
   render() {
     if (!(props.show_domain_names ||
@@ -71,14 +68,14 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
     List<ReactElement> text_components = [];
 
     if (props.show_strand_names) {
-      ReactElement strand_name_component = _draw_strand_name();
+      ReactElement? strand_name_component = _draw_strand_name();
       if (strand_name_component != null) {
         text_components.add(strand_name_component);
       }
     }
 
     if (props.show_strand_labels) {
-      ReactElement strand_label_component = _draw_strand_label();
+      ReactElement? strand_label_component = _draw_strand_label();
       if (strand_label_component != null) {
         text_components.add(strand_label_component);
       }
@@ -106,26 +103,26 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
       return null;
     }
 
-    return (Dom.g()..className = 'domain-and-strand-names')(text_components);
+    return (Dom.g()..className = 'domain-and-strand-names-and-labels')(text_components);
   }
 
-  ReactElement _draw_strand_name() {
+  ReactElement? _draw_strand_name() {
     if (props.strand.name == null) {
       // nothing to draw if strand name is null
       return null;
     }
 
-    ReactElement strand_name_component = null;
+    ReactElement? strand_name_component = null;
     Domain domain_5p = props.strand.first_domain;
     bool draw_domain = should_draw_domain(
         domain_5p.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
 
-    var helix_svg_position = props.helix_idx_to_svg_position[domain_5p.helix];
+    var helix_svg_position = props.helix_idx_to_svg_position[domain_5p.helix]!;
 
     // don't bother if 5' domain is not visible; if we give more sophisticated options for where to place
     // the strand name later, this should be changed
     if (draw_domain && props.strand.name != null) {
-      Helix helix = props.helices[domain_5p.helix];
+      Helix helix = props.helices[domain_5p.helix]!;
       int num_stacked = 0;
       if (props.show_dna) num_stacked++;
       if (props.show_domain_names) num_stacked++;
@@ -133,14 +130,14 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
       strand_name_component = (DesignMainStrandDomainText()
         ..strand = props.strand
         ..domain = domain_5p
-        ..text = props.strand.name
+        ..text = props.strand.name!
         ..num_stacked = num_stacked
         ..css_selector_text = constants.css_selector_strand_name
         ..font_size = props.strand_name_font_size
         ..helix = helix
         ..helix_groups = props.groups
         ..geometry = props.geometry
-        ..transform = transform_of_helix(domain_5p.helix)
+        ..transform = transform_of_helix2(props, domain_5p.helix)
         ..helix_svg_position = helix_svg_position
         ..context_menu_strand = props.context_menu_strand
         ..key = "strand-name")();
@@ -148,23 +145,23 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
     return strand_name_component;
   }
 
-  ReactElement _draw_strand_label() {
+  ReactElement? _draw_strand_label() {
     if (props.strand.label == null) {
       // nothing to draw if strand name is null
       return null;
     }
 
-    ReactElement strand_label_component = null;
+    ReactElement? strand_label_component = null;
     Domain domain_5p = props.strand.first_domain;
     bool draw_domain = should_draw_domain(
         domain_5p.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
 
-    var helix_svg_position = props.helix_idx_to_svg_position[domain_5p.helix];
+    var helix_svg_position = props.helix_idx_to_svg_position[domain_5p.helix]!;
 
     // don't bother if 5' domain is not visible; if we give more sophisticated options for where to place
     // the strand label later, this should be changed
     if (draw_domain && props.strand.label != null) {
-      Helix helix = props.helices[domain_5p.helix];
+      Helix helix = props.helices[domain_5p.helix]!;
       int num_stacked = 0;
       if (props.show_dna) num_stacked++;
       if (props.show_strand_names) num_stacked++;
@@ -173,14 +170,14 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
       strand_label_component = (DesignMainStrandDomainText()
         ..strand = props.strand
         ..domain = domain_5p
-        ..text = props.strand.label
+        ..text = props.strand.label!
         ..num_stacked = num_stacked
         ..css_selector_text = constants.css_selector_strand_label
         ..font_size = props.strand_label_font_size
         ..helix = helix
         ..helix_groups = props.groups
         ..geometry = props.geometry
-        ..transform = transform_of_helix(domain_5p.helix)
+        ..transform = transform_of_helix2(props, domain_5p.helix)
         ..helix_svg_position = helix_svg_position
         ..context_menu_strand = props.context_menu_strand
         ..key = "strand-label")();
@@ -197,21 +194,21 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
         bool draw_domain = should_draw_domain(
             domain.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
         if (draw_domain && domain.name != null) {
-          Helix helix = props.helices[substrand.helix];
-          var helix_svg_position = props.helix_idx_to_svg_position[substrand.helix];
+          Helix helix = props.helices[substrand.helix]!;
+          var helix_svg_position = props.helix_idx_to_svg_position[substrand.helix]!;
           int num_stacked = 0;
           if (props.show_dna) num_stacked++;
           names.add((DesignMainStrandDomainText()
             ..strand = props.strand
             ..domain = substrand
-            ..text = domain.name
+            ..text = domain.name!
             ..num_stacked = num_stacked
             ..css_selector_text = constants.css_selector_domain_name
             ..helix = helix
             ..helix_groups = props.groups
             ..geometry = props.geometry
             ..font_size = props.domain_name_font_size
-            ..transform = transform_of_helix(domain.helix)
+            ..transform = transform_of_helix2(props, domain.helix)
             ..helix_svg_position = helix_svg_position
             ..context_menu_strand = props.context_menu_strand
             ..key = "domain-name-$i")());
@@ -229,7 +226,7 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
         if (draw_loopout && loopout.name != null) {
           names.add((DesignMainStrandLoopoutText()
             ..loopout = loopout
-            ..text = loopout.name
+            ..text = loopout.name!
             ..num_stacked = num_stacked
             ..prev_domain = prev_domain
             ..next_domain = next_domain
@@ -248,7 +245,7 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
         if (draw_ext && ext.name != null) {
           names.add((DesignMainStrandExtensionText()
             ..ext = ext
-            ..text = ext.name
+            ..text = ext.name!
             ..num_stacked = num_stacked
             ..geometry = props.geometry
             ..font_size = props.domain_name_font_size
@@ -272,22 +269,22 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
         bool draw_domain = should_draw_domain(
             domain.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
         if (draw_domain && domain.label != null) {
-          Helix helix = props.helices[substrand.helix];
-          var helix_svg_position = props.helix_idx_to_svg_position[substrand.helix];
+          Helix helix = props.helices[substrand.helix]!;
+          var helix_svg_position = props.helix_idx_to_svg_position[substrand.helix]!;
           int num_stacked = 0;
           if (props.show_dna) num_stacked++;
           if (props.show_domain_names) num_stacked++;
           names.add((DesignMainStrandDomainText()
             ..strand = props.strand
             ..domain = substrand
-            ..text = domain.label
+            ..text = domain.label!
             ..num_stacked = num_stacked
             ..css_selector_text = constants.css_selector_domain_label
             ..helix = helix
             ..helix_groups = props.groups
             ..geometry = props.geometry
             ..font_size = props.domain_name_font_size
-            ..transform = transform_of_helix(domain.helix)
+            ..transform = transform_of_helix2(props, domain.helix)
             ..helix_svg_position = helix_svg_position
             ..context_menu_strand = props.context_menu_strand
             ..className = constants.css_selector_domain_label
@@ -312,7 +309,7 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
             ..next_domain = next_domain
             ..geometry = props.geometry
             ..font_size = props.domain_name_font_size
-            ..text = loopout.label
+            ..text = loopout.label!
             ..css_selector_text = constants.css_selector_loopout_label
             ..key = "loopout-label-$i")());
         }
@@ -330,7 +327,7 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
             ..num_stacked = num_stacked
             ..geometry = props.geometry
             ..font_size = props.domain_name_font_size
-            ..text = ext.label
+            ..text = ext.label!
             ..css_selector_text = constants.css_selector_extension_label
             ..key = "extension-label-$i")());
         }

@@ -142,12 +142,12 @@ Simple CSV (comma-separated value) format. Not a format used by any biotech comp
     idt_plates384: 'IDT 384-well plate(s) (.xlsx)',
   };
 
-  String toString() => _toString_map[this];
+  String toString() => _toString_map[this]!;
 
   /// Inverse of toString()
   static ExportDNAFormat fromString(String str) {
     for (var format in _toString_map.keys) {
-      String val_str = _toString_map[format];
+      String val_str = _toString_map[format]!;
       if (val_str == str) {
         return format;
       }
@@ -191,7 +191,7 @@ Simple CSV (comma-separated value) format. Not a format used by any biotech comp
     Iterable<Strand> strands, {
     String delimiter = ',',
     String domain_delimiter = '',
-    StrandOrder strand_order = null,
+    StrandOrder? strand_order = null,
     bool column_major_strand = true,
     bool column_major_plate = true,
   }) {
@@ -258,7 +258,7 @@ String idt_bulk_export(Iterable<Strand> strands,
 }
 
 Future<List<int>> idt_plates_export(Iterable<Strand> strands, PlateType plate_type, bool column_major_plate,
-    {String domain_delimiter}) async {
+    {required String domain_delimiter}) async {
   var plate_coord = _PlateCoordinate(plate_type);
   int plate = 1;
   int excel_row = 1;
@@ -339,7 +339,6 @@ int num_wells_per_plate(PlateType plate_type) {
     case PlateType.none:
       throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
   }
-  throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
 }
 
 int min_wells_per_plate(PlateType plate_type) {
@@ -351,7 +350,6 @@ int min_wells_per_plate(PlateType plate_type) {
     case PlateType.none:
       throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
   }
-  throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
 }
 
 List<String> rows_of(PlateType plate_type) {
@@ -363,7 +361,6 @@ List<String> rows_of(PlateType plate_type) {
     case PlateType.none:
       throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
   }
-  throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
 }
 
 List<int> cols_of(PlateType plate_type) {
@@ -375,7 +372,6 @@ List<int> cols_of(PlateType plate_type) {
     case PlateType.none:
       throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
   }
-  throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
 }
 
 class _PlateCoordinate {

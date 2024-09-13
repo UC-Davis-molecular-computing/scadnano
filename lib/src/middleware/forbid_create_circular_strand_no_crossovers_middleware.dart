@@ -13,8 +13,6 @@ import '../state/helix.dart';
 /// substrand would necessarily be a loopout, currently disallowed.
 forbid_create_circular_strand_no_crossovers_middleware(
     Store<AppState> store, dynamic action, NextDispatcher next) {
-  Design design = store.state.design;
-
   var msg_generic = """\
 Unfortunately it is not possible in scadnano to create a circular strand 
 with no crossovers and only loopouts. (This is because it is unsupported 
@@ -24,8 +22,9 @@ where one is chosen arbitrarily as the "first").
 See https://github.com/UC-Davis-molecular-computing/scadnano/issues/34""";
 
   if (action is actions.ConvertCrossoverToLoopout) {
+    Design design = store.state.design;
     Crossover crossover = action.crossover;
-    Strand strand = design.crossover_to_strand[crossover];
+    Strand strand = design.crossover_to_strand[crossover]!;
     if (strand.circular && strand.crossovers.length == 1) {
       var msg = """\
 This is the only crossover on this circular strand. It cannot be converted
@@ -35,6 +34,7 @@ ${msg_generic}""";
       return;
     }
   } else if (action is actions.ConvertCrossoversToLoopouts) {
+    Design design = store.state.design;
     // collect crossovers associated to each strand
     Map<String, List<Crossover>> crossovers_on = {};
     for (var crossover in action.crossovers) {
@@ -42,13 +42,13 @@ ${msg_generic}""";
       if (!crossovers_on.containsKey(strand_id)) {
         crossovers_on[strand_id] = [];
       }
-      crossovers_on[strand_id].add(crossover);
+      crossovers_on[strand_id]!.add(crossover);
     }
 
     // check if any strand would lose all its crossovers
     for (var strand_id in crossovers_on.keys) {
-      Strand strand = design.strands_by_id[strand_id];
-      List<Crossover> crossovers = crossovers_on[strand_id];
+      Strand strand = design.strands_by_id[strand_id]!;
+      List<Crossover> crossovers = crossovers_on[strand_id]!;
       if (strand.crossovers.length == crossovers.length) {
         int helix = strand.first_domain.helix;
         var offset_5p = strand.first_domain.offset_5p;
@@ -62,14 +62,15 @@ ${msg_generic}""";
       }
     }
   } else if (action is actions.Ligate) {
+    Design design = store.state.design;
     var dna_end = action.dna_end;
     var strand = design.end_to_strand(dna_end);
 
     // find other strand
-    var domain = design.end_to_domain[dna_end];
+    var domain = design.end_to_domain[dna_end]!;
     var address_end = dna_end.is_start ? domain.address_start : domain.address_end;
     int delta = dna_end.is_start ? -1 : 1;
-    var address_other_end = address_end.rebuild((b) => b..offset = b.offset + delta);
+    var address_other_end = address_end.rebuild((b) => b..offset = b.offset! + delta);
     var domain_other = design.domain_on_helix_at(address_other_end);
     var strand_other = design.substrand_to_strand[domain_other];
 

@@ -13,7 +13,7 @@ part 'select_mode.over_react.g.dart';
 UiFactory<SelectModeProps> ConnectedSelectMode = connect<AppState, SelectModeProps>(
   mapStateToProps: (state) {
     bool is_origami = false;
-    if (state.design?.is_origami == true) {
+    if (state.maybe_design?.is_origami == true) {
       is_origami = true;
     }
     return SelectMode()
@@ -27,8 +27,8 @@ UiFactory<SelectModeProps> ConnectedSelectMode = connect<AppState, SelectModePro
 UiFactory<SelectModeProps> SelectMode = _$SelectMode;
 
 mixin SelectModePropsMixin on UiProps {
-  SelectModeState select_mode_state;
-  bool is_origami;
+  late SelectModeState select_mode_state;
+  late bool is_origami;
 }
 
 class SelectModeProps = UiProps with SelectModePropsMixin, ConnectPropsMixin;

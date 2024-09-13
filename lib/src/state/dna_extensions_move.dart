@@ -16,9 +16,9 @@ abstract class DNAExtensionsMove
     with BuiltJsonSerializable
     implements Built<DNAExtensionsMove, DNAExtensionsMoveBuilder> {
   factory DNAExtensionsMove(
-      {BuiltList<DNAExtensionMove> moves,
-      Point<num> start_point,
-      Point<num> current_point}) = _$DNAExtensionsMove._;
+      {required BuiltList<DNAExtensionMove> moves,
+      required Point<double> start_point,
+      required Point<double> current_point}) = _$DNAExtensionsMove._;
 
   factory DNAExtensionsMove.from([void Function(DNAExtensionsMoveBuilder) updates]) = _$DNAExtensionsMove;
 
@@ -33,16 +33,16 @@ abstract class DNAExtensionsMove
 
   BuiltList<DNAExtensionMove> get moves;
 
-  Point<num> get start_point;
+  Point<double> get start_point;
 
-  Point<num> get current_point;
+  Point<double> get current_point;
 
   bool get is_nontrivial => start_point != current_point;
 
   @memoized
   BuiltList<DNAEnd> get ends_moving => [for (var end_move in moves) end_move.dna_end].build();
 
-  Point<num> current_point_of(DNAEnd end) {
+  Point<double>? current_point_of(DNAEnd end) {
     for (DNAExtensionMove move in moves) {
       if (move.dna_end == end) {
         return current_point - start_point + move.original_position;
@@ -56,11 +56,11 @@ abstract class DNAExtensionMove
     with BuiltJsonSerializable
     implements Built<DNAExtensionMove, DNAExtensionMoveBuilder> {
   factory DNAExtensionMove(
-      {DNAEnd dna_end,
-      Color color,
-      Point<num> original_position,
-      Point<num> attached_end_position,
-      Extension extension}) = _$DNAExtensionMove._;
+      {required DNAEnd dna_end,
+      required Color color,
+      required Point<double> original_position,
+      required Point<double> attached_end_position,
+      required Extension extension}) = _$DNAExtensionMove._;
 
   factory DNAExtensionMove.from([void Function(DNAExtensionMoveBuilder) updates]) = _$DNAExtensionMove;
 
@@ -74,9 +74,9 @@ abstract class DNAExtensionMove
 
   Color get color;
 
-  Point<num> get original_position;
+  Point<double> get original_position;
 
-  Point<num> get attached_end_position;
+  Point<double> get attached_end_position;
 
   Extension get extension;
 }

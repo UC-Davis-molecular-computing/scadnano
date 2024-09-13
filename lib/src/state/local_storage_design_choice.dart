@@ -61,5 +61,5 @@ abstract class LocalStorageDesignChoice
 
   LocalStorageDesignChoice to_periodic() => rebuild((b) => b..option = LocalStorageDesignOption.periodic);
 
-  LocalStorageDesignChoice change_period(num new_period) => rebuild((b) => b..period_seconds = new_period);
+  LocalStorageDesignChoice change_period(int new_period) => rebuild((b) => b..period_seconds = new_period);
 }

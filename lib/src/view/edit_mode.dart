@@ -10,6 +10,8 @@ import '../actions/actions.dart' as actions;
 
 part 'edit_mode.over_react.g.dart';
 
+//NOTE: this is only used for testing; in the app,
+// EditModeComponent is used directly without the ConnectedEditMode wrapper.
 UiFactory<EditModeProps> ConnectedEditMode = connect<AppState, EditModeProps>(
   mapStateToProps: (state) {
     return EditMode()..modes = state.ui_state.edit_modes;
@@ -21,10 +23,10 @@ UiFactory<EditModeProps> ConnectedEditMode = connect<AppState, EditModeProps>(
 UiFactory<EditModeProps> EditMode = _$EditMode;
 
 mixin EditModeProps on UiProps {
-  BuiltSet<EditModeChoice> modes;
+  late BuiltSet<EditModeChoice> modes;
 }
 
-class EditModeComponent extends UiComponent2<EditModeProps> with RedrawCounterMixin {
+class EditModeComponent extends UiComponent2<EditModeProps> with RedrawCounterMixin<EditModeProps> {
   @override
   render() {
     return (Dom.div()..id = 'edit-mode')([

@@ -29,8 +29,8 @@ reselect_moved_domains_middleware(Store<AppState> store, action, NextDispatcher 
     List<Address> addresses = [];
 
     var new_address_helix_idx = domains_move.current_address.helix_idx;
-    var new_helix = old_design.helices[new_address_helix_idx];
-    var new_group = old_design.groups[new_helix.group];
+    var new_helix = old_design.helices[new_address_helix_idx]!;
+    var new_group = old_design.groups[new_helix.group]!;
 
     BuiltList<int> new_helices_view_order = new_group.helices_view_order;
     BuiltMap<int, int> old_helices_view_order_inverse = domains_move.original_helices_view_order_inverse;
@@ -40,7 +40,7 @@ reselect_moved_domains_middleware(Store<AppState> store, action, NextDispatcher 
     for (Domain old_domain in domains_move.domains_moving) {
       // Domain old_domain = strand.first_domain;
       DNAEnd old_5p_end = old_domain.dnaend_5p;
-      int old_helix_view_order = old_helices_view_order_inverse[old_domain.helix];
+      int old_helix_view_order = old_helices_view_order_inverse[old_domain.helix]!;
       int new_helix_view_order = old_helix_view_order + domains_move.delta_view_order;
       int new_helix_idx = new_helices_view_order[new_helix_view_order];
       int new_offset = old_5p_end.offset_inclusive + domains_move.delta_offset;
@@ -59,7 +59,7 @@ reselect_moved_domains_middleware(Store<AppState> store, action, NextDispatcher 
     BuiltMap<Address, Domain> address_to_domain =
         domains_move.delta_forward ? new_design.address_3p_to_domain : new_design.address_5p_to_domain;
     for (var address in addresses) {
-      Domain new_domain = address_to_domain[address];
+      Domain new_domain = address_to_domain[address]!;
       new_domains.add(new_domain);
     }
     store.dispatch(actions.SelectAll(selectables: new_domains.toBuiltList(), only: true));

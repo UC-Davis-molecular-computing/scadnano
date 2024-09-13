@@ -12,7 +12,7 @@ BuiltList<Strand> assign_domain_name_complement_from_bound_strands_reducer(
   List<Strand> all_strands = strands.toList();
   for (var strand_to_assign in action.strands) {
     int strand_to_assign_idx = strands.indexOf(strand_to_assign);
-    for (var other_strand in state.design.strands_overlapping[strand_to_assign]) {
+    for (var other_strand in state.design.strands_overlapping[strand_to_assign]!) {
       strand_to_assign = compute_domain_name_complements(strand_to_assign, other_strand, computed_domains);
     }
     all_strands[strand_to_assign_idx] = strand_to_assign;
@@ -35,7 +35,7 @@ Strand compute_domain_name_complements(Strand strand_to, Strand strand_from, Lis
             domain_to.end == domain_from.end &&
             domain_from.name != null &&
             !computed_domains.contains(domain_to)) {
-          var domain_name_to = complement_domain_name(domain_from.name);
+          var domain_name_to = complement_domain_name(domain_from.name!);
           domain_to = domain_to.rebuild((b) => b..name = domain_name_to);
           substrands[ss_idx] = domain_to;
           computed_domains.add(domain_from);
@@ -58,7 +58,7 @@ BuiltList<Strand> assign_domain_name_complement_from_bound_domains_reducer(
   var all_strands = strands.toList();
   for (var domain_to_assign in action.domains) {
     if (!computed_domains.contains(domain_to_assign)) {
-      Strand strand_to = state.design.substrand_to_strand[domain_to_assign];
+      Strand strand_to = state.design.substrand_to_strand[domain_to_assign]!;
       var strand_idx = strands.indexOf(strand_to);
       for (var other_domain in state.design.domains_on_helix_overlapping(domain_to_assign)) {
         strand_to = compute_domain_name_complements_for_bound_domains(
@@ -80,7 +80,7 @@ Strand compute_domain_name_complements_for_bound_domains(
         domain_to_assign.end == other_domain.end &&
         other_domain.name != null &&
         !computed_domains.contains(domain_to_assign)) {
-      var domain_name_to = complement_domain_name(other_domain.name);
+      var domain_name_to = complement_domain_name(other_domain.name!);
       domain_to_assign = domain_to_assign.rebuild((b) => b..name = domain_name_to);
       substrands[ss_idx] = domain_to_assign;
       computed_domains.add(other_domain);

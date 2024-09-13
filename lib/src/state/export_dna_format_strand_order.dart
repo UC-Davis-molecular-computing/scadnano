@@ -39,12 +39,12 @@ regardless of whether it is 5', 3', or internal."""
     top_left_domain_start: "top left domain",
   };
 
-  String toString() => _toString_map[this];
+  String toString() => _toString_map[this]!;
 
   /// Inverse of toString()
   static StrandOrder fromString(String str) {
     for (var format in _toString_map.keys) {
-      String val_str = _toString_map[format];
+      String val_str = _toString_map[format]!;
       if (val_str == str) {
         return format;
       }

@@ -55,15 +55,14 @@ abstract class MouseoverData
 
   int get strand_idx;
 
-  @nullable
-  Domain get domain;
+  Domain? get domain;
 
   @memoized
   int get hashCode;
 
   /// Converts from raw mouseover data (helix, offset, forward) to data user wants to see in the footer (substrand)
   static List<MouseoverData> from_params(Design design, Iterable<MouseoverParams> params) {
-    Domain domain_in_direction = null;
+    Domain? domain_in_direction = null;
     List<MouseoverData> mouseover_datas_builder = [];
     for (var param in params) {
       int helix_idx = param.helix_idx;
@@ -71,7 +70,7 @@ abstract class MouseoverData
       bool forward = param.forward;
       Color color_forward = constants.color_forward_rotation_arrow_no_strand;
       Color color_reverse = constants.color_forward_rotation_arrow_no_strand;
-      Helix helix = design.helices[helix_idx];
+      Helix helix = design.helices[helix_idx]!;
       double roll_forward = design.helix_rotation_forward(helix.idx, offset);
       int num_domains_found = 0;
       int strand_idx = -1;
@@ -83,7 +82,7 @@ abstract class MouseoverData
                 design.idx_on_strand(Address(helix_idx: helix_idx, offset: offset, forward: forward));
           }
           num_domains_found++;
-          Strand strand = design.substrand_to_strand[domain];
+          Strand strand = design.substrand_to_strand[domain]!;
           if (domain.forward) {
             color_forward = strand.color;
           } else {
@@ -102,7 +101,7 @@ abstract class MouseoverData
   }
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory MouseoverData(Helix helix, int offset, int strand_idx, Domain domain, Color color_forward,
+  factory MouseoverData(Helix helix, int offset, int strand_idx, Domain? domain, Color color_forward,
           Color color_reverse, double roll_forward, double minor_groove_angle) =>
       MouseoverData.from((b) => b
         ..helix.replace(helix)

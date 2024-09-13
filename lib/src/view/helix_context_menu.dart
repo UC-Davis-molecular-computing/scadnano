@@ -14,13 +14,13 @@ import '../util.dart' as util;
 
 const SET_HELIX_TICK_MARKS_SHORT_DESCRIPTION = "set helix tick marks";
 
-List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to_all) {
+BuiltList<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to_all) {
   Future<void> dialog_helix_set_min_offset() async {
     int min_idx = 0;
     int min_set_by_domain_idx = 1;
     int apply_to_all_idx = 2;
 
-    var items = List<DialogItem>.filled(3, null);
+    var items = util.FixedList<DialogItem>(3);
     items[min_idx] = DialogInteger(label: 'minimum', value: helix.min_offset);
     items[min_set_by_domain_idx] = DialogCheckbox(label: 'set minimum by existing domains', value: false);
     items[apply_to_all_idx] = DialogCheckbox(label: 'apply to all helices', value: helix_change_apply_to_all);
@@ -32,7 +32,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
         disable_when_any_checkboxes_on: {
           min_idx: [min_set_by_domain_idx],
         });
-    List<DialogItem> results = await util.dialog(dialog);
+    List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
 
     bool apply_to_all = (results[apply_to_all_idx] as DialogCheckbox).value;
@@ -65,7 +65,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     int apply_to_all_idx = 2;
     int take_max_of_all_idx = 3;
 
-    var items = List<DialogItem>.filled(4, null);
+    var items = util.FixedList<DialogItem>(4);
     items[max_idx] = DialogInteger(label: 'maximum', value: helix.max_offset);
     items[max_set_by_domain_idx] = DialogCheckbox(label: 'set maximum by existing domains', value: false);
     items[apply_to_all_idx] = DialogCheckbox(label: 'apply to all helices', value: helix_change_apply_to_all);
@@ -78,7 +78,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
         disable_when_any_checkboxes_on: {
           max_idx: [max_set_by_domain_idx],
         });
-    List<DialogItem> results = await util.dialog(dialog);
+    List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
 
     bool apply_to_all = (results[apply_to_all_idx] as DialogCheckbox).value;
@@ -115,7 +115,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
         Dialog(title: 'set helix index', use_saved_response: false, type: DialogType.set_helix_index, items: [
       DialogInteger(label: 'new index', value: helix.idx),
     ]);
-    List<DialogItem> results = await util.dialog(dialog);
+    List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
 
     int new_idx = (results[0] as DialogInteger).value;
@@ -133,7 +133,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
         items: [
           DialogFloat(label: 'roll', value: helix.roll),
         ]);
-    List<DialogItem> results = await util.dialog(dialog);
+    List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
 
     double roll = (results[0] as DialogFloat).value;
@@ -150,7 +150,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     List<int> default_periodic_distances;
     int default_start = helix.major_tick_start;
     if (helix.has_major_tick_distance) {
-      default_regular_distance = helix.major_tick_distance;
+      default_regular_distance = helix.major_tick_distance!;
       default_periodic_distances = [default_regular_distance];
     } else if (helix.has_major_tick_periodic_distances) {
       default_regular_distance = helix.major_tick_periodic_distances.first;
@@ -170,7 +170,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     int apply_to_all_idx = 7;
     int apply_to_some_idx = 8;
     int apply_to_some_helices_idx = 9;
-    List<DialogItem> items = List<DialogItem>.filled(10, null);
+    var items = util.FixedList<DialogItem>(10);
     items[regular_spacing_checkbox_idx] =
         DialogCheckbox(label: 'regular spacing', value: helix.has_major_tick_distance);
     items[regular_spacing_distance_idx] =
@@ -184,7 +184,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
         DialogCheckbox(label: 'explicit list of major tick spacing', value: helix.has_major_ticks);
     items[major_ticks_distances_idx] = DialogText(
         label: 'distances (space-separated)',
-        value: helix.major_ticks == null ? '' : util.deltas(helix.major_ticks).join(' '));
+        value: helix.major_ticks == null ? '' : util.deltas(helix.major_ticks!).join(' '));
     items[apply_to_all_idx] = DialogCheckbox(label: 'apply to all', value: helix_change_apply_to_all);
     items[apply_to_some_idx] = DialogCheckbox(label: 'apply to some', value: helix_change_apply_to_all);
     items[apply_to_some_helices_idx] = DialogText(label: 'helices (space-separated)', value: "");
@@ -207,7 +207,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
       ],
     );
 
-    List<DialogItem> results = await util.dialog(dialog);
+    List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) {
       return;
     }
@@ -222,9 +222,9 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     bool apply_to_all = (results[apply_to_all_idx] as DialogCheckbox).value;
     bool apply_to_some = (results[apply_to_some_idx] as DialogCheckbox).value;
 
-    List<int> major_ticks = null;
-    int major_tick_distance = null;
-    List<int> major_tick_periodic_distances = [];
+    List<int>? major_ticks = null;
+    int? major_tick_distance = null;
+    List<int>? major_tick_periodic_distances = [];
 
     int major_tick_start = (results[major_tick_start_idx] as DialogInteger).value;
     if (major_tick_start < helix.min_offset) {
@@ -260,7 +260,7 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
     if (apply_to_all) {
       if (use_major_tick_distance) {
         action = actions.BatchAction([
-          actions.HelixMajorTickDistanceChangeAll(major_tick_distance: major_tick_distance),
+          actions.HelixMajorTickDistanceChangeAll(major_tick_distance: major_tick_distance!),
           actions.HelixMajorTickStartChangeAll(major_tick_start: major_tick_start),
         ], SET_HELIX_TICK_MARKS_SHORT_DESCRIPTION);
       } else if (use_major_tick_periodic_distances) {
@@ -270,19 +270,22 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
           actions.HelixMajorTickStartChangeAll(major_tick_start: major_tick_start),
         ], SET_HELIX_TICK_MARKS_SHORT_DESCRIPTION);
       } else if (use_major_ticks) {
-        action = actions.HelixMajorTicksChangeAll(major_ticks: major_ticks.build());
+        action = actions.HelixMajorTicksChangeAll(major_ticks: major_ticks!.build());
       } else {
         throw AssertionError('should not be reachable');
       }
     } else if (apply_to_some) {
       String helix_idxs_str = (results[apply_to_some_helices_idx] as DialogText).value;
-      List<int> helix_idxs = parse_helix_idxs_and_check_validity(helix_idxs_str);
+      List<int>? helix_idxs = parse_helix_idxs_and_check_validity(helix_idxs_str);
+      if (helix_idxs == null) {
+        return;
+      }
       List<actions.UndoableAction> all_actions = [];
       for (int this_helix_idx in helix_idxs) {
         if (use_major_tick_distance) {
           all_actions.addAll([
             actions.HelixMajorTickDistanceChange(
-                helix_idx: this_helix_idx, major_tick_distance: major_tick_distance),
+                helix_idx: this_helix_idx, major_tick_distance: major_tick_distance!),
             actions.HelixMajorTickStartChange(helix_idx: this_helix_idx, major_tick_start: major_tick_start),
           ]);
         } else if (use_major_tick_periodic_distances) {
@@ -294,7 +297,7 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
           ]);
         } else if (use_major_ticks) {
           all_actions.add(
-              actions.HelixMajorTicksChange(helix_idx: this_helix_idx, major_ticks: major_ticks.build()));
+              actions.HelixMajorTicksChange(helix_idx: this_helix_idx, major_ticks: major_ticks!.build()));
         } else {
           throw AssertionError('should not be reachable');
         }
@@ -304,7 +307,7 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
       if (use_major_tick_distance) {
         action = actions.BatchAction([
           actions.HelixMajorTickDistanceChange(
-              helix_idx: helix_idx, major_tick_distance: major_tick_distance),
+              helix_idx: helix_idx, major_tick_distance: major_tick_distance!),
           actions.HelixMajorTickStartChange(helix_idx: helix_idx, major_tick_start: major_tick_start),
         ], SET_HELIX_TICK_MARKS_SHORT_DESCRIPTION);
       } else if (use_major_tick_periodic_distances) {
@@ -314,7 +317,7 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
           actions.HelixMajorTickStartChange(helix_idx: helix_idx, major_tick_start: major_tick_start),
         ], SET_HELIX_TICK_MARKS_SHORT_DESCRIPTION);
       } else if (use_major_ticks) {
-        action = actions.HelixMajorTicksChange(helix_idx: helix_idx, major_ticks: major_ticks.build());
+        action = actions.HelixMajorTicksChange(helix_idx: helix_idx, major_ticks: major_ticks!.build());
       } else {
         throw AssertionError('should not be reachable');
       }
@@ -334,17 +337,17 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
           DialogInteger(label: 'v', value: grid_position.v),
         ]);
 
-    List<DialogItem> results = await util.dialog(dialog);
+    List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
 
-    num h = (results[0] as DialogInteger).value;
-    num v = (results[1] as DialogInteger).value;
+    int h = (results[0] as DialogInteger).value;
+    int v = (results[1] as DialogInteger).value;
 
     app.dispatch(actions.HelixGridPositionSet(helix: helix, grid_position: GridPosition(h, v)));
   }
 
   Future<void> dialog_helix_set_position() async {
-    var position = helix.position ?? Position3D();
+    var position = helix.position;
 
     var dialog = Dialog(
         title: 'set helix position',
@@ -356,12 +359,12 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
           DialogFloat(label: 'z', value: position.z),
         ]);
 
-    List<DialogItem> results = await util.dialog(dialog);
+    List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
 
-    num x = (results[0] as DialogFloat).value;
-    num y = (results[1] as DialogFloat).value;
-    num z = (results[2] as DialogFloat).value;
+    double x = (results[0] as DialogFloat).value;
+    double y = (results[1] as DialogFloat).value;
+    double z = (results[2] as DialogFloat).value;
 
     // TODO: (check validity)
     app.dispatch(actions.HelixPositionSet(
@@ -381,7 +384,7 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
     selected_helix_idxs.addAll(app.state.ui_state.side_selected_helix_idxs);
 
     var other_group_names = group_names.toList();
-    var existing_group_name = helix.group ?? Position3D();
+    var existing_group_name = helix.group;
     other_group_names.remove(existing_group_name);
 
     var dialog = Dialog(
@@ -391,7 +394,7 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
           DialogRadio(options: other_group_names, radio: false, label: 'new group'),
         ]);
 
-    List<DialogItem> results = await util.dialog(dialog);
+    List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
 
     String existing_other_group_name = (results[0] as DialogRadio).value;
@@ -467,15 +470,15 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
     context_menu_item_set_position,
     ContextMenuItem(
         title: 'set group', on_click: helix_set_group, disabled: app.state.design.groups.length <= 1),
-  ];
+  ].build();
 }
 
-List<int> parse_major_ticks_and_check_validity(String major_ticks_str, Helix helix, bool apply_to_all) {
+List<int>? parse_major_ticks_and_check_validity(String major_ticks_str, Helix helix, bool apply_to_all) {
   List<String> major_ticks_strs =
       major_ticks_str.trim().split(' ').where((token) => token.isNotEmpty).toList();
   List<int> major_ticks = [];
   for (var major_tick_str in major_ticks_strs) {
-    int major_tick = int.tryParse(major_tick_str);
+    int? major_tick = int.tryParse(major_tick_str);
     if (major_tick == null) {
       window.alert('"${major_tick_str}" is not a valid integer');
       return null;
@@ -490,7 +493,12 @@ positive offsets from the previous tick mark''');
     }
   }
 
-  int t = major_ticks.firstWhere((t) => t < helix.min_offset, orElse: () => null);
+  int? t;
+  try {
+    t = major_ticks.firstWhere((t) => t < helix.min_offset);
+  } catch (_) {
+    t = null;
+  }
   if (t != null) {
     window.alert('major tick ${t} is less than minimum offset ${helix.min_offset}');
     return null;
@@ -499,29 +507,27 @@ positive offsets from the previous tick mark''');
   // TODO: avoid global variable here if possible (move this logic to middleware)
   if (apply_to_all) {
     for (var other_helix in app.state.design.helices.values) {
-      t = major_ticks.firstWhere((t) => t < other_helix.min_offset, orElse: () => null);
+      int? t;
+      try {
+        t = major_ticks.firstWhere((t) => t < other_helix.min_offset);
+      } catch (_) {
+        t = null;
+      }
       if (t != null) {
         window.alert('major tick ${t} is less than minimum offset ${other_helix.min_offset}');
         return null;
       }
     }
-//      for (var other_helix in app.state.design.helices.values) {
-//        t = major_ticks.firstWhere((t) => t > other_helix.max_offset, orElse: () => null);
-//        if (t != null) {
-//          window.alert("major tick ${t} is greater than maximum offset ${other_helix.max_offset}, "
-//              "so I'm only going up to the major tick just before that");
-//        }
-//      }
   }
   return major_ticks;
 }
 
-List<int> parse_major_tick_distances_and_check_validity(String major_tick_distances_str) {
+List<int>? parse_major_tick_distances_and_check_validity(String major_tick_distances_str) {
   List<String> major_tick_distances_strs =
       major_tick_distances_str.trim().split(' ').where((token) => token.isNotEmpty).toList();
   List<int> major_tick_distances = [];
   for (var major_tick_distance_str in major_tick_distances_strs) {
-    int major_tick_distance = int.tryParse(major_tick_distance_str);
+    int? major_tick_distance = int.tryParse(major_tick_distance_str);
     if (major_tick_distance == null) {
       window.alert('"${major_tick_distance_str}" is not a valid integer');
       return null;
@@ -536,11 +542,11 @@ List<int> parse_major_tick_distances_and_check_validity(String major_tick_distan
   return major_tick_distances;
 }
 
-List<int> parse_helix_idxs_and_check_validity(String helix_idxs_str) {
+List<int>? parse_helix_idxs_and_check_validity(String helix_idxs_str) {
   List<String> helix_idxs_strs = helix_idxs_str.trim().split(' ').where((token) => token.isNotEmpty).toList();
   List<int> helix_idxs = [];
   for (var helix_idx_str in helix_idxs_strs) {
-    int helix_idx = int.tryParse(helix_idx_str);
+    int? helix_idx = int.tryParse(helix_idx_str);
     if (helix_idx == null) {
       window.alert('"${helix_idx}" is not a valid integer');
       return null;

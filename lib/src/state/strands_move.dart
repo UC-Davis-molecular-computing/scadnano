@@ -23,12 +23,12 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
   /************************ end BuiltValue boilerplate ************************/
 
   factory StrandsMove(
-      {BuiltList<Strand> strands_moving,
-      BuiltList<Strand> all_strands,
-      BuiltMap<int, Helix> helices,
-      BuiltMap<String, HelixGroup> groups,
-      BuiltMap<int, int> original_helices_view_order_inverse,
-      Address original_address,
+      {required BuiltList<Strand> strands_moving,
+      required BuiltList<Strand> all_strands,
+      required BuiltMap<int, Helix> helices,
+      required BuiltMap<String, HelixGroup> groups,
+      required BuiltMap<int, int> original_helices_view_order_inverse,
+      required Address original_address,
       bool copy = false,
       bool keep_color = true}) {
     var strands_fixed = copy
@@ -75,13 +75,13 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
 
   bool get keep_color;
 
-  Helix get current_helix => helices[current_address.helix_idx];
+  Helix get current_helix => helices[current_address.helix_idx]!;
 
-  HelixGroup get current_group => groups[current_helix.group];
+  HelixGroup get current_group => groups[current_helix.group]!;
 
-  int get original_view_order => original_helices_view_order_inverse[original_address.helix_idx];
+  int get original_view_order => original_helices_view_order_inverse[original_address.helix_idx]!;
 
-  int get current_view_order => groups[current_helix.group].helices_view_order_inverse[current_helix.idx];
+  int get current_view_order => current_group.helices_view_order_inverse[current_helix.idx]!;
 
   int get delta_offset => current_address.offset - original_address.offset;
 

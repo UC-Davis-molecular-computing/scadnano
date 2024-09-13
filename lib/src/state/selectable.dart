@@ -238,7 +238,8 @@ abstract class SelectableDeletion
 
   /************************ begin BuiltValue boilerplate ************************/
 
-  factory SelectableDeletion({int offset, Domain domain, bool is_scaffold}) = _$SelectableDeletion._;
+  factory SelectableDeletion({required int offset, required Domain domain, required bool is_scaffold}) =
+      _$SelectableDeletion._;
 
   factory SelectableDeletion.from([void Function(SelectableDeletionBuilder) updates]) = _$SelectableDeletion;
 
@@ -277,8 +278,10 @@ abstract class SelectableInsertion
 
   /************************ begin BuiltValue boilerplate ************************/
 
-  factory SelectableInsertion({Insertion insertion, Domain domain, bool is_scaffold}) =
-      _$SelectableInsertion._;
+  factory SelectableInsertion(
+      {required Insertion insertion,
+      required Domain domain,
+      required bool is_scaffold}) = _$SelectableInsertion._;
 
   factory SelectableInsertion.from([void Function(SelectableInsertionBuilder) updates]) =
       _$SelectableInsertion;
@@ -325,7 +328,7 @@ abstract class SelectableModification5Prime
 
   /************************ begin BuiltValue boilerplate ************************/
 
-  factory SelectableModification5Prime({Modification5Prime modification, Strand strand}) =
+  factory SelectableModification5Prime({required Modification5Prime modification, required Strand strand}) =
       _$SelectableModification5Prime._;
 
   factory SelectableModification5Prime.from([void Function(SelectableModification5PrimeBuilder) updates]) =
@@ -357,7 +360,7 @@ abstract class SelectableModification3Prime
 
   /************************ begin BuiltValue boilerplate ************************/
 
-  factory SelectableModification3Prime({Modification3Prime modification, Strand strand}) =
+  factory SelectableModification3Prime({required Modification3Prime modification, required Strand strand}) =
       _$SelectableModification3Prime._;
 
   factory SelectableModification3Prime.from([void Function(SelectableModification3PrimeBuilder) updates]) =
@@ -396,10 +399,10 @@ abstract class SelectableModificationInternal
   /************************ begin BuiltValue boilerplate ************************/
 
   factory SelectableModificationInternal(
-      {ModificationInternal modification,
-      Strand strand,
-      Domain domain,
-      int dna_idx}) = _$SelectableModificationInternal._;
+      {required ModificationInternal modification,
+      required Strand strand,
+      required Domain domain,
+      required int dna_idx}) = _$SelectableModificationInternal._;
 
   factory SelectableModificationInternal.from(
       [void Function(SelectableModificationInternalBuilder) updates]) = _$SelectableModificationInternal;
@@ -594,7 +597,7 @@ class SelectableTrait extends EnumClass {
     throw AssertionError('unrecognized trait ${this}');
   }
 
-  Object trait_of_strand(Strand strand) {
+  Object? trait_of_strand(Strand strand) {
     if (this == strand_name) return strand.name;
     if (this == strand_label) return strand.label;
     if (this == color) return strand.color;
@@ -610,7 +613,7 @@ class SelectableTrait extends EnumClass {
 
   // generic way to check if two trait values "match" that generalizes beyond ==,
   // for instance two Modifications match if their IDs match (but not perhaps their position if internal).
-  bool matches(Object v1, Object v2) {
+  bool matches(Object? v1, Object? v2) {
     if (v1 == null && v2 == null) {
       return true;
     } else if (v1 == null && v2 != null) {
@@ -663,14 +666,14 @@ class SelectableTrait extends EnumClass {
 }
 
 Future<void> ask_for_select_all_with_same_as_selected() async {
-  var selected_strands = BuiltList<Selectable>.from(app.state.ui_state.selectables_store.selected_strands);
+  var selected_strands = app.state.ui_state.selectables_store.selected_strands.toBuiltList();
   if (selected_strands.length == 0) {
     window.alert('No strands are selected. Select at least one strand before choosing this option.');
     return;
   }
 
   var all_traits = List<SelectableTrait>.from(SelectableTrait.values);
-  var items = List<DialogItem>.filled(all_traits.length + 1, null);
+  util.FixedList<DialogItem> items = util.FixedList<DialogItem>(all_traits.length + 1);
 
   for (int idx = 0; idx < all_traits.length; idx++) {
     var trait = all_traits[idx];
@@ -685,7 +688,7 @@ However, *currently* selected scaffold strands will remain selected.''');
     type: DialogType.select_all_with_same_as_selected,
     items: items,
   );
-  List<DialogItem> results = await util.dialog(dialog);
+  List<DialogItem>? results = await util.dialog(dialog);
   if (results == null) return;
 
   List<SelectableTrait> traits_for_selection = [];
@@ -698,8 +701,8 @@ However, *currently* selected scaffold strands will remain selected.''');
   }
   bool exclude_scaffolds = (results[all_traits.length] as DialogCheckbox).value;
 
-  var action = actions.SelectAllWithSameAsSelected(
-    templates: selected_strands,
+  var action = actions.SelectAllStrandsWithSameAsSelected(
+    template_strands: selected_strands,
     traits: traits_for_selection.build(),
     exclude_scaffolds: exclude_scaffolds,
   );

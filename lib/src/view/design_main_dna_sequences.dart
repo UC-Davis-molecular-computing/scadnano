@@ -12,6 +12,7 @@ import '../util.dart';
 import '../state/strand.dart';
 import 'pure_component.dart';
 import '../constants.dart' as constants;
+import '../util.dart' as util;
 import 'design_main_dna_sequence.dart';
 
 part 'design_main_dna_sequences.over_react.g.dart';
@@ -19,22 +20,22 @@ part 'design_main_dna_sequences.over_react.g.dart';
 UiFactory<DesignMainDNASequencesProps> DesignMainDNASequences = _$DesignMainDNASequences;
 
 mixin DesignMainDNASequencesProps on UiProps {
-  BuiltMap<int, Helix> helices;
-  BuiltMap<String, HelixGroup> groups;
-  Geometry geometry;
+  late BuiltMap<int, Helix> helices;
+  late BuiltMap<String, HelixGroup> groups;
+  late Geometry geometry;
 
-  BuiltList<Strand> strands;
-  BuiltSet<int> side_selected_helix_idxs;
-  String dna_sequence_png_uri;
-  num dna_sequence_png_horizontal_offset;
-  num dna_sequence_png_vertical_offset;
-  bool is_zoom_above_threshold;
-  actions.ExportSvg export_svg_action_delayed_for_png_cache;
-  bool only_display_selected_helices;
-  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
-  bool disable_png_caching_dna_sequences;
-  bool retain_strand_color_on_selection;
-  bool display_reverse_DNA_right_side_up;
+  late BuiltList<Strand> strands;
+  late BuiltSet<int> side_selected_helix_idxs;
+  String? dna_sequence_png_uri;
+  late num dna_sequence_png_horizontal_offset;
+  late num dna_sequence_png_vertical_offset;
+  late bool is_zoom_above_threshold;
+  actions.ExportSvg? export_svg_action_delayed_for_png_cache;
+  late bool only_display_selected_helices;
+  late BuiltMap<int, Point<double>> helix_idx_to_svg_position_map;
+  late bool disable_png_caching_dna_sequences;
+  late bool retain_strand_color_on_selection;
+  late bool display_reverse_DNA_right_side_up;
 }
 
 class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequencesProps> with PureComponent {
@@ -42,7 +43,7 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
   /// If this prop is not null, then it dispatches the prop action before disabling it.
   @override
   void componentDidUpdate(Map prevProps, Map prevState, [snapshot]) {
-    var action_to_complete = props.export_svg_action_delayed_for_png_cache;
+    actions.ExportSvg? action_to_complete = props.export_svg_action_delayed_for_png_cache;
 
     if (action_to_complete != null) {
       app.dispatch(action_to_complete);
@@ -69,9 +70,9 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
           ..id = 'dna-sequences-main-view-png')(),
       );
     } else {
-      // DNA sequence svg.
+      int idx = 0;
       return (Dom.g()..className = 'dna-sequences-main-view')([
-        for (Strand strand in props.strands)
+        for (var strand in props.strands)
           if (strand.dna_sequence != null)
             (DesignMainDNASequence()
               ..helices = props.helices
@@ -79,11 +80,11 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
               ..geometry = props.geometry
               ..strand = strand
               ..side_selected_helix_idxs = props.side_selected_helix_idxs
-              ..key = strand.toString()
               ..only_display_selected_helices = props.only_display_selected_helices
               ..display_reverse_DNA_right_side_up = props.display_reverse_DNA_right_side_up
               ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
-              ..className = 'strand-dna-sequence-elts')()
+              ..key = idx++
+              ..className = 'strand-dna-sequence-elts')(),
       ]);
     }
   }

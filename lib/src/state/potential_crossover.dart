@@ -22,12 +22,12 @@ abstract class PotentialCrossover
   static Serializer<PotentialCrossover> get serializer => _$potentialCrossoverSerializer;
 
   factory PotentialCrossover({
-    Address address,
-    String color,
-    DNAEnd dna_end_first_click,
-    Point<num> start_point,
-    Point<num> current_point,
-    Linker linker = null,
+    required Address address,
+    required String color,
+    required DNAEnd dna_end_first_click,
+    required Point<double> start_point,
+    required Point<double> current_point,
+    Linker? linker = null,
   }) {
     // need this because Linker is not a Built type, but its two subclasses Crossover and Loopout are,
     // so need this to satisfy the compiler that they have a toBuilder() method
@@ -51,12 +51,11 @@ abstract class PotentialCrossover
 
   DNAEnd get dna_end_first_click;
 
-  Point<num> get start_point;
+  Point<double> get start_point;
 
-  Point<num> get current_point;
+  Point<double> get current_point;
 
   // are we exchanging DNA ends of an existing crossover or loopout?
   // If not this is null, otherwise it is the existing crossover/loopout
-  @nullable
-  Linker get linker;
+  Linker? get linker;
 }

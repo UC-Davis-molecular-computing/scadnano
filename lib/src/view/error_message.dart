@@ -6,11 +6,8 @@ import '../constants.dart' as constants;
 class ErrorMessageComponent {
   DivElement root_element;
 
-//  ErrorMessageStore error_message_store;
-
   ErrorMessageComponent(this.root_element) {
     this.root_element.attributes = {'class': 'error-message'};
-//    this.error_message_store.listen((_) => this.render());
   }
 
   render(String error_message) {

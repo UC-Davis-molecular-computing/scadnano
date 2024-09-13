@@ -11,11 +11,10 @@ import '../middleware/oxview_update_view.dart';
 import '../constants.dart' as constants;
 
 class OxviewViewComponent {
-  DivElement div;
-  IFrameElement frame;
+  late DivElement div;
+  late IFrameElement frame;
 
   OxviewViewComponent() {
-    print("creating new OxviewViewComponent");
     this.div = DivElement()..attributes = {'id': OXVIEW_ID, 'class': 'split'};
     this.frame = IFrameElement()
       ..attributes = {

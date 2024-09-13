@@ -17,25 +17,25 @@ extension MinMaxOfIterable<C extends Comparable> on Iterable<C> {
     if (isEmpty) {
       throw ArgumentError('cannot call min on an empty iterable');
     }
-    C min_val = null;
+    C? min_val = null;
     for (C val in this) {
       if (min_val == null || min_val.compareTo(val) > 0) {
         min_val = val;
       }
     }
-    return min_val;
+    return min_val!;
   }
 
   C get max {
     if (isEmpty) {
       throw ArgumentError('cannot call max on an empty iterable');
     }
-    C max_val = null;
+    C? max_val = null;
     for (C val in this) {
       if (max_val == null || max_val.compareTo(val) < 0) {
         max_val = val;
       }
     }
-    return max_val;
+    return max_val!;
   }
 }

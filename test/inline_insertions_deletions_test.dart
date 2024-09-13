@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'dart:convert';
 
 import 'package:scadnano/src/json_serializable.dart';
@@ -21,10 +19,11 @@ import 'package:scadnano/src/actions/actions.dart' as actions;
 
 import 'utils.dart';
 
-void helix0_strand0_inlined_test(Design design, {int max_offset, List<int> major_ticks, int start, int end}) {
+void helix0_strand0_inlined_test(Design design,
+    {required int max_offset, required List<int> major_ticks, required int start, required int end}) {
   expect(design.helices.length, 1);
   expect(design.strands.length, 1);
-  var helix = design.helices[0];
+  var helix = design.helices[0]!;
   var strand = design.strands[0];
   expect(helix.max_offset, max_offset);
   expect(helix.major_ticks, major_ticks);
@@ -36,7 +35,7 @@ void helix0_strand0_inlined_test(Design design, {int max_offset, List<int> major
 
 main() {
   group('InlineInsertionsDeletions', () {
-    Design design;
+    Design design = Design(helices: [], grid: Grid.square);
     actions.InlineInsertionsDeletions action = actions.InlineInsertionsDeletions();
 
     setUp(() async {
@@ -83,7 +82,7 @@ main() {
     0   [----->
         */
       design = design.draw_strand(0, 0).move(8).with_deletion(4).commit();
-      design = inline_insertions_deletions_reducer(design, action);
+      design = inline_insertions_deletions_reducer(design, action)!;
       helix0_strand0_inlined_test(design, max_offset: 23, major_ticks: [0, 7, 15, 23], start: 0, end: 7);
     });
 
@@ -100,7 +99,7 @@ main() {
     0   [---->
         */
       design = design.draw_strand(0, 0).move(8).with_deletions([2, 4]).commit();
-      design = inline_insertions_deletions_reducer(design, action);
+      design = inline_insertions_deletions_reducer(design, action)!;
       helix0_strand0_inlined_test(design, max_offset: 22, major_ticks: [0, 6, 14, 22], start: 0, end: 6);
     });
 
@@ -117,7 +116,7 @@ main() {
     0   [------->
         */
       design = design.draw_strand(0, 0).move(8).with_insertion(4, 1).commit();
-      design = inline_insertions_deletions_reducer(design, action);
+      design = inline_insertions_deletions_reducer(design, action)!;
       helix0_strand0_inlined_test(design, max_offset: 25, major_ticks: [0, 9, 17, 25], start: 0, end: 9);
     });
 
@@ -134,7 +133,7 @@ main() {
     0   [---------->
         */
       design = design.draw_strand(0, 0).move(8).with_insertions([Insertion(2, 3), Insertion(4, 1)]).commit();
-      design = inline_insertions_deletions_reducer(design, action);
+      design = inline_insertions_deletions_reducer(design, action)!;
       helix0_strand0_inlined_test(design, max_offset: 28, major_ticks: [0, 12, 20, 28], start: 0, end: 12);
     });
 
@@ -151,7 +150,7 @@ main() {
     0   [-------->
         */
       design = design.draw_strand(0, 0).move(8).with_deletion(4).with_insertion(2, 3).commit();
-      design = inline_insertions_deletions_reducer(design, action);
+      design = inline_insertions_deletions_reducer(design, action)!;
       helix0_strand0_inlined_test(design, max_offset: 26, major_ticks: [0, 10, 18, 26], start: 0, end: 10);
     });
 
@@ -168,7 +167,7 @@ main() {
     0   [--------->
         */
       design = design.draw_strand(0, 0).move(12).with_deletion(9).commit();
-      design = inline_insertions_deletions_reducer(design, action);
+      design = inline_insertions_deletions_reducer(design, action)!;
       helix0_strand0_inlined_test(design, max_offset: 23, major_ticks: [0, 8, 15, 23], start: 0, end: 11);
     });
 
@@ -186,7 +185,7 @@ main() {
          [ - - - - - - - - - >
         */
       design = design.draw_strand(0, 0).move(12).with_deletion(8).commit();
-      design = inline_insertions_deletions_reducer(design, action);
+      design = inline_insertions_deletions_reducer(design, action)!;
       helix0_strand0_inlined_test(design, max_offset: 23, major_ticks: [0, 8, 15, 23], start: 0, end: 11);
     });
 
@@ -203,7 +202,7 @@ main() {
     0   [--------->
         */
       design = design.draw_strand(0, 0).move(12).with_deletion(7).commit();
-      design = inline_insertions_deletions_reducer(design, action);
+      design = inline_insertions_deletions_reducer(design, action)!;
       helix0_strand0_inlined_test(design, max_offset: 23, major_ticks: [0, 7, 15, 23], start: 0, end: 11);
     });
 
@@ -220,7 +219,7 @@ main() {
     0   [----------->
         */
       design = design.draw_strand(0, 0).move(12).with_insertion(9, 1).commit();
-      design = inline_insertions_deletions_reducer(design, action);
+      design = inline_insertions_deletions_reducer(design, action)!;
       helix0_strand0_inlined_test(design, max_offset: 25, major_ticks: [0, 8, 17, 25], start: 0, end: 13);
     });
 
@@ -237,7 +236,7 @@ main() {
     0   [----------->
         */
       design = design.draw_strand(0, 0).move(12).with_insertion(8, 1).commit();
-      design = inline_insertions_deletions_reducer(design, action);
+      design = inline_insertions_deletions_reducer(design, action)!;
       helix0_strand0_inlined_test(design, max_offset: 25, major_ticks: [0, 8, 17, 25], start: 0, end: 13);
     });
 
@@ -254,7 +253,7 @@ main() {
     0   [----------->
         */
       design = design.draw_strand(0, 0).move(12).with_insertion(7, 1).commit();
-      design = inline_insertions_deletions_reducer(design, action);
+      design = inline_insertions_deletions_reducer(design, action)!;
       helix0_strand0_inlined_test(design, max_offset: 25, major_ticks: [0, 9, 17, 25], start: 0, end: 13);
     });
 
@@ -275,7 +274,7 @@ main() {
           .move(24)
           .with_deletion(19)
           .with_insertions([Insertion(5, 2), Insertion(11, 1)]).commit();
-      design = inline_insertions_deletions_reducer(design, action);
+      design = inline_insertions_deletions_reducer(design, action)!;
       helix0_strand0_inlined_test(design, max_offset: 26, major_ticks: [0, 10, 19, 26], start: 0, end: 26);
     });
 
@@ -298,10 +297,10 @@ main() {
           .with_deletion(2)
           .with_insertions([Insertion(5, 2), Insertion(10, 1)]).commit();
       design = design.draw_strand(0, 14).to(24).with_deletion(19).commit();
-      design = inline_insertions_deletions_reducer(design, action);
+      design = inline_insertions_deletions_reducer(design, action)!;
       expect(design.helices.length, 1);
       expect(design.strands.length, 2);
-      var helix = design.helices[0];
+      var helix = design.helices[0]!;
       var strand0 = design.strands[0];
       var strand1 = design.strands[1];
       expect(helix.max_offset, 25);

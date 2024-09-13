@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'dart:convert';
 
 import 'package:scadnano/src/json_serializable.dart';
@@ -21,8 +19,8 @@ import 'utils.dart';
 
 main() {
   group('DomainNameBoundComplements_LinearStrands', () {
-    List<Helix> helices;
-    Design design;
+    late List<Helix> helices;
+    late Design design;
 
     /* 0              16               32      40       50  
        |---------------|---------------|-------|---------|
@@ -95,7 +93,7 @@ main() {
       expect(all_strands[4].substrands[0].name, "JKL");
     });
 
-    /* 0              16               32      40       50  
+    /* 0              16               32      40       50
        |---------------|---------------|-------|---------|
                                                   JKL*
     0  /------------------------------\        [-------->
@@ -104,7 +102,7 @@ main() {
       |               ||                )
       |       ABC     ||                )
     1 |[--------------++-------------->)
-       \--------------]<--------------/  
+       \--------------]<--------------/
                               DEF*
     */
 
@@ -132,7 +130,7 @@ main() {
       expect(all_strands[4].substrands[0].name, "JKL");
     });
 
-    /* 0              16               32      40       50  
+    /* 0              16               32      40       50
        |---------------|---------------|-------|---------|
                                                   JKL*
     0  /------------------------------\        [-------->
@@ -141,7 +139,7 @@ main() {
       |               ||                )
       |       ABC     ||                )
     1 |[--------------++-------------->)
-       \--------------]<--------------/  
+       \--------------]<--------------/
               ABC*            DEF*
     */
 
@@ -170,7 +168,7 @@ main() {
       expect(all_strands[4].substrands[0].name, "JKL");
     });
 
-    /* 0              16               32      40       50  
+    /* 0              16               32      40       50
        |---------------|---------------|-------|---------|
 
     0  /------------------------------\        [-------->
@@ -179,7 +177,7 @@ main() {
       |               ||                )
       |       ABC     ||      DEF       )
     1 |[--------------++-------------->)
-       \--------------]<--------------/  
+       \--------------]<--------------/
                               DEF*
     */
     test('assign_domain_name_complement_on_complement_of_ABC_and_DEF', () {
@@ -210,8 +208,8 @@ main() {
   });
 
   group('DomainNameBoundComplements_CircularStrands', () {
-    List<Helix> helices;
-    Design design;
+    List<Helix> helices = []; // mocks to make the dart compiler happy; these get set in setUp
+    Design design = Design(helices: helices, grid: Grid.square);
 
     /* 0       8       16      24      32
        |-------|-------|-------|-------|
@@ -274,7 +272,7 @@ main() {
 
     /* 0       8       16      24      32
        |-------|-------|-------|-------|
-         ABC        
+         ABC
     0  /------\[------\/------> /------\
        \------/<------/\------] \---/
          ABC*     DEF     GHI    JKL*
@@ -321,10 +319,10 @@ main() {
   group('DomainNameBoundComplements_DifferentCombinationOfExistingDomainNames', () {
     /* 0       8
        |-------|
-         ABC        
+         ABC
     0  [------\
        <------/
-         XYZ      
+         XYZ
     */
     test('self_complementary_strand__both_domains_named__complementary', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
@@ -357,10 +355,10 @@ main() {
 
     /* 0       8
        |-------|
-          ABC        
+          ABC
     0  [-------\
         <------/
-          XYZ      
+          XYZ
     */
     test('self_complementary_strand__both_domains_named__noncomplementary', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
@@ -388,10 +386,10 @@ main() {
 
     /* 0       8
        |-------|
-                  
+
     0  [-------\
        <-------/
-                
+
     */
     test('self_complementary_strand__both_domains_not_named__complementary', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
@@ -412,10 +410,10 @@ main() {
 
     /* 0       8
        |-------|
-         ABC        
+         ABC
     0  [------>
        <------]
-          XYZ      
+          XYZ
     */
     test('separate_strands__both_domains_named__complementary__both_strands_selected', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
@@ -442,10 +440,10 @@ main() {
 
     /* 0       8
        |-------|-
-         ABC        
+         ABC
     0  [------->
        <------]
-          XYZ      
+          XYZ
     */
     test('separate_strands__both_domains_named__noncomplementary__both_strands_selected', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
@@ -518,10 +516,10 @@ main() {
 
     /* 0       8
        |-------|
-          ABC        
+          ABC
     0  [------>
        <------]
-          XYZ      
+          XYZ
     */
     test('separate_strands__both_domains_named__complementary__one_strand_selected', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
@@ -543,10 +541,10 @@ main() {
 
     /* 0     8
        |-------|-
-          ABC        
+          ABC
     0  [------->
        <------]
-          XYZ      
+          XYZ
     */
     test('separate_strands__both_domains_named__noncomplementary__one_strand_selected', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
@@ -568,10 +566,10 @@ main() {
 
     /* 0       8
        |-------|
-                  
+
     0  [------>
        <------]
-                
+
     */
     test('separate_strands__both_domains_not_named__complementary__one_strand_selected', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
@@ -593,10 +591,10 @@ main() {
 
     /* 0      8
        |-------|-
-                  
+
     0  [------->
        <------]
-                
+
     */
     test('separate_strands__both_domains_not_named__noncomplementary__one_strand_selected', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
@@ -660,17 +658,17 @@ main() {
 
       var all_overlapping_strands = design.strands_overlapping;
 
-      expect(all_overlapping_strands[design.strands[0]].length, 2);
+      expect(all_overlapping_strands[design.strands[0]]!.length, 2);
       expect(all_overlapping_strands[design.strands[0]],
           allOf([contains(design.strands[1]), contains(design.strands[2])]));
 
-      expect(all_overlapping_strands[design.strands[1]].length, 1);
+      expect(all_overlapping_strands[design.strands[1]]!.length, 1);
       expect(all_overlapping_strands[design.strands[1]], [design.strands[0]]);
 
-      expect(all_overlapping_strands[design.strands[2]].length, 1);
+      expect(all_overlapping_strands[design.strands[2]]!.length, 1);
       expect(all_overlapping_strands[design.strands[2]], [design.strands[0]]);
 
-      expect(all_overlapping_strands[design.strands[3]].length, 1);
+      expect(all_overlapping_strands[design.strands[3]]!.length, 1);
       expect(all_overlapping_strands[design.strands[3]], [design.strands[3]]);
     });
 
@@ -688,10 +686,10 @@ main() {
 
       var all_overlapping_strands = design.strands_overlapping;
 
-      expect(all_overlapping_strands[design.strands[0]].length, 1);
+      expect(all_overlapping_strands[design.strands[0]]!.length, 1);
       expect(all_overlapping_strands[design.strands[0]], allOf([contains(design.strands[1])]));
 
-      expect(all_overlapping_strands[design.strands[1]].length, 1);
+      expect(all_overlapping_strands[design.strands[1]]!.length, 1);
       expect(all_overlapping_strands[design.strands[1]], allOf([contains(design.strands[0])]));
     });
 
@@ -708,7 +706,7 @@ main() {
 
       var all_overlapping_strands = design.strands_overlapping;
 
-      expect(all_overlapping_strands[design.strands[0]].length, 1);
+      expect(all_overlapping_strands[design.strands[0]]!.length, 1);
       expect(all_overlapping_strands[design.strands[0]], allOf([contains(design.strands[0])]));
     });
 
@@ -726,11 +724,11 @@ main() {
 
       var all_overlapping_strands = design.strands_overlapping;
 
-      expect(all_overlapping_strands[design.strands[0]].length, 2);
+      expect(all_overlapping_strands[design.strands[0]]!.length, 2);
       expect(all_overlapping_strands[design.strands[0]],
           allOf([contains(design.strands[0]), contains(design.strands[1])]));
 
-      expect(all_overlapping_strands[design.strands[1]].length, 1);
+      expect(all_overlapping_strands[design.strands[1]]!.length, 1);
       expect(all_overlapping_strands[design.strands[1]], allOf([contains(design.strands[0])]));
     });
   });

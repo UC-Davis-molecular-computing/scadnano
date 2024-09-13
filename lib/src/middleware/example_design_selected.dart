@@ -9,8 +9,8 @@ example_design_selected_middleware(Store<AppState> store, action, NextDispatcher
   next(action);
   if (action is actions.ExampleDesignsLoad) {
     var example_designs = store.state.ui_state.example_designs;
-    String url = example_designs.url;
-    String filename = example_designs.selected_filename;
+    String url = example_designs.url!;
+    String filename = example_designs.selected_filename!;
     _get_file_content_and_dispatch_load(store, url, filename);
   }
 }

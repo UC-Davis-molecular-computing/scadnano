@@ -32,11 +32,10 @@ AppState app_state_reducer(AppState state, action) {
 
   // "local" reducers can operate on one slice of the state and need only read that same slice
   state = state.rebuild((m) => m
-    ..design = design_reducer(state.design, action)?.toBuilder()
+    ..maybe_design = design_reducer(state.maybe_design, action)?.toBuilder()
     ..ui_state.replace(ui_state_local_reducer(state.ui_state, action))
     ..error_message =
-        TypedReducer<String, actions.ErrorMessageSet>(error_message_reducer)(state.error_message, action)
-    ..editor_content = editor_content_reducer(state.editor_content, action));
+        TypedReducer<String?, actions.ErrorMessageSet>(error_message_reducer)(state.error_message, action));
 
   // "global" reducers operate on a slice of the state but need another part of the state.
   // For consistency, everyone gets the version of the state before any action was applied.
@@ -45,7 +44,7 @@ AppState app_state_reducer(AppState state, action) {
   // items from the DNADesign can still see the set of selected items in
   // original_state.ui_state.selectables_store.
   state = state.rebuild((m) => m
-    ..design = design_global_reducer(state.design, original_state, action)?.toBuilder()
+    ..maybe_design = design_global_reducer(state.maybe_design, original_state, action)?.toBuilder()
     ..ui_state.replace(ui_state_global_reducer(state.ui_state, original_state, action)));
 
   // Batch actions are grouped together but should just have one entry on the undo stack.
@@ -68,8 +67,4 @@ AppState app_state_reducer(AppState state, action) {
   return state;
 }
 
-String error_message_reducer(String error_message, actions.ErrorMessageSet action) => action.error_message;
-
-String editor_content_reducer(String editor_content, action) {
-  return editor_content;
-}
+String? error_message_reducer(String? _, actions.ErrorMessageSet action) => action.error_message;

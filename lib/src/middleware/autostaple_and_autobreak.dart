@@ -23,7 +23,7 @@ autostaple_and_autobreak_middleware(Store<AppState> store, dynamic action, NextD
 
 _autostaple(Store<AppState> store) async {
   var response = await http.post(
-    constants.autostaple_url,
+    Uri.parse(constants.autostaple_url),
     body: json_encode(store.state.design),
     headers: {"Content-Type": "application/json"},
   );
@@ -42,7 +42,7 @@ _autobreak(Store<AppState> store, actions.Autobreak action) async {
     'design': store.state.design.to_json_serializable()
   });
   var response = await http.post(
-    constants.autobreak_url,
+    Uri.parse(constants.autobreak_url),
     body: body,
     headers: {"Content-Type": "application/json"},
   );
@@ -53,8 +53,12 @@ _autobreak(Store<AppState> store, actions.Autobreak action) async {
 void _handle_response(Store<AppState> store, http.Response response, String short_description) {
   if (response.statusCode == 200) {
     var json_model_text = response.body;
-    var design_new = Design.from_json_str(json_model_text, store.state.ui_state.invert_y);
-    store.dispatch(actions.NewDesignSet(design_new, short_description));
+    Design? design_new = Design.from_json_str(json_model_text, store.state.ui_state.invert_y);
+    if (design_new != null) {
+      store.dispatch(actions.NewDesignSet(design_new, short_description));
+    } else {
+      window.alert('Error: Received null design from server');
+    }
   } else {
     Map response_body_json = jsonDecode(response.body);
     window.alert('Error: ${response_body_json['error']}');
