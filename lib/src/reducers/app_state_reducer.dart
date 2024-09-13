@@ -59,11 +59,6 @@ AppState app_state_reducer(AppState state, action) {
     }
   }
 
-  if (state == null) {
-    // this is a check on myself since null is implicitly returned when there is no return statement
-    throw ArgumentError('reducer returned a null state, which is disallowed');
-  }
-
   return state;
 }
 
