@@ -2218,7 +2218,10 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
           // if we allow unassigned DNA, then either base being `?` means they are "complementary"
           if (allow_mismatches ||
               (allow_unassigned_dna &&
-                  (base1 == constants.DNA_BASE_WILDCARD || base2 == constants.DNA_BASE_WILDCARD)) ||
+                  (base1 == null ||
+                      base2 == null ||
+                      base1 == constants.DNA_BASE_WILDCARD ||
+                      base2 == constants.DNA_BASE_WILDCARD)) ||
               util.reverse_complementary(base1, base2, allow_wildcard: true)) {
             offsets_and_domain_strand.add(Tuple5<int, Domain, Domain, Strand, Strand>(
                 offset, dom1, dom2, this.substrand_to_strand[dom1]!, this.substrand_to_strand[dom2]!));
