@@ -6,8 +6,8 @@ import '../state/selection_box.dart';
 
 part 'selection_box_view.over_react.g.dart';
 
-UiFactory<SelectionBoxViewProps> ConnectedSelectionBoxView = connect<SelectionBox, SelectionBoxViewProps>(
-  mapStateToPropsWithOwnProps: (box, props) {
+UiFactory<SelectionBoxViewProps> ConnectedSelectionBoxView = connect<SelectionBox?, SelectionBoxViewProps>(
+  mapStateToPropsWithOwnProps: (SelectionBox? box, SelectionBoxViewProps props) {
     return SelectionBoxView()
       ..selection_box = box
       ..stroke_width_getter = props.stroke_width_getter

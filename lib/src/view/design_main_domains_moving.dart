@@ -18,11 +18,23 @@ part 'design_main_domains_moving.over_react.g.dart';
 
 DesignMainDomainsMovingProps set_design_main_domains_moving_props(
     DesignMainDomainsMovingProps elt, AppState state) {
-  var original_group, current_group;
-  if (state.ui_state.domains_move != null) {
-    original_group = util.original_group_from_domains_move(state.design, state.ui_state.domains_move!);
-    current_group = util.current_group_from_domains_move(state.design, state.ui_state.domains_move!);
+  if (state.ui_state.domains_move == null) {
+    return elt
+      ..domains_move = null
+      ..color_of_domain = BuiltMap<Domain, Color>()
+      ..groups = BuiltMap<String, HelixGroup>()
+      ..original_group = HelixGroup(helices_view_order: [])
+      ..current_group = HelixGroup(helices_view_order: [])
+      ..helices = BuiltMap<int, Helix>()
+      ..side_selected_helix_idxs = BuiltSet<int>()
+      ..helix_idx_to_svg_position_y_map = BuiltMap<int, num>()
+      ..geometry = Geometry();
   }
+
+  HelixGroup original_group =
+      util.original_group_from_domains_move(state.design, state.ui_state.domains_move!);
+  HelixGroup current_group = util.current_group_from_domains_move(state.design, state.ui_state.domains_move!);
+
   // Need to check this here, because we need to allow the middleware to let through the domains_move
   // object so that view/design.dart can issue a warning to the user on a mousemove event when the
   // left-click is depressed. But if we allow the domains_move to propagate to the view it throws

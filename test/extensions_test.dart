@@ -265,7 +265,7 @@ main() {
   ]
 }
 ''';
-      var design = Design.from_json_str(json_str);
+      var design = Design.from_json_str(json_str)!;
       var first_domain = Domain(helix: 0, forward: true, start: 0, end: 16);
       var last_domain = Domain(helix: 2, forward: true, start: 0, end: 16);
       var expected_strand = Strand([

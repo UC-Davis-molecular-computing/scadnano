@@ -298,7 +298,7 @@ main() {
   ]
 }
     ''';
-    var design = Design.from_json_str(json_str);
+    var design = Design.from_json_str(json_str)!;
     var json_map_export = design.to_json_serializable(suppress_indent: false);
     expect(json_map_export.containsKey(constants.grid_key), true);
     expect(json_map_export.containsKey(constants.groups_key), false);

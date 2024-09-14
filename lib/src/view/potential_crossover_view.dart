@@ -14,8 +14,8 @@ PotentialCrossoverViewProps set_potential_crossover_props(
 }
 
 UiFactory<PotentialCrossoverViewProps> ConnectedPotentialCrossoverView =
-    connect<PotentialCrossover, PotentialCrossoverViewProps>(
-  mapStateToProps: (potential_crossover) =>
+    connect<PotentialCrossover?, PotentialCrossoverViewProps>(
+  mapStateToProps: (PotentialCrossover? potential_crossover) =>
       set_potential_crossover_props(PotentialCrossoverView(), potential_crossover),
   context: app.context_potential_crossover,
 )(PotentialCrossoverView);

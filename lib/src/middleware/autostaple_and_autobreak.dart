@@ -57,7 +57,7 @@ void _handle_response(Store<AppState> store, http.Response response, String shor
     var json_model_text = response.body;
     Design design_new;
     try {
-      design_new = Design.from_json_str(json_model_text, store.state.ui_state.invert_y);
+      design_new = Design.from_json_str(json_model_text, store.state.ui_state.invert_y)!;
     } catch (e) {
       window.alert('Error: Received invalid JSON from server: ${e}');
       return;

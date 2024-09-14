@@ -1284,12 +1284,15 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return Tuple2(helix_builders_map, group_builders_map);
   }
 
-  static Design from_json_str(String json_str, [bool invert_y = false]) {
-    Map<String, dynamic> json_map;
+  static Design? from_json_str(String json_str, [bool invert_y = false]) {
+    Map<String, dynamic>? json_map;
     try {
       json_map = jsonDecode(json_str);
     } on FormatException catch (e) {
       throw IllegalDesignError('Error in syntax of scadnano file: ${e.message}');
+    }
+    if (json_map == null) {
+      return null;
     }
     return Design.from_json(json_map, invert_y);
   }

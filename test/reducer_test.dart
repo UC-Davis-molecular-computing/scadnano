@@ -7258,7 +7258,7 @@ main() {
           ]
         }
       ''';
-      Design d = Design.from_json_str(json_str);
+      Design d = Design.from_json_str(json_str)!;
       Helix helix0 = d.helices[0]!;
       Helix helix1 = d.helices[1]!;
       expect(helix0.position, Position3D(x: 1, y: 2, z: 3));
@@ -7308,7 +7308,7 @@ main() {
         ]
       }
       """;
-      Design d = Design.from_json_str(json_str);
+      Design d = Design.from_json_str(json_str)!;
       Helix helix0 = d.helices[0]!;
       Helix helix1 = d.helices[1]!;
 
@@ -7369,7 +7369,7 @@ main() {
         ]
       }
       ''';
-      Design d = Design.from_json_str(json_str);
+      Design d = Design.from_json_str(json_str)!;
       Helix helix0 = d.helices[0]!;
       Helix helix1 = d.helices[1]!;
 
@@ -7425,7 +7425,7 @@ main() {
         ]
       }
       """;
-      Design d = Design.from_json_str(json_str);
+      Design d = Design.from_json_str(json_str)!;
       Helix helix0 = d.helices[0]!;
       Helix helix1 = d.helices[1]!;
 
@@ -7486,7 +7486,7 @@ main() {
         ]
       }
       """;
-      Design d = Design.from_json_str(json_str);
+      Design d = Design.from_json_str(json_str)!;
       Helix helix0 = d.helices[0]!;
       Helix helix1 = d.helices[1]!;
 

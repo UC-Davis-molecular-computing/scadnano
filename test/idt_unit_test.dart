@@ -280,7 +280,7 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
     }
     ''';
 
-    var design = Design.from_json_str(json_str);
+    var design = Design.from_json_str(json_str)!;
     expect(design.strands.length, 1);
     var strand = design.strands[0];
     expect(strand.name, 'staple1');
@@ -316,7 +316,7 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
     }
     ''';
 
-    var design = Design.from_json_str(json_str);
+    var design = Design.from_json_str(json_str)!;
     expect(design.strands.length, 1);
     var strand = design.strands[0];
     expect(strand.name, 'staple1 strand level');

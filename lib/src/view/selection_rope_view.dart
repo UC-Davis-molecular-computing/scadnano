@@ -6,8 +6,9 @@ import '../state/selection_rope.dart';
 
 part 'selection_rope_view.over_react.g.dart';
 
-UiFactory<SelectionRopeViewProps> ConnectedSelectionRopeView = connect<SelectionRope, SelectionRopeViewProps>(
-  mapStateToPropsWithOwnProps: (rope, props) {
+UiFactory<SelectionRopeViewProps> ConnectedSelectionRopeView =
+    connect<SelectionRope?, SelectionRopeViewProps>(
+  mapStateToPropsWithOwnProps: (SelectionRope? rope, SelectionRopeViewProps props) {
     return SelectionRopeView()
       ..selection_rope = rope
       ..stroke_width_getter = props.stroke_width_getter
