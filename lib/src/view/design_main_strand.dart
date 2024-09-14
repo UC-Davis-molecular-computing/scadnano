@@ -1172,11 +1172,24 @@ calls position 0. For example, for the circular sequence AACCGGTT:
 - rotation 3: CGGTTAAC
 - rotation 4: GGTTAACC
 - ...''');
-  items[idx_assign_complements] =
-      DialogCheckbox(label: 'assign complement to bound strands', value: options.assign_complements);
+  items[idx_assign_complements] = DialogCheckbox(
+      label: 'assign complement to bound strands', value: options.assign_complements, tooltip: '''\
+If checked, then assign the complement of the DNA sequence to all strands that
+are bound to this one. The typical use of this option is that you assign a 
+sequence such as M13 to the scaffold strand, and this option will automatically 
+assign the complement of the M13 sequence to all staple strands bound to 
+the scaffold.''');
   items[idx_disable_change_sequence_bound_strand] = DialogCheckbox(
       label: 'disallow assigning different sequence to bound strand with existing sequence',
-      value: options.disable_change_sequence_bound_strand);
+      value: options.disable_change_sequence_bound_strand,
+      tooltip: '''\
+If checked, then if a bound strand already has a DNA sequence assigned, this 
+option will prevent you from assigning a different DNA sequence to it.
+This is useful if you have assigned DNA to some strands, but not others, and you 
+want to use the "assign complement to bound strands" option to the unassigned 
+strands, and you believe that the sequence being assigned is compatible with the 
+already-assigned strands, but want to have scadnano check this for you so you 
+don't accidentally change an existing sequence.''');
   items[idx_predefine_sequence_link] = DialogLink(
       label: 'Information about sequence variants',
       link: 'https://scadnano-python-package.readthedocs.io/en/latest/#scadnano.M13Variant');
