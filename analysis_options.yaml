@@ -1,8 +1,8 @@
-#FIXME: set these to false eventually; will create lots of errors we have to handle
+#FIXME: set these to true eventually; will create lots of errors we have to handle
 analyzer:
-  strong-mode:
-    implicit-casts: true
-    implicit-dynamic: true
+  language:
+    strict-casts: false
+    strict-raw-types: false
   errors:
     uri_has_not_been_generated: ignore
     hash_and_equals: ignore
