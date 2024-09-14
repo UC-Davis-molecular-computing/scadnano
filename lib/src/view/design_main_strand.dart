@@ -1161,7 +1161,17 @@ Future<void> ask_for_assign_dna_sequence(Strand strand, DNAAssignOptions options
   items[idx_predefined_sequence_name] =
       DialogRadio(label: 'predefined DNA sequence', options: DNASequencePredefined.display_names);
   items[idx_rotation] =
-      DialogInteger(label: 'rotation of predefined DNA sequence', value: options.m13_rotation);
+      DialogInteger(label: 'rotation of predefined DNA sequence', value: options.m13_rotation, tooltip: '''\
+The standard M13 sequence (p7249) is circular, so GenBank lists its bases 
+starting at a particular point we call 0. The "rotation" here means to 
+advance the start of the sequence by this many bases from the one GenBank
+calls position 0. For example, for the circular sequence AACCGGTT:
+- rotation 0: AACCGGTT
+- rotation 1: ACCGGTTA
+- rotation 2: CCGGTTAA
+- rotation 3: CGGTTAAC
+- rotation 4: GGTTAACC
+- ...''');
   items[idx_assign_complements] =
       DialogCheckbox(label: 'assign complement to bound strands', value: options.assign_complements);
   items[idx_disable_change_sequence_bound_strand] = DialogCheckbox(
