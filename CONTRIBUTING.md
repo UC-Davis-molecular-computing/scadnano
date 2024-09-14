@@ -248,7 +248,7 @@ This project requires using Dart version **2.19.6**, not the latest version, whi
 <details><summary><strong>Windows</strong></summary>
 First, install <a href="https://chocolatey.org/install">Chocolatey</a> if you haven't already. If <code>choco help</code> shows a help menu for using Chocolatey, then you've set it up correctly.
 
-Then, install Dart 2.19.6:
+Then, open a shell (cmd/Powershell) with Administrative privileges (go to Start type `cmd`, right-click on "Command Prompt", or type Powershell and right-click on "Powershell"; in both cases pick "Run as administrator") and install Dart 2.19.6:
 
 <pre>
 choco install dart-sdk --version 2.19.6
