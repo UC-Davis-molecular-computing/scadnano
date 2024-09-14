@@ -379,6 +379,7 @@ label + select {
 ** BEGIN CodeMirror layout
 ************************************************/
 
+/*
 #controls {
     margin-bottom: 1em;
 }
@@ -408,6 +409,8 @@ label + select {
     text-align: center;
     font-size: 0.8em;
 }
+*.
+ */
 
 /************************************************
 ** END CodeMirror layout
