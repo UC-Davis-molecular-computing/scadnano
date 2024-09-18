@@ -693,13 +693,8 @@ BuiltMap<int, Helix> relax_helix_rolls_reducer(
 
 BuiltMap<int, Helix> helix_group_change_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.GroupChange action) {
-  var new_group = state.design.groups[action.new_name]!;
-  Geometry new_geometry = new_group.geometry ?? state.design.geometry;
-  return helices.map_values((idx, helix) => helix.group == action.old_name
-      ? helix.rebuild((b) => b
-        ..group = action.new_name
-        ..geometry.replace(new_geometry))
-      : helix);
+  return helices.map_values((idx, helix) =>
+      helix.group == action.old_name ? helix.rebuild((b) => b..group = action.new_name) : helix);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
