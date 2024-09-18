@@ -15,7 +15,8 @@ helix_grid_offsets_middleware(Store<AppState> store, dynamic action, NextDispatc
   if (action is actions.GridChange &&
       !action.grid.is_none &&
       store.state.design.groups[action.group_name]!.grid.is_none) {
-    Geometry geometry = store.state.design.geometry;
+    var group = store.state.design.groups[action.group_name]!;
+    Geometry geometry = group.geometry ?? store.state.design.geometry;
     Map<int, GridPosition> new_grid_positions_map = {
       for (var helix in store.state.design.helices_in_group(action.group_name).values)
         helix.idx: util.position3d_to_grid_position(helix.position, action.grid, geometry)

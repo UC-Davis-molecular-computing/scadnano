@@ -110,7 +110,10 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     Map<int, Helix> helices_map = {for (var helix in helices) helix.idx: helix};
 
     for (var key in helices_map.keys) {
-      helices_map[key] = helices_map[key]!.rebuild((b) => b..geometry.replace(geometry!));
+      var helix = helices_map[key]!;
+      var group = groups[helix.group]!;
+      Geometry helix_geometry = group.geometry ?? geometry;
+      helices_map[key] = helix.rebuild((b) => b..geometry.replace(helix_geometry));
     }
 
     var design = Design.from((b) => b

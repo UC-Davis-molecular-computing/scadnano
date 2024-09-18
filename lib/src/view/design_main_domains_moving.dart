@@ -45,6 +45,8 @@ DesignMainDomainsMovingProps set_design_main_domains_moving_props(
     selected_domains_on_multiple_groups = group_names.length > 1;
   }
 
+  var geometry = current_group.geometry ?? state.design.geometry;
+
   return elt
     ..domains_move = selected_domains_on_multiple_groups ? null : state.ui_state.domains_move
     ..color_of_domain = state.design.color_of_domain
@@ -54,7 +56,7 @@ DesignMainDomainsMovingProps set_design_main_domains_moving_props(
     ..helices = state.design.helices
     ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
     ..helix_idx_to_svg_position_y_map = state.helix_idx_to_svg_position_map.map((i, p) => MapEntry(i, p.y))
-    ..geometry = state.design.geometry;
+    ..geometry = geometry;
 }
 
 UiFactory<DesignMainDomainsMovingProps> ConnectedDesignMainDomainsMoving =
@@ -98,6 +100,11 @@ class DesignMainDomainsMovingComponent extends UiComponent2<DesignMainDomainsMov
       );
       int moved_helix_idx = domain_moved.helix;
       var domain_helix_svg_position_y = props.helix_idx_to_svg_position_y_map[moved_helix_idx]!;
+
+      var helix = props.helices[moved_helix_idx]!;
+      var group = props.groups[helix.group]!;
+      var geometry = group.geometry ?? props.geometry;
+
       domains_moving.add((DesignMainDomainMoving()
         ..domain_moved = domain_moved
         ..color = props.color_of_domain[domain]!
@@ -110,7 +117,7 @@ class DesignMainDomainsMovingComponent extends UiComponent2<DesignMainDomainsMov
         ..helices = props.helices
         ..groups = props.groups
         ..allowable = domains_move.allowable
-        ..geometry = props.geometry
+        ..geometry = geometry
         ..domain_helix_svg_position_y = domain_helix_svg_position_y
         ..key = key++)());
     }

@@ -93,7 +93,9 @@ abstract class MouseoverData
           break;
         }
       }
-      double minor_groove_angle = design.geometry.minor_groove_angle;
+      var group = design.groups[helix.group]!;
+      var geometry = group.geometry ?? design.geometry;
+      double minor_groove_angle = geometry.minor_groove_angle;
       mouseover_datas_builder.add(MouseoverData(helix, offset, strand_idx, domain_in_direction, color_forward,
           color_reverse, roll_forward, minor_groove_angle));
     }

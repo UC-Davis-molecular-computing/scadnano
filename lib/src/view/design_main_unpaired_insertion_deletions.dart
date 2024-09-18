@@ -45,6 +45,10 @@ class DesignMainUnpairedInsertionDeletionsComponent
             bool is_insertion = domain.insertion_offset_to_length[unpaired.offset] != null;
 
             String key = '${base_svg_pos};${domain.forward}';
+
+            var group = props.design.groups[helix.group]!;
+            var geometry = group.geometry ?? props.design.geometry;
+
             if (!keys.contains(key)) {
               // otherwise, already rendered mismatch for this insertion
               keys.add(key);
@@ -52,7 +56,7 @@ class DesignMainUnpairedInsertionDeletionsComponent
                 ..base_svg_pos = base_svg_pos +
                     Point(0,
                         is_insertion ? helix.geometry.base_height_svg * 2 * (unpaired.forward ? 1 : -1) : 0)
-                ..geometry = props.design.geometry
+                ..geometry = geometry
                 ..forward = domain.forward
                 ..color = 'green'
                 ..key = key)();

@@ -20,6 +20,7 @@ DesignMainStrandsMovingProps set_design_main_strands_moving_props(
   BuiltMap<int, int>? original_helices_view_order_inverse = null;
   bool selected_strands_on_multiple_groups = false;
   var strands_move = state.ui_state.strands_move;
+  var geometry = state.design.geometry;
   if (strands_move != null) {
     original_helices_view_order_inverse = strands_move.original_helices_view_order_inverse;
     current_group = util.current_group_from_strands_move(state.design, strands_move);
@@ -31,6 +32,9 @@ DesignMainStrandsMovingProps set_design_main_strands_moving_props(
       var group_names = state.design.group_names_of_strands(strands_move.strands_moving);
       selected_strands_on_multiple_groups = group_names != null && group_names.length > 1;
     }
+    if (current_group.geometry != null) {
+      geometry = current_group.geometry!;
+    }
   }
   return elt
     ..strands_move = selected_strands_on_multiple_groups ? null : strands_move
@@ -40,7 +44,7 @@ DesignMainStrandsMovingProps set_design_main_strands_moving_props(
     ..helices = state.design.helices
     ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
     ..helix_idx_to_svg_position_map = state.helix_idx_to_svg_position_map
-    ..geometry = state.design.geometry;
+    ..geometry = geometry;
 }
 
 UiFactory<DesignMainStrandsMovingProps> ConnectedDesignMainStrandsMoving =

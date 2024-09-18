@@ -322,7 +322,7 @@ bool lists_contain_same_elts<T extends Comparable>(Iterable<T> elts1, Iterable<T
 
 /// Returns SVG position for helices
 Map<int, Point<double>> helices_assign_svg(
-    Geometry geometry, bool invert_y, BuiltMap<int, Helix> helices, BuiltMap<String, HelixGroup> groups,
+    Design design, bool invert_y, BuiltMap<int, Helix> helices, BuiltMap<String, HelixGroup> groups,
     {BuiltSet<int>? helix_idxs_to_calculate = null}) {
   if (helix_idxs_to_calculate == null || helix_idxs_to_calculate.isEmpty) {
     helix_idxs_to_calculate = [for (var helix in helices.values) helix.idx].toBuiltSet();
@@ -334,6 +334,7 @@ Map<int, Point<double>> helices_assign_svg(
   // to go in view order
   for (var group_name in groups.keys) {
     HelixGroup group = groups[group_name]!;
+    var geometry = group.geometry ?? design.geometry;
 
     double? prev_y = null;
 
@@ -343,6 +344,7 @@ Map<int, Point<double>> helices_assign_svg(
         Helix helix = helices[helix_idx]!;
 
         // Assertion: Helices should already be updated by reducers
+        //TODO: GEOMETRY
         assert(helix.geometry == geometry);
         double x = main_view_svg_x_of_helix(geometry, helix);
         double y = main_view_svg_y_of_helix(geometry, helix);
@@ -1779,7 +1781,7 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix, Point<double> helix
   if (show_mouseover_data()) {
     MouseEvent event = event_syn.nativeEvent;
     var group = app.state.design.groups[helix.group]!;
-    var geometry = app.state.design.geometry;
+    var geometry = group.geometry ?? app.state.design.geometry;
     var address = get_address_on_helix(event, helix, group, geometry, helix_svg_position);
     int offset = address.offset;
     bool forward = address.forward;

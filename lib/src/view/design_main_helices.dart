@@ -47,6 +47,7 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
     var group_views = [];
     for (var group_name in props.groups.keys) {
       var group = props.groups[group_name]!;
+      var geometry = group.geometry ?? props.geometry;
       var helix_idxs_in_group = props.helix_idxs_in_group[group_name]!;
 
       if (helix_idxs_in_group.isEmpty) {
@@ -58,7 +59,6 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
       var children = [];
       for (int helix_idx in helix_idxs_in_group) {
         var helix = props.helices[helix_idx]!;
-        var group = props.groups[helix.group]!;
         int view_order = group.helices_view_order_inverse[helix.idx]!;
 
         if (only_display_selected_helices && side_selected_helix_idxs.contains(helix.idx) ||
@@ -84,7 +84,7 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
 
       group_views.add((Dom.g()
         ..className = 'helices-main-view-group-${group_name}'
-        ..transform = group.transform_str(props.geometry)
+        ..transform = group.transform_str(geometry)
         ..key = '${group_name}')(children));
     }
 

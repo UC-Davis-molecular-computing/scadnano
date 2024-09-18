@@ -6,6 +6,7 @@ import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:quiver/collection.dart';
 
+import '../state/geometry.dart';
 import '../state/position3d.dart';
 import '../state/grid.dart';
 import '../state/dialog.dart';
@@ -60,7 +61,6 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
         },
         NavbarBrand({'key': 'side-menu-display-title'}, props.displayed_group_name),
         groups_menu(groups),
-        grid_menu(groups),
       );
     } else {
       return Navbar(
@@ -69,7 +69,6 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
           'expand': 'lg',
         },
         groups_menu(groups),
-        grid_menu(groups),
       );
     }
   }
@@ -86,6 +85,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
     }
     options.addAll([
       DropdownDivider({'key': 'divider-add-remove'}),
+      grid_menu(groups),
       (MenuDropdownItem()
         ..display = 'adjust current group'
         ..on_click = ((ev) => set_new_parameters_for_current_group(groups))
@@ -104,10 +104,15 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
         ..disabled = groups[props.displayed_group_name]!.helices_view_order.length == 0
         ..on_click = ((ev) => adjust_helix_indices_for_current_group(groups))
         ..key = 'adjust-helix-indices')(),
+      (MenuDropdownItem()
+        ..display = 'adjust current group geometry'
+        ..on_click = ((ev) => change_group_geometry())
+        ..key = 'adjust-current-group-geometry')(),
     ]);
     return NavDropdown({
       'title': 'Group',
       'id': 'group-nav-dropdown',
+      'key': 'group-nav-dropdown',
     }, options);
   }
 
@@ -116,6 +121,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
       {
         'title': 'Grid',
         'id': 'grid-nav-dropdown',
+        'key': 'grid-nav-dropdown',
       },
       [
         for (var grid in Grid.values)
@@ -308,5 +314,53 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
     }
 
     app.dispatch(actions.HelixIdxsChange(idx_replacements: new_indices_map));
+  }
+
+  change_group_geometry() => app.disable_keyboard_shortcuts_while(() => ask_change_group_geometry());
+
+  Future<void> ask_change_group_geometry() async {
+    var group = app.state.design.groups[props.displayed_group_name]!;
+    var geometry = group.geometry;
+    if (geometry == null) {
+      geometry = Geometry();
+    }
+    int rise_per_base_pair_idx = 0;
+    int helix_radius_idx = 1;
+    int inter_helix_gap_idx = 2;
+    int bases_per_turn_idx = 3;
+    int minor_groove_angle_idx = 4;
+
+    var items = util.FixedList<DialogItem>(5);
+    items[rise_per_base_pair_idx] =
+        DialogFloat(label: 'rise per base pair (nm)', value: geometry.rise_per_base_pair);
+    items[helix_radius_idx] = DialogFloat(label: 'helix radius (nm)', value: geometry.helix_radius);
+    items[inter_helix_gap_idx] = DialogFloat(label: 'inter helix gap (nm)', value: geometry.inter_helix_gap);
+    items[bases_per_turn_idx] = DialogFloat(label: 'bases per turn', value: geometry.bases_per_turn);
+    items[minor_groove_angle_idx] =
+        DialogFloat(label: 'minor groove angle (degrees)', value: geometry.minor_groove_angle);
+
+    var dialog = Dialog(
+        title: 'adjust geometric parameters',
+        type: DialogType.adjust_geometric_parameters,
+        items: items,
+        use_saved_response: false);
+    List<DialogItem>? results = await util.dialog(dialog);
+    if (results == null) return;
+
+    double rise_per_base_pair = (results[rise_per_base_pair_idx] as DialogFloat).value;
+    double helix_radius = (results[helix_radius_idx] as DialogFloat).value;
+    double inter_helix_gap = (results[inter_helix_gap_idx] as DialogFloat).value;
+    double bases_per_turn = (results[bases_per_turn_idx] as DialogFloat).value;
+    double minor_groove_angle = (results[minor_groove_angle_idx] as DialogFloat).value;
+
+    var new_geometry = Geometry(
+      rise_per_base_pair: rise_per_base_pair,
+      helix_radius: helix_radius,
+      inter_helix_gap: inter_helix_gap,
+      bases_per_turn: bases_per_turn,
+      minor_groove_angle: minor_groove_angle,
+    );
+    app.dispatch(
+        actions.GeometryHelixGroupSet(group_name: props.displayed_group_name, geometry: new_geometry));
   }
 }

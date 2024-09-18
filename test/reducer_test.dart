@@ -1756,8 +1756,8 @@ main() {
   Design two_helices_join_inner_strands = Design.from_json(jsonDecode(two_helices_join_inner_strands_json));
   test('pencil should connect a 3p end to a 5p end', () {
     AppState state = app_state_from_design(two_helices_design);
-    Map<int, Point<double>> svg_position_map = util.helices_assign_svg(two_helices_design.geometry,
-        state.ui_state.invert_y, two_helices_design.helices, two_helices_design.groups);
+    Map<int, Point<double>> svg_position_map = util.helices_assign_svg(
+        two_helices_design, state.ui_state.invert_y, two_helices_design.helices, two_helices_design.groups);
 
     Strand h0_reverse_strand = two_helices_design.strands[1];
     Strand h1_forward_strand = two_helices_design.strands[2];
@@ -1788,8 +1788,8 @@ main() {
   });
   test('pencil should connect a 5p end to a 3p end', () {
     AppState state = app_state_from_design(two_helices_design);
-    Map<int, Point<double>> svg_position_map = util.helices_assign_svg(two_helices_design.geometry,
-        state.ui_state.invert_y, two_helices_design.helices, two_helices_design.groups);
+    Map<int, Point<double>> svg_position_map = util.helices_assign_svg(
+        two_helices_design, state.ui_state.invert_y, two_helices_design.helices, two_helices_design.groups);
 
     Strand h0_reverse_strand = two_helices_design.strands[1];
     Strand h1_forward_strand = two_helices_design.strands[2];
@@ -4456,7 +4456,7 @@ main() {
     // 1 [------------------->
     //   <-------------------]
     Map<int, Point<double>> svg_position_map = util.helices_assign_svg(
-        two_helices_design.geometry, false, two_helices_design.helices, two_helices_design.groups);
+        two_helices_design, false, two_helices_design.helices, two_helices_design.groups);
 
     DNAEnd dnaEnd = two_helices_design.strands.first.dnaend_5p;
     Helix helix0 = two_helices_design.helices.values.first;

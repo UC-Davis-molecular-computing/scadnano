@@ -203,6 +203,7 @@ part 'serializers.g.dart';
   EditModeToggle,
   EditModesSet,
   GeometrySet,
+  GeometryHelixGroupSet,
   HelixAdd,
   HelixRemove,
   HelixRemoveAllSelected,

@@ -53,6 +53,7 @@ List<actions.UndoableAction> get_helix_position_and_roll_actions(AppState state)
   for (var group_name in state.design.groups.keys) {
     if (group_names_to_skip.contains(group_name)) continue;
     var group = state.design.groups[group_name]!;
+    var geometry = group.geometry ?? state.design.geometry;
     List<Helix> helices = _get_helices_to_process(state, group);
     List<Tuple2<Address, Address>>? addresses = _get_addresses_to_process(state, helices);
     if (addresses == null) {
@@ -60,7 +61,7 @@ List<actions.UndoableAction> get_helix_position_and_roll_actions(AppState state)
     }
     double first_roll = helices[0].roll;
     List<RollXY> rolls_and_positions =
-        _calculate_rolls_and_positions(state.design, helices, addresses, first_roll);
+        _calculate_rolls_and_positions(state.design, geometry, helices, addresses, first_roll);
     var all_actions_this_group = set_rolls_and_positions(helices, rolls_and_positions);
     all_actions.addAll(all_actions_this_group);
   }
@@ -277,11 +278,9 @@ class RollXY {
 /// Return list of rolls, same length as [helices], giving the roll that each should be to point
 /// each pair of helix backbones at each other through the given [addresses].
 /// The first roll is [first_roll].
-List<RollXY> _calculate_rolls_and_positions(
-    Design design, List<Helix> helices, List<Tuple2<Address, Address>> addresses, double first_roll) {
+List<RollXY> _calculate_rolls_and_positions(Design design, Geometry geometry, List<Helix> helices,
+    List<Tuple2<Address, Address>> addresses, double first_roll) {
   assert(helices.length == addresses.length + 1);
-
-  Geometry geometry = design.geometry;
 
   double x = helices[0].position3d.z;
   double y = helices[0].position3d.y;
