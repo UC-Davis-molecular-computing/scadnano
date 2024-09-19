@@ -58,7 +58,7 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
       if (this.modification is ModificationInternal) {
         var mod = (this.modification as ModificationInternal);
         if (!mod.attached_to_base) {
-          var delta = props.helix.geometry.base_width_svg / 2;
+          var delta = props.geometry.base_width_svg / 2;
           pos = Point<double>(pos.x + delta, pos.y);
         }
       }
