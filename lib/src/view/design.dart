@@ -25,6 +25,7 @@ import '../state/address.dart';
 import '../state/dna_ends_move.dart';
 import '../state/edit_mode.dart';
 import '../state/helix.dart';
+import '../state/select_mode.dart';
 import '../state/strand_creation.dart';
 import '../state/strands_move.dart';
 
@@ -637,6 +638,32 @@ class DesignViewComponent {
       // Alt+Shift+A for Select all with same
       ev.preventDefault();
       app.disable_keyboard_shortcuts_while(ask_for_select_all_with_same_as_selected);
+    } else if ((app.state.ui_state.edit_modes.contains(EditModeChoice.select) ||
+        app.state.ui_state.edit_modes.contains(EditModeChoice.rope_select) &&
+            ev.altKey &&
+            !(ev.ctrlKey || ev.metaKey))) {
+      // Alt+? for select modes
+      ev.preventDefault(); // for some reason this is not stopping Alt+D,
+      // so we also let the user type Alt+O since Alt+D has a special meaning in Chrome
+      if (key == KeyCode.S) {
+        app.dispatch(actions.SelectModeToggle(SelectModeChoice.strand));
+      } else if (key == KeyCode.O || key == KeyCode.D) {
+        app.dispatch(actions.SelectModeToggle(SelectModeChoice.domain));
+      } else if (key == KeyCode.E) {
+        app.dispatch(actions.SelectModesAdd(modes: SelectModeChoice.ends));
+      } else if (key == KeyCode.C) {
+        app.dispatch(actions.SelectModeToggle(SelectModeChoice.crossover));
+      } else if (key == KeyCode.L) {
+        app.dispatch(actions.SelectModeToggle(SelectModeChoice.loopout));
+      } else if (key == KeyCode.X) {
+        app.dispatch(actions.SelectModeToggle(SelectModeChoice.extension_));
+      } else if (key == KeyCode.I) {
+        app.dispatch(actions.SelectModeToggle(SelectModeChoice.insertion));
+      } else if (key == KeyCode.N) {
+        app.dispatch(actions.SelectModeToggle(SelectModeChoice.deletion));
+      } else if (key == KeyCode.M) {
+        app.dispatch(actions.SelectModeToggle(SelectModeChoice.modification));
+      }
     }
 
     if (key == EditModeChoice.pencil.key_code()) {
