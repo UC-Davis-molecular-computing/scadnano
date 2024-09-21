@@ -19,7 +19,7 @@ mixin DesignSideRotationProps on UiProps {
 class DesignSideRotationComponent extends UiComponent2<DesignSideRotationProps> with PureComponent {
   @override
   render() {
-    double roll_reverse = props.data.roll_forward + props.data.minor_groove_angle;
+    double roll_reverse = props.data.roll_forward + props.data.geometry.minor_groove_angle;
     var color_forward_str = props.data.color_forward.toHexColor().toCssString();
     var color_reverse_str = props.data.color_reverse.toHexColor().toCssString();
 

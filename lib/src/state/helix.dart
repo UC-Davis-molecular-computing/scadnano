@@ -292,13 +292,13 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     }
 
     if (json_map.containsKey(constants.major_ticks_key)) {
-      List<int> major_ticks_json = List<int>.from(json_map[constants.major_ticks_key]! as List);
+      List<int> major_ticks_json = List<int>.from(json_map[constants.major_ticks_key]!);
       helix_builder.major_ticks = ListBuilder<int>(List<int>.from(major_ticks_json));
     }
 
     if (json_map.containsKey(constants.major_tick_periodic_distances_key)) {
       List<int> major_tick_periodic_distances_json =
-          json_map[constants.major_tick_periodic_distances_key]! as List<int>;
+          List<int>.from(json_map[constants.major_tick_periodic_distances_key]!);
       helix_builder.major_tick_periodic_distances =
           ListBuilder<int>(List<int>.from(major_tick_periodic_distances_json));
     }
