@@ -80,6 +80,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
       if (!strand_moved.circular)
         (EndMoving()
           ..helix = first_helix_moved
+          ..geometry = props.geometry
           ..dna_end = end_5p_moved
           ..color = props.strand.color
           ..forward = first_domain_moved.forward //first_domain_moved.forward != props.delta_forward
@@ -91,6 +92,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
       if (!strand_moved.circular)
         (EndMoving()
           ..helix = last_helix_moved
+          ..geometry = props.geometry
           ..dna_end = end_3p_moved
           ..color = props.strand.color
           ..forward = last_domain_moved.forward //props.delta_forward != last_domain_moved.forward
