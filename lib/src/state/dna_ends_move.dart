@@ -6,6 +6,7 @@ import 'package:built_value/serializer.dart';
 
 import '../serializers.dart';
 import 'dna_end.dart';
+import 'geometry.dart';
 import 'helix.dart';
 
 part 'dna_ends_move.g.dart';
@@ -16,6 +17,7 @@ abstract class DNAEndsMove with BuiltJsonSerializable implements Built<DNAEndsMo
     required int original_offset,
     required int current_offset,
     required Helix helix,
+    required Geometry geometry,
   }) = _$DNAEndsMove._;
 
   factory DNAEndsMove.from([void Function(DNAEndsMoveBuilder) updates]) = _$DNAEndsMove;
@@ -41,6 +43,8 @@ abstract class DNAEndsMove with BuiltJsonSerializable implements Built<DNAEndsMo
   /// (note that some ends have offset different from start_offset, but we are trying to move all of them
   /// by current_offset - start_offset, assuming that won't be too far for any of them)
   int get current_offset;
+
+  Geometry get geometry;
 
   @memoized
   BuiltList<DNAEnd> get ends_moving => [for (var end_move in moves) end_move.dna_end].build();

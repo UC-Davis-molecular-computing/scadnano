@@ -799,7 +799,7 @@ main() {
     expect(design.helices[15]!.grid_position, GridPosition(0, 1));
 
     // test that x and z cordinate swapped for helices in helix group using none grid
-    expect(design.helices[8]!.position, Position3D(x: 7, y: 8, z: 6));
-    expect(design.helices[9]!.position, Position3D(x: 1, y: 2.5, z: 2));
+    expect(design.helices[8]!.position(design.geometry), Position3D(x: 7, y: 8, z: 6));
+    expect(design.helices[9]!.position(design.geometry), Position3D(x: 1, y: 2.5, z: 2));
   });
 }

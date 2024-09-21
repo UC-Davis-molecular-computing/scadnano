@@ -54,10 +54,10 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with
     Domain domain = props.domain;
     String id = domain.id;
 
-    Point<double> start_svg =
-        props.helix.svg_base_pos(domain.offset_5p, domain.forward, props.helix_svg_position.y);
-    Point<double> end_svg =
-        props.helix.svg_base_pos(domain.offset_3p, domain.forward, props.helix_svg_position.y);
+    Point<double> start_svg = props.helix
+        .svg_base_pos(domain.offset_5p, domain.forward, props.helix_svg_position.y, props.geometry);
+    Point<double> end_svg = props.helix
+        .svg_base_pos(domain.offset_3p, domain.forward, props.helix_svg_position.y, props.geometry);
 
     var classname = constants.css_selector_domain;
     if (props.selected) {

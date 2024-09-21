@@ -19,7 +19,8 @@ DNAEndsMove? dna_ends_move_set_selected_ends_reducer(
         moves: action.moves,
         original_offset: action.original_offset,
         current_offset: action.original_offset,
-        helix: action.helix);
+        helix: action.helix,
+        geometry: action.geometry);
 
 DNAEndsMove? dna_ends_move_adjust_reducer(DNAEndsMove? move, actions.DNAEndsMoveAdjustOffset action) =>
     move?.rebuild((b) => b..current_offset = action.offset);

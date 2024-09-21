@@ -52,7 +52,8 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
   render() {
     Point<double> pos;
     if (props.ext == null) {
-      pos = props.helix.svg_base_pos(this.address.offset, this.address.forward, props.helix_svg_position_y);
+      pos = props.helix.svg_base_pos(
+          this.address.offset, this.address.forward, props.helix_svg_position_y, props.geometry);
       // if internal modification that goes between bases, adjust x offset to be after the given base,
       // instead of on it
       if (this.modification is ModificationInternal) {
@@ -68,7 +69,7 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
       var adj_helix = props.helix;
       var adj_helix_svg_y = props.helix_svg_position_y;
       Point<double> extension_attached_end_svg =
-          util.compute_extension_attached_end_svg(ext, adj_dom, adj_helix, adj_helix_svg_y);
+          util.compute_extension_attached_end_svg(ext, adj_dom, adj_helix, adj_helix_svg_y, props.geometry);
       pos = util.compute_extension_free_end_svg(extension_attached_end_svg, ext, adj_dom, props.geometry);
     }
     bool display_connector = props.display_connector;
@@ -212,9 +213,9 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
       ..key = 'mod')(this.modification.display_text);
   }
 
-  double y_delta_mod() => props.helix.geometry.base_height_svg * 0.45;
+  double y_delta_mod() => props.geometry.base_height_svg * 0.45;
 
-  double x_delta_mod() => props.helix.geometry.base_width_svg / 3.0;
+  double x_delta_mod() => props.geometry.base_width_svg / 3.0;
 }
 
 Future<void> ask_for_add_modification(Strand strand, Substrand substrand, Address address,

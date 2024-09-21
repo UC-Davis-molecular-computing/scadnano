@@ -97,8 +97,8 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
 
     var rotate_degrees = 0;
     int offset = domain.offset_5p;
-    Point<double> pos =
-        helix.svg_base_pos(offset, domain.forward, props.helix_idx_to_svg_position_map[domain.helix]!.y);
+    Point<double> pos = helix.svg_base_pos(
+        offset, domain.forward, props.helix_idx_to_svg_position_map[domain.helix]!.y, props.geometry);
     var rotate_x = pos.x;
     var rotate_y = pos.y;
 

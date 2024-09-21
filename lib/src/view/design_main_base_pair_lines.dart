@@ -44,7 +44,8 @@ class DesignMainBasePairLinesComponent extends UiComponent2<DesignMainBasePairLi
       if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(helix_idx)) {
         var helix = props.design.helices[helix_idx]!;
         HelixGroup group = props.design.groups[helix.group]!;
-        String transform_str = group.transform_str(props.design.geometry);
+        var geometry = group.geometry ?? props.design.geometry;
+        String transform_str = group.transform_str(geometry);
 
         // code below draws one line for each base pair, should render somewhat slowly
         // however, this makes it easier to associate base pair lines to individual strands,
@@ -52,8 +53,8 @@ class DesignMainBasePairLinesComponent extends UiComponent2<DesignMainBasePairLi
         List<ReactElement> helix_components = [];
         for (int offset in base_pairs[helix_idx]!) {
           var svg_position_y = props.helix_idx_to_svg_position_y_map[helix_idx]!;
-          var base_svg_forward_pos = helix.svg_base_pos(offset, true, svg_position_y);
-          var base_svg_reverse_pos = helix.svg_base_pos(offset, false, svg_position_y);
+          var base_svg_forward_pos = helix.svg_base_pos(offset, true, svg_position_y, geometry);
+          var base_svg_reverse_pos = helix.svg_base_pos(offset, false, svg_position_y, geometry);
           var base_pair_line = (Dom.line()
             ..id = 'base_pair-${helix_idx}-${offset}'
             ..x1 = base_svg_forward_pos.x

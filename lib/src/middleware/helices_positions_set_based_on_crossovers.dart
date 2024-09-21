@@ -62,7 +62,7 @@ List<actions.UndoableAction> get_helix_position_and_roll_actions(AppState state)
     double first_roll = helices[0].roll;
     List<RollXY> rolls_and_positions =
         _calculate_rolls_and_positions(state.design, geometry, helices, addresses, first_roll);
-    var all_actions_this_group = set_rolls_and_positions(helices, rolls_and_positions);
+    var all_actions_this_group = set_rolls_and_positions(helices, rolls_and_positions, geometry);
     all_actions.addAll(all_actions_this_group);
   }
 
@@ -282,8 +282,8 @@ List<RollXY> _calculate_rolls_and_positions(Design design, Geometry geometry, Li
     List<Tuple2<Address, Address>> addresses, double first_roll) {
   assert(helices.length == addresses.length + 1);
 
-  double x = helices[0].position3d.z;
-  double y = helices[0].position3d.y;
+  double x = helices[0].position3d(geometry).z;
+  double y = helices[0].position3d(geometry).y;
   List<RollXY> rollxys = [RollXY(roll: first_roll, x: x, y: y)];
 
   for (int i = 0; i < addresses.length; i++) {
@@ -322,13 +322,14 @@ List<RollXY> _calculate_rolls_and_positions(Design design, Geometry geometry, Li
   return rollxys;
 }
 
-List<actions.UndoableAction> set_rolls_and_positions(List<Helix> helices, List<RollXY> rolls_and_positions) {
+List<actions.UndoableAction> set_rolls_and_positions(
+    List<Helix> helices, List<RollXY> rolls_and_positions, Geometry geometry) {
   List<actions.UndoableAction> all_actions = [];
   for (int i = 0; i < helices.length; i++) {
     var helix = helices[i];
     var rollxy = rolls_and_positions[i];
     var roll_action = actions.HelixRollSet(helix_idx: helix.idx, roll: rollxy.roll);
-    var position = Position3D(x: rollxy.x, y: rollxy.y, z: helix.position3d.z);
+    var position = Position3D(x: rollxy.x, y: rollxy.y, z: helix.position3d(geometry).z);
     var pos_action = actions.HelixPositionSet(helix_idx: helix.idx, position: position);
     all_actions.add(roll_action);
     all_actions.add(pos_action);

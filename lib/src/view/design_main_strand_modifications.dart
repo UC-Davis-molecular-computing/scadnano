@@ -24,7 +24,6 @@ mixin DesignMainStrandModificationsProps on UiProps implements TransformByHelixG
   late Strand strand;
   late BuiltMap<int, Helix> helices;
   late BuiltMap<String, HelixGroup> groups;
-  late Geometry geometry;
 
   late BuiltSet<int>? side_selected_helix_idxs; // null if only_display_selected_helices is false
   late bool only_display_selected_helices;
@@ -35,6 +34,7 @@ mixin DesignMainStrandModificationsProps on UiProps implements TransformByHelixG
 
   late BuiltMap<int, double> helix_idx_to_svg_position_y_map;
   late bool retain_strand_color_on_selection;
+  late Geometry geometry;
 }
 
 class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStrandModificationsProps>
@@ -47,6 +47,8 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
       var domain = props.strand.first_domain;
       if (!props.only_display_selected_helices || props.side_selected_helix_idxs!.contains(domain.helix)) {
         Helix helix_5p = props.helices[domain.helix]!;
+        var group = props.groups[helix_5p.group]!;
+        var geometry = group.geometry ?? props.geometry;
         bool selected =
             props.selected_modifications_in_strand.contains(props.strand.selectable_modification_5p);
         Extension? ext = null;
@@ -61,7 +63,7 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
           ..font_size = props.font_size
           ..display_connector = props.display_connector
           ..selected = selected
-          ..geometry = props.geometry
+          ..geometry = geometry
           ..helix_svg_position_y = props.helix_idx_to_svg_position_y_map[helix_5p.idx]!
           ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
           ..key = "5'")());
@@ -72,6 +74,8 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
       var domain = props.strand.last_domain;
       if (!props.only_display_selected_helices || props.side_selected_helix_idxs!.contains(domain.helix)) {
         Helix helix_3p = props.helices[domain.helix]!;
+        var group = props.groups[helix_3p.group]!;
+        var geometry = group.geometry ?? props.geometry;
         Extension? ext = null;
         if (props.strand.has_3p_extension) {
           ext = props.strand.substrands.last as Extension;
@@ -85,7 +89,7 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
           ..display_connector = props.display_connector
           ..selected =
               props.selected_modifications_in_strand.contains(props.strand.selectable_modification_3p)
-          ..geometry = props.geometry
+          ..geometry = geometry
           ..helix_svg_position_y = props.helix_idx_to_svg_position_y_map[helix_3p.idx]!
           ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
           ..key = "3'")());
@@ -112,6 +116,8 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
           // int ss_dna_idx = dna_idx_mod - dna_index_5p_end_of_ss_with_mod;
           // int offset = ss_with_mod.substrand_dna_idx_to_substrand_offset(ss_dna_idx, ss_with_mod.forward);
           Helix helix = props.helices[ss_with_mod.helix]!;
+          var group = props.groups[helix.group]!;
+          var geometry = group.geometry ?? props.geometry;
           var selectable_mod_int = props.strand.selectable_modifications_int_by_dna_idx[dna_idx_mod]!;
           modifications.add((DesignMainStrandModification()
             ..selectable_modification = selectable_mod_int
@@ -120,7 +126,7 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
             ..font_size = props.font_size
             ..display_connector = props.display_connector
             ..selected = props.selected_modifications_in_strand.contains(selectable_mod_int)
-            ..geometry = props.geometry
+            ..geometry = geometry
             ..helix_svg_position_y = props.helix_idx_to_svg_position_y_map[helix.idx]!
             ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
             ..dna_idx_mod = dna_idx_mod

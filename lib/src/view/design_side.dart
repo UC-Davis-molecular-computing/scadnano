@@ -27,9 +27,10 @@ DesignSideProps set_design_side_props(DesignSideProps elt, AppState state) {
   var displayed_group = state.design.groups[state.ui_state.displayed_group_name]!;
   var helix_idxs_in_group = state.design.helix_idxs_in_group[state.ui_state.displayed_group_name]!;
   var helices_in_group = {for (int idx in helix_idxs_in_group) idx: state.design.helices[idx]!}.build();
+  var geometry = displayed_group.geometry ?? state.design.geometry;
   return elt
     ..helices = helices_in_group
-    ..geometry = state.design.geometry
+    ..geometry = geometry
     ..helix_change_apply_to_all = state.ui_state.helix_change_apply_to_all
     ..helix_idxs_selected = state.ui_state.side_selected_helix_idxs
     ..rotation_datas = state.ui_state.show_slice_bar
@@ -89,7 +90,8 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> with PureCompone
         Position3D mouse_pos_nm_3d =
             util.svg_side_view_to_position3d(props.mouse_svg_pos!, props.invert_y, props.geometry);
         Point<double> mouse_pos_nm_xy = Point<double>(mouse_pos_nm_3d.x, mouse_pos_nm_3d.y);
-        Point<double> helix_pos_nm_xy = Point<double>(helix.position.x, helix.position.y);
+        Point<double> helix_pos_nm_xy =
+            Point<double>(helix.position(props.geometry).x, helix.position(props.geometry).y);
         double distance = (helix_pos_nm_xy - mouse_pos_nm_xy).magnitude;
         if (distance < props.geometry.helix_radius) {
           mouse_is_over = true;
@@ -97,6 +99,7 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> with PureCompone
       }
       helices_components.add((DesignSideHelix()
         ..helix = helix
+        ..geometry = props.geometry
         ..slice_bar_offset = props.slice_bar_offset
         ..grid = props.displayed_group.grid
         ..invert_y = props.invert_y

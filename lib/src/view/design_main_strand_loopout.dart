@@ -42,7 +42,12 @@ mixin DesignMainLoopoutProps on UiProps implements TransformByHelixGroupPropsMix
 
   late BuiltMap<int, Helix> helices;
   late BuiltMap<String, HelixGroup> groups;
+
+  // This is here to make TransformByHelixGroupPropsMixin happy, but we use
+  // prev_geometry and next_geometry instead.
   late Geometry geometry;
+  late Geometry prev_geometry;
+  late Geometry next_geometry;
   late double prev_helix_svg_position_y;
   late double next_helix_svg_position_y;
   late bool retain_strand_color_on_selection;
@@ -85,15 +90,18 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
 
     if (within_group) {
       path_description = loopout_path_description_within_group(
-          props.prev_helix,
-          props.next_helix,
-          props.prev_domain,
-          props.next_domain,
-          props.loopout,
-          true,
-          props.show_domain_names,
-          props.prev_helix_svg_position_y,
-          props.next_helix_svg_position_y);
+        props.prev_helix,
+        props.next_helix,
+        props.prev_domain,
+        props.next_domain,
+        props.loopout,
+        true,
+        props.show_domain_names,
+        props.prev_helix_svg_position_y,
+        props.next_helix_svg_position_y,
+        props.prev_geometry,
+        props.next_geometry,
+      );
     } else {
       path_description = loopout_path_description_between_groups();
     }
@@ -273,10 +281,10 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     var prev_group = props.groups[props.prev_helix.group]!;
     var next_group = props.groups[props.next_helix.group]!;
 
-    var prev_svg_untransformed = props.prev_helix
-        .svg_base_pos(prev_offset, props.prev_domain.forward, props.prev_helix_svg_position_y);
-    var next_svg_untransformed = props.next_helix
-        .svg_base_pos(next_offset, props.next_domain.forward, props.next_helix_svg_position_y);
+    var prev_svg_untransformed = props.prev_helix.svg_base_pos(
+        prev_offset, props.prev_domain.forward, props.prev_helix_svg_position_y, props.geometry);
+    var next_svg_untransformed = props.next_helix.svg_base_pos(
+        next_offset, props.next_domain.forward, props.next_helix_svg_position_y, props.geometry);
 
     var prev_svg = prev_group.transform_point_main_view(prev_svg_untransformed, props.geometry);
     var next_svg = next_group.transform_point_main_view(next_svg_untransformed, props.geometry);
@@ -310,25 +318,27 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
 // When drawing a normal loopout this is needed, but when drawing a moving strand, where all path commands
 // are concatenated together, it is not needed.
 String loopout_path_description_within_group(
-    Helix prev_helix,
-    Helix next_helix,
-    Domain prev_domain,
-    Domain next_domain,
-    Loopout loopout,
-    bool include_start_M,
-    bool show_loopout_labels,
-    num prev_helix_svg_position_y,
-    num next_helix_svg_position_y) {
+  Helix prev_helix,
+  Helix next_helix,
+  Domain prev_domain,
+  Domain next_domain,
+  Loopout loopout,
+  bool include_start_M,
+  bool show_loopout_labels,
+  num prev_helix_svg_position_y,
+  num next_helix_svg_position_y,
+  Geometry prev_geometry,
+  Geometry next_geometry,
+) {
   Helix top_helix = prev_helix;
   Helix bot_helix = next_helix;
-  Geometry geometry = top_helix.geometry;
   Domain top_dom = prev_domain;
   Domain bot_dom = next_domain;
 
   bool same_helix = top_helix.idx == bot_helix.idx;
   if (same_helix && top_dom.forward == bot_dom.forward) {
     return loopout_path_description_same_helix_same_direction(loopout, prev_helix, prev_domain, next_domain,
-        include_start_M, show_loopout_labels, prev_helix_svg_position_y);
+        include_start_M, show_loopout_labels, prev_helix_svg_position_y, prev_geometry);
   } else if (prev_helix_svg_position_y > next_helix_svg_position_y || same_helix && !top_dom.forward) {
     // helices are same if same_helix is true, but we'd still like top_dom/bot_dom to reflect which
     // is on top, i.e. that of the forward domain
@@ -344,21 +354,23 @@ String loopout_path_description_within_group(
   int prev_offset = top_dom_is_prev ? top_offset : bot_offset;
   int next_offset = top_dom_is_prev ? bot_offset : top_offset;
 
-  var prev_svg = prev_helix.svg_base_pos(prev_offset, prev_domain.forward, prev_helix_svg_position_y);
-  var next_svg = next_helix.svg_base_pos(next_offset, next_domain.forward, next_helix_svg_position_y);
+  var prev_svg =
+      prev_helix.svg_base_pos(prev_offset, prev_domain.forward, prev_helix_svg_position_y, prev_geometry);
+  var next_svg =
+      next_helix.svg_base_pos(next_offset, next_domain.forward, next_helix_svg_position_y, next_geometry);
 
   var w, h;
 
   if (top_helix.idx == bot_helix.idx) {
-    w = 1.5 * util.sigmoid(loopout.loopout_num_bases - 1) * geometry.base_width_svg;
+    w = 1.5 * util.sigmoid(loopout.loopout_num_bases - 1) * prev_geometry.base_width_svg;
     if (show_loopout_labels) {
-      h = 10 * util.sigmoid(loopout.loopout_num_bases) * geometry.base_height_svg;
+      h = 10 * util.sigmoid(loopout.loopout_num_bases) * prev_geometry.base_height_svg;
     } else {
-      h = 10 * util.sigmoid(loopout.loopout_num_bases - 5) * geometry.base_height_svg;
+      h = 10 * util.sigmoid(loopout.loopout_num_bases - 5) * prev_geometry.base_height_svg;
     }
   } else {
-    w = 2 * util.sigmoid(loopout.loopout_num_bases) * geometry.base_width_svg;
-    h = 10 * util.sigmoid(loopout.loopout_num_bases - 3) * geometry.base_height_svg;
+    w = 2 * util.sigmoid(loopout.loopout_num_bases) * prev_geometry.base_width_svg;
+    h = 10 * util.sigmoid(loopout.loopout_num_bases - 3) * prev_geometry.base_height_svg;
   }
 
   var x_offset1, x_offset2, y_offset1, y_offset2;
@@ -390,14 +402,21 @@ String loopout_path_description_within_group(
   return path;
 }
 
-String loopout_path_description_same_helix_same_direction(Loopout loopout, Helix helix, Domain prev_domain,
-    Domain next_domain, bool include_start_m, bool show_loopout_labels, num helix_svg_position_y) {
-  Geometry geometry = helix.geometry;
+String loopout_path_description_same_helix_same_direction(
+  Loopout loopout,
+  Helix helix,
+  Domain prev_domain,
+  Domain next_domain,
+  bool include_start_m,
+  bool show_loopout_labels,
+  num helix_svg_position_y,
+  Geometry geometry,
+) {
   int prev_offset = prev_domain.offset_3p;
   int next_offset = next_domain.offset_5p;
   bool forward = prev_domain.forward;
-  var prev_svg = helix.svg_base_pos(prev_offset, forward, helix_svg_position_y);
-  var next_svg = helix.svg_base_pos(next_offset, forward, helix_svg_position_y);
+  var prev_svg = helix.svg_base_pos(prev_offset, forward, helix_svg_position_y, geometry);
+  var next_svg = helix.svg_base_pos(next_offset, forward, helix_svg_position_y, geometry);
 
   int left_offset = prev_offset;
   int right_offset = next_offset;

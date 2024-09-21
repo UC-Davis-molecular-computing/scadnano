@@ -36,6 +36,8 @@ dna_ends_move_start_middleware(Store<AppState> store, action, NextDispatcher nex
       strands_affected.add(strand);
     }
     next(action);
+    var group = design.groups[action.helix.group]!;
+    var geometry = group.geometry ?? design.geometry;
 
     // important that we dispatch to app, not to store, because the app dispatch will know to route this
     // to the appropriate optimized store for moving DNAEnds
@@ -43,7 +45,8 @@ dna_ends_move_start_middleware(Store<AppState> store, action, NextDispatcher nex
         original_offset: action.offset,
         moves: moves.toBuiltList(),
         helix: action.helix,
-        strands_affected: strands_affected.toBuiltSet()));
+        strands_affected: strands_affected.toBuiltSet(),
+        geometry: geometry));
   } else {
     next(action);
   }

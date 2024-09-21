@@ -82,7 +82,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
           HelixBuilder()
             ..idx = idx
             ..grid = grid
-            ..geometry = geometry.toBuilder()
             ..grid_position = (grid == Grid.none ? null : default_grid_position(idx).toBuilder())
             ..position_ = grid != Grid.none ? null : default_position(geometry, idx).toBuilder()
       ];
@@ -94,7 +93,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       helix_builders = [];
     }
 
-    for (var helix_builder in helix_builders) helix_builder.geometry = geometry.toBuilder();
     Map<int, HelixBuilder> helix_builders_map = {
       for (var helix_builder in helix_builders) helix_builder.idx!: helix_builder
     };
@@ -108,13 +106,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     helices = helix_builders_map.values.map((b) => b.build());
 
     Map<int, Helix> helices_map = {for (var helix in helices) helix.idx: helix};
-
-    for (var key in helices_map.keys) {
-      var helix = helices_map[key]!;
-      var group = groups[helix.group]!;
-      Geometry helix_geometry = group.geometry ?? geometry;
-      helices_map[key] = helix.rebuild((b) => b..geometry.replace(helix_geometry));
-    }
 
     var design = Design.from((b) => b
       ..geometry.replace(geometry!)
@@ -1118,7 +1109,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       /// END Backward Compatibility Code for Helix With Individual Pitch/Yaw ///
       ///////////////////////////////////////////////////////////////////////////
 
-      helix_builder.geometry = geometry.toBuilder();
       if (grid_is_none && !using_groups && helix_json.containsKey(constants.grid_position_key)) {
         throw IllegalDesignError(
             'grid is none, but Helix $helix_idx has grid_position = ${helix_json[constants.grid_position_key]}');
@@ -2692,7 +2682,9 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       var helix = helices_relaxed[helix_idx]!;
       var crossover_addresses = this.helix_to_crossover_addresses_disallow_intrahelix[helix_idx]!;
       if (crossover_addresses.isNotEmpty) {
-        helix = helix.relax_roll(this.helices, crossover_addresses);
+        var group = this.groups[helix.group]!;
+        var helix_geometry = group.geometry ?? this.geometry;
+        helix = helix.relax_roll(this.helices, crossover_addresses, helix_geometry);
         helices_relaxed[helix_idx] = helix;
       }
     }

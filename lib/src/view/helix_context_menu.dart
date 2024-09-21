@@ -347,7 +347,9 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
   }
 
   Future<void> dialog_helix_set_position() async {
-    var position = helix.position;
+    var group = app.state.design.groups[helix.group]!;
+    var geometry = group.geometry ?? app.state.design.geometry;
+    var position = helix.position(geometry);
 
     var dialog = Dialog(
         title: 'set helix position',

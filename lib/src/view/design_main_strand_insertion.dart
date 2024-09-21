@@ -35,6 +35,7 @@ mixin DesignMainStrandInsertionProps on UiProps {
   late double svg_position_y;
 
   late bool retain_strand_color_on_selection;
+  late Geometry geometry;
 }
 
 class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandInsertionProps>
@@ -57,8 +58,8 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       classname += ' ' + constants.css_selector_scaffold;
     }
 
-    Point<double> pos =
-        props.helix.svg_base_pos(this.insertion.offset, this.domain.forward, props.svg_position_y);
+    Point<double> pos = props.helix
+        .svg_base_pos(this.insertion.offset, this.domain.forward, props.svg_position_y, props.geometry);
     ReactElement insertion_background = _insertion_background(pos);
     ReactElement insertion_path = _insertion_path();
     ReactElement text_num_insertions = _text_number_of_insertions(pos);
@@ -83,11 +84,12 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
   }
 
   ReactElement _insertion_path() {
-    Geometry geometry = props.helix.geometry;
+    Geometry geometry = props.geometry;
     int offset = this.insertion.offset;
     Color color = props.color;
 
-    Point<double> pos = props.helix.svg_base_pos(offset, this.domain.forward, props.svg_position_y);
+    Point<double> pos =
+        props.helix.svg_base_pos(offset, this.domain.forward, props.svg_position_y, props.geometry);
 
     num dx1 = geometry.base_width_svg;
     num dx2 = 0.5 * geometry.base_width_svg;
@@ -129,7 +131,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
   }
 
   ReactElement _text_number_of_insertions(Point<double> pos) {
-    Geometry geometry = props.helix.geometry;
+    Geometry geometry = props.geometry;
     int offset = this.insertion.offset;
     Insertion insertion = this.insertion;
 
@@ -182,7 +184,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
   }
 
   ReactElement _insertion_background(Point<double> pos) {
-    Geometry geometry = props.helix.geometry;
+    Geometry geometry = props.geometry;
     String key_background = 'insertion-background-H${this.domain.helix}-${this.insertion.offset}';
     num background_width = geometry.base_width_svg;
     num background_height = geometry.base_height_svg;

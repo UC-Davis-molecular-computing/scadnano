@@ -465,7 +465,7 @@ Tuple3<OxdnaVector, OxdnaVector, OxdnaVector> oxdna_get_helix_vectors(Design des
   if (grid == Grid.none) {
     // unnecessary since this check is done in the position getter, but this way the code exactly mirrors
     // the Python package equivalent
-    position = helix.position;
+    position = helix.position(geometry);
   } else {
     position = util.grid_position_to_position3d(helix.grid_position!, grid, geometry);
   }

@@ -45,7 +45,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   factory Helix({
     required int idx,
-    Geometry? geometry = null,
     Grid? grid = null,
     GridPosition? grid_position = null,
     double roll = constants.default_roll,
@@ -64,9 +63,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     if (major_tick_start == null) {
       major_tick_start = min_offset;
     }
-    if (geometry == null) {
-      geometry = constants.default_geometry;
-    }
     if (grid_position == null && grid != Grid.none) {
       grid_position = GridPosition(0, idx);
     }
@@ -75,7 +71,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     }
     return Helix.from((b) => b
       ..idx = idx
-      ..geometry.replace(geometry!)
       ..group = group
       ..grid = grid
       ..grid_position = grid_position?.toBuilder()
@@ -101,7 +96,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   Grid get grid;
 
-  Geometry get geometry;
+  // Geometry get geometry;
 
   String get group;
 
@@ -110,7 +105,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   Position3D? get position_;
 
-  Position3D get position =>
+  Position3D position(Geometry geometry) =>
       position_ ?? util.grid_position_to_position3d(this.grid_position!, grid, geometry);
 
   /// Helix rotation of the backbone of the forward strand at the helix's minimum base offset. (y-z)
@@ -133,8 +128,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   BuiltList<int>? get major_ticks;
 
-  @memoized
-  Position3D get default_position {
+  Position3D default_position(Geometry geometry) {
     double z = min_offset * geometry.rise_per_base_pair;
 
     // normalized so helices are diameter 1
@@ -163,18 +157,17 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   /// Gets 3D position (in "SVG coordinates" for the x,y,z) of Helix (offset 0).
   /// If [null], then [grid_position] must be non-[null], and it is auto-calculated from that.
-  @memoized
-  Position3D get position3d {
+  Position3D position3d(Geometry geometry) {
     if (position_ != null) {
       return position_!;
     }
-    return default_position;
+    return this.default_position(geometry);
   }
 
   /// Calculates x-y angle in degrees, according to position3d(), from this [Helix] to [other].
-  double angle_to(Helix other) {
-    var pos1 = position3d;
-    var pos2 = other.position3d;
+  double angle_to(Helix other, Geometry geometry) {
+    var pos1 = this.position3d(geometry);
+    var pos2 = other.position3d(geometry);
     double x = pos2.x - pos1.x;
     double y = pos2.y - pos1.y;
     double angle_radians = (atan2(x, -y)) % (2 * pi); // using SVG "reverse y" coordinates
@@ -225,7 +218,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     }
 
     if (has_position) {
-      var pos = this.position.to_json_serializable(suppress_indent: suppress_indent);
+      var pos = this.position_!.to_json_serializable(suppress_indent: suppress_indent);
       json_map[constants.position_key] = suppress_indent && !use_no_indent ? NoIndent(pos) : pos;
     }
 
@@ -264,25 +257,25 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   /// This function also requires svg_position_y, the y coordinate of the helix
   /// svg position.
   /// This is relative to the starting point of the Helix.
-  Point<double> svg_base_pos(int offset, bool forward, num svg_position_y) {
+  Point<double> svg_base_pos(int offset, bool forward, num svg_position_y, Geometry geometry) {
     double x = geometry.base_width_svg / 2.0 + offset * geometry.base_width_svg;
 
     // svg_height is height of whole helix, including both forward and reverse strand
     // must divide by 2 to get height of one strand, then divide by 2 again to go halfway into square
-    double y = svg_height / 4.0 + svg_position_y;
+    double y = this.svg_height(geometry) / 4.0 + svg_position_y;
     if (!forward) {
       y += geometry.base_height_svg;
     }
     return Point<double>(x, y);
   }
 
-  int svg_x_to_offset(num x, num helix_svg_position_x) {
+  int svg_x_to_offset(num x, num helix_svg_position_x, Geometry geometry) {
     var offset = ((x - helix_svg_position_x) / geometry.base_width_svg).floor() + min_offset;
     return offset;
   }
 
   // Don't know why but Firefox knows about the SVG translation already so no need to correct for it.
-  bool svg_y_is_forward(num y, num helix_svg_position_y) {
+  bool svg_y_is_forward(num y, num helix_svg_position_y, Geometry geometry) {
     var relative_y = (y - helix_svg_position_y);
     // return relative_y < 10;
     return relative_y < geometry.base_height_svg;
@@ -352,11 +345,9 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     return helix_builder;
   }
 
-  @memoized
-  double get svg_width => geometry.base_width_svg * this.num_bases;
+  double svg_width(Geometry geometry) => geometry.base_width_svg * this.num_bases;
 
-  @memoized
-  double get svg_height => geometry.base_height_svg * 2;
+  double svg_height(Geometry geometry) => geometry.base_height_svg * 2;
 
   @memoized
   int get num_bases => this.max_offset - this.min_offset;
@@ -391,7 +382,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     return ticks.build();
   }
 
-  double backbone_angle_at_offset(int offset, bool forward) {
+  double backbone_angle_at_offset(int offset, bool forward, Geometry geometry) {
     // Computes the backbone angle at *offset* for the strand in the direction given by *forward*.
     //
     // :param offset:
@@ -409,18 +400,19 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     return angle;
   }
 
-  Helix relax_roll(BuiltMap<int, Helix> helices, BuiltList<Address> crossover_addresses) {
-    var roll_delta = compute_relaxed_roll_delta(helices, crossover_addresses);
+  Helix relax_roll(BuiltMap<int, Helix> helices, BuiltList<Address> crossover_addresses, Geometry geometry) {
+    var roll_delta = compute_relaxed_roll_delta(helices, crossover_addresses, geometry);
     var new_helix = this.rebuild((b) => b..roll = roll + roll_delta);
     return new_helix;
   }
 
-  double compute_relaxed_roll_delta(BuiltMap<int, Helix> helices, BuiltList<Address> crossover_addresses) {
+  double compute_relaxed_roll_delta(
+      BuiltMap<int, Helix> helices, BuiltList<Address> crossover_addresses, Geometry geometry) {
     List<Tuple2<double, double>> angles = [];
     for (var address in crossover_addresses) {
       var other_helix = helices[address.helix_idx]!;
-      var angle_of_other_helix = util.angle_from_helix_to_helix(this, other_helix);
-      var crossover_angle = this.backbone_angle_at_offset(address.offset, address.forward);
+      var angle_of_other_helix = util.angle_from_helix_to_helix(this, other_helix, geometry);
+      var crossover_angle = this.backbone_angle_at_offset(address.offset, address.forward, geometry);
       var relative_angle = Tuple2<double, double>(crossover_angle, angle_of_other_helix);
       angles.add(relative_angle);
     }

@@ -128,7 +128,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       forward = domain.forward;
       dna_end = props.is_5p ? domain.dnaend_5p : domain.dnaend_3p;
       offset = props.is_5p ? domain.offset_5p : domain.offset_3p;
-      pos = props.helix.svg_base_pos(offset, domain.forward, props.helix_svg_position.y);
+      pos = props.helix.svg_base_pos(offset, domain.forward, props.helix_svg_position.y, props.geometry);
       if (domain.color != null) {
         color = domain.color!;
       }
@@ -139,7 +139,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       dna_end = ext.dnaend_free;
 
       extension_attached_end_svg = util.compute_extension_attached_end_svg(
-          ext, ext.adjacent_domain, props.helix, props.helix_svg_position.y);
+          ext, ext.adjacent_domain, props.helix, props.helix_svg_position.y, props.geometry);
       pos = util.compute_extension_free_end_svg(
           extension_attached_end_svg, ext, ext.adjacent_domain, props.geometry);
 
@@ -271,7 +271,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         dna_end.handle_selection_mouse_down(event);
         // set up drag detection for moving DNA ends
         Point<double> extension_attached_end_svg = util.compute_extension_attached_end_svg(
-            ext, ext.adjacent_domain, props.helix, props.helix_svg_position.y);
+            ext, ext.adjacent_domain, props.helix, props.helix_svg_position.y, props.geometry);
 
         // extension_start_point is in helix group coordinate space, so add it with helix group position
         // to get canvas coordinate space
@@ -312,7 +312,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       // If clicking on end of a strand, start drawing a new crossover
       int offset = props.is_5p ? domain.offset_5p : domain.offset_3p;
       var start_point_untransformed =
-          props.helix.svg_base_pos(offset, domain.forward, props.helix_svg_position.y);
+          props.helix.svg_base_pos(offset, domain.forward, props.helix_svg_position.y, props.geometry);
       var start_point = props.group.transform_point_main_view(start_point_untransformed, props.geometry);
       var address = Address(helix_idx: props.helix.idx, offset: offset, forward: domain.forward);
       var potential_crossover = PotentialCrossover(
@@ -367,7 +367,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       int other_helix_idx = other_domain.helix;
       Point<double> other_helix_svg = app.state.helix_idx_to_svg_position_map[other_helix_idx]!;
       var start_point_untransformed =
-          props.helix.svg_base_pos(other_offset, other_domain.forward, other_helix_svg.y);
+          props.helix.svg_base_pos(other_offset, other_domain.forward, other_helix_svg.y, props.geometry);
       var start_point = props.group.transform_point_main_view(start_point_untransformed, props.geometry);
       var address = Address(helix_idx: other_helix_idx, offset: other_offset, forward: other_domain.forward);
       var potential_crossover = PotentialCrossover(

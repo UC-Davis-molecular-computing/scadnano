@@ -25,11 +25,13 @@ helix_group_move_start_middleware(Store<AppState> store, action, NextDispatcher 
 
     if (helices_in_group.isNotEmpty) {
       next(action); // this lets the boolean be set that we are moving a helix group
+      var geometry = group.geometry ?? state.design.geometry;
       var helix_group_move = HelixGroupMove(
         group_name: group_name,
         group: group,
         helices: helices_in_group,
         original_mouse_point: action.mouse_point,
+        geometry: geometry,
       );
       // important that we dispatch to app, not to store, because the app dispatch will know to route this
       // to the appropriate optimized store for moving HelixGroup

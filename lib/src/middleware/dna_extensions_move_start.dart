@@ -28,14 +28,16 @@ dna_extensions_move_start_middleware(Store<AppState> store, action, NextDispatch
     for (var end in selected_ends) {
       var extension = design.end_to_extension[end]!;
       var helix = design.helices[extension.adjacent_domain.helix]!;
-      var extension_start_point = util.compute_extension_attached_end_svg(
-          extension,
-          extension.adjacent_domain,
-          helix,
-          store.state.helix_idx_to_svg_position_map[extension.adjacent_domain.helix]!.y);
-
       var group = design.groups[helix.group]!;
       var geometry = group.geometry ?? design.geometry;
+
+      var extension_start_point = util.compute_extension_attached_end_svg(
+        extension,
+        extension.adjacent_domain,
+        helix,
+        store.state.helix_idx_to_svg_position_map[extension.adjacent_domain.helix]!.y,
+        geometry,
+      );
 
       // extension_start_point is in helix group coordinate space, so add it with helix group position
       // to get canvas coordinate space

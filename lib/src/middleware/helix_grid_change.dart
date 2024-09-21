@@ -19,7 +19,7 @@ helix_grid_offsets_middleware(Store<AppState> store, dynamic action, NextDispatc
     Geometry geometry = group.geometry ?? store.state.design.geometry;
     Map<int, GridPosition> new_grid_positions_map = {
       for (var helix in store.state.design.helices_in_group(action.group_name).values)
-        helix.idx: util.position3d_to_grid_position(helix.position, action.grid, geometry)
+        helix.idx: util.position3d_to_grid_position(helix.position(geometry), action.grid, geometry)
     };
     Set<GridPosition> new_grid_positions_set = Set<GridPosition>.from(new_grid_positions_map.values);
     // if lengths don't match, there's a duplicate grid position
@@ -33,8 +33,8 @@ helix_grid_offsets_middleware(Store<AppState> store, dynamic action, NextDispatc
           var gp2 = new_grid_positions_map[h2idx]!;
           if (gp1 == gp2) {
             var helices = store.state.design.helices;
-            var pos1 = helices[h1idx]!.position3d;
-            var pos2 = helices[h2idx]!.position3d;
+            var pos1 = helices[h1idx]!.position3d(geometry);
+            var pos2 = helices[h2idx]!.position3d(geometry);
             var msg = '''\
 This design cannot be automatically converted to the ${action.grid.name} grid.
 Two helices, with idx values ${h1idx} and ${h2idx}, have positions that are

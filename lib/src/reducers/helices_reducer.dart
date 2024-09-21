@@ -64,8 +64,6 @@ GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGl
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.ReplaceStrands>(first_replace_strands_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.SelectionsClear>(
       reset_helices_offsets_after_selections_clear),
-  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.GeometryHelixGroupSet>(
-      helix_geometry_helix_group_set_reducer),
 ]);
 
 BuiltMap<int, Helix> helix_individual_reducer(
@@ -79,18 +77,6 @@ BuiltMap<int, Helix> helix_individual_reducer(
   } else {
     return helices;
   }
-}
-
-BuiltMap<int, Helix> helix_geometry_helix_group_set_reducer(
-    BuiltMap<int, Helix> helices, AppState state, actions.GeometryHelixGroupSet action) {
-  var helices_new = helices.toMap();
-  for (int helix_idx in helices.keys) {
-    var helix = helices[helix_idx]!;
-    var group = state.design.groups[helix.group]!;
-    var geometry = group.geometry ?? state.design.geometry;
-    helices_new[helix_idx] = helix.rebuild((b) => b..geometry.replace(geometry));
-  }
-  return helices_new.build();
 }
 
 GlobalReducer<Helix, AppState> _helix_individual_reducers = combineGlobalReducers([
@@ -536,13 +522,11 @@ Design? helix_add_design_reducer(Design? design, AppState state, actions.HelixAd
   var new_group = group.rebuild((b) => b..helices_view_order.replace(new_helices_view_order));
   var new_groups = design.groups.toMap();
   new_groups[state.ui_state.displayed_group_name] = new_group;
-  var geometry = new_group.geometry ?? design.geometry;
 
   Helix helix = Helix(
     idx: new_idx,
     grid: group.grid,
     group: state.ui_state.displayed_group_name,
-    geometry: geometry,
     grid_position: action.grid_position,
     position: action.position,
     min_offset: min_offset,
@@ -658,7 +642,7 @@ BuiltMap<int, Helix> helix_grid_change_reducer(
     helix_builder.grid = action.grid;
     if (!action.grid.is_none && helix.grid_position == null) {
       helix_builder.grid_position =
-          util.position3d_to_grid_position(helix.position, action.grid, geometry).toBuilder();
+          util.position3d_to_grid_position(helix.position(geometry), action.grid, geometry).toBuilder();
       helix_builder.position_ = null;
     }
     if (action.grid.is_none && helix.position_ == null) {
@@ -682,9 +666,11 @@ BuiltMap<int, Helix> relax_helix_rolls_reducer(
   var new_helices_map = helices.toMap();
   for (var helix_idx in helix_idxs_to_relax) {
     var helix = new_helices_map[helix_idx]!;
+    var group = state.design.groups[helix.group]!;
+    var geometry = group.geometry ?? state.design.geometry;
     var crossover_addresses =
         state.design.helix_to_crossover_addresses_disallow_intrahelix_disallow_intergroup[helix_idx]!;
-    var helix_relaxed = helix.relax_roll(helices, crossover_addresses);
+    var helix_relaxed = helix.relax_roll(helices, crossover_addresses, geometry);
     new_helices_map[helix_idx] = helix_relaxed;
   }
 
