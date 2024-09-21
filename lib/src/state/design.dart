@@ -2033,6 +2033,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   /// in degrees; gives rotation of backbone of strand in the forward direction, as viewed in the side view
   double helix_rotation_forward(int helix_idx, int offset, [double? roll = null]) {
     Helix helix = helices[helix_idx]!;
+    var group = this.groups[helix.group]!;
+    var geometry_of_helix = group.geometry ?? this.geometry;
     if (roll == null) {
       roll = helix.roll;
     }
@@ -2044,7 +2046,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     } else {
       num_bases = 0;
     }
-    double rot = (roll + (360 * num_bases / 10.5)) % (360);
+    double rot = (roll + (360 * num_bases / geometry_of_helix.bases_per_turn)) % (360);
     return rot;
   }
 

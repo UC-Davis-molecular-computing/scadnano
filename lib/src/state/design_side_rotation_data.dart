@@ -4,6 +4,7 @@ import 'package:color/color.dart';
 
 import '../serializers.dart';
 import 'design.dart';
+import 'geometry.dart';
 import 'helix.dart';
 import 'domain.dart';
 import 'strand.dart';
@@ -47,7 +48,7 @@ abstract class DesignSideRotationData
 
   double get roll_forward;
 
-  double get minor_groove_angle;
+  Geometry get geometry;
 
   @memoized
   int get hashCode;
@@ -79,23 +80,28 @@ abstract class DesignSideRotationData
       }
       var group = design.groups[helix.group]!;
       var geometry = group.geometry ?? design.geometry;
-      double minor_groove_angle = geometry.minor_groove_angle;
-      design_side_rotation_datas_builder.add(DesignSideRotationData(
-          helix, offset, color_forward, color_reverse, roll_forward, minor_groove_angle));
+      design_side_rotation_datas_builder
+          .add(DesignSideRotationData(helix, offset, color_forward, color_reverse, roll_forward, geometry));
     }
     return design_side_rotation_datas_builder;
   }
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory DesignSideRotationData(Helix helix, int offset, Color color_forward, Color color_reverse,
-          double roll_forward, double minor_groove_angle) =>
+  factory DesignSideRotationData(
+    Helix helix,
+    int offset,
+    Color color_forward,
+    Color color_reverse,
+    double roll_forward,
+    Geometry geometry,
+  ) =>
       DesignSideRotationData.from((b) => b
         ..helix.replace(helix)
         ..offset = offset
         ..color_forward = color_forward
         ..color_reverse = color_reverse
         ..roll_forward = roll_forward
-        ..minor_groove_angle = minor_groove_angle);
+        ..geometry.replace(geometry));
 
   factory DesignSideRotationData.from([void Function(DesignSideRotationDataBuilder) updates]) =
       _$DesignSideRotationData;
