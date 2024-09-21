@@ -77,7 +77,7 @@ in the app. Thank you!""");
 
     BuiltMap<int, Point<double>> ret = util
         .helices_assign_svg(design, ui_state.invert_y, design.helices, design.groups,
-        helix_idxs_to_calculate: helix_idxs_to_calculate)
+            helix_idxs_to_calculate: helix_idxs_to_calculate)
         .build();
 
     // print('${sw.elapsedMicroseconds} microseconds to calculate helix_idx_to_svg_position_map');
@@ -95,7 +95,7 @@ in the app. Thank you!""");
   Map<String, dynamic> toJson() {
     Map<String, dynamic> map = {};
     var design_to_store =
-    this.maybe_design != null ? design.to_json_serializable(suppress_indent: false) : null;
+        this.maybe_design != null ? design.to_json_serializable(suppress_indent: false) : null;
     map['design'] = design_to_store;
     map['ui_state'] = ui_state.toJson();
     map['error_message'] = error_message;
