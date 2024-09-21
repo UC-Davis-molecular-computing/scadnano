@@ -65,8 +65,10 @@ This document explains how to use the web interface for viewing and manually edi
 The documentation for the Python scripting package is
 [here](https://scadnano-python-package.readthedocs.io).
 This document does not assume any familiarity with cadnano,
-although some parts explain slight differences between cadnano and scadnano for the benefit of those who have
-used cadnano.
+although some parts explain slight differences between cadnano and scadnano for the benefit of those who have used cadnano.
+
+
+Although this document provides some help with how to use scadnano, it is not comprehensive. scadnano is fairly [discoverable](), however, so nearly every capability it has can be found by looking though the menu, right-clicking on various objects such as strands/crossovers/etc. and by hovering over certain objects to see the pop-up text message that gives more information.
 
 Please file bug reports and make feature requests as GitHub repository issues in the repositories for the
 [web interface](https://github.com/UC-Davis-molecular-computing/scadnano/issues)
