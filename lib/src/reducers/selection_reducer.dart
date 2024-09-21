@@ -4,6 +4,7 @@ import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/selection_rope.dart';
 import '../state/edit_mode.dart';
+import '../state/geometry.dart';
 import '../state/select_mode.dart';
 
 import '../state/selectable.dart';
@@ -199,9 +200,12 @@ BuiltSet<int> helix_selections_adjust_reducer(
   //FIXME: this reducer isn't pure. Move into middleware similar to selections_intersect_box_compute
   bool toggle = action.toggle;
   var selection_box = action.selection_box;
-  var all_helices_in_displayed_group = state.design.helices_in_group(state.ui_state.displayed_group_name);
+  var group_name = state.ui_state.displayed_group_name;
+  var all_helices_in_displayed_group = state.design.helices_in_group(group_name);
+  var group = state.design.groups[group_name]!;
+  var geometry = group.geometry ?? state.design.geometry;
   List<select.Box> all_bboxes = all_helices_in_displayed_group.values
-      .map((helix) => helix_to_box(helix, state.ui_state.invert_y))
+      .map((helix) => helix_to_box(helix, geometry, state.ui_state.invert_y))
       .toList();
   var selection_box_as_box = select.Box.from_selection_box(selection_box);
   List<Helix> helices_overlapping =
@@ -227,14 +231,13 @@ BuiltSet<int> helix_selections_adjust_reducer(
   return helices_idxs_selected_new.build();
 }
 
-select.Box helix_to_box(Helix helix, bool invert_y) {
+select.Box helix_to_box(Helix helix, Geometry geometry, bool invert_y) {
   //FIXME: this is making boxes that are not far enough apart
-  var position3d = helix.position3d;
   num x, y, width, height;
-  var svg_pos = util.position3d_to_side_view_svg(position3d, invert_y, helix.geometry);
-  x = svg_pos.x - helix.geometry.helix_radius_svg;
-  y = svg_pos.y - helix.geometry.helix_radius_svg;
-  height = width = helix.geometry.helix_radius_svg * 2.0;
+  var svg_pos = util.position3d_to_side_view_svg(helix.position3d(geometry), invert_y, geometry);
+  x = svg_pos.x - geometry.helix_radius_svg;
+  y = svg_pos.y - geometry.helix_radius_svg;
+  height = width = geometry.helix_radius_svg * 2.0;
   return select.Box(x, y, width: width, height: height);
 }
 

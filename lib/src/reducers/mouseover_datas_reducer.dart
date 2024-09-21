@@ -47,7 +47,8 @@ BuiltList<MouseoverData> helix_rotation_set_at_other_mouseover_reducer(
     BuiltList<MouseoverData> mouseover_datas, AppState state, actions.HelixRollSetAtOther action) {
   Helix helix = state.design.helices[action.helix_idx]!;
   Helix helix_other = state.design.helices[action.helix_other_idx]!;
-  var geometry = state.design.geometry;
+  var group = state.design.groups[helix.group]!;
+  var geometry = group.geometry ?? state.design.geometry;
   double rotation = util.rotation_between_helices(helix, helix_other, action.forward, geometry);
   return _update_mouseover_datas_with_helix_rotation(
     model: state,

@@ -80,6 +80,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
       if (!strand_moved.circular)
         (EndMoving()
           ..helix = first_helix_moved
+          ..geometry = props.geometry
           ..dna_end = end_5p_moved
           ..color = props.strand.color
           ..forward = first_domain_moved.forward //first_domain_moved.forward != props.delta_forward
@@ -91,6 +92,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
       if (!strand_moved.circular)
         (EndMoving()
           ..helix = last_helix_moved
+          ..geometry = props.geometry
           ..dna_end = end_3p_moved
           ..color = props.strand.color
           ..forward = last_domain_moved.forward //props.delta_forward != last_domain_moved.forward
@@ -107,7 +109,8 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
 
     Helix helix = props.helices[domain_first.helix]!;
     var helix_svg_position_y = props.helix_idx_to_svg_position_map[domain_first.helix]!.y;
-    var start_svg = helix.svg_base_pos(domain_first.offset_5p, domain_first.forward, helix_svg_position_y);
+    var start_svg = helix.svg_base_pos(
+        domain_first.offset_5p, domain_first.forward, helix_svg_position_y, props.geometry);
     var path_cmds = ['M ${start_svg.x} ${start_svg.y}'];
 
     var substrands = strand_moved.substrands;
@@ -117,7 +120,8 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
         Domain domain = substrand;
         // substrand line
         helix_svg_position_y = props.helix_idx_to_svg_position_map[helix.idx]!.y;
-        var end_svg = helix.svg_base_pos(domain.offset_3p, domain.forward, helix_svg_position_y);
+        var end_svg =
+            helix.svg_base_pos(domain.offset_3p, domain.forward, helix_svg_position_y, props.geometry);
         path_cmds.add('L ${end_svg.x} ${end_svg.y}');
 
         // crossover/loopout line/arc
@@ -130,7 +134,8 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
           }
           helix = props.helices[domain.helix]!;
           helix_svg_position_y = props.helix_idx_to_svg_position_map[helix.idx]!.y;
-          start_svg = helix.svg_base_pos(domain.offset_5p, domain.forward, helix_svg_position_y);
+          start_svg =
+              helix.svg_base_pos(domain.offset_5p, domain.forward, helix_svg_position_y, props.geometry);
           var control = control_point_for_crossover_bezier_curve(
               old_domain,
               domain,
@@ -148,10 +153,22 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
         var next_domain = substrands[i + 1] as Domain;
         var prev_helix = props.helices[prev_domain.helix]!;
         var next_helix = props.helices[next_domain.helix]!;
+        var geometry = props.current_group.geometry ?? props.geometry;
         var prev_helix_svg_position_y = props.helix_idx_to_svg_position_map[prev_domain.helix]!.y;
         var next_helix_svg_position_y = props.helix_idx_to_svg_position_map[next_domain.helix]!.y;
-        var loopout_path_desc = loopout_path_description_within_group(prev_helix, next_helix, prev_domain,
-            next_domain, loopout, false, false, prev_helix_svg_position_y, next_helix_svg_position_y);
+        var loopout_path_desc = loopout_path_description_within_group(
+          prev_helix,
+          next_helix,
+          prev_domain,
+          next_domain,
+          loopout,
+          false,
+          false,
+          prev_helix_svg_position_y,
+          next_helix_svg_position_y,
+          geometry,
+          geometry,
+        );
         path_cmds.add(loopout_path_desc);
         helix = props.helices[next_domain.helix]!; // need to update this for next domain line to be draw
       }

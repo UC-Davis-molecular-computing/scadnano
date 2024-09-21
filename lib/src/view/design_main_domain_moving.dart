@@ -38,10 +38,10 @@ class DesignMainDomainMovingComponent extends UiComponent2<DesignMainDomainMovin
   @override
   render() {
     Helix helix = props.helices[props.domain_moved.helix]!;
-    var start_svg = helix.svg_base_pos(
-        props.domain_moved.offset_5p, props.domain_moved.forward, props.domain_helix_svg_position_y);
-    var end_svg = helix.svg_base_pos(
-        props.domain_moved.offset_3p, props.domain_moved.forward, props.domain_helix_svg_position_y);
+    var start_svg = helix.svg_base_pos(props.domain_moved.offset_5p, props.domain_moved.forward,
+        props.domain_helix_svg_position_y, props.geometry);
+    var end_svg = helix.svg_base_pos(props.domain_moved.offset_3p, props.domain_moved.forward,
+        props.domain_helix_svg_position_y, props.geometry);
 
     var classname = constants.css_selector_domain_moving;
     if (!props.allowable) {

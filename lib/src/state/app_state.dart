@@ -76,7 +76,7 @@ in the app. Thank you!""");
     }
 
     BuiltMap<int, Point<double>> ret = util
-        .helices_assign_svg(design.geometry, ui_state.invert_y, design.helices, design.groups,
+        .helices_assign_svg(design, ui_state.invert_y, design.helices, design.groups,
             helix_idxs_to_calculate: helix_idxs_to_calculate)
         .build();
 

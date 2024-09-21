@@ -89,41 +89,43 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
   static const charWidth = 6.59375;
 
   ReactElement _dna_sequence_on_domain(Domain domain) {
+    var helix = props.helices[domain.helix]!;
+    var group = props.groups[helix.group]!;
+    var geometry = group.geometry ?? props.geometry;
     var seq_to_draw = domain.dna_sequence_deletions_insertions_to_spaces(
         reverse: props.display_reverse_DNA_right_side_up && !domain.forward);
 
     var rotate_degrees = 0;
     int offset = domain.offset_5p;
-    var helix = props.helices[domain.helix]!;
-    Point<double> pos =
-        helix.svg_base_pos(offset, domain.forward, props.helix_idx_to_svg_position_map[domain.helix]!.y);
+    Point<double> pos = helix.svg_base_pos(
+        offset, domain.forward, props.helix_idx_to_svg_position_map[domain.helix]!.y, props.geometry);
     var rotate_x = pos.x;
     var rotate_y = pos.y;
 
     // this is needed to make complementary DNA bases line up more nicely (still not perfect)
-    var x_adjust = -props.geometry.base_width_svg * 0.32;
+    var x_adjust = -geometry.base_width_svg * 0.32;
     var dy, x, y;
-    var text_length = props.geometry.base_width_svg * (domain.visual_length - 0.342);
+    var text_length = geometry.base_width_svg * (domain.visual_length - 0.342);
 
     //extension, loopout,
 
     if (domain.forward) {
       //rotation and displacement for forward text
       rotate_degrees = 0;
-      dy = -props.geometry.base_height_svg * 0.25;
+      dy = -geometry.base_height_svg * 0.25;
       x = pos.x + x_adjust;
       y = pos.y;
     } else {
       if (props.display_reverse_DNA_right_side_up) {
         rotate_degrees = 0;
         //displacement for reverse text
-        dy = props.geometry.base_height_svg * 0.75;
+        dy = geometry.base_height_svg * 0.75;
         x = pos.x - x_adjust - text_length;
-        y = pos.y + props.geometry.base_height_svg;
+        y = pos.y + geometry.base_height_svg;
       } else {
         rotate_degrees = 180;
         //displacement for reverse text if option not enabled
-        dy = -props.geometry.base_height_svg * 0.25;
+        dy = -geometry.base_height_svg * 0.25;
         x = pos.x + x_adjust;
         y = pos.y;
       }
@@ -150,6 +152,9 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
   }
 
   ReactElement _dna_sequence_on_insertion(Domain domain, int offset, int length) {
+    var helix = props.helices[domain.helix]!;
+    var group = props.groups[helix.group]!;
+    var geometry = group.geometry ?? props.geometry;
     var reverse_right_side_up = props.display_reverse_DNA_right_side_up && !domain.forward;
 
     var subseq = domain.dna_sequence_in(offset, offset, reverse: reverse_right_side_up);
@@ -158,7 +163,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
 //    num path_length = insertion_path_elt.getTotalLength();
 
     var start_offset = '50%';
-    var dy = '${0.1 * props.geometry.base_width_svg}';
+    var dy = '${0.1 * geometry.base_width_svg}';
 
     Tuple2<double?, int> ls_fs = _calculate_letter_spacing_and_font_size_insertion(length);
     double? letter_spacing = ls_fs.item1;
@@ -189,11 +194,14 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
   }
 
   ReactElement _dna_sequence_on_loopout(Loopout loopout, Domain prev_domain, Domain next_domain) {
+    var helix = props.helices[prev_domain.helix]!;
+    var group = props.groups[helix.group]!;
+    var geometry = group.geometry ?? props.geometry;
     String subseq = loopout.dna_sequence!;
     var length = subseq.length;
 
     var start_offset = '50%';
-    var dy = '${0.1 * props.geometry.base_height_svg}';
+    var dy = '${0.1 * geometry.base_height_svg}';
 
     Tuple2<double?, int> ls_fs;
     if (util.is_hairpin(prev_domain, next_domain)) {
@@ -224,10 +232,13 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
   }
 
   ReactElement _dna_sequence_on_extension(Extension ext) {
+    var helix = props.helices[ext.adjacent_domain.helix]!;
+    var group = props.groups[helix.group]!;
+    var geometry = group.geometry ?? props.geometry;
     var subseq = ext.dna_sequence;
 
     var start_offset = '50%';
-    var dy = '${0.1 * props.geometry.base_height_svg}';
+    var dy = '${0.1 * geometry.base_height_svg}';
 
     Tuple2<double, int> ls_fs = _calculate_letter_spacing_and_font_size_extension(ext);
     double letter_spacing = ls_fs.item1;

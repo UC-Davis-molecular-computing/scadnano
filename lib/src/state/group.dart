@@ -31,6 +31,8 @@ abstract class HelixGroup with BuiltJsonSerializable implements Built<HelixGroup
 
   double get roll;
 
+  Geometry? get geometry;
+
   static void _initializeBuilder(HelixGroupBuilder b) {
     b.grid = Grid.none;
     b.position = Position3D.origin.toBuilder();
@@ -38,6 +40,7 @@ abstract class HelixGroup with BuiltJsonSerializable implements Built<HelixGroup
     b.yaw = 0;
     b.roll = 0;
     b.helices_view_order = ListBuilder<int>();
+    b.geometry = null;
   }
 
   factory HelixGroup({
@@ -47,6 +50,7 @@ abstract class HelixGroup with BuiltJsonSerializable implements Built<HelixGroup
     double pitch = 0,
     double yaw = 0,
     double roll = 0,
+    Geometry? geometry = null,
   }) {
     if (position == null) {
       position = Position3D.origin;
@@ -57,7 +61,8 @@ abstract class HelixGroup with BuiltJsonSerializable implements Built<HelixGroup
       ..position.replace(position!)
       ..pitch = pitch
       ..yaw = yaw
-      ..roll = roll);
+      ..roll = roll
+      ..geometry = geometry?.toBuilder());
   }
 
   Map<String, dynamic> to_json_serializable({
@@ -86,6 +91,11 @@ abstract class HelixGroup with BuiltJsonSerializable implements Built<HelixGroup
       var helices_view_order_to_write = helices_view_order.toList();
       json_map[constants.helices_view_order_key] =
           suppress_indent ? NoIndent(helices_view_order_to_write) : helices_view_order_to_write;
+    }
+
+    if (this.geometry != null) {
+      json_map[constants.geometry_key] =
+          this.geometry!.to_json_serializable(suppress_indent: suppress_indent);
     }
 
     return json_map;
@@ -123,13 +133,22 @@ abstract class HelixGroup with BuiltJsonSerializable implements Built<HelixGroup
     double roll = util.optional_field(json_map, constants.roll_key, constants.default_roll);
     double yaw = util.optional_field(json_map, constants.yaw_key, constants.default_yaw);
 
+    Map<String, dynamic>? geometry_map =
+        util.optional_field_with_null_default(json_map, constants.geometry_key);
+    Geometry? geometry = null;
+    if (geometry_map != null) {
+      geometry = Geometry.from_json(geometry_map);
+    }
+
     return HelixGroup(
-        position: position,
-        pitch: pitch,
-        yaw: yaw,
-        roll: roll,
-        helices_view_order: helices_view_order,
-        grid: grid);
+      position: position,
+      pitch: pitch,
+      yaw: yaw,
+      roll: roll,
+      helices_view_order: helices_view_order,
+      grid: grid,
+      geometry: geometry,
+    );
   }
 
   /// Returns a map mapping helix indices to their view order.

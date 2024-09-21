@@ -5,6 +5,7 @@ import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/state/design_side_rotation_data.dart';
 import '../state/context_menu.dart';
 import '../state/edit_mode.dart';
+import '../state/geometry.dart';
 import '../state/grid.dart';
 import '../state/position3d.dart';
 
@@ -36,6 +37,7 @@ mixin DesignSideHelixProps on UiProps {
   late Grid grid;
   DesignSideRotationData? rotation_data;
   late BuiltSet<EditModeChoice> edit_modes;
+  late Geometry geometry;
 }
 
 class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with PureComponent {
@@ -57,7 +59,7 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
     String grid_position_str;
     String position_str;
     if (props.grid.is_none) {
-      var pos = props.helix.position3d;
+      var pos = props.helix.position3d(props.geometry);
       position_str = '${pos.x.toStringAsFixed(precision)}, ${pos.y.toStringAsFixed(precision)}';
       grid_position_str = '${pos.x.toStringAsFixed(1)},${pos.y.toStringAsFixed(1)}';
     } else {
@@ -68,10 +70,10 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
 
     // these aren't defined if slice bar is not showing, so check for null
     var forward_angle = props.slice_bar_offset != null
-        ? props.helix.backbone_angle_at_offset(props.slice_bar_offset!, true)
+        ? props.helix.backbone_angle_at_offset(props.slice_bar_offset!, true, props.geometry)
         : null;
     var reverse_angle = props.slice_bar_offset != null
-        ? props.helix.backbone_angle_at_offset(props.slice_bar_offset!, false)
+        ? props.helix.backbone_angle_at_offset(props.slice_bar_offset!, false, props.geometry)
         : null;
     var tooltip = '''\
 position:  ${position_str}
@@ -83,7 +85,7 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
     var children = [
       (Dom.circle()
         ..className = classname_circle
-        ..r = '${props.helix.geometry.helix_radius_svg}'
+        ..r = '${props.geometry.helix_radius_svg}'
         ..onClick = ((e) => this._handle_click(e, props.helix))
         ..id = helix_circle_id()
         ..key = 'circle')((Dom.svgTitle())(tooltip)),
@@ -100,7 +102,7 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
           ..fontSize = 10
           ..dominantBaseline = 'text-before-edge'
           ..textAnchor = 'middle'
-          ..y = props.helix.geometry.helix_radius_svg / 2
+          ..y = props.geometry.helix_radius_svg / 2
           ..key = 'text-grid-position')(grid_position_str),
       ((Dom.svgTitle()..key = 'text-grid-position-tooltip')(tooltip)),
     ];
@@ -108,7 +110,7 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
     if (props.rotation_data != null) {
       assert(props.rotation_data!.helix.idx == this.props.helix.idx);
       var rot_component = (DesignSideRotation()
-        ..radius = props.helix.geometry.helix_radius_svg
+        ..radius = props.geometry.helix_radius_svg
         ..data = props.rotation_data!
         ..invert_y = props.invert_y
         ..className = '$SIDE_VIEW_PREFIX-helix-rotation'
@@ -116,8 +118,8 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
       children.add(rot_component);
     }
 
-    Position3D pos3d = props.helix.position3d;
-    Point<double> center = util.position3d_to_side_view_svg(pos3d, props.invert_y, props.helix.geometry);
+    Position3D pos3d = props.helix.position3d(props.geometry);
+    Point<double> center = util.position3d_to_side_view_svg(pos3d, props.invert_y, props.geometry);
 
     return (Dom.g()
       ..transform = 'translate(${center.x} ${center.y})'

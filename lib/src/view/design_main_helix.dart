@@ -32,6 +32,7 @@ mixin DesignMainHelixProps on UiProps {
   late bool display_major_tick_widths;
   late bool show_helix_circles;
   late Point<double> helix_svg_position;
+  late Geometry geometry;
 }
 
 class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with PureComponent {
@@ -39,15 +40,13 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 
   @override
   render() {
-    Geometry geometry = props.helix.geometry;
-
     // for helix circles
-    var cx = -(2 * geometry.base_width_svg + geometry.distance_between_helices_svg / 2);
-    var cy = props.helix_svg_position.y + props.helix.svg_height / 2.0;
+    var cx = -(2 * props.geometry.base_width_svg + props.geometry.distance_between_helices_svg / 2);
+    var cy = props.helix_svg_position.y + props.helix.svg_height(props.geometry) / 2.0;
 
     // for helix horizontal lines
-    num width = props.helix.svg_width;
-    num height = props.helix.svg_height;
+    num width = props.helix.svg_width(props.geometry);
+    num height = props.helix.svg_height(props.geometry);
 
     var horz_line_paths = _horz_line_paths(props.helix, props.helix_svg_position.y);
     var vert_line_paths = _vert_line_paths(props.helix, props.helix_svg_position.y);
@@ -63,7 +62,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
           ..id = helix_circle_id()
           ..cx = '$cx'
           ..cy = '$cy'
-          ..r = '${geometry.helix_radius_svg}'
+          ..r = '${props.geometry.helix_radius_svg}'
           ..key = 'main-view-helix-circle')(), //Dom.svgTitle()(tooltip_helix_length_adjust)),
       if (props.show_helix_circles)
         (Dom.text()
@@ -99,7 +98,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
             if (event.button != constants.LEFT_CLICK_BUTTON) return;
             var group = app.state.design.groups[props.helix.group]!;
             var helix_svg_position = app.state.helix_idx_to_svg_position_map[props.helix.idx]!;
-            var address = util.get_address_on_helix(event, props.helix, group, geometry, helix_svg_position);
+            var address =
+                util.get_address_on_helix(event, props.helix, group, props.geometry, helix_svg_position);
             app.dispatch(actions.StrandCreateStart(address: address, color: util.color_cycler.next()));
           }
         }
@@ -162,16 +162,16 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     // offset if DNA sequences and/or domain labels are present
     num offset = 0;
     if (props.show_dna) {
-      offset += props.helix.geometry.base_height_svg;
+      offset += props.geometry.base_height_svg;
     }
     if (props.show_domain_labels) {
-      offset += 1.2 * props.helix.geometry.base_height_svg;
+      offset += 1.2 * props.geometry.base_height_svg;
     }
     num y = props.helix_svg_position.y - (DISTANCE_OFFSET_DISPLAY_FROM_HELIX + offset);
 
     var offset_texts_elements = [];
     for (int offset in major_ticks) {
-      var x = (offset + 0.5) * props.helix.geometry.base_width_svg;
+      var x = (offset + 0.5) * props.geometry.base_width_svg;
       var text_element = (Dom.text()
         ..className = 'main-view-helix-major-tick-offset-text'
         ..x = '$x'
@@ -195,12 +195,15 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     // offset if DNA sequences and/or domain labels are present
     num offset = 0;
     if (props.show_dna) {
-      offset += props.helix.geometry.base_height_svg;
+      offset += props.geometry.base_height_svg;
     }
     if (props.show_domain_labels) {
-      offset += props.helix.geometry.base_height_svg;
+      offset += props.geometry.base_height_svg;
     }
-    num y = props.helix_svg_position.y + props.helix.svg_height + DISTANCE_OFFSET_DISPLAY_FROM_HELIX + offset;
+    num y = props.helix_svg_position.y +
+        props.helix.svg_height(props.geometry) +
+        DISTANCE_OFFSET_DISPLAY_FROM_HELIX +
+        offset;
 
     var offset_texts_elements = [];
     Map<num, int> map_offset_to_distance = {};
@@ -217,7 +220,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       var base = entry.key;
       var distance = entry.value;
 
-      var x = props.helix_svg_position.x + base * props.helix.geometry.base_width_svg;
+      var x = props.helix_svg_position.x + base * props.geometry.base_width_svg;
       var text_element = (Dom.text()
         ..className = 'main-view-helix-major-tick-distance-text'
         ..x = '$x'
@@ -235,9 +238,9 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   }
 
   String _horz_line_paths(Helix helix, num helix_svg_position_y) {
-    num width = helix.svg_width;
-    num height = helix.svg_height;
-    num x_start = helix.min_offset * props.helix.geometry.base_width_svg;
+    num width = helix.svg_width(props.geometry);
+    num height = helix.svg_height(props.geometry);
+    num x_start = helix.min_offset * props.geometry.base_width_svg;
     num x_end = x_start + width;
     num y_start = helix_svg_position_y;
     num y_mid = y_start + height / 2.0;
@@ -262,11 +265,11 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 
     for (int base = helix.min_offset; base <= helix.max_offset; base++) {
       var base_minus_min_offset = base; // - helix.min_offset;
-      var x = base_minus_min_offset * props.helix.geometry.base_width_svg;
+      var x = base_minus_min_offset * props.geometry.base_width_svg;
       var path_cmds = major_ticks.contains(base) ? path_cmds_vert_major : path_cmds_vert_minor;
       path_cmds.add('M $x $y');
-      path_cmds.add('v ${helix.svg_height}');
-      x += props.helix.geometry.base_width_svg;
+      path_cmds.add('v ${helix.svg_height(props.geometry)}');
+      x += props.geometry.base_width_svg;
     }
 
     return {'minor': path_cmds_vert_minor.join(' '), 'major': path_cmds_vert_major.join(' ')};

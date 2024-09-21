@@ -1450,6 +1450,25 @@ abstract class GeometrySet
   String short_description() => "set geometric parameters";
 }
 
+abstract class GeometryHelixGroupSet
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<GeometryHelixGroupSet, GeometryHelixGroupSetBuilder> {
+  String get group_name;
+
+  Geometry get geometry;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory GeometryHelixGroupSet({required String group_name, required Geometry geometry}) =
+      _$GeometryHelixGroupSet._;
+
+  GeometryHelixGroupSet._();
+
+  static Serializer<GeometryHelixGroupSet> get serializer => _$geometryHelixGroupSetSerializer;
+
+  @override
+  String short_description() => "set helix group geometric parameters ";
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Selectables
 
@@ -2953,12 +2972,16 @@ abstract class DNAEndsMoveSetSelectedEnds
 
   BuiltSet<Strand> get strands_affected;
 
+  Geometry get geometry;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory DNAEndsMoveSetSelectedEnds(
-      {required BuiltList<DNAEndMove> moves,
-      required int original_offset,
-      required Helix helix,
-      required BuiltSet<Strand> strands_affected}) = _$DNAEndsMoveSetSelectedEnds._;
+  factory DNAEndsMoveSetSelectedEnds({
+    required BuiltList<DNAEndMove> moves,
+    required int original_offset,
+    required Helix helix,
+    required BuiltSet<Strand> strands_affected,
+    required Geometry geometry,
+  }) = _$DNAEndsMoveSetSelectedEnds._;
 
   DNAEndsMoveSetSelectedEnds._();
 

@@ -24,6 +24,7 @@ mixin DesignMainStrandDeletionPropsMixin on UiProps {
   late String transform;
   late num svg_position_y;
   late bool retain_strand_color_on_selection;
+  late Geometry geometry;
 }
 
 class DesignMainStrandDeletionProps = UiProps with DesignMainStrandDeletionPropsMixin;
@@ -37,11 +38,12 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
 
   @override
   render() {
-    Geometry geometry = props.helix.geometry;
+    Geometry geometry = props.geometry;
     Domain domain = this.domain;
     int deletion_offset = this.deletion;
 
-    Point<double> pos = props.helix.svg_base_pos(deletion_offset, domain.forward, props.svg_position_y);
+    Point<double> pos =
+        props.helix.svg_base_pos(deletion_offset, domain.forward, props.svg_position_y, props.geometry);
 
     // deletion
     var width = 0.8 * geometry.base_width_svg;

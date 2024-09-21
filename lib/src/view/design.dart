@@ -261,9 +261,10 @@ class DesignViewComponent {
       if (left_mouse_button_is_down && app.state.ui_state.slice_bar_is_moving) {
         String displayed_group_name = app.state.ui_state.displayed_group_name;
         var group = app.state.design.groups[displayed_group_name]!;
+        var geometry = group.geometry ?? app.state.design.geometry;
         var helices_in_group = app.state.design.helices_in_group(displayed_group_name).values;
         int? old_offset = app.state.ui_state.storables.slice_bar_offset;
-        int new_offset = util.find_closest_offset(event, helices_in_group, group, app.state.design.geometry,
+        int new_offset = util.find_closest_offset(event, helices_in_group, group, geometry,
             app.state.helix_idx_to_svg_position_map[helices_in_group.first.idx]!.x);
 
         if (old_offset != new_offset) {
@@ -284,7 +285,7 @@ class DesignViewComponent {
           } else {
             Helix helix = moves_store.helix;
             var group = app.state.design.groups[helix.group]!;
-            var geometry = app.state.design.geometry;
+            var geometry = group.geometry ?? app.state.design.geometry;
             int offset = util
                 .get_address_on_helix(
                     event, helix, group, geometry, app.state.helix_idx_to_svg_position_map[helix.idx]!)
@@ -347,8 +348,10 @@ class DesignViewComponent {
                       if (app.state.ui_state.side_selected_helix_idxs.contains(helix.idx)) helix
                   ]
                 : app.state.design.helices.values;
-            var address = util.find_closest_address(event, visible_helices, app.state.design.groups,
-                app.state.design.geometry, app.state.helix_idx_to_svg_position_map);
+            var group = app.state.design.groups[app.state.ui_state.displayed_group_name]!;
+            var geometry = group.geometry ?? app.state.design.geometry;
+            var address = util.find_closest_address(event, visible_helices, app.state.design.groups, geometry,
+                app.state.helix_idx_to_svg_position_map);
             if (address != old_address) {
               app.dispatch(actions.StrandsMoveAdjustAddress(address: address));
             }
@@ -373,8 +376,10 @@ class DesignViewComponent {
                       if (app.state.ui_state.side_selected_helix_idxs.contains(helix.idx)) helix
                   ]
                 : app.state.design.helices.values;
-            var address = util.find_closest_address(event, visible_helices, app.state.design.groups,
-                app.state.design.geometry, app.state.helix_idx_to_svg_position_map);
+            var group = app.state.design.groups[app.state.ui_state.displayed_group_name]!;
+            var geometry = group.geometry ?? app.state.design.geometry;
+            var address = util.find_closest_address(event, visible_helices, app.state.design.groups, geometry,
+                app.state.helix_idx_to_svg_position_map);
             if (address != old_address) {
               app.dispatch(actions.DomainsMoveAdjustAddress(address: address));
             }
@@ -386,7 +391,7 @@ class DesignViewComponent {
       StrandCreation? strand_creation = app.state.ui_state.strand_creation;
       if (strand_creation != null) {
         var group = app.state.design.groups[strand_creation.helix.group]!;
-        var geometry = app.state.design.geometry;
+        var geometry = group.geometry ?? app.state.design.geometry;
         // int new_offset = util
         //     .get_address_on_helix(event, strand_creation.helix, group, geometry,
         //         app.state.helix_idx_to_svg_position_map[strand_creation.helix.idx])
@@ -980,10 +985,11 @@ class DesignViewComponent {
     assert(!(mouse_pos == null && event == null));
     if (edit_mode_is_pencil()) {
       var displayed_group_name = app.state.ui_state.displayed_group_name;
+      var group = app.state.design.groups[displayed_group_name]!;
       var displayed_grid = app.state.design.groups[displayed_group_name]!.grid;
       if (!displayed_grid.is_none) {
         bool invert_y = app.state.ui_state.invert_y;
-        Geometry geometry = app.state.design.geometry;
+        Geometry geometry = group.geometry ?? app.state.design.geometry;
         var new_grid_pos = util.grid_position_of_mouse_in_side_view(displayed_grid, invert_y, geometry,
             mouse_pos: mouse_pos, event: event);
         if (app.state.ui_state.side_view_grid_position_mouse_cursor != new_grid_pos) {

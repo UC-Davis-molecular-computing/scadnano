@@ -76,9 +76,6 @@ Design? design_geometry_set_reducer(Design? design, AppState state, actions.Geom
     return null;
   }
   var new_helices = design.helices.toMap();
-  for (var key in new_helices.keys) {
-    new_helices[key] = new_helices[key]!.rebuild((b) => b..geometry.replace(action.geometry));
-  }
 
   return design.rebuild((b) => b
     ..helices.replace(new_helices)

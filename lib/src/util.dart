@@ -322,7 +322,7 @@ bool lists_contain_same_elts<T extends Comparable>(Iterable<T> elts1, Iterable<T
 
 /// Returns SVG position for helices
 Map<int, Point<double>> helices_assign_svg(
-    Geometry geometry, bool invert_y, BuiltMap<int, Helix> helices, BuiltMap<String, HelixGroup> groups,
+    Design design, bool invert_y, BuiltMap<int, Helix> helices, BuiltMap<String, HelixGroup> groups,
     {BuiltSet<int>? helix_idxs_to_calculate = null}) {
   if (helix_idxs_to_calculate == null || helix_idxs_to_calculate.isEmpty) {
     helix_idxs_to_calculate = [for (var helix in helices.values) helix.idx].toBuiltSet();
@@ -334,6 +334,7 @@ Map<int, Point<double>> helices_assign_svg(
   // to go in view order
   for (var group_name in groups.keys) {
     HelixGroup group = groups[group_name]!;
+    var geometry = group.geometry ?? design.geometry;
 
     double? prev_y = null;
 
@@ -343,7 +344,6 @@ Map<int, Point<double>> helices_assign_svg(
         Helix helix = helices[helix_idx]!;
 
         // Assertion: Helices should already be updated by reducers
-        assert(helix.geometry == geometry);
         double x = main_view_svg_x_of_helix(geometry, helix);
         double y = main_view_svg_y_of_helix(geometry, helix);
         if (prev_helix != null) {
@@ -372,12 +372,12 @@ Map<int, Point<double>> helices_assign_svg(
 }
 
 double main_view_svg_x_of_helix(Geometry geometry, Helix helix) {
-  double x = helix.position3d.z * geometry.nm_to_svg_pixels;
+  double x = helix.position3d(geometry).z * geometry.nm_to_svg_pixels;
   return x;
 }
 
 double main_view_svg_y_of_helix(Geometry geometry, Helix helix) {
-  double y = helix.position3d.y * geometry.nm_to_svg_pixels;
+  double y = helix.position3d(geometry).y * geometry.nm_to_svg_pixels;
   return y;
 }
 
@@ -480,8 +480,8 @@ Helix find_closest_helix(MouseEvent event, Iterable<Helix> helices, BuiltMap<Str
     var group = groups[helix.group]!;
     var helix_upper_left_corner =
         group.transform_point_main_view(helix_idx_to_svg_position_map[helix.idx]!, geometry);
-    var dist = distance_to_rectangle(
-        svg_clicked_point, helix_upper_left_corner, helix.svg_width, helix.svg_height, group.pitch);
+    var dist = distance_to_rectangle(svg_clicked_point, helix_upper_left_corner, helix.svg_width(geometry),
+        helix.svg_height(geometry), group.pitch);
     if (min_dist == null || min_dist > dist) {
       min_dist = dist;
       closest_helix = helix;
@@ -538,7 +538,7 @@ int find_closest_offset(MouseEvent event, Iterable<Helix> helices_in_group, Heli
   var max_offset = range.y;
 
   int closest_offset_unbounded = helices_in_group.first
-      .svg_x_to_offset(svg_clicked_point_untransformed.x, helices_in_group_first_svg_position_x);
+      .svg_x_to_offset(svg_clicked_point_untransformed.x, helices_in_group_first_svg_position_x, geometry);
 
   // max_offset in helix is non-inclusive, so highest offset value is max_offset - 1
   return min(max_offset - 1, max(closest_offset_unbounded, min_offset));
@@ -571,14 +571,15 @@ Address find_closest_address(MouseEvent event, Iterable<Helix> helices, BuiltMap
   var group = groups[helix.group]!;
   var helix_upper_left_corner =
       group.transform_point_main_view(helix_idx_to_svg_position_map[helix.idx]!, geometry);
-  var closest_point_in_helix = closest_point_in_rectangle(
-      svg_clicked_point, helix_upper_left_corner, helix.svg_width, helix.svg_height, group.pitch);
+  var closest_point_in_helix = closest_point_in_rectangle(svg_clicked_point, helix_upper_left_corner,
+      helix.svg_width(geometry), helix.svg_height(geometry), group.pitch);
 
   var closest_point_in_helix_untransformed =
       group.transform_point_main_view(closest_point_in_helix, geometry, inverse: true);
 
-  int offset = helix.svg_x_to_offset(closest_point_in_helix_untransformed.x, helix_svg_position.x);
-  bool forward = helix.svg_y_is_forward(closest_point_in_helix_untransformed.y, helix_svg_position.y);
+  int offset = helix.svg_x_to_offset(closest_point_in_helix_untransformed.x, helix_svg_position.x, geometry);
+  bool forward =
+      helix.svg_y_is_forward(closest_point_in_helix_untransformed.y, helix_svg_position.y, geometry);
 
 //  print('* get_closest_address *');
 //  print('  forward = ${forward}');
@@ -609,8 +610,9 @@ Address find_closest_address_with_infinite_helix_boundaries(
   var closest_point_in_helix_untransformed =
       group.transform_point_main_view(closest_point_in_helix, geometry, inverse: true);
 
-  int offset = helix.svg_x_to_offset(closest_point_in_helix_untransformed.x, helix_svg_position.x);
-  bool forward = helix.svg_y_is_forward(closest_point_in_helix_untransformed.y, helix_svg_position.y);
+  int offset = helix.svg_x_to_offset(closest_point_in_helix_untransformed.x, helix_svg_position.x, geometry);
+  bool forward =
+      helix.svg_y_is_forward(closest_point_in_helix_untransformed.y, helix_svg_position.y, geometry);
 
 //  print('  forward = ${forward}');
   return Address(helix_idx: helix.idx, offset: offset, forward: forward);
@@ -1292,7 +1294,7 @@ double to_radians(double degrees) => degrees * 2 * pi / 360;
 //}
 
 double rotation_between_helices(Helix helix, Helix helix_other, bool forward, Geometry geometry) {
-  double rotation = helix.angle_to(helix_other);
+  double rotation = helix.angle_to(helix_other, geometry);
   if (!forward) {
     rotation = (rotation - geometry.minor_groove_angle) % 360;
   }
@@ -1728,10 +1730,10 @@ double compute_end_rotation(double display_angle, bool forward, bool is_5p) {
 }
 
 Point<double> compute_extension_attached_end_svg(
-    Extension ext, Domain adj_dom, Helix adj_helix, num adj_helix_svg_y) {
+    Extension ext, Domain adj_dom, Helix adj_helix, num adj_helix_svg_y, Geometry geometry) {
   int end_offset = ext.is_5p ? adj_dom.offset_5p : adj_dom.offset_3p;
   Point<double> extension_attached_end_svg =
-      adj_helix.svg_base_pos(end_offset, adj_dom.forward, adj_helix_svg_y);
+      adj_helix.svg_base_pos(end_offset, adj_dom.forward, adj_helix_svg_y, geometry);
   return extension_attached_end_svg;
 }
 
@@ -1779,7 +1781,7 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix, Point<double> helix
   if (show_mouseover_data()) {
     MouseEvent event = event_syn.nativeEvent;
     var group = app.state.design.groups[helix.group]!;
-    var geometry = app.state.design.geometry;
+    var geometry = group.geometry ?? app.state.design.geometry;
     var address = get_address_on_helix(event, helix, group, geometry, helix_svg_position);
     int offset = address.offset;
     bool forward = address.forward;
@@ -1868,9 +1870,9 @@ double radians(double deg) => deg * pi / 180;
 //     :any:`Geometry` to use when calculating Helix positions
 // :return:
 //     angle between `helix` and `other_helix` in degrees.
-double angle_from_helix_to_helix(Helix helix, Helix other_helix) {
-  var p1 = helix.position;
-  var p2 = other_helix.position;
+double angle_from_helix_to_helix(Helix helix, Helix other_helix, Geometry geometry) {
+  var p1 = helix.position(geometry);
+  var p2 = other_helix.position(geometry);
 
   // negate y_diff because y increases going down in the main view
   var y_diff = -(p2.y - p1.y);

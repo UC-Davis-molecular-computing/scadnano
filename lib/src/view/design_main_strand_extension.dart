@@ -62,7 +62,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     var adj_helix_svg_y = props.adjacent_helix_svg_position.y;
 
     Point<double> extension_attached_end_svg =
-        util.compute_extension_attached_end_svg(ext, adj_dom, adj_helix, adj_helix_svg_y);
+        util.compute_extension_attached_end_svg(ext, adj_dom, adj_helix, adj_helix_svg_y, props.geometry);
 
     Point<double> extension_free_end_svg =
         util.compute_extension_free_end_svg(extension_attached_end_svg, ext, adj_dom, props.geometry);

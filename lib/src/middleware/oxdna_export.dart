@@ -425,7 +425,7 @@ Tuple3<OxdnaVector, OxdnaVector, OxdnaVector> oxdna_get_helix_vectors(Design des
   */
   var group = design.groups[helix.group]!;
   var grid = group.grid;
-  var geometry = design.geometry;
+  var geometry = group.geometry ?? design.geometry;
 
   // var forward = OxdnaVector(0, 0, 1);
   // var normal = OxdnaVector(0, -1, 0);
@@ -465,7 +465,7 @@ Tuple3<OxdnaVector, OxdnaVector, OxdnaVector> oxdna_get_helix_vectors(Design des
   if (grid == Grid.none) {
     // unnecessary since this check is done in the position getter, but this way the code exactly mirrors
     // the Python package equivalent
-    position = helix.position;
+    position = helix.position(geometry);
   } else {
     position = util.grid_position_to_position3d(helix.grid_position!, grid, geometry);
   }
@@ -482,8 +482,6 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand>? strands
   }
 
   var system = OxdnaSystem();
-  var geometry = design.geometry;
-  var step_rot = -360 / geometry.bases_per_turn;
 
   // each entry is the number of insertions - deletions since the start of a given helix
   Map<int, List<int>> mod_map = {};
@@ -533,6 +531,9 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand>? strands
       // handle normal domains
       if (domain is Domain) {
         var helix = design.helices[domain.helix]!;
+        var group = design.groups[helix.group]!;
+        var geometry = group.geometry ?? design.geometry;
+        var step_rot = -360 / geometry.bases_per_turn;
         var origin_forward_normal = helix_vectors[helix.idx]!;
         var origin = origin_forward_normal.item1;
         var forward = origin_forward_normal.item2;
@@ -554,7 +555,7 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand>? strands
           insertions[insertion.offset] = insertion.length;
         }
 
-        // use Design.geometry field to figure out various distances
+        // use Design.geometry or HelixGroup.geometry field to figure out various distances
         // https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/lib/src/state/geometry.dart
 
         // index is used for finding the base in our sequence
@@ -608,8 +609,16 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand>? strands
         strand_domains.add(Tuple2<OxdnaStrand, bool>(ox_strand, true));
       } else if (domain is Extension) {
         bool is_5p = ss_idx == 0;
+        var helix = design.helices[domain.adjacent_domain.helix]!;
+        var group = design.groups[helix.group]!;
+        var geometry = group.geometry ?? design.geometry;
         var nucleotides = _compute_extension_nucleotides(
-            design: design, strand: strand, is_5p: is_5p, helix_vectors: helix_vectors, mod_map: mod_map);
+            design: design,
+            geometry: geometry,
+            strand: strand,
+            is_5p: is_5p,
+            helix_vectors: helix_vectors,
+            mod_map: mod_map);
         ox_strand.nucleotides.addAll(nucleotides);
         strand_domains.add(Tuple2<OxdnaStrand, bool>(ox_strand, false));
       } else {
@@ -651,11 +660,11 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand>? strands
 
 List<OxdnaNucleotide> _compute_extension_nucleotides(
     {required Design design,
+    required Geometry geometry,
     required Strand strand,
     required bool is_5p,
     required Map<int, Tuple3<OxdnaVector, OxdnaVector, OxdnaVector>> helix_vectors,
     required Map<int, List<int>> mod_map}) {
-  var geometry = design.geometry;
   var step_rot = -360 / geometry.bases_per_turn;
 
   var adj_dom = is_5p ? strand.domains.first : strand.domains.last;

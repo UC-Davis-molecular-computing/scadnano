@@ -62,6 +62,7 @@ class HelixGroupMovingComponent extends UiComponent2<HelixGroupMovingProps> with
           !only_display_selected_helices) {
         children.add((DesignMainHelix()
           ..helix = helix
+          ..geometry = helix_group_move.geometry
           ..selected = side_selected_helix_idxs.contains(helix.idx)
           ..major_tick_offset_font_size = props.major_tick_offset_font_size
           ..major_tick_width_font_size = props.major_tick_width_font_size

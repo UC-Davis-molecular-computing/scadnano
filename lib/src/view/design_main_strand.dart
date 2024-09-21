@@ -312,6 +312,8 @@ api.selectElements([base]);''';
     List<ReactElement> paths = [];
     for (Domain domain in props.strand.domains) {
       Helix helix = props.helices[domain.helix]!;
+      var group = props.groups[helix.group]!;
+      var geometry = group.geometry ?? props.geometry;
       if (should_draw_domain_on_strand(
           domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
         for (var selectable_insertion in domain.selectable_insertions) {
@@ -319,6 +321,7 @@ api.selectElements([base]);''';
             ..selectable_insertion = selectable_insertion
             ..selected = props.selected_insertions_in_strand.contains(selectable_insertion)
             ..helix = helix
+            ..geometry = geometry
             ..color = props.strand.color
             ..transform = transform_of_helix2(props, domain.helix)
             ..svg_position_y = props.helix_idx_to_svg_position_map[helix.idx]!.y
@@ -351,11 +354,14 @@ api.selectElements([base]);''';
       Helix helix = props.helices[domain.helix]!;
       if (should_draw_domain_on_strand(
           domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
+        var group = props.groups[helix.group]!;
+        var geometry = group.geometry ?? props.geometry;
         for (var selectable_deletion in domain.selectable_deletions) {
           String id = util.id_deletion(domain, selectable_deletion.offset);
           paths.add((DesignMainStrandDeletion()
             ..selectable_deletion = selectable_deletion
             ..helix = helix
+            ..geometry = geometry
             ..selected = props.selected_deletions_in_strand.contains(selectable_deletion)
             ..transform = transform_of_helix2(props, domain.helix)
             ..svg_position_y = props.helix_idx_to_svg_position_map[domain.helix]!.y

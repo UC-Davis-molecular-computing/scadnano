@@ -54,6 +54,14 @@ label + select {
     flex-direction: column;
 }
 
+#design-oxview-separator {
+    z-index: 0;
+}
+
+.dialog-form-container {
+    z-index: 1;
+}
+
 .fixed-horizontal-separator {
     height: 5px;
     background: black;

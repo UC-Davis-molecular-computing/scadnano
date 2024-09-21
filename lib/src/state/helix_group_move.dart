@@ -20,7 +20,8 @@ abstract class HelixGroupMove
       {required String group_name,
       required HelixGroup group,
       required BuiltMap<int, Helix> helices,
-      required Point<double> original_mouse_point}) {
+      required Point<double> original_mouse_point,
+      required Geometry geometry}) {
     if (helices.isEmpty) {
       throw ArgumentError.value('helices should not be empty in a HelixGroupMove object');
     }
@@ -29,7 +30,8 @@ abstract class HelixGroupMove
       ..group.replace(group)
       ..helices.replace(helices)
       ..original_mouse_point = original_mouse_point
-      ..current_mouse_point = original_mouse_point);
+      ..current_mouse_point = original_mouse_point
+      ..geometry.replace(geometry));
   }
 
   factory HelixGroupMove.from([void Function(HelixGroupMoveBuilder) updates]) = _$HelixGroupMove;
@@ -55,6 +57,8 @@ abstract class HelixGroupMove
   /// current offset where mouse is
   Point<double> get current_mouse_point;
 
+  Geometry get geometry;
+
   /// current position in nanometers (original is group.position)
   @memoized
   Position3D get current_position {
@@ -74,7 +78,4 @@ abstract class HelixGroupMove
 
   @memoized
   BuiltList<int> get helix_idxs_in_group => [for (var helix in helices.values) helix.idx].build();
-
-  @memoized
-  Geometry get geometry => helices.values.first.geometry;
 }

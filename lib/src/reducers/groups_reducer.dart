@@ -13,6 +13,7 @@ Reducer<BuiltMap<String, HelixGroup>> groups_local_reducer = combineReducers([
   TypedReducer<BuiltMap<String, HelixGroup>, actions.GroupRemove>(group_remove_reducer),
   TypedReducer<BuiltMap<String, HelixGroup>, actions.GroupChange>(group_change_reducer),
   TypedReducer<BuiltMap<String, HelixGroup>, actions.GridChange>(grid_change_reducer),
+  TypedReducer<BuiltMap<String, HelixGroup>, actions.GeometryHelixGroupSet>(geometry_helix_group_set_reducer),
 ]);
 
 GlobalReducer<BuiltMap<String, HelixGroup>, AppState> groups_global_reducer = combineGlobalReducers([
@@ -25,6 +26,15 @@ BuiltMap<String, HelixGroup> grid_change_reducer(
     groups.map_values((name, group) {
       if (name == action.group_name) {
         group = group.rebuild((b) => b..grid = action.grid);
+      }
+      return group;
+    });
+
+BuiltMap<String, HelixGroup> geometry_helix_group_set_reducer(
+        BuiltMap<String, HelixGroup> groups, actions.GeometryHelixGroupSet action) =>
+    groups.map_values((name, group) {
+      if (name == action.group_name) {
+        group = group.rebuild((b) => b..geometry.replace(action.geometry));
       }
       return group;
     });

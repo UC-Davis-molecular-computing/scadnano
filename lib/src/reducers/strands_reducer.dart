@@ -405,13 +405,17 @@ BuiltList<Strand> strands_dna_extensions_move_commit_reducer(
     int substrand_idx = strand.substrands.indexOf(extension);
     var substrands_builder = strand.substrands.toBuilder();
     var extension_start_point = move.attached_end_position;
+    var adjacent_domain = extension.adjacent_domain;
+    var helix = state.design.helices[adjacent_domain.helix]!;
+    var group = state.design.groups[helix.group]!;
+    var geometry = group.geometry ?? state.design.geometry;
 
     var length_and_angle = util.compute_extension_length_and_angle_from_point(
         action.dna_extensions_move.current_point_of(move.dna_end)!,
         extension_start_point,
         extension,
         extension.adjacent_domain,
-        state.design.geometry);
+        geometry);
 
     Extension ext_new = extension.rebuild((b) => b
       ..display_length = length_and_angle.item1

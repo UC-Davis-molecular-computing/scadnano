@@ -63,7 +63,7 @@ GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGl
       helix_offset_change_all_while_creating_strand_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.ReplaceStrands>(first_replace_strands_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.SelectionsClear>(
-      reset_helices_offsets_after_selections_clear)
+      reset_helices_offsets_after_selections_clear),
 ]);
 
 BuiltMap<int, Helix> helix_individual_reducer(
@@ -473,8 +473,9 @@ BuiltMap<int, Helix> helix_roll_set_at_other_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.HelixRollSetAtOther action) {
   Helix helix = helices[action.helix_idx]!;
   Helix helix_other = helices[action.helix_other_idx]!;
+  var group = state.design.groups[helix.group]!;
 
-  var geometry = state.design.geometry;
+  var geometry = group.geometry ?? state.design.geometry;
   num rotation = util.rotation_between_helices(helix, helix_other, action.forward, geometry);
   double old_rotation_at_anchor = state.design.helix_rotation_forward(helix.idx, action.anchor);
   double delta_roll = rotation - old_rotation_at_anchor;
@@ -526,7 +527,6 @@ Design? helix_add_design_reducer(Design? design, AppState state, actions.HelixAd
     idx: new_idx,
     grid: group.grid,
     group: state.ui_state.displayed_group_name,
-    geometry: design.geometry,
     grid_position: action.grid_position,
     position: action.position,
     min_offset: min_offset,
@@ -631,7 +631,8 @@ BuiltMap<int, Helix> helix_grid_change_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.GridChange action) {
   // make builder of all helices
   Map<int, Helix> new_helices = helices.toMap();
-  Geometry geometry = state.design.geometry;
+  var group = state.design.groups[action.group_name]!;
+  Geometry geometry = group.geometry ?? state.design.geometry;
 
   // process only those in this group
   var helix_idxs_in_group = state.design.helix_idxs_in_group[action.group_name]!;
@@ -641,7 +642,7 @@ BuiltMap<int, Helix> helix_grid_change_reducer(
     helix_builder.grid = action.grid;
     if (!action.grid.is_none && helix.grid_position == null) {
       helix_builder.grid_position =
-          util.position3d_to_grid_position(helix.position, action.grid, geometry).toBuilder();
+          util.position3d_to_grid_position(helix.position(geometry), action.grid, geometry).toBuilder();
       helix_builder.position_ = null;
     }
     if (action.grid.is_none && helix.position_ == null) {
@@ -665,9 +666,11 @@ BuiltMap<int, Helix> relax_helix_rolls_reducer(
   var new_helices_map = helices.toMap();
   for (var helix_idx in helix_idxs_to_relax) {
     var helix = new_helices_map[helix_idx]!;
+    var group = state.design.groups[helix.group]!;
+    var geometry = group.geometry ?? state.design.geometry;
     var crossover_addresses =
         state.design.helix_to_crossover_addresses_disallow_intrahelix_disallow_intergroup[helix_idx]!;
-    var helix_relaxed = helix.relax_roll(helices, crossover_addresses);
+    var helix_relaxed = helix.relax_roll(helices, crossover_addresses, geometry);
     new_helices_map[helix_idx] = helix_relaxed;
   }
 
@@ -726,6 +729,7 @@ BuiltMap<int, Helix> helix_position_set_reducer(
 // groups_reducer.dart file, which processes this same Action on the groups map.
 BuiltMap<int, Helix> move_helices_to_group_helices_reducer(
     BuiltMap<int, Helix> helices, actions.MoveHelicesToGroup action) {
+  //TODO: make this global and set helix.geometry if new group geometry is not null
   var helices_map = helices.toMap();
   for (int idx in action.helix_idxs) {
     assert(helices_map.keys.contains(idx));

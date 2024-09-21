@@ -60,8 +60,8 @@ class DesignMainSliceBarComponent extends UiComponent2<DesignMainSliceBarProps> 
     var slice_bar_svg_height =
         displayed_helices_max_y - displayed_helices_min_y + geometry.helix_diameter_svg;
     var helix = props.helices[helix_idxs_in_group.first]!;
-    var slice_bar_svg_base_center_pos = helix.svg_base_pos(
-        props.slice_bar_offset, true, props.helix_idx_to_svg_position_map[helix_idxs_in_group.first]!.y);
+    var slice_bar_svg_base_center_pos = helix.svg_base_pos(props.slice_bar_offset, true,
+        props.helix_idx_to_svg_position_map[helix_idxs_in_group.first]!.y, geometry);
 
     var slice_bar_x = slice_bar_svg_base_center_pos.x - geometry.base_width_svg / 2;
     var slice_bar_y = displayed_helices_min_y - geometry.helix_radius_svg + geometry.base_height_svg;

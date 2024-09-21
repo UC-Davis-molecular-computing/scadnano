@@ -152,6 +152,10 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
         Domain prev_dom = strand.substrands[i - 1] as Domain;
         Helix prev_helix = props.helices[prev_dom.helix]!;
         Helix next_helix = props.helices[next_dom.helix]!;
+        var prev_group = props.groups[prev_helix.group]!;
+        var next_group = props.groups[next_helix.group]!;
+        var prev_geometry = prev_group.geometry ?? props.geometry;
+        var next_geometry = next_group.geometry ?? props.geometry;
         bool should = should_draw_loopout(prev_dom.helix, next_dom.helix, props.side_selected_helix_idxs,
             props.only_display_selected_helices);
         if (should) {
@@ -168,6 +172,8 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..helices = props.helices
             ..groups = props.groups
             ..geometry = props.geometry
+            ..prev_geometry = prev_geometry
+            ..next_geometry = next_geometry
             ..prev_helix_svg_position_y = props.helix_idx_to_svg_position_map[prev_helix.idx]!.y
             ..next_helix_svg_position_y = props.helix_idx_to_svg_position_map[next_helix.idx]!.y
             ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
@@ -268,13 +274,15 @@ String crossover_path_description_between_groups(
   var next_helix = helices[next_domain.helix]!;
   var prev_group = groups[prev_helix.group]!;
   var next_group = groups[next_helix.group]!;
+  var prev_geometry = prev_group.geometry ?? geometry;
+  var next_geometry = next_group.geometry ?? geometry;
 
-  var start_svg =
-      prev_helix.svg_base_pos(prev_domain.offset_3p, prev_domain.forward, prev_helix_svg_position_y);
+  var start_svg = prev_helix.svg_base_pos(
+      prev_domain.offset_3p, prev_domain.forward, prev_helix_svg_position_y, prev_geometry);
   start_svg = prev_group.transform_point_main_view(start_svg, geometry);
 
-  var end_svg =
-      next_helix.svg_base_pos(next_domain.offset_5p, next_domain.forward, next_helix_svg_position_y);
+  var end_svg = next_helix.svg_base_pos(
+      next_domain.offset_5p, next_domain.forward, next_helix_svg_position_y, next_geometry);
   end_svg = next_group.transform_point_main_view(end_svg, geometry);
 
   var vector_start_to_end = end_svg - start_svg;
@@ -301,13 +309,13 @@ String crossover_path_description_within_group(
     double next_helix_svg_position_y) {
   var prev_helix = helices[prev_domain.helix]!;
   var next_helix = helices[next_domain.helix]!;
-  var start_svg =
-      prev_helix.svg_base_pos(prev_domain.offset_3p, prev_domain.forward, prev_helix_svg_position_y);
+  var start_svg = prev_helix.svg_base_pos(
+      prev_domain.offset_3p, prev_domain.forward, prev_helix_svg_position_y, geometry);
   var control = control_point_for_crossover_bezier_curve(
       prev_domain, next_domain, helices, prev_helix_svg_position_y, next_helix_svg_position_y,
       geometry: geometry);
-  var end_svg =
-      next_helix.svg_base_pos(next_domain.offset_5p, next_domain.forward, next_helix_svg_position_y);
+  var end_svg = next_helix.svg_base_pos(
+      next_domain.offset_5p, next_domain.forward, next_helix_svg_position_y, geometry);
 
   var path = 'M ${start_svg.x} ${start_svg.y} Q ${control.x} ${control.y} ${end_svg.x} ${end_svg.y}';
 
@@ -324,9 +332,10 @@ Point<double> control_point_for_crossover_bezier_curve(Domain from_ss, Domain to
   var helix_distance_normalized =
       ((from_helix_svg_position_y - to_helix_svg_position_y) / geometry.distance_between_helices_svg).abs();
 
-  var start_pos =
-      from_helix.svg_base_pos(from_ss.offset_3p + delta, from_ss.forward, from_helix_svg_position_y);
-  var end_pos = to_helix.svg_base_pos(to_ss.offset_5p + delta, to_ss.forward, to_helix_svg_position_y);
+  var start_pos = from_helix.svg_base_pos(
+      from_ss.offset_3p + delta, from_ss.forward, from_helix_svg_position_y, geometry);
+  var end_pos =
+      to_helix.svg_base_pos(to_ss.offset_5p + delta, to_ss.forward, to_helix_svg_position_y, geometry);
   bool from_strand_below = from_helix_svg_position_y > to_helix_svg_position_y;
   double midX = (start_pos.x + end_pos.x) / 2;
   double midY = (start_pos.y + end_pos.y) / 2;

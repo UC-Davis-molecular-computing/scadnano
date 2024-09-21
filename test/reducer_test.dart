@@ -94,7 +94,7 @@ main() {
      */
     Design design = Design.from_json(jsonDecode(json_str), false);
     var expected_position = Position3D(x: 1, y: 2, z: 3);
-    var actual_position = design.helices[0]!.position3d;
+    var actual_position = design.helices[0]!.position3d(design.geometry);
     expect(actual_position, expected_position);
   });
 
@@ -133,7 +133,7 @@ main() {
      */
     Design design = Design.from_json(jsonDecode(json_str), false);
     var expected_position = Position3D(x: 1, y: 2, z: 3);
-    var actual_position = design.helices[0]!.position3d;
+    var actual_position = design.helices[0]!.position3d(design.geometry);
     expect(actual_position, expected_position);
   });
 
@@ -168,7 +168,7 @@ main() {
      */
     Design design = Design.from_json(jsonDecode(json_str), false);
     var expected_position = Position3D(x: 1, y: 2, z: 3);
-    var actual_position = design.helices[0]!.position3d;
+    var actual_position = design.helices[0]!.position3d(design.geometry);
     expect(actual_position, expected_position);
   });
 
@@ -205,7 +205,7 @@ main() {
      */
     Design design = Design.from_json(jsonDecode(json_str), false);
     var expected_position = Position3D(x: 1, y: 2, z: 3);
-    var actual_position = design.helices[0]!.position3d;
+    var actual_position = design.helices[0]!.position3d(design.geometry);
     expect(actual_position, expected_position);
   });
 
@@ -215,9 +215,7 @@ main() {
 
     state = app_state_reducer(state, new HelixAdd(grid_position: grid_position));
 
-    var geometry = state.design.geometry;
-    final correct_helix =
-        new Helix(grid_position: grid_position, idx: 0, grid: Grid.square, geometry: geometry);
+    final correct_helix = new Helix(grid_position: grid_position, idx: 0, grid: Grid.square);
     expect(state.design.helices, BuiltMap<int, Helix>({correct_helix.idx: correct_helix}));
   });
 
@@ -1756,14 +1754,14 @@ main() {
   Design two_helices_join_inner_strands = Design.from_json(jsonDecode(two_helices_join_inner_strands_json));
   test('pencil should connect a 3p end to a 5p end', () {
     AppState state = app_state_from_design(two_helices_design);
-    Map<int, Point<double>> svg_position_map = util.helices_assign_svg(two_helices_design.geometry,
-        state.ui_state.invert_y, two_helices_design.helices, two_helices_design.groups);
+    Map<int, Point<double>> svg_position_map = util.helices_assign_svg(
+        two_helices_design, state.ui_state.invert_y, two_helices_design.helices, two_helices_design.groups);
 
     Strand h0_reverse_strand = two_helices_design.strands[1];
     Strand h1_forward_strand = two_helices_design.strands[2];
     Helix h0 = two_helices_design.helices[0]!;
-    Point<double> start_point =
-        h0.svg_base_pos(0, false, svg_position_map[0]!.y); // 3p end is 0 offset and forward is false.
+    Point<double> start_point = h0.svg_base_pos(0, false, svg_position_map[0]!.y,
+        two_helices_design.geometry); // 3p end is 0 offset and forward is false.
     PotentialCrossover helix_0_3p_end_potential_crossover = PotentialCrossover(
       address: Address(
         helix_idx: 0,
@@ -1788,14 +1786,14 @@ main() {
   });
   test('pencil should connect a 5p end to a 3p end', () {
     AppState state = app_state_from_design(two_helices_design);
-    Map<int, Point<double>> svg_position_map = util.helices_assign_svg(two_helices_design.geometry,
-        state.ui_state.invert_y, two_helices_design.helices, two_helices_design.groups);
+    Map<int, Point<double>> svg_position_map = util.helices_assign_svg(
+        two_helices_design, state.ui_state.invert_y, two_helices_design.helices, two_helices_design.groups);
 
     Strand h0_reverse_strand = two_helices_design.strands[1];
     Strand h1_forward_strand = two_helices_design.strands[2];
     Helix h1 = two_helices_design.helices[1]!;
-    Point<double> start_point =
-        h1.svg_base_pos(0, true, svg_position_map[1]!.y); // 5p end is 0 offset and forward is true.
+    Point<double> start_point = h1.svg_base_pos(0, true, svg_position_map[1]!.y,
+        two_helices_design.geometry); // 5p end is 0 offset and forward is true.
     PotentialCrossover helix_1_5p_end_potential_crossover = PotentialCrossover(
       address: Address(
         helix_idx: 1,
@@ -2126,6 +2124,7 @@ main() {
       original_offset: 0,
       current_offset: 3,
       helix: helix0,
+      geometry: simple_helix_no_seq_design.geometry,
     );
     actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
 
@@ -2176,6 +2175,7 @@ main() {
       original_offset: 15,
       current_offset: 3,
       helix: helix0,
+      geometry: simple_helix_no_seq_design.geometry,
     );
     actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
 
@@ -2224,6 +2224,7 @@ main() {
       original_offset: 15,
       current_offset: 3,
       helix: helix0,
+      geometry: simple_helix_no_seq_design.geometry,
     );
     actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
 
@@ -2273,6 +2274,7 @@ main() {
       original_offset: 0,
       current_offset: 3,
       helix: helix0,
+      geometry: simple_helix_no_seq_design.geometry,
     );
     actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
 
@@ -2331,6 +2333,7 @@ main() {
       original_offset: 0,
       current_offset: 3,
       helix: helix0,
+      geometry: simple_helix_no_seq_design.geometry,
     );
     actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
 
@@ -2382,6 +2385,7 @@ main() {
       original_offset: 0,
       current_offset: 3,
       helix: helix0,
+      geometry: simple_helix_no_seq_design.geometry,
     );
     mid_state = app_state_reducer(mid_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move_forward));
 
@@ -2399,6 +2403,7 @@ main() {
       original_offset: 15,
       current_offset: 4,
       helix: helix0,
+      geometry: simple_helix_no_seq_design.geometry,
     );
     final_state = app_state_reducer(final_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move_reverse));
 
@@ -2451,6 +2456,7 @@ main() {
       original_offset: 0,
       current_offset: 3,
       helix: helix0,
+      geometry: simple_helix_no_seq_design.geometry,
     );
     mid_state = app_state_reducer(mid_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move_forward));
 
@@ -2468,6 +2474,7 @@ main() {
       original_offset: 15,
       current_offset: 4,
       helix: helix0,
+      geometry: simple_helix_no_seq_design.geometry,
     );
     final_state = app_state_reducer(final_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move_reverse));
 
@@ -2546,6 +2553,7 @@ main() {
       original_offset: 0,
       current_offset: 3,
       helix: helix0,
+      geometry: simple_helix_no_seq_design.geometry,
     );
     mid_state = app_state_reducer(mid_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move_forward));
 
@@ -2572,6 +2580,7 @@ main() {
       original_offset: 15,
       current_offset: 4,
       helix: helix0,
+      geometry: simple_helix_no_seq_design.geometry,
     );
     final_state = app_state_reducer(final_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move_reverse));
 
@@ -2672,6 +2681,7 @@ main() {
       original_offset: 4,
       current_offset: -6,
       helix: helix0,
+      geometry: simple_helix_no_seq_smaller_design.geometry,
     );
     actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
 
@@ -2724,6 +2734,7 @@ main() {
       original_offset: 10,
       current_offset: 19,
       helix: helix0,
+      geometry: simple_helix_no_seq_smaller_design.geometry,
     );
     actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
 
@@ -2767,6 +2778,7 @@ main() {
       original_offset: 0,
       current_offset: 7,
       helix: helix0,
+      geometry: simple_helix_no_seq_design.geometry,
     );
     AppState actual_state = initial_state;
 
@@ -2844,6 +2856,7 @@ main() {
       original_offset: 0,
       current_offset: 16,
       helix: helix0,
+      geometry: simple_helix_with_deletion_design.geometry,
     );
     AppState actual_state = initial_state;
 
@@ -2895,6 +2908,7 @@ main() {
       original_offset: 0,
       current_offset: 16,
       helix: helix0,
+      geometry: simple_helix_with_insertion_design.geometry,
     );
     AppState actual_state = initial_state;
 
@@ -4456,11 +4470,12 @@ main() {
     // 1 [------------------->
     //   <-------------------]
     Map<int, Point<double>> svg_position_map = util.helices_assign_svg(
-        two_helices_design.geometry, false, two_helices_design.helices, two_helices_design.groups);
+        two_helices_design, false, two_helices_design.helices, two_helices_design.groups);
 
     DNAEnd dnaEnd = two_helices_design.strands.first.dnaend_5p;
     Helix helix0 = two_helices_design.helices.values.first;
-    Point<double> start_point = helix0.svg_base_pos(0, true, svg_position_map[helix0.idx]!.y);
+    Point<double> start_point =
+        helix0.svg_base_pos(0, true, svg_position_map[helix0.idx]!.y, two_helices_design.geometry);
 
     // The two states of the two store's reducers we want to test:
     AppState state = app_state_from_design(two_helices_design);
@@ -5467,12 +5482,18 @@ main() {
 
       expect(state.design.default_group().grid, Grid.none);
       num eps = 0.0001;
-      expect(state.design.helices[0]!.position3d.x, closeTo(expected_position_h0.x, eps));
-      expect(state.design.helices[0]!.position3d.y, closeTo(expected_position_h0.y, eps));
-      expect(state.design.helices[0]!.position3d.z, closeTo(expected_position_h0.z, eps));
-      expect(state.design.helices[1]!.position3d.x, closeTo(expected_position_h1.x, eps));
-      expect(state.design.helices[1]!.position3d.y, closeTo(expected_position_h1.y, eps));
-      expect(state.design.helices[1]!.position3d.z, closeTo(expected_position_h1.z, eps));
+      expect(state.design.helices[0]!.position3d(two_helices_design.geometry).x,
+          closeTo(expected_position_h0.x, eps));
+      expect(state.design.helices[0]!.position3d(two_helices_design.geometry).y,
+          closeTo(expected_position_h0.y, eps));
+      expect(state.design.helices[0]!.position3d(two_helices_design.geometry).z,
+          closeTo(expected_position_h0.z, eps));
+      expect(state.design.helices[1]!.position3d(two_helices_design.geometry).x,
+          closeTo(expected_position_h1.x, eps));
+      expect(state.design.helices[1]!.position3d(two_helices_design.geometry).y,
+          closeTo(expected_position_h1.y, eps));
+      expect(state.design.helices[1]!.position3d(two_helices_design.geometry).z,
+          closeTo(expected_position_h1.z, eps));
     });
 
     test('GridChange_none_to_square', () {
@@ -5484,8 +5505,8 @@ main() {
       Helix original_helix0 = no_grid_two_helices_design.helices[0]!;
       Helix original_helix1 = no_grid_two_helices_design.helices[1]!;
       Geometry geometry = no_grid_two_helices_design.geometry;
-      Position3D expected_position0 = original_helix0.position3d;
-      Position3D expected_position1 = original_helix1.position3d;
+      Position3D expected_position0 = original_helix0.position3d(geometry);
+      Position3D expected_position1 = original_helix1.position3d(geometry);
       // Since positions start out with positive x coordinates, but grid positions set these based
       // on min_offset, x coordinates should become 0.
       expected_position0 =
@@ -5501,13 +5522,11 @@ main() {
       Helix new_helix0 = no_grid_two_helices_design.helices.values.first.rebuild((b) => b
         ..grid = grid
         ..position_ = null
-        ..grid_position.replace(expected_grid_position0)
-        ..geometry.replace(no_grid_two_helices_design.geometry));
+        ..grid_position.replace(expected_grid_position0));
       Helix new_helix1 = no_grid_two_helices_design.helices.values.last.rebuild((b) => b
         ..grid = grid
         ..position_ = null
-        ..grid_position.replace(expected_grid_position1)
-        ..geometry.replace(no_grid_two_helices_design.geometry));
+        ..grid_position.replace(expected_grid_position1));
 
       Map<int, Helix> new_helices = {0: new_helix0, 1: new_helix1};
 
@@ -6802,7 +6821,12 @@ main() {
       AppState state = initial_state;
       DNAEndMove move = DNAEndMove(dna_end: end_5p_H5, lowest_offset: 0, highest_offset: 16);
       DNAEndsMove moves = DNAEndsMove(
-          moves: BuiltList<DNAEndMove>([move]), original_offset: 15, current_offset: 13, helix: helix5);
+        moves: BuiltList<DNAEndMove>([move]),
+        original_offset: 15,
+        current_offset: 13,
+        helix: helix5,
+        geometry: expected_design.geometry,
+      );
       state = app_state_reducer(state, DNAEndsMoveCommit(dna_ends_move: moves));
 
       expect_design_equal(state.design, expected_design);
@@ -7261,7 +7285,7 @@ main() {
       Design d = Design.from_json_str(json_str)!;
       Helix helix0 = d.helices[0]!;
       Helix helix1 = d.helices[1]!;
-      expect(helix0.position, Position3D(x: 1, y: 2, z: 3));
+      expect(helix0.position(d.geometry), Position3D(x: 1, y: 2, z: 3));
       expect(helix0.roll, 5);
       // Helix 0 should have been moved to a new helix group
       String pitch_25_yaw_19_group_name = 'pitch_25_yaw_19';
@@ -7269,7 +7293,7 @@ main() {
       expect(pitch_25_yaw_19_group.pitch, 25);
       expect(pitch_25_yaw_19_group.yaw, 19);
       expect(helix0.group, pitch_25_yaw_19_group_name);
-      expect(helix1.position, Position3D(x: 3, y: 2, z: 3));
+      expect(helix1.position(d.geometry), Position3D(x: 3, y: 2, z: 3));
       expect(helix1.roll, 15);
       expect(helix1.group, "north");
       expect(d.groups.length, 2);
@@ -7315,7 +7339,7 @@ main() {
       // Helix 0 should have been moved to a new helix group
       String pitch_25_yaw_19_group_name = 'pitch_25_yaw_19';
       HelixGroup pitch_25_yaw_19_group = d.groups[pitch_25_yaw_19_group_name]!;
-      expect(helix0.position, Position3D(x: 1, y: 2, z: 3));
+      expect(helix0.position(d.geometry), Position3D(x: 1, y: 2, z: 3));
       expect(pitch_25_yaw_19_group.pitch, 25);
       expect(pitch_25_yaw_19_group.yaw, 19);
       expect(helix0.roll, 5);
@@ -7324,7 +7348,7 @@ main() {
       // Helix 1 should have been moved to a new helix group
       String pitch_21_yaw_13_group_name = 'pitch_21_yaw_13';
       HelixGroup pitch_21_yaw_13_group = d.groups[pitch_21_yaw_13_group_name]!;
-      expect(helix1.position, Position3D(x: 3, y: 2, z: 3));
+      expect(helix1.position(d.geometry), Position3D(x: 3, y: 2, z: 3));
       expect(pitch_21_yaw_13_group.pitch, 21);
       expect(pitch_21_yaw_13_group.yaw, 13);
       expect(helix1.roll, 15);
@@ -7379,13 +7403,13 @@ main() {
       HelixGroup south_group = d.groups[south_str]!;
       expect(d.groups.length, 2);
 
-      expect(helix0.position, Position3D(x: 1, y: 2, z: 3));
+      expect(helix0.position(d.geometry), Position3D(x: 1, y: 2, z: 3));
       expect(helix0.roll, 5);
       expect(north_group.pitch, 21);
       expect(north_group.yaw, 13);
       expect(helix0.group, north_str);
 
-      expect(helix1.position, Position3D(x: 3, y: 2, z: 3));
+      expect(helix1.position(d.geometry), Position3D(x: 3, y: 2, z: 3));
       expect(helix1.roll, 15);
       expect(south_group.pitch, 23);
       expect(south_group.yaw, 98);
@@ -7435,13 +7459,13 @@ main() {
       HelixGroup south_group = d.groups[south_str]!;
       expect(d.groups.length, 2);
 
-      expect(helix0.position, Position3D(x: 1, y: 2, z: 3));
+      expect(helix0.position(d.geometry), Position3D(x: 1, y: 2, z: 3));
       expect(helix0.roll, 5);
       expect(north_group.pitch, 0);
       expect(north_group.yaw, 0);
       expect(helix0.group, north_str);
 
-      expect(helix1.position, Position3D(x: 3, y: 2, z: 3));
+      expect(helix1.position(d.geometry), Position3D(x: 3, y: 2, z: 3));
       expect(helix1.roll, 15);
       expect(south_group.pitch, 0);
       expect(south_group.yaw, 0);
@@ -7495,12 +7519,12 @@ main() {
       HelixGroup north_group = d.groups[north_str]!;
       HelixGroup south_group = d.groups[south_str]!;
       expect(d.groups.length, 2);
-      expect(helix0.position, Position3D(x: 1, y: 2, z: 3));
+      expect(helix0.position(d.geometry), Position3D(x: 1, y: 2, z: 3));
       expect(helix0.roll, 5);
       expect(north_group.pitch, 25);
       expect(north_group.yaw, 19);
       expect(helix0.group, north_str);
-      expect(helix1.position, Position3D(x: 3, y: 2, z: 3));
+      expect(helix1.position(d.geometry), Position3D(x: 3, y: 2, z: 3));
       expect(helix1.roll, 15);
       expect(south_group.pitch, 23);
       expect(south_group.yaw, 98);
@@ -7568,7 +7592,8 @@ main() {
 
     // New svg position y coordinate should have changed
     expect(new_state.helix_idx_to_svg_position_map[1]!.y, closeTo(original_helix1_svg_position.y, 0.001));
-    var offset = (helix1.position3d.y - helix0.position3d.y) * design.geometry.nm_to_svg_pixels;
+    var offset = (helix1.position3d(design.geometry).y - helix0.position3d(design.geometry).y) *
+        design.geometry.nm_to_svg_pixels;
     expect(new_state.helix_idx_to_svg_position_map[0]!.y,
         closeTo(original_helix1_svg_position.y + offset, 0.001));
   });
@@ -7652,8 +7677,13 @@ main() {
     // Action:
     DNAEndMove move =
         DNAEndMove(dna_end: design.strands.first.dnaend_5p, lowest_offset: 0, highest_offset: 8);
-    DNAEndsMove dna_ends_move =
-        DNAEndsMove(moves: [move].build(), original_offset: 0, current_offset: 4, helix: helix0);
+    DNAEndsMove dna_ends_move = DNAEndsMove(
+      moves: [move].build(),
+      original_offset: 0,
+      current_offset: 4,
+      helix: helix0,
+      geometry: design.geometry,
+    );
     AppState new_state = app_state_reducer(state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
 
     // Expected Result:
@@ -7697,8 +7727,13 @@ main() {
     // Action:
     DNAEndMove move =
         DNAEndMove(dna_end: design.strands.first.dnaend_5p, lowest_offset: 0, highest_offset: 16);
-    DNAEndsMove dna_ends_move =
-        DNAEndsMove(moves: [move].build(), original_offset: 7, current_offset: 10, helix: helix1);
+    DNAEndsMove dna_ends_move = DNAEndsMove(
+      moves: [move].build(),
+      original_offset: 7,
+      current_offset: 10,
+      helix: helix1,
+      geometry: design.geometry,
+    );
     AppState new_state = app_state_reducer(state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
 
     // Expected Result:

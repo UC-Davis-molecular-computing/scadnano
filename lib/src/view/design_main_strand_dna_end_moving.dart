@@ -7,6 +7,7 @@ import 'package:react/react.dart' as react;
 import '../state/dna_end.dart';
 
 import '../state/dna_ends_move.dart';
+import '../state/geometry.dart';
 import '../state/helix.dart';
 
 import '../app.dart';
@@ -36,6 +37,7 @@ UiFactory<EndMovingProps> ConnectedEndMoving = connect<DNAEndsMove?, EndMovingPr
       ..forward = props.dna_end!.forward
       ..is_5p = props.dna_end!.is_5p
       ..svg_position_y = props.svg_position_y
+      ..geometry = dna_ends_move.geometry
       ..transform = null;
   },
   context: app.context_dna_ends_move,
@@ -49,6 +51,7 @@ mixin EndMovingProps on UiProps {
   Color? color;
   bool? forward;
   bool? is_5p;
+  Geometry? geometry;
 
   int? current_offset;
   double? svg_position_y;
@@ -76,7 +79,8 @@ class EndMovingComponent extends UiComponent2<EndMovingProps> {
     double svg_position_y = props.svg_position_y!;
     bool is_5p = props.is_5p!;
     Color color = props.color!;
-    Point<double> pos = helix.svg_base_pos(current_offset, forward, svg_position_y);
+    Geometry geometry = props.geometry!;
+    Point<double> pos = helix.svg_base_pos(current_offset, forward, svg_position_y, geometry);
     EndEitherPrimeProps end_props = (is_5p ? End5Prime() : End3Prime());
     String classname = (is_5p ? 'five-prime-end-moving' : 'three-prime-end-moving') +
         (props.allowable ? '' : ' disallowed-end');

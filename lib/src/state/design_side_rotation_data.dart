@@ -77,7 +77,9 @@ abstract class DesignSideRotationData
           break;
         }
       }
-      double minor_groove_angle = design.geometry.minor_groove_angle;
+      var group = design.groups[helix.group]!;
+      var geometry = group.geometry ?? design.geometry;
+      double minor_groove_angle = geometry.minor_groove_angle;
       design_side_rotation_datas_builder.add(DesignSideRotationData(
           helix, offset, color_forward, color_reverse, roll_forward, minor_groove_angle));
     }
