@@ -257,7 +257,7 @@ Future<List<DialogItem>?> dialog(Dialog dialog) async {
     app.dispatch(actions.DialogHide());
   }
   // https://api.dart.dev/stable/2.7.0/dart-async/Completer-class.html
-  Completer<List<DialogItem>> completer = Completer<List<DialogItem>>();
+  Completer<List<DialogItem>?> completer = Completer<List<DialogItem>?>();
   dialog = dialog.rebuild((b) => b
     ..on_submit = (List<DialogItem>? items) {
       completer.complete(items);
