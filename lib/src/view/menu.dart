@@ -362,12 +362,12 @@ It will also only work on scadnano designs that are exportable to cadnano.
     return undo_or_redo_dropdowns((i) => actions.Redo(i), props.state.undo_redo.redo_stack, "Redo");
   }
 
-  List<ReactElement> undo_or_redo_dropdowns(ActionFromIntCreator undo_or_redo_action_creator,
-      BuiltList<UndoRedoItem> undo_or_redo_stack, String action_name) {
+  List<ReactElement> undo_or_redo_dropdowns(
+      ActionFromIntCreator undo_or_redo_action_creator, BuiltList<UndoRedoItem> stack, String action_name) {
     List<ReactElement> dropdowns = [];
     int num_times = 1;
     bool most_recent = true;
-    for (var item in undo_or_redo_stack.reversed) {
+    for (var item in stack.reversed) {
       dropdowns
           .add(undo_or_redo_dropdown(item, undo_or_redo_action_creator, num_times, action_name, most_recent));
       num_times += 1;
@@ -378,9 +378,11 @@ It will also only work on scadnano designs that are exportable to cadnano.
 
   ReactElement undo_or_redo_dropdown(UndoRedoItem item, ActionFromIntCreator undo_or_redo_action_creator,
       int num_times, String action_name, bool is_most_recent) {
+    String key = '${action_name.toLowerCase()}-${num_times}';
+    print("key: $key");
     return (MenuDropdownItem()
       ..display = '${action_name} "${item.short_description}"' + (is_most_recent ? " [Most Recent]" : "")
-      ..key = '${action_name.toLowerCase()}-${num_times}'
+      ..key = key
       ..on_click = (_) => app.dispatch(undo_or_redo_action_creator(num_times)))();
   }
 
@@ -389,7 +391,7 @@ It will also only work on scadnano designs that are exportable to cadnano.
       ..title_ = 'Copy/Paste/Select'
       ..id_ = 'edit_menu_copy-paste'
       ..key = 'edit_menu_copy-paste'
-      ..className = 'submenu-item')([
+      ..className = 'submenu-item')(
       (MenuDropdownItem()
         ..on_click = (_) {
           if (this.enable_copy) {
@@ -397,7 +399,6 @@ It will also only work on scadnano designs that are exportable to cadnano.
           }
         }
         ..display = 'Copy'
-        ..key = 'edit_menu_copy-paste_copy'
         ..keyboard_shortcut = 'Ctrl+C'
         ..tooltip = '''\
 Copy the currently selected strand(s). They can be pasted into this design,
@@ -411,7 +412,6 @@ a text document to see a JSON description of the copied strand(s).'''
           }
         }
         ..display = 'Copy image'
-        ..key = 'edit_menu_copy-paste_copy-image'
         ..keyboard_shortcut = 'Ctrl+I'
         ..tooltip = '''\
 Copy a (PNG bitmap) image of the currently selected strand(s) to the system
@@ -425,7 +425,6 @@ to save an SVG file of the selected strands.'''
         ..on_click =
             ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped))
         ..display = 'Paste'
-        ..key = 'edit_menu_copy-paste_paste'
         ..tooltip = '''\
 Paste the previously copied strand(s). They can be pasted into this design,
 or into another design in another browser or tab. You can also paste into
@@ -435,7 +434,6 @@ a text document to see a JSON description of the copied strand(s).
       (MenuDropdownItem()
         ..on_click = ((_) => paste_strands_auto())
         ..display = 'Autopaste'
-        ..key = 'edit_menu_copy-paste_autopaste'
         ..tooltip = '''\
 This automatically pastes copied strands to an automatically selected position
 in the design, which can be faster to create many copies of strand(s) than
@@ -457,46 +455,41 @@ with some default direction chosen. Play with it and see!
         ..on_click =
             ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.A, ctrlKey: true).wrapped))
         ..display = 'Select all'
-        ..key = 'edit_menu_copy-select-all'
         ..tooltip = 'Select all strands in the design.'
         ..keyboard_shortcut = 'Ctrl+A')(),
       (MenuDropdownItem()
         ..on_click = ((_) => app.dispatch(actions.SelectAllSelectable(current_helix_group_only: true)))
         ..display = 'Select all in helix group'
-        ..key = 'edit_menu_copy-select-all-in-helix-groups'
         ..tooltip = 'Select all selectable strands in the current helix group.'
         ..keyboard_shortcut = 'Ctrl+Shift+A')(),
       (MenuDropdownItem()
         ..on_click = ((_) => app.disable_keyboard_shortcuts_while(ask_for_select_all_with_same_as_selected))
         ..display = 'Select all with same...'
-        ..key = 'edit_menu_copy-select-all-with-same'
         ..tooltip = 'Select all strands that share given trait(s) as the currently selected strand(s).'
         ..keyboard_shortcut = 'Alt+Shift+A')(),
       (MenuBoolean()
         ..value = props.state.ui_state.selection_box_intersection
         ..display = 'Selection box intersection'
-        ..key = 'edit_menu_copy-paste_Selection box intersection'
         ..tooltip = '''\
 In Select mode, one does Shift+drag to create a selection box, and in rope select mode,
 one can draw a more general selection "rope" polygon. This checkbox determines the rule 
-for how objects are selected by these boxes.
+for how objects are selected by these shape.
 
-If unchecked, select any object *entirely contained within* the selection box.
+If unchecked, select any object *entirely contained within* the selection shape.
 
-If checked, select any object *intersecting* the selection box, even if some parts lie 
-outside the box.'''
+If checked, select any object *intersecting* the selection shape, even if some parts lie 
+outside the selection shape.'''
         ..on_change = ((_) => app.dispatch(actions.SelectionBoxIntersectionRuleSet(
             intersect: !props.state.ui_state.selection_box_intersection))))(),
       (MenuBoolean()
         ..value = props.state.ui_state.strand_paste_keep_color
         ..display = 'Pasted strands keep original color'
-        ..key = 'edit_menu_copy-paste_Pasted strands keep original color'
         ..tooltip = '''\
 If checked, when copying and pasting a strand, the color is preserved.
 If unchecked, then a new color is generated.'''
         ..on_change = ((_) => app.dispatch(
             actions.StrandPasteKeepColorSet(keep: !props.state.ui_state.strand_paste_keep_color))))(),
-    ]);
+    );
   }
 
   ReactElement edit_menu_helix_rolls() {
@@ -504,11 +497,10 @@ If unchecked, then a new color is generated.'''
       ..title_ = 'Helix rolls'
       ..id_ = 'edit_menu_helix-rolls'
       ..key = 'edit_menu_helix-rolls'
-      ..className = 'submenu-item')([
+      ..className = 'submenu-item')(
       (MenuDropdownItem()
         ..on_click = ((_) => app.dispatch(actions.RelaxHelixRolls(only_selected: false)))
         ..display = 'Set helix rolls to unstrain crossovers'
-        ..key = 'edit_menu_helix-rolls_set-helix-rolls'
         ..tooltip = '''\
 Sets all helix rolls to "relax" them based on their crossovers.
 
@@ -523,7 +515,6 @@ then set the rolls to match the crossover locations as best as possible.
       (MenuDropdownItem()
         ..on_click = ((_) => app.dispatch(actions.RelaxHelixRolls(only_selected: true)))
         ..display = 'Set *selected* helix rolls to unstrain crossovers'
-        ..key = 'edit_menu_helix-rolls_set-selected-helix-rolls'
         ..tooltip = '''\
 Same as option "Set helix rolls based on crossovers and helix coordinates" above,
 but changes the rolls only of selected helices.''')(),
@@ -531,7 +522,6 @@ but changes the rolls only of selected helices.''')(),
       (MenuDropdownItem()
         ..on_click = ((_) => app.dispatch(actions.HelicesPositionsSetBasedOnCrossovers()))
         ..display = 'Set helix coordinates based on crossovers'
-        ..key = 'edit_menu_helix-rolls_set-helix-positions-based-on-crossovers'
         ..disabled = this.no_grid_is_none
         ..tooltip = '''\
 The grid must be set to none to enable this.${this.no_grid_is_none ? " (Currently disabled since the grid is not none.)" : ""}
@@ -547,7 +537,6 @@ directly at the adjoining helix.''')(),
       (MenuBoolean()
         ..value = props.state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls
         ..display = 'default to leftmost scaffold crossover'
-        ..key = 'edit_menu_helix-rolls_default to leftmost scaffold crossover'
         ..tooltip = '''\
 When selecting "Set helix coordinates based on crossovers", if two adjacent 
 helices do not have a crossover selected, determines which types to select 
@@ -570,7 +559,6 @@ Ignored if design is not an origami (i.e., does not have at least one scaffold).
       (MenuBoolean()
         ..value = props.state.ui_state.default_crossover_type_staple_for_setting_helix_rolls
         ..display = 'default to leftmost staple crossover'
-        ..key = 'edit_menu_helix-rolls_default to leftmost staple crossover'
         ..tooltip = '''\
 When selecting "Set helix coordinates based on crossovers", if two adjacent 
 helices do not have a crossover selected, determines which types to select 
@@ -590,7 +578,7 @@ Ignored if design is not an origami (i.e., does not have at least one scaffold).
                 staple: !props.state.ui_state.default_crossover_type_staple_for_setting_helix_rolls));
           }
         })(),
-    ]);
+    );
   }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////

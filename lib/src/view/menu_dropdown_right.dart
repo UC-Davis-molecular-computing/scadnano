@@ -55,12 +55,12 @@ class MenuDropdownRightComponent
     // (if there's a keyboard shortcut) allows us to have a keyboard shortcut in the dropdown title
     // justified to the right, while the rest of the title is justified to the left.
     // React Bootstrap only seems to pass along the components properly when they are HTML elements,
-    // in this case a <span> and a <text> element. We can pass a list of Strings as the value to associate
+    // in this case two <span> elements. We can pass a list of Strings as the value to associate
     // to the 'title' key, but then the keyboard shortcut will be left-justified with the rest of the title.
     bool has_shortcut = props.keyboard_shortcut != null;
-    var title_and_shortcut = [Dom.span()(props.title_)];
+    var title_and_shortcut = [(Dom.span()..key = 'title')(props.title_)];
     if (has_shortcut) {
-      title_and_shortcut.add(Dom.text()(props.keyboard_shortcut!));
+      title_and_shortcut.add((Dom.span()..key = 'shortcut')(props.keyboard_shortcut!));
     }
     var menu_dropdown_right = DropdownButton({
       'title': has_shortcut ? title_and_shortcut : props.title_,
