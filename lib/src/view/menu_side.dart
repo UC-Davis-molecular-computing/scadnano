@@ -340,10 +340,11 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
         DialogFloat(label: 'minor groove angle (degrees)', value: geometry.minor_groove_angle);
 
     var dialog = Dialog(
-        title: 'adjust geometric parameters',
-        type: DialogType.adjust_geometric_parameters,
-        items: items,
-        use_saved_response: false);
+      title: 'adjust geometric parameters',
+      type: DialogType.adjust_geometric_parameters_group,
+      items: items,
+      use_saved_response: false,
+    );
     List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
 

@@ -309,7 +309,8 @@ to the first end e2 after it in this order, if
       // Set geometric parameters
       DropdownDivider({}),
       (MenuDropdownItem()
-        ..on_click = ((_) => ask_for_geometry(props.state.maybe_design?.geometry))
+        ..on_click = ((_) =>
+            app.disable_keyboard_shortcuts_while(() => ask_for_geometry(props.state.maybe_design?.geometry)))
         ..display = 'Set geometric parameters'
         ..tooltip = '''\
 Set geometric parameters affecting how the design is displayed.
@@ -1464,7 +1465,11 @@ Future<void> ask_for_geometry(Geometry? geometry) async {
       DialogFloat(label: 'minor groove angle (degrees)', value: geometry.minor_groove_angle);
 
   var dialog = Dialog(
-      title: 'adjust geometric parameters', type: DialogType.adjust_geometric_parameters, items: items);
+    title: 'adjust geometric parameters',
+    type: DialogType.adjust_geometric_parameters_design,
+    items: items,
+    use_saved_response: false,
+  );
   List<DialogItem>? results = await util.dialog(dialog);
   if (results == null) return;
 

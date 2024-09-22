@@ -21,7 +21,8 @@ class DialogType extends EnumClass {
   /******************** end BuiltValue boilerplate *********************/
 
   static const DialogType choose_autobreak_parameters = _$choose_autobreak_parameters;
-  static const DialogType adjust_geometric_parameters = _$adjust_geometric_parameters;
+  static const DialogType adjust_geometric_parameters_design = _$adjust_geometric_parameters_design;
+  static const DialogType adjust_geometric_parameters_group = _$adjust_geometric_parameters_group;
   static const DialogType create_new_helix_group = _$create_new_helix_group;
   static const DialogType adjust_current_helix_group = _$adjust_current_helix_group;
   static const DialogType adjust_helix_indices = _$adjust_helix_indices;
