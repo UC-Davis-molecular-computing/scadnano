@@ -1,6 +1,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+import 'package:scadnano/src/state/copy_info.dart';
 
 import '../serializers.dart';
 import 'design.dart';
@@ -38,11 +39,20 @@ abstract class UndoRedoItem with BuiltJsonSerializable implements Built<UndoRedo
 
   Design get design;
 
+  CopyInfo get copy_info;
+
   /************************ begin BuiltValue boilerplate ************************/
 
-  factory UndoRedoItem(String short_description, Design design) => UndoRedoItem.from((b) => b
+  factory UndoRedoItem(String short_description, Design design, CopyInfo copy_info) => UndoRedoItem.from((b) => b
     ..short_description = short_description
-    ..design.replace(design));
+    ..copy_info.update((c) {
+        print('I am replaced***');
+        if (copy_info != null) {
+          c.replace(copy_info);
+        }
+      })    
+    ..design.replace(design)
+    );
 
   factory UndoRedoItem.from([void Function(UndoRedoItemBuilder) updates]) = _$UndoRedoItem;
 
