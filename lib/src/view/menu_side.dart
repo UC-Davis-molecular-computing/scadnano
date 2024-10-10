@@ -79,7 +79,6 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
     }
     options.addAll([
       DropdownDivider({'key': 'divider-add-remove'}),
-      grid_menu(groups),
       (MenuDropdownItem()
         ..display = 'adjust current group'
         ..on_click = ((ev) => set_new_parameters_for_current_group(groups))
