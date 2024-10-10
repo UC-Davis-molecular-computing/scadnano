@@ -54,22 +54,16 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
     }
 
     if (groups.length > 1 || props.displayed_group_name != constants.default_group_name) {
-      return Navbar(
-        {
-          'bg': 'light',
-          'expand': 'lg',
-        },
-        NavbarBrand({'key': 'side-menu-display-title'}, props.displayed_group_name),
-        groups_menu(groups),
-      );
+      return Navbar({
+        'bg': 'light',
+        'expand': 'lg',
+      }, NavbarBrand({'key': 'side-menu-display-title'}, props.displayed_group_name), groups_menu(groups),
+          grid_menu(groups));
     } else {
-      return Navbar(
-        {
-          'bg': 'light',
-          'expand': 'lg',
-        },
-        groups_menu(groups),
-      );
+      return Navbar({
+        'bg': 'light',
+        'expand': 'lg',
+      }, groups_menu(groups), grid_menu(groups));
     }
   }
 
