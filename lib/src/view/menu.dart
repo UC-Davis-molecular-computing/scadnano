@@ -379,7 +379,6 @@ It will also only work on scadnano designs that are exportable to cadnano.
   ReactElement undo_or_redo_dropdown(UndoRedoItem item, ActionFromIntCreator undo_or_redo_action_creator,
       int num_times, String action_name, bool is_most_recent) {
     String key = '${action_name.toLowerCase()}-${num_times}';
-    print("key: $key");
     return (MenuDropdownItem()
       ..display = '${action_name} "${item.short_description}"' + (is_most_recent ? " [Most Recent]" : "")
       ..key = key
