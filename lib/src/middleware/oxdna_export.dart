@@ -77,8 +77,18 @@ String to_oxview_format(Design design, List<Strand> strands_to_export) {
 
   Map<String, dynamic> oxview_strand_map = {};
   Map<String, int> strand_id_to_index = {};
+  List<String> strand_names_without_dna = [];
   for (int i = 0; i < strands_to_export.length; i++) {
     Strand sc_strand = strands_to_export[i];
+
+    if (sc_strand.dna_sequence == null || sc_strand.dna_sequence!.contains(constants.DNA_BASE_WILDCARD)) {
+      if (sc_strand.name != null) {
+        strand_names_without_dna.add(sc_strand.name!);
+      } else {
+        strand_names_without_dna.add(sc_strand.id);
+      }
+    }
+
     strand_id_to_index[sc_strand.id] = i;
     OxdnaStrand oxdna_strand = system.strands[i];
 
@@ -121,80 +131,16 @@ String to_oxview_format(Design design, List<Strand> strands_to_export) {
     }
     oxview_strands.add(oxv_strand);
   }
-  // print('first loop: ${DateTime.now().difference(start).inMilliseconds} ms');
 
-  // start = DateTime.now();
-
-  // find base pairs
-  //TODO: this is slow; compute this in a memoized getter on the Design,
-  // and make it linear time instead of quadratic by iterating over each helix, since
-  // it's useless to check all these pairs of strands that do not even have domains on the same helix.
-  // for (int i1 = 0; i1 < strands_to_export.length; i1++) {
-  //   Strand sc_strand1 = strands_to_export[i1];
-  //   Map<String, dynamic> oxv_strand1 = oxview_strands[i1];
-  //   for (int i2 = 0; i2 < strands_to_export.length; i2++) {
-  //     Strand sc_strand2 = strands_to_export[i2];
-  //     if (!sc_strand1.overlaps(sc_strand2)) {
-  //       continue;
-  //     }
-  //     int s1_nuc_idx = strand_nuc_start[i1 + 1];
-  //     for (var domain1 in sc_strand1.domains) {
-  //       if (domain1 is Loopout || domain1 is Extension) {
-  //         continue;
-  //       }
-  //       int s2_nuc_idx = strand_nuc_start[i2 + 1];
-  //       for (var domain2 in sc_strand2.domains) {
-  //         if (domain2 is Loopout || domain2 is Extension) {
-  //           continue;
-  //         }
-  //         if (!domain1.overlaps(domain2)) {
-  //           continue;
-  //         }
-  //         Tuple2<int, int> overlap = domain1.compute_overlap(domain2);
-  //         int overlap_left = overlap.item1;
-  //         int overlap_right = overlap.item2;
-  //         int s1_left = sc_strand1.domain_offset_to_strand_dna_idx(domain1, overlap_left, false);
-  //         int s1_right = sc_strand1.domain_offset_to_strand_dna_idx(domain1, overlap_right, false);
-  //         int s2_left = sc_strand2.domain_offset_to_strand_dna_idx(domain2, overlap_left, false);
-  //         int s2_right = sc_strand2.domain_offset_to_strand_dna_idx(domain2, overlap_right, false);
-  //         List<int> d1range;
-  //         List<int> d2range;
-  //         if (domain1.forward) {
-  //           d1range = List<int>.from(quiver.range(s1_left, s1_right));
-  //           d2range = List<int>.from(quiver.range(s2_left, s2_right, -1));
-  //         } else {
-  //           d1range = List<int>.from(quiver.range(s1_right + 1, s1_left + 1));
-  //           d2range = List<int>.from(quiver.range(s2_right - 1, s2_left - 1, -1));
-  //         }
-  //         assert(d1range.length == d2range.length);
-  //
-  //         for (int i = 0; i < d1range.length; i++) {
-  //           int d1 = d1range[i];
-  //           int d2 = d2range[i];
-  //           // Check for mismatches, and do not add a pair if the bases are *known*
-  //           // to mismatch.  (FIXME: this must be changed if scadnano later supports
-  //           // degenerate base codes.)
-  //           // Note that if either strand is *missing* a base (either because `dna_sequence` is null, or the
-  //           // base is assigned `?`, we *do* add the pair.
-  //           if (sc_strand1.dna_sequence != null &&
-  //               sc_strand2.dna_sequence != null &&
-  //               sc_strand1.dna_sequence[d1] != constants.DNA_BASE_WILDCARD &&
-  //               sc_strand2.dna_sequence[d2] != constants.DNA_BASE_WILDCARD &&
-  //               util.wc(sc_strand1.dna_sequence[d1]) != sc_strand2.dna_sequence[d2]) {
-  //             continue;
-  //           }
-  //           oxv_strand1['monomers'][d1]['bp'] = s2_nuc_idx + d2;
-  //           if (oxview_strands[i2]['monomers'][d2].containsKey('bp')) {
-  //             if (oxview_strands[i2]['monomers'][d2]['bp'] != s1_nuc_idx + d1) {
-  //               print('${s2_nuc_idx + d2} ${s1_nuc_idx + d1} '
-  //                   '${oxview_strands[i2]['monomers'][d2]['bp']} ${domain1} ${domain2}');
-  //             }
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
+  if (strand_names_without_dna.isNotEmpty) {
+    var msg = 'The following strands do not have complete DNA sequences assigned: '
+        '${strand_names_without_dna.join(", ")}. '
+        'These strands will be exported with a default sequence of "T" '
+        'for each nucleotide whose base is not specified. '
+        'This can lead to unexpected behavior in oxView. For best results, '
+        'assign a DNA sequence to each strand before exporting.';
+    window.alert(msg);
+  }
 
   //TODO: this hasn't been tested well
   var base_pairs_map = design.base_pairs_with_domain_strand(false, true, strands_to_export.toSet().build());
