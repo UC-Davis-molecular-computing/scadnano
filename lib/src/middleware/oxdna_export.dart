@@ -427,15 +427,6 @@ Tuple3<OxdnaVector, OxdnaVector, OxdnaVector> oxdna_get_helix_vectors(Design des
   var grid = group.grid;
   var geometry = group.geometry ?? design.geometry;
 
-  // var forward = OxdnaVector(0, 0, 1);
-  // var normal = OxdnaVector(0, -1, 0);
-  //
-  // forward = forward.rotate(design.yaw_of_helix(helix), normal);
-  // forward = forward.rotate(-design.pitch_of_helix(helix), OxdnaVector(1, 0, 0));
-  // normal = normal.rotate(-design.pitch_of_helix(helix), OxdnaVector(1, 0, 0));
-  //
-  // normal = normal.rotate(-helix.roll, forward);
-
   // principal axes for computing rotation
   // see https://en.wikipedia.org/wiki/Aircraft_principal_axes
   var yaw_axis = OxdnaVector(0, 1, 0);
@@ -454,25 +445,34 @@ Tuple3<OxdnaVector, OxdnaVector, OxdnaVector> oxdna_get_helix_vectors(Design des
   roll_axis = roll_axis.rotate(design.pitch_of_helix(helix), pitch_axis);
 
   // then the roll rotation
-  yaw_axis = yaw_axis.rotate(-design.roll_of_helix(helix), roll_axis);
+  yaw_axis = yaw_axis.rotate(-group.roll, roll_axis);
+  pitch_axis = pitch_axis.rotate(-group.roll, roll_axis);
 
   // by chosen convention, forward is the same as the roll axis
   // and normal is the negated yaw axis
   var forward = roll_axis;
   var normal = -yaw_axis;
 
-  var position = Position3D();
+  // account for helix roll separately or this would mess up the rotations of the axes above
+  normal = normal.rotate(-helix.roll, roll_axis);
+
+  var position_in_helix_group = Position3D();
   if (grid == Grid.none) {
     // unnecessary since this check is done in the position getter, but this way the code exactly mirrors
     // the Python package equivalent
-    position = helix.position(geometry);
+    position_in_helix_group = helix.position(geometry);
   } else {
-    position = util.grid_position_to_position3d(helix.grid_position!, grid, geometry);
+    position_in_helix_group = util.grid_position_to_position3d(helix.grid_position!, grid, geometry);
   }
 
-  position = position + group.position;
+  var position_in_helix_group_rotated = ((pitch_axis * position_in_helix_group.x) +
+      (yaw_axis * position_in_helix_group.y) +
+      (roll_axis * position_in_helix_group.z));
 
-  var origin = OxdnaVector(position.x, position.y, position.z) * NM_TO_OX_UNITS;
+  var helix_group_offset = OxdnaVector(group.position.x, group.position.y, group.position.z);
+
+  var origin = (position_in_helix_group_rotated + helix_group_offset) * NM_TO_OX_UNITS;
+
   return Tuple3<OxdnaVector, OxdnaVector, OxdnaVector>(origin, forward, normal);
 }
 
