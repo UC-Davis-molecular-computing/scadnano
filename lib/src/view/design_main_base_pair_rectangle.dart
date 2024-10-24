@@ -54,6 +54,10 @@ class DesignMainBasePairRectangleComponent extends UiComponent2<DesignMainBasePa
         List<ReactElement> helix_components = [];
         int last_offset = -2;
         var last_svg_forward_pos = null;
+
+        int starting_rect_offset = base_pairs[helix_idx]![1];
+        int ending_rect_offset = base_pairs[helix_idx]!.last;
+
         for (int offset in base_pairs[helix_idx]!) {
           var svg_position_y = props.helix_idx_to_svg_position_y_map[helix_idx]!;
           var base_svg_forward_pos = helix.svg_base_pos(offset, true, svg_position_y, geometry);
@@ -62,11 +66,28 @@ class DesignMainBasePairRectangleComponent extends UiComponent2<DesignMainBasePa
           var base_pair_ele = null;
 
           if (offset - last_offset == 1) {
+            double width_modifier = 1;
+            double x_offset = 0;
+
+            // need to move/expand the left-most square (turn into rectangle)
+            // this solves the left-side for GH issue #987
+            if (offset == starting_rect_offset) {
+              width_modifier = 1.25;
+              x_offset = -3;
+            }
+
+            // need to move/expand the right-most square (turn into rectangle)
+            // this solves the right-side for GH issue #987
+            if (offset == ending_rect_offset) {
+              width_modifier = 1.25;
+              x_offset = 0.5;
+            }
+
             base_pair_ele = (Dom.rect()
               ..id = 'base_pair-${helix_idx}-${offset}'
-              ..x = last_svg_forward_pos.x - 0.5
+              ..x = last_svg_forward_pos.x - 0.5 + x_offset
               ..y = base_svg_forward_pos.y
-              ..width = base_svg_reverse_pos.x - last_svg_forward_pos.x + 0.8
+              ..width = (base_svg_reverse_pos.x - last_svg_forward_pos.x + 0.8) * width_modifier
               ..height = base_svg_reverse_pos.y - base_svg_forward_pos.y
               ..className = constants.css_selector_base_pair_rect
               ..fill = 'grey'
