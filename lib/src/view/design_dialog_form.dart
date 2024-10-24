@@ -283,6 +283,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
           ..pattern = r'[+-]?(\d*[.])?\d+' // allow to type floating numbers
           ..value = item.value
           ..step = 'any'
+          ..className = 'dialog-form-item-input'
           ..onChange = (SyntheticFormEvent e) {
             var new_responses = current_responses.toBuilder();
             double? new_value = double.tryParse(e.target.value);

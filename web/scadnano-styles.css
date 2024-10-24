@@ -204,9 +204,27 @@ label + select {
 
 .dialog-form-item {
     align-self: flex-start;
+    width: 100%;
+
+    /* Used to help left and right justify the text and input respectively. */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     /*float: left;*/
     /*display: block;*/
 }
+
+.dialog-form-item label {
+    flex-grow: 1; /* Force label to take up available space. */
+    display: flex;
+    justify-content: space-between; /* Evenly distribute text and input. */
+    align-items: center;
+}
+
+.dialog-form-item-input {
+    margin-left: auto; /* Force input toward the right. */
+}
+
 
 .dialog-button {
     display: inline-block;
