@@ -644,12 +644,13 @@ class DesignViewComponent {
       ev.preventDefault();
       app.disable_keyboard_shortcuts_while(ask_for_select_all_with_same_as_selected);
     } else if ((app.state.ui_state.edit_modes.contains(EditModeChoice.select) ||
-        app.state.ui_state.edit_modes.contains(EditModeChoice.rope_select) &&
-            ev.altKey &&
-            !(ev.ctrlKey || ev.metaKey))) {
+            app.state.ui_state.edit_modes.contains(EditModeChoice.rope_select)) &&
+        ev.altKey &&
+        !(ev.ctrlKey || ev.metaKey)) {
       // Alt+? for select modes
       ev.preventDefault(); // for some reason this is not stopping Alt+D,
       // so we also let the user type Alt+O since Alt+D has a special meaning in Chrome
+
       if (key == KeyCode.S) {
         app.dispatch(actions.SelectModeToggle(SelectModeChoice.strand));
       } else if (key == KeyCode.O || key == KeyCode.D) {
