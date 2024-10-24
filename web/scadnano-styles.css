@@ -211,14 +211,14 @@ label + select {
 }
 
 /* Only apply this to labels that contain an input field */
-.dialog-form-item label:has(> .dialog-form-item-input) {
+.dialog-form-item label:has(> input) {
     display: flex;
     gap: 10px;
     justify-content: space-between; /* Allow the label text and input to take up entire space. */
     align-items: center; /* Align items vertically */
 }
 
-.dialog-form-item-input {
+.dialog-form-item input {
     margin-left: auto; /* Force label input toward the right. */
 }
 
