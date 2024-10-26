@@ -23,7 +23,7 @@ import '../actions/actions.dart' as actions;
 import '../state/helix.dart';
 import '../util.dart' as util;
 import '../util.dart';
-import 'export_cadnano_or_codenano_file.dart' as export_cadnano;
+import 'export_cadnano_file.dart' as export_cadnano;
 import '../constants.dart' as constants;
 import 'oxdna_export.dart';
 import '../app.dart';

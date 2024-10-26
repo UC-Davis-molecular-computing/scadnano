@@ -1,7 +1,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/actions/actions.dart';
 import 'package:scadnano/src/json_serializable.dart';
-import 'package:scadnano/src/middleware/export_cadnano_or_codenano_file.dart';
+import 'package:scadnano/src/middleware/export_cadnano_file.dart';
 import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/grid.dart';
@@ -290,6 +290,22 @@ main() {
       String filename = 'test_paranemic_crossover.sc';
       Design design = Design.from_json_str(
           await get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'))!;
+
+      String output_json = to_cadnano_v2_json(design);
+      Design output_design = Design.from_cadnano_v2_json_str(output_json);
+      expect(output_design.helices.length, 4);
+    });
+
+    test('test_paranemic_crossover_other_direction', () async {
+      var helices = [
+        Helix(idx: 1, max_offset: 64, grid_position: GridPosition(19, 14), grid: Grid.square),
+        Helix(idx: 0, max_offset: 64, grid_position: GridPosition(19, 15), grid: Grid.square),
+        Helix(idx: 3, max_offset: 64, grid_position: GridPosition(19, 16), grid: Grid.square),
+        Helix(idx: 2, max_offset: 64, grid_position: GridPosition(19, 17), grid: Grid.square),
+      ];
+      var design = Design(helices: helices);
+      design = design.draw_strand(3, 24).to(8).cross(1, 24).to(8).commit();
+      design = design.draw_strand(2, 50).to(24).cross(0, 50).to(24).commit();
 
       String output_json = to_cadnano_v2_json(design);
       Design output_design = Design.from_cadnano_v2_json_str(output_json);

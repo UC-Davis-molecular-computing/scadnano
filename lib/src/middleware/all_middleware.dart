@@ -6,7 +6,7 @@ import 'dna_extensions_move_start.dart';
 import 'forbid_create_circular_strand_no_crossovers_middleware.dart';
 import 'helix_group_move_start.dart';
 import 'adjust_grid_position.dart';
-import 'export_cadnano_or_codenano_file.dart';
+import 'export_cadnano_file.dart';
 import 'assign_dna.dart';
 import 'check_mirror_strands_legal.dart';
 import 'edit_select_mode_change.dart';
@@ -48,7 +48,7 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   export_svg_middleware,
   save_file_middleware,
   load_file_middleware,
-  export_cadnano_or_codenano_file_middleware,
+  export_cadnano_file_middleware,
   example_design_selected_middleware,
   throttle_middleware,
   assign_dna_middleware,
