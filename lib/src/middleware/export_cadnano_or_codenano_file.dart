@@ -176,24 +176,24 @@ Map<String, dynamic> to_cadnano_v2_serializable(Design design, [String name = ""
             'since they are not cadnano v2 concepts.');
       }
 
-      bool right_direction;
+      bool cadnano_expected_direction;
 
       Domain domain = substrand as Domain;
       if (strand.is_scaffold) {
         if (domain.helix % 2 == 0) {
-          right_direction = domain.forward;
+          cadnano_expected_direction = domain.forward;
         } else {
-          right_direction = !domain.forward;
+          cadnano_expected_direction = !domain.forward;
         }
       } else {
         if (domain.helix % 2 == 0) {
-          right_direction = !domain.forward;
+          cadnano_expected_direction = !domain.forward;
         } else {
-          right_direction = domain.forward;
+          cadnano_expected_direction = domain.forward;
         }
       }
 
-      if (!right_direction) {
+      if (!cadnano_expected_direction) {
         throw new IllegalCadnanoDesignError(
             'We can only convert designs where even helices have the scaffold going forward and odd helices have the scaffold going backward see the spec v2.txt Note 4. ${domain}');
       }
