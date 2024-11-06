@@ -143,7 +143,8 @@ String to_oxview_format(Design design, List<Strand> strands_to_export) {
   }
 
   //TODO: this hasn't been tested well
-  var base_pairs_map = design.base_pairs_with_domain_strand(false, true, strands_to_export.toSet().build());
+  var base_pairs_map =
+      design.base_pairs_with_domain_strand(false, true, strands_to_export.toSet().build(), true);
   for (int helix in base_pairs_map.keys) {
     for (var offset_dom_strands in base_pairs_map[helix]!) {
       int offset = offset_dom_strands.item1;

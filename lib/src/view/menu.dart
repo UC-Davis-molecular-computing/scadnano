@@ -909,7 +909,7 @@ or real coordinates in nanometers, depending on whether a grid is selected).'''
       ..key = 'view_menu_base_pairs-dropdown'
       ..className = 'submenu_item')([
       (MenuBoolean()
-        ..value = props.state.ui_state.base_pair_display_type.toIndex() == 1
+        ..value = props.state.ui_state.base_pair_display_type == BasePairDisplayType.lines
         ..display = 'Display as ${BasePairDisplayType.lines.display_name()}'
         ..key = 'base-pair-display-lines'
         ..on_change = (_) {
@@ -919,6 +919,20 @@ or real coordinates in nanometers, depending on whether a grid is selected).'''
             app.dispatch(actions.BasePairTypeSet(selected_idx: BasePairDisplayType.lines.toIndex()));
           }
         })(),
+      (MenuBoolean()
+        ..value = props.state.ui_state.export_base_pair_lines_if_other_strand_not_selected
+        ..hide = props.state.ui_state.base_pair_display_type != BasePairDisplayType.lines
+        ..display = 'Export base pair lines if other strand not selected'
+        ..tooltip = '''\
+When exporting an image of strands while base pair lines are displayed, either through 
+Edit-->Copy/Paste/Select-->Copy image (Ctrl+I), or through 
+Export-->SVG of selected strands, where it is possible that some strands are not selected,
+but are bound to strands that are selected, this determines whether to export the base pair 
+lines connecting the exported strand to the other (non-exported) strand.'''
+        ..on_change = ((_) => app.dispatch(actions.ExportBasePairLinesIfOtherStrandNotSelectedSet(
+            export_base_pair_lines_if_other_strand_not_selected:
+                !props.state.ui_state.export_base_pair_lines_if_other_strand_not_selected)))
+        ..key = 'display-major-tick-offsets-on-all-helices')(),
       (MenuBoolean()
         ..value = props.state.ui_state.base_pair_display_type.toIndex() == 2
         ..display = 'Display as ${BasePairDisplayType.rectangle.display_name()}'

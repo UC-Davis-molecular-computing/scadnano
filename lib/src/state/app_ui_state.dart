@@ -156,6 +156,9 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get show_base_pair_lines => storables.show_base_pair_lines;
 
+  bool get export_base_pair_lines_if_other_strand_not_selected =>
+      storables.export_base_pair_lines_if_other_strand_not_selected;
+
   bool get show_base_pair_lines_with_mismatches => storables.show_base_pair_lines_with_mismatches;
 
   double get strand_name_font_size => storables.strand_name_font_size;

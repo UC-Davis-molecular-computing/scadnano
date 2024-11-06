@@ -2152,21 +2152,23 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   /// maps each helix_idx to a list of offsets where there is a complementary base pair on each strand,
   /// or when at least one of the strands lacks DNA (is null or is `?` wildcard)
   @memoized
-  BuiltMap<int, BuiltList<int>> get base_pairs => this._base_pairs(false, strands.toBuiltSet());
+  BuiltMap<int, BuiltList<int>> get base_pairs => this._base_pairs(false, strands.toBuiltSet(), true);
 
   /// maps each helix_idx to a list of offsets where there is a base on each strand,
   /// NOT necessarily complementary
   @memoized
   BuiltMap<int, BuiltList<int>> get base_pairs_with_mismatches =>
-      this._base_pairs(true, strands.toBuiltSet());
+      this._base_pairs(true, strands.toBuiltSet(), true);
 
   // returns a subset of base_pairs that is connected to selected_strands
-  BuiltMap<int, BuiltList<int>> selected_base_pairs(BuiltSet<Strand> selected_strands) =>
-      this._base_pairs(false, selected_strands);
+  BuiltMap<int, BuiltList<int>> selected_base_pairs(
+          BuiltSet<Strand> selected_strands, bool include_base_pair_lines_if_other_strand_not_selected) =>
+      this._base_pairs(false, selected_strands, include_base_pair_lines_if_other_strand_not_selected);
 
   // returns a subset of base_pairs_with_mismatches that is connected to selected_strands
-  BuiltMap<int, BuiltList<int>> selected_base_pairs_with_mismatches(BuiltSet<Strand> selected_strands) =>
-      this._base_pairs(true, selected_strands);
+  BuiltMap<int, BuiltList<int>> selected_base_pairs_with_mismatches(
+          BuiltSet<Strand> selected_strands, bool include_base_pair_lines_if_other_strand_not_selected) =>
+      this._base_pairs(true, selected_strands, include_base_pair_lines_if_other_strand_not_selected);
 
   /// Teturns a list of tuples (offset, d1, d2, s1, s2), where offset is the offset on the helix
   /// of a base pair, and d1/d2/s1/s2 are the domains/strands in the base pair.
@@ -2175,7 +2177,10 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   /// Otherwise we only consider them paired if they both have DNA; [allow_mismatches] then determines
   /// whether they need to be complementary to be considered a base pair.
   BuiltMap<int, BuiltList<Tuple5<int, Domain, Domain, Strand, Strand>>> base_pairs_with_domain_strand(
-      bool allow_mismatches, bool allow_unassigned_dna, BuiltSet<Strand> selected_strands) {
+      bool allow_mismatches,
+      bool allow_unassigned_dna,
+      BuiltSet<Strand> selected_strands,
+      bool include_base_pair_lines_if_other_strand_not_selected) {
     var base_pairs_with_domain_strand = Map<int, BuiltList<Tuple5<int, Domain, Domain, Strand, Strand>>>();
     BuiltSet<Domain> selected_domains = selected_strands
         .map((s) => s.substrands)
@@ -2193,8 +2198,18 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
           // If not allowing unassigned DNA, then skip if either has no DNA sequence
           continue;
         }
-        if (!selected_domains.contains(dom1) || !selected_domains.contains(dom2)) {
-          continue;
+        if (include_base_pair_lines_if_other_strand_not_selected) {
+          // If we include base pair lines when one strand is not selected, we still need to check
+          // that the OTHER strand is selected.
+          if (!selected_domains.contains(dom1) && !selected_domains.contains(dom2)) {
+            continue;
+          }
+        } else {
+          // If we only include base pair lines when both strands are selected, then skip if either
+          // strand is not selected.
+          if (!selected_domains.contains(dom1) || !selected_domains.contains(dom2)) {
+            continue;
+          }
         }
         // We already checked that these domains are overlapping by calling
         // `find_overlapping_domains_on_helix`, so the next call should not return null.
@@ -2234,9 +2249,10 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return base_pairs_with_domain_strand.build();
   }
 
-  BuiltMap<int, BuiltList<int>> _base_pairs(bool allow_mismatches, BuiltSet<Strand> selected_strands) {
-    var base_pairs_with_domain_strand =
-        this.base_pairs_with_domain_strand(allow_mismatches, true, selected_strands);
+  BuiltMap<int, BuiltList<int>> _base_pairs(bool allow_mismatches, BuiltSet<Strand> selected_strands,
+      bool include_base_pair_lines_if_other_strand_not_selected) {
+    var base_pairs_with_domain_strand = this.base_pairs_with_domain_strand(
+        allow_mismatches, true, selected_strands, include_base_pair_lines_if_other_strand_not_selected);
     var base_pairs = Map<int, BuiltList<int>>();
     for (int idx in base_pairs_with_domain_strand.keys) {
       base_pairs[idx] = base_pairs_with_domain_strand[idx]!.map((x) => x.item1).toList().build();

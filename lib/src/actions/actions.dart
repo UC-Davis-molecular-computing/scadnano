@@ -4398,6 +4398,29 @@ abstract class ShowBasePairLinesSet
   int get hashCode;
 }
 
+abstract class ExportBasePairLinesIfOtherStrandNotSelectedSet
+    with
+        BuiltJsonSerializable
+    implements
+        Action,
+        Built<ExportBasePairLinesIfOtherStrandNotSelectedSet,
+            ExportBasePairLinesIfOtherStrandNotSelectedSetBuilder> {
+  bool get export_base_pair_lines_if_other_strand_not_selected;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExportBasePairLinesIfOtherStrandNotSelectedSet(
+          {required bool export_base_pair_lines_if_other_strand_not_selected}) =
+      _$ExportBasePairLinesIfOtherStrandNotSelectedSet._;
+
+  ExportBasePairLinesIfOtherStrandNotSelectedSet._();
+
+  static Serializer<ExportBasePairLinesIfOtherStrandNotSelectedSet> get serializer =>
+      _$exportBasePairLinesIfOtherStrandNotSelectedSetSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
 abstract class ShowBasePairLinesWithMismatchesSet
     with BuiltJsonSerializable
     implements Action, Built<ShowBasePairLinesWithMismatchesSet, ShowBasePairLinesWithMismatchesSetBuilder> {

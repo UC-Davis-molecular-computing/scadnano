@@ -84,9 +84,11 @@ List<Element> get_selected_svg_elements(AppState state) {
   BuiltSet<Strand> selected_strands = state.ui_state.selectables_store.selected_strands;
   List<Element> selected_elts = [];
   if (app.state.ui_state.base_pair_display_type != BasePairDisplayType.none) {
+    bool export_bp_if_other_not_selected =
+        app.state.ui_state.export_base_pair_lines_if_other_strand_not_selected;
     var base_pairs = state.ui_state.show_base_pair_lines_with_mismatches
-        ? state.design.selected_base_pairs_with_mismatches(selected_strands)
-        : state.design.selected_base_pairs(selected_strands);
+        ? state.design.selected_base_pairs_with_mismatches(selected_strands, export_bp_if_other_not_selected)
+        : state.design.selected_base_pairs(selected_strands, export_bp_if_other_not_selected);
     selected_elts.addAll(get_svg_elements_of_base_pairs(base_pairs));
   }
   selected_elts.addAll(get_svg_elements_of_strands(selected_strands));

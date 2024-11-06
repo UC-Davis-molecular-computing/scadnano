@@ -39,6 +39,8 @@ abstract class AppUIStateStorables
 
   bool get show_base_pair_lines;
 
+  bool get export_base_pair_lines_if_other_strand_not_selected;
+
   bool get show_base_pair_lines_with_mismatches;
 
   double get strand_name_font_size;
@@ -147,6 +149,7 @@ abstract class AppUIStateStorables
     b.show_domain_labels = false;
     b.base_pair_display_type = BasePairDisplayType.none;
     b.show_base_pair_lines = false;
+    b.export_base_pair_lines_if_other_strand_not_selected = false;
     b.show_base_pair_lines_with_mismatches = false;
     b.strand_name_font_size = constants.default_strand_name_font_size;
     b.strand_label_font_size = constants.default_strand_label_font_size;

@@ -82,6 +82,7 @@ part 'serializers.g.dart';
   SubstrandLabelSet,
   DomainNameMismatch,
   ShowBasePairLinesSet,
+  ExportBasePairLinesIfOtherStrandNotSelectedSet,
   ShowBasePairLinesWithMismatchesSet,
   ShowDomainNameMismatchesSet,
   ShowUnpairedInsertionDeletionsSet,

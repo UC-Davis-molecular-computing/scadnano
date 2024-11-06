@@ -251,6 +251,10 @@ BasePairDisplayType base_pair_type_idx_reducer(
 
 bool show_base_pair_lines_reducer(bool _, actions.ShowBasePairLinesSet action) => action.show_base_pair_lines;
 
+bool export_base_pair_lines_if_other_strand_not_selected_reducer(
+        bool _, actions.ExportBasePairLinesIfOtherStrandNotSelectedSet action) =>
+    action.export_base_pair_lines_if_other_strand_not_selected;
+
 bool show_base_pair_lines_with_mismatches_reducer(
         bool _, actions.ShowBasePairLinesWithMismatchesSet action) =>
     action.show_base_pair_lines_with_mismatches;
@@ -531,6 +535,10 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
             storables.base_pair_display_type, action)
     ..show_base_pair_lines = TypedReducer<bool, actions.ShowBasePairLinesSet>(show_base_pair_lines_reducer)(
         storables.show_base_pair_lines, action)
+    ..export_base_pair_lines_if_other_strand_not_selected =
+        TypedReducer<bool, actions.ExportBasePairLinesIfOtherStrandNotSelectedSet>(
+                export_base_pair_lines_if_other_strand_not_selected_reducer)(
+            storables.export_base_pair_lines_if_other_strand_not_selected, action)
     ..show_base_pair_lines_with_mismatches = TypedReducer<bool, actions.ShowBasePairLinesWithMismatchesSet>(
         show_base_pair_lines_with_mismatches_reducer)(storables.show_base_pair_lines_with_mismatches, action)
     ..export_svg_text_separately =

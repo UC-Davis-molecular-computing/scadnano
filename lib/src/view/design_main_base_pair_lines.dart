@@ -37,8 +37,8 @@ class DesignMainBasePairLinesComponent extends UiComponent2<DesignMainBasePairLi
   List<ReactElement> create_base_pair_lines_components(BuiltSet<Strand> strands) {
     List<ReactElement> base_pair_lines_components = [];
     BuiltMap<int, BuiltList<int>> base_pairs = props.with_mismatches
-        ? props.design.selected_base_pairs_with_mismatches(strands)
-        : props.design.selected_base_pairs(strands);
+        ? props.design.selected_base_pairs_with_mismatches(strands, true)
+        : props.design.selected_base_pairs(strands, true);
 
     for (int helix_idx in base_pairs.keys) {
       if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(helix_idx)) {
