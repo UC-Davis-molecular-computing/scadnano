@@ -204,8 +204,32 @@ label + select {
 
 .dialog-form-item {
     align-self: flex-start;
+
     /*float: left;*/
     /*display: block;*/
+}
+
+/* Only modify the width of the dialog form items that contain these specific classes. */
+.dialog-form-item:has(label > input[type="number"]),
+.dialog-form-item:has(label > input[type="text"]),
+.dialog-form-item:has(div > .radio-left) {
+    width: 100%;
+}
+
+/* Only apply to labels/divs that contain their specified elements. */
+.dialog-form-item label:has(> input[type="number"]),
+.dialog-form-item label:has(> input[type="text"]),
+.dialog-form-item div:has(> .radio-left) {
+    display: flex;
+    gap: 10px;
+    align-items: center; /* Align items vertically */
+}
+
+/* Only affect specific inputs/classes that are part of the dialog form item. */
+.dialog-form-item input[type="number"],
+.dialog-form-item input[type="text"],
+.dialog-form-item .radio-left {
+    margin-left: auto; /* Force label input toward the right. */
 }
 
 .dialog-button {
