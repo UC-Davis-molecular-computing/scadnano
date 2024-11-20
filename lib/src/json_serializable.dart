@@ -54,6 +54,35 @@ class SuppressableIndentEncoder extends JsonEncoder {
     return result;
   }
 }
+// class SuppressableIndentEncoder {
+//   final String indent;
+//   final bool suppress;
+//   final Replacer replacer;
+//   final JsonEncoder encoder_indent;
+//
+//   // Use composition: hold an instance of JsonEncoder
+//   final JsonEncoder encoder;
+//
+//   SuppressableIndentEncoder(Replacer replacer, {String this.indent = "  ", bool this.suppress = true})
+//       : this.replacer = replacer,
+//         this.encoder_indent = JsonEncoder.withIndent(indent),
+//         this.encoder = JsonEncoder.withIndent(indent);
+//
+//   String convert(Object? obj) {
+//     String result = encoder.convert(obj);
+//     for (var key in this.replacer.replacement_map.keys) {
+//       String val = this.replacer.replacement_map[key];
+//
+//       // Dart *really* minifies its JSON; let's make it a bit more readable
+//       // using a cheap hack to avoid replacing those ':' that occur within a JSON string key
+//       val = val.replaceAll('":', '": '); // hopefully that " is the end of the previous key
+//       val = val.replaceAll(',', ', ');
+//
+//       result = result.replaceFirst('"@@${key}@@"', val);
+//     }
+//     return result;
+//   }
+// }
 
 class Replacer {
   int unique_id = 0;
