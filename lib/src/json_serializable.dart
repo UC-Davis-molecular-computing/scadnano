@@ -27,7 +27,7 @@ String json_encode(JSONSerializable? obj, [bool suppress_indent = true]) {
   return json_str;
 }
 
-class SuppressableIndentEncoder extends JsonEncoder {
+class SuppressableIndentEncoder {
   final String indent;
   final bool suppress;
   final Replacer replacer;
@@ -36,13 +36,12 @@ class SuppressableIndentEncoder extends JsonEncoder {
 
   SuppressableIndentEncoder(Replacer replacer, {String this.indent = "  ", bool this.suppress = true})
       : this.replacer = replacer,
-        this.encoder_indent = JsonEncoder.withIndent(indent),
-        super(replacer.default_encode);
+        this.encoder_indent = JsonEncoder.withIndent(indent, replacer.default_encode);
 
   String convert(Object? obj) {
-    String result = super.convert(obj);
+    String result = this.encoder_indent.convert(obj);
     for (var key in this.replacer.replacement_map.keys) {
-      String val = this.replacer.replacement_map[key];
+      String val = this.replacer.replacement_map[key]!;
 
       // Dart *really* minifies its JSON; let's make it a bit more readable
       // using a cheap hack to avoid replacing those ':' that occur within a JSON string key
@@ -57,7 +56,7 @@ class SuppressableIndentEncoder extends JsonEncoder {
 
 class Replacer {
   int unique_id = 0;
-  final Map replacement_map = {};
+  final Map<int, String> replacement_map = {};
   final JsonEncoder encoder_no_indent = JsonEncoder();
 
   dynamic default_encode(dynamic obj) {
