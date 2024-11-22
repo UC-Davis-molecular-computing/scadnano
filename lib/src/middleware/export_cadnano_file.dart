@@ -133,7 +133,8 @@ Map<String, dynamic> to_cadnano_v2_serializable(Design design, [String name = ""
 
       if (!cadnano_expected_direction) {
         throw new IllegalCadnanoDesignError(
-            'We can only convert designs where even helices have the scaffold going forward and odd helices have the scaffold going backward see the spec v2.txt Note 4. ${domain}');
+            'We can only convert designs where even helices have the scaffold going forward and odd helices '
+            'have the scaffold going backward see the spec v2.txt Note 4. ${domain}');
       }
     }
   }

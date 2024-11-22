@@ -303,8 +303,8 @@ main() {
         Helix(idx: 3, max_offset: 64, grid_position: GridPosition(19, 16), grid: Grid.square),
         Helix(idx: 2, max_offset: 64, grid_position: GridPosition(19, 17), grid: Grid.square),
       ];
-      var design = Design(helices: helices);
-      design = design.draw_strand(3, 24).to(8).cross(1, 24).to(8).commit();
+      var design = Design(helices: helices, grid: Grid.square);
+      design = design.draw_strand(3, 24).to(8).cross(1, 24).to(8).as_scaffold().commit();
       design = design.draw_strand(2, 50).to(24).cross(0, 50).to(24).commit();
 
       String output_json = to_cadnano_v2_json(design);
