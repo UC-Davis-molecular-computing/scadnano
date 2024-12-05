@@ -129,9 +129,9 @@ main() {
           .cross(1)
           .move(-16)
           .as_scaffold()
-          // also assigns complement to strands other than scaf bound to it
+      // also assigns complement to strands other than scaf bound to it
           .with_sequence('AACGT' * 18)
-          // deletions and insertions added to design so they can be added to both strands on a helix
+      // deletions and insertions added to design so they can be added to both strands on a helix
           .add_deletion(0, 11)
           .add_deletion(0, 12)
           .add_deletion(0, 24)
@@ -303,8 +303,8 @@ main() {
         Helix(idx: 3, max_offset: 64, grid_position: GridPosition(19, 16), grid: Grid.square),
         Helix(idx: 2, max_offset: 64, grid_position: GridPosition(19, 17), grid: Grid.square),
       ];
-      var design = Design(helices: helices);
-      design = design.draw_strand(3, 24).to(8).cross(1, 24).to(8).commit();
+      var design = Design(helices: helices, grid: Grid.square);
+      design = design.draw_strand(3, 24).to(8).cross(1, 24).to(8).as_scaffold().commit();
       design = design.draw_strand(2, 50).to(24).cross(0, 50).to(24).commit();
 
       String output_json = to_cadnano_v2_json(design);
@@ -355,9 +355,9 @@ main() {
           .loopout(1, 3)
           .move(-16)
           .as_scaffold()
-          // also assigns complement to strands other than scaf bound to it
+      // also assigns complement to strands other than scaf bound to it
           .with_sequence('AACGT' * 18)
-          // deletions and insertions added to design so they can be added to both strands on a helix
+      // deletions and insertions added to design so they can be added to both strands on a helix
           .add_deletion(1, 20)
           .add_insertion(0, 14, 1)
           .add_insertion(0, 26, 2)
