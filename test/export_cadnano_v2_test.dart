@@ -129,9 +129,9 @@ main() {
           .cross(1)
           .move(-16)
           .as_scaffold()
-      // also assigns complement to strands other than scaf bound to it
+          // also assigns complement to strands other than scaf bound to it
           .with_sequence('AACGT' * 18)
-      // deletions and insertions added to design so they can be added to both strands on a helix
+          // deletions and insertions added to design so they can be added to both strands on a helix
           .add_deletion(0, 11)
           .add_deletion(0, 12)
           .add_deletion(0, 24)
@@ -355,9 +355,9 @@ main() {
           .loopout(1, 3)
           .move(-16)
           .as_scaffold()
-      // also assigns complement to strands other than scaf bound to it
+          // also assigns complement to strands other than scaf bound to it
           .with_sequence('AACGT' * 18)
-      // deletions and insertions added to design so they can be added to both strands on a helix
+          // deletions and insertions added to design so they can be added to both strands on a helix
           .add_deletion(1, 20)
           .add_insertion(0, 14, 1)
           .add_insertion(0, 26, 2)
