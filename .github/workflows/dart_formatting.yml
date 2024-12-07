@@ -20,7 +20,7 @@ jobs:
       - name: Add Dart Repository
         run: echo 'deb [signed-by=/usr/share/keyrings/dart.gpg arch=amd64] https://storage.googleapis.com/download.dartlang.org/linux/debian stable main' | sudo tee /etc/apt/sources.list.d/dart_stable.list
       - name: Install Dart
-        run: sudo apt-get update && sudo apt-get install dart=3.4.4
+        run: sudo apt-get update && sudo apt-get install dart=3.5.4
       - uses: actions/checkout@v4
       - name: Install dependencies
         run: dart pub get
