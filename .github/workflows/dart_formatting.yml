@@ -20,7 +20,7 @@ jobs:
       - name: Setup Dart SDK Step 4
         run: sudo sh -c 'wget -qO- https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_stable.list > /etc/apt/sources.list.d/dart_stable.list'
       - name: Setup Dart SDK Step 5
-        run: wget -O /tmp/dart_3.5.4-1_amd64.deb https://storage.googleapis.com/dart-archive/channels/stable/release/latest/linux_packages/dart_3.5.4-1_amd64.deb
+        run: wget -O /tmp/dart_3.5.4-1_amd64.deb https://storage.googleapis.com/dart-archive/channels/stable/release/3.5.4/linux_packages/dart_3.5.4-1_amd64.deb
       - name: Setup Dart SDK Step 6
         run: sudo apt install /tmp/dart_3.5.4-1_amd64.deb
       - uses: actions/checkout@v4

@@ -241,23 +241,23 @@ git checkout dev
 
 ### Installing Dart
 
-This project requires using Dart version **2.19.6**, not the latest version, which is 3.x. Click on a dropdown below for installation instructions for your operating system.
+This project requires using Dart version **3.5.4**, not the latest version. Click on a dropdown below for installation instructions for your operating system.
 
 <!--TODO: Find a way to use code blocks with syntax highlighting inside <details>-->
 
 <details><summary><strong>Windows</strong></summary>
 First, install <a href="https://chocolatey.org/install">Chocolatey</a> if you haven't already. If <code>choco help</code> shows a help menu for using Chocolatey, then you've set it up correctly.
 
-Then, open a shell (cmd/Powershell) with Administrative privileges (go to Start type `cmd`, right-click on "Command Prompt", or type Powershell and right-click on "Powershell"; in both cases pick "Run as administrator") and install Dart 2.19.6:
+Then, open a shell (cmd/Powershell) with Administrative privileges (go to Start type `cmd`, right-click on "Command Prompt", or type Powershell and right-click on "Powershell"; in both cases pick "Run as administrator") and install Dart 3.5.4:
 
 <pre>
-choco install dart-sdk --version 2.19.6
+choco install dart-sdk --version 3.5.4
 </pre>
 
 To stop Chocolatey from automatically updating Dart to the latest version, pin it:
 
 <pre>
-choco pin --name="'dart-sdk'" --version="'2.19.6'"
+choco pin --name="'dart-sdk'" --version="'3.5.4'"
 </pre>
 
 </details>
@@ -267,16 +267,16 @@ First, install <a href="https://brew.sh/">Homebrew</a> if you haven't already. I
 
 It may help to run `brew tap dart-lang/dart` first.
 
-Then, install Dart 2.19.6:
+Then, install Dart 3.5.4:
 
 <pre>
-brew install dart@2.19.6
+brew install dart@3.5.4
 </pre>
 
 To stop Homebrew from automatically updating Dart to the latest version, pin it:
 
 <pre>
-brew pin dart@2.19.6
+brew pin dart@3.5.4
 </pre>
 
 If running `dart` in a terminal now does not work, you may need to follow <a href="https://docs.brew.sh/FAQ#my-mac-apps-dont-find-homebrew-utilities">these instructions</a>.
@@ -292,17 +292,17 @@ wget -qO- https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo gpg --dea
 echo 'deb [signed-by=/usr/share/keyrings/dart.gpg arch=amd64] https://storage.googleapis.com/download.dartlang.org/linux/debian stable main' | sudo tee /etc/apt/sources.list.d/dart_stable.list
 </pre>
 
-Then, install Dart 2.19.6:
+Then, install Dart 3.5.4:
 
 <pre>
 sudo apt-get update
-sudo apt-get install dart=2.19.6
+sudo apt-get install dart=3.5.4
 </pre>
 
 To stop apt from automatically updating Dart to the latest version, hold it:
 
 <pre>
-sudo apt-mark hold dart=2.19.6
+sudo apt-mark hold dart=3.5.4
 </pre>
 
 </details>
@@ -322,6 +322,8 @@ Try running the unit tests like this:
 ```
 dart run build_runner test
 ```
+
+If the above command fails, it should be run as sudo or an administrator.
 
 It should report something like this after running the tests:
 
@@ -347,7 +349,7 @@ Built test:test.
 `webdev` is used to run a local server for running scadnano in your browser for testing. Install it with:
 
 ```
-pub global activate webdev
+dart pub global activate webdev
 ```
 
 Note that often a message like this appears:
