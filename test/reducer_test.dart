@@ -1608,7 +1608,7 @@ main() {
   String two_helices_json = '''
  {
   "version": "${constants.CURRENT_VERSION}",''' +
-      r''' 
+      r'''
   "grid": "square", 
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
   "strands": [

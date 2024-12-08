@@ -358,7 +358,7 @@ have different parity of row number: respectively ${helix_from_dct['row']} and $
   } else if (!forward_from && !forward_to) {
     helix_from_dct[strand_type][start_from]
         .setRange(2, helix_from_dct[strand_type][start_from].length, [helix_to, end_to - 1]);
-    helix_to_dct[strand_type][start_to].setRange(0, 2, [helix_from, end_from - 1]);
+    helix_to_dct[strand_type][end_to - 1].setRange(0, 2, [helix_from, start_from]);
     if (helix_from_dct['row'] % 2 != helix_to_dct['row'] % 2) {
       throw new IllegalCadnanoDesignError('''\
 Paranemic crossovers are only allowed between helices that have the same parity of 
