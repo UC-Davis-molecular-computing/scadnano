@@ -644,14 +644,14 @@ after:
           ].build()),
       ContextMenuItem(
           title: 'add extension',
-          on_click: () => app.disable_keyboard_shortcuts_while(() => ask_for_add_extension(strand)),
+          on_click: () => app.disable_keyboard_shortcuts_while(() => ask_for_add_extension(strand, type)),
           disabled: strand.has_5p_extension && strand.has_3p_extension),
     ];
 
     return items;
   }
 
-  Future<void> ask_for_add_extension(Strand strand) async {
+  Future<void> ask_for_add_extension(Strand strand, ModificationType type) async {
     if (strand.has_5p_extension && strand.has_3p_extension) {
       // This shouldn't be reachable since the context menu should not include the
       // add extension option in this case, but let's check just in case.
@@ -669,6 +669,9 @@ after:
     assert(options.isNotEmpty);
 
     int selected_radio_index = 0;
+    if ((type == ModificationType.three_prime) && (options.length > 1)) {
+      selected_radio_index = 1;
+    }
     int extension_end_idx = 0;
     int num_bases_idx = 1;
     var items = util.FixedList<DialogItem>(2);
