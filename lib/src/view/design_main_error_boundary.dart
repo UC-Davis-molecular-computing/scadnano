@@ -7,6 +7,7 @@ import 'package:over_react/src/component/error_boundary_recoverable.dart';
 import '../app.dart';
 import '../constants.dart' as constants;
 import '../actions/actions.dart' as actions;
+import '../util.dart' as util;
 
 part 'design_main_error_boundary.over_react.g.dart';
 
@@ -61,11 +62,9 @@ class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
     if (state.hasError) {
       var error = state.error;
 //      var escaper = HtmlEscape();
-      var escaped_error_message = 'You have discovered a bug in scadnano.  '
-          'Please file a bug report as a GitHub issue at\n'
-          '  ${constants.BUG_REPORT_URL}\n'
-          'and include the following information:\n\n'
-          '${error.toString()}\n\nstack trace:\n${error.stackTrace}' //escaper.convert(
+      var escaped_error_message = util.ASSERTION_ERROR_MESSAGE +
+              '\n\n' +
+              '${error.toString()}\n\nstack trace:\n${error.stackTrace}' //escaper.convert(
           //  )
           ;
 

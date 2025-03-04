@@ -56,8 +56,12 @@ import 'state/selection_box.dart';
 import 'state/strand.dart';
 import 'actions/actions.dart' as actions;
 
-const ASSERTION_ERROR_MESSAGE = 'You have discovered a bug. Please send this entire error message to\n'
-    '  ${constants.BUG_REPORT_URL}';
+const ASSERTION_ERROR_MESSAGE = '''
+You have discovered a bug. Please file a bug report as a GitHub issue at
+  ${constants.BUG_REPORT_URL}
+Please include as much detail as possible. For instance, it is helpful to upload the design
+you were working on, as well as indicating the steps to reproduce the error. Please also
+into the bug report any additional error information displayed in the app. Thank you!''';
 
 /////////////////////////////////////////////////////////////////////////////
 // interop between Dart and JS
@@ -1238,7 +1242,9 @@ String stack_trace_message_bug_report(stack_trace) {
       '\n**********************************************************************************'
       '\n* If you believe this is due to a bug in scadnano, please file a bug report at   *'
       '\n*   ${constants.BUG_REPORT_URL}${' ' * (77 - constants.BUG_REPORT_URL.length)}*'
-      '\n* Include this entire message in the email.                                      *'
+      '\n* Include this entire message in the email, as well as any detail that may help  *'
+      '\n* us, including uploading the scadnano design, as well as indicating steps to    *'
+      '\n* help us to reproduce the error.                                                *'
       '\n**********************************************************************************'
       '\n\nstack trace:'
       '\n${stack_trace}';

@@ -29,12 +29,7 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
     if (this.maybe_design != null) {
       return this.maybe_design!;
     } else {
-      throw AssertionError("""\
-You have discovered a bug in scadnano.
-
-Please file a bug report at https://github.com/UC-Davis-molecular-computing/scadnano/issues.
-Include as much detail as possible, including any information currently displayed 
-in the app. Thank you!""");
+      throw AssertionError(util.ASSERTION_ERROR_MESSAGE);
     }
   }
 
