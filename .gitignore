@@ -13,7 +13,6 @@ build/
 .vscode/
 
 node_modules/
-package-lock.json
 
 # Directory created by dartdoc
 doc/api/
