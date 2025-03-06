@@ -2235,8 +2235,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
                       base1 == constants.DNA_BASE_WILDCARD ||
                       base2 == constants.DNA_BASE_WILDCARD)) ||
               util.reverse_complementary(base1, base2, allow_wildcard: true)) {
-            offsets_and_domain_strand.add((
-                offset, dom1, dom2, this.substrand_to_strand[dom1]!, this.substrand_to_strand[dom2]!));
+            offsets_and_domain_strand
+                .add((offset, dom1, dom2, this.substrand_to_strand[dom1]!, this.substrand_to_strand[dom2]!));
           }
         }
       }

@@ -214,7 +214,7 @@ Map<(int, int), List<(Address, Address)>> _get_addresses_of_selected_crossovers_
     var next_dom = strand.substrands[crossover.next_domain_idx] as Domain;
     var prev_idx = prev_dom.helix;
     var next_idx = next_dom.helix;
-    (int, int) pair_idxs =(prev_idx, next_idx);
+    (int, int) pair_idxs = (prev_idx, next_idx);
     (int, int) pair_idxs_rev = (next_idx, prev_idx);
 
     if (addresses_top_bot_crossovers.containsKey(pair_idxs) ||
