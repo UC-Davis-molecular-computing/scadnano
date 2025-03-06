@@ -12,7 +12,6 @@ import '../state/domain.dart';
 import '../state/geometry.dart';
 import '../state/helix.dart';
 import '../state/position3d.dart';
-import 'package:tuple/tuple.dart';
 
 import '../state/address.dart';
 import '../actions/actions.dart' as actions;
@@ -55,7 +54,7 @@ List<actions.UndoableAction> get_helix_position_and_roll_actions(AppState state)
     var group = state.design.groups[group_name]!;
     var geometry = group.geometry ?? state.design.geometry;
     List<Helix> helices = _get_helices_to_process(state, group);
-    List<Tuple2<Address, Address>>? addresses = _get_addresses_to_process(state, helices);
+    List<(Address, Address)>? addresses = _get_addresses_to_process(state, helices);
     if (addresses == null) {
       continue;
     }
@@ -89,17 +88,17 @@ List<Helix> _get_helices_to_process(AppState state, HelixGroup group) {
 /// on the two helices it connects.
 /// returns null if two such crossovers are selected
 /// if none are selected, finds the first (one with lowest offset on helix earlier in order in [helices])
-List<Tuple2<Address, Address>>? _get_addresses_to_process(AppState state, List<Helix> helices) {
+List<(Address, Address)>? _get_addresses_to_process(AppState state, List<Helix> helices) {
   var design = state.design;
   var selected_crossovers = state.ui_state.selectables_store.selected_crossovers;
   var addresses_of_selected_crossovers_by_prev_helix_idx =
       _get_addresses_of_selected_crossovers_by_prev_helix_idx(selected_crossovers, helices, design);
 
-  List<Tuple2<Address, Address>> addresses = [];
+  List<(Address, Address)> addresses = [];
   for (int i = 0; i < helices.length - 1; i++) {
     var helix_top = helices[i];
     var helix_bot = helices[i + 1];
-    var helix_idx_top_bot = Tuple2<int, int>(helix_top.idx, helix_bot.idx);
+    (int, int) helix_idx_top_bot = (helix_top.idx, helix_bot.idx);
     var addresses_crossovers_this_helices_pair =
         addresses_of_selected_crossovers_by_prev_helix_idx[helix_idx_top_bot]!;
 
@@ -115,12 +114,12 @@ Please select only one, or select none to default to the first crossover between
       return null;
     } else if (addresses_crossovers_this_helices_pair.length == 1) {
       // first try selected crossovers between this pair of helices
-      address_top = addresses_crossovers_this_helices_pair.first.item1;
-      address_bot = addresses_crossovers_this_helices_pair.first.item2;
+      address_top = addresses_crossovers_this_helices_pair.first.$1;
+      address_bot = addresses_crossovers_this_helices_pair.first.$2;
     } else {
       // otherwise if none are selected, find the addresses of first crossover between this pair of helices
       // using boolean scaffold/staple settings from user to possible ignore one of those types
-      Tuple2<Address, Address>? address_top_bot;
+      (Address, Address)? address_top_bot;
       bool use_scaffold = state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls;
       bool use_staple = state.ui_state.default_crossover_type_staple_for_setting_helix_rolls;
 
@@ -135,44 +134,44 @@ Please select only one, or select none to default to the first crossover between
         util.async_alert(msg);
         return null;
       }
-      address_top = address_top_bot.item1;
-      address_bot = address_top_bot.item2;
+      address_top = address_top_bot.$1;
+      address_bot = address_top_bot.$2;
     }
-    addresses.add(Tuple2<Address, Address>(address_top, address_bot));
+    addresses.add((address_top, address_bot));
   }
   return addresses;
 }
 
 // "First" refers to having the lowest offset on helix h1.
-Tuple2<Address, Address>? _first_crossover_addresses_between_helices(
+(Address, Address)? _first_crossover_addresses_between_helices(
     Helix helix_top, Helix helix_bot, Design design,
     {required bool use_scaffold, required bool use_staple}) {
-  BuiltList<Tuple2<Address, Crossover>> address_crossovers_on_top =
+  BuiltList<(Address, Crossover)> address_crossovers_on_top =
       design.address_crossover_pairs_by_helix_idx[helix_top.idx]!;
-  BuiltList<Tuple2<Address, Crossover>> address_crossovers_on_bot =
+  BuiltList<(Address, Crossover)> address_crossovers_on_bot =
       design.address_crossover_pairs_by_helix_idx[helix_bot.idx]!;
 
   // if not using scaffold or crossovers when finding leftmost, filter those out
   if (!use_scaffold) {
     address_crossovers_on_bot = address_crossovers_on_bot
-        .where((address_crossover) => !address_crossover.item2.is_scaffold)
+        .where((address_crossover) => !address_crossover.$2.is_scaffold)
         .toBuiltList();
   }
   if (!use_staple) {
     address_crossovers_on_bot = address_crossovers_on_bot
-        .where((address_crossover) => address_crossover.item2.is_scaffold)
+        .where((address_crossover) => address_crossover.$2.is_scaffold)
         .toBuiltList();
   }
 
   // find first crossover on h1 that also goes to h2
-  for (Tuple2<Address, Crossover> address_crossover_top in address_crossovers_on_top) {
-    Crossover crossover_top = address_crossover_top.item2;
+  for ((Address, Crossover) address_crossover_top in address_crossovers_on_top) {
+    Crossover crossover_top = address_crossover_top.$2;
     for (var address_crossover_bot in address_crossovers_on_bot) {
-      var crossover_bot = address_crossover_bot.item2;
+      var crossover_bot = address_crossover_bot.$2;
       if (crossover_bot == crossover_top) {
-        Address address_top = address_crossover_top.item1;
-        Address address_bot = address_crossover_bot.item1;
-        return Tuple2<Address, Address>(address_top, address_bot);
+        Address address_top = address_crossover_top.$1;
+        Address address_bot = address_crossover_bot.$1;
+        return (address_top, address_bot);
       }
     }
   }
@@ -191,17 +190,17 @@ Tuple2<Address, Address>? _first_crossover_addresses_between_helices(
 //   (7,5): [... (offset,crossover) pairs between 5 and 7, offset is where crossover touches helix 7]
 // }
 // Sorts each list by the offset on its first helix (first meaning first in order in helices)
-Map<Tuple2<int, int>, List<Tuple2<Address, Address>>> _get_addresses_of_selected_crossovers_by_prev_helix_idx(
+Map<(int, int), List<(Address, Address)>> _get_addresses_of_selected_crossovers_by_prev_helix_idx(
     BuiltSet<Crossover> selected_crossovers, List<Helix> helices, Design design) {
   // this is essentially what we return, but each crossover also carries with it the start offset of
   // the helix earlier in the ordering, which helps to sort the lists of crossovers before returning
-  Map<Tuple2<int, int>, List<Tuple2<Address, Address>>> addresses_top_bot_crossovers = {};
+  Map<(int, int), List<(Address, Address)>> addresses_top_bot_crossovers = {};
 
   // initialize internal map to have empty lists
   for (int i = 0; i < helices.length - 1; i++) {
     int idx1 = helices[i].idx;
     int idx2 = helices[i + 1].idx;
-    var pair_idxs = Tuple2<int, int>(idx1, idx2);
+    (int, int) pair_idxs = (idx1, idx2);
     addresses_top_bot_crossovers[pair_idxs] = [];
   }
 
@@ -215,8 +214,8 @@ Map<Tuple2<int, int>, List<Tuple2<Address, Address>>> _get_addresses_of_selected
     var next_dom = strand.substrands[crossover.next_domain_idx] as Domain;
     var prev_idx = prev_dom.helix;
     var next_idx = next_dom.helix;
-    var pair_idxs = Tuple2<int, int>(prev_idx, next_idx);
-    var pair_idxs_rev = Tuple2<int, int>(next_idx, prev_idx);
+    (int, int) pair_idxs =(prev_idx, next_idx);
+    (int, int) pair_idxs_rev = (next_idx, prev_idx);
 
     if (addresses_top_bot_crossovers.containsKey(pair_idxs) ||
         addresses_top_bot_crossovers.containsKey(pair_idxs_rev)) {
@@ -255,7 +254,7 @@ Map<Tuple2<int, int>, List<Tuple2<Address, Address>>> _get_addresses_of_selected
       }
       var address_top = Address(helix_idx: dom_top.helix, offset: offset_top, forward: dom_top.forward);
       var address_bot = Address(helix_idx: dom_bot.helix, offset: offset_bot, forward: dom_bot.forward);
-      addresses_top_bot_crossovers[pair_idxs]!.add(Tuple2<Address, Address>(address_top, address_bot));
+      addresses_top_bot_crossovers[pair_idxs]!.add((address_top, address_bot));
     }
   }
 
@@ -279,7 +278,7 @@ class RollXY {
 /// each pair of helix backbones at each other through the given [addresses].
 /// The first roll is [first_roll].
 List<RollXY> _calculate_rolls_and_positions(Design design, Geometry geometry, List<Helix> helices,
-    List<Tuple2<Address, Address>> addresses, double first_roll) {
+    List<(Address, Address)> addresses, double first_roll) {
   assert(helices.length == addresses.length + 1);
 
   double x = helices[0].position3d(geometry).z;
@@ -287,8 +286,8 @@ List<RollXY> _calculate_rolls_and_positions(Design design, Geometry geometry, Li
   List<RollXY> rollxys = [RollXY(roll: first_roll, x: x, y: y)];
 
   for (int i = 0; i < addresses.length; i++) {
-    var address_top = addresses[i].item1;
-    var address_bot = addresses[i].item2;
+    var address_top = addresses[i].$1;
+    var address_bot = addresses[i].$2;
     var roll = rollxys[i].roll;
     var x = rollxys[i].x;
     var y = rollxys[i].y;

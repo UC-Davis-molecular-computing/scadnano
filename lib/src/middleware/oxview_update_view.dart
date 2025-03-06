@@ -17,7 +17,6 @@ import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/position3d.dart';
 import 'package:scadnano/src/state/strand.dart';
-import 'package:tuple/tuple.dart';
 import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
 import '../state/helix.dart';
@@ -66,9 +65,9 @@ void update_oxview_view(Design design, [IFrameElement? frame = null]) {
   List<Strand> strands_to_export = design.strands.toList();
 
   // String content = to_oxview_format(design, strands_to_export);
-  Tuple2<String, String> dat_top = to_oxdna_format(design, strands_to_export);
-  String dat = dat_top.item1;
-  String top = dat_top.item2;
+  (String, String) dat_top = to_oxdna_format(design, strands_to_export);
+  String dat = dat_top.$1;
+  String top = dat_top.$2;
 
   Blob blob_dat = new Blob([dat], blob_type_to_string(BlobType.text));
   Blob blob_top = new Blob([top], blob_type_to_string(BlobType.text));

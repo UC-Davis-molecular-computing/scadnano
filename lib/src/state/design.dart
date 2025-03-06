@@ -2,7 +2,6 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:tuple/tuple.dart';
 import 'package:collection/collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
@@ -255,7 +254,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     Map<int, BuiltList<Crossover>> builder = {
       for (int idx in address_crossover_pairs_by_helix_idx.keys)
         idx: address_crossover_pairs_by_helix_idx[idx]!
-            .map((address_crossover_pair) => address_crossover_pair.item2)
+            .map((address_crossover_pair) => address_crossover_pair.$2)
             .toBuiltList()
     };
 
@@ -266,10 +265,10 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   // offset is inclusive on either end. This ensures that each half of a double crossover actual
   // has different offsets, and the leftmost one is considered smaller.
   @memoized
-  BuiltMap<int, BuiltList<Tuple2<Address, Crossover>>> get address_crossover_pairs_by_helix_idx {
+  BuiltMap<int, BuiltList<(Address, Crossover)>> get address_crossover_pairs_by_helix_idx {
     // this is essentially what we return, but each crossover also carries with it the start offset of
     // the helix earlier in the ordering, which helps to sort the lists of crossovers before returning
-    Map<int, List<Tuple2<Address, Crossover>>> address_crossover_pairs = {};
+    Map<int, List<(Address, Crossover)>> address_crossover_pairs = {};
 
     // initialize internal map to have empty lists
     for (int helix_idx in helices.keys) {
@@ -283,7 +282,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         var next_dom = strand.substrands[crossover.next_domain_idx] as Domain;
         bool is_prev = true;
         for (var dom in [prev_dom, next_dom]) {
-          List<Tuple2<Address, Crossover>> address_crossover_pair_list = address_crossover_pairs[dom.helix]!;
+          List<(Address, Crossover)> address_crossover_pair_list = address_crossover_pairs[dom.helix]!;
           int offset;
           // ugg, this logic is ugly. Here's the various possibilities
           /*
@@ -298,7 +297,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
             offset = dom.start;
           }
           var address = Address(helix_idx: dom.helix, offset: offset, forward: dom.forward);
-          var pair = Tuple2<Address, Crossover>(address, crossover);
+          (Address, Crossover) pair = (address, crossover);
           address_crossover_pair_list.add(pair);
           is_prev = false;
         }
@@ -307,16 +306,16 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
     // sort by offset where it intersects the helix
     for (var pair_idxs in address_crossover_pairs.keys) {
-      List<Tuple2<Address, Crossover>> start_crossover_pair_list = address_crossover_pairs[pair_idxs]!;
+      List<(Address, Crossover)> start_crossover_pair_list = address_crossover_pairs[pair_idxs]!;
       start_crossover_pair_list.sort((address_crossover_pair1, address_crossover_pair2) {
-        Address add1 = address_crossover_pair1.item1;
-        Address add2 = address_crossover_pair2.item1;
+        Address add1 = address_crossover_pair1.$1;
+        Address add2 = address_crossover_pair2.$1;
         return add1.offset - add2.offset;
       });
     }
 
     // convert to proper return type by dropping the offset
-    Map<int, BuiltList<Tuple2<Address, Crossover>>> builder = {
+    Map<int, BuiltList<(Address, Crossover)>> builder = {
       for (int idx in address_crossover_pairs.keys) idx: address_crossover_pairs[idx]!.toBuiltList()
     };
 
@@ -1034,7 +1033,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   /// into designs where helices do not have individual pitches and yaws.
   ///
   /// Pass these two maps into _groups_from_json so that groups can be assigned appropriate pitch, yaw values.
-  static Tuple3<Map<int, HelixBuilder>, Map<String, HelixPitchYaw>, Map<HelixPitchYaw, List<HelixBuilder>>>
+  static (Map<int, HelixBuilder>, Map<String, HelixPitchYaw>, Map<HelixPitchYaw, List<HelixBuilder>>)
       _helices_from_json(Map<String, dynamic> json_map, bool invert_y, Geometry geometry) {
     // Initialize containers
     List<HelixBuilder> helix_builders_list = [];
@@ -1127,7 +1126,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       for (var helix_builder in helix_builders_list) helix_builder.idx!: helix_builder
     };
 
-    return Tuple3(helix_builders_map, group_to_pitch_yaw, pitch_yaw_to_helices);
+    return (helix_builders_map, group_to_pitch_yaw, pitch_yaw_to_helices);
   }
 
   /// Returns map of helix group names to group as well as the grid.
@@ -1235,7 +1234,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return group_builders_map;
   }
 
-  static Tuple2<Map<int, HelixBuilder>, Map<String, HelixGroupBuilder>> _helices_and_groups_from_json(
+  static (Map<int, HelixBuilder>, Map<String, HelixGroupBuilder>) _helices_and_groups_from_json(
       Map<String, dynamic> json_map, bool invert_y, bool position_x_z_should_swap, Geometry geometry) {
     var grid =
         util.optional_field(json_map, constants.grid_key, constants.default_grid, transformer: Grid.valueOf);
@@ -1243,9 +1242,9 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     bool using_groups = json_map.containsKey(constants.groups_key);
 
     var r = _helices_from_json(json_map, invert_y, geometry);
-    Map<int, HelixBuilder> helix_builders_map = r.item1;
-    Map<String, HelixPitchYaw> group_to_pitch_yaw = r.item2;
-    Map<HelixPitchYaw, List<HelixBuilder>> pitch_yaw_to_helices = r.item3;
+    Map<int, HelixBuilder> helix_builders_map = r.$1;
+    Map<String, HelixPitchYaw> group_to_pitch_yaw = r.$2;
+    Map<HelixPitchYaw, List<HelixBuilder>> pitch_yaw_to_helices = r.$3;
 
     Map<String, HelixGroupBuilder> group_builders_map =
         _groups_from_json(json_map, helix_builders_map, group_to_pitch_yaw, pitch_yaw_to_helices);
@@ -1274,7 +1273,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         group_builder.position.z = swap;
       }
     }
-    return Tuple2(helix_builders_map, group_builders_map);
+    return (helix_builders_map, group_builders_map);
   }
 
   static Design? from_json_str(String json_str, [bool invert_y = false]) {
@@ -1305,8 +1304,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         legacy_keys: constants.legacy_geometry_keys);
 
     var t = Design._helices_and_groups_from_json(json_map, invert_y, position_x_z_should_swap, geometry);
-    var helix_builders_map = t.item1;
-    var group_builders_map = t.item2;
+    var helix_builders_map = t.$1;
+    var group_builders_map = t.$2;
 
     // strands
     List<Strand> strands = [];
@@ -1324,13 +1323,13 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     Map<String, Modification3Prime> mods_3p = {};
     Map<String, ModificationInternal> mods_int = {};
 
-    for (var all_mods_key_and_mods in [
-      Tuple2<String, Map<String, Modification5Prime>>(constants.design_modifications_5p_key, mods_5p),
-      Tuple2<String, Map<String, Modification3Prime>>(constants.design_modifications_3p_key, mods_3p),
-      Tuple2<String, Map<String, ModificationInternal>>(constants.design_modifications_int_key, mods_int),
+    for ((String, Map<String, dynamic>) all_mods_key_and_mods in [
+      (constants.design_modifications_5p_key, mods_5p),
+      (constants.design_modifications_3p_key, mods_3p),
+      (constants.design_modifications_int_key, mods_int),
     ]) {
-      var all_mods_key = all_mods_key_and_mods.item1;
-      var mods = all_mods_key_and_mods.item2;
+      var all_mods_key = all_mods_key_and_mods.$1;
+      var mods = all_mods_key_and_mods.$2;
       if (json_map.keys.contains(all_mods_key)) {
         var all_mods_json = json_map[all_mods_key];
         for (var mod_key in all_mods_json.keys) {
@@ -1618,18 +1617,18 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       if (domains.length == 0) continue;
 
       // check all consecutive domains on the same helix, sorted by start/end indices
-      List<Tuple3<int, bool, Domain>> offsets_data = [];
+      List<(int, bool, Domain)> offsets_data = [];
       for (var domain in domains) {
-        offsets_data.add(Tuple3<int, bool, Domain>(domain.start, true, domain));
-        offsets_data.add(Tuple3<int, bool, Domain>(domain.end, false, domain));
+        offsets_data.add((domain.start, true, domain));
+        offsets_data.add((domain.end, false, domain));
       }
-      offsets_data.sort((d1, d2) => d1.item1 - d2.item1);
+      offsets_data.sort((d1, d2) => d1.$1 - d2.$1);
 
       List<Domain> current_domains = [];
       for (var data in offsets_data) {
-        var offset = data.item1;
-        var is_start = data.item2;
-        var domain = data.item3;
+        var offset = data.$1;
+        var is_start = data.$2;
+        var domain = data.$3;
         if (is_start) {
           if (current_domains.length >= 2) {
             if (offset >= current_domains[1].end) {
@@ -2176,12 +2175,12 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   /// either of them has unassigned DNA (either no DNA sequence, or a `?` wildcard).
   /// Otherwise we only consider them paired if they both have DNA; [allow_mismatches] then determines
   /// whether they need to be complementary to be considered a base pair.
-  BuiltMap<int, BuiltList<Tuple5<int, Domain, Domain, Strand, Strand>>> base_pairs_with_domain_strand(
+  BuiltMap<int, BuiltList<(int, Domain, Domain, Strand, Strand)>> base_pairs_with_domain_strand(
       bool allow_mismatches,
       bool allow_unassigned_dna,
       BuiltSet<Strand> selected_strands,
       bool include_base_pair_lines_if_other_strand_not_selected) {
-    var base_pairs_with_domain_strand = Map<int, BuiltList<Tuple5<int, Domain, Domain, Strand, Strand>>>();
+    var base_pairs_with_domain_strand = Map<int, BuiltList<(int, Domain, Domain, Strand, Strand)>>();
     BuiltSet<Domain> selected_domains = selected_strands
         .map((s) => s.substrands)
         .expand((x) => x)
@@ -2189,11 +2188,11 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         .map((x) => x as Domain)
         .toBuiltSet();
     for (int idx in this.helices.keys) {
-      List<Tuple5<int, Domain, Domain, Strand, Strand>> offsets_and_domain_strand = [];
-      List<Tuple2<Domain, Domain>> overlapping_domains = find_overlapping_domains_on_helix(idx);
+      List<(int, Domain, Domain, Strand, Strand)> offsets_and_domain_strand = [];
+      List<(Domain, Domain)> overlapping_domains = find_overlapping_domains_on_helix(idx);
       for (var domain_pair in overlapping_domains) {
-        Domain dom1 = domain_pair.item1;
-        Domain dom2 = domain_pair.item2;
+        Domain dom1 = domain_pair.$1;
+        Domain dom2 = domain_pair.$2;
         if (!allow_unassigned_dna && (dom1.dna_sequence == null || dom2.dna_sequence == null)) {
           // If not allowing unassigned DNA, then skip if either has no DNA sequence
           continue;
@@ -2214,8 +2213,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         // We already checked that these domains are overlapping by calling
         // `find_overlapping_domains_on_helix`, so the next call should not return null.
         var start_and_end = dom1.compute_overlap(dom2)!;
-        int start = start_and_end.item1;
-        int end = start_and_end.item2;
+        int start = start_and_end.$1;
+        int end = start_and_end.$2;
         for (int offset = start; offset < end; offset++) {
           if (dom1.deletions.contains(offset) || dom2.deletions.contains(offset)) {
             continue;
@@ -2236,7 +2235,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
                       base1 == constants.DNA_BASE_WILDCARD ||
                       base2 == constants.DNA_BASE_WILDCARD)) ||
               util.reverse_complementary(base1, base2, allow_wildcard: true)) {
-            offsets_and_domain_strand.add(Tuple5<int, Domain, Domain, Strand, Strand>(
+            offsets_and_domain_strand.add((
                 offset, dom1, dom2, this.substrand_to_strand[dom1]!, this.substrand_to_strand[dom2]!));
           }
         }
@@ -2255,12 +2254,12 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         allow_mismatches, true, selected_strands, include_base_pair_lines_if_other_strand_not_selected);
     var base_pairs = Map<int, BuiltList<int>>();
     for (int idx in base_pairs_with_domain_strand.keys) {
-      base_pairs[idx] = base_pairs_with_domain_strand[idx]!.map((x) => x.item1).toList().build();
+      base_pairs[idx] = base_pairs_with_domain_strand[idx]!.map((x) => x.$1).toList().build();
     }
     return base_pairs.build();
   }
 
-  List<Tuple2<Domain, Domain>> find_overlapping_domains_on_helix(int helix_idx) {
+  List<(Domain, Domain)> find_overlapping_domains_on_helix(int helix_idx) {
     // compute list of pairs of domains that overlap on Helix `helix`
     List<Domain> forward_domains = domains_on_helix(helix_idx, forward: true);
     List<Domain> reverse_domains_list = domains_on_helix(helix_idx, forward: false);
@@ -2274,7 +2273,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     // need to be efficient to remove the front element repeatedly
     var reverse_domains = Queue<Domain>.from(reverse_domains_list);
 
-    List<Tuple2<Domain, Domain>> overlapping_domains = [];
+    List<(Domain, Domain)> overlapping_domains = [];
 
     for (var forward_domain in forward_domains) {
       var reverse_domain = reverse_domains.first;
@@ -2297,7 +2296,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
       // add each reverse_domain that overlaps forward_domain
       while (forward_domain.overlaps(reverse_domain)) {
-        overlapping_domains.add(Tuple2<Domain, Domain>(forward_domain, reverse_domain));
+        overlapping_domains.add((forward_domain, reverse_domain));
 
         if (reverse_domain.end <= forward_domain.end) {
           // [-----f_dom--->[--next_f_dom-->
@@ -2372,7 +2371,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
 
     // We do a DFS on strands
-    Map<String, Map<Tuple2<int, int>, bool>> seen = new HashMap();
+    Map<String, Map<(int, int), bool>> seen = new HashMap();
     seen['scaf'] = new HashMap();
     seen['stap'] = new HashMap();
     List<Strand> strands = [];
@@ -2385,9 +2384,9 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     for (Map<String, dynamic> cadnano_helix in cadnano_v2_design['vstrands']) {
       int helix_num = cadnano_helix['num'];
       for (String strand_type in ['scaf', 'stap']) {
-        Map<Tuple2<int, int>, bool> seen_strand_type = seen[strand_type]!;
+        Map<(int, int), bool> seen_strand_type = seen[strand_type]!;
         for (int base_id = 0; base_id < num_bases; base_id++) {
-          if (seen_strand_type.containsKey(Tuple2(helix_num, base_id))) continue;
+          if (seen_strand_type.containsKey((helix_num, base_id))) continue;
           Strand? strand = Design._cadnano_v2_import_explore_strand(
               cadnano_helices, strand_type, seen_strand_type, helix_num, base_id);
           if (strand != null) strands.add(strand);
@@ -2402,8 +2401,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   /// Routine that will follow a cadnano v2 strand accross helices and create
   /// cadnano domains and strand accordingly.
   static Strand? _cadnano_v2_import_explore_strand(Map<int, Map<String, dynamic>> vstrands,
-      String strand_type, Map<Tuple2<int, int>, bool> seen, int helix_num, int base_id) {
-    seen[Tuple2(helix_num, base_id)] = true;
+      String strand_type, Map<(int, int), bool> seen, int helix_num, int base_id) {
+    seen[(helix_num, base_id)] = true;
     int id_from = vstrands[helix_num]![strand_type]![base_id]![0]!;
     int base_from = vstrands[helix_num]![strand_type]![base_id]![1]!;
     int id_to = vstrands[helix_num]![strand_type]![base_id]![2]!;
@@ -2411,11 +2410,11 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
     if (id_from == -1 && base_from == -1 && id_to == -1 && base_to == -1) return null;
 
-    Tuple3<int, int, bool> tmp =
+    (int, int, bool) tmp =
         Design._cadnano_v2_import_find_5_end(vstrands, strand_type, helix_num, base_id, id_from, base_from);
-    int strand_5_end_helix = tmp.item1;
-    int strand_5_end_base = tmp.item2;
-    bool is_circular = tmp.item3;
+    int strand_5_end_helix = tmp.$1;
+    int strand_5_end_base = tmp.$2;
+    bool is_circular = tmp.$3;
 
     Color strand_color = Design._cadnano_v2_import_find_strand_color(
         vstrands, strand_type, strand_5_end_base, strand_5_end_helix);
@@ -2433,26 +2432,26 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   // Routine which finds the 5' end of a strand in a cadnano v2 import. It returns the
   // helix and the base of the 5' end.
-  static Tuple3<int, int, bool> _cadnano_v2_import_find_5_end(Map<int, Map<String, dynamic>> vstrands,
+  static (int, int, bool) _cadnano_v2_import_find_5_end(Map<int, Map<String, dynamic>> vstrands,
       String strand_type, int helix_num, int base_id, int id_from, int base_from) {
     int id_from_before = helix_num; // 'id' stands for helix id
     int base_from_before = base_id;
 
-    Map<Tuple2<int, int>, bool> circular_seen = {};
+    Map<(int, int), bool> circular_seen = {};
     bool is_circular = false;
 
     while (!(id_from == -1 && base_from == -1)) {
-      if (circular_seen.containsKey(Tuple2(id_from, base_from))) {
+      if (circular_seen.containsKey((id_from, base_from))) {
         is_circular = true;
         break;
       }
-      circular_seen[Tuple2(id_from, base_from)] = true;
+      circular_seen[(id_from, base_from)] = true;
       id_from_before = id_from;
       base_from_before = base_from;
       id_from = vstrands[id_from_before]![strand_type]![base_from_before]![0]!;
       base_from = vstrands[id_from_before]![strand_type]![base_from_before]![1]!;
     }
-    return Tuple3(id_from_before, base_from_before, is_circular);
+    return (id_from_before, base_from_before, is_circular);
   }
 
   /// Routine that finds the color of a cadnano v2 strand."""
@@ -2484,7 +2483,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   /// Finds all domains of a cadnano v2 strand.
   static List<Domain> _cadnano_v2_import_explore_domains(Map<int, Map<String, dynamic>> vstrands,
-      Map<Tuple2<int, int>, bool> seen, String strand_type, int strand_5_end_base, int strand_5_end_helix) {
+      Map<(int, int), bool> seen, String strand_type, int strand_5_end_base, int strand_5_end_helix) {
     int curr_helix = strand_5_end_helix;
     int curr_base = strand_5_end_base;
     List<Domain> domains = [];
@@ -2498,14 +2497,14 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     else
       end = curr_base;
 
-    Map<Tuple2<int, int>, bool> circular_seen = {};
+    Map<(int, int), bool> circular_seen = {};
     while (!(curr_helix == -1 && curr_base == -1)) {
-      if (circular_seen.containsKey(Tuple2(curr_helix, curr_base))) break;
-      circular_seen[Tuple2(curr_helix, curr_base)] = true;
+      if (circular_seen.containsKey((curr_helix, curr_base))) break;
+      circular_seen[(curr_helix, curr_base)] = true;
 
       int old_helix = curr_helix;
       int old_base = curr_base;
-      seen[Tuple2(curr_helix, curr_base)] = true;
+      seen[(curr_helix, curr_base)] = true;
       curr_helix = vstrands[old_helix]![strand_type]![old_base]![2]!;
       curr_base = vstrands[old_helix]![strand_type]![old_base]![3]!;
       /* Add crossover
@@ -2842,10 +2841,10 @@ BuiltMap<int, BuiltList<Domain>> construct_helix_idx_to_domains_map(Iterable<Str
 }
 
 _ensure_helix_idxs_unique(List<int> helix_indices, List<HelixBuilder> helix_builders_list) {
-  Tuple2<int, int>? repeated_idxs = util.repeated_element_indices(helix_indices);
+  (int, int)? repeated_idxs = util.repeated_element_indices(helix_indices);
   if (repeated_idxs != null) {
-    int i1 = repeated_idxs.item1;
-    int i2 = repeated_idxs.item2;
+    int i1 = repeated_idxs.$1;
+    int i2 = repeated_idxs.$2;
     int helix_idx = helix_builders_list[i1].idx!;
     throw IllegalDesignError('helix idx values must be unique, '
         'but two helices share idx = ${helix_idx}; they appear at positions ${i1} and ${i2} in the '

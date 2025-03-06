@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:tuple/tuple.dart';
 import '../state/design.dart';
 import '../state/position3d.dart';
 import '../state/unused_fields.dart';
@@ -408,12 +407,12 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   double compute_relaxed_roll_delta(
       BuiltMap<int, Helix> helices, BuiltList<Address> crossover_addresses, Geometry geometry) {
-    List<Tuple2<double, double>> angles = [];
+    List<(double, double)> angles = [];
     for (var address in crossover_addresses) {
       var other_helix = helices[address.helix_idx]!;
       var angle_of_other_helix = util.angle_from_helix_to_helix(this, other_helix, geometry);
       var crossover_angle = this.backbone_angle_at_offset(address.offset, address.forward, geometry);
-      var relative_angle = Tuple2<double, double>(crossover_angle, angle_of_other_helix);
+      (double, double) relative_angle = (crossover_angle, angle_of_other_helix);
       angles.add(relative_angle);
     }
     var angle = util.minimum_strain_angle(angles);

@@ -93,7 +93,7 @@ class ExtensionEndMovingComponent extends UiComponent2<ExtensionEndMovingProps> 
       ..forward = props.forward!;
     var display_angle = util.compute_extension_length_and_angle_from_point(
         pos, props.attached_end_svg!, props.ext!, props.ext!.adjacent_domain, props.geometry!);
-    var rotation_degrees = util.compute_end_rotation(display_angle.item2, props.forward!, props.is_5p!);
+    var rotation_degrees = util.compute_end_rotation(display_angle.$2, props.forward!, props.is_5p!);
     // https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-center-in-svg
     end_props = end_props..transform = "rotate($rotation_degrees)";
     return end_props();

@@ -17,7 +17,6 @@ import 'package:test/test.dart';
 
 import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/actions/actions.dart' as actions;
-import 'package:tuple/tuple.dart';
 
 import 'package:scadnano/src/util.dart' as util;
 import 'package:scadnano/src/constants.dart' as constants;
@@ -628,10 +627,10 @@ main() {
     });
 
     test('minimum_strain_angle_0_10_20_relative_to_0', () {
-      var relative_angles = [
-        Tuple2<double, double>(0, 0),
-        Tuple2<double, double>(10, 0),
-        Tuple2<double, double>(20, 0),
+      List<(double, double)> relative_angles = [
+        (0, 0),
+        (10, 0),
+        (20, 0),
       ];
       var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 350.0;
@@ -639,10 +638,10 @@ main() {
     });
 
     test('minimum_strain_angle_0_10_50_relative_to_0', () {
-      var relative_angles = [
-        Tuple2<double, double>(0, 0),
-        Tuple2<double, double>(10, 0),
-        Tuple2<double, double>(50, 0),
+      List<(double, double)> relative_angles = [
+        (0, 0),
+        (10, 0),
+        (50, 0),
       ];
       var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 340.0;
@@ -650,10 +649,10 @@ main() {
     });
 
     test('minimum_strain_angle_0_10_80_relative_to_0', () {
-      var relative_angles = [
-        Tuple2<double, double>(0, 0),
-        Tuple2<double, double>(10, 0),
-        Tuple2<double, double>(80, 0),
+      List<(double, double)> relative_angles = [
+        (0, 0),
+        (10, 0),
+        (80, 0),
       ];
       var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 330.0;
@@ -661,10 +660,10 @@ main() {
     });
 
     test('minimum_strain_angle_350_0_10_relative_to_0', () {
-      var relative_angles = [
-        Tuple2<double, double>(350, 0),
-        Tuple2<double, double>(0, 0),
-        Tuple2<double, double>(10, 0),
+      List<(double, double)> relative_angles = [
+        (350, 0),
+        (0, 0),
+        (10, 0),
       ];
       var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 0.0;
@@ -672,10 +671,10 @@ main() {
     });
 
     test('minimum_strain_angle_350_0_40_relative_to_0', () {
-      var relative_angles = [
-        Tuple2<double, double>(350, 0),
-        Tuple2<double, double>(0, 0),
-        Tuple2<double, double>(40, 0),
+      List<(double, double)> relative_angles = [
+        (350, 0),
+        (0, 0),
+        (40, 0),
       ];
       var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 350.0;
@@ -683,10 +682,10 @@ main() {
     });
 
     test('minimum_strain_angle_350_10_60_relative_to_0', () {
-      var relative_angles = [
-        Tuple2<double, double>(350, 0),
-        Tuple2<double, double>(10, 0),
-        Tuple2<double, double>(60, 0),
+      List<(double, double)> relative_angles = [
+        (350, 0),
+        (10, 0),
+        (60, 0),
       ];
       var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 340.0;
@@ -694,14 +693,14 @@ main() {
     });
 
     test('minimum_strain_angle_350_10_60_relative_to_0_and_20_0_310_relative_to_10', () {
-      var relative_angles = [
-        Tuple2<double, double>(350, 0), // -10
-        Tuple2<double, double>(10, 0), // 10
-        Tuple2<double, double>(60, 0), // 60
+      List<(double, double)> relative_angles = [
+        (350, 0), // -10
+        (10, 0), // 10
+        (60, 0), // 60
         ///////////////////////////////// ave to 20
-        Tuple2<double, double>(20, 10), // 10
-        Tuple2<double, double>(0, 10), // -10
-        Tuple2<double, double>(340, 10), // -30
+        (20, 10), // 10
+        (0, 10), // -10
+        (340, 10), // -30
         ///////////////////////////////// ave to -10
         ///////////////////////////////// total average is (20-10)/2 = 5, so 355 (-5) to correct it
       ];
@@ -711,9 +710,9 @@ main() {
     });
 
     test('minimum_strain_angle_179_181_relative_to_0', () {
-      var relative_angles = [
-        Tuple2<double, double>(179, 0),
-        Tuple2<double, double>(181, 0),
+      List<(double, double)> relative_angles = [
+        (179, 0),
+        (181, 0),
       ];
       var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 180.0;
@@ -721,9 +720,9 @@ main() {
     });
 
     test('minimum_strain_angle_181_183_relative_to_0', () {
-      var relative_angles = [
-        Tuple2<double, double>(181, 0),
-        Tuple2<double, double>(183, 0),
+      List<(double, double)> relative_angles = [
+        (181, 0),
+        (183, 0),
       ];
       var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 178.0;
@@ -731,10 +730,10 @@ main() {
     });
 
     test('minimum_strain_angle_174_179_184_relative_to_0', () {
-      var relative_angles = [
-        Tuple2<double, double>(174, 0),
-        Tuple2<double, double>(179, 0),
-        Tuple2<double, double>(184, 0),
+      List<(double, double)> relative_angles = [
+        (174, 0),
+        (179, 0),
+        (184, 0),
       ];
       var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 181.0;

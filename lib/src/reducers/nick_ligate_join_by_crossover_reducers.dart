@@ -5,7 +5,6 @@ import 'package:react/react.dart';
 import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
 import 'package:scadnano/src/state/linker.dart';
 import 'package:scadnano/src/state/potential_crossover.dart';
-import 'package:tuple/tuple.dart';
 
 import '../state/crossover.dart';
 import '../state/design.dart';
@@ -426,15 +425,15 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
 
 BuiltList<Strand> join_strands_by_multiple_crossovers_reducer(
     BuiltList<Strand> strands, AppState state, actions.JoinStrandsByMultipleCrossovers action) {
-  List<Tuple2<DNAEnd, DNAEnd>> end_pairs =
+  List<(DNAEnd, DNAEnd)> end_pairs =
       find_end_pairs_to_connect(state.design, state.ui_state.selectables_store.selected_dna_ends.toList());
 
   // build up list of addresses; these will stay the same even as the strands change as we add Crossovers
   List<Address> addresses_from = [];
   List<Address> addresses_to = [];
   for (var end_pair in end_pairs) {
-    var end1 = end_pair.item1;
-    var end2 = end_pair.item2;
+    var end1 = end_pair.$1;
+    var end2 = end_pair.$2;
     var end_from = end1.is_3p ? end1 : end2;
     var end_to = end1.is_3p ? end2 : end1;
     addresses_from.add(state.design.end_to_address[end_from]!);
@@ -468,7 +467,7 @@ Strand? _strand_with_end_address(Iterable<Strand> strands, Address address, bool
 
 /// find which pairs of ends among [selected_ends] to connect by Crossovers, and dispatch BatchAction
 /// to connect them
-List<Tuple2<DNAEnd, DNAEnd>> find_end_pairs_to_connect(Design design, List<DNAEnd> selected_ends) {
+List<(DNAEnd, DNAEnd)> find_end_pairs_to_connect(Design design, List<DNAEnd> selected_ends) {
   Map<DNAEnd, Domain> all_domains = {for (var end in selected_ends) end: design.end_to_domain[end]!};
 
   // group according to HelixGroups
@@ -485,7 +484,7 @@ List<Tuple2<DNAEnd, DNAEnd>> find_end_pairs_to_connect(Design design, List<DNAEn
   }
 
   // find pairs of ends to connect
-  List<Tuple2<DNAEnd, DNAEnd>> end_pairs_to_connect = [];
+  List<(DNAEnd, DNAEnd)> end_pairs_to_connect = [];
   for (var group_name in design.groups.keys) {
     // BuiltList<int> helices_view_order = design.groups[group_name].helices_view_order;
     BuiltMap<int, int> helices_view_order_inverse = design.groups[group_name]!.helices_view_order_inverse;
@@ -503,7 +502,7 @@ List<Tuple2<DNAEnd, DNAEnd>> find_end_pairs_to_connect(Design design, List<DNAEn
 
 /// find end pairs to connect according to algorithm described here:
 /// https://github.com/UC-Davis-molecular-computing/scadnano/issues/581
-List<Tuple2<DNAEnd, DNAEnd>> find_end_pairs_to_connect_in_group(
+List<(DNAEnd, DNAEnd)> find_end_pairs_to_connect_in_group(
     List<DNAEnd> ends, Map<DNAEnd, Domain> domains_by_end, BuiltMap<int, int> helices_view_order_inverse) {
   /// sort by helix, then by forward/reverse, then by offset
   ends.sort((DNAEnd end1, DNAEnd end2) {
@@ -532,7 +531,7 @@ List<Tuple2<DNAEnd, DNAEnd>> find_end_pairs_to_connect_in_group(
     ends_by_offset[end.offset_inclusive]!.add(end);
   }
 
-  List<Tuple2<DNAEnd, DNAEnd>> end_pairs = [];
+  List<(DNAEnd, DNAEnd)> end_pairs = [];
 
   for (int offset in ends_by_offset.keys) {
     // remember which ends have been paired with this offset, so we don't pick any twice
@@ -545,7 +544,7 @@ List<Tuple2<DNAEnd, DNAEnd>> find_end_pairs_to_connect_in_group(
       }
       var end2 = find_paired_end(end1, i + 1, ends_with_offset, already_chosen_ends, domains_by_end);
       if (end2 != null) {
-        var end_pair = Tuple2<DNAEnd, DNAEnd>(end1, end2);
+        (DNAEnd, DNAEnd) end_pair = (end1, end2);
         end_pairs.add(end_pair);
         already_chosen_ends.add(end1);
         already_chosen_ends.add(end2);

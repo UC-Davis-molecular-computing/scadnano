@@ -4,7 +4,6 @@ import '../state/domain.dart';
 import '../state/design.dart';
 import '../state/loopout.dart';
 import '../state/substrand.dart';
-import 'package:tuple/tuple.dart';
 
 import '../state/strand.dart';
 import '../state/app_state.dart';
@@ -99,11 +98,11 @@ BuiltList<Strand> assign_dna_reducer(BuiltList<Strand> strands, AppState state, 
 }
 
 // Lexicographically compare (start,end) overlap coordinates of o1 and o2.
-int compare_overlap(Tuple2<Tuple2<int, int>, Domain> o1, Tuple2<Tuple2<int, int>, Domain> o2) {
-  int o1_start = o1.item1.item1;
-  int o1_end = o1.item1.item2;
-  int o2_start = o2.item1.item1;
-  int o2_end = o2.item1.item2;
+int compare_overlap(((int, int), Domain) o1, ((int, int), Domain) o2) {
+  int o1_start = o1.$1.$1;
+  int o1_end = o1.$1.$2;
+  int o2_start = o2.$1.$1;
+  int o2_end = o2.$1.$2;
   if (o1_start != o2_start) {
     return o1_start - o2_start;
   } else {
@@ -165,11 +164,11 @@ String compute_dna_complement_from(
 
       int helix_idx = domain_to.helix;
       List<Domain> domains_on_helix_from = strand_from.domains_on_helix[helix_idx]?.toList() ?? [];
-      List<Tuple2<Tuple2<int, int>, Domain>> overlaps = [];
+      List<((int, int), Domain)> overlaps = [];
       for (var domain_from in domains_on_helix_from) {
         if (domain_to != domain_from && domain_to.overlaps(domain_from)) {
-          Tuple2<int, int> overlap = domain_to.compute_overlap(domain_from)!;
-          overlaps.add(Tuple2<Tuple2<int, int>, Domain>(overlap, domain_from));
+          (int, int) overlap = domain_to.compute_overlap(domain_from)!;
+          overlaps.add((overlap, domain_from));
         }
       }
       overlaps.sort(compare_overlap);
@@ -178,9 +177,9 @@ String compute_dna_complement_from(
       int start_idx = domain_to.start;
       // repeatedly insert wildcards into gaps, then reverse WC complement
       for (var overlap in overlaps) {
-        int overlap_left = overlap.item1.item1;
-        int overlap_right = overlap.item1.item2;
-        Domain substrand_from = overlap.item2;
+        int overlap_left = overlap.$1.$1;
+        int overlap_right = overlap.$1.$2;
+        Domain substrand_from = overlap.$2;
         // wildcards = DNA_base_wildcard * (overlap_left - start_idx)
         int num_wildcard_bases = domain_to.dna_length_in(start_idx, overlap_left - 1);
         String wildcards = constants.DNA_BASE_WILDCARD * num_wildcard_bases;
