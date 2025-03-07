@@ -10,19 +10,11 @@ function createWindow() {
         },
     });
 
-    const devPath = path.join(__dirname, '../build/index.html');
-    const buildPath = path.join(__dirname, '../build/index.html');
-
-    // win.loadURL((app.isPackaged) ? `file://${filePath}` : MAIN_WINDOW_WEBPACK_ENTRY);
-    // win.loadURL((app.isPackaged) ? `file://${buildPath}` : `file://${devPath}`)
-
-    // win.loadURL('file://' + path.join(__dirname, '../build/index.html'));
-
-    win.loadFile((app.isPackaged) ? buildPath : devPath);
+    win.loadFile(path.join(__dirname, '../build/index.html'));
 
     // Uncomment to allow devtools (for debugging)
     // This is similar to Chrome DevTools. (Because it literally is chrome's devtools!)
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools();
 }
 
 app.whenReady().then(() => {
