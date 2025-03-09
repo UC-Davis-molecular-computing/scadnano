@@ -238,7 +238,8 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
                   .context_menu_strand(props.strand,
                       domain: domain,
                       address: address,
-                      type: (props.is_5p ? ModificationType.five_prime : ModificationType.three_prime))
+                      modification_type:
+                          (props.is_5p ? ModificationType.five_prime : ModificationType.three_prime))
                   .build(),
               position: util.from_point_num(event.page))));
     }

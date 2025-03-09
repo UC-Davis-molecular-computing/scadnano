@@ -46,7 +46,7 @@ import 'pure_component.dart';
 part 'design_main_strand.over_react.g.dart';
 
 typedef ContextMenuStrand = List<ContextMenuItem> Function(Strand strand,
-    {required Domain domain, required Address address, ModificationType type});
+    {required Domain domain, required Address address, ModificationType modification_type});
 
 UiFactory<DesignMainStrandProps> DesignMainStrand = _$DesignMainStrand;
 
@@ -414,7 +414,9 @@ api.selectElements([base]);''';
   }
 
   List<ContextMenuItem> context_menu_strand(Strand strand,
-      {required Domain domain, required Address address, ModificationType type = ModificationType.internal}) {
+      {required Domain domain,
+      required Address address,
+      ModificationType modification_type = ModificationType.internal}) {
     var items = [
       ContextMenuItem(
           title: 'edit DNA',
@@ -443,12 +445,12 @@ assigned, assign the complementary DNA sequence to this strand.
           ].build()),
       ContextMenuItem(
         title: 'add modification',
-        on_click: () => add_modification(domain, address, type),
+        on_click: () => add_modification(domain, address, modification_type),
       ),
       if (app.state.ui_state.show_oxview)
         ContextMenuItem(
           title: 'focus in oxView',
-          on_click: () => focus_base_oxview(props.strand, domain, address, type),
+          on_click: () => focus_base_oxview(props.strand, domain, address, modification_type),
         ),
       ContextMenuItem(
           title: 'edit vendor fields',
@@ -644,14 +646,15 @@ after:
           ].build()),
       ContextMenuItem(
           title: 'add extension',
-          on_click: () => app.disable_keyboard_shortcuts_while(() => ask_for_add_extension(strand)),
+          on_click: () => app.disable_keyboard_shortcuts_while(
+              () => ask_for_add_extension(strand, (modification_type == ModificationType.five_prime))),
           disabled: strand.has_5p_extension && strand.has_3p_extension),
     ];
 
     return items;
   }
 
-  Future<void> ask_for_add_extension(Strand strand) async {
+  Future<void> ask_for_add_extension(Strand strand, bool five_prime) async {
     if (strand.has_5p_extension && strand.has_3p_extension) {
       // This shouldn't be reachable since the context menu should not include the
       // add extension option in this case, but let's check just in case.
@@ -669,6 +672,9 @@ after:
     assert(options.isNotEmpty);
 
     int selected_radio_index = 0;
+    if (!five_prime && (options.length > 1)) {
+      selected_radio_index = 1;
+    }
     int extension_end_idx = 0;
     int num_bases_idx = 1;
     var items = util.FixedList<DialogItem>(2);
