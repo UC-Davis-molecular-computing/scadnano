@@ -12,10 +12,11 @@ import '../constants.dart' as constants;
 
 part 'design_context_menu.over_react.g.dart';
 
-UiFactory<DesignContextMenuProps> ConnectedDesignContextMenu =
-    connect<AppState, DesignContextMenuProps>(mapStateToProps: (state) {
-  return DesignContextMenu()..context_menu = state.ui_state.context_menu;
-})(DesignContextMenu);
+UiFactory<DesignContextMenuProps> ConnectedDesignContextMenu = connect<AppState, DesignContextMenuProps>(
+  mapStateToProps: (state) {
+    return DesignContextMenu()..context_menu = state.ui_state.context_menu;
+  },
+)(DesignContextMenu);
 
 UiFactory<DesignContextMenuProps> DesignContextMenu = _$DesignContextMenu;
 
@@ -34,10 +35,11 @@ class DesignContextMenuComponent extends UiStatefulComponent2<DesignContextMenuP
   final num MENU_PADDING = 20;
 
   @override
-  Map get initialState => (newState()
-    ..width = 0
-    ..height = 0
-    ..menu_HTML_element_ref = createRef<DivElement>());
+  Map get initialState =>
+      (newState()
+        ..width = 0
+        ..height = 0
+        ..menu_HTML_element_ref = createRef<DivElement>());
 
   // how to find width and height of a React element:
   // https://stackoverflow.com/a/43824598
@@ -69,9 +71,11 @@ class DesignContextMenuComponent extends UiStatefulComponent2<DesignContextMenuP
     if (state.menu_HTML_element_ref.current != null &&
         state.menu_HTML_element_ref.current!.offsetWidth != 0 &&
         state.menu_HTML_element_ref.current!.offsetWidth != t_prev_state.width) {
-      setState(newState()
-        ..width = state.menu_HTML_element_ref.current!.offsetWidth
-        ..height = state.menu_HTML_element_ref.current!.offsetHeight);
+      setState(
+        newState()
+          ..width = state.menu_HTML_element_ref.current!.offsetWidth
+          ..height = state.menu_HTML_element_ref.current!.offsetHeight,
+      );
     }
     // if (state.menu_HTML_element_ref.current.offsetWidth != t_prev_state.width) {
     //   setState(newState()
@@ -103,10 +107,7 @@ class DesignContextMenuComponent extends UiStatefulComponent2<DesignContextMenuP
       ..ref = state.menu_HTML_element_ref
       ..className = 'context-menu'
       ..id = 'context-menu'
-      ..style = {
-        'left': pos.x,
-        'top': pos.y,
-      })(context_menu_to_ul(props.context_menu!));
+      ..style = {'left': pos.x, 'top': pos.y})(context_menu_to_ul(props.context_menu!));
   }
 }
 
@@ -125,14 +126,16 @@ mixin DesignContextSubmenuState on UiState {
 }
 
 class DesignContextSubmenuComponent
-    extends UiStatefulComponent2<DesignContextSubmenuProps, DesignContextSubmenuState> with PureComponent {
+    extends UiStatefulComponent2<DesignContextSubmenuProps, DesignContextSubmenuState>
+    with PureComponent {
   @override
-  Map get initialState => (newState()
-    ..width = 0
-    ..height = 0
-    ..left = 0
-    ..top = 0
-    ..submenu_HTML_element_ref = createRef<DivElement>());
+  Map get initialState =>
+      (newState()
+        ..width = 0
+        ..height = 0
+        ..left = 0
+        ..top = 0
+        ..submenu_HTML_element_ref = createRef<DivElement>());
 
   // how to find width and height of a React element (same links as DesignContextMenuComponent):
   // https://stackoverflow.com/a/43824598
@@ -181,9 +184,11 @@ class DesignContextSubmenuComponent
     var t_prev_props = typedPropsFactory(prev_props);
 
     if (t_prev_props.context_menu.position != props.context_menu.position) {
-      setState(newState()
-        ..width = 0
-        ..height = 0);
+      setState(
+        newState()
+          ..width = 0
+          ..height = 0,
+      );
     } else if (state.width == 0) {
       reset_submenu_bounding_box();
     }
@@ -193,11 +198,13 @@ class DesignContextSubmenuComponent
     if (state.submenu_HTML_element_ref.current == null) {
       return;
     }
-    setState(newState()
-      ..width = state.submenu_HTML_element_ref.current!.offsetWidth
-      ..height = state.submenu_HTML_element_ref.current!.offsetHeight
-      ..left = state.submenu_HTML_element_ref.current!.getBoundingClientRect().left
-      ..top = state.submenu_HTML_element_ref.current!.getBoundingClientRect().top);
+    setState(
+      newState()
+        ..width = state.submenu_HTML_element_ref.current!.offsetWidth
+        ..height = state.submenu_HTML_element_ref.current!.offsetHeight
+        ..left = state.submenu_HTML_element_ref.current!.getBoundingClientRect().left
+        ..top = state.submenu_HTML_element_ref.current!.getBoundingClientRect().top,
+    );
   }
 
   // apply correct css absolute positioning classes depending on if submenus fit in its default
@@ -231,21 +238,24 @@ ReactElement context_menu_to_ul(ContextMenu menu) {
   return (Dom.ul()..className = 'context-menu-list')([
     for (ContextMenuItem item in menu.items)
       (Dom.li()
-            ..key = item.title
-            ..className = (item.nested != null ? 'has-submenu' : ''))(
-          (Dom.span()
-            ..title = item.tooltip
-            ..onClick = item.on_click != null
-                ? (_) {
+        ..key = item.title
+        ..className = (item.nested != null ? 'has-submenu' : ''))(
+        (Dom.span()
+          ..title = item.tooltip
+          ..onClick =
+              item.on_click != null
+                  ? (_) {
                     app.dispatch(actions.ContextMenuHide());
                     item.on_click!();
                   }
-                : null
-            ..className = 'context-menu-item' +
-                (item.disabled ? " " + constants.css_selector_context_menu_item_disabled : ""))(item.title),
-          item.nested != null
-              ? (DesignContextSubmenu()
-                ..context_menu = ContextMenu(items: item.nested!, position: menu.position))()
-              : null)
+                  : null
+          ..className =
+              'context-menu-item' +
+              (item.disabled ? " " + constants.css_selector_context_menu_item_disabled : ""))(item.title),
+        item.nested != null
+            ? (DesignContextSubmenu()
+              ..context_menu = ContextMenu(items: item.nested!, position: menu.position))()
+            : null,
+      ),
   ]);
 }

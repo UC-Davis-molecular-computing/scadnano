@@ -33,15 +33,17 @@ mixin MenuDropdownRightState on UiState {
 class MenuDropdownRightComponent
     extends UiStatefulComponent2<MenuDropdownRightProps, MenuDropdownRightState> {
   @override
-  Map get initialState => (newState()
-    ..HTML_element = createRef<DivElement>()
-    ..top = null);
+  Map get initialState =>
+      (newState()
+        ..HTML_element = createRef<DivElement>()
+        ..top = null);
 
   @override
-  get defaultProps => (newProps()
-    ..tooltip = ''
-    ..disabled = false
-    ..disallow_overflow = false);
+  get defaultProps =>
+      (newProps()
+        ..tooltip = ''
+        ..disabled = false
+        ..disallow_overflow = false);
 
   // once component mounts and HTML_element has a reference assigned, save top coord to set proper css styling
   @override
@@ -71,12 +73,13 @@ class MenuDropdownRightComponent
       'ref': state.HTML_element,
       'key': props.id_,
       /* set some custom CSS props so dropright divs know how much to shift themselves upwards */
-      'style': state.top != null
-          ? {
-              '--offset-top': '${state.top}px',
-              '--overflow-y': props.disallow_overflow == true ? 'auto' : 'visible',
-            }
-          : {}
+      'style':
+          state.top != null
+              ? {
+                '--offset-top': '${state.top}px',
+                '--overflow-y': props.disallow_overflow == true ? 'auto' : 'visible',
+              }
+              : {},
     }, props.children);
 
     return (Dom.span() // had to put outside of DropdownItem to make tooltip show up when disabled

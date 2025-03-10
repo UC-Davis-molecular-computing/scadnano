@@ -107,11 +107,19 @@ BuiltList<Strand> move_linker_reducer(BuiltList<Strand> strands, AppState state,
     bool first_clicked_is_3p = end_fixed.is_3p;
     BuiltList<Strand> new_strands_connected;
     if (first_clicked_is_3p) {
-      new_strands_connected = _join_strands_with_crossover(new_strand_connected_intermediate, strand_to,
-          [new_strand_connected_intermediate, strand_to].build(), first_clicked_is_3p);
+      new_strands_connected = _join_strands_with_crossover(
+        new_strand_connected_intermediate,
+        strand_to,
+        [new_strand_connected_intermediate, strand_to].build(),
+        first_clicked_is_3p,
+      );
     } else {
-      new_strands_connected = _join_strands_with_crossover(strand_to, new_strand_connected_intermediate,
-          [strand_to, new_strand_connected_intermediate].build(), first_clicked_is_3p);
+      new_strands_connected = _join_strands_with_crossover(
+        strand_to,
+        new_strand_connected_intermediate,
+        [strand_to, new_strand_connected_intermediate].build(),
+        first_clicked_is_3p,
+      );
     }
     assert(new_strands_connected.length == 1);
     Strand new_strand_connected = new_strands_connected.first;
@@ -119,14 +127,20 @@ BuiltList<Strand> move_linker_reducer(BuiltList<Strand> strands, AppState state,
     // if linker is a Loopout, we need to convert the Crossover we just made in
     // _join_strands_with_crossover to a Loopout
     if (linker is Loopout) {
-      int crossover_idx = end_fixed.is_5p
-          ? strand_to.domains.length - 1
-          : new_strand_connected_intermediate.domains.length - 1;
+      int crossover_idx =
+          end_fixed.is_5p
+              ? strand_to.domains.length - 1
+              : new_strand_connected_intermediate.domains.length - 1;
       var crossover = new_strand_connected.linkers[crossover_idx] as Crossover;
-      var convert_crossover_to_loopout_action =
-          actions.ConvertCrossoverToLoopout(crossover, linker.loopout_num_bases, linker.dna_sequence);
-      new_strand_connected =
-          convert_crossover_to_loopout_reducer(new_strand_connected, convert_crossover_to_loopout_action);
+      var convert_crossover_to_loopout_action = actions.ConvertCrossoverToLoopout(
+        crossover,
+        linker.loopout_num_bases,
+        linker.dna_sequence,
+      );
+      new_strand_connected = convert_crossover_to_loopout_reducer(
+        new_strand_connected,
+        convert_crossover_to_loopout_action,
+      );
     }
 
     // assign DNA
@@ -138,7 +152,8 @@ BuiltList<Strand> move_linker_reducer(BuiltList<Strand> strands, AppState state,
     // add wildcards to strands with no DNA sequences
     String strand_to_dna_sequence =
         strand_to.dna_sequence ?? constants.DNA_BASE_WILDCARD * strand_to.dna_length;
-    String new_strand_connected_dna_sequence = new_strand_connected_intermediate.dna_sequence ??
+    String new_strand_connected_dna_sequence =
+        new_strand_connected_intermediate.dna_sequence ??
         constants.DNA_BASE_WILDCARD * new_strand_connected_intermediate.dna_length;
     String new_strand_connected_seq;
     if (end_fixed.is_5p) {
@@ -179,21 +194,23 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
   var start = domain_to_remove.start;
   var end = domain_to_remove.end;
   Domain domain_left = Domain(
-      helix: helix,
-      forward: forward,
-      start: start,
-      end: nick_offset,
-      is_scaffold: domain_to_remove.is_scaffold,
-      deletions: domain_to_remove.deletions.where((d) => d < nick_offset),
-      insertions: domain_to_remove.insertions.where((i) => i.offset < nick_offset));
+    helix: helix,
+    forward: forward,
+    start: start,
+    end: nick_offset,
+    is_scaffold: domain_to_remove.is_scaffold,
+    deletions: domain_to_remove.deletions.where((d) => d < nick_offset),
+    insertions: domain_to_remove.insertions.where((i) => i.offset < nick_offset),
+  );
   Domain domain_right = Domain(
-      helix: helix,
-      forward: forward,
-      start: nick_offset,
-      end: end,
-      is_scaffold: domain_to_remove.is_scaffold,
-      deletions: domain_to_remove.deletions.where((d) => d >= nick_offset),
-      insertions: domain_to_remove.insertions.where((i) => i.offset >= nick_offset));
+    helix: helix,
+    forward: forward,
+    start: nick_offset,
+    end: end,
+    is_scaffold: domain_to_remove.is_scaffold,
+    deletions: domain_to_remove.deletions.where((d) => d >= nick_offset),
+    insertions: domain_to_remove.insertions.where((i) => i.offset >= nick_offset),
+  );
 
   // join new Domains to existing strands
   int index_removed = strand.substrands.indexOf(domain_to_remove);
@@ -205,12 +222,18 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
     domain_before = domain_right;
     domain_after = domain_left;
   }
-  domain_before = domain_before.rebuild((b) => b
-    ..is_last = true
-    ..is_first = substrands_before.isEmpty);
-  domain_after = domain_after.rebuild((b) => b
-    ..is_first = true
-    ..is_last = substrands_after.isEmpty);
+  domain_before = domain_before.rebuild(
+    (b) =>
+        b
+          ..is_last = true
+          ..is_first = substrands_before.isEmpty,
+  );
+  domain_after = domain_after.rebuild(
+    (b) =>
+        b
+          ..is_first = true
+          ..is_last = substrands_after.isEmpty,
+  );
   substrands_before.add(domain_before);
   substrands_after.insert(0, domain_after);
 
@@ -237,9 +260,12 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
 
   if (strand.circular) {
     var substrands = substrands_after + substrands_before;
-    var strand_new = strand.rebuild((b) => b
-      ..substrands.replace(substrands)
-      ..circular = false);
+    var strand_new = strand.rebuild(
+      (b) =>
+          b
+            ..substrands.replace(substrands)
+            ..circular = false,
+    );
     strand_new = strand_new.initialize();
 
     int strand_idx = strands.indexOf(strand);
@@ -247,15 +273,17 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
     strands_mutable[strand_idx] = strand_new;
     return strands_mutable.build();
   } else {
-    Strand strand_5p = Strand(substrands_before,
-        name: strand.name,
-        color: strand.color,
-        dna_sequence: dna_before,
-        vendor_fields: strand.vendor_fields,
-        is_scaffold: strand.is_scaffold,
-        modification_5p: strand.modification_5p,
-        modification_3p: null,
-        modifications_int: modifications_int_strand_5p);
+    Strand strand_5p = Strand(
+      substrands_before,
+      name: strand.name,
+      color: strand.color,
+      dna_sequence: dna_before,
+      vendor_fields: strand.vendor_fields,
+      is_scaffold: strand.is_scaffold,
+      modification_5p: strand.modification_5p,
+      modification_3p: null,
+      modifications_int: modifications_int_strand_5p,
+    );
 
     // move modifications onto strand_3p from strand
     Map<int, ModificationInternal> modifications_int_strand_3p = {};
@@ -269,14 +297,16 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
       });
     }
 
-    Strand strand_3p = Strand(substrands_after,
-        name: strand.name,
-        color: strand.is_scaffold == true ? strand.color : null,
-        dna_sequence: dna_after,
-        is_scaffold: strand.is_scaffold,
-        modification_5p: null,
-        modification_3p: strand.modification_3p,
-        modifications_int: modifications_int_strand_3p);
+    Strand strand_3p = Strand(
+      substrands_after,
+      name: strand.name,
+      color: strand.is_scaffold == true ? strand.color : null,
+      dna_sequence: dna_after,
+      is_scaffold: strand.is_scaffold,
+      modification_5p: null,
+      modification_3p: strand.modification_3p,
+      modifications_int: modifications_int_strand_3p,
+    );
 
     return swap_old_strands_for_new(strands, [strand], [strand_5p, strand_3p]);
   }
@@ -353,15 +383,16 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
   }
 
   Domain dom_new = Domain(
-      helix: helix,
-      forward: forward,
-      start: dom_left.start,
-      end: dom_right.end,
-      is_scaffold: strand_5p.is_scaffold || strand_3p.is_scaffold,
-      deletions: dom_left.deletions + dom_right.deletions,
-      insertions: dom_left.insertions + dom_right.insertions,
-      is_first: dom_3p.is_first,
-      is_last: dom_5p.is_last);
+    helix: helix,
+    forward: forward,
+    start: dom_left.start,
+    end: dom_right.end,
+    is_scaffold: strand_5p.is_scaffold || strand_3p.is_scaffold,
+    deletions: dom_left.deletions + dom_right.deletions,
+    insertions: dom_left.insertions + dom_right.insertions,
+    is_first: dom_3p.is_first,
+    is_last: dom_5p.is_last,
+  );
 
   if (strand_left == strand_right) {
     // join domains and make strand circular
@@ -397,9 +428,12 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
       substrands = substrands.sublist(first_dom) + substrands.sublist(0, first_dom);
     }
 
-    var new_strand = strand.rebuild((b) => b
-      ..substrands.replace(substrands)
-      ..circular = true);
+    var new_strand = strand.rebuild(
+      (b) =>
+          b
+            ..substrands.replace(substrands)
+            ..circular = true,
+    );
     new_strand = new_strand.initialize();
 
     int strand_idx = strands.indexOf(strand);
@@ -414,8 +448,12 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
 
     //TODO: figure out if strand_3p was the one clicked
     bool first_clicked_is_3p = dna_end_clicked.is_3p;
-    Strand new_strand =
-        join_two_strands_with_substrands(strand_3p, strand_5p, substrands_new, first_clicked_is_3p);
+    Strand new_strand = join_two_strands_with_substrands(
+      strand_3p,
+      strand_5p,
+      substrands_new,
+      first_clicked_is_3p,
+    );
 
     return swap_old_strands_for_new(strands, [strand_left, strand_right], [new_strand]);
   }
@@ -425,9 +463,14 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
 // actions.JoinStrandsByMultipleCrossovers
 
 BuiltList<Strand> join_strands_by_multiple_crossovers_reducer(
-    BuiltList<Strand> strands, AppState state, actions.JoinStrandsByMultipleCrossovers action) {
-  List<Tuple2<DNAEnd, DNAEnd>> end_pairs =
-      find_end_pairs_to_connect(state.design, state.ui_state.selectables_store.selected_dna_ends.toList());
+  BuiltList<Strand> strands,
+  AppState state,
+  actions.JoinStrandsByMultipleCrossovers action,
+) {
+  List<Tuple2<DNAEnd, DNAEnd>> end_pairs = find_end_pairs_to_connect(
+    state.design,
+    state.ui_state.selectables_store.selected_dna_ends.toList(),
+  );
 
   // build up list of addresses; these will stay the same even as the strands change as we add Crossovers
   List<Address> addresses_from = [];
@@ -491,10 +534,13 @@ List<Tuple2<DNAEnd, DNAEnd>> find_end_pairs_to_connect(Design design, List<DNAEn
     BuiltMap<int, int> helices_view_order_inverse = design.groups[group_name]!.helices_view_order_inverse;
     var ends_in_group = ends_by_group[group_name]!;
     Map<DNAEnd, Domain> domains_by_end_in_group = {
-      for (var end in ends_in_group) end: design.end_to_domain[end]!
+      for (var end in ends_in_group) end: design.end_to_domain[end]!,
     };
     var end_pairs_to_connect_in_group = find_end_pairs_to_connect_in_group(
-        ends_in_group, domains_by_end_in_group, helices_view_order_inverse);
+      ends_in_group,
+      domains_by_end_in_group,
+      helices_view_order_inverse,
+    );
     end_pairs_to_connect.addAll(end_pairs_to_connect_in_group);
   }
 
@@ -504,7 +550,10 @@ List<Tuple2<DNAEnd, DNAEnd>> find_end_pairs_to_connect(Design design, List<DNAEn
 /// find end pairs to connect according to algorithm described here:
 /// https://github.com/UC-Davis-molecular-computing/scadnano/issues/581
 List<Tuple2<DNAEnd, DNAEnd>> find_end_pairs_to_connect_in_group(
-    List<DNAEnd> ends, Map<DNAEnd, Domain> domains_by_end, BuiltMap<int, int> helices_view_order_inverse) {
+  List<DNAEnd> ends,
+  Map<DNAEnd, Domain> domains_by_end,
+  BuiltMap<int, int> helices_view_order_inverse,
+) {
   /// sort by helix, then by forward/reverse, then by offset
   ends.sort((DNAEnd end1, DNAEnd end2) {
     var domain1 = domains_by_end[end1]!;
@@ -559,8 +608,13 @@ List<Tuple2<DNAEnd, DNAEnd>> find_end_pairs_to_connect_in_group(
 /// find DNAEnd in list [ends_with_offset], but not in set [already_chosen_ends], to pair with [end1],
 /// starting at index [starting_index] in [ends_with_offset].
 /// Assume [end1] has same offset as all DNAEnds in [ends_with_offset].
-DNAEnd? find_paired_end(DNAEnd end1, int starting_index, List<DNAEnd> ends_with_offset,
-    Set<DNAEnd> already_chosen_ends, Map<DNAEnd, Domain> domains_by_end) {
+DNAEnd? find_paired_end(
+  DNAEnd end1,
+  int starting_index,
+  List<DNAEnd> ends_with_offset,
+  Set<DNAEnd> already_chosen_ends,
+  Map<DNAEnd, Domain> domains_by_end,
+) {
   var domain1 = domains_by_end[end1]!;
   for (int i = starting_index; i < ends_with_offset.length; i++) {
     DNAEnd end2 = ends_with_offset[i];
@@ -579,7 +633,10 @@ DNAEnd? find_paired_end(DNAEnd end1, int starting_index, List<DNAEnd> ends_with_
 // actions.JoinStrandsByCrossover
 
 BuiltList<Strand> join_strands_by_crossover_reducer(
-    BuiltList<Strand> strands, AppState state, actions.JoinStrandsByCrossover action) {
+  BuiltList<Strand> strands,
+  AppState state,
+  actions.JoinStrandsByCrossover action,
+) {
   // gather substrand data
   DNAEnd end_first_click = action.dna_end_first_click;
   DNAEnd end_second_click = action.dna_end_second_click;
@@ -598,7 +655,11 @@ BuiltList<Strand> join_strands_by_crossover_reducer(
 
 // This is a common function used by actions JoinStrandsByCrossover and JoinStrandsByMultipleCrossovers
 BuiltList<Strand> _join_strands_with_crossover(
-    Strand strand_3p, Strand strand_5p, BuiltList<Strand> strands, bool first_clicked_is_3p) {
+  Strand strand_3p,
+  Strand strand_5p,
+  BuiltList<Strand> strands,
+  bool first_clicked_is_3p,
+) {
   // if joining strand to itself by crossover, just make it circular
   if (strand_3p == strand_5p) {
     var strand = strand_3p;
@@ -618,9 +679,12 @@ BuiltList<Strand> _join_strands_with_crossover(
   Domain last_domain_3p = substrands_3p[last_idx_3p] as Domain;
   Domain first_domain_5p = substrands_5p[0] as Domain;
   last_domain_3p = last_domain_3p.rebuild((b) => b..is_last = false);
-  first_domain_5p = first_domain_5p.rebuild((b) => b
-    ..is_first = false
-    ..strand_id = strand_5p.id);
+  first_domain_5p = first_domain_5p.rebuild(
+    (b) =>
+        b
+          ..is_first = false
+          ..strand_id = strand_5p.id,
+  );
 
   // put back into Substrand lists
   substrands_3p[last_idx_3p] = last_domain_3p;
@@ -629,8 +693,12 @@ BuiltList<Strand> _join_strands_with_crossover(
   List<Substrand> substrands_new = substrands_3p + substrands_5p;
 
   // create new Strand
-  Strand new_strand =
-      join_two_strands_with_substrands(strand_3p, strand_5p, substrands_new, first_clicked_is_3p);
+  Strand new_strand = join_two_strands_with_substrands(
+    strand_3p,
+    strand_5p,
+    substrands_new,
+    first_clicked_is_3p,
+  );
 
   return swap_old_strands_for_new(strands, [strand_3p, strand_5p], [new_strand]);
 }
@@ -641,7 +709,11 @@ BuiltList<Strand> _join_strands_with_crossover(
 /// Note that it *ignores* the substrands in strand1 and strand2.
 /// Set properties_from_strand_3p
 Strand join_two_strands_with_substrands(
-    Strand strand_3p, Strand strand_5p, List<Substrand> substrands_new, bool properties_from_strand_3p) {
+  Strand strand_3p,
+  Strand strand_5p,
+  List<Substrand> substrands_new,
+  bool properties_from_strand_3p,
+) {
   // if one is scaffold and the other isn't, take properties from scaffold
   if (strand_3p.is_scaffold && !strand_5p.is_scaffold) {
     properties_from_strand_3p = true;
@@ -687,21 +759,26 @@ Strand join_two_strands_with_substrands(
     strand_name = properties_from_strand_3p ? strand_3p.name : strand_5p.name;
   }
 
-  Strand new_strand = Strand(substrands_new,
-      name: strand_name,
-      color: color,
-      dna_sequence: dna,
-      vendor_fields: idt,
-      is_scaffold: strand_3p.is_scaffold || strand_5p.is_scaffold,
-      modification_5p: mod_5p,
-      modification_3p: mod_3p,
-      modifications_int: mods_int);
+  Strand new_strand = Strand(
+    substrands_new,
+    name: strand_name,
+    color: color,
+    dna_sequence: dna,
+    vendor_fields: idt,
+    is_scaffold: strand_3p.is_scaffold || strand_5p.is_scaffold,
+    modification_5p: mod_5p,
+    modification_3p: mod_3p,
+    modifications_int: mods_int,
+  );
   return new_strand;
 }
 
 // Take strands_to_remove out of strands and put strands_to_add in
 BuiltList<Strand> swap_old_strands_for_new(
-    BuiltList<Strand> strands, Iterable<Strand> strands_to_remove, Iterable<Strand> strands_to_add) {
+  BuiltList<Strand> strands,
+  Iterable<Strand> strands_to_remove,
+  Iterable<Strand> strands_to_add,
+) {
   List<Strand> new_strands = strands.toList();
   for (var strand in strands_to_remove) {
     new_strands.remove(strand);

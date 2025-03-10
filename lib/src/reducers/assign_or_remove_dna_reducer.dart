@@ -41,7 +41,10 @@ BuiltList<Strand> remove_dna_reducer(BuiltList<Strand> strands, actions.RemoveDN
 }
 
 BuiltList<Strand> assign_dna_reducer_complement_from_bound_strands(
-    BuiltList<Strand> strands, AppState state, actions.AssignDNAComplementFromBoundStrands action) {
+  BuiltList<Strand> strands,
+  AppState state,
+  actions.AssignDNAComplementFromBoundStrands action,
+) {
   List<Strand> all_strands = strands.toList();
   for (var strand_to_assign in action.strands) {
     int strand_to_assign_idx = strands.indexOf(strand_to_assign);
@@ -87,8 +90,12 @@ BuiltList<Strand> assign_dna_reducer(BuiltList<Strand> strands, AppState state, 
         continue;
       }
       if (other_strand.overlaps(strand)) {
-        String new_dna = compute_dna_complement_from(state.design, other_strand, strand_with_new_sequence,
-            action.disable_change_sequence_bound_strand);
+        String new_dna = compute_dna_complement_from(
+          state.design,
+          other_strand,
+          strand_with_new_sequence,
+          action.disable_change_sequence_bound_strand,
+        );
         if (new_dna != other_strand.dna_sequence) {
           strands_builder[i] = other_strand.set_dna_sequence(new_dna);
         }
@@ -127,7 +134,11 @@ int compare_overlap(Tuple2<Tuple2<int, int>, Domain> o1, Tuple2<Tuple2<int, int>
 /// about sequence complementarity is done. This can be used to intentionally assign *mismatching*
 /// DNA sequences to :any:`Strand`'s that are bound on a :any:`Helix`.
 String compute_dna_complement_from(
-    Design design, Strand strand_to, Strand strand_from, bool error_on_change) {
+  Design design,
+  Strand strand_to,
+  Strand strand_from,
+  bool error_on_change,
+) {
   assert(strand_from.dna_sequence != null);
 
   bool already_assigned = strand_to.dna_sequence != null;
@@ -156,7 +167,8 @@ String compute_dna_complement_from(
       var unpaired_addresses = design.find_unpaired_insertion_deletions_on_domain(domain_to, true);
       if (unpaired_addresses.isNotEmpty) {
         var first_unpaired_address = unpaired_addresses.first;
-        var err_msg = "I cannot assign DNA complements when there is an unpaired deletion or insertion, "
+        var err_msg =
+            "I cannot assign DNA complements when there is an unpaired deletion or insertion, "
             "but I found one at this address:\n"
             "helix idx=${first_unpaired_address.helix_idx}, offset=${first_unpaired_address.offset}\n"
             "To view all of them in the design, go to View-->Show unpaired deletions/insertions.";
@@ -210,8 +222,11 @@ String compute_dna_complement_from(
     // merge with existing pre-assigned sequence
     String existing_substrand_to_dna_sequence = strand_complement_builder[ss_idx];
     var merge = error_on_change ? util.merge_wildcards : util.merge_wildcards_favor_first;
-    String merged_substrand_to_dna_sequence =
-        merge(substrand_to_dna_sequence, existing_substrand_to_dna_sequence, constants.DNA_BASE_WILDCARD);
+    String merged_substrand_to_dna_sequence = merge(
+      substrand_to_dna_sequence,
+      existing_substrand_to_dna_sequence,
+      constants.DNA_BASE_WILDCARD,
+    );
     strand_complement_builder[ss_idx] = merged_substrand_to_dna_sequence;
   }
 
@@ -223,15 +238,22 @@ String compute_dna_complement_from(
     // choice silently overwriting their DNA
     if (!error_on_change) {
       new_dna_sequence = util.merge_wildcards_favor_first(
-          new_dna_sequence, strand_to.dna_sequence!, constants.DNA_BASE_WILDCARD);
+        new_dna_sequence,
+        strand_to.dna_sequence!,
+        constants.DNA_BASE_WILDCARD,
+      );
     } else {
       try {
-        new_dna_sequence =
-            util.merge_wildcards(strand_to.dna_sequence!, new_dna_sequence, constants.DNA_BASE_WILDCARD);
+        new_dna_sequence = util.merge_wildcards(
+          strand_to.dna_sequence!,
+          new_dna_sequence,
+          constants.DNA_BASE_WILDCARD,
+        );
       } on ArgumentError {
         Domain dom_to = strand_to.first_domain;
         Domain dom_from = strand_from.first_domain;
-        var msg = 'strand starting at helix ${dom_to.helix}, offset ${dom_to.offset_5p} has '
+        var msg =
+            'strand starting at helix ${dom_to.helix}, offset ${dom_to.offset_5p} has '
             'length '
             '${strand_to.dna_length} and already has a partial DNA sequence assignment of length '
             '${strand_to.dna_sequence!.length}, which is \n'
@@ -254,7 +276,8 @@ String merge_sequences_if_necessary(Strand strand, String seq) {
       seq = util.merge_wildcards(seq, strand.dna_sequence!, constants.DNA_BASE_WILDCARD);
     } on ArgumentError {
       var first_ss = strand.first_domain;
-      var msg = 'strand starting at helix ${first_ss.helix}, offset ${first_ss.offset_5p} has '
+      var msg =
+          'strand starting at helix ${first_ss.helix}, offset ${first_ss.offset_5p} has '
           'length '
           '${strand.dna_length} and already has a DNA sequence assignment of length '
           '${strand.dna_sequence!.length}, which is \n'

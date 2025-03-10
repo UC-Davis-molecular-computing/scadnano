@@ -39,17 +39,19 @@ abstract class Loopout
     String? name = null,
     String? label = null,
     String strand_id = 'NONE YET',
-  }) =>
-      Loopout.from((b) => b
-        ..loopout_num_bases = loopout_num_bases
-        ..prev_domain_idx = prev_domain_idx
-        ..is_scaffold = is_scaffold
-        ..dna_sequence = dna_sequence
-        ..color = color
-        ..name = name
-        ..label = label
-        ..strand_id = strand_id
-        ..unused_fields = MapBuilder<String, Object>({}));
+  }) => Loopout.from(
+    (b) =>
+        b
+          ..loopout_num_bases = loopout_num_bases
+          ..prev_domain_idx = prev_domain_idx
+          ..is_scaffold = is_scaffold
+          ..dna_sequence = dna_sequence
+          ..color = color
+          ..name = name
+          ..label = label
+          ..strand_id = strand_id
+          ..unused_fields = MapBuilder<String, Object>({}),
+  );
 
   int get loopout_num_bases;
 
@@ -93,22 +95,22 @@ abstract class Loopout
     int loopout_num_bases = util.mandatory_field(json_map, constants.loopout_key, class_name);
     String? name = util.optional_field_with_null_default(json_map, constants.name_key);
     String? label = util.optional_field_with_null_default(json_map, constants.label_key);
-    Color? color = json_map.containsKey(constants.color_key)
-        ? util.parse_json_color(json_map[constants.color_key]!)
-        : null;
+    Color? color =
+        json_map.containsKey(constants.color_key)
+            ? util.parse_json_color(json_map[constants.color_key]!)
+            : null;
     return LoopoutBuilder()
       ..loopout_num_bases = loopout_num_bases
       ..name = name
       ..label = label
       ..color = color
-      ..strand_id = 'NONE YET' // placeholder, will be set by Strand
+      ..strand_id =
+          'NONE YET' // placeholder, will be set by Strand
       ..unused_fields = util.unused_fields_map(json_map, constants.loopout_keys);
   }
 
   Object to_json_serializable({bool suppress_indent = false}) {
-    Map<String, dynamic> json_map = {
-      constants.loopout_key: loopout_num_bases,
-    };
+    Map<String, dynamic> json_map = {constants.loopout_key: loopout_num_bases};
     if (name != null) {
       json_map[constants.name_key] = name!;
     }

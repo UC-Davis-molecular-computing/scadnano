@@ -14,8 +14,8 @@ DesignLoadingDialogProps set_design_loading_dialog_props(DesignLoadingDialogProp
     elt..show = state.ui_state.show_load_dialog;
 
 UiFactory<DesignLoadingDialogProps> ConnectedLoadingDialog = connect<AppState, DesignLoadingDialogProps>(
-    mapStateToProps: (state) =>
-        set_design_loading_dialog_props(DesignLoadingDialog(), state))(DesignLoadingDialog);
+  mapStateToProps: (state) => set_design_loading_dialog_props(DesignLoadingDialog(), state),
+)(DesignLoadingDialog);
 
 UiFactory<DesignLoadingDialogProps> DesignLoadingDialog = _$DesignLoadingDialog;
 

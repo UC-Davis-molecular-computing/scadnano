@@ -70,10 +70,16 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
       helix_idxs_to_calculate = null; // let helices_assign_svg automatically set this to all helices
     }
 
-    BuiltMap<int, Point<double>> ret = util
-        .helices_assign_svg(design, ui_state.invert_y, design.helices, design.groups,
-            helix_idxs_to_calculate: helix_idxs_to_calculate)
-        .build();
+    BuiltMap<int, Point<double>> ret =
+        util
+            .helices_assign_svg(
+              design,
+              ui_state.invert_y,
+              design.helices,
+              design.groups,
+              helix_idxs_to_calculate: helix_idxs_to_calculate,
+            )
+            .build();
 
     // print('${sw.elapsedMicroseconds} microseconds to calculate helix_idx_to_svg_position_map');
 

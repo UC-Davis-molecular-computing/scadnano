@@ -38,10 +38,13 @@ abstract class Insertion
   Insertion fromJson(List list) => Insertion(list[0], list[1]);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory Insertion(int offset, int count, [String strand_id = 'NONE YET']) => Insertion.from((b) => b
-    ..offset = offset
-    ..length = count
-    ..strand_id = strand_id);
+  factory Insertion(int offset, int count, [String strand_id = 'NONE YET']) => Insertion.from(
+    (b) =>
+        b
+          ..offset = offset
+          ..length = count
+          ..strand_id = strand_id,
+  );
 
   factory Insertion.from([void Function(InsertionBuilder) updates]) = _$Insertion;
 
@@ -71,43 +74,47 @@ abstract class Domain
   /******************************* end built_value boilerplate ************************************/
 
   // named argument constructor
-  factory Domain(
-      {required int helix,
-      required bool forward,
-      required int start,
-      required int end,
-      Iterable<int>? deletions = null,
-      Iterable<Insertion>? insertions = null,
-      String strand_id = 'NONE YET',
-      String? dna_sequence = null,
-      Color? color = null,
-      bool is_scaffold = false,
-      String? name = null,
-      String? label = null,
-      bool is_first = false,
-      bool is_last = false}) {
+  factory Domain({
+    required int helix,
+    required bool forward,
+    required int start,
+    required int end,
+    Iterable<int>? deletions = null,
+    Iterable<Insertion>? insertions = null,
+    String strand_id = 'NONE YET',
+    String? dna_sequence = null,
+    Color? color = null,
+    bool is_scaffold = false,
+    String? name = null,
+    String? label = null,
+    bool is_first = false,
+    bool is_last = false,
+  }) {
     if (deletions == null) {
       deletions = BuiltList<int>();
     }
     if (insertions == null) {
       insertions = BuiltList<Insertion>();
     }
-    return Domain.from((b) => b
-      ..helix = helix
-      ..forward = forward
-      ..start = start
-      ..end = end
-      ..deletions.replace(deletions!)
-      ..insertions.replace(insertions!)
-      ..name = name
-      ..label = label
-      ..dna_sequence = dna_sequence
-      ..color = color
-      ..strand_id = strand_id
-      ..is_first = is_first
-      ..is_last = is_last
-      ..is_scaffold = is_scaffold
-      ..unused_fields.replace({}));
+    return Domain.from(
+      (b) =>
+          b
+            ..helix = helix
+            ..forward = forward
+            ..start = start
+            ..end = end
+            ..deletions.replace(deletions!)
+            ..insertions.replace(insertions!)
+            ..name = name
+            ..label = label
+            ..dna_sequence = dna_sequence
+            ..color = color
+            ..strand_id = strand_id
+            ..is_first = is_first
+            ..is_last = is_last
+            ..is_scaffold = is_scaffold
+            ..unused_fields.replace({}),
+    );
   }
 
   int get helix;
@@ -151,38 +158,42 @@ abstract class Domain
 
   @memoized
   DNAEnd get dnaend_start => DNAEnd(
-      is_5p: forward,
-      is_start: true,
-      forward: forward,
-      offset: start,
-      is_scaffold: is_scaffold,
-      substrand_is_first: is_first,
-      substrand_is_last: is_last,
-      is_on_extension: false,
-      substrand_id: id);
+    is_5p: forward,
+    is_start: true,
+    forward: forward,
+    offset: start,
+    is_scaffold: is_scaffold,
+    substrand_is_first: is_first,
+    substrand_is_last: is_last,
+    is_on_extension: false,
+    substrand_id: id,
+  );
 
   @memoized
   DNAEnd get dnaend_end => DNAEnd(
-      is_5p: !forward,
-      is_start: false,
-      forward: forward,
-      offset: end,
-      is_scaffold: is_scaffold,
-      substrand_is_first: is_first,
-      substrand_is_last: is_last,
-      is_on_extension: false,
-      substrand_id: id);
+    is_5p: !forward,
+    is_start: false,
+    forward: forward,
+    offset: end,
+    is_scaffold: is_scaffold,
+    substrand_is_first: is_first,
+    substrand_is_last: is_last,
+    is_on_extension: false,
+    substrand_id: id,
+  );
 
   @memoized
-  BuiltList<SelectableDeletion> get selectable_deletions => [
+  BuiltList<SelectableDeletion> get selectable_deletions =>
+      [
         for (int deletion in deletions)
-          SelectableDeletion(offset: deletion, domain: this, is_scaffold: is_scaffold)
+          SelectableDeletion(offset: deletion, domain: this, is_scaffold: is_scaffold),
       ].build();
 
   @memoized
-  BuiltList<SelectableInsertion> get selectable_insertions => [
+  BuiltList<SelectableInsertion> get selectable_insertions =>
+      [
         for (var insertion in insertions)
-          SelectableInsertion(insertion: insertion, domain: this, is_scaffold: is_scaffold)
+          SelectableInsertion(insertion: insertion, domain: this, is_scaffold: is_scaffold),
       ].build();
 
   Domain set_start(int start_new) => rebuild((ss) => ss..start = start_new);
@@ -231,9 +242,9 @@ abstract class Domain
     }
     if (this.insertions.isNotEmpty) {
       // need to use List.from because List.map returns Iterable, not List
-      json_map[constants.insertions_key] = List<dynamic>.from(this
-          .insertions
-          .map((insertion) => insertion.to_json_serializable(suppress_indent: suppress_indent)));
+      json_map[constants.insertions_key] = List<dynamic>.from(
+        this.insertions.map((insertion) => insertion.to_json_serializable(suppress_indent: suppress_indent)),
+      );
     }
     if (this.color != null) {
       json_map[constants.color_key] = this.color!.toHexColor().toCssString();
@@ -249,17 +260,22 @@ abstract class Domain
 
   static DomainBuilder from_json(Map<String, dynamic> json_map) {
     var class_name = 'Domain';
-    var forward = util.mandatory_field(json_map, constants.forward_key, class_name,
-        legacy_keys: constants.legacy_forward_keys);
+    var forward = util.mandatory_field(
+      json_map,
+      constants.forward_key,
+      class_name,
+      legacy_keys: constants.legacy_forward_keys,
+    );
     var helix = util.mandatory_field(json_map, constants.helix_idx_key, class_name);
     var start = util.mandatory_field(json_map, constants.start_key, class_name);
     var end = util.mandatory_field(json_map, constants.end_key, class_name);
     var deletions = List<int>.from(util.optional_field(json_map, constants.deletions_key, []));
     var insertions = parse_json_insertions(util.optional_field(json_map, constants.insertions_key, []));
 
-    Color? color = json_map.containsKey(constants.color_key)
-        ? util.parse_json_color(json_map[constants.color_key]!)
-        : null;
+    Color? color =
+        json_map.containsKey(constants.color_key)
+            ? util.parse_json_color(json_map[constants.color_key]!)
+            : null;
 
     String? name = util.optional_field_with_null_default(json_map, constants.name_key);
     String? label = util.optional_field_with_null_default(json_map, constants.label_key);
@@ -274,40 +290,52 @@ abstract class Domain
         var ins2 = insertions[j];
         if (ins1.offset == ins2.offset) {
           assert(ins1.length != ins2.length);
-          throw IllegalDesignError('two insertions on a domain have the same offset but different lengths:'
-              '\n${ins1}'
-              '\n${ins2}'
-              '\n${pre_domain_description(helix, forward, start, end)}');
+          throw IllegalDesignError(
+            'two insertions on a domain have the same offset but different lengths:'
+            '\n${ins1}'
+            '\n${ins2}'
+            '\n${pre_domain_description(helix, forward, start, end)}',
+          );
         }
       }
     }
 
     for (int deletion in deletions) {
       if (deletion < start) {
-        throw IllegalDesignError('deletion ${deletion} cannot be less than offset ${start}.\n'
-            '\n${pre_domain_description(helix, forward, start, end)}');
+        throw IllegalDesignError(
+          'deletion ${deletion} cannot be less than offset ${start}.\n'
+          '\n${pre_domain_description(helix, forward, start, end)}',
+        );
       }
       if (deletion >= end) {
-        throw IllegalDesignError('deletion ${deletion} cannot be greater than or equal to offset ${end}.\n'
-            '\n${pre_domain_description(helix, forward, start, end)}');
+        throw IllegalDesignError(
+          'deletion ${deletion} cannot be greater than or equal to offset ${end}.\n'
+          '\n${pre_domain_description(helix, forward, start, end)}',
+        );
       }
     }
 
     for (Insertion insertion in insertions) {
       if (insertion.offset < start) {
-        throw IllegalDesignError('insertion offset ${insertion.offset} '
-            'cannot be less than start offset ${start}.\n'
-            '\n${pre_domain_description(helix, forward, start, end)}');
+        throw IllegalDesignError(
+          'insertion offset ${insertion.offset} '
+          'cannot be less than start offset ${start}.\n'
+          '\n${pre_domain_description(helix, forward, start, end)}',
+        );
       }
       if (insertion.offset >= end) {
-        throw IllegalDesignError('insertion offset ${insertion.offset} '
-            'cannot be greater than or equal to end offset ${end}.\n'
-            '\n${pre_domain_description(helix, forward, start, end)}');
+        throw IllegalDesignError(
+          'insertion offset ${insertion.offset} '
+          'cannot be greater than or equal to end offset ${end}.\n'
+          '\n${pre_domain_description(helix, forward, start, end)}',
+        );
       }
       if (insertion.length <= 0) {
-        throw IllegalDesignError('insertion length ${insertion.length} '
-            'cannot be less than or equal to 0.\n'
-            '\n${pre_domain_description(helix, forward, start, end)}');
+        throw IllegalDesignError(
+          'insertion length ${insertion.length} '
+          'cannot be less than or equal to 0.\n'
+          '\n${pre_domain_description(helix, forward, start, end)}',
+        );
       }
     }
 
@@ -366,8 +394,8 @@ abstract class Domain
 
   int get visual_length => (this.end - this.start);
 
-//  String toString() =>
-//      'Domain(helix=${this.helix}, forward=${this.forward}, start=${this.start}, end=${this.end})';
+  //  String toString() =>
+  //      'Domain(helix=${this.helix}, forward=${this.forward}, start=${this.start}, end=${this.end})';
 
   /// Indicates if `offset` is the offset of a base on this substrand. (The end index should be false.)
   /// Note that offsets refer to visual portions of the displayed grid for the Helix.

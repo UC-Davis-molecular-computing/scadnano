@@ -44,7 +44,11 @@ class DesignMainDNAMismatchesComponent extends UiComponent2<DesignMainDNAMismatc
             var group = props.design.groups[helix.group]!;
             var geometry = group.geometry ?? props.design.geometry;
             var base_svg_pos = helix.svg_base_pos(
-                mismatch.offset, domain.forward, props.helix_idx_to_svg_position_y_map[helix.idx]!, geometry);
+              mismatch.offset,
+              domain.forward,
+              props.helix_idx_to_svg_position_y_map[helix.idx]!,
+              geometry,
+            );
             // For now, if there is a mismatch in an insertion we simply display it for the whole insertion,
             // not for a specific base. We maintain React keys to agree on any mismatches in the same
             // insertion, and we only render one of them.
@@ -52,12 +56,13 @@ class DesignMainDNAMismatchesComponent extends UiComponent2<DesignMainDNAMismatc
             if (!keys.contains(key)) {
               // otherwise, already rendered mismatch for this insertion
               keys.add(key);
-              var mismatch_component = (DesignMainWarningStar()
-                ..base_svg_pos = base_svg_pos
-                ..geometry = geometry
-                ..forward = domain.forward
-                ..color = 'red'
-                ..key = key)();
+              var mismatch_component =
+                  (DesignMainWarningStar()
+                    ..base_svg_pos = base_svg_pos
+                    ..geometry = geometry
+                    ..forward = domain.forward
+                    ..color = 'red'
+                    ..key = key)();
               domain_components.add(mismatch_component);
             }
           }
@@ -68,10 +73,12 @@ class DesignMainDNAMismatchesComponent extends UiComponent2<DesignMainDNAMismatc
         String transform_str = group.transform_str(props.design.geometry);
 
         if (domain_components.isNotEmpty) {
-          mismatch_components.add((Dom.g()
-            ..transform = transform_str
-            ..className = 'mismatch-components-in-domain mismatch-${strand.id}'
-            ..key = util.id_domain(domain))(domain_components));
+          mismatch_components.add(
+            (Dom.g()
+              ..transform = transform_str
+              ..className = 'mismatch-components-in-domain mismatch-${strand.id}'
+              ..key = util.id_domain(domain))(domain_components),
+          );
         }
       }
     }

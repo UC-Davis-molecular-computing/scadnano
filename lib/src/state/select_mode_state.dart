@@ -21,8 +21,11 @@ abstract class SelectModeState implements Built<SelectModeState, SelectModeState
   BuiltSet<SelectModeChoice> get modes;
 
   static void _initializeBuilder(SelectModeStateBuilder b) {
-    b.modes = SetBuilder<SelectModeChoice>(
-        [SelectModeChoice.strand, SelectModeChoice.staple, SelectModeChoice.scaffold]);
+    b.modes = SetBuilder<SelectModeChoice>([
+      SelectModeChoice.strand,
+      SelectModeChoice.staple,
+      SelectModeChoice.scaffold,
+    ]);
   }
 
   bool is_selectable(Selectable selectable) => modes.contains(selectable.select_mode);

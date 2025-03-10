@@ -15,10 +15,13 @@ import 'package:scadnano/src/util.dart' as util;
 import '../utils.dart' as utils;
 
 AppState initializeTestState() {
-  return util.default_state().rebuild((b) => b
-    ..ui_state.storables.show_dna = false
-    ..ui_state.storables.show_mismatches = true
-    ..maybe_design.replace(two_helices_design));
+  return util.default_state().rebuild(
+    (b) =>
+        b
+          ..ui_state.storables.show_dna = false
+          ..ui_state.storables.show_mismatches = true
+          ..maybe_design.replace(two_helices_design),
+  );
 }
 
 const MenuTestId = 'scadnano.MenuComponent';
@@ -62,11 +65,13 @@ main() {
     setUp(() {
       utils.initialize_test_store(initializeTestState());
       menuRef = createRef<MenuComponent>();
-      mount((ReduxProvider()..store = app.store)(
-        (set_menu_props(ConnectedMenu(), app.state)
-          ..addTestId(MenuTestId)
-          ..ref = menuRef)(),
-      ));
+      mount(
+        (ReduxProvider()..store = app.store)(
+          (set_menu_props(ConnectedMenu(), app.state)
+            ..addTestId(MenuTestId)
+            ..ref = menuRef)(),
+        ),
+      );
       component = menuRef!.current;
       // component = getComponentByTestId(testJacket.getInstance(), MenuTestId);
       expect(component, isNotNull, reason: 'ConnectedMenu should be mounted');

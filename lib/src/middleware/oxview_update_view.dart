@@ -53,8 +53,9 @@ void update_oxview_view(Design design, [IFrameElement? frame = null]) {
   }
 
   // reset oxview in case it has nucleotides already
-  Blob blob_js_reset_commands =
-      new Blob(['resetScene(resetCamera = false);'], blob_type_to_string(BlobType.text));
+  Blob blob_js_reset_commands = new Blob([
+    'resetScene(resetCamera = false);',
+  ], blob_type_to_string(BlobType.text));
   Map<String, dynamic> message = {
     'message': 'iframe_drop',
     'files': [blob_js_reset_commands],

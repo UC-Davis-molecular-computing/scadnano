@@ -33,8 +33,10 @@ mixin DesignMainDNASequenceProps on UiProps implements TransformByHelixGroupProp
 }
 
 bool should_draw_domain(
-        Domain ss, BuiltSet<int> side_selected_helix_idxs, bool only_display_selected_helices) =>
-    !only_display_selected_helices || side_selected_helix_idxs.contains(ss.helix);
+  Domain ss,
+  BuiltSet<int> side_selected_helix_idxs,
+  bool only_display_selected_helices,
+) => !only_display_selected_helices || side_selected_helix_idxs.contains(ss.helix);
 
 class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceProps> with PureComponent {
   @override
@@ -54,10 +56,12 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
             int length = insertion.length;
             domain_elts.add(this._dna_sequence_on_insertion(domain, offset, length));
           }
-          dna_sequence_elts.add((Dom.g()
-            ..transform = transform_of_helix2(props, domain.helix)
-            ..className = 'dna-seq-on-domain-group'
-            ..key = util.id_domain(domain))(domain_elts));
+          dna_sequence_elts.add(
+            (Dom.g()
+              ..transform = transform_of_helix2(props, domain.helix)
+              ..className = 'dna-seq-on-domain-group'
+              ..key = util.id_domain(domain))(domain_elts),
+          );
         }
       } else if (substrand is Loopout) {
         assert(0 < i);
@@ -73,7 +77,10 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
         assert(i == 0 || i == props.strand.substrands.length - 1);
         Extension ext = substrand;
         if (should_draw_domain(
-            ext.adjacent_domain, side_selected_helix_idxs, props.only_display_selected_helices)) {
+          ext.adjacent_domain,
+          side_selected_helix_idxs,
+          props.only_display_selected_helices,
+        )) {
           dna_sequence_elts.add(this._dna_sequence_on_extension(ext));
         }
       } else {
@@ -93,12 +100,17 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     var group = props.groups[helix.group]!;
     var geometry = group.geometry ?? props.geometry;
     var seq_to_draw = domain.dna_sequence_deletions_insertions_to_spaces(
-        reverse: props.display_reverse_DNA_right_side_up && !domain.forward);
+      reverse: props.display_reverse_DNA_right_side_up && !domain.forward,
+    );
 
     var rotate_degrees = 0;
     int offset = domain.offset_5p;
     Point<double> pos = helix.svg_base_pos(
-        offset, domain.forward, props.helix_idx_to_svg_position_map[domain.helix]!.y, props.geometry);
+      offset,
+      domain.forward,
+      props.helix_idx_to_svg_position_map[domain.helix]!.y,
+      props.geometry,
+    );
     var rotate_x = pos.x;
     var rotate_y = pos.y;
 
@@ -160,7 +172,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     var subseq = domain.dna_sequence_in(offset, offset, reverse: reverse_right_side_up);
     //XXX: path_length appears to return different results depending on the computer (probably resolution??)
     // don't rely on it. This caused Firefox for example to render different on the same version.
-//    num path_length = insertion_path_elt.getTotalLength();
+    //    num path_length = insertion_path_elt.getTotalLength();
 
     var start_offset = '50%';
     var dy = '${0.1 * geometry.base_width_svg}';
@@ -180,13 +192,14 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       style_map['dominantBaseline'] = 'hanging';
     }
 
-    SvgProps text_path_props = (Dom.textPath()
-      ..className = classname_dna_sequence + '-insertion'
-      //XXX: xlink:href is deprecated, but this is needed for exporting SVG, due to a bug in Inkscape
-      // https://gitlab.com/inkscape/inbox/issues/1763
-      ..xlinkHref = '#${util.id_insertion(domain, offset)}'
-      ..startOffset = start_offset
-      ..style = style_map);
+    SvgProps text_path_props =
+        (Dom.textPath()
+          ..className = classname_dna_sequence + '-insertion'
+          //XXX: xlink:href is deprecated, but this is needed for exporting SVG, due to a bug in Inkscape
+          // https://gitlab.com/inkscape/inbox/issues/1763
+          ..xlinkHref = '#${util.id_insertion(domain, offset)}'
+          ..startOffset = start_offset
+          ..style = style_map);
 
     return (Dom.text()
       ..key = 'textelt-${util.id_insertion(domain, offset)}'
@@ -219,13 +232,15 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       style_map = {'fontSize': '${font_size}px'};
     }
 
-    SvgProps text_path_props = (Dom.textPath()
-      ..className = classname_dna_sequence + '-loopout'
-      ..xlinkHref = '#${loopout.id}'
-      ..startOffset = start_offset
-      ..style = style_map);
+    SvgProps text_path_props =
+        (Dom.textPath()
+          ..className = classname_dna_sequence + '-loopout'
+          ..xlinkHref = '#${loopout.id}'
+          ..startOffset = start_offset
+          ..style = style_map);
     return (Dom.text()
-      ..key = 'loopout-dna'
+      ..key =
+          'loopout-dna'
           'H${prev_domain.helix},${prev_domain.offset_3p}-'
           'H${next_domain.helix},${next_domain.offset_5p}'
       ..dy = dy)(text_path_props(subseq));
@@ -246,13 +261,15 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
 
     Map<String, dynamic> style_map = {'letterSpacing': '${letter_spacing}em', 'fontSize': '${font_size}px'};
 
-    SvgProps text_path_props = (Dom.textPath()
-      ..className = classname_dna_sequence + '-extension'
-      ..xlinkHref = '#${ext.id}'
-      ..startOffset = start_offset
-      ..style = style_map);
+    SvgProps text_path_props =
+        (Dom.textPath()
+          ..className = classname_dna_sequence + '-extension'
+          ..xlinkHref = '#${ext.id}'
+          ..startOffset = start_offset
+          ..style = style_map);
     return (Dom.text()
-      ..key = 'extension-dna-${ext.is_5p ? "5'" : "3'"}'
+      ..key =
+          'extension-dna-${ext.is_5p ? "5'" : "3'"}'
           'H${ext.adjacent_domain.helix},${ext.adjacent_domain.start}-${ext.adjacent_domain.end}'
       ..dy = dy)(text_path_props(subseq));
   }

@@ -80,7 +80,8 @@ Map<String, dynamic> to_cadnano_v2_serializable(Design design, [String name = ""
     }
     if (grid_used.length > 1) {
       throw new IllegalCadnanoDesignError(
-          'Designs using helix groups can be exported to cadnano v2 only if all groups share the same grid type.');
+        'Designs using helix groups can be exported to cadnano v2 only if all groups share the same grid type.',
+      );
     } else {
       design_grid = grid_type;
     }
@@ -110,8 +111,10 @@ Map<String, dynamic> to_cadnano_v2_serializable(Design design, [String name = ""
   for (Strand strand in design.strands) {
     for (Substrand substrand in strand.substrands) {
       if (substrand is Loopout || substrand is Extension) {
-        throw new IllegalCadnanoDesignError('We cannot handle designs with Loopouts or Extensions, '
-            'since they are not cadnano v2 concepts.');
+        throw new IllegalCadnanoDesignError(
+          'We cannot handle designs with Loopouts or Extensions, '
+          'since they are not cadnano v2 concepts.',
+        );
       }
 
       bool cadnano_expected_direction;
@@ -133,8 +136,9 @@ Map<String, dynamic> to_cadnano_v2_serializable(Design design, [String name = ""
 
       if (!cadnano_expected_direction) {
         throw new IllegalCadnanoDesignError(
-            'We can only convert designs where even helices have the scaffold going forward and odd helices '
-            'have the scaffold going backward see the spec v2.txt Note 4. ${domain}');
+          'We can only convert designs where even helices have the scaffold going forward and odd helices '
+          'have the scaffold going backward see the spec v2.txt Note 4. ${domain}',
+        );
       }
     }
   }
@@ -155,7 +159,11 @@ int _get_multiple_of_x_sup_closest_to_y(int x, int y) {
 
 /// Creates blank cadnanov2 helices in and initialized all their fields.
 Map<int, int> _cadnano_v2_fill_blank(
-    Design design, Map<String, dynamic> dct, int num_bases, Grid design_grid) {
+  Design design,
+  Map<String, dynamic> dct,
+  int num_bases,
+  Grid design_grid,
+) {
   Map<int, int> helices_ids_reverse = new HashMap();
   int i = 0;
   for (Helix helix in design.helices.values) {
@@ -200,7 +208,8 @@ void _cadnano_v2_place_strand(Strand strand, Map<String, dynamic> dct, Map<int, 
     Domain domain = strand.domains[i];
     if (domain is Loopout) {
       throw new IllegalCadnanoDesignError(
-          'cannot convert Strand ${strand} to cadnanov2 format, since it has Loopouts');
+        'cannot convert Strand ${strand} to cadnanov2 format, since it has Loopouts',
+      );
     }
 
     int which_helix_id = helices_ids_reverse[domain.helix]!;
@@ -216,7 +225,8 @@ void _cadnano_v2_place_strand(Strand strand, Map<String, dynamic> dct, Map<int, 
       Domain next_domain = strand.domains[i + 1];
       if (next_domain is Loopout) {
         throw new IllegalCadnanoDesignError(
-            'cannot convert Strand ${strand} to cadnanov2 format, since it has Loopouts');
+          'cannot convert Strand ${strand} to cadnanov2 format, since it has Loopouts',
+        );
       }
 
       int next_helix_id = helices_ids_reverse[next_domain.helix]!;
@@ -302,8 +312,11 @@ void _cadnano_v2_place_strand_segment(Map<String, dynamic> helix_dct, Domain dom
 
     if (i_base == start) {
       if (forward)
-        (helix_dct[strand_type][i_base] as List<int>)
-            .setRange(2, (helix_dct[strand_type][i_base] as List<int>).length, [to_helix, to_base]);
+        (helix_dct[strand_type][i_base] as List<int>).setRange(
+          2,
+          (helix_dct[strand_type][i_base] as List<int>).length,
+          [to_helix, to_base],
+        );
       else
         (helix_dct[strand_type][i_base] as List<int>).setRange(0, 2, [from_helix, from_base]);
     } else if (i_base < end - 1) {
@@ -312,8 +325,10 @@ void _cadnano_v2_place_strand_segment(Map<String, dynamic> helix_dct, Domain dom
       if (forward)
         helix_dct[strand_type][i_base].setRange(0, 2, [from_helix, from_base]);
       else
-        helix_dct[strand_type][i_base]
-            .setRange(2, (helix_dct[strand_type][i_base] as List<int>).length, [to_helix, to_base]);
+        helix_dct[strand_type][i_base].setRange(2, (helix_dct[strand_type][i_base] as List<int>).length, [
+          to_helix,
+          to_base,
+        ]);
     }
   }
 }
@@ -321,8 +336,13 @@ void _cadnano_v2_place_strand_segment(Map<String, dynamic> helix_dct, Domain dom
 /// Converts a crossover to cadnano v2 format.
 /// Returns a conversion table from ids in the structure self.helices to helices ids
 /// as given by helix.idx.
-void _cadnano_v2_place_crossover(Map<String, dynamic> helix_from_dct, Map<String, dynamic> helix_to_dct,
-    Domain domain_from, Domain domain_to, String strand_type) {
+void _cadnano_v2_place_crossover(
+  Map<String, dynamic> helix_from_dct,
+  Map<String, dynamic> helix_to_dct,
+  Domain domain_from,
+  Domain domain_to,
+  String strand_type,
+) {
   int helix_from = helix_from_dct['num'];
   int start_from = domain_from.start;
   int end_from = domain_from.end;
@@ -338,16 +358,24 @@ void _cadnano_v2_place_crossover(Map<String, dynamic> helix_from_dct, Map<String
   // In total there are four cases corresponding to
   // [forward_from, not forward_from] x [forward_to, not forward_to]
   if (forward_from && !forward_to) {
-    (helix_from_dct[strand_type][end_from - 1] as List<int>)
-        .setRange(2, (helix_from_dct[strand_type][end_from - 1] as List<int>).length, [helix_to, end_to - 1]);
+    (helix_from_dct[strand_type][end_from - 1] as List<int>).setRange(
+      2,
+      (helix_from_dct[strand_type][end_from - 1] as List<int>).length,
+      [helix_to, end_to - 1],
+    );
     (helix_to_dct[strand_type][end_to - 1] as List<int>).setRange(0, 2, [helix_from, end_from - 1]);
   } else if (!forward_from && forward_to) {
-    (helix_from_dct[strand_type][start_from] as List<int>)
-        .setRange(2, (helix_from_dct[strand_type][start_from] as List<int>).length, [helix_to, start_to]);
+    (helix_from_dct[strand_type][start_from] as List<int>).setRange(
+      2,
+      (helix_from_dct[strand_type][start_from] as List<int>).length,
+      [helix_to, start_to],
+    );
     (helix_to_dct[strand_type][start_to] as List<int>).setRange(0, 2, [helix_from, start_from]);
   } else if (forward_from && forward_to) {
-    helix_from_dct[strand_type][end_from - 1]
-        .setRange(2, helix_from_dct[strand_type][end_from - 1].length, [helix_to, start_to]);
+    helix_from_dct[strand_type][end_from - 1].setRange(2, helix_from_dct[strand_type][end_from - 1].length, [
+      helix_to,
+      start_to,
+    ]);
     helix_to_dct[strand_type][end_to - 1].setRange(0, 2, [helix_from, start_from]);
     if (helix_from_dct['row'] % 2 != helix_to_dct['row'] % 2) {
       throw new IllegalCadnanoDesignError('''\
@@ -356,8 +384,10 @@ row number, here helix num ${helix_from_dct['num']} and helix num ${helix_to_dct
 have different parity of row number: respectively ${helix_from_dct['row']} and ${helix_to_dct['row']}''');
     }
   } else if (!forward_from && !forward_to) {
-    helix_from_dct[strand_type][start_from]
-        .setRange(2, helix_from_dct[strand_type][start_from].length, [helix_to, end_to - 1]);
+    helix_from_dct[strand_type][start_from].setRange(2, helix_from_dct[strand_type][start_from].length, [
+      helix_to,
+      end_to - 1,
+    ]);
     helix_to_dct[strand_type][end_to - 1].setRange(0, 2, [helix_from, start_from]);
     if (helix_from_dct['row'] % 2 != helix_to_dct['row'] % 2) {
       throw new IllegalCadnanoDesignError('''\

@@ -78,20 +78,22 @@ export_dna_sequences_middleware(Store<AppState> store, action, NextDispatcher ne
       );
       // See export comments for why we have this stupid special case
       if (result is Future<List<int>>) {
-        result.then((response) {
-          List<int> content = response;
-          util.save_file(filename, content, blob_type: blob_type);
-        }).catchError((e, stackTrace) {
-          var cause = "";
-          if (has_cause(e)) {
-            cause = e.cause;
-          } else if (has_message(e)) {
-            cause = e.message;
-          }
-          var msg = cause + '\n\n' + stackTrace.toString();
-          store.dispatch(actions.ErrorMessageSet(msg));
-          app.view.design_view.render(store.state);
-        });
+        result
+            .then((response) {
+              List<int> content = response;
+              util.save_file(filename, content, blob_type: blob_type);
+            })
+            .catchError((e, stackTrace) {
+              var cause = "";
+              if (has_cause(e)) {
+                cause = e.cause;
+              } else if (has_message(e)) {
+                cause = e.message;
+              }
+              var msg = cause + '\n\n' + stackTrace.toString();
+              store.dispatch(actions.ErrorMessageSet(msg));
+              app.view.design_view.render(store.state);
+            });
       } else {
         String content = result;
         util.save_file(filename, content, blob_type: blob_type);
@@ -124,21 +126,30 @@ Future<void> export_dna() async {
 
   FixedList<DialogItem> items = FixedList<DialogItem>(idx_strand_order_str + 1);
 
-  items[idx_delimiter] = DialogText(label: 'delimiter between IDT fields', value: ',', tooltip: '''\
+  items[idx_delimiter] = DialogText(
+    label: 'delimiter between IDT fields',
+    value: ',',
+    tooltip: '''\
 Delimiter to separate IDT fields in a "bulk input" text file, for instance if set to ";", then a line 
 of the file could be
-  strand_name;AAAAACCCCCGGGGG;25nm;STD''');
+  strand_name;AAAAACCCCCGGGGG;25nm;STD''',
+  );
 
-  items[idx_domain_delimiter] =
-      DialogText(label: 'delimiter between DNA sequences of domains', value: '', tooltip: '''\
+  items[idx_domain_delimiter] = DialogText(
+    label: 'delimiter between DNA sequences of domains',
+    value: '',
+    tooltip: '''\
 Delimiter to separate DNA sequences from different domains/loopouts/extensions, for instance if set to " ", 
 then the exported DNA sequence could be
   AAAAA CCCCC GGGGG
-if it had three domains each of length 5.''');
+if it had three domains each of length 5.''',
+  );
 
   items[idx_include_scaffold] = DialogCheckbox(label: 'include scaffold', value: false);
-  items[idx_include_only_selected_strands] =
-      DialogCheckbox(label: 'include only selected strands', value: false);
+  items[idx_include_only_selected_strands] = DialogCheckbox(
+    label: 'include only selected strands',
+    value: false,
+  );
   items[idx_exclude_selected_strands] = DialogCheckbox(label: 'exclude selected strands', value: false);
   items[idx_format_str] = DialogRadio(
     label: 'export format',
@@ -147,21 +158,30 @@ if it had three domains each of length 5.''');
     option_tooltips: ExportDNAFormat.tooltips,
   );
   items[idx_column_major_plate] = DialogCheckbox(
-      label: 'column-major well order (uncheck for row-major order)', value: true, tooltip: """\
+    label: 'column-major well order (uncheck for row-major order)',
+    value: true,
+    tooltip: """\
 For exporting to plates, this customizes the order in which wells are enumerated.
 Column-major order is A1, B1, C1, ... Row-major order is A1, A2, A3, ... 
 Note that this is distinct from the notion of "sort strands", which helps specify the 
 order in which strands are processed (as opposed to order of wells in a plate).
-""");
-  items[idx_sort] = DialogCheckbox(label: 'sort strands', value: false, tooltip: """\
+""",
+  );
+  items[idx_sort] = DialogCheckbox(
+    label: 'sort strands',
+    value: false,
+    tooltip: """\
 By default strands are exported in the order they are stored in the .sc file.
 Checking this box allows some customization of the order in which strands are processed.
 (See "column-major" box below for description.) Note that for exporting plates, 
 this is distinct from the order in which wells are enumerated when putting strands 
 into the plate. That can be customized by selecting "column-major well order" below.
-""");
+""",
+  );
   items[idx_column_major_strand] = DialogCheckbox(
-      label: 'column-major strand order (uncheck for row-major order)', value: true, tooltip: """\
+    label: 'column-major strand order (uncheck for row-major order)',
+    value: true,
+    tooltip: """\
 When checked, strands are processed in column-major "visual order" by their 5' ends. 
 Column-major means sort first by offset, then by helix index. For example, if
 the 5' addresses are (0,5), meaning helix 0 at offset 5, 
@@ -170,7 +190,8 @@ then that is row-major order. Column-major order would be
 (0,5), (1,5), (2,5), (0,10), (1,10), (2,10), (0,15), (1,15), (2,15).
 Finally, instead of using the addresses of 5' ends, other strand "parts" can be
 used to sort; see options under "strand part to sort by".
-""");
+""",
+  );
   items[idx_strand_order_str] = DialogRadio(
     label: 'strand part to sort by',
     options: sort_options,
@@ -183,28 +204,29 @@ which part of the strand to use as the address.
   );
 
   var dialog = Dialog(
-      title: 'export DNA sequences',
-      type: DialogType.export_dna_sequences,
-      items: items,
-      disable_when_any_checkboxes_on: {
-        idx_include_only_selected_strands: [idx_exclude_selected_strands],
-        idx_exclude_selected_strands: [idx_include_only_selected_strands],
+    title: 'export DNA sequences',
+    type: DialogType.export_dna_sequences,
+    items: items,
+    disable_when_any_checkboxes_on: {
+      idx_include_only_selected_strands: [idx_exclude_selected_strands],
+      idx_exclude_selected_strands: [idx_include_only_selected_strands],
+    },
+    disable_when_any_checkboxes_off: {
+      idx_column_major_strand: [idx_sort],
+      idx_strand_order_str: [idx_sort],
+    },
+    disable_when_any_radio_button_selected: {
+      idx_column_major_plate: {
+        idx_format_str: [
+          // need to use toString() to get the exact string value displayed for later comparison
+          // using ExportDNAFormat.name instead will return a different string (e.g. 'csv' vs
+          // 'CSV (.csv)') than displayed in the radio button
+          ExportDNAFormat.csv.toString(),
+          ExportDNAFormat.idt_bulk.toString(),
+        ],
       },
-      disable_when_any_checkboxes_off: {
-        idx_column_major_strand: [idx_sort],
-        idx_strand_order_str: [idx_sort],
-      },
-      disable_when_any_radio_button_selected: {
-        idx_column_major_plate: {
-          idx_format_str: [
-            // need to use toString() to get the exact string value displayed for later comparison
-            // using ExportDNAFormat.name instead will return a different string (e.g. 'csv' vs
-            // 'CSV (.csv)') than displayed in the radio button
-            ExportDNAFormat.csv.toString(),
-            ExportDNAFormat.idt_bulk.toString(),
-          ]
-        },
-      });
+    },
+  );
 
   List<DialogItem>? results = await util.dialog(dialog);
   if (results == null) return;
@@ -228,17 +250,19 @@ which part of the strand to use as the address.
 
   assert(!(include_only_selected_strands && exclude_selected_strands));
 
-  app.dispatch(actions.ExportDNA(
-    include_scaffold: include_scaffold,
-    include_only_selected_strands: include_only_selected_strands,
-    exclude_selected_strands: exclude_selected_strands,
-    export_dna_format: format,
-    delimiter: delimiter,
-    domain_delimiter: domain_delimiter,
-    strand_order: strand_order,
-    column_major_strand: column_major_strand,
-    column_major_plate: column_major_plate,
-  ));
+  app.dispatch(
+    actions.ExportDNA(
+      include_scaffold: include_scaffold,
+      include_only_selected_strands: include_only_selected_strands,
+      exclude_selected_strands: exclude_selected_strands,
+      export_dna_format: format,
+      delimiter: delimiter,
+      domain_delimiter: domain_delimiter,
+      strand_order: strand_order,
+      column_major_strand: column_major_strand,
+      column_major_plate: column_major_plate,
+    ),
+  );
 }
 
 String cando_compatible_csv_export(Iterable<Strand> strands) {
@@ -262,10 +286,12 @@ String cando_compatible_csv_export(Iterable<Strand> strands) {
     String cando_strand_end = cando_split_name[1]!;
     String cando_strand_start = cando_split_name[0]!;
     // Write the strand to the CSV file.
-    buf.writeln('${cando_strand_start},${cando_strand_end}'
-        ',${vendor_sequence_null_aware(strand, "")}'
-        ',${vendor_sequence_null_aware(strand, "").length}'
-        ',${strand.color.toHexColor().toCssString().toUpperCase()}');
+    buf.writeln(
+      '${cando_strand_start},${cando_strand_end}'
+      ',${vendor_sequence_null_aware(strand, "")}'
+      ',${vendor_sequence_null_aware(strand, "").length}'
+      ',${strand.color.toHexColor().toCssString().toUpperCase()}',
+    );
   }
   return buf.toString();
 }

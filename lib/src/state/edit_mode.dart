@@ -25,7 +25,7 @@ class EditModeChoice extends EnumClass {
   static const EditModeChoice deletion = _$deletion;
   static const EditModeChoice move_group = _$move_group;
 
-//  static const EditModeChoice python = _$python;
+  //  static const EditModeChoice python = _$python;
 
   static BuiltSet<EditModeChoice> get values => _$values;
 

@@ -31,7 +31,8 @@ GlobalReducer<SelectablesStore, AppState> selectables_store_global_reducer = com
   TypedGlobalReducer<SelectablesStore, AppState, actions.SelectOrToggleItems>(select_or_toggle_items_reducer),
   TypedGlobalReducer<SelectablesStore, AppState, actions.SelectAllSelectable>(select_all_selectables_reducer),
   TypedGlobalReducer<SelectablesStore, AppState, actions.SelectAllStrandsWithSameAsSelected>(
-      select_all_with_same_reducer),
+    select_all_with_same_reducer,
+  ),
 ]);
 
 // is item currently selectable, given all the information about select modes, whether it's part of
@@ -76,7 +77,10 @@ SelectablesStore select_reducer(SelectablesStore selectables_store, AppState sta
 }
 
 SelectablesStore select_all_selectables_reducer(
-    SelectablesStore selectables_store, AppState state, actions.SelectAllSelectable action) {
+  SelectablesStore selectables_store,
+  AppState state,
+  actions.SelectAllSelectable action,
+) {
   BuiltSet<SelectModeChoice> modes = state.ui_state.select_mode_state.modes;
   bool scaffold_selectable = modes.contains(SelectModeChoice.scaffold);
   bool staple_selectable = modes.contains(SelectModeChoice.staple);
@@ -84,7 +88,8 @@ SelectablesStore select_all_selectables_reducer(
   List<Selectable> selected = [];
   for (var strand in state.design.strands) {
     if (action.current_helix_group_only &&
-        state.design.group_name_of_strand(strand) != state.ui_state.displayed_group_name) continue;
+        state.design.group_name_of_strand(strand) != state.ui_state.displayed_group_name)
+      continue;
     if (!state.design.is_origami ||
         (strand.is_scaffold && scaffold_selectable) ||
         (!strand.is_scaffold && staple_selectable)) {
@@ -100,14 +105,14 @@ SelectablesStore select_all_selectables_reducer(
           for (var ext in strand.extensions)
             if (ext.is_5p) ext.dnaend_free,
           for (var domain in strand.domains)
-            if (domain.is_first) domain.dnaend_5p
+            if (domain.is_first) domain.dnaend_5p,
         ]);
       if (modes.contains(SelectModeChoice.end_3p_strand))
         selected.addAll([
           for (var ext in strand.extensions)
             if (!ext.is_5p) ext.dnaend_free,
           for (var domain in strand.domains)
-            if (domain.is_last) domain.dnaend_3p
+            if (domain.is_last) domain.dnaend_3p,
         ]);
       if (modes.contains(SelectModeChoice.end_5p_domain))
         selected.addAll(strand.domains.where((domain) => !domain.is_first).map((domain) => domain.dnaend_5p));
@@ -119,8 +124,10 @@ SelectablesStore select_all_selectables_reducer(
 }
 
 SelectablesStore select_or_toggle_items_reducer(
-        SelectablesStore selectables_store, AppState state, actions.SelectOrToggleItems action) =>
-    action.toggle ? selectables_store.toggle_all(action.items) : selectables_store.select_all(action.items);
+  SelectablesStore selectables_store,
+  AppState state,
+  actions.SelectOrToggleItems action,
+) => action.toggle ? selectables_store.toggle_all(action.items) : selectables_store.select_all(action.items);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // selectables local reducer
@@ -136,8 +143,9 @@ Reducer<SelectablesStore> selectables_store_local_reducer = combineReducers([
 
 // because the DNADesign changed, some selected items may no longer be valid
 SelectablesStore design_changing_action_reducer(
-        SelectablesStore selectables_store, actions.DesignChangingAction action) =>
-    action is actions.HelicesPositionsSetBasedOnCrossovers ? selectables_store : selectables_store.clear();
+  SelectablesStore selectables_store,
+  actions.DesignChangingAction action,
+) => action is actions.HelicesPositionsSetBasedOnCrossovers ? selectables_store : selectables_store.clear();
 
 SelectablesStore select_all_reducer(SelectablesStore selectables_store, actions.SelectAll action) =>
     selectables_store.select_all(action.selectables, only: action.only);
@@ -145,7 +153,10 @@ SelectablesStore select_all_reducer(SelectablesStore selectables_store, actions.
 SelectablesStore selections_clear_reducer(SelectablesStore selectables_store, _) => selectables_store.clear();
 
 SelectablesStore select_all_with_same_reducer(
-    SelectablesStore selectables_store, AppState state, actions.SelectAllStrandsWithSameAsSelected action) {
+  SelectablesStore selectables_store,
+  AppState state,
+  actions.SelectAllStrandsWithSameAsSelected action,
+) {
   // gather values of traits of selected strands
   Map<SelectableTrait, List<Object?>> trait_values = {for (var trait in action.traits) trait: []};
   for (var strand in action.template_strands) {
@@ -196,7 +207,10 @@ GlobalReducer<BuiltSet<int>, AppState> side_selected_helices_global_reducer = co
 ]);
 
 BuiltSet<int> helix_selections_adjust_reducer(
-    BuiltSet<int> helix_idxs_selected, AppState state, actions.HelixSelectionsAdjust action) {
+  BuiltSet<int> helix_idxs_selected,
+  AppState state,
+  actions.HelixSelectionsAdjust action,
+) {
   //FIXME: this reducer isn't pure. Move into middleware similar to selections_intersect_box_compute
   bool toggle = action.toggle;
   var selection_box = action.selection_box;
@@ -204,13 +218,17 @@ BuiltSet<int> helix_selections_adjust_reducer(
   var all_helices_in_displayed_group = state.design.helices_in_group(group_name);
   var group = state.design.groups[group_name]!;
   var geometry = group.geometry ?? state.design.geometry;
-  List<select.Box> all_bboxes = all_helices_in_displayed_group.values
-      .map((helix) => helix_to_box(helix, geometry, state.ui_state.invert_y))
-      .toList();
+  List<select.Box> all_bboxes =
+      all_helices_in_displayed_group.values
+          .map((helix) => helix_to_box(helix, geometry, state.ui_state.invert_y))
+          .toList();
   var selection_box_as_box = select.Box.from_selection_box(selection_box);
-  List<Helix> helices_overlapping =
-      select.enclosure_list(all_helices_in_displayed_group.values, all_bboxes, selection_box_as_box);
-//      util.intersection_list(all_helices.toList(), all_bboxes, util.Box.from_selection_box(selection_box));
+  List<Helix> helices_overlapping = select.enclosure_list(
+    all_helices_in_displayed_group.values,
+    all_bboxes,
+    selection_box_as_box,
+  );
+  //      util.intersection_list(all_helices.toList(), all_bboxes, util.Box.from_selection_box(selection_box));
   List<int> helix_idxs_overlapping = helices_overlapping.map((helix) => helix.idx).toList();
 
   // start with all previously selected helices
@@ -290,8 +308,9 @@ SelectionBox? selection_box_create_reducer(SelectionBox? _, actions.SelectionBox
     SelectionBox(action.point, action.toggle, action.is_main);
 
 SelectionBox? selection_box_size_changed_reducer(
-        SelectionBox? selection_box, actions.SelectionBoxSizeChange action) =>
-    selection_box!.rebuild((s) => s..current = action.point);
+  SelectionBox? selection_box,
+  actions.SelectionBoxSizeChange action,
+) => selection_box!.rebuild((s) => s..current = action.point);
 
 SelectionBox? selection_box_remove_reducer(SelectionBox? _, actions.SelectionBoxRemove __) => null;
 
