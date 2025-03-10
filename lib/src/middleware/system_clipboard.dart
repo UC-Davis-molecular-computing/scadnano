@@ -118,8 +118,8 @@ bool paste_is_impossible_from_clipboard(String clipboard_content, bool in_browse
   var strands_and_helices_view_order = parse_strands_and_helices_view_order_from_clipboard(clipboard_content);
   if (strands_and_helices_view_order == null) return true;
 
-  List<Strand> strands = strands_and_helices_view_order.item1;
-  List<int>? helices_view_order = strands_and_helices_view_order.item2;
+  List<Strand> strands = strands_and_helices_view_order.$1;
+  List<int>? helices_view_order = strands_and_helices_view_order.$2;
 
   if (strands.isEmpty) return true;
 

@@ -7,7 +7,6 @@ import 'package:built_value/built_value.dart';
 import 'package:scadnano/src/state/design_side_rotation_data.dart';
 import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/copy_info.dart';
-import 'package:tuple/tuple.dart';
 import '../actions/actions.dart' as actions;
 import '../state/local_storage_design_choice.dart';
 

@@ -9,7 +9,6 @@ import 'package:scadnano/src/state/extension.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/selectable.dart';
-import 'package:tuple/tuple.dart';
 
 import 'assign_domain_names_reducer.dart';
 import 'strands_move_reducer.dart' as strands_move_reducer;
@@ -363,8 +362,8 @@ BuiltList<Strand> strands_dna_ends_move_commit_reducer(
   for (var strand in strands_affected) {
     int strand_idx = strands.indexOf(strand);
     var ret = single_strand_dna_ends_commit_stop_reducer(strand, move, state.design);
-    strand = ret.item1;
-    records.addAll(ret.item2);
+    strand = ret.$1;
+    records.addAll(ret.$2);
     strand = strand.initialize();
     strands_builder[strand_idx] = strand;
   }
@@ -418,8 +417,8 @@ BuiltList<Strand> strands_dna_extensions_move_commit_reducer(
         geometry);
 
     Extension ext_new = extension.rebuild((b) => b
-      ..display_length = length_and_angle.item1
-      ..display_angle = length_and_angle.item2);
+      ..display_length = length_and_angle.$1
+      ..display_angle = length_and_angle.$2);
 
     substrands_builder[substrand_idx] = ext_new;
     strand = strand.rebuild((s) => s..substrands = substrands_builder);
@@ -439,7 +438,7 @@ class InsertionDeletionRecord {
       'InsertionDeletionRecord(offset=${offset}, strand_idx=$strand_idx, substrand_idx=$substrand_idx)';
 }
 
-Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop_reducer(
+(Strand, List<InsertionDeletionRecord>) single_strand_dna_ends_commit_stop_reducer(
     Strand strand, DNAEndsMove all_move, Design design) {
   List<InsertionDeletionRecord> records = [];
   List<Substrand> substrands = strand.substrands.toList();
@@ -487,7 +486,7 @@ Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop
     substrands[i] = new_substrand;
   }
   strand = strand.rebuild((b) => b..substrands.replace(substrands));
-  return Tuple2<Strand, List<InsertionDeletionRecord>>(strand, records);
+  return (strand, records);
 }
 
 List<int> get_remaining_deletions(Domain substrand, int new_offset, DNAEnd dnaend) => substrand.deletions

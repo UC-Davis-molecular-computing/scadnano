@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
-import 'package:tuple/tuple.dart';
 import 'package:built_collection/built_collection.dart';
 
 import 'select_mode.dart';
@@ -551,14 +550,14 @@ abstract class Domain
         this.compute_overlap(other) != null);
   }
 
-  Tuple2<int, int>? compute_overlap(Domain other) {
+  (int, int)? compute_overlap(Domain other) {
     int overlap_start = max(this.start, other.start);
     int overlap_end = min(this.end, other.end);
     if (overlap_start >= overlap_end) {
       // overlap is empty
       return null;
     }
-    return Tuple2<int, int>(overlap_start, overlap_end);
+    return (overlap_start, overlap_end);
   }
 
   bool contains_insertion_at(int offset) {

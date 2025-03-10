@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:tuple/tuple.dart';
-
 import 'package:scadnano/src/actions/actions.dart';
 import 'package:scadnano/src/json_serializable.dart';
 import 'package:scadnano/src/reducers/app_state_reducer.dart';
@@ -87,7 +85,7 @@ main() {
       var overlapping_domains_h0 = test_design.find_overlapping_domains_on_helix(0);
 
       expect(overlapping_domains_h0.length, 1);
-      expect(overlapping_domains_h0, contains(Tuple2<Domain, Domain>(d01f, d01r)));
+      expect(overlapping_domains_h0, contains((d01f, d01r)));
     });
     test('find_overlapping_domains', () {
       var d01f = design.strands[0].domains[0];
@@ -115,14 +113,14 @@ main() {
       expect(overlapping_domains_h0.length, 4);
       expect(overlapping_domains_h1.length, 3);
 
-      expect(overlapping_domains_h0, contains(Tuple2<Domain, Domain>(d01f, d01r)));
-      expect(overlapping_domains_h0, contains(Tuple2<Domain, Domain>(d02f, d02r)));
-      expect(overlapping_domains_h0, contains(Tuple2<Domain, Domain>(d03f, d02r)));
-      expect(overlapping_domains_h0, contains(Tuple2<Domain, Domain>(d05f, d04r)));
+      expect(overlapping_domains_h0, contains((d01f, d01r)));
+      expect(overlapping_domains_h0, contains((d02f, d02r)));
+      expect(overlapping_domains_h0, contains((d03f, d02r)));
+      expect(overlapping_domains_h0, contains((d05f, d04r)));
 
-      expect(overlapping_domains_h1, contains(Tuple2<Domain, Domain>(d11f, d11r)));
-      expect(overlapping_domains_h1, contains(Tuple2<Domain, Domain>(d11f, d12r)));
-      expect(overlapping_domains_h1, contains(Tuple2<Domain, Domain>(d12f, d12r)));
+      expect(overlapping_domains_h1, contains((d11f, d11r)));
+      expect(overlapping_domains_h1, contains((d11f, d12r)));
+      expect(overlapping_domains_h1, contains((d12f, d12r)));
     });
 
     test('design_base_pairs_mismatches', () {

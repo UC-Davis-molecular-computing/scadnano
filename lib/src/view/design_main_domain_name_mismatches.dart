@@ -2,7 +2,6 @@ import 'dart:html';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:tuple/tuple.dart';
 
 import '../state/domain_name_mismatch.dart';
 import '../state/design.dart';
@@ -44,11 +43,11 @@ class DesignMainDomainNameMismatchesComponent extends UiComponent2<DesignMainDom
       for (var domain_name_mismatch in domain_name_mismatches) {
         Domain forward_domain = domain_name_mismatch.forward_domain;
         Domain reverse_domain = domain_name_mismatch.reverse_domain;
-        Tuple2<int, int>? overlap = forward_domain.compute_overlap(reverse_domain);
+        (int, int)? overlap = forward_domain.compute_overlap(reverse_domain);
         if (overlap == null) throw AssertionError('overlap should not be null');
 
         // draw mismatch stars at midpoint of overlap of domains
-        int mid = (overlap.item1 + overlap.item2) ~/ 2;
+        int mid = (overlap.$1 + overlap.$2) ~/ 2;
         for (Domain domain in [forward_domain, reverse_domain]) {
           var helix = props.design.helices[domain.helix]!;
           var group = props.design.groups[helix.group]!;
