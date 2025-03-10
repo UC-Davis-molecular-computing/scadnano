@@ -2534,6 +2534,23 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         else
           start = old_base;
 
+	bool running = true;
+	while(running){
+	  switch(Design._cadnano_v2_import_extract_end_deletions(vstrands[old_helix]['skip'], start,end)){
+	    case -1:{
+	      start = start + 1;
+	    }
+	    break;
+	    case 1:{
+	      end = end-1;
+	    }
+	    break;
+	    case 0:{
+	      running = false;
+	    }
+	  }
+	}
+
         domains.add(Domain(
             is_scaffold: strand_type == 'scaf',
             helix: old_helix,
@@ -2581,6 +2598,19 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       }
     }
     return to_return;
+  }
+
+
+  /// Routines which finds cadnano skips that correspond to domain ends. Returns -1 if they appear at the start, +1 if they appear at the end, or 0 if there are no end deletions.
+  static int _cadnano_v2_import_extract_end_deletions(List<dynamic> skip_table, int start, int end){
+    if ((skip_table[start] == -1)){
+      return -1;
+    }
+    if (skip_table[end] == -1){
+      return 1;
+    } else {
+      return 0;
+    }
   }
 
   /// Routines which converts cadnano skips to scadnano insertions
