@@ -49,9 +49,7 @@ with three main differences:
    [Firefox](https://www.mozilla.org/en-US/firefox/),
    and
    [Edge](https://www.microsoft.com/en-us/windows/microsoft-edge)
-   are supported, with support for
-   [Safari](https://www.apple.com/safari/)
-   planned in the future.
+   are supported.
 
 2) scadnano designs, while they can be edited manually in scadnano, can also be created and edited by a
    well-documented Python scripting library
