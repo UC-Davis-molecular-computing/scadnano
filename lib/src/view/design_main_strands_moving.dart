@@ -15,7 +15,9 @@ import 'design_main_strand_moving.dart';
 part 'design_main_strands_moving.over_react.g.dart';
 
 DesignMainStrandsMovingProps set_design_main_strands_moving_props(
-    DesignMainStrandsMovingProps elt, AppState state) {
+  DesignMainStrandsMovingProps elt,
+  AppState state,
+) {
   HelixGroup? current_group = null;
   BuiltMap<int, int>? original_helices_view_order_inverse = null;
   bool selected_strands_on_multiple_groups = false;
@@ -49,8 +51,8 @@ DesignMainStrandsMovingProps set_design_main_strands_moving_props(
 
 UiFactory<DesignMainStrandsMovingProps> ConnectedDesignMainStrandsMoving =
     connect<AppState, DesignMainStrandsMovingProps>(
-        mapStateToProps: (state) =>
-            set_design_main_strands_moving_props(DesignMainStrandsMoving(), state))(DesignMainStrandsMoving);
+      mapStateToProps: (state) => set_design_main_strands_moving_props(DesignMainStrandsMoving(), state),
+    )(DesignMainStrandsMoving);
 
 UiFactory<DesignMainStrandsMovingProps> DesignMainStrandsMoving = _$DesignMainStrandsMoving;
 
@@ -90,7 +92,7 @@ class DesignMainStrandsMovingComponent extends UiComponent2<DesignMainStrandsMov
           ..allowable = strands_move.allowable
           ..geometry = props.geometry
           ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
-          ..key = key++)()
+          ..key = key++)(),
     ]);
   }
 }

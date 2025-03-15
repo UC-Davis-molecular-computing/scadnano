@@ -42,7 +42,8 @@ class SelectModeComponent extends UiComponent2<SelectModeProps> with RedrawCount
     var all_ends_button = (Dom.button()
       ..onClick = ((_) => app.dispatch(actions.SelectModesAdd(modes: SelectModeChoice.ends)))
       ..title = SelectModeChoice.all_ends_tooltip
-      ..className = 'mode-button ' +
+      ..className =
+          'mode-button ' +
           (props.select_mode_state.modes.containsAll(SelectModeChoice.ends)
               ? 'select-mode-button-selected'
               : 'select-mode-button-unselected')
@@ -55,12 +56,13 @@ class SelectModeComponent extends UiComponent2<SelectModeProps> with RedrawCount
         mode: (Dom.button()
           ..onClick = ((_) => app.dispatch(actions.SelectModeToggle(mode)))
           ..title = mode.tooltip
-          ..className = 'mode-button ' +
+          ..className =
+              'mode-button ' +
               (props.select_mode_state.modes.contains(mode)
                   ? 'select-mode-button-selected'
                   : 'select-mode-button-unselected')
           ..addTestId('scadnano.SelectModeComponent.button.${mode.name}')
-          ..key = mode.display_name)((Dom.img()..src = mode.image_file)())
+          ..key = mode.display_name)((Dom.img()..src = mode.image_file)()),
     };
     var elts = [
       elts_map[SelectModeChoice.strand],
@@ -68,7 +70,7 @@ class SelectModeComponent extends UiComponent2<SelectModeProps> with RedrawCount
       all_ends_button,
       ...[
         for (var mode in modes)
-          if (mode != SelectModeChoice.strand && mode != SelectModeChoice.domain) elts_map[mode]
+          if (mode != SelectModeChoice.strand && mode != SelectModeChoice.domain) elts_map[mode],
       ],
     ];
 

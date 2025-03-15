@@ -18,14 +18,17 @@ load_file_middleware(Store<AppState> store, action, NextDispatcher next) {
   if (action is actions.PrepareToLoadDNAFile && !action.unit_testing) {
     store.dispatch(actions.LoadingDialogShow());
     Future.delayed(
-        const Duration(milliseconds: 50),
-        () => store.dispatch(actions.LoadDNAFile(
-              content: action.content,
-              filename: action.filename,
-              write_local_storage: action.write_local_storage,
-              unit_testing: action.unit_testing,
-              dna_file_type: action.dna_file_type,
-            )));
+      const Duration(milliseconds: 50),
+      () => store.dispatch(
+        actions.LoadDNAFile(
+          content: action.content,
+          filename: action.filename,
+          write_local_storage: action.write_local_storage,
+          unit_testing: action.unit_testing,
+          dna_file_type: action.dna_file_type,
+        ),
+      ),
+    );
   } else if (action is actions.LoadDNAFile && !action.unit_testing) {
     next(action);
 
@@ -43,7 +46,10 @@ load_file_middleware(Store<AppState> store, action, NextDispatcher next) {
     store.dispatch(actions.LoadingDialogHide());
     if (store.state.maybe_design != null) {
       set_selectables_css_style_rules(
-          store.state.design, store.state.ui_state.edit_modes, store.state.ui_state.select_mode_state.modes);
+        store.state.design,
+        store.state.ui_state.edit_modes,
+        store.state.ui_state.select_mode_state.modes,
+      );
     }
   } else {
     next(action);

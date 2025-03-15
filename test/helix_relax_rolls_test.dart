@@ -40,9 +40,12 @@ main() {
                    (14-10.5)/10.5 = 3.5/10.5
                              (26-21)/10.5 = 5/10.5
       */
-      design2h = Design(helices: [
-        for (int i = 0; i < 2; i++) Helix(max_offset: 50, idx: i, grid_position: GridPosition(0, i))
-      ], grid: Grid.square);
+      design2h = Design(
+        helices: [
+          for (int i = 0; i < 2; i++) Helix(max_offset: 50, idx: i, grid_position: GridPosition(0, i)),
+        ],
+        grid: Grid.square,
+      );
       // helix 0 forward
       design2h = design2h.draw_strand(0, 0).move(5).cross(1).move(-5).commit();
       design2h = design2h.draw_strand(0, 5).move(10).cross(1).move(-10).commit();
@@ -56,9 +59,12 @@ main() {
                       |
       2      <--------+
       */
-      design3helix3strand = Design(helices: [
-        for (int i = 0; i < 3; i++) Helix(max_offset: 50, idx: i, grid_position: GridPosition(0, i))
-      ], grid: Grid.square);
+      design3helix3strand = Design(
+        helices: [
+          for (int i = 0; i < 3; i++) Helix(max_offset: 50, idx: i, grid_position: GridPosition(0, i)),
+        ],
+        grid: Grid.square,
+      );
       // helix 0 forward
       design3helix3strand = design3helix3strand.draw_strand(0, 0).move(5).cross(1).move(-5).commit();
       design3helix3strand = design3helix3strand.draw_strand(0, 5).move(10).cross(2).move(-10).commit();
@@ -232,7 +238,12 @@ main() {
       double initial_roll = 30.0;
       for (int i = 0; i < 2; i++) {
         var helix = Helix(
-            max_offset: 60, grid: Grid.square, idx: i, grid_position: GridPosition(0, i), roll: initial_roll);
+          max_offset: 60,
+          grid: Grid.square,
+          idx: i,
+          grid_position: GridPosition(0, i),
+          roll: initial_roll,
+        );
         helices.add(helix);
       }
       var design2h = Design(helices: helices, grid: Grid.square);
@@ -579,7 +590,7 @@ main() {
       var group2name = 'group 2';
 
       var helices = [
-        for (int i = 0; i < 3; i++) Helix(max_offset: 50, idx: i, grid_position: GridPosition(0, i))
+        for (int i = 0; i < 3; i++) Helix(max_offset: 50, idx: i, grid_position: GridPosition(0, i)),
       ];
       helices[2] = helices[2].rebuild((b) => b..group = group2name);
       var design = Design(helices: helices, grid: Grid.square);
@@ -711,20 +722,14 @@ main() {
     });
 
     test('minimum_strain_angle_179_181_relative_to_0', () {
-      var relative_angles = [
-        Tuple2<double, double>(179, 0),
-        Tuple2<double, double>(181, 0),
-      ];
+      var relative_angles = [Tuple2<double, double>(179, 0), Tuple2<double, double>(181, 0)];
       var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 180.0;
       expect(act_min_strain_angle, closeTo(exp_min_strain_angle, epsilon));
     });
 
     test('minimum_strain_angle_181_183_relative_to_0', () {
-      var relative_angles = [
-        Tuple2<double, double>(181, 0),
-        Tuple2<double, double>(183, 0),
-      ];
+      var relative_angles = [Tuple2<double, double>(181, 0), Tuple2<double, double>(183, 0)];
       var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 178.0;
       expect(act_min_strain_angle, closeTo(exp_min_strain_angle, epsilon));

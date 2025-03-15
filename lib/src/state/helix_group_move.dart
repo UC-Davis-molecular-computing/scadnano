@@ -16,22 +16,26 @@ part 'helix_group_move.g.dart';
 abstract class HelixGroupMove
     with BuiltJsonSerializable
     implements Built<HelixGroupMove, HelixGroupMoveBuilder> {
-  factory HelixGroupMove(
-      {required String group_name,
-      required HelixGroup group,
-      required BuiltMap<int, Helix> helices,
-      required Point<double> original_mouse_point,
-      required Geometry geometry}) {
+  factory HelixGroupMove({
+    required String group_name,
+    required HelixGroup group,
+    required BuiltMap<int, Helix> helices,
+    required Point<double> original_mouse_point,
+    required Geometry geometry,
+  }) {
     if (helices.isEmpty) {
       throw ArgumentError.value('helices should not be empty in a HelixGroupMove object');
     }
-    return HelixGroupMove.from((b) => b
-      ..group_name = group_name
-      ..group.replace(group)
-      ..helices.replace(helices)
-      ..original_mouse_point = original_mouse_point
-      ..current_mouse_point = original_mouse_point
-      ..geometry.replace(geometry));
+    return HelixGroupMove.from(
+      (b) =>
+          b
+            ..group_name = group_name
+            ..group.replace(group)
+            ..helices.replace(helices)
+            ..original_mouse_point = original_mouse_point
+            ..current_mouse_point = original_mouse_point
+            ..geometry.replace(geometry),
+    );
   }
 
   factory HelixGroupMove.from([void Function(HelixGroupMoveBuilder) updates]) = _$HelixGroupMove;
@@ -64,9 +68,12 @@ abstract class HelixGroupMove
   Position3D get current_position {
     var mouse_translation = delta;
     var nm_translation = mouse_translation * geometry.svg_pixels_to_nm;
-    var new_position = group.position.rebuild((b) => b
-      ..z = group.position.z + nm_translation.x
-      ..y = group.position.y + nm_translation.y);
+    var new_position = group.position.rebuild(
+      (b) =>
+          b
+            ..z = group.position.z + nm_translation.x
+            ..y = group.position.y + nm_translation.y,
+    );
     return new_position;
   }
 

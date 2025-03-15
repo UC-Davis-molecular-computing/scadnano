@@ -18,52 +18,61 @@ Reducer<BuiltMap<String, HelixGroup>> groups_local_reducer = combineReducers([
 
 GlobalReducer<BuiltMap<String, HelixGroup>, AppState> groups_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<BuiltMap<String, HelixGroup>, AppState, actions.MoveHelicesToGroup>(
-      move_helices_to_group_groups_reducer),
+    move_helices_to_group_groups_reducer,
+  ),
 ]);
 
 BuiltMap<String, HelixGroup> grid_change_reducer(
-        BuiltMap<String, HelixGroup> groups, actions.GridChange action) =>
-    groups.map_values((name, group) {
-      if (name == action.group_name) {
-        group = group.rebuild((b) => b..grid = action.grid);
-      }
-      return group;
-    });
+  BuiltMap<String, HelixGroup> groups,
+  actions.GridChange action,
+) => groups.map_values((name, group) {
+  if (name == action.group_name) {
+    group = group.rebuild((b) => b..grid = action.grid);
+  }
+  return group;
+});
 
 BuiltMap<String, HelixGroup> geometry_helix_group_set_reducer(
-        BuiltMap<String, HelixGroup> groups, actions.GeometryHelixGroupSet action) =>
-    groups.map_values((name, group) {
-      if (name == action.group_name) {
-        group = group.rebuild((b) => b..geometry.replace(action.geometry));
-      }
-      return group;
-    });
+  BuiltMap<String, HelixGroup> groups,
+  actions.GeometryHelixGroupSet action,
+) => groups.map_values((name, group) {
+  if (name == action.group_name) {
+    group = group.rebuild((b) => b..geometry.replace(action.geometry));
+  }
+  return group;
+});
 
 BuiltMap<String, HelixGroup> group_add_reducer(
-        BuiltMap<String, HelixGroup> groups, actions.GroupAdd action) =>
-    groups.rebuild((b) {
-      b[action.name] = action.group;
-    });
+  BuiltMap<String, HelixGroup> groups,
+  actions.GroupAdd action,
+) => groups.rebuild((b) {
+  b[action.name] = action.group;
+});
 
 BuiltMap<String, HelixGroup> group_remove_reducer(
-        BuiltMap<String, HelixGroup> groups, actions.GroupRemove action) =>
-    groups.rebuild((b) {
-      b.remove(action.name);
-    });
+  BuiltMap<String, HelixGroup> groups,
+  actions.GroupRemove action,
+) => groups.rebuild((b) {
+  b.remove(action.name);
+});
 
 BuiltMap<String, HelixGroup> group_change_reducer(
-        BuiltMap<String, HelixGroup> groups, actions.GroupChange action) =>
-    groups.rebuild((b) {
-      if (action.old_name != action.new_name) {
-        b.remove(action.old_name);
-      }
-      b[action.new_name] = action.new_group;
-    });
+  BuiltMap<String, HelixGroup> groups,
+  actions.GroupChange action,
+) => groups.rebuild((b) {
+  if (action.old_name != action.new_name) {
+    b.remove(action.old_name);
+  }
+  b[action.new_name] = action.new_group;
+});
 
 // The suffix "_groups_reducer" helps distinguish from the "_helices_reducer" in the
 // helices_reducer.dart file, which processes this same Action on the helices map.
 BuiltMap<String, HelixGroup> move_helices_to_group_groups_reducer(
-    BuiltMap<String, HelixGroup> groups, AppState state, actions.MoveHelicesToGroup action) {
+  BuiltMap<String, HelixGroup> groups,
+  AppState state,
+  actions.MoveHelicesToGroup action,
+) {
   var to_group_name = action.group_name;
 
   //TODO: this should not have duplicates

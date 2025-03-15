@@ -163,10 +163,12 @@ abstract class BatchAction with UndoableAction implements Built<BatchAction, Bat
   String get short_description_value;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory BatchAction(Iterable<UndoableAction> actions, String short_description_value) =>
-      BatchAction.from((b) => b
-        ..actions.replace(actions)
-        ..short_description_value = short_description_value);
+  factory BatchAction(Iterable<UndoableAction> actions, String short_description_value) => BatchAction.from(
+    (b) =>
+        b
+          ..actions.replace(actions)
+          ..short_description_value = short_description_value,
+  );
 
   factory BatchAction.from([void Function(BatchActionBuilder) updates]) = _$BatchAction;
 
@@ -204,9 +206,12 @@ abstract class ThrottledActionFast
   double get interval_sec;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ThrottledActionFast(Action action, double interval_sec) => ThrottledActionFast.from((b) => b
-    ..action = action
-    ..interval_sec = interval_sec);
+  factory ThrottledActionFast(Action action, double interval_sec) => ThrottledActionFast.from(
+    (b) =>
+        b
+          ..action = action
+          ..interval_sec = interval_sec,
+  );
 
   factory ThrottledActionFast.from([void Function(ThrottledActionFastBuilder) updates]) =
       _$ThrottledActionFast;
@@ -224,9 +229,12 @@ abstract class ThrottledActionNonFast
   double get interval_sec;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ThrottledActionNonFast(Action action, double interval_sec) => ThrottledActionNonFast.from((b) => b
-    ..action = action
-    ..interval_sec = interval_sec);
+  factory ThrottledActionNonFast(Action action, double interval_sec) => ThrottledActionNonFast.from(
+    (b) =>
+        b
+          ..action = action
+          ..interval_sec = interval_sec,
+  );
 
   factory ThrottledActionNonFast.from([void Function(ThrottledActionNonFastBuilder) updates]) =
       _$ThrottledActionNonFast;
@@ -690,8 +698,9 @@ abstract class SetModificationDisplayConnector
       SetModificationDisplayConnector.from((b) => b..show = show);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SetModificationDisplayConnector.from(
-      [void Function(SetModificationDisplayConnectorBuilder) updates]) = _$SetModificationDisplayConnector;
+  factory SetModificationDisplayConnector.from([
+    void Function(SetModificationDisplayConnectorBuilder) updates,
+  ]) = _$SetModificationDisplayConnector;
 
   SetModificationDisplayConnector._();
 
@@ -738,12 +747,13 @@ abstract class ShowUnpairedInsertionDeletionsSet
 
   factory ShowUnpairedInsertionDeletionsSet(bool show_unpaired_insertion_deletions) =>
       ShowUnpairedInsertionDeletionsSet.from(
-          (b) => b..show_unpaired_insertion_deletions = show_unpaired_insertion_deletions);
+        (b) => b..show_unpaired_insertion_deletions = show_unpaired_insertion_deletions,
+      );
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ShowUnpairedInsertionDeletionsSet.from(
-          [void Function(ShowUnpairedInsertionDeletionsSetBuilder) updates]) =
-      _$ShowUnpairedInsertionDeletionsSet;
+  factory ShowUnpairedInsertionDeletionsSet.from([
+    void Function(ShowUnpairedInsertionDeletionsSetBuilder) updates,
+  ]) = _$ShowUnpairedInsertionDeletionsSet;
 
   ShowUnpairedInsertionDeletionsSet._();
 
@@ -767,21 +777,22 @@ abstract class OxviewShowSet
 }
 
 abstract class SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix
-    with
-        BuiltJsonSerializable
+    with BuiltJsonSerializable
     implements
         Action,
-        Built<SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix,
-            SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelixBuilder> {
+        Built<
+          SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix,
+          SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelixBuilder
+        > {
   bool get show;
 
   factory SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(bool show) =>
       SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix.from((b) => b..show = show);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix.from(
-          [void Function(SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelixBuilder) updates]) =
-      _$SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix;
+  factory SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix.from([
+    void Function(SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelixBuilder) updates,
+  ]) = _$SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix;
 
   SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix._();
 
@@ -816,9 +827,9 @@ abstract class SetDisplayMajorTickWidthsAllHelices
       SetDisplayMajorTickWidthsAllHelices.from((b) => b..show = show);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SetDisplayMajorTickWidthsAllHelices.from(
-          [void Function(SetDisplayMajorTickWidthsAllHelicesBuilder) updates]) =
-      _$SetDisplayMajorTickWidthsAllHelices;
+  factory SetDisplayMajorTickWidthsAllHelices.from([
+    void Function(SetDisplayMajorTickWidthsAllHelicesBuilder) updates,
+  ]) = _$SetDisplayMajorTickWidthsAllHelices;
 
   SetDisplayMajorTickWidthsAllHelices._();
 
@@ -852,7 +863,8 @@ abstract class SetOnlyDisplaySelectedHelices
 
   factory SetOnlyDisplaySelectedHelices(bool only_display_selected_helices) =>
       SetOnlyDisplaySelectedHelices.from(
-          (b) => b..only_display_selected_helices = only_display_selected_helices);
+        (b) => b..only_display_selected_helices = only_display_selected_helices,
+      );
 
   /************************ begin BuiltValue boilerplate ************************/
   factory SetOnlyDisplaySelectedHelices.from([void Function(SetOnlyDisplaySelectedHelicesBuilder) updates]) =
@@ -947,9 +959,9 @@ abstract class CopySelectedStandsToClipboardImage
     with BuiltJsonSerializable
     implements Action, Built<CopySelectedStandsToClipboardImage, CopySelectedStandsToClipboardImageBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
-  factory CopySelectedStandsToClipboardImage(
-          [void Function(CopySelectedStandsToClipboardImageBuilder) updates]) =
-      _$CopySelectedStandsToClipboardImage;
+  factory CopySelectedStandsToClipboardImage([
+    void Function(CopySelectedStandsToClipboardImageBuilder) updates,
+  ]) = _$CopySelectedStandsToClipboardImage;
 
   CopySelectedStandsToClipboardImage._();
 
@@ -986,18 +998,22 @@ abstract class LoadDNAFile
   String? get filename;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory LoadDNAFile(
-      {required String content,
-      String? filename,
-      bool write_local_storage = true,
-      bool unit_testing = false,
-      DNAFileType dna_file_type = DNAFileType.scadnano_file}) {
-    return LoadDNAFile.from((b) => b
-      ..content = content
-      ..filename = filename
-      ..write_local_storage = write_local_storage
-      ..unit_testing = unit_testing
-      ..dna_file_type = dna_file_type);
+  factory LoadDNAFile({
+    required String content,
+    String? filename,
+    bool write_local_storage = true,
+    bool unit_testing = false,
+    DNAFileType dna_file_type = DNAFileType.scadnano_file,
+  }) {
+    return LoadDNAFile.from(
+      (b) =>
+          b
+            ..content = content
+            ..filename = filename
+            ..write_local_storage = write_local_storage
+            ..unit_testing = unit_testing
+            ..dna_file_type = dna_file_type,
+    );
   }
 
   factory LoadDNAFile.from([void Function(LoadDNAFileBuilder) updates]) = _$LoadDNAFile;
@@ -1029,12 +1045,15 @@ abstract class PrepareToLoadDNAFile
     bool unit_testing = false,
     DNAFileType dna_file_type = DNAFileType.scadnano_file,
   }) {
-    return PrepareToLoadDNAFile.from((b) => b
-      ..content = content
-      ..filename = filename
-      ..write_local_storage = write_local_storage
-      ..unit_testing = unit_testing
-      ..dna_file_type = dna_file_type);
+    return PrepareToLoadDNAFile.from(
+      (b) =>
+          b
+            ..content = content
+            ..filename = filename
+            ..write_local_storage = write_local_storage
+            ..unit_testing = unit_testing
+            ..dna_file_type = dna_file_type,
+    );
   }
 
   factory PrepareToLoadDNAFile.from([void Function(PrepareToLoadDNAFileBuilder) updates]) =
@@ -1054,9 +1073,12 @@ abstract class NewDesignSet
 
   /************************ begin BuiltValue boilerplate ************************/
   factory NewDesignSet(Design design, String short_description_value) {
-    return NewDesignSet.from((b) => b
-      ..design.replace(design)
-      ..short_description_value = short_description_value);
+    return NewDesignSet.from(
+      (b) =>
+          b
+            ..design.replace(design)
+            ..short_description_value = short_description_value,
+    );
   }
 
   factory NewDesignSet.from([void Function(NewDesignSetBuilder) updates]) = _$NewDesignSet;
@@ -1178,11 +1200,14 @@ abstract class HelixRollSetAtOther
 
   /************************ begin BuiltValue boilerplate ************************/
   factory HelixRollSetAtOther(int helix_idx, int helix_other_idx, bool forward, int anchor) =>
-      HelixRollSetAtOther.from((b) => b
-        ..helix_idx = helix_idx
-        ..helix_other_idx = helix_other_idx
-        ..forward = forward
-        ..anchor = anchor);
+      HelixRollSetAtOther.from(
+        (b) =>
+            b
+              ..helix_idx = helix_idx
+              ..helix_other_idx = helix_other_idx
+              ..forward = forward
+              ..anchor = anchor,
+      );
 
   factory HelixRollSetAtOther.from([void Function(HelixRollSetAtOtherBuilder) updates]) =
       _$HelixRollSetAtOther;
@@ -1250,11 +1275,13 @@ abstract class SelectionBoxCreate
   bool get is_main;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SelectionBoxCreate(Point<double> point, bool toggle, bool is_main) =>
-      SelectionBoxCreate.from((b) => b
-        ..point = point
-        ..toggle = toggle
-        ..is_main = is_main);
+  factory SelectionBoxCreate(Point<double> point, bool toggle, bool is_main) => SelectionBoxCreate.from(
+    (b) =>
+        b
+          ..point = point
+          ..toggle = toggle
+          ..is_main = is_main,
+  );
 
   factory SelectionBoxCreate.from([void Function(SelectionBoxCreateBuilder) updates]) = _$SelectionBoxCreate;
 
@@ -1271,9 +1298,12 @@ abstract class SelectionBoxSizeChange
   bool get is_main;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SelectionBoxSizeChange(Point<double> point, bool is_main) => SelectionBoxSizeChange.from((b) => b
-    ..point = point
-    ..is_main = is_main);
+  factory SelectionBoxSizeChange(Point<double> point, bool is_main) => SelectionBoxSizeChange.from(
+    (b) =>
+        b
+          ..point = point
+          ..is_main = is_main,
+  );
 
   factory SelectionBoxSizeChange.from([void Function(SelectionBoxSizeChangeBuilder) updates]) =
       _$SelectionBoxSizeChange;
@@ -1501,10 +1531,13 @@ abstract class Select with BuiltJsonSerializable implements Action, Built<Select
   bool get only;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory Select(Selectable selectable, {required bool toggle, bool only = false}) => Select.from((b) => b
-    ..selectable = selectable
-    ..toggle = toggle
-    ..only = only);
+  factory Select(Selectable selectable, {required bool toggle, bool only = false}) => Select.from(
+    (b) =>
+        b
+          ..selectable = selectable
+          ..toggle = toggle
+          ..only = only,
+  );
 
   factory Select.from([void Function(SelectBuilder) updates]) = _$Select;
 
@@ -1611,10 +1644,11 @@ abstract class SelectAllStrandsWithSameAsSelected
   bool get exclude_scaffolds;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SelectAllStrandsWithSameAsSelected(
-      {required BuiltList<Strand> template_strands,
-      required BuiltList<SelectableTrait> traits,
-      required bool exclude_scaffolds}) = _$SelectAllStrandsWithSameAsSelected._;
+  factory SelectAllStrandsWithSameAsSelected({
+    required BuiltList<Strand> template_strands,
+    required BuiltList<SelectableTrait> traits,
+    required bool exclude_scaffolds,
+  }) = _$SelectAllStrandsWithSameAsSelected._;
 
   SelectAllStrandsWithSameAsSelected._();
 
@@ -1722,9 +1756,12 @@ abstract class HelixSelect
   bool get toggle;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory HelixSelect(int helix_idx, bool toggle) => HelixSelect.from((b) => b
-    ..helix_idx = helix_idx
-    ..toggle = toggle);
+  factory HelixSelect(int helix_idx, bool toggle) => HelixSelect.from(
+    (b) =>
+        b
+          ..helix_idx = helix_idx
+          ..toggle = toggle,
+  );
 
   factory HelixSelect.from([void Function(HelixSelectBuilder) updates]) = _$HelixSelect;
 
@@ -1761,10 +1798,12 @@ abstract class HelixSelectionsAdjust
   SelectionBox get selection_box;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory HelixSelectionsAdjust(bool toggle, SelectionBox selection_box) =>
-      HelixSelectionsAdjust.from((b) => b
-        ..toggle = toggle
-        ..selection_box.replace(selection_box));
+  factory HelixSelectionsAdjust(bool toggle, SelectionBox selection_box) => HelixSelectionsAdjust.from(
+    (b) =>
+        b
+          ..toggle = toggle
+          ..selection_box.replace(selection_box),
+  );
 
   factory HelixSelectionsAdjust.from([void Function(HelixSelectionsAdjustBuilder) updates]) =
       _$HelixSelectionsAdjust;
@@ -1901,9 +1940,10 @@ abstract class HelixMajorTickPeriodicDistancesChange
   BuiltList<int> get major_tick_periodic_distances;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory HelixMajorTickPeriodicDistancesChange(
-      {required int helix_idx,
-      required BuiltList<int> major_tick_periodic_distances}) = _$HelixMajorTickPeriodicDistancesChange._;
+  factory HelixMajorTickPeriodicDistancesChange({
+    required int helix_idx,
+    required BuiltList<int> major_tick_periodic_distances,
+  }) = _$HelixMajorTickPeriodicDistancesChange._;
 
   HelixMajorTickPeriodicDistancesChange._();
 
@@ -2148,16 +2188,19 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
     bool column_major_plate = true,
   }) {
     assert(!(include_only_selected_strands && exclude_selected_strands));
-    return ExportDNA.from((b) => b
-      ..include_scaffold = include_scaffold
-      ..include_only_selected_strands = include_only_selected_strands
-      ..exclude_selected_strands = exclude_selected_strands
-      ..export_dna_format = export_dna_format
-      ..delimiter = delimiter
-      ..domain_delimiter = domain_delimiter
-      ..strand_order = strand_order
-      ..column_major_strand = column_major_strand
-      ..column_major_plate = column_major_plate);
+    return ExportDNA.from(
+      (b) =>
+          b
+            ..include_scaffold = include_scaffold
+            ..include_only_selected_strands = include_only_selected_strands
+            ..exclude_selected_strands = exclude_selected_strands
+            ..export_dna_format = export_dna_format
+            ..delimiter = delimiter
+            ..domain_delimiter = domain_delimiter
+            ..strand_order = strand_order
+            ..column_major_strand = column_major_strand
+            ..column_major_plate = column_major_plate,
+    );
   }
 
   factory ExportDNA.from([void Function(ExportDNABuilder) updates]) = _$ExportDNA;
@@ -2247,15 +2290,21 @@ abstract class ExtensionDisplayLengthAngleSet
   StrandPart get strand_part => ext;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ExtensionDisplayLengthAngleSet(
-          {required Extension ext, required double display_length, required double display_angle}) =>
-      ExtensionDisplayLengthAngleSet.from((b) => b
-        ..ext.replace(ext)
-        ..display_length = display_length
-        ..display_angle = display_angle);
+  factory ExtensionDisplayLengthAngleSet({
+    required Extension ext,
+    required double display_length,
+    required double display_angle,
+  }) => ExtensionDisplayLengthAngleSet.from(
+    (b) =>
+        b
+          ..ext.replace(ext)
+          ..display_length = display_length
+          ..display_angle = display_angle,
+  );
 
-  factory ExtensionDisplayLengthAngleSet.from(
-      [void Function(ExtensionDisplayLengthAngleSetBuilder) updates]) = _$ExtensionDisplayLengthAngleSet;
+  factory ExtensionDisplayLengthAngleSet.from([
+    void Function(ExtensionDisplayLengthAngleSetBuilder) updates,
+  ]) = _$ExtensionDisplayLengthAngleSet;
 
   ExtensionDisplayLengthAngleSet._();
 
@@ -2280,10 +2329,13 @@ abstract class ExtensionAdd
 
   /************************ begin BuiltValue boilerplate ************************/
   factory ExtensionAdd({required Strand strand, required bool is_5p, required int num_bases}) =>
-      ExtensionAdd.from((b) => b
-        ..strand.replace(strand)
-        ..is_5p = is_5p
-        ..num_bases = num_bases);
+      ExtensionAdd.from(
+        (b) =>
+            b
+              ..strand.replace(strand)
+              ..is_5p = is_5p
+              ..num_bases = num_bases,
+      );
 
   factory ExtensionAdd.from([void Function(ExtensionAddBuilder) updates]) = _$ExtensionAdd;
 
@@ -2308,9 +2360,12 @@ abstract class ExtensionNumBasesChange
   StrandPart get strand_part => ext;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ExtensionNumBasesChange(Extension ext, int num_bases) => ExtensionNumBasesChange.from((b) => b
-    ..ext.replace(ext)
-    ..num_bases = num_bases);
+  factory ExtensionNumBasesChange(Extension ext, int num_bases) => ExtensionNumBasesChange.from(
+    (b) =>
+        b
+          ..ext.replace(ext)
+          ..num_bases = num_bases,
+  );
 
   factory ExtensionNumBasesChange.from([void Function(ExtensionNumBasesChangeBuilder) updates]) =
       _$ExtensionNumBasesChange;
@@ -2332,9 +2387,12 @@ abstract class ExtensionsNumBasesChange
 
   /************************ begin BuiltValue boilerplate ************************/
   factory ExtensionsNumBasesChange(Iterable<Extension> extensions, int num_bases) =>
-      ExtensionsNumBasesChange.from((b) => b
-        ..extensions.replace(extensions)
-        ..num_bases = num_bases);
+      ExtensionsNumBasesChange.from(
+        (b) =>
+            b
+              ..extensions.replace(extensions)
+              ..num_bases = num_bases,
+      );
 
   factory ExtensionsNumBasesChange.from([void Function(ExtensionsNumBasesChangeBuilder) updates]) =
       _$ExtensionsNumBasesChange;
@@ -2357,9 +2415,12 @@ abstract class LoopoutLengthChange
   StrandPart get strand_part => loopout;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory LoopoutLengthChange(Loopout loopout, int num_bases) => LoopoutLengthChange.from((b) => b
-    ..loopout.replace(loopout)
-    ..num_bases = num_bases);
+  factory LoopoutLengthChange(Loopout loopout, int num_bases) => LoopoutLengthChange.from(
+    (b) =>
+        b
+          ..loopout.replace(loopout)
+          ..num_bases = num_bases,
+  );
 
   factory LoopoutLengthChange.from([void Function(LoopoutLengthChangeBuilder) updates]) =
       _$LoopoutLengthChange;
@@ -2380,9 +2441,12 @@ abstract class LoopoutsLengthChange
   int get length;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory LoopoutsLengthChange(Iterable<Loopout> loopouts, int length) => LoopoutsLengthChange.from((b) => b
-    ..loopouts.replace(loopouts)
-    ..length = length);
+  factory LoopoutsLengthChange(Iterable<Loopout> loopouts, int length) => LoopoutsLengthChange.from(
+    (b) =>
+        b
+          ..loopouts.replace(loopouts)
+          ..length = length,
+  );
 
   factory LoopoutsLengthChange.from([void Function(LoopoutsLengthChangeBuilder) updates]) =
       _$LoopoutsLengthChange;
@@ -2408,10 +2472,13 @@ abstract class ConvertCrossoverToLoopout
 
   /************************ begin BuiltValue boilerplate ************************/
   factory ConvertCrossoverToLoopout(Crossover crossover, int length, [String? dna_sequence = null]) =>
-      ConvertCrossoverToLoopout.from((b) => b
-        ..crossover.replace(crossover)
-        ..length = length
-        ..dna_sequence = dna_sequence);
+      ConvertCrossoverToLoopout.from(
+        (b) =>
+            b
+              ..crossover.replace(crossover)
+              ..length = length
+              ..dna_sequence = dna_sequence,
+      );
 
   factory ConvertCrossoverToLoopout.from([void Function(ConvertCrossoverToLoopoutBuilder) updates]) =
       _$ConvertCrossoverToLoopout;
@@ -2433,9 +2500,12 @@ abstract class ConvertCrossoversToLoopouts
 
   /************************ begin BuiltValue boilerplate ************************/
   factory ConvertCrossoversToLoopouts(Iterable<Crossover> crossovers, int length) =>
-      ConvertCrossoversToLoopouts.from((b) => b
-        ..crossovers.replace(crossovers)
-        ..length = length);
+      ConvertCrossoversToLoopouts.from(
+        (b) =>
+            b
+              ..crossovers.replace(crossovers)
+              ..length = length,
+      );
 
   factory ConvertCrossoversToLoopouts.from([void Function(ConvertCrossoversToLoopoutsBuilder) updates]) =
       _$ConvertCrossoversToLoopouts;
@@ -2489,9 +2559,10 @@ abstract class JoinStrandsByCrossover
   DNAEnd get dna_end_second_click;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory JoinStrandsByCrossover(
-      {required DNAEnd dna_end_first_click,
-      required DNAEnd dna_end_second_click}) = _$JoinStrandsByCrossover._;
+  factory JoinStrandsByCrossover({
+    required DNAEnd dna_end_first_click,
+    required DNAEnd dna_end_second_click,
+  }) = _$JoinStrandsByCrossover._;
 
   JoinStrandsByCrossover._();
 
@@ -2517,9 +2588,10 @@ abstract class MoveLinker
   @memoized
   int get hashCode;
 
-  factory MoveLinker(
-      {required PotentialCrossover potential_crossover,
-      required DNAEnd dna_end_second_click}) = _$MoveLinker._;
+  factory MoveLinker({
+    required PotentialCrossover potential_crossover,
+    required DNAEnd dna_end_second_click,
+  }) = _$MoveLinker._;
 
   factory MoveLinker.from([void Function(MoveLinkerBuilder) updates]) = _$MoveLinker;
 
@@ -2575,10 +2647,11 @@ abstract class StrandsReflect
   bool get reverse_polarity;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandsReflect(
-      {required BuiltList<Strand> strands,
-      required bool horizontal,
-      required bool reverse_polarity}) = _$StrandsReflect._;
+  factory StrandsReflect({
+    required BuiltList<Strand> strands,
+    required bool horizontal,
+    required bool reverse_polarity,
+  }) = _$StrandsReflect._;
 
   StrandsReflect._();
 
@@ -2658,12 +2731,13 @@ abstract class StrandCreateCommit
   Color get color;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandCreateCommit(
-      {required int helix_idx,
-      required bool forward,
-      required int start,
-      required int end,
-      required Color color}) = _$StrandCreateCommit._;
+  factory StrandCreateCommit({
+    required int helix_idx,
+    required bool forward,
+    required int start,
+    required int end,
+    required Color color,
+  }) = _$StrandCreateCommit._;
 
   StrandCreateCommit._();
 
@@ -2730,9 +2804,12 @@ abstract class ManualPasteInitiate
 
   /************************ begin BuiltValue boilerplate ************************/
   factory ManualPasteInitiate({required String clipboard_content, bool in_browser = true}) =>
-      ManualPasteInitiate.from((b) => b
-        ..clipboard_content = clipboard_content
-        ..in_browser = in_browser);
+      ManualPasteInitiate.from(
+        (b) =>
+            b
+              ..clipboard_content = clipboard_content
+              ..in_browser = in_browser,
+      );
 
   ManualPasteInitiate._();
 
@@ -2754,9 +2831,12 @@ abstract class AutoPasteInitiate
 
   /************************ begin BuiltValue boilerplate ************************/
   factory AutoPasteInitiate({required String clipboard_content, bool in_browser = true}) =>
-      AutoPasteInitiate.from((b) => b
-        ..clipboard_content = clipboard_content
-        ..in_browser = in_browser);
+      AutoPasteInitiate.from(
+        (b) =>
+            b
+              ..clipboard_content = clipboard_content
+              ..in_browser = in_browser,
+      );
 
   AutoPasteInitiate._();
 
@@ -2795,11 +2875,12 @@ abstract class StrandsMoveStart
   BuiltMap<int, int> get original_helices_view_order_inverse;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandsMoveStart(
-      {required BuiltList<Strand> strands,
-      required Address address,
-      required bool copy,
-      required BuiltMap<int, int> original_helices_view_order_inverse}) = _$StrandsMoveStart._;
+  factory StrandsMoveStart({
+    required BuiltList<Strand> strands,
+    required Address address,
+    required bool copy,
+    required BuiltMap<int, int> original_helices_view_order_inverse,
+  }) = _$StrandsMoveStart._;
 
   StrandsMoveStart._();
 
@@ -2816,10 +2897,11 @@ abstract class StrandsMoveStartSelectedStrands
   BuiltMap<int, int> get original_helices_view_order_inverse;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandsMoveStartSelectedStrands(
-      {required Address address,
-      required bool copy,
-      required BuiltMap<int, int> original_helices_view_order_inverse}) = _$StrandsMoveStartSelectedStrands._;
+  factory StrandsMoveStartSelectedStrands({
+    required Address address,
+    required bool copy,
+    required BuiltMap<int, int> original_helices_view_order_inverse,
+  }) = _$StrandsMoveStartSelectedStrands._;
 
   StrandsMoveStartSelectedStrands._();
 
@@ -2882,9 +2964,10 @@ abstract class DomainsMoveStartSelectedDomains
   BuiltMap<int, int> get original_helices_view_order_inverse;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory DomainsMoveStartSelectedDomains(
-      {required Address address,
-      required BuiltMap<int, int> original_helices_view_order_inverse}) = _$DomainsMoveStartSelectedDomains._;
+  factory DomainsMoveStartSelectedDomains({
+    required Address address,
+    required BuiltMap<int, int> original_helices_view_order_inverse,
+  }) = _$DomainsMoveStartSelectedDomains._;
 
   DomainsMoveStartSelectedDomains._();
 
@@ -3061,11 +3144,12 @@ abstract class DNAExtensionsMoveSetSelectedExtensionEnds
   Helix get helix;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory DNAExtensionsMoveSetSelectedExtensionEnds(
-      {required BuiltList<DNAExtensionMove> moves,
-      required Point<double> original_point,
-      required BuiltSet<Strand> strands_affected,
-      required Helix helix}) = _$DNAExtensionsMoveSetSelectedExtensionEnds._;
+  factory DNAExtensionsMoveSetSelectedExtensionEnds({
+    required BuiltList<DNAExtensionMove> moves,
+    required Point<double> original_point,
+    required BuiltSet<Strand> strands_affected,
+    required Helix helix,
+  }) = _$DNAExtensionsMoveSetSelectedExtensionEnds._;
 
   DNAExtensionsMoveSetSelectedExtensionEnds._();
 
@@ -3235,9 +3319,9 @@ abstract class AssignDNAComplementFromBoundStrands
     return AssignDNAComplementFromBoundStrands.from((b) => b..strands.replace(strands));
   }
 
-  factory AssignDNAComplementFromBoundStrands.from(
-          [void Function(AssignDNAComplementFromBoundStrandsBuilder) updates]) =
-      _$AssignDNAComplementFromBoundStrands;
+  factory AssignDNAComplementFromBoundStrands.from([
+    void Function(AssignDNAComplementFromBoundStrandsBuilder) updates,
+  ]) = _$AssignDNAComplementFromBoundStrands;
 
   AssignDNAComplementFromBoundStrands._();
 
@@ -3263,8 +3347,8 @@ abstract class AssignDomainNameComplementFromBoundStrands
   }
 
   factory AssignDomainNameComplementFromBoundStrands.from(
-          void Function(AssignDomainNameComplementFromBoundStrandsBuilder) updates) =
-      _$AssignDomainNameComplementFromBoundStrands;
+    void Function(AssignDomainNameComplementFromBoundStrandsBuilder) updates,
+  ) = _$AssignDomainNameComplementFromBoundStrands;
 
   AssignDomainNameComplementFromBoundStrands._();
 
@@ -3289,9 +3373,9 @@ abstract class AssignDomainNameComplementFromBoundDomains
     return AssignDomainNameComplementFromBoundDomains.from((b) => b..domains.replace(domains));
   }
 
-  factory AssignDomainNameComplementFromBoundDomains.from(
-          [void Function(AssignDomainNameComplementFromBoundDomainsBuilder) updates]) =
-      _$AssignDomainNameComplementFromBoundDomains;
+  factory AssignDomainNameComplementFromBoundDomains.from([
+    void Function(AssignDomainNameComplementFromBoundDomainsBuilder) updates,
+  ]) = _$AssignDomainNameComplementFromBoundDomains;
 
   AssignDomainNameComplementFromBoundDomains._();
 
@@ -3382,18 +3466,21 @@ abstract class InsertionLengthChange
   StrandPart get strand_part => domain;
 
   InsertionLengthChange clone_for_other_domain(Domain other_domain) => InsertionLengthChange(
-        domain: other_domain,
-        insertion: other_domain.insertions.firstWhere((i) => i.offset == offset),
-        length: length,
-      );
+    domain: other_domain,
+    insertion: other_domain.insertions.firstWhere((i) => i.offset == offset),
+    length: length,
+  );
 
   /************************ begin BuiltValue boilerplate ************************/
   factory InsertionLengthChange({required Domain domain, required Insertion insertion, required int length}) {
-    return InsertionLengthChange.from((b) => b
-      ..domain.replace(domain)
-      ..insertion.replace(insertion)
-      ..length = length
-      ..all_helices = false);
+    return InsertionLengthChange.from(
+      (b) =>
+          b
+            ..domain.replace(domain)
+            ..insertion.replace(insertion)
+            ..length = length
+            ..all_helices = false,
+    );
   }
 
   factory InsertionLengthChange.from([void Function(InsertionLengthChangeBuilder) updates]) =
@@ -3421,13 +3508,19 @@ abstract class InsertionsLengthChange
   bool get all_helices;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory InsertionsLengthChange(
-      {required Iterable<Insertion> insertions, required Iterable<Domain> domains, required int length}) {
-    return InsertionsLengthChange.from((b) => b
-      ..insertions.replace(insertions)
-      ..domains.replace(domains)
-      ..length = length
-      ..all_helices = false);
+  factory InsertionsLengthChange({
+    required Iterable<Insertion> insertions,
+    required Iterable<Domain> domains,
+    required int length,
+  }) {
+    return InsertionsLengthChange.from(
+      (b) =>
+          b
+            ..insertions.replace(insertions)
+            ..domains.replace(domains)
+            ..length = length
+            ..all_helices = false,
+    );
   }
 
   factory InsertionsLengthChange.from([void Function(InsertionsLengthChangeBuilder) updates]) =
@@ -3480,16 +3573,19 @@ abstract class InsertionRemove
   StrandPart get strand_part => domain;
 
   InsertionRemove clone_for_other_domain(Domain other_domain) => InsertionRemove(
-        domain: other_domain,
-        insertion: other_domain.insertions.firstWhere((i) => i.offset == offset),
-      );
+    domain: other_domain,
+    insertion: other_domain.insertions.firstWhere((i) => i.offset == offset),
+  );
 
   /************************ begin BuiltValue boilerplate ************************/
   factory InsertionRemove({required Domain domain, required Insertion insertion}) {
-    return InsertionRemove.from((b) => b
-      ..domain.replace(domain)
-      ..insertion.replace(insertion)
-      ..all_helices = false);
+    return InsertionRemove.from(
+      (b) =>
+          b
+            ..domain.replace(domain)
+            ..insertion.replace(insertion)
+            ..all_helices = false,
+    );
   }
 
   factory InsertionRemove.from([void Function(InsertionRemoveBuilder) updates]) = _$InsertionRemove;
@@ -3518,10 +3614,13 @@ abstract class DeletionRemove
 
   /************************ begin BuiltValue boilerplate ************************/
   factory DeletionRemove({required Domain domain, required int offset}) {
-    return DeletionRemove.from((b) => b
-      ..domain.replace(domain)
-      ..offset = offset
-      ..all_helices = false);
+    return DeletionRemove.from(
+      (b) =>
+          b
+            ..domain.replace(domain)
+            ..offset = offset
+            ..all_helices = false,
+    );
   }
 
   factory DeletionRemove.from([void Function(DeletionRemoveBuilder) updates]) = _$DeletionRemove;
@@ -3652,10 +3751,11 @@ abstract class ModificationRemove
   int? get strand_dna_idx;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ModificationRemove(
-      {required Strand strand,
-      required Modification modification,
-      int? strand_dna_idx}) = _$ModificationRemove._;
+  factory ModificationRemove({
+    required Strand strand,
+    required Modification modification,
+    int? strand_dna_idx,
+  }) = _$ModificationRemove._;
 
   ModificationRemove._();
 
@@ -3678,13 +3778,15 @@ abstract class ModificationConnectorLengthSet
   @memoized
   int get hashCode;
 
-  factory ModificationConnectorLengthSet(
-      {required Strand strand,
-      required Modification modification,
-      required int connector_length}) = _$ModificationConnectorLengthSet._;
+  factory ModificationConnectorLengthSet({
+    required Strand strand,
+    required Modification modification,
+    required int connector_length,
+  }) = _$ModificationConnectorLengthSet._;
 
-  factory ModificationConnectorLengthSet.from(
-      [void Function(ModificationConnectorLengthSetBuilder) updates]) = _$ModificationConnectorLengthSet;
+  factory ModificationConnectorLengthSet.from([
+    void Function(ModificationConnectorLengthSetBuilder) updates,
+  ]) = _$ModificationConnectorLengthSet;
 
   ModificationConnectorLengthSet._();
 
@@ -3705,10 +3807,11 @@ abstract class ModificationEdit
   int? get strand_dna_idx;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ModificationEdit(
-      {required Strand strand,
-      required Modification modification,
-      int? strand_dna_idx}) = _$ModificationEdit._;
+  factory ModificationEdit({
+    required Strand strand,
+    required Modification modification,
+    int? strand_dna_idx,
+  }) = _$ModificationEdit._;
 
   ModificationEdit._();
 
@@ -3726,12 +3829,16 @@ abstract class Modifications5PrimeEdit
   Modification5Prime get new_modification;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory Modifications5PrimeEdit(
-      {required Iterable<SelectableModification5Prime> modifications,
-      required Modification5Prime new_modification}) {
-    return Modifications5PrimeEdit.from((b) => b
-      ..modifications.replace(modifications)
-      ..new_modification.replace(new_modification));
+  factory Modifications5PrimeEdit({
+    required Iterable<SelectableModification5Prime> modifications,
+    required Modification5Prime new_modification,
+  }) {
+    return Modifications5PrimeEdit.from(
+      (b) =>
+          b
+            ..modifications.replace(modifications)
+            ..new_modification.replace(new_modification),
+    );
   }
 
   factory Modifications5PrimeEdit.from([void Function(Modifications5PrimeEditBuilder) updates]) =
@@ -3753,12 +3860,16 @@ abstract class Modifications3PrimeEdit
   Modification3Prime get new_modification;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory Modifications3PrimeEdit(
-      {required Iterable<SelectableModification3Prime> modifications,
-      required Modification3Prime new_modification}) {
-    return Modifications3PrimeEdit.from((b) => b
-      ..modifications.replace(modifications)
-      ..new_modification.replace(new_modification));
+  factory Modifications3PrimeEdit({
+    required Iterable<SelectableModification3Prime> modifications,
+    required Modification3Prime new_modification,
+  }) {
+    return Modifications3PrimeEdit.from(
+      (b) =>
+          b
+            ..modifications.replace(modifications)
+            ..new_modification.replace(new_modification),
+    );
   }
 
   factory Modifications3PrimeEdit.from([void Function(Modifications3PrimeEditBuilder) updates]) =
@@ -3780,12 +3891,16 @@ abstract class ModificationsInternalEdit
   ModificationInternal get new_modification;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ModificationsInternalEdit(
-      {required Iterable<SelectableModificationInternal> modifications,
-      required ModificationInternal new_modification}) {
-    return ModificationsInternalEdit.from((b) => b
-      ..modifications.replace(modifications)
-      ..new_modification.replace(new_modification));
+  factory ModificationsInternalEdit({
+    required Iterable<SelectableModificationInternal> modifications,
+    required ModificationInternal new_modification,
+  }) {
+    return ModificationsInternalEdit.from(
+      (b) =>
+          b
+            ..modifications.replace(modifications)
+            ..new_modification.replace(new_modification),
+    );
   }
 
   factory ModificationsInternalEdit.from([void Function(ModificationsInternalEditBuilder) updates]) =
@@ -3993,8 +4108,9 @@ abstract class StrandOrSubstrandColorPickerHide
   /************************ begin BuiltValue boilerplate ************************/
   factory StrandOrSubstrandColorPickerHide() => StrandOrSubstrandColorPickerHide.from((b) => b);
 
-  factory StrandOrSubstrandColorPickerHide.from(
-      [void Function(StrandOrSubstrandColorPickerHideBuilder) updates]) = _$StrandOrSubstrandColorPickerHide;
+  factory StrandOrSubstrandColorPickerHide.from([
+    void Function(StrandOrSubstrandColorPickerHideBuilder) updates,
+  ]) = _$StrandOrSubstrandColorPickerHide;
 
   StrandOrSubstrandColorPickerHide._();
 
@@ -4178,12 +4294,13 @@ abstract class InlineInsertionsDeletions
 // which crossovers to default to when setting helix positions/rolls based on crossover
 
 abstract class DefaultCrossoverTypeForSettingHelixRollsSet
-    with
-        BuiltJsonSerializable
+    with BuiltJsonSerializable
     implements
         Action,
-        Built<DefaultCrossoverTypeForSettingHelixRollsSet,
-            DefaultCrossoverTypeForSettingHelixRollsSetBuilder> {
+        Built<
+          DefaultCrossoverTypeForSettingHelixRollsSet,
+          DefaultCrossoverTypeForSettingHelixRollsSetBuilder
+        > {
   bool get scaffold;
 
   bool get staple;
@@ -4241,8 +4358,9 @@ abstract class ShowHelixComponentsMainViewSet
   factory ShowHelixComponentsMainViewSet({required bool show_helix_components}) =
       _$ShowHelixComponentsMainViewSet._;
 
-  factory ShowHelixComponentsMainViewSet.from(
-      [void Function(ShowHelixComponentsMainViewSetBuilder) updates]) = _$ShowHelixComponentsMainViewSet;
+  factory ShowHelixComponentsMainViewSet.from([
+    void Function(ShowHelixComponentsMainViewSetBuilder) updates,
+  ]) = _$ShowHelixComponentsMainViewSet;
 
   ShowHelixComponentsMainViewSet._();
 
@@ -4329,11 +4447,16 @@ abstract class LoadDnaSequenceImageUri
 
   /************************ begin BuiltValue boilerplate ************************/
   factory LoadDnaSequenceImageUri(
-          String? uri, double dna_sequence_png_horizontal_offset, double dna_sequence_png_vertical_offset) =>
-      LoadDnaSequenceImageUri.from((b) => b
-        ..uri = uri
-        ..dna_sequence_png_horizontal_offset = dna_sequence_png_horizontal_offset
-        ..dna_sequence_png_vertical_offset = dna_sequence_png_vertical_offset);
+    String? uri,
+    double dna_sequence_png_horizontal_offset,
+    double dna_sequence_png_vertical_offset,
+  ) => LoadDnaSequenceImageUri.from(
+    (b) =>
+        b
+          ..uri = uri
+          ..dna_sequence_png_horizontal_offset = dna_sequence_png_horizontal_offset
+          ..dna_sequence_png_vertical_offset = dna_sequence_png_vertical_offset,
+  );
 
   factory LoadDnaSequenceImageUri.from(void Function(LoadDnaSequenceImageUriBuilder) updates) =
       _$LoadDnaSequenceImageUri;
@@ -4369,12 +4492,14 @@ abstract class SetExportSvgActionDelayedForPngCache
 
   /************************ begin BuiltValue boilerplate ************************/
   factory SetExportSvgActionDelayedForPngCache(ExportSvg? export_svg_action_delayed_for_png_cache) =>
-      SetExportSvgActionDelayedForPngCache.from((b) =>
-          b..export_svg_action_delayed_for_png_cache = export_svg_action_delayed_for_png_cache?.toBuilder());
+      SetExportSvgActionDelayedForPngCache.from(
+        (b) =>
+            b..export_svg_action_delayed_for_png_cache = export_svg_action_delayed_for_png_cache?.toBuilder(),
+      );
 
-  factory SetExportSvgActionDelayedForPngCache.from(
-          [void Function(SetExportSvgActionDelayedForPngCacheBuilder) updates]) =
-      _$SetExportSvgActionDelayedForPngCache;
+  factory SetExportSvgActionDelayedForPngCache.from([
+    void Function(SetExportSvgActionDelayedForPngCacheBuilder) updates,
+  ]) = _$SetExportSvgActionDelayedForPngCache;
 
   SetExportSvgActionDelayedForPngCache._();
 
@@ -4399,18 +4524,19 @@ abstract class ShowBasePairLinesSet
 }
 
 abstract class ExportBasePairLinesIfOtherStrandNotSelectedSet
-    with
-        BuiltJsonSerializable
+    with BuiltJsonSerializable
     implements
         Action,
-        Built<ExportBasePairLinesIfOtherStrandNotSelectedSet,
-            ExportBasePairLinesIfOtherStrandNotSelectedSetBuilder> {
+        Built<
+          ExportBasePairLinesIfOtherStrandNotSelectedSet,
+          ExportBasePairLinesIfOtherStrandNotSelectedSetBuilder
+        > {
   bool get export_base_pair_lines_if_other_strand_not_selected;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ExportBasePairLinesIfOtherStrandNotSelectedSet(
-          {required bool export_base_pair_lines_if_other_strand_not_selected}) =
-      _$ExportBasePairLinesIfOtherStrandNotSelectedSet._;
+  factory ExportBasePairLinesIfOtherStrandNotSelectedSet({
+    required bool export_base_pair_lines_if_other_strand_not_selected,
+  }) = _$ExportBasePairLinesIfOtherStrandNotSelectedSet._;
 
   ExportBasePairLinesIfOtherStrandNotSelectedSet._();
 
@@ -4480,10 +4606,12 @@ abstract class DisablePngCachingDnaSequencesSet
   /************************ begin BuiltValue boilerplate ************************/
   factory DisablePngCachingDnaSequencesSet(bool disable_png_caching_dna_sequences) =>
       DisablePngCachingDnaSequencesSet.from(
-          (b) => b..disable_png_caching_dna_sequences = disable_png_caching_dna_sequences);
+        (b) => b..disable_png_caching_dna_sequences = disable_png_caching_dna_sequences,
+      );
 
-  factory DisablePngCachingDnaSequencesSet.from(
-      [void Function(DisablePngCachingDnaSequencesSetBuilder) updates]) = _$DisablePngCachingDnaSequencesSet;
+  factory DisablePngCachingDnaSequencesSet.from([
+    void Function(DisablePngCachingDnaSequencesSetBuilder) updates,
+  ]) = _$DisablePngCachingDnaSequencesSet;
 
   DisablePngCachingDnaSequencesSet._();
 
@@ -4499,10 +4627,12 @@ abstract class RetainStrandColorOnSelectionSet
   /************************ begin BuiltValue boilerplate ************************/
   factory RetainStrandColorOnSelectionSet(bool retain_strand_color_on_selection) =>
       RetainStrandColorOnSelectionSet.from(
-          (b) => b..retain_strand_color_on_selection = retain_strand_color_on_selection);
+        (b) => b..retain_strand_color_on_selection = retain_strand_color_on_selection,
+      );
 
-  factory RetainStrandColorOnSelectionSet.from(
-      [void Function(RetainStrandColorOnSelectionSetBuilder) updates]) = _$RetainStrandColorOnSelectionSet;
+  factory RetainStrandColorOnSelectionSet.from([
+    void Function(RetainStrandColorOnSelectionSetBuilder) updates,
+  ]) = _$RetainStrandColorOnSelectionSet;
 
   RetainStrandColorOnSelectionSet._();
 
@@ -4518,10 +4648,12 @@ abstract class DisplayReverseDNARightSideUpSet
   /************************ begin BuiltValue boilerplate ************************/
   factory DisplayReverseDNARightSideUpSet(bool display_reverse_DNA_right_side_up) =>
       DisplayReverseDNARightSideUpSet.from(
-          (b) => b..display_reverse_DNA_right_side_up = display_reverse_DNA_right_side_up);
+        (b) => b..display_reverse_DNA_right_side_up = display_reverse_DNA_right_side_up,
+      );
 
-  factory DisplayReverseDNARightSideUpSet.from(
-      [void Function(DisplayReverseDNARightSideUpSetBuilder) updates]) = _$DisplayReverseDNARightSideUpSet;
+  factory DisplayReverseDNARightSideUpSet.from([
+    void Function(DisplayReverseDNARightSideUpSetBuilder) updates,
+  ]) = _$DisplayReverseDNARightSideUpSet;
 
   DisplayReverseDNARightSideUpSet._();
 
@@ -4571,16 +4703,19 @@ abstract class Autobreak with BuiltJsonSerializable implements Action, Built<Aut
   int get min_distance_to_xover;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory Autobreak(
-          {required int target_length,
-          required int min_length,
-          required int max_length,
-          required int min_distance_to_xover}) =>
-      Autobreak.from((b) => b
-        ..target_length = target_length
-        ..min_length = min_length
-        ..max_length = max_length
-        ..min_distance_to_xover = min_distance_to_xover);
+  factory Autobreak({
+    required int target_length,
+    required int min_length,
+    required int max_length,
+    required int min_distance_to_xover,
+  }) => Autobreak.from(
+    (b) =>
+        b
+          ..target_length = target_length
+          ..min_length = min_length
+          ..max_length = max_length
+          ..min_distance_to_xover = min_distance_to_xover,
+  );
 
   factory Autobreak.from([void Function(AutobreakBuilder) updates]) = _$Autobreak;
 

@@ -22,32 +22,37 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
 
   /************************ end BuiltValue boilerplate ************************/
 
-  factory StrandsMove(
-      {required BuiltList<Strand> strands_moving,
-      required BuiltList<Strand> all_strands,
-      required BuiltMap<int, Helix> helices,
-      required BuiltMap<String, HelixGroup> groups,
-      required BuiltMap<int, int> original_helices_view_order_inverse,
-      required Address original_address,
-      bool copy = false,
-      bool keep_color = true}) {
-    var strands_fixed = copy
-        ? all_strands
-        : [
-            for (var strand in all_strands)
-              if (!strands_moving.contains(strand)) strand
-          ];
-    return StrandsMove.from((b) => b
-      ..strands_moving.replace(strands_moving)
-      ..strands_fixed.replace(strands_fixed)
-      ..helices.replace(helices)
-      ..groups.replace(groups)
-      ..original_helices_view_order_inverse.replace(original_helices_view_order_inverse)
-      ..original_address.replace(original_address)
-      ..current_address.replace(original_address)
-      ..copy = copy
-      ..keep_color = keep_color
-      ..allowable = true);
+  factory StrandsMove({
+    required BuiltList<Strand> strands_moving,
+    required BuiltList<Strand> all_strands,
+    required BuiltMap<int, Helix> helices,
+    required BuiltMap<String, HelixGroup> groups,
+    required BuiltMap<int, int> original_helices_view_order_inverse,
+    required Address original_address,
+    bool copy = false,
+    bool keep_color = true,
+  }) {
+    var strands_fixed =
+        copy
+            ? all_strands
+            : [
+              for (var strand in all_strands)
+                if (!strands_moving.contains(strand)) strand,
+            ];
+    return StrandsMove.from(
+      (b) =>
+          b
+            ..strands_moving.replace(strands_moving)
+            ..strands_fixed.replace(strands_fixed)
+            ..helices.replace(helices)
+            ..groups.replace(groups)
+            ..original_helices_view_order_inverse.replace(original_helices_view_order_inverse)
+            ..original_address.replace(original_address)
+            ..current_address.replace(original_address)
+            ..copy = copy
+            ..keep_color = keep_color
+            ..allowable = true,
+    );
   }
 
   BuiltList<Strand> get strands_moving;

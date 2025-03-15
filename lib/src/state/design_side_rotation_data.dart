@@ -23,9 +23,12 @@ abstract class DesignSideRotationParams
   int get hashCode;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory DesignSideRotationParams(int helix_idx, int offset) => DesignSideRotationParams.from((b) => b
-    ..helix_idx = helix_idx
-    ..offset = offset);
+  factory DesignSideRotationParams(int helix_idx, int offset) => DesignSideRotationParams.from(
+    (b) =>
+        b
+          ..helix_idx = helix_idx
+          ..offset = offset,
+  );
 
   factory DesignSideRotationParams.from([void Function(DesignSideRotationParamsBuilder) updates]) =
       _$DesignSideRotationParams;
@@ -80,8 +83,9 @@ abstract class DesignSideRotationData
       }
       var group = design.groups[helix.group]!;
       var geometry = group.geometry ?? design.geometry;
-      design_side_rotation_datas_builder
-          .add(DesignSideRotationData(helix, offset, color_forward, color_reverse, roll_forward, geometry));
+      design_side_rotation_datas_builder.add(
+        DesignSideRotationData(helix, offset, color_forward, color_reverse, roll_forward, geometry),
+      );
     }
     return design_side_rotation_datas_builder;
   }
@@ -94,14 +98,16 @@ abstract class DesignSideRotationData
     Color color_reverse,
     double roll_forward,
     Geometry geometry,
-  ) =>
-      DesignSideRotationData.from((b) => b
-        ..helix.replace(helix)
-        ..offset = offset
-        ..color_forward = color_forward
-        ..color_reverse = color_reverse
-        ..roll_forward = roll_forward
-        ..geometry.replace(geometry));
+  ) => DesignSideRotationData.from(
+    (b) =>
+        b
+          ..helix.replace(helix)
+          ..offset = offset
+          ..color_forward = color_forward
+          ..color_reverse = color_reverse
+          ..roll_forward = roll_forward
+          ..geometry.replace(geometry),
+  );
 
   factory DesignSideRotationData.from([void Function(DesignSideRotationDataBuilder) updates]) =
       _$DesignSideRotationData;

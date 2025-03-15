@@ -14,14 +14,20 @@ part 'vendor_fields.g.dart';
 abstract class VendorFields
     with BuiltJsonSerializable, UnusedFields
     implements Built<VendorFields, VendorFieldsBuilder> {
-  factory VendorFields(
-          {required String scale, required String purification, String? plate = null, String? well = null}) =>
-      VendorFields.from((b) => b
-        ..scale = scale
-        ..purification = purification
-        ..plate = plate
-        ..well = well
-        ..unused_fields = MapBuilder<String, dynamic>({}));
+  factory VendorFields({
+    required String scale,
+    required String purification,
+    String? plate = null,
+    String? well = null,
+  }) => VendorFields.from(
+    (b) =>
+        b
+          ..scale = scale
+          ..purification = purification
+          ..plate = plate
+          ..well = well
+          ..unused_fields = MapBuilder<String, dynamic>({}),
+  );
 
   factory VendorFields.from([void Function(VendorFieldsBuilder) updates]) = _$VendorFields;
 
@@ -45,7 +51,7 @@ abstract class VendorFields
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     Map<String, dynamic> json_map = {
       constants.vendor_scale_key: this.scale,
-      constants.vendor_purification_key: this.purification
+      constants.vendor_purification_key: this.purification,
     };
     if (this.plate != null) {
       json_map[constants.vendor_plate_key] = this.plate;
@@ -69,17 +75,25 @@ abstract class VendorFields
       well = json_map[constants.vendor_well_key];
     }
     if (plate == null && well != null) {
-      throw IllegalDesignError("cannot set VendorFields.well to ${well} when plate is null\n"
-          "this occurred when reading VendorFields entry:\n${json_map}");
+      throw IllegalDesignError(
+        "cannot set VendorFields.well to ${well} when plate is null\n"
+        "this occurred when reading VendorFields entry:\n${json_map}",
+      );
     }
     if (plate != null && well == null) {
-      throw IllegalDesignError("cannot set VendorFields.plate to ${plate} when well is null\n"
-          "this occurred when reading VendorFields entry:\n${json_map}");
+      throw IllegalDesignError(
+        "cannot set VendorFields.plate to ${plate} when well is null\n"
+        "this occurred when reading VendorFields entry:\n${json_map}",
+      );
     }
     var unused_fields = util.unused_fields_map(json_map, constants.vendor_keys);
 
-    return new VendorFields(scale: scale, purification: purification, plate: plate, well: well)
-        .rebuild((b) => b.unused_fields = unused_fields);
+    return new VendorFields(
+      scale: scale,
+      purification: purification,
+      plate: plate,
+      well: well,
+    ).rebuild((b) => b.unused_fields = unused_fields);
   }
 
   tooltip() =>

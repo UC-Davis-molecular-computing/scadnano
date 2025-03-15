@@ -56,10 +56,11 @@ abstract class ExampleDesigns
 
   static Serializer<ExampleDesigns> get serializer => _$exampleDesignsSerializer;
 
-  factory ExampleDesigns(
-      {required BuiltList<String> filenames,
-      required String directory,
-      required int selected_idx}) = _$ExampleDesigns._;
+  factory ExampleDesigns({
+    required BuiltList<String> filenames,
+    required String directory,
+    required int selected_idx,
+  }) = _$ExampleDesigns._;
 
   @memoized
   int get hashCode;

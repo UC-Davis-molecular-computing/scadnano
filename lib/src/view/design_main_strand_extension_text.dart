@@ -33,11 +33,12 @@ class DesignMainStrandExtensionTextComponent extends UiComponent2<DesignMainStra
 
     Map<String, dynamic> style_map = {'letterSpacing': '${letter_spacing}em', 'fontSize': '${font_size}px'};
 
-    SvgProps text_path_props = (Dom.textPath()
-      ..className = props.css_selector_text
-      ..xlinkHref = '#${props.ext.id}'
-      ..startOffset = start_offset
-      ..style = style_map);
+    SvgProps text_path_props =
+        (Dom.textPath()
+          ..className = props.css_selector_text
+          ..xlinkHref = '#${props.ext.id}'
+          ..startOffset = start_offset
+          ..style = style_map);
     var dom = props.ext.adjacent_domain;
     var adj_dom_offset = props.ext.is_5p ? dom.offset_5p : dom.offset_3p;
     return (Dom.text()

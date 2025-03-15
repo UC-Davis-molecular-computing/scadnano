@@ -4,7 +4,7 @@ description: A web-based scriptable cadnano (see https://cadnano.org/ for origin
 #author: David Doty <doty@ucdavis.edu>
 
 environment:
-  sdk: '>=3.5.0 <4.0.0'
+  sdk: '>=3.7.0 <4.0.0'
 
 dependencies:
   analyzer: ^6.8.0

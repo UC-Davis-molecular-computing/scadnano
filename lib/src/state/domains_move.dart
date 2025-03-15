@@ -34,24 +34,28 @@ abstract class DomainsMove with BuiltJsonSerializable implements Built<DomainsMo
     bool copy = false,
     bool keep_color = true,
   }) {
-    var domains_fixed = copy
-        ? all_domains
-        : [
-            for (var domain in all_domains)
-              if (!domains_moving.contains(domain)) domain
-          ];
-    return DomainsMove.from((b) => b
-      ..domains_moving.replace(domains_moving)
-      ..domains_fixed.replace(domains_fixed)
-      ..strands_with_domains_moving.replace(strands_with_domains_moving)
-      ..helices.replace(helices)
-      ..groups.replace(groups)
-      ..original_helices_view_order_inverse.replace(original_helices_view_order_inverse)
-      ..original_address.replace(original_address)
-      ..current_address.replace(original_address)
-      ..copy = copy
-      ..keep_color = keep_color
-      ..allowable = true);
+    var domains_fixed =
+        copy
+            ? all_domains
+            : [
+              for (var domain in all_domains)
+                if (!domains_moving.contains(domain)) domain,
+            ];
+    return DomainsMove.from(
+      (b) =>
+          b
+            ..domains_moving.replace(domains_moving)
+            ..domains_fixed.replace(domains_fixed)
+            ..strands_with_domains_moving.replace(strands_with_domains_moving)
+            ..helices.replace(helices)
+            ..groups.replace(groups)
+            ..original_helices_view_order_inverse.replace(original_helices_view_order_inverse)
+            ..original_address.replace(original_address)
+            ..current_address.replace(original_address)
+            ..copy = copy
+            ..keep_color = keep_color
+            ..allowable = true,
+    );
   }
 
   BuiltList<Domain> get domains_moving;

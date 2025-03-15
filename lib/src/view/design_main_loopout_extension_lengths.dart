@@ -37,11 +37,13 @@ class DesignMainLoopoutExtensionLengthsComponent extends UiComponent2<DesignMain
       for (Strand strand in props.strands)
         for (Substrand substrand in strand.substrands)
           if (substrand is Loopout || substrand is Extension) {
-            elts.add((DesignMainLoopoutExtensionLength()
-              ..geometry = props.geometry
-              ..substrand = substrand
-              ..key = "${idx++}"
-              ..className = 'loopout-extension-length-elts')());
+            elts.add(
+              (DesignMainLoopoutExtensionLength()
+                ..geometry = props.geometry
+                ..substrand = substrand
+                ..key = "${idx++}"
+                ..className = 'loopout-extension-length-elts')(),
+            );
           }
       return (Dom.g()..className = 'loopout-extension-lengths-main-view')(elts);
     }

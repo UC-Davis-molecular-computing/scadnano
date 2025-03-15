@@ -52,7 +52,7 @@ main() {
 
     test('change_helix_idx_with_nondefault_helices_view_order', () {
       var helices = [
-        for (int i = 0; i < 3; i++) Helix(idx: i, grid: Grid.square, grid_position: GridPosition(0, i))
+        for (int i = 0; i < 3; i++) Helix(idx: i, grid: Grid.square, grid_position: GridPosition(0, i)),
       ];
       var groups = {
         "default_group": HelixGroup(helices_view_order: [2, 1, 0], grid: Grid.square),

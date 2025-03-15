@@ -26,13 +26,17 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
     var export_svg_action_delayed_for_png_cache = ui_state.export_svg_action_delayed_for_png_cache;
     var disable_png_caching_dna_sequences = ui_state.disable_png_caching_dna_sequences;
 
-    bool using_png_dna_sequence = util.use_png(dna_sequence_png_uri, is_zoom_above_threshold,
-        export_svg_action_delayed_for_png_cache, disable_png_caching_dna_sequences);
+    bool using_png_dna_sequence = util.use_png(
+      dna_sequence_png_uri,
+      is_zoom_above_threshold,
+      export_svg_action_delayed_for_png_cache,
+      disable_png_caching_dna_sequences,
+    );
 
     // If main needs to be exported, then the png needs to be disabled if currently being used.
     bool need_to_disable_png =
         (action is actions.CopySelectedStandsToClipboardImage || action.type == actions.ExportSvgType.main) &&
-            using_png_dna_sequence;
+        using_png_dna_sequence;
 
     if (need_to_disable_png) {
       // Disables the png
@@ -50,11 +54,15 @@ export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next
           if (action.type == actions.ExportSvgType.selected) {
             List<Element> selected_elts = get_selected_svg_elements(store.state);
             if (selected_elts.length == 0) {
-              window.alert("No strands are selected, so there is nothing to export.\n"
-                  "Please select some strands before choosing this option.");
+              window.alert(
+                "No strands are selected, so there is nothing to export.\n"
+                "Please select some strands before choosing this option.",
+              );
             } else {
               var cloned_svg_element_with_style = get_cloned_svg_element_with_style(
-                  selected_elts, store.state.ui_state.export_svg_text_separately);
+                selected_elts,
+                store.state.ui_state.export_svg_text_separately,
+              );
               _export_from_element(cloned_svg_element_with_style, 'selected');
             }
           } else {
@@ -86,9 +94,13 @@ List<Element> get_selected_svg_elements(AppState state) {
   if (app.state.ui_state.base_pair_display_type != BasePairDisplayType.none) {
     bool export_bp_if_other_not_selected =
         app.state.ui_state.export_base_pair_lines_if_other_strand_not_selected;
-    var base_pairs = state.ui_state.show_base_pair_lines_with_mismatches
-        ? state.design.selected_base_pairs_with_mismatches(selected_strands, export_bp_if_other_not_selected)
-        : state.design.selected_base_pairs(selected_strands, export_bp_if_other_not_selected);
+    var base_pairs =
+        state.ui_state.show_base_pair_lines_with_mismatches
+            ? state.design.selected_base_pairs_with_mismatches(
+              selected_strands,
+              export_bp_if_other_not_selected,
+            )
+            : state.design.selected_base_pairs(selected_strands, export_bp_if_other_not_selected);
     selected_elts.addAll(get_svg_elements_of_base_pairs(base_pairs));
   }
   selected_elts.addAll(get_svg_elements_of_strands(selected_strands));
@@ -140,7 +152,7 @@ DomMatrix dominant_baseline_matrix(String dominant_baseline, double rot, String 
         0,
         0,
         1,
-        ...rotate_vector([0, (-3 * get_text_height(font)) / 12], rot)
+        ...rotate_vector([0, (-3 * get_text_height(font)) / 12], rot),
       ]);
     case "hanging":
       return new DomMatrix([
@@ -148,7 +160,7 @@ DomMatrix dominant_baseline_matrix(String dominant_baseline, double rot, String 
         0,
         0,
         1,
-        ...rotate_vector([0, (9 * get_text_height(font)) / 12], rot)
+        ...rotate_vector([0, (9 * get_text_height(font)) / 12], rot),
       ]);
     case "central":
       return new DomMatrix([
@@ -156,7 +168,7 @@ DomMatrix dominant_baseline_matrix(String dominant_baseline, double rot, String 
         0,
         0,
         1,
-        ...rotate_vector([0, (4 * get_text_height(font)) / 12], rot)
+        ...rotate_vector([0, (4 * get_text_height(font)) / 12], rot),
       ]);
     default:
       return new DomMatrix([1, 0, 0, 1, 0, 0]);
@@ -164,25 +176,11 @@ DomMatrix dominant_baseline_matrix(String dominant_baseline, double rot, String 
 }
 
 Map matrix_to_map<T>(Matrix matrix) {
-  return {
-    "a": matrix.a,
-    "b": matrix.b,
-    "c": matrix.c,
-    "d": matrix.d,
-    "e": matrix.e,
-    "f": matrix.f,
-  };
+  return {"a": matrix.a, "b": matrix.b, "c": matrix.c, "d": matrix.d, "e": matrix.e, "f": matrix.f};
 }
 
 Map dom_matrix_to_map(DomMatrix matrix) {
-  return {
-    "a": matrix.a,
-    "b": matrix.b,
-    "c": matrix.c,
-    "d": matrix.d,
-    "e": matrix.e,
-    "f": matrix.f,
-  };
+  return {"a": matrix.a, "b": matrix.b, "c": matrix.c, "d": matrix.d, "e": matrix.e, "f": matrix.f};
 }
 
 Map point_to_map(svg.Point point) {
@@ -203,23 +201,31 @@ TextElement create_portable_text(TextContentElement text_ele, int j) {
     rot = item.angle! as double;
   }
   if (char_ele.style.getPropertyValue("dominant-baseline") != "") {
-    pos = pos.matrixTransform(dom_matrix_to_map(dominant_baseline_matrix(
-        char_ele.style.getPropertyValue("dominant-baseline"),
-        rot,
-        text_ele.style.fontSize + " " + text_ele.style.fontFamily)));
+    pos = pos.matrixTransform(
+      dom_matrix_to_map(
+        dominant_baseline_matrix(
+          char_ele.style.getPropertyValue("dominant-baseline"),
+          rot,
+          text_ele.style.fontSize + " " + text_ele.style.fontFamily,
+        ),
+      ),
+    );
   }
   char_ele.style.setProperty("dominant-baseline", "");
   char_ele.style.setProperty("text-anchor", "start");
-  if (text_ele.classes.any([
-    "loopout-extension-length",
-    "dna-seq-insertion",
-    "dna-seq-loopout",
-    "dna-seq-extension",
-    "dna-seq"
-  ].contains)) {
+  if (text_ele.classes.any(
+    [
+      "loopout-extension-length",
+      "dna-seq-insertion",
+      "dna-seq-loopout",
+      "dna-seq-extension",
+      "dna-seq",
+    ].contains,
+  )) {
     char_ele.style.setProperty(
-        "text-shadow", // doesn't work in PowerPoint
-        "-0.7px -0.7px 0 #fff, 0.7px -0.7px 0 #fff, -0.7px 0.7px 0 #fff, 0.7px 0.7px 0 #fff");
+      "text-shadow", // doesn't work in PowerPoint
+      "-0.7px -0.7px 0 #fff, 0.7px -0.7px 0 #fff, -0.7px 0.7px 0 #fff, 0.7px 0.7px 0 #fff",
+    );
   }
   char_ele.setAttribute("x", pos.x.toString());
   char_ele.setAttribute("y", pos.y.toString());
@@ -248,7 +254,9 @@ RectElement create_portable_rect(RectElement ele) {
     Transform item = ele.transform!.baseVal!.getItem(i);
     if (item.angle != 0) {
       portableEle.setAttribute(
-          "transform", "rotate(${item.angle} ${pos.x! + pos.width! / 2} ${pos.y! + pos.height! / 2})");
+        "transform",
+        "rotate(${item.angle} ${pos.x! + pos.width! / 2} ${pos.y! + pos.height! / 2})",
+      );
     }
   }
   return portableEle;
@@ -290,8 +298,8 @@ SvgSvgElement make_portable(SvgSvgElement src) {
 }
 
 SvgSvgElement get_cloned_svg_element_with_style(List<Element> selected_elts, bool separate_text) {
-  var cloned_svg_element_with_style = SvgSvgElement()
-    ..children = selected_elts.map(clone_and_apply_style).toList();
+  var cloned_svg_element_with_style =
+      SvgSvgElement()..children = selected_elts.map(clone_and_apply_style).toList();
   if (separate_text) {
     cloned_svg_element_with_style = make_portable(cloned_svg_element_with_style);
   }
@@ -302,8 +310,10 @@ SvgSvgElement get_cloned_svg_element_with_style(List<Element> selected_elts, boo
   cloned_svg_element_with_style.remove();
 
   // have to add some padding to viewbox, for some reason bbox doesn't always fit it by a few pixels??
-  cloned_svg_element_with_style.setAttribute('viewBox',
-      '${bbox.x!.floor() - 1} ${bbox.y!.floor() - 1} ${bbox.width!.ceil() + 3} ${bbox.height!.ceil() + 6}');
+  cloned_svg_element_with_style.setAttribute(
+    'viewBox',
+    '${bbox.x!.floor() - 1} ${bbox.y!.floor() - 1} ${bbox.width!.ceil() + 3} ${bbox.height!.ceil() + 6}',
+  );
 
   return cloned_svg_element_with_style;
 }
@@ -394,7 +404,7 @@ Element clone_and_apply_style(Element elt_orig) {
 
 clone_and_apply_style_rec(Element elt_styled, Element elt_orig, {int depth = 0}) {
   // print('elt_styled ${elt_styled.id} and elt_orig ${elt_orig.id}');
-//  Set<Element> children_styled_to_remove = {};
+  //  Set<Element> children_styled_to_remove = {};
   var tag_name = elt_styled.tagName;
 
   if (elt_styled.classes.contains('svg-pan-zoom_viewport')) {
@@ -410,9 +420,9 @@ clone_and_apply_style_rec(Element elt_styled, Element elt_orig, {int depth = 0})
     // 'id ${elt_styled.id} fill ${style_def.getPropertyValue("fill")} relevant_styles ${relevant_styles[tag_name]}');
     //TODO: figure out how to remove nodes that aren't visible;
     // getting error "Unsupported operation: Cannot setRange on filtered list" when removing children
-//      if (style_def.visibility == 'hidden') {
-//        children_styled_to_remove.add(child_styled);
-//      }
+    //      if (style_def.visibility == 'hidden') {
+    //        children_styled_to_remove.add(child_styled);
+    //      }
 
     for (var style_name in relevant_styles[tag_name]!) {
       var style_value = style_def.getPropertyValue(style_name);
@@ -432,10 +442,10 @@ clone_and_apply_style_rec(Element elt_styled, Element elt_orig, {int depth = 0})
     // elt_styled.setAttribute("style", style_string);
     // print(elt_styled.styleMap);
 
-//    print('${' ' * depth * 2} ${tag_name} ${elt_orig.classes.toList()} style: $style_string');
+    //    print('${' ' * depth * 2} ${tag_name} ${elt_orig.classes.toList()} style: $style_string');
   }
 
-//  svg_elt_styled.children.removeWhere((node) => children_styled_to_remove.contains(node));
+  //  svg_elt_styled.children.removeWhere((node) => children_styled_to_remove.contains(node));
 
   // recurse
   var children_styled = elt_styled.childNodes;

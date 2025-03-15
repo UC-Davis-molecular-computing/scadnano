@@ -53,7 +53,7 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
 
     // set SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX to true to print helix coordinates in side view instead
     // of idx, which is useful for making figures in the documentation showing how the grids work
-//    bool SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX = true;
+    //    bool SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX = true;
     int precision = constants.NUM_DIGITS_PRECISION_POSITION_DISPLAYED;
 
     String grid_position_str;
@@ -69,12 +69,14 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
     }
 
     // these aren't defined if slice bar is not showing, so check for null
-    var forward_angle = props.slice_bar_offset != null
-        ? props.helix.backbone_angle_at_offset(props.slice_bar_offset!, true, props.geometry)
-        : null;
-    var reverse_angle = props.slice_bar_offset != null
-        ? props.helix.backbone_angle_at_offset(props.slice_bar_offset!, false, props.geometry)
-        : null;
+    var forward_angle =
+        props.slice_bar_offset != null
+            ? props.helix.backbone_angle_at_offset(props.slice_bar_offset!, true, props.geometry)
+            : null;
+    var reverse_angle =
+        props.slice_bar_offset != null
+            ? props.helix.backbone_angle_at_offset(props.slice_bar_offset!, false, props.geometry)
+            : null;
     var tooltip = '''\
 position:  ${position_str}
 roll:      ${props.helix.roll.toStringAsFixed(precision)}
@@ -90,13 +92,14 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
         ..id = helix_circle_id()
         ..key = 'circle')((Dom.svgTitle())(tooltip)),
       (Dom.text()
-            ..style = SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX ? {'fontSize': 20} : {}
-            ..className = '$SIDE_VIEW_PREFIX-helix-text'
-            ..id = helix_text_id()
-            ..onClick = ((e) => this._handle_click(e, props.helix))
-            ..key = 'text-idx')(
-          SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX ? grid_position_str : props.helix.idx.toString(),
-          (Dom.svgTitle())(tooltip)),
+        ..style = SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX ? {'fontSize': 20} : {}
+        ..className = '$SIDE_VIEW_PREFIX-helix-text'
+        ..id = helix_text_id()
+        ..onClick = ((e) => this._handle_click(e, props.helix))
+        ..key = 'text-idx')(
+        SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX ? grid_position_str : props.helix.idx.toString(),
+        (Dom.svgTitle())(tooltip),
+      ),
       if (props.show_grid_coordinates)
         (Dom.text()
           ..fontSize = 10
@@ -109,12 +112,13 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
 
     if (props.rotation_data != null) {
       assert(props.rotation_data!.helix.idx == this.props.helix.idx);
-      var rot_component = (DesignSideRotation()
-        ..radius = props.geometry.helix_radius_svg
-        ..data = props.rotation_data!
-        ..invert_y = props.invert_y
-        ..className = '$SIDE_VIEW_PREFIX-helix-rotation'
-        ..key = 'rotation')();
+      var rot_component =
+          (DesignSideRotation()
+            ..radius = props.geometry.helix_radius_svg
+            ..data = props.rotation_data!
+            ..invert_y = props.invert_y
+            ..className = '$SIDE_VIEW_PREFIX-helix-rotation'
+            ..key = 'rotation')();
       children.add(rot_component);
     }
 
@@ -159,10 +163,14 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
     MouseEvent event = ev as MouseEvent;
     if (!event.shiftKey) {
       event.preventDefault();
-      app.dispatch(actions.ContextMenuShow(
+      app.dispatch(
+        actions.ContextMenuShow(
           context_menu: ContextMenu(
-              items: context_menu_helix(props.helix, props.helix_change_apply_to_all),
-              position: util.from_point_num(event.page))));
+            items: context_menu_helix(props.helix, props.helix_change_apply_to_all),
+            position: util.from_point_num(event.page),
+          ),
+        ),
+      );
     }
   }
 

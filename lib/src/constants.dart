@@ -228,7 +228,8 @@ const design_modifications_5p_key = 'modifications_5p_in_design';
 const design_modifications_3p_key = 'modifications_3p_in_design';
 const design_modifications_int_key = 'modifications_int_in_design';
 const groups_key = 'groups';
-final design_keys = [
+final design_keys =
+    [
       version_key,
       grid_key,
       helices_key,
@@ -251,7 +252,8 @@ const bases_per_turn_key = 'bases_per_turn';
 const minor_groove_angle_key = 'minor_groove_angle';
 const legacy_minor_groove_angle_keys = ['groove_angle'];
 const inter_helix_gap_key = 'inter_helix_gap';
-final geometry_keys = [
+final geometry_keys =
+    [
       rise_per_base_pair_key,
       helix_radius_key,
       bases_per_turn_key,
@@ -277,7 +279,8 @@ const major_tick_distance_key = 'major_tick_distance';
 const major_tick_start_key = 'major_tick_start';
 const major_tick_periodic_distances_key = 'major_tick_periodic_distances';
 const group_key = 'group';
-final helix_keys = [
+final helix_keys =
+    [
       idx_on_helix_key,
       max_offset_key,
       min_offset_key,
@@ -319,7 +322,8 @@ const legacy_substrands_keys = ['substrands'];
 const modification_5p_key = '5prime_modification';
 const modification_3p_key = '3prime_modification';
 const modifications_int_key = 'internal_modifications';
-final strand_keys = [
+final strand_keys =
+    [
       color_key,
       dna_sequence_key,
       vendor_fields_key,
@@ -342,7 +346,8 @@ const mod_vendor_code_key = 'vendor_code';
 const legacy_mod_vendor_code_keys = ['idt_text'];
 const mod_allowed_bases_key = 'allowed_bases';
 const mod_connector_length_key = 'connector_length';
-final modification_keys = [
+final modification_keys =
+    [
       mod_location_key,
       mod_display_text_key,
       mod_vendor_code_key,
@@ -373,7 +378,8 @@ const start_key = 'start';
 const end_key = 'end';
 const deletions_key = 'deletions';
 const insertions_key = 'insertions';
-final domain_keys = [
+final domain_keys =
+    [
       helix_idx_key,
       forward_key,
       start_key,
@@ -388,12 +394,7 @@ final domain_keys = [
 
 // Loopout keys
 const loopout_key = 'loopout';
-const loopout_keys = [
-  loopout_key,
-  label_key,
-  name_key,
-  color_key,
-];
+const loopout_keys = [loopout_key, label_key, name_key, color_key];
 
 // Extension keys
 const extension_key = 'extension_num_bases';
@@ -493,5 +494,5 @@ enum strand_bounds_status {
   max_offset_out_of_bounds,
   in_bounds_with_min_offset_changes,
   in_bounds_with_max_offset_changes,
-  in_bounds
+  in_bounds,
 }

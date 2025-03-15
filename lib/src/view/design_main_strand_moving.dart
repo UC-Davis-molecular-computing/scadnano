@@ -47,12 +47,13 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
     }
 
     Strand? strand_moved = move_strand(
-        strand: props.strand,
-        original_helices_view_order_inverse: props.original_helices_view_order_inverse,
-        current_group: props.current_group,
-        delta_view_order: props.delta_view_order,
-        delta_offset: props.delta_offset,
-        delta_forward: props.delta_forward);
+      strand: props.strand,
+      original_helices_view_order_inverse: props.original_helices_view_order_inverse,
+      current_group: props.current_group,
+      delta_view_order: props.delta_view_order,
+      delta_offset: props.delta_offset,
+      delta_forward: props.delta_forward,
+    );
 
     if (strand_moved == null) {
       return null;
@@ -83,10 +84,15 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
           ..geometry = props.geometry
           ..dna_end = end_5p_moved
           ..color = props.strand.color
-          ..forward = first_domain_moved.forward //first_domain_moved.forward != props.delta_forward
-          ..is_5p = true //true != props.delta_forward
+          ..forward =
+              first_domain_moved
+                  .forward //first_domain_moved.forward != props.delta_forward
+          ..is_5p =
+              true //true != props.delta_forward
           ..allowable = props.allowable
-          ..current_offset = end_5p_moved.offset_inclusive // + props.delta_offset
+          ..current_offset =
+              end_5p_moved
+                  .offset_inclusive // + props.delta_offset
           ..svg_position_y = props.helix_idx_to_svg_position_map[first_helix_moved.idx]!.y
           ..key = 'end-5p')(),
       if (!strand_moved.circular)
@@ -95,10 +101,15 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
           ..geometry = props.geometry
           ..dna_end = end_3p_moved
           ..color = props.strand.color
-          ..forward = last_domain_moved.forward //props.delta_forward != last_domain_moved.forward
-          ..is_5p = false //false != props.delta_forward
+          ..forward =
+              last_domain_moved
+                  .forward //props.delta_forward != last_domain_moved.forward
+          ..is_5p =
+              false //false != props.delta_forward
           ..allowable = props.allowable
-          ..current_offset = end_3p_moved.offset_inclusive // + props.delta_offset
+          ..current_offset =
+              end_3p_moved
+                  .offset_inclusive // + props.delta_offset
           ..svg_position_y = props.helix_idx_to_svg_position_map[last_helix_moved.idx]!.y
           ..key = 'end-3p')(),
     ]);
@@ -110,7 +121,11 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
     Helix helix = props.helices[domain_first.helix]!;
     var helix_svg_position_y = props.helix_idx_to_svg_position_map[domain_first.helix]!.y;
     var start_svg = helix.svg_base_pos(
-        domain_first.offset_5p, domain_first.forward, helix_svg_position_y, props.geometry);
+      domain_first.offset_5p,
+      domain_first.forward,
+      helix_svg_position_y,
+      props.geometry,
+    );
     var path_cmds = ['M ${start_svg.x} ${start_svg.y}'];
 
     var substrands = strand_moved.substrands;
@@ -120,8 +135,12 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
         Domain domain = substrand;
         // substrand line
         helix_svg_position_y = props.helix_idx_to_svg_position_map[helix.idx]!.y;
-        var end_svg =
-            helix.svg_base_pos(domain.offset_3p, domain.forward, helix_svg_position_y, props.geometry);
+        var end_svg = helix.svg_base_pos(
+          domain.offset_3p,
+          domain.forward,
+          helix_svg_position_y,
+          props.geometry,
+        );
         path_cmds.add('L ${end_svg.x} ${end_svg.y}');
 
         // crossover/loopout line/arc
@@ -134,15 +153,20 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
           }
           helix = props.helices[domain.helix]!;
           helix_svg_position_y = props.helix_idx_to_svg_position_map[helix.idx]!.y;
-          start_svg =
-              helix.svg_base_pos(domain.offset_5p, domain.forward, helix_svg_position_y, props.geometry);
+          start_svg = helix.svg_base_pos(
+            domain.offset_5p,
+            domain.forward,
+            helix_svg_position_y,
+            props.geometry,
+          );
           var control = control_point_for_crossover_bezier_curve(
-              old_domain,
-              domain,
-              props.helices,
-              props.helix_idx_to_svg_position_map[old_domain.helix]!.y,
-              props.helix_idx_to_svg_position_map[domain.helix]!.y,
-              geometry: props.geometry);
+            old_domain,
+            domain,
+            props.helices,
+            props.helix_idx_to_svg_position_map[old_domain.helix]!.y,
+            props.helix_idx_to_svg_position_map[domain.helix]!.y,
+            geometry: props.geometry,
+          );
           var crossover_path_desc = 'Q ${control.x} ${control.y} ${start_svg.x} ${start_svg.y}';
           path_cmds.add(crossover_path_desc);
         }
@@ -180,12 +204,13 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
     }
 
     int key = 0;
-    var path = (Dom.path()
-      ..className = classname
-      ..stroke = props.strand.color.toHexColor().toCssString()
-      ..fill = 'none'
-      ..d = path_cmds.join(' ')
-      ..key = key++)();
+    var path =
+        (Dom.path()
+          ..className = classname
+          ..stroke = props.strand.color.toHexColor().toCssString()
+          ..fill = 'none'
+          ..d = path_cmds.join(' ')
+          ..key = key++)();
 
     return path;
   }

@@ -21,18 +21,22 @@ abstract class DNAAssignOptions
 
   static Serializer<DNAAssignOptions> get serializer => _$dNAAssignOptionsSerializer;
 
-  factory DNAAssignOptions(
-      {required String dna_sequence,
-      bool use_predefined_dna_sequence = false,
-      bool assign_complements = true,
-      bool disable_change_sequence_bound_strand = true,
-      int m13_rotation = 5587}) {
-    return DNAAssignOptions.from((b) => b
-      ..dna_sequence = dna_sequence
-      ..use_predefined_dna_sequence = use_predefined_dna_sequence
-      ..assign_complements = assign_complements
-      ..disable_change_sequence_bound_strand = disable_change_sequence_bound_strand
-      ..m13_rotation = m13_rotation);
+  factory DNAAssignOptions({
+    required String dna_sequence,
+    bool use_predefined_dna_sequence = false,
+    bool assign_complements = true,
+    bool disable_change_sequence_bound_strand = true,
+    int m13_rotation = 5587,
+  }) {
+    return DNAAssignOptions.from(
+      (b) =>
+          b
+            ..dna_sequence = dna_sequence
+            ..use_predefined_dna_sequence = use_predefined_dna_sequence
+            ..assign_complements = assign_complements
+            ..disable_change_sequence_bound_strand = disable_change_sequence_bound_strand
+            ..m13_rotation = m13_rotation,
+    );
   }
 
   @memoized

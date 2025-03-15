@@ -40,8 +40,10 @@ ${error.cause}
 ${util.stack_trace_message_bug_report(stack_trace)}''';
   } catch (error, stack_trace) {
     window.alert(
-        'I was unable to process that file. Only scadnano .sc files are supported for opening via the menu File-->Open or dragging onto the browser. If you are trying to import a cadnano file (ending. in .json), use the menu option File-->Import cadnano v2. Here is the full error message: ');
-    error_message = "I encountered an error while reading the file ${action.filename}:"
+      'I was unable to process that file. Only scadnano .sc files are supported for opening via the menu File-->Open or dragging onto the browser. If you are trying to import a cadnano file (ending. in .json), use the menu option File-->Import cadnano v2. Here is the full error message: ',
+    );
+    error_message =
+        "I encountered an error while reading the file ${action.filename}:"
         '\n\n$hline'
         '\n* error type:    ${error.runtimeType}'
         '\n* error message: ${error.toString()}'
@@ -62,11 +64,14 @@ ${util.stack_trace_message_bug_report(stack_trace)}''';
 
   AppState new_state;
   if (error_message != null) {
-    new_state = state.rebuild((m) => m
-      ..undo_redo.replace(UndoRedo())
-      ..maybe_design = null
-      ..ui_state.changed_since_last_save = false
-      ..error_message = error_message);
+    new_state = state.rebuild(
+      (m) =>
+          m
+            ..undo_redo.replace(UndoRedo())
+            ..maybe_design = null
+            ..ui_state.changed_since_last_save = false
+            ..error_message = error_message,
+    );
   } else if (design_new != null) {
     Design design = design_new;
     BuiltSet<int> side_selected_helix_idxs = BuiltSet<int>();
@@ -77,8 +82,9 @@ ${util.stack_trace_message_bug_report(stack_trace)}''';
 
       // remove selected helices from
       if (state.maybe_design != null && design.helices.length < state.design.helices.length) {
-        side_selected_helix_idxs =
-            side_selected_helix_idxs.rebuild((s) => s.removeWhere((idx) => idx >= design.helices.length));
+        side_selected_helix_idxs = side_selected_helix_idxs.rebuild(
+          (s) => s.removeWhere((idx) => idx >= design.helices.length),
+        );
       }
     }
 
@@ -92,16 +98,22 @@ ${util.stack_trace_message_bug_report(stack_trace)}''';
       storables = storables.rebuild((b) => b..displayed_group_name = design.groups.keys.first);
     }
 
-    new_state = state.rebuild((m) => m
-      ..undo_redo.replace(UndoRedo())
-      ..maybe_design = design.toBuilder()
-      ..ui_state.update((u) => u
-        ..storables.replace(storables)
-        ..selectables_store.replace(new_selectables_store)
-        ..changed_since_last_save = false
-        ..storables.loaded_filename = new_filename
-        ..storables.side_selected_helix_idxs.replace(side_selected_helix_idxs))
-      ..error_message = "");
+    new_state = state.rebuild(
+      (m) =>
+          m
+            ..undo_redo.replace(UndoRedo())
+            ..maybe_design = design.toBuilder()
+            ..ui_state.update(
+              (u) =>
+                  u
+                    ..storables.replace(storables)
+                    ..selectables_store.replace(new_selectables_store)
+                    ..changed_since_last_save = false
+                    ..storables.loaded_filename = new_filename
+                    ..storables.side_selected_helix_idxs.replace(side_selected_helix_idxs),
+            )
+            ..error_message = "",
+    );
   } else {
     throw AssertionError("This line should be unreachable");
   }

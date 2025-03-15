@@ -9,9 +9,11 @@ import '../state/app_state.dart';
 helix_remove_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   if (action is actions.HelixRemove) {
     if (store.state.design.domains_on_helix(action.helix_idx).isNotEmpty) {
-      var confirm_remove = window.confirm('Helix ${action.helix_idx} has domains on it. '
-          'If you delete the helix, the domains will be removed. '
-          'Are you sure you wish to remove helix ${action.helix_idx}?');
+      var confirm_remove = window.confirm(
+        'Helix ${action.helix_idx} has domains on it. '
+        'If you delete the helix, the domains will be removed. '
+        'Are you sure you wish to remove helix ${action.helix_idx}?',
+      );
       if (!confirm_remove) {
         return;
       }
@@ -30,13 +32,16 @@ helix_remove_middleware(Store<AppState> store, dynamic action, NextDispatcher ne
     if (helix_idx_with_substrands.isNotEmpty) {
       var helix_idx_string = helix_idx_with_substrands.join(', ');
 
-      var first_line_string = (helix_idx_with_substrands.length == 1)
-          ? 'Selected helix ${helix_idx_string} has domains on it. '
-          : 'Selected helices: ${helix_idx_string} have domains on them. ';
+      var first_line_string =
+          (helix_idx_with_substrands.length == 1)
+              ? 'Selected helix ${helix_idx_string} has domains on it. '
+              : 'Selected helices: ${helix_idx_string} have domains on them. ';
 
-      var confirm_remove = window.confirm('${first_line_string}'
-          'If you delete the selected helices, the domains will be removed. '
-          'Are you sure you wish to remove selected helices: ${side_selected_helix_idxs.join(', ')}?');
+      var confirm_remove = window.confirm(
+        '${first_line_string}'
+        'If you delete the selected helices, the domains will be removed. '
+        'Are you sure you wish to remove selected helices: ${side_selected_helix_idxs.join(', ')}?',
+      );
       if (!confirm_remove) {
         return;
       }

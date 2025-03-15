@@ -25,24 +25,31 @@ mixin DesignMainErrorBoundaryStateMixin on UiState {
 class DesignMainErrorBoundaryState = UiState with ErrorBoundaryState, DesignMainErrorBoundaryStateMixin;
 
 @Component2(isWrapper: true, isErrorBoundary: true)
-class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
-    S extends DesignMainErrorBoundaryState> extends UiStatefulComponent2<T, S> with ErrorBoundaryApi<T, S> {
+class DesignMainErrorBoundaryComponent<
+  T extends DesignMainErrorBoundaryProps,
+  S extends DesignMainErrorBoundaryState
+>
+    extends UiStatefulComponent2<T, S>
+    with ErrorBoundaryApi<T, S> {
   @override
-  get defaultProps => (newProps()
-    ..identicalErrorFrequencyTolerance = Duration(seconds: 5)
-    ..loggerName = constants.default_error_boundary_logger_name
-    ..shouldLogErrors = true);
+  get defaultProps =>
+      (newProps()
+        ..identicalErrorFrequencyTolerance = Duration(seconds: 5)
+        ..loggerName = constants.default_error_boundary_logger_name
+        ..shouldLogErrors = true);
 
   @override
-  get initialState => (newState()
-    ..hasError = false
-    ..showFallbackUIOnError = true);
+  get initialState =>
+      (newState()
+        ..hasError = false
+        ..showFallbackUIOnError = true);
 
   @override
-  Map getDerivedStateFromError(error) => (newState()
-    ..hasError = true
-    ..error = error
-    ..showFallbackUIOnError = true);
+  Map getDerivedStateFromError(error) =>
+      (newState()
+        ..hasError = true
+        ..error = error
+        ..showFallbackUIOnError = true);
 
   @override
   void componentDidCatch(error, ReactErrorInfo info) {
@@ -61,12 +68,13 @@ class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
   render() {
     if (state.hasError) {
       var error = state.error;
-//      var escaper = HtmlEscape();
-      var escaped_error_message = util.ASSERTION_ERROR_MESSAGE +
-              '\n\n' +
-              '${error.toString()}\n\nstack trace:\n${error.stackTrace}' //escaper.convert(
-          //  )
-          ;
+      //      var escaper = HtmlEscape();
+      var escaped_error_message =
+          util.ASSERTION_ERROR_MESSAGE +
+          '\n\n' +
+          '${error.toString()}\n\nstack trace:\n${error.stackTrace}' //escaper.convert(
+      //  )
+      ;
 
       send_error(escaped_error_message);
       return null;

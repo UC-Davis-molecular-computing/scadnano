@@ -36,7 +36,8 @@ main() {
       HELIX_ANGLE = pi * 2 / BASES_PER_TURN;
       RISE_PER_BASE_PAIR = 0.332;
       // square of expected distance between adjacent nucleotide centers of mass
-      EXPECTED_ADJ_NUC_CM_DIST2 = pow(2 * OX_BASE_DIST * sin(HELIX_ANGLE / 2), 2) +
+      EXPECTED_ADJ_NUC_CM_DIST2 =
+          pow(2 * OX_BASE_DIST * sin(HELIX_ANGLE / 2), 2) +
           pow(RISE_PER_BASE_PAIR * NM_TO_OX_UNITS, 2).toDouble();
     });
 
@@ -197,13 +198,19 @@ main() {
       */
       var helices = [
         for (int i = 0; i < 4; i++)
-          Helix(idx: i, max_offset: 7, grid: i < 2 ? Grid.honeycomb : Grid.square, group: i < 2 ? 'a' : 'b')
+          Helix(idx: i, max_offset: 7, grid: i < 2 ? Grid.honeycomb : Grid.square, group: i < 2 ? 'a' : 'b'),
       ];
       var groups = {
         'a': HelixGroup(
-            grid: Grid.honeycomb, position: Position3D(x: 0, y: 0, z: 0), helices_view_order: [0, 1]),
+          grid: Grid.honeycomb,
+          position: Position3D(x: 0, y: 0, z: 0),
+          helices_view_order: [0, 1],
+        ),
         'b': HelixGroup(
-            grid: Grid.square, position: Position3D(x: 100, y: 0, z: 0), helices_view_order: [2, 3]),
+          grid: Grid.square,
+          position: Position3D(x: 100, y: 0, z: 0),
+          helices_view_order: [2, 3],
+        ),
       };
       var design = Design(helices: helices, grid: Grid.square, groups: groups);
       design = design.draw_strand(0, 0).to(7).cross(1).move(-7).commit();

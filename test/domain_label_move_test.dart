@@ -42,18 +42,19 @@ main() {
     */
       var helices = [
         Helix(idx: 0, max_offset: 100, grid: Grid.square),
-        Helix(idx: 1, max_offset: 100, grid: Grid.square)
+        Helix(idx: 1, max_offset: 100, grid: Grid.square),
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design
-          .draw_strand(0, 0)
-          .move(8)
-          .with_domain_name("ABC")
-          .cross(1)
-          .move(-8)
-          .with_domain_name("XYZ")
-          .commit();
+      design =
+          design
+              .draw_strand(0, 0)
+              .move(8)
+              .with_domain_name("ABC")
+              .cross(1)
+              .move(-8)
+              .with_domain_name("XYZ")
+              .commit();
 
       AppState state = app_state_from_design(design);
       //Select Strands
@@ -64,12 +65,13 @@ main() {
       Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
       state = app_state_reducer(state, SelectAll(selectables: selectables, only: true));
       state = app_state_reducer(
-          state,
-          StrandsMoveStartSelectedStrands(
-            address: address,
-            copy: false,
-            original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
-          ));
+        state,
+        StrandsMoveStartSelectedStrands(
+          address: address,
+          copy: false,
+          original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
+        ),
+      );
 
       //Adjust Address
       offset = 4;
@@ -116,18 +118,19 @@ main() {
     */
       var helices = [
         Helix(idx: 0, max_offset: 100, grid: Grid.square),
-        Helix(idx: 1, max_offset: 100, grid: Grid.square)
+        Helix(idx: 1, max_offset: 100, grid: Grid.square),
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design
-          .draw_strand(0, 0)
-          .move(8)
-          .with_domain_name("ABC")
-          .loopout(1, 2)
-          .move(-8)
-          .with_domain_name("XYZ")
-          .commit();
+      design =
+          design
+              .draw_strand(0, 0)
+              .move(8)
+              .with_domain_name("ABC")
+              .loopout(1, 2)
+              .move(-8)
+              .with_domain_name("XYZ")
+              .commit();
 
       AppState state = app_state_from_design(design);
       //Select Strands
@@ -138,12 +141,13 @@ main() {
       Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
       state = app_state_reducer(state, SelectAll(selectables: selectables, only: true));
       state = app_state_reducer(
-          state,
-          StrandsMoveStartSelectedStrands(
-            address: address,
-            copy: false,
-            original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
-          ));
+        state,
+        StrandsMoveStartSelectedStrands(
+          address: address,
+          copy: false,
+          original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
+        ),
+      );
 
       //Adjust Address
       offset = 4;
@@ -189,19 +193,20 @@ main() {
     */
       var helices = [
         Helix(idx: 0, max_offset: 100, grid: Grid.square),
-        Helix(idx: 1, max_offset: 100, grid: Grid.square)
+        Helix(idx: 1, max_offset: 100, grid: Grid.square),
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design
-          .draw_strand(0, 0)
-          .move(8)
-          .with_domain_name("ABC")
-          .cross(1)
-          .move(-8)
-          .with_domain_name("XYZ")
-          .as_circular()
-          .commit();
+      design =
+          design
+              .draw_strand(0, 0)
+              .move(8)
+              .with_domain_name("ABC")
+              .cross(1)
+              .move(-8)
+              .with_domain_name("XYZ")
+              .as_circular()
+              .commit();
       AppState state = app_state_from_design(design);
       //Select Strands
       BuiltList<Selectable> selectables = [design.strands[0]].toBuiltList();
@@ -211,12 +216,13 @@ main() {
       Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
       state = app_state_reducer(state, SelectAll(selectables: selectables, only: true));
       state = app_state_reducer(
-          state,
-          StrandsMoveStartSelectedStrands(
-            address: address,
-            copy: false,
-            original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
-          ));
+        state,
+        StrandsMoveStartSelectedStrands(
+          address: address,
+          copy: false,
+          original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
+        ),
+      );
 
       //Adjust Address
       offset = 4;
@@ -263,19 +269,20 @@ main() {
     */
       var helices = [
         Helix(idx: 0, max_offset: 100, grid: Grid.square),
-        Helix(idx: 1, max_offset: 100, grid: Grid.square)
+        Helix(idx: 1, max_offset: 100, grid: Grid.square),
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design
-          .draw_strand(0, 0)
-          .move(8)
-          .with_domain_name("ABC")
-          .loopout(1, 2)
-          .move(-8)
-          .with_domain_name("XYZ")
-          .as_circular()
-          .commit();
+      design =
+          design
+              .draw_strand(0, 0)
+              .move(8)
+              .with_domain_name("ABC")
+              .loopout(1, 2)
+              .move(-8)
+              .with_domain_name("XYZ")
+              .as_circular()
+              .commit();
       AppState state = app_state_from_design(design);
       //Select Strands
       BuiltList<Selectable> selectables = [design.strands[0]].toBuiltList();
@@ -285,12 +292,13 @@ main() {
       Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
       state = app_state_reducer(state, SelectAll(selectables: selectables, only: true));
       state = app_state_reducer(
-          state,
-          StrandsMoveStartSelectedStrands(
-            address: address,
-            copy: false,
-            original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
-          ));
+        state,
+        StrandsMoveStartSelectedStrands(
+          address: address,
+          copy: false,
+          original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
+        ),
+      );
 
       //Adjust Address
       offset = 4;
@@ -333,18 +341,19 @@ main() {
     */
       var helices = [
         Helix(idx: 0, max_offset: 100, grid: Grid.square),
-        Helix(idx: 1, max_offset: 100, grid: Grid.square)
+        Helix(idx: 1, max_offset: 100, grid: Grid.square),
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design
-          .draw_strand(0, 0)
-          .move(8)
-          .with_domain_name("ABC")
-          .cross(1)
-          .move(-8)
-          .with_domain_name("XYZ")
-          .commit();
+      design =
+          design
+              .draw_strand(0, 0)
+              .move(8)
+              .with_domain_name("ABC")
+              .cross(1)
+              .move(-8)
+              .with_domain_name("XYZ")
+              .commit();
 
       AppState state = app_state_from_design(design);
       //Select Strands
@@ -355,12 +364,13 @@ main() {
       Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
       state = app_state_reducer(state, SelectAll(selectables: selectables, only: true));
       state = app_state_reducer(
-          state,
-          StrandsMoveStartSelectedStrands(
-            address: address,
-            copy: false,
-            original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
-          ));
+        state,
+        StrandsMoveStartSelectedStrands(
+          address: address,
+          copy: false,
+          original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
+        ),
+      );
 
       //Adjust Address
       offset = 6;

@@ -40,9 +40,12 @@ abstract class UndoRedoItem with BuiltJsonSerializable implements Built<UndoRedo
 
   /************************ begin BuiltValue boilerplate ************************/
 
-  factory UndoRedoItem(String short_description, Design design) => UndoRedoItem.from((b) => b
-    ..short_description = short_description
-    ..design.replace(design));
+  factory UndoRedoItem(String short_description, Design design) => UndoRedoItem.from(
+    (b) =>
+        b
+          ..short_description = short_description
+          ..design.replace(design),
+  );
 
   factory UndoRedoItem.from([void Function(UndoRedoItemBuilder) updates]) = _$UndoRedoItem;
 

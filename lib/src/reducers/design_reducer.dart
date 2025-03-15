@@ -33,17 +33,23 @@ Design? design_global_reducer(Design? design, AppState state, action) {
 
 // composed: operate on slices of the DNADesign
 // local: don't need the whole AppState
-Design? design_composed_local_reducer(Design? design, action) => design?.rebuild((d) => d
-  ..groups.replace(groups_local_reducer(design.groups, action))
-  ..helices.replace(helices_local_reducer(design.helices, action))
-  ..strands.replace(strands_local_reducer(design.strands, action)));
+Design? design_composed_local_reducer(Design? design, action) => design?.rebuild(
+  (d) =>
+      d
+        ..groups.replace(groups_local_reducer(design.groups, action))
+        ..helices.replace(helices_local_reducer(design.helices, action))
+        ..strands.replace(strands_local_reducer(design.strands, action)),
+);
 
 // composed: operate on slices of the DNADesign
 // global: need the whole AppState
-Design? design_composed_global_reducer(Design? design, AppState state, action) => design?.rebuild((d) => d
-  ..groups.replace(groups_global_reducer(design.groups, state, action))
-  ..helices.replace(helices_global_reducer(design.helices, state, action))
-  ..strands.replace(strands_global_reducer(design.strands, state, action)));
+Design? design_composed_global_reducer(Design? design, AppState state, action) => design?.rebuild(
+  (d) =>
+      d
+        ..groups.replace(groups_global_reducer(design.groups, state, action))
+        ..helices.replace(helices_global_reducer(design.helices, state, action))
+        ..strands.replace(strands_global_reducer(design.strands, state, action)),
+);
 
 // whole: operate on the whole DNADesign
 // local: don't need the whole AppState
@@ -66,7 +72,8 @@ GlobalReducer<Design?, AppState> design_whole_global_reducer = combineGlobalRedu
   TypedGlobalReducer<Design?, AppState, actions.HelixAdd>(helix_add_design_reducer),
   TypedGlobalReducer<Design?, AppState, actions.HelixRemove>(helix_remove_design_global_reducer),
   TypedGlobalReducer<Design?, AppState, actions.HelixRemoveAllSelected>(
-      helix_remove_all_selected_design_global_reducer),
+    helix_remove_all_selected_design_global_reducer,
+  ),
   TypedGlobalReducer<Design?, AppState, actions.HelixGroupMoveCommit>(helix_group_move_commit_global_reducer),
 ]);
 
@@ -77,9 +84,12 @@ Design? design_geometry_set_reducer(Design? design, AppState state, actions.Geom
   }
   var new_helices = design.helices.toMap();
 
-  return design.rebuild((b) => b
-    ..helices.replace(new_helices)
-    ..geometry.replace(action.geometry));
+  return design.rebuild(
+    (b) =>
+        b
+          ..helices.replace(new_helices)
+          ..geometry.replace(action.geometry),
+  );
 }
 
 Design? new_design_set_reducer(Design? design, actions.NewDesignSet action) => action.design;

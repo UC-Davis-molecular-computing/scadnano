@@ -29,8 +29,10 @@ Strand insertion_deletion_reducer(Strand strand, actions.InsertionOrDeletionActi
     dom_idx++;
   }
   if (!found) {
-    print('WARNING: could not find domain ${domain} on strand substrands: ${strand.substrands} '
-        'when implementing action ${action}');
+    print(
+      'WARNING: could not find domain ${domain} on strand substrands: ${strand.substrands} '
+      'when implementing action ${action}',
+    );
     return strand;
   }
 
@@ -87,7 +89,10 @@ Domain insertion_length_change_reducer(Domain domain, actions.InsertionLengthCha
 }
 
 BuiltList<Strand> insertions_length_change_reducer(
-    BuiltList<Strand> strands, AppState state, actions.InsertionsLengthChange action) {
+  BuiltList<Strand> strands,
+  AppState state,
+  actions.InsertionsLengthChange action,
+) {
   assert(action.insertions.length == action.domains.length);
 
   Map<String, Map<Domain, List<Insertion>>> insertions_on_strand_id_domain = {};

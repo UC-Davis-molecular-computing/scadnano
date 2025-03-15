@@ -39,18 +39,22 @@ abstract class ContextMenuItem
 
   static Serializer<ContextMenuItem> get serializer => _$contextMenuItemSerializer;
 
-  factory ContextMenuItem(
-      {required String title,
-      Callback? on_click = null,
-      String tooltip = '',
-      BuiltList<ContextMenuItem>? nested = null,
-      bool disabled = false}) {
-    return ContextMenuItem.from((b) => b
-      ..title = title
-      ..on_click = on_click
-      ..tooltip = tooltip
-      ..nested = nested?.toBuilder()
-      ..disabled = disabled);
+  factory ContextMenuItem({
+    required String title,
+    Callback? on_click = null,
+    String tooltip = '',
+    BuiltList<ContextMenuItem>? nested = null,
+    bool disabled = false,
+  }) {
+    return ContextMenuItem.from(
+      (b) =>
+          b
+            ..title = title
+            ..on_click = on_click
+            ..tooltip = tooltip
+            ..nested = nested?.toBuilder()
+            ..disabled = disabled,
+    );
   }
 
   @memoized

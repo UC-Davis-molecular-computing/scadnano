@@ -42,13 +42,18 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
     Domain domain = this.domain;
     int deletion_offset = this.deletion;
 
-    Point<double> pos =
-        props.helix.svg_base_pos(deletion_offset, domain.forward, props.svg_position_y, props.geometry);
+    Point<double> pos = props.helix.svg_base_pos(
+      deletion_offset,
+      domain.forward,
+      props.svg_position_y,
+      props.geometry,
+    );
 
     // deletion
     var width = 0.8 * geometry.base_width_svg;
     var half_width = 0.5 * width;
-    var path_cmds = 'M ${pos.x - half_width} ${pos.y - half_width} '
+    var path_cmds =
+        'M ${pos.x - half_width} ${pos.y - half_width} '
         'l ${width} ${width} m ${-width} ${0} l ${width} ${-width}';
 
     // deletion invisible background
@@ -72,40 +77,41 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
     String key = 'deletion-H${domain.helix}-${deletion_offset}';
     String key_background = 'deletion-background-H${domain.helix}-${deletion_offset}';
     return (Dom.g()
-          ..className = classname
-          ..onPointerDown = ((ev) {
-            if (deletion_selectable(props.selectable_deletion)) {
-              props.selectable_deletion.handle_selection_mouse_down(ev.nativeEvent);
-            }
-          })
-          ..onPointerUp = ((ev) {
-            if (deletion_selectable(props.selectable_deletion)) {
-              props.selectable_deletion.handle_selection_mouse_up(ev.nativeEvent);
-            }
-          })
-          ..transform = props.transform)(
-        (Dom.rect()
-          ..className = 'deletion-background'
-          ..x = background_x
-          ..y = background_y
-          ..width = background_width
-          ..height = background_height
-          ..onClick = ((_) {
-            if (edit_mode_is_deletion()) {
-              app.dispatch(actions.DeletionRemove(domain: this.domain, offset: this.deletion));
-            }
-          })
-          ..key = key_background)(),
-        (Dom.path()
-          ..className = 'deletion-cross'
-          ..fill = 'none'
-          ..d = path_cmds
-          ..onClick = ((_) {
-            if (edit_mode_is_deletion()) {
-              app.dispatch(actions.DeletionRemove(domain: this.domain, offset: this.deletion));
-            }
-          })
-          ..id = props.selectable_deletion.id
-          ..key = key)());
+      ..className = classname
+      ..onPointerDown = ((ev) {
+        if (deletion_selectable(props.selectable_deletion)) {
+          props.selectable_deletion.handle_selection_mouse_down(ev.nativeEvent);
+        }
+      })
+      ..onPointerUp = ((ev) {
+        if (deletion_selectable(props.selectable_deletion)) {
+          props.selectable_deletion.handle_selection_mouse_up(ev.nativeEvent);
+        }
+      })
+      ..transform = props.transform)(
+      (Dom.rect()
+        ..className = 'deletion-background'
+        ..x = background_x
+        ..y = background_y
+        ..width = background_width
+        ..height = background_height
+        ..onClick = ((_) {
+          if (edit_mode_is_deletion()) {
+            app.dispatch(actions.DeletionRemove(domain: this.domain, offset: this.deletion));
+          }
+        })
+        ..key = key_background)(),
+      (Dom.path()
+        ..className = 'deletion-cross'
+        ..fill = 'none'
+        ..d = path_cmds
+        ..onClick = ((_) {
+          if (edit_mode_is_deletion()) {
+            app.dispatch(actions.DeletionRemove(domain: this.domain, offset: this.deletion));
+          }
+        })
+        ..id = props.selectable_deletion.id
+        ..key = key)(),
+    );
   }
 }

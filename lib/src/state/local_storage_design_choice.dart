@@ -29,12 +29,15 @@ const int _default_period = 30;
 abstract class LocalStorageDesignChoice
     with BuiltJsonSerializable
     implements Built<LocalStorageDesignChoice, LocalStorageDesignChoiceBuilder> {
-  factory LocalStorageDesignChoice(
-          [LocalStorageDesignOption option = LocalStorageDesignOption.on_edit,
-          int period_seconds = _default_period]) =>
-      LocalStorageDesignChoice.from((b) => b
-        ..option = option
-        ..period_seconds = period_seconds);
+  factory LocalStorageDesignChoice([
+    LocalStorageDesignOption option = LocalStorageDesignOption.on_edit,
+    int period_seconds = _default_period,
+  ]) => LocalStorageDesignChoice.from(
+    (b) =>
+        b
+          ..option = option
+          ..period_seconds = period_seconds,
+  );
 
   factory LocalStorageDesignChoice.from([void Function(LocalStorageDesignChoiceBuilder) updates]) =
       _$LocalStorageDesignChoice;

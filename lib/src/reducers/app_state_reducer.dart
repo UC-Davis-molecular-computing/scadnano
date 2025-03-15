@@ -31,11 +31,16 @@ AppState app_state_reducer(AppState state, action) {
   }
 
   // "local" reducers can operate on one slice of the state and need only read that same slice
-  state = state.rebuild((m) => m
-    ..maybe_design = design_reducer(state.maybe_design, action)?.toBuilder()
-    ..ui_state.replace(ui_state_local_reducer(state.ui_state, action))
-    ..error_message =
-        TypedReducer<String?, actions.ErrorMessageSet>(error_message_reducer)(state.error_message, action));
+  state = state.rebuild(
+    (m) =>
+        m
+          ..maybe_design = design_reducer(state.maybe_design, action)?.toBuilder()
+          ..ui_state.replace(ui_state_local_reducer(state.ui_state, action))
+          ..error_message = TypedReducer<String?, actions.ErrorMessageSet>(error_message_reducer)(
+            state.error_message,
+            action,
+          ),
+  );
 
   // "global" reducers operate on a slice of the state but need another part of the state.
   // For consistency, everyone gets the version of the state before any action was applied.
@@ -43,9 +48,12 @@ AppState app_state_reducer(AppState state, action) {
   // selection reducer sets the set of selected items to empty, yet the delete_all_reducer that deletes the
   // items from the DNADesign can still see the set of selected items in
   // original_state.ui_state.selectables_store.
-  state = state.rebuild((m) => m
-    ..maybe_design = design_global_reducer(state.maybe_design, original_state, action)?.toBuilder()
-    ..ui_state.replace(ui_state_global_reducer(state.ui_state, original_state, action)));
+  state = state.rebuild(
+    (m) =>
+        m
+          ..maybe_design = design_global_reducer(state.maybe_design, original_state, action)?.toBuilder()
+          ..ui_state.replace(ui_state_global_reducer(state.ui_state, original_state, action)),
+  );
 
   // Batch actions are grouped together but should just have one entry on the undo stack.
   // So we set a variable telling the Undo reducer not to put anything on the stack

@@ -46,7 +46,10 @@ Strand convert_crossover_to_loopout_reducer(Strand strand, actions.ConvertCrosso
 }
 
 BuiltList<Strand> convert_crossovers_to_loopouts_reducer(
-    BuiltList<Strand> strands, AppState state, actions.ConvertCrossoversToLoopouts action) {
+  BuiltList<Strand> strands,
+  AppState state,
+  actions.ConvertCrossoversToLoopouts action,
+) {
   // TODO: need to dynamically calculate index of crossover as strand is being converted,
   //  since inserting loopouts earlier will increase indices
 
@@ -89,7 +92,10 @@ BuiltList<Strand> convert_crossovers_to_loopouts_reducer(
 }
 
 BuiltList<Strand> loopouts_length_change_reducer(
-    BuiltList<Strand> strands, AppState state, actions.LoopoutsLengthChange action) {
+  BuiltList<Strand> strands,
+  AppState state,
+  actions.LoopoutsLengthChange action,
+) {
   Map<String, List<Loopout>> loopouts_on_strand_id = {};
   for (var loopout in action.loopouts) {
     String strand_id = loopout.strand_id;
@@ -129,7 +135,10 @@ BuiltList<Strand> loopouts_length_change_reducer(
 }
 
 BuiltList<Strand> extensions_num_bases_change_reducer(
-    BuiltList<Strand> strands, AppState state, actions.ExtensionsNumBasesChange action) {
+  BuiltList<Strand> strands,
+  AppState state,
+  actions.ExtensionsNumBasesChange action,
+) {
   Map<String, List<Extension>> exts_on_strand_id = {};
   for (var ext in action.extensions) {
     String strand_id = ext.strand_id;
@@ -194,15 +203,20 @@ Strand extension_num_bases_change_reducer(Strand strand, actions.ExtensionNumBas
 }
 
 Strand extension_display_length_angle_change_reducer(
-    Strand strand, actions.ExtensionDisplayLengthAngleSet action) {
+  Strand strand,
+  actions.ExtensionDisplayLengthAngleSet action,
+) {
   int idx = strand.substrands.indexOf(action.ext);
   var substrands_builder = strand.substrands.toBuilder();
   if (action.display_length <= 0) {
     throw ArgumentError('extension must have positive display_angle');
   }
-  Extension ext_new = action.ext.rebuild((b) => b
-    ..display_length = action.display_length
-    ..display_angle = action.display_angle);
+  Extension ext_new = action.ext.rebuild(
+    (b) =>
+        b
+          ..display_length = action.display_length
+          ..display_angle = action.display_angle,
+  );
   substrands_builder[idx] = ext_new;
   strand = strand.rebuild((s) => s..substrands = substrands_builder);
   return strand;

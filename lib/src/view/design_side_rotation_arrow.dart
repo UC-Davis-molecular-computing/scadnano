@@ -15,7 +15,8 @@ class DesignSideRotationArrowComponent extends UiComponent2<DesignSideRotationAr
   @override
   render() {
     double mag = this.props.radius * 0.93;
-    var path_description = 'M 0 0 '
+    var path_description =
+        'M 0 0 '
         'v -$mag '
         'm ${mag / 6.0} ${mag / 4.0} '
         'L 0 -${mag} '

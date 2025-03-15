@@ -27,11 +27,12 @@ class MenuNumberProps = UiProps with MenuNumberPropsMixin;
 
 class MenuNumberComponent extends UiComponent2<MenuNumberProps> {
   @override
-  get defaultProps => (newProps()
-    ..min_value = 1.0
-    ..hide = false
-    ..tooltip = ''
-    ..step = 1.0);
+  get defaultProps =>
+      (newProps()
+        ..min_value = 1.0
+        ..hide = false
+        ..tooltip = ''
+        ..step = 1.0);
 
   @override
   render() {
@@ -51,21 +52,22 @@ class MenuNumberComponent extends UiComponent2<MenuNumberProps> {
       ..className = 'menu-item menu-item-number-input'
       ..style = {'display': 'block'})(
       (Dom.label()..title = props.tooltip)(
-          (Dom.input()
-            ..style = {'marginRight': '1em', 'width': '4em'}
-            ..type = 'number'
-            ..min = '${props.min_value}'
-            ..step = '${props.step}'
-            ..id = input_elt_id
-            ..onChange = (_) {
-              InputElement inputElement = document.getElementById(input_elt_id) as InputElement;
-              num? new_value = num.tryParse(inputElement.value ?? '');
-              if (new_value != null) {
-                props.on_new_value(new_value);
-              }
+        (Dom.input()
+          ..style = {'marginRight': '1em', 'width': '4em'}
+          ..type = 'number'
+          ..min = '${props.min_value}'
+          ..step = '${props.step}'
+          ..id = input_elt_id
+          ..onChange = (_) {
+            InputElement inputElement = document.getElementById(input_elt_id) as InputElement;
+            num? new_value = num.tryParse(inputElement.value ?? '');
+            if (new_value != null) {
+              props.on_new_value(new_value);
             }
-            ..defaultValue = props.default_value)(),
-          props.display),
+          }
+          ..defaultValue = props.default_value)(),
+        props.display,
+      ),
     );
   }
 }

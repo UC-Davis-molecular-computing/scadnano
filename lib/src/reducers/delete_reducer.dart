@@ -15,7 +15,10 @@ import '../state/substrand.dart';
 import '../actions/actions.dart' as actions;
 
 BuiltList<Strand> delete_all_reducer(
-    BuiltList<Strand> strands, AppState state, actions.DeleteAllSelected action) {
+  BuiltList<Strand> strands,
+  AppState state,
+  actions.DeleteAllSelected action,
+) {
   BuiltSet<Selectable> items = state.ui_state.selectables_store.selected_items;
   if (items.isEmpty) {
     return strands;
@@ -42,17 +45,20 @@ BuiltList<Strand> delete_all_reducer(
     strands = remove_domains(strands, state, domains);
   } else if (select_mode_state.deletions_selectable || select_mode_state.insertions_selectable) {
     // deletions/insertions
-    List<SelectableDeletion> deletions = select_mode_state.deletions_selectable
-        ? List<SelectableDeletion>.from(items.where((item) => item is SelectableDeletion))
-        : [];
-    List<SelectableInsertion> insertions = select_mode_state.insertions_selectable
-        ? List<SelectableInsertion>.from(items.where((item) => item is SelectableInsertion))
-        : [];
+    List<SelectableDeletion> deletions =
+        select_mode_state.deletions_selectable
+            ? List<SelectableDeletion>.from(items.where((item) => item is SelectableDeletion))
+            : [];
+    List<SelectableInsertion> insertions =
+        select_mode_state.insertions_selectable
+            ? List<SelectableInsertion>.from(items.where((item) => item is SelectableInsertion))
+            : [];
     strands = remove_deletions_and_insertions(strands, state, deletions, insertions);
   } else if (select_mode_state.modifications_selectable) {
     // modifications
-    var modifications =
-        List<SelectableModification>.from(items.where((item) => item is SelectableModification));
+    var modifications = List<SelectableModification>.from(
+      items.where((item) => item is SelectableModification),
+    );
     strands = remove_modifications(strands, state, modifications);
   } else if (select_mode_state.extensions_selectable) {
     // extensions
@@ -67,7 +73,11 @@ BuiltList<Strand> _remove_strands(BuiltList<Strand> strands, Iterable<Strand> st
     strands.rebuild((b) => b..removeWhere((strand) => strands_to_remove.contains(strand)));
 
 BuiltList<Strand> remove_crossovers_and_loopouts(
-    BuiltList<Strand> strands, AppState state, Iterable<Crossover> crossovers, Iterable<Loopout> loopouts) {
+  BuiltList<Strand> strands,
+  AppState state,
+  Iterable<Crossover> crossovers,
+  Iterable<Loopout> loopouts,
+) {
   // maps each strand with >= 1 domains being removed to list of strands to replace it
   Map<Strand, List<Strand>> strands_to_replace = {};
 
@@ -164,9 +174,10 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
   // Find DNA sequences of new Strands.
   //XXX: This must go before updating substrands below with is_first and is_last or else they cannot be
   // found as substrands of strand by method Strand.dna_sequence_in(), called by _dna_seq
-  var dna_sequences = strand.dna_sequence == null
-      ? [for (var _ in substrands_list) null]
-      : [for (var substrands in substrands_list) _dna_seq(substrands, strand)];
+  var dna_sequences =
+      strand.dna_sequence == null
+          ? [for (var _ in substrands_list) null]
+          : [for (var substrands in substrands_list) _dna_seq(substrands, strand)];
 
   Modification5Prime? mod_5p = null;
   Modification3Prime? mod_3p = null;
@@ -222,15 +233,17 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
     var mod_3p_cur = i == substrands_list.length - 1 ? mod_3p : null;
 
     var color = strand.color; //i==0?strand.color:null;
-    var new_strand = Strand(substrands,
-        name: strand.name,
-        dna_sequence: dna_sequence,
-        vendor_fields: idt,
-        is_scaffold: is_scaffold,
-        color: color,
-        modification_5p: mod_5p_cur,
-        modification_3p: mod_3p_cur,
-        modifications_int: mods_int);
+    var new_strand = Strand(
+      substrands,
+      name: strand.name,
+      dna_sequence: dna_sequence,
+      vendor_fields: idt,
+      is_scaffold: is_scaffold,
+      color: color,
+      modification_5p: mod_5p_cur,
+      modification_3p: mod_3p_cur,
+      modifications_int: mods_int,
+    );
     new_strand = new_strand.initialize();
     new_strands.add(new_strand);
   }
@@ -238,7 +251,10 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
 }
 
 BuiltList<Strand> remove_extensions(
-    BuiltList<Strand> strands, AppState state, Iterable<Extension> extensions) {
+  BuiltList<Strand> strands,
+  AppState state,
+  Iterable<Extension> extensions,
+) {
   // collect all Extensions for one strand
   Map<Strand, Set<Extension>> strand_to_exts = {};
   for (var ext in extensions) {
@@ -361,8 +377,12 @@ List<Strand> _remove_domains_from_strand(Strand strand, Set<Domain> domains_to_r
   return create_new_strands_from_substrand_lists(substrands_list, strand);
 }
 
-BuiltList<Strand> remove_deletions_and_insertions(BuiltList<Strand> strands, AppState state,
-    List<SelectableDeletion> deletions, List<SelectableInsertion> insertions) {
+BuiltList<Strand> remove_deletions_and_insertions(
+  BuiltList<Strand> strands,
+  AppState state,
+  List<SelectableDeletion> deletions,
+  List<SelectableInsertion> insertions,
+) {
   // collect all deletions/insertions for each strand
   Map<Strand, Map<Domain, Set<SelectableDeletion>>> strand_to_deletions = {};
   Map<Strand, Map<Domain, Set<SelectableInsertion>>> strand_to_insertions = {};
@@ -401,11 +421,15 @@ BuiltList<Strand> remove_deletions_and_insertions(BuiltList<Strand> strands, App
           var deletions_existing = domain.deletions.toList();
           var insertions_existing = domain.insertions.toList();
           deletions_existing.removeWhere((offset) => deletions_offsets_to_remove.contains(offset));
-          insertions_existing
-              .removeWhere((insertion) => insertions_offsets_to_remove.contains(insertion.offset));
-          domain = domain.rebuild((b) => b
-            ..deletions.replace(deletions_existing)
-            ..insertions.replace(insertions_existing));
+          insertions_existing.removeWhere(
+            (insertion) => insertions_offsets_to_remove.contains(insertion.offset),
+          );
+          domain = domain.rebuild(
+            (b) =>
+                b
+                  ..deletions.replace(deletions_existing)
+                  ..insertions.replace(insertions_existing),
+          );
           substrands[j] = domain;
         }
       }
@@ -419,7 +443,10 @@ BuiltList<Strand> remove_deletions_and_insertions(BuiltList<Strand> strands, App
 }
 
 BuiltList<Strand> remove_modifications(
-    BuiltList<Strand> strands, AppState state, List<SelectableModification> modifications) {
+  BuiltList<Strand> strands,
+  AppState state,
+  List<SelectableModification> modifications,
+) {
   // collect all modifications for each strand
   Map<String, Set<SelectableModification>> strand_id_to_mods = {};
   for (var mod in modifications) {

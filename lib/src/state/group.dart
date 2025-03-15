@@ -55,14 +55,17 @@ abstract class HelixGroup with BuiltJsonSerializable implements Built<HelixGroup
     if (position == null) {
       position = Position3D.origin;
     }
-    return HelixGroup.from((b) => b
-      ..grid = grid
-      ..helices_view_order.replace(helices_view_order)
-      ..position.replace(position!)
-      ..pitch = pitch
-      ..yaw = yaw
-      ..roll = roll
-      ..geometry = geometry?.toBuilder());
+    return HelixGroup.from(
+      (b) =>
+          b
+            ..grid = grid
+            ..helices_view_order.replace(helices_view_order)
+            ..position.replace(position!)
+            ..pitch = pitch
+            ..yaw = yaw
+            ..roll = roll
+            ..geometry = geometry?.toBuilder(),
+    );
   }
 
   Map<String, dynamic> to_json_serializable({
@@ -94,8 +97,9 @@ abstract class HelixGroup with BuiltJsonSerializable implements Built<HelixGroup
     }
 
     if (this.geometry != null) {
-      json_map[constants.geometry_key] =
-          this.geometry!.to_json_serializable(suppress_indent: suppress_indent);
+      json_map[constants.geometry_key] = this.geometry!.to_json_serializable(
+        suppress_indent: suppress_indent,
+      );
     }
 
     return json_map;
@@ -109,32 +113,42 @@ abstract class HelixGroup with BuiltJsonSerializable implements Built<HelixGroup
     if (json_map.containsKey(constants.helices_view_order_key)) {
       helices_view_order = List<int>.from(json_map[constants.helices_view_order_key]);
       if (helices_view_order.length != helix_idxs.length) {
-        throw IllegalDesignError('number of helices (${helix_idxs.length}) does not match '
-            'length of helices_view_order (${helices_view_order.length})\n'
-            'helix idxs:         ${helix_idxs.join(", ")}\n'
-            'helices_view_order: ${helices_view_order.join(", ")}');
+        throw IllegalDesignError(
+          'number of helices (${helix_idxs.length}) does not match '
+          'length of helices_view_order (${helices_view_order.length})\n'
+          'helix idxs:         ${helix_idxs.join(", ")}\n'
+          'helices_view_order: ${helices_view_order.join(", ")}',
+        );
       }
       if (!util.lists_contain_same_elts(helices_view_order, helix_idxs)) {
-        throw IllegalDesignError('helices_view_order ${helices_view_order} must have same indexes as '
-            'helix_idxs ${helix_idxs}\n'
-            'helix idxs:         ${helix_idxs.join(", ")}\n'
-            'helices_view_order: ${helices_view_order.join(", ")}');
+        throw IllegalDesignError(
+          'helices_view_order ${helices_view_order} must have same indexes as '
+          'helix_idxs ${helix_idxs}\n'
+          'helix idxs:         ${helix_idxs.join(", ")}\n'
+          'helices_view_order: ${helices_view_order.join(", ")}',
+        );
       }
     } else {
       helices_view_order = List<int>.of(helix_idxs);
       helices_view_order.sort();
     }
 
-    var position_map = util.mandatory_field(json_map, constants.position_key, 'HelixGroup',
-        legacy_keys: constants.legacy_position_keys);
+    var position_map = util.mandatory_field(
+      json_map,
+      constants.position_key,
+      'HelixGroup',
+      legacy_keys: constants.legacy_position_keys,
+    );
     var position = Position3D.from_json(position_map);
 
     double pitch = util.optional_field(json_map, constants.pitch_key, constants.default_pitch);
     double roll = util.optional_field(json_map, constants.roll_key, constants.default_roll);
     double yaw = util.optional_field(json_map, constants.yaw_key, constants.default_yaw);
 
-    Map<String, dynamic>? geometry_map =
-        util.optional_field_with_null_default(json_map, constants.geometry_key);
+    Map<String, dynamic>? geometry_map = util.optional_field_with_null_default(
+      json_map,
+      constants.geometry_key,
+    );
     Geometry? geometry = null;
     if (geometry_map != null) {
       geometry = Geometry.from_json(geometry_map);
@@ -161,7 +175,7 @@ abstract class HelixGroup with BuiltJsonSerializable implements Built<HelixGroup
   String transform_str(Geometry geometry) {
     var translate_svg = position * geometry.nm_to_svg_pixels;
     return 'translate(${translate_svg.z}, ${translate_svg.y}) rotate(${pitch})';
-//    return 'rotate(${pitch}) translate(${translate_svg.x}, ${translate_svg.y})';
+    //    return 'rotate(${pitch}) translate(${translate_svg.x}, ${translate_svg.y})';
   }
 
   Point<double> translation(Geometry geometry) {

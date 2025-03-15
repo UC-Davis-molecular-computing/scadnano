@@ -46,19 +46,20 @@ main() {
       3   [-->      +-->
        */
       var helices = [
-        for (int idx in [0, 1, 2, 3]) Helix(idx: idx, max_offset: 100, grid: Grid.square)
+        for (int idx in [0, 1, 2, 3]) Helix(idx: idx, max_offset: 100, grid: Grid.square),
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design
-          .draw_strand(0, 0)
-          .move(4)
-          .cross(1)
-          .move(-4)
-          .cross(2)
-          .move(4)
-          .with_sequence('AAAACCCCGGGG')
-          .commit();
+      design =
+          design
+              .draw_strand(0, 0)
+              .move(4)
+              .cross(1)
+              .move(-4)
+              .cross(2)
+              .move(4)
+              .with_sequence('AAAACCCCGGGG')
+              .commit();
       design = design.draw_strand(3, 0).move(4).with_sequence('TTTT').commit();
       AppState state = app_state_from_design(design);
       Strand strand1 = design.strands[0];
@@ -71,14 +72,17 @@ main() {
       DNAEnd end_click1 = strand1.domains[1].dnaend_start;
       DNAEnd end_click2 = strand2.domains[0].dnaend_start;
       PotentialCrossover potential_crossover = PotentialCrossover(
-          address: Address(helix_idx: 2, forward: true, offset: 0),
-          color: '000000',
-          dna_end_first_click: end_click1,
-          start_point: Point<double>(0, 0),
-          current_point: Point<double>(0, 0),
-          linker: orig_crossover);
+        address: Address(helix_idx: 2, forward: true, offset: 0),
+        color: '000000',
+        dna_end_first_click: end_click1,
+        start_point: Point<double>(0, 0),
+        current_point: Point<double>(0, 0),
+        linker: orig_crossover,
+      );
       state = app_state_reducer(
-          state, MoveLinker(potential_crossover: potential_crossover, dna_end_second_click: end_click2));
+        state,
+        MoveLinker(potential_crossover: potential_crossover, dna_end_second_click: end_click2),
+      );
 
       expect(state.design.strands.length, 2);
       expect(state.design.strands[0].substrands.length, 3);
@@ -127,19 +131,20 @@ main() {
       3   [-->      [--+
        */
       var helices = [
-        for (int idx in [0, 1, 2, 3]) Helix(idx: idx, max_offset: 100, grid: Grid.square)
+        for (int idx in [0, 1, 2, 3]) Helix(idx: idx, max_offset: 100, grid: Grid.square),
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design
-          .draw_strand(0, 0)
-          .move(4)
-          .cross(1)
-          .move(-4)
-          .cross(2)
-          .move(4)
-          .with_sequence('AAAACCCCGGGG')
-          .commit();
+      design =
+          design
+              .draw_strand(0, 0)
+              .move(4)
+              .cross(1)
+              .move(-4)
+              .cross(2)
+              .move(4)
+              .with_sequence('AAAACCCCGGGG')
+              .commit();
       design = design.draw_strand(3, 0).move(4).with_sequence('TTTT').commit();
       AppState state = app_state_from_design(design);
       Strand strand1 = design.strands[0];
@@ -152,14 +157,17 @@ main() {
       DNAEnd end_click1 = strand1.domains[2].dnaend_start;
       DNAEnd end_click2 = strand2.domains[0].dnaend_end;
       PotentialCrossover potential_crossover = PotentialCrossover(
-          address: Address(helix_idx: 1, forward: false, offset: 0),
-          color: '000000',
-          dna_end_first_click: end_click1,
-          start_point: Point<double>(0, 0),
-          current_point: Point<double>(0, 0),
-          linker: orig_crossover);
+        address: Address(helix_idx: 1, forward: false, offset: 0),
+        color: '000000',
+        dna_end_first_click: end_click1,
+        start_point: Point<double>(0, 0),
+        current_point: Point<double>(0, 0),
+        linker: orig_crossover,
+      );
       state = app_state_reducer(
-          state, MoveLinker(potential_crossover: potential_crossover, dna_end_second_click: end_click2));
+        state,
+        MoveLinker(potential_crossover: potential_crossover, dna_end_second_click: end_click2),
+      );
 
       expect(state.design.strands.length, 2);
       expect(state.design.strands[0].substrands.length, 2);
@@ -207,19 +215,20 @@ main() {
       3   [-->      +-->
       */
       var helices = [
-        for (int idx in [0, 1, 2, 3]) Helix(idx: idx, max_offset: 100, grid: Grid.square)
+        for (int idx in [0, 1, 2, 3]) Helix(idx: idx, max_offset: 100, grid: Grid.square),
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design
-          .draw_strand(0, 0)
-          .move(4)
-          .loopout(1, 1)
-          .move(-4)
-          .loopout(2, 1)
-          .move(4)
-          .with_sequence('AAAAGCCCCTGGGG')
-          .commit();
+      design =
+          design
+              .draw_strand(0, 0)
+              .move(4)
+              .loopout(1, 1)
+              .move(-4)
+              .loopout(2, 1)
+              .move(4)
+              .with_sequence('AAAAGCCCCTGGGG')
+              .commit();
       design = design.draw_strand(3, 0).move(4).with_sequence('TTTT').commit();
       AppState state = app_state_from_design(design);
       Strand strand1 = design.strands[0];
@@ -232,14 +241,17 @@ main() {
       DNAEnd end_click1 = strand1.domains[1].dnaend_start;
       DNAEnd end_click2 = strand2.domains[0].dnaend_start;
       PotentialCrossover potential_crossover = PotentialCrossover(
-          address: Address(helix_idx: 2, forward: true, offset: 0),
-          color: '000000',
-          dna_end_first_click: end_click1,
-          start_point: Point<double>(0, 0),
-          current_point: Point<double>(0, 0),
-          linker: orig_loopout);
+        address: Address(helix_idx: 2, forward: true, offset: 0),
+        color: '000000',
+        dna_end_first_click: end_click1,
+        start_point: Point<double>(0, 0),
+        current_point: Point<double>(0, 0),
+        linker: orig_loopout,
+      );
       state = app_state_reducer(
-          state, MoveLinker(potential_crossover: potential_crossover, dna_end_second_click: end_click2));
+        state,
+        MoveLinker(potential_crossover: potential_crossover, dna_end_second_click: end_click2),
+      );
 
       expect(state.design.strands.length, 2);
       expect(state.design.strands[0].substrands.length, 5);
@@ -291,19 +303,20 @@ main() {
       3   [-->      [--+
        */
       var helices = [
-        for (int idx in [0, 1, 2, 3]) Helix(idx: idx, max_offset: 100, grid: Grid.square)
+        for (int idx in [0, 1, 2, 3]) Helix(idx: idx, max_offset: 100, grid: Grid.square),
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design
-          .draw_strand(0, 0)
-          .move(4)
-          .loopout(1, 1)
-          .move(-4)
-          .loopout(2, 1)
-          .move(4)
-          .with_sequence('AAAAGCCCCTGGGG')
-          .commit();
+      design =
+          design
+              .draw_strand(0, 0)
+              .move(4)
+              .loopout(1, 1)
+              .move(-4)
+              .loopout(2, 1)
+              .move(4)
+              .with_sequence('AAAAGCCCCTGGGG')
+              .commit();
       design = design.draw_strand(3, 0).move(4).with_sequence('TTTT').commit();
       AppState state = app_state_from_design(design);
       Strand strand1 = design.strands[0];
@@ -316,14 +329,17 @@ main() {
       DNAEnd end_click1 = strand1.domains[2].dnaend_start;
       DNAEnd end_click2 = strand2.domains[0].dnaend_end;
       PotentialCrossover potential_crossover = PotentialCrossover(
-          address: Address(helix_idx: 1, forward: false, offset: 0),
-          color: '000000',
-          dna_end_first_click: end_click1,
-          start_point: Point<double>(0, 0),
-          current_point: Point<double>(0, 0),
-          linker: orig_loopout);
+        address: Address(helix_idx: 1, forward: false, offset: 0),
+        color: '000000',
+        dna_end_first_click: end_click1,
+        start_point: Point<double>(0, 0),
+        current_point: Point<double>(0, 0),
+        linker: orig_loopout,
+      );
       state = app_state_reducer(
-          state, MoveLinker(potential_crossover: potential_crossover, dna_end_second_click: end_click2));
+        state,
+        MoveLinker(potential_crossover: potential_crossover, dna_end_second_click: end_click2),
+      );
 
       expect(state.design.strands.length, 2);
       expect(state.design.strands[0].substrands.length, 3);

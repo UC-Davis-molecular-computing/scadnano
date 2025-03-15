@@ -26,10 +26,13 @@ abstract class MouseoverParams
   int get hashCode;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory MouseoverParams(int helix_idx, int offset, bool forward) => MouseoverParams.from((b) => b
-    ..helix_idx = helix_idx
-    ..offset = offset
-    ..forward = forward);
+  factory MouseoverParams(int helix_idx, int offset, bool forward) => MouseoverParams.from(
+    (b) =>
+        b
+          ..helix_idx = helix_idx
+          ..offset = offset
+          ..forward = forward,
+  );
 
   factory MouseoverParams.from([void Function(MouseoverParamsBuilder) updates]) = _$MouseoverParams;
 
@@ -78,8 +81,9 @@ abstract class MouseoverData
         if (domain.contains_offset(offset)) {
           if (domain.forward == forward) {
             domain_in_direction = domain;
-            strand_idx =
-                design.idx_on_strand(Address(helix_idx: helix_idx, offset: offset, forward: forward));
+            strand_idx = design.idx_on_strand(
+              Address(helix_idx: helix_idx, offset: offset, forward: forward),
+            );
           }
           num_domains_found++;
           Strand strand = design.substrand_to_strand[domain]!;
@@ -96,24 +100,44 @@ abstract class MouseoverData
       var group = design.groups[helix.group]!;
       var geometry = group.geometry ?? design.geometry;
       double minor_groove_angle = geometry.minor_groove_angle;
-      mouseover_datas_builder.add(MouseoverData(helix, offset, strand_idx, domain_in_direction, color_forward,
-          color_reverse, roll_forward, minor_groove_angle));
+      mouseover_datas_builder.add(
+        MouseoverData(
+          helix,
+          offset,
+          strand_idx,
+          domain_in_direction,
+          color_forward,
+          color_reverse,
+          roll_forward,
+          minor_groove_angle,
+        ),
+      );
     }
     return mouseover_datas_builder;
   }
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory MouseoverData(Helix helix, int offset, int strand_idx, Domain? domain, Color color_forward,
-          Color color_reverse, double roll_forward, double minor_groove_angle) =>
-      MouseoverData.from((b) => b
-        ..helix.replace(helix)
-        ..domain = domain?.toBuilder()
-        ..offset = offset
-        ..strand_idx = strand_idx
-        ..color_forward = color_forward
-        ..color_reverse = color_reverse
-        ..roll_forward = roll_forward
-        ..minor_groove_angle = minor_groove_angle);
+  factory MouseoverData(
+    Helix helix,
+    int offset,
+    int strand_idx,
+    Domain? domain,
+    Color color_forward,
+    Color color_reverse,
+    double roll_forward,
+    double minor_groove_angle,
+  ) => MouseoverData.from(
+    (b) =>
+        b
+          ..helix.replace(helix)
+          ..domain = domain?.toBuilder()
+          ..offset = offset
+          ..strand_idx = strand_idx
+          ..color_forward = color_forward
+          ..color_reverse = color_reverse
+          ..roll_forward = roll_forward
+          ..minor_groove_angle = minor_groove_angle,
+  );
 
   factory MouseoverData.from([void Function(MouseoverDataBuilder) updates]) = _$MouseoverData;
 

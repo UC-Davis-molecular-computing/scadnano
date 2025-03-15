@@ -1,7 +1,10 @@
 /// A Reducer that changes some "local state" (a substree of the full state tree),
 /// but requires reaching into a larger subtree (global state) to know how to apply the action.
 typedef LocalState GlobalReducer<LocalState, GlobalState>(
-    LocalState local_state, GlobalState global_state, dynamic action);
+  LocalState local_state,
+  GlobalState global_state,
+  dynamic action,
+);
 
 /// Class-based version of [GlobalReducer].
 abstract class GlobalReducerClass<LocalState, GlobalState> {
@@ -25,7 +28,8 @@ class TypedGlobalReducer<LocalState, GlobalState, Action>
 }
 
 GlobalReducer<LocalState, GlobalState> combineGlobalReducers<LocalState, GlobalState>(
-    Iterable<GlobalReducer<LocalState, GlobalState>> reducers) {
+  Iterable<GlobalReducer<LocalState, GlobalState>> reducers,
+) {
   return (LocalState local_state, GlobalState global_state, dynamic action) {
     for (final reducer in reducers) {
       local_state = reducer(local_state, global_state, action);

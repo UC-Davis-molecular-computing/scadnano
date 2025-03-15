@@ -33,7 +33,9 @@ UiFactory<EndMovingProps> ConnectedEndMoving = connect<DNAEndsMove?, EndMovingPr
       ..current_offset = current_offset
       ..dna_end = dna_ends_move.ends_moving.first
       ..helix = dna_ends_move.helix
-      ..color = props.color // below here are mock props
+      ..color =
+          props
+              .color // below here are mock props
       ..forward = props.dna_end!.forward
       ..is_5p = props.dna_end!.is_5p
       ..svg_position_y = props.svg_position_y
@@ -64,9 +66,10 @@ mixin EndMovingProps on UiProps {
 
 class EndMovingComponent extends UiComponent2<EndMovingProps> {
   @override
-  get defaultProps => (newProps()
-    ..render = true
-    ..allowable = true);
+  get defaultProps =>
+      (newProps()
+        ..render = true
+        ..allowable = true);
 
   @override
   render() {
@@ -82,13 +85,15 @@ class EndMovingComponent extends UiComponent2<EndMovingProps> {
     Geometry geometry = props.geometry!;
     Point<double> pos = helix.svg_base_pos(current_offset, forward, svg_position_y, geometry);
     EndEitherPrimeProps end_props = (is_5p ? End5Prime() : End3Prime());
-    String classname = (is_5p ? 'five-prime-end-moving' : 'three-prime-end-moving') +
+    String classname =
+        (is_5p ? 'five-prime-end-moving' : 'three-prime-end-moving') +
         (props.allowable ? '' : ' disallowed-end');
-    end_props = end_props
-      ..classname = classname
-      ..pos = pos
-      ..color = color
-      ..forward = forward;
+    end_props =
+        end_props
+          ..classname = classname
+          ..pos = pos
+          ..color = color
+          ..forward = forward;
     if (props.transform != null) {
       // https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-center-in-svg
       end_props = end_props..transform = props.transform;

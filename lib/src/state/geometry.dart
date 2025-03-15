@@ -35,13 +35,15 @@ abstract class Geometry with BuiltJsonSerializable, UnusedFields implements Buil
     double inter_helix_gap = constants.default_inter_helix_gap,
     double bases_per_turn = constants.default_bases_per_turn,
     double minor_groove_angle = constants.default_minor_groove_angle,
-  }) =>
-      Geometry.from((b) => b
-        ..rise_per_base_pair = rise_per_base_pair
-        ..helix_radius = helix_radius
-        ..inter_helix_gap = inter_helix_gap
-        ..bases_per_turn = bases_per_turn
-        ..minor_groove_angle = minor_groove_angle);
+  }) => Geometry.from(
+    (b) =>
+        b
+          ..rise_per_base_pair = rise_per_base_pair
+          ..helix_radius = helix_radius
+          ..inter_helix_gap = inter_helix_gap
+          ..bases_per_turn = bases_per_turn
+          ..minor_groove_angle = minor_groove_angle,
+  );
 
   /// Distance in nanometers between two adjacent base pairs along the length of a DNA double helix.
   double get rise_per_base_pair;
@@ -102,18 +104,33 @@ abstract class Geometry with BuiltJsonSerializable, UnusedFields implements Buil
 
   static Geometry from_json(Map<String, dynamic> json_map) {
     double rise_per_base_pair = util.optional_field(
-        json_map, constants.rise_per_base_pair_key, constants.default_rise_per_base_pair,
-        legacy_keys: constants.legacy_rise_per_base_pair_keys);
-    double helix_radius =
-        util.optional_field(json_map, constants.helix_radius_key, constants.default_helix_radius);
-    double inter_helix_gap =
-        util.optional_field(json_map, constants.inter_helix_gap_key, constants.default_inter_helix_gap);
-    double bases_per_turn =
-        util.optional_field(json_map, constants.bases_per_turn_key, constants.default_bases_per_turn);
+      json_map,
+      constants.rise_per_base_pair_key,
+      constants.default_rise_per_base_pair,
+      legacy_keys: constants.legacy_rise_per_base_pair_keys,
+    );
+    double helix_radius = util.optional_field(
+      json_map,
+      constants.helix_radius_key,
+      constants.default_helix_radius,
+    );
+    double inter_helix_gap = util.optional_field(
+      json_map,
+      constants.inter_helix_gap_key,
+      constants.default_inter_helix_gap,
+    );
+    double bases_per_turn = util.optional_field(
+      json_map,
+      constants.bases_per_turn_key,
+      constants.default_bases_per_turn,
+    );
     double minor_groove_angle = util.optional_field(
-        json_map, constants.minor_groove_angle_key, constants.default_minor_groove_angle,
-        legacy_keys: constants.legacy_minor_groove_angle_keys,
-        legacy_transformer: (double angle_radians) => util.to_degrees(angle_radians));
+      json_map,
+      constants.minor_groove_angle_key,
+      constants.default_minor_groove_angle,
+      legacy_keys: constants.legacy_minor_groove_angle_keys,
+      legacy_transformer: (double angle_radians) => util.to_degrees(angle_radians),
+    );
 
     var geometry = Geometry(
       rise_per_base_pair: rise_per_base_pair,
@@ -153,17 +170,14 @@ abstract class Geometry with BuiltJsonSerializable, UnusedFields implements Buil
     return json_map;
   }
 
-  bool is_default() => util.are_all_close([
-        rise_per_base_pair,
-        helix_radius,
-        inter_helix_gap,
-        bases_per_turn,
-        minor_groove_angle,
-      ], [
-        constants.default_rise_per_base_pair,
-        constants.default_helix_radius,
-        constants.default_inter_helix_gap,
-        constants.default_bases_per_turn,
-        constants.default_minor_groove_angle,
-      ]);
+  bool is_default() => util.are_all_close(
+    [rise_per_base_pair, helix_radius, inter_helix_gap, bases_per_turn, minor_groove_angle],
+    [
+      constants.default_rise_per_base_pair,
+      constants.default_helix_radius,
+      constants.default_inter_helix_gap,
+      constants.default_bases_per_turn,
+      constants.default_minor_groove_angle,
+    ],
+  );
 }

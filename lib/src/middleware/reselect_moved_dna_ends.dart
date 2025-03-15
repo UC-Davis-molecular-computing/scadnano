@@ -20,8 +20,9 @@ reselect_moved_dna_ends_middleware(Store<AppState> store, action, NextDispatcher
       DNAEnd old_end = move.dna_end;
       Domain old_substrand = store.state.design.end_to_domain[old_end]!;
       int new_offset = action.dna_ends_move.current_capped_offset_of(old_end)!;
-      addresses
-          .add(Address(helix_idx: old_substrand.helix, offset: new_offset, forward: old_substrand.forward));
+      addresses.add(
+        Address(helix_idx: old_substrand.helix, offset: new_offset, forward: old_substrand.forward),
+      );
     }
 
     // then apply action

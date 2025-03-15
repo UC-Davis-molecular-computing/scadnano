@@ -55,8 +55,12 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
 
   @override
   render() {
-    bool should_use_png_dna_sequence = use_png(props.dna_sequence_png_uri, props.is_zoom_above_threshold,
-        props.export_svg_action_delayed_for_png_cache, props.disable_png_caching_dna_sequences);
+    bool should_use_png_dna_sequence = use_png(
+      props.dna_sequence_png_uri,
+      props.is_zoom_above_threshold,
+      props.export_svg_action_delayed_for_png_cache,
+      props.disable_png_caching_dna_sequences,
+    );
 
     if (should_use_png_dna_sequence) {
       // DNA sequence png.

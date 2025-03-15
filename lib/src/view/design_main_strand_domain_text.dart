@@ -46,10 +46,18 @@ class DesignMainStrandDomainTextComponent extends UiComponent2<DesignMainStrandD
     with PureComponent {
   @override
   render() {
-    Point<double> start_svg = props.helix
-        .svg_base_pos(props.domain.start, props.domain.forward, props.helix_svg_position.y, props.geometry);
-    Point<double> end_svg = props.helix
-        .svg_base_pos(props.domain.end - 1, props.domain.forward, props.helix_svg_position.y, props.geometry);
+    Point<double> start_svg = props.helix.svg_base_pos(
+      props.domain.start,
+      props.domain.forward,
+      props.helix_svg_position.y,
+      props.geometry,
+    );
+    Point<double> end_svg = props.helix.svg_base_pos(
+      props.domain.end - 1,
+      props.domain.forward,
+      props.helix_svg_position.y,
+      props.geometry,
+    );
     Point<double> mid_svg = (start_svg + end_svg) * 0.5;
 
     String baseline = props.domain.forward ? 'baseline' : 'hanging';
@@ -95,12 +103,21 @@ class DesignMainStrandDomainTextComponent extends UiComponent2<DesignMainStrandD
     if (!event.shiftKey) {
       event.preventDefault();
       event.stopPropagation();
-      Address address = util.find_closest_address(event, [props.helix], props.helix_groups, props.geometry,
-          {props.helix.idx: props.helix_svg_position}.build());
-      app.dispatch(actions.ContextMenuShow(
+      Address address = util.find_closest_address(
+        event,
+        [props.helix],
+        props.helix_groups,
+        props.geometry,
+        {props.helix.idx: props.helix_svg_position}.build(),
+      );
+      app.dispatch(
+        actions.ContextMenuShow(
           context_menu: ContextMenu(
-              items: props.context_menu_strand(props.strand, domain: props.domain, address: address).build(),
-              position: util.from_point_num(event.page))));
+            items: props.context_menu_strand(props.strand, domain: props.domain, address: address).build(),
+            position: util.from_point_num(event.page),
+          ),
+        ),
+      );
     }
   }
 }

@@ -36,19 +36,21 @@ class StrandMaker {
 
   StrandMaker(this.design, this.current_helix, this.current_offset);
 
-//always the final call that creates the new strand
+  //always the final call that creates the new strand
   Design commit() {
-    Strand strand = new Strand(substrands,
-        color: this.color,
-        circular: circular,
-        is_scaffold: this.is_scaffold,
-        dna_sequence: this.dna_sequence,
-        label: this.label,
-        vendor_fields: this.idt,
-        name: this.name,
-        modification_3p: this.modification_3p,
-        modification_5p: this.modification_5p,
-        modifications_int: this.modifications_int);
+    Strand strand = new Strand(
+      substrands,
+      color: this.color,
+      circular: circular,
+      is_scaffold: this.is_scaffold,
+      dna_sequence: this.dna_sequence,
+      label: this.label,
+      vendor_fields: this.idt,
+      name: this.name,
+      modification_3p: this.modification_3p,
+      modification_5p: this.modification_5p,
+      modifications_int: this.modifications_int,
+    );
     strand = strand.initialize();
     this.design = this.design.add_strand(strand);
     return this.design;
@@ -135,9 +137,11 @@ class StrandMaker {
     return this;
   }
 
-  StrandMaker extension_3p(int num_bases,
-      {double display_length = constants.default_display_length,
-      double display_angle = constants.default_display_angle}) {
+  StrandMaker extension_3p(
+    int num_bases, {
+    double display_length = constants.default_display_length,
+    double display_angle = constants.default_display_angle,
+  }) {
     _verify_extension_3p_is_valid();
     Domain adjacent_domain = this.substrands.last as Domain;
     Extension ext = Extension(
@@ -154,8 +158,10 @@ class StrandMaker {
 
   void _verify_extension_3p_is_valid() {
     if (substrands.length == 0) {
-      throw IllegalDesignError('Cannot add a 3\' extension when there are no domains. '
-          'Did you mean to create a 5\' extension?');
+      throw IllegalDesignError(
+        'Cannot add a 3\' extension when there are no domains. '
+        'Did you mean to create a 5\' extension?',
+      );
     }
     if (this.most_recently_added_substrand_is_loopout()) {
       throw IllegalDesignError('Cannot add a 3\' extension immediately after a loopout.');
@@ -183,9 +189,11 @@ class StrandMaker {
   bool most_recently_added_substrand_is_extension_5p() =>
       substrands.length == 1 && this.most_recently_added_substrand_is_extension();
 
-  StrandMaker extension_5p(int num_bases,
-      {double display_length = constants.default_display_length,
-      double display_angle = constants.default_display_angle}) {
+  StrandMaker extension_5p(
+    int num_bases, {
+    double display_length = constants.default_display_length,
+    double display_angle = constants.default_display_angle,
+  }) {
     this._verify_extension_5p_is_valid();
     Extension ext = Extension(
       num_bases: num_bases,
@@ -202,8 +210,10 @@ class StrandMaker {
 
   void _verify_extension_5p_is_valid() {
     if (substrands.length > 0) {
-      throw IllegalDesignError('Cannot add a 5\' extension when there are already domains. '
-          'Did you mean to create a 3\' extension?');
+      throw IllegalDesignError(
+        'Cannot add a 5\' extension when there are already domains. '
+        'Did you mean to create a 3\' extension?',
+      );
     }
     if (this.circular) {
       throw IllegalDesignError('cannot have extensions on a circular strand');
@@ -242,11 +252,12 @@ class StrandMaker {
     return this;
   }
 
-  StrandMaker with_idt(
-      {String scale = constants.default_vendor_scale,
-      String purification = constants.default_vendor_purification,
-      String? plate = null,
-      String? well = null}) {
+  StrandMaker with_idt({
+    String scale = constants.default_vendor_scale,
+    String purification = constants.default_vendor_purification,
+    String? plate = null,
+    String? well = null,
+  }) {
     this.idt = VendorFields(scale: scale, purification: purification, plate: plate, well: well);
     return this;
   }
@@ -397,16 +408,20 @@ class StrandMaker {
     var last_ss = substrands.last;
 
     if (most_recently_added_substrand_is_loopout() || most_recently_added_substrand_is_extension()) {
-      throw ArgumentError('can only create a deletion on a bound Domain, '
-          'not a ${last_ss.runtimeType}; be sure only to call with_deletions immediately '
-          'after a call to move, to, or update_to');
+      throw ArgumentError(
+        'can only create a deletion on a bound Domain, '
+        'not a ${last_ss.runtimeType}; be sure only to call with_deletions immediately '
+        'after a call to move, to, or update_to',
+      );
     }
     Domain last_domain = last_ss as Domain;
 
     for (int deletion in deletions) {
       if (!(last_domain.start <= deletion && deletion < last_domain.end)) {
-        throw IllegalDesignError('all deletions must be between start=${last_domain.start} '
-            'and end=${last_domain.end}, but deletion=${deletion} is outside that range');
+        throw IllegalDesignError(
+          'all deletions must be between start=${last_domain.start} '
+          'and end=${last_domain.end}, but deletion=${deletion} is outside that range',
+        );
       }
     }
 
@@ -429,16 +444,20 @@ class StrandMaker {
     var last_ss = substrands.last;
 
     if (most_recently_added_substrand_is_loopout() || most_recently_added_substrand_is_extension()) {
-      throw ArgumentError('can only create an insertion on a bound Domain, '
-          'not a ${last_ss.runtimeType}; be sure only to call with_insertions immediately '
-          'after a call to move, to, or update_to');
+      throw ArgumentError(
+        'can only create an insertion on a bound Domain, '
+        'not a ${last_ss.runtimeType}; be sure only to call with_insertions immediately '
+        'after a call to move, to, or update_to',
+      );
     }
     Domain last_domain = last_ss as Domain;
 
     for (Insertion insertion in insertions) {
       if (!(last_domain.start <= insertion.offset && insertion.offset < last_domain.end)) {
-        throw IllegalDesignError('all insertions must be between start=${last_domain.start} '
-            'and end=${last_domain.end}, but insertion=${insertion} is outside that range');
+        throw IllegalDesignError(
+          'all insertions must be between start=${last_domain.start} '
+          'and end=${last_domain.end}, but insertion=${insertion} is outside that range',
+        );
       }
     }
 

@@ -17,7 +17,9 @@ typedef StrandActionCreator = actions.UndoableAction Function(Strand strand);
 typedef SubstrandActionCreator = actions.UndoableAction Function(Strand strand, Substrand substrand);
 
 StrandOrSubstrandColorPickerProps set_strand_or_substrand_color_picker_props(
-    StrandOrSubstrandColorPickerProps elt, AppState state) {
+  StrandOrSubstrandColorPickerProps elt,
+  AppState state,
+) {
   var color = state.ui_state.color_picker_strand?.color;
   if (state.ui_state.color_picker_substrand?.color != null) {
     color = state.ui_state.color_picker_substrand!.color;
@@ -31,8 +33,9 @@ StrandOrSubstrandColorPickerProps set_strand_or_substrand_color_picker_props(
 
 UiFactory<StrandOrSubstrandColorPickerProps> ConnectedStrandOrSubstrandColorPicker =
     connect<AppState, StrandOrSubstrandColorPickerProps>(
-        mapStateToProps: (state) => set_strand_or_substrand_color_picker_props(
-            StrandOrSubstrandColorPicker(), state))(StrandOrSubstrandColorPicker);
+      mapStateToProps:
+          (state) => set_strand_or_substrand_color_picker_props(StrandOrSubstrandColorPicker(), state),
+    )(StrandOrSubstrandColorPicker);
 
 UiFactory<StrandOrSubstrandColorPickerProps> StrandOrSubstrandColorPicker = _$StrandOrSubstrandColorPicker;
 
@@ -70,8 +73,11 @@ class StrandOrSubstrandColorPickerComponent
       actions.Action? action = null;
       if (props.substrand == null && props.strand != null && color != props.strand!.color) {
         // if substrand is null, we're setting this for a strand or many selected strands
-        action = batch_if_multiple_selected_strands(color_set_strand_action_creator(color), props.strand!,
-            app.state.ui_state.selectables_store.selected_strands);
+        action = batch_if_multiple_selected_strands(
+          color_set_strand_action_creator(color),
+          props.strand!,
+          app.state.ui_state.selectables_store.selected_strands,
+        );
       } else if (props.substrand != null && color != props.substrand!.color) {
         // if substrand is non-null, we're setting this for a substrand or many selected substrands
         var store = app.state.ui_state.selectables_store;
@@ -80,7 +86,11 @@ class StrandOrSubstrandColorPickerComponent
         selected_substrands.addAll(store.selected_extensions);
         selected_substrands.addAll(store.selected_loopouts);
         action = batch_if_multiple_selected_substrands(
-            color_set_substrand_action_creator(color), props.strand!, props.substrand!, selected_substrands);
+          color_set_substrand_action_creator(color),
+          props.strand!,
+          props.substrand!,
+          selected_substrands,
+        );
       }
       if (action != null) {
         app.dispatch(action);
@@ -132,7 +142,10 @@ class StrandOrSubstrandColorPickerComponent
           actions.StrandOrSubstrandColorSet(strand: strand, substrand: substrand, color: color));
 
   actions.UndoableAction batch_if_multiple_selected_strands(
-      StrandActionCreator action_creator, Strand strand, BuiltSet<Strand> selected_strands) {
+    StrandActionCreator action_creator,
+    Strand strand,
+    BuiltSet<Strand> selected_strands,
+  ) {
     actions.UndoableAction action;
     if (selected_strands.isEmpty || selected_strands.length == 1 && selected_strands.first == strand) {
       // set for single strand if nothing is selected, or exactly this strand is selected
@@ -142,14 +155,19 @@ class StrandOrSubstrandColorPickerComponent
       if (!selected_strands.contains(strand)) {
         selected_strands = selected_strands.rebuild((b) => b.add(strand));
       }
-      action = actions.BatchAction(
-          [for (var strand in selected_strands) action_creator(strand)], "set strands color");
+      action = actions.BatchAction([
+        for (var strand in selected_strands) action_creator(strand),
+      ], "set strands color");
     }
     return action;
   }
 
-  actions.UndoableAction batch_if_multiple_selected_substrands(SubstrandActionCreator action_creator,
-      Strand strand, Substrand substrand, List<Substrand> selected_substrands) {
+  actions.UndoableAction batch_if_multiple_selected_substrands(
+    SubstrandActionCreator action_creator,
+    Strand strand,
+    Substrand substrand,
+    List<Substrand> selected_substrands,
+  ) {
     actions.UndoableAction action;
     if (selected_substrands.isEmpty ||
         selected_substrands.length == 1 && selected_substrands.first == substrand) {

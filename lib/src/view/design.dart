@@ -71,8 +71,8 @@ class DesignViewComponent {
   DivElement root_element;
 
   DivElement design_above_footer_pane = DivElement()..attributes = {'id': 'design'};
-  DivElement footer_separator = DivElement()
-    ..attributes = {'id': 'design-footer-separator', 'class': 'fixed-separator'};
+  DivElement footer_separator =
+      DivElement()..attributes = {'id': 'design-footer-separator', 'class': 'fixed-separator'};
   DivElement footer_element = DivElement()..attributes = {'id': FOOTER_ID};
   DivElement modes_element = DivElement()..attributes = {'id': MODES_ID};
   DivElement error_message_pane = DivElement()..attributes = {'id': 'error-message-pane'};
@@ -82,8 +82,8 @@ class DesignViewComponent {
   DivElement context_menu_container = DivElement()..attributes = {'id': 'context-menu-container'};
   DivElement dialog_form_container = DivElement()..attributes = {'class': 'dialog-form-container'};
   DivElement dialog_loading_container = DivElement()..attributes = {'class': 'dialog-loading-container'};
-  DivElement strand_color_picker_container = DivElement()
-    ..attributes = {'id': 'strand-color-picker-container'};
+  DivElement strand_color_picker_container =
+      DivElement()..attributes = {'id': 'strand-color-picker-container'};
 
   late svg.SvgSvgElement side_view_svg;
   late svg.SvgSvgElement main_view_svg;
@@ -100,57 +100,47 @@ class DesignViewComponent {
 
   DesignViewComponent(this.root_element) {
     this.side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
-    var side_main_separator = DivElement()
-      ..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
+    var side_main_separator =
+        DivElement()..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
     this.main_pane = DivElement()..attributes = {'id': 'main-pane', 'class': 'split'};
 
-    side_view_svg = svg.SvgSvgElement()
-      ..attributes = {
-        'id': SIDE_VIEW_SVG_ID,
-        'class': PANZOOMABLE_CLASS,
-        'width': '100%',
-        'height': '100%',
-      };
+    side_view_svg =
+        svg.SvgSvgElement()
+          ..attributes = {
+            'id': SIDE_VIEW_SVG_ID,
+            'class': PANZOOMABLE_CLASS,
+            'width': '100%',
+            'height': '100%',
+          };
 
-    main_view_svg = svg.SvgSvgElement()
-      ..attributes = {
-        'id': MAIN_VIEW_SVG_ID,
-        'class': PANZOOMABLE_CLASS,
-        'width': '100%',
-        'height': '100%',
-      };
+    main_view_svg =
+        svg.SvgSvgElement()
+          ..attributes = {
+            'id': MAIN_VIEW_SVG_ID,
+            'class': PANZOOMABLE_CLASS,
+            'width': '100%',
+            'height': '100%',
+          };
     add_shadow_filter(main_view_svg);
 
-    var main_arrows = svg.SvgSvgElement()
-      ..attributes = {
-        'id': MAIN_VIEW_ARROWS_SVG_ID,
-        'width': '85px',
-        'height': '85px',
-      };
+    var main_arrows =
+        svg.SvgSvgElement()..attributes = {'id': MAIN_VIEW_ARROWS_SVG_ID, 'width': '85px', 'height': '85px'};
 
-    var side_arrows = svg.SvgSvgElement()
-      ..attributes = {
-        'id': SIDE_VIEW_ARROWS_SVG_ID,
-        'width': '85px',
-        'height': '85px',
-      };
+    var side_arrows =
+        svg.SvgSvgElement()..attributes = {'id': SIDE_VIEW_ARROWS_SVG_ID, 'width': '85px', 'height': '85px'};
 
-    var side_view_svg_viewport = svg.GElement()
-      ..attributes = {
-        'id': SIDE_VIEW_SVG_VIEWPORT_GROUP,
-      };
-    var main_view_svg_viewport = svg.GElement()
-      ..attributes = {
-        'id': MAIN_VIEW_SVG_VIEWPORT_GROUP,
-      };
+    var side_view_svg_viewport = svg.GElement()..attributes = {'id': SIDE_VIEW_SVG_VIEWPORT_GROUP};
+    var main_view_svg_viewport = svg.GElement()..attributes = {'id': MAIN_VIEW_SVG_VIEWPORT_GROUP};
 
     side_view_svg.children.add(side_view_svg_viewport);
     main_view_svg.children.add(main_view_svg_viewport);
 
-    var side_view_dummy_elt = svg.CircleElement()
-      ..attributes = {'id': 'dummy-elt-side-view', 'r': '100', 'cx': '100', 'cy': '50', 'fill': 'white'};
-    var main_view_dummy_elt = svg.CircleElement()
-      ..attributes = {'id': 'dummy-elt-main-view', 'r': '200', 'cx': '100', 'cy': '100', 'fill': 'white'};
+    var side_view_dummy_elt =
+        svg.CircleElement()
+          ..attributes = {'id': 'dummy-elt-side-view', 'r': '100', 'cx': '100', 'cy': '50', 'fill': 'white'};
+    var main_view_dummy_elt =
+        svg.CircleElement()
+          ..attributes = {'id': 'dummy-elt-main-view', 'r': '200', 'cx': '100', 'cy': '100', 'fill': 'white'};
     side_view_svg_viewport.children.add(side_view_dummy_elt);
     main_view_svg_viewport.children.add(main_view_dummy_elt);
 
@@ -178,7 +168,7 @@ class DesignViewComponent {
     set_side_main_pane_widths();
     handle_keyboard_mouse_events();
 
-//    app.state.design_or_error_store.listen((_) => this.render());
+    //    app.state.design_or_error_store.listen((_) => this.render());
   }
 
   set_side_main_pane_widths() {
@@ -226,15 +216,15 @@ class DesignViewComponent {
       });
       //XXX: Dart doesn't have onPointerUp, so we have to trigger from JS,
       // which calls [main_view_pointer_up]
-//      view_svg.onMouseUp.listen((event) {
-//        util.set_allow_pan(true);
-//        print('mouse up');
-//        if (view_svg == main_view_svg && app.store_dna_ends_move.state != null) {
-//          DNAEndsMove dna_ends_move = app.store_dna_ends_move.state;
-//          print('mouse up and move != null');
-//          app.dispatch(actions.DNAEndsMoveStop(dna_ends_move: dna_ends_move));
-//        }
-//      });
+      //      view_svg.onMouseUp.listen((event) {
+      //        util.set_allow_pan(true);
+      //        print('mouse up');
+      //        if (view_svg == main_view_svg && app.store_dna_ends_move.state != null) {
+      //          DNAEndsMove dna_ends_move = app.store_dna_ends_move.state;
+      //          print('mouse up and move != null');
+      //          app.dispatch(actions.DNAEndsMoveStop(dna_ends_move: dna_ends_move));
+      //        }
+      //      });
     }
 
     main_view_svg.onMouseMove.listen((MouseEvent event) {
@@ -251,8 +241,11 @@ class DesignViewComponent {
           (event.ctrlKey || event.metaKey || event.shiftKey)) {
         bool is_main_view = true;
         var view_svg = main_view_svg;
-        Point<double> point =
-            util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
+        Point<double> point = util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
+          event,
+          is_main_view,
+          view_svg,
+        );
         var action = actions.SelectionRopeMouseMove(point: point, is_main_view: is_main_view);
         app.dispatch(actions.ThrottledActionFast(action, 1 / 60.0));
       }
@@ -264,8 +257,13 @@ class DesignViewComponent {
         var geometry = group.geometry ?? app.state.design.geometry;
         var helices_in_group = app.state.design.helices_in_group(displayed_group_name).values;
         int? old_offset = app.state.ui_state.storables.slice_bar_offset;
-        int new_offset = util.find_closest_offset(event, helices_in_group, group, geometry,
-            app.state.helix_idx_to_svg_position_map[helices_in_group.first.idx]!.x);
+        int new_offset = util.find_closest_offset(
+          event,
+          helices_in_group,
+          group,
+          geometry,
+          app.state.helix_idx_to_svg_position_map[helices_in_group.first.idx]!.x,
+        );
 
         if (old_offset != new_offset) {
           app.dispatch(actions.SliceBarOffsetSet(new_offset));
@@ -279,17 +277,24 @@ class DesignViewComponent {
         if (moves_store != null) {
           var group_names = group_names_of_ends(moves_store);
           if (group_names.length != 1) {
-            var msg = 'Cannot move or copy DNA ends unless they are all on the same helix group.\n'
+            var msg =
+                'Cannot move or copy DNA ends unless they are all on the same helix group.\n'
                 'The selected ends occupy the following helix groups: ${group_names.join(", ")}';
             window.alert(msg);
           } else {
             Helix helix = moves_store.helix;
             var group = app.state.design.groups[helix.group]!;
             var geometry = group.geometry ?? app.state.design.geometry;
-            int offset = util
-                .get_address_on_helix(
-                    event, helix, group, geometry, app.state.helix_idx_to_svg_position_map[helix.idx]!)
-                .offset;
+            int offset =
+                util
+                    .get_address_on_helix(
+                      event,
+                      helix,
+                      group,
+                      geometry,
+                      app.state.helix_idx_to_svg_position_map[helix.idx]!,
+                    )
+                    .offset;
             int old_offset = moves_store.current_offset;
             if (offset != old_offset) {
               app.dispatch(actions.DNAEndsMoveAdjustOffset(offset: offset));
@@ -300,13 +305,17 @@ class DesignViewComponent {
         if (extensions_move_store != null) {
           var group_names = group_names_of_extensions(extensions_move_store);
           if (group_names.length != 1) {
-            var msg = 'Cannot move or copy DNA extensions unless they are all on the same helix group.\n'
+            var msg =
+                'Cannot move or copy DNA extensions unless they are all on the same helix group.\n'
                 'The selected ends occupy the following helix groups: ${group_names.join(", ")}';
             window.alert(msg);
           } else {
             Point<double> old_point = extensions_move_store.current_point;
-            Point<double> point =
-                util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, true, main_view_svg);
+            Point<double> point = util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
+              event,
+              true,
+              main_view_svg,
+            );
             if (point != old_point) {
               app.dispatch(actions.DNAExtensionsMoveAdjustPosition(position: point));
             }
@@ -334,7 +343,8 @@ class DesignViewComponent {
           if (!strands_move.copy) {
             BuiltSet<String>? group_names = group_names_of_strands(strands_move);
             if (group_names != null && group_names.length != 1) {
-              var msg = 'Cannot move or copy strands unless they are all on the same helix group.\n'
+              var msg =
+                  'Cannot move or copy strands unless they are all on the same helix group.\n'
                   'These strands occupy the following helix groups: ${group_names.join(", ")}';
               window.alert(msg);
               can_paste = false;
@@ -342,16 +352,22 @@ class DesignViewComponent {
           }
           if (can_paste) {
             var old_address = strands_move.current_address;
-            var visible_helices = app.state.ui_state.only_display_selected_helices
-                ? [
-                    for (var helix in app.state.design.helices.values)
-                      if (app.state.ui_state.side_selected_helix_idxs.contains(helix.idx)) helix
-                  ]
-                : app.state.design.helices.values;
+            var visible_helices =
+                app.state.ui_state.only_display_selected_helices
+                    ? [
+                      for (var helix in app.state.design.helices.values)
+                        if (app.state.ui_state.side_selected_helix_idxs.contains(helix.idx)) helix,
+                    ]
+                    : app.state.design.helices.values;
             var group = app.state.design.groups[app.state.ui_state.displayed_group_name]!;
             var geometry = group.geometry ?? app.state.design.geometry;
-            var address = util.find_closest_address(event, visible_helices, app.state.design.groups, geometry,
-                app.state.helix_idx_to_svg_position_map);
+            var address = util.find_closest_address(
+              event,
+              visible_helices,
+              app.state.design.groups,
+              geometry,
+              app.state.helix_idx_to_svg_position_map,
+            );
             if (address != old_address) {
               app.dispatch(actions.StrandsMoveAdjustAddress(address: address));
             }
@@ -365,21 +381,28 @@ class DesignViewComponent {
         if (left_mouse_button_is_down) {
           var group_names = group_names_of_domains(domains_move);
           if (group_names.length != 1) {
-            var msg = 'Cannot move or copy domains unless they are all on the same helix group.\n'
+            var msg =
+                'Cannot move or copy domains unless they are all on the same helix group.\n'
                 'These domains occupy the following helix groups: ${group_names.join(", ")}';
             window.alert(msg);
           } else {
             var old_address = domains_move.current_address;
-            var visible_helices = app.state.ui_state.only_display_selected_helices
-                ? [
-                    for (var helix in app.state.design.helices.values)
-                      if (app.state.ui_state.side_selected_helix_idxs.contains(helix.idx)) helix
-                  ]
-                : app.state.design.helices.values;
+            var visible_helices =
+                app.state.ui_state.only_display_selected_helices
+                    ? [
+                      for (var helix in app.state.design.helices.values)
+                        if (app.state.ui_state.side_selected_helix_idxs.contains(helix.idx)) helix,
+                    ]
+                    : app.state.design.helices.values;
             var group = app.state.design.groups[app.state.ui_state.displayed_group_name]!;
             var geometry = group.geometry ?? app.state.design.geometry;
-            var address = util.find_closest_address(event, visible_helices, app.state.design.groups, geometry,
-                app.state.helix_idx_to_svg_position_map);
+            var address = util.find_closest_address(
+              event,
+              visible_helices,
+              app.state.design.groups,
+              geometry,
+              app.state.helix_idx_to_svg_position_map,
+            );
             if (address != old_address) {
               app.dispatch(actions.DomainsMoveAdjustAddress(address: address));
             }
@@ -398,13 +421,15 @@ class DesignViewComponent {
         //     .offset;
         Helix strand_creation_helix = app.state.design.helices[strand_creation.helix.idx]!;
         Address updated_function_offset = util.find_closest_address_with_infinite_helix_boundaries(
-            event,
-            strand_creation_helix,
-            {strand_creation.helix.group: group}.build(),
-            geometry,
-            {strand_creation.helix.idx: app.state.helix_idx_to_svg_position_map[strand_creation.helix.idx]!}
-                .build(),
-            strand_creation);
+          event,
+          strand_creation_helix,
+          {strand_creation.helix.group: group}.build(),
+          geometry,
+          {
+            strand_creation.helix.idx: app.state.helix_idx_to_svg_position_map[strand_creation.helix.idx]!,
+          }.build(),
+          strand_creation,
+        );
         app.dispatch(actions.StrandCreateAdjustOffset(offset: updated_function_offset.offset));
       }
     });
@@ -491,8 +516,11 @@ class DesignViewComponent {
         bool left_click = util.left_mouse_button_caused_mouse_event(event);
         bool selection_rope_exists = app.state.ui_state.selection_rope != null;
         if (selection_rope_exists && left_click && edit_mode_is_rope_select()) {
-          Point<double> point =
-              util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, svg_elt);
+          Point<double> point = util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
+            event,
+            is_main_view,
+            svg_elt,
+          );
           app.dispatch(actions.SelectionRopeAddPoint(point: point, is_main_view: is_main_view));
         }
 
@@ -510,23 +538,23 @@ class DesignViewComponent {
       });
     }
 
-//XXX: this does NOT get fired when Draggable is running things, in particular when the user
-// did Ctrl+mouse or Shift+mouse to drag a selection box over items and raised the mouse button to
-// finish the box
-//    main_view_svg.onMouseUp.listen((ev) {
-//      // XXX: if we decide to unselect items here, add some logic to make sure we didn't just get done moving a
-//      // selected item/group of items
-//      if (!(ev.ctrlKey || ev.metaKey || ev.shiftKey) &&
-//          app.state.ui_state.selectables_store.selected_items.isNotEmpty) {
-////        Actions_OLD.unselect_all();
-//      }
-//    });
-//    side_view_svg.onMouseUp.listen((ev) {
-//      if (!(ev.ctrlKey || ev.metaKey || ev.shiftKey)) {
-//        //XXX: maybe should unselect the helices, but it's probably more convenient to let them stay selected
-////        app.dispatch(actions.HelicesSelectedClear());
-//      }
-//    });
+    //XXX: this does NOT get fired when Draggable is running things, in particular when the user
+    // did Ctrl+mouse or Shift+mouse to drag a selection box over items and raised the mouse button to
+    // finish the box
+    //    main_view_svg.onMouseUp.listen((ev) {
+    //      // XXX: if we decide to unselect items here, add some logic to make sure we didn't just get done moving a
+    //      // selected item/group of items
+    //      if (!(ev.ctrlKey || ev.metaKey || ev.shiftKey) &&
+    //          app.state.ui_state.selectables_store.selected_items.isNotEmpty) {
+    ////        Actions_OLD.unselect_all();
+    //      }
+    //    });
+    //    side_view_svg.onMouseUp.listen((ev) {
+    //      if (!(ev.ctrlKey || ev.metaKey || ev.shiftKey)) {
+    //        //XXX: maybe should unselect the helices, but it's probably more convenient to let them stay selected
+    ////        app.dispatch(actions.HelicesSelectedClear());
+    //      }
+    //    });
   }
 
   handle_esc_keyboard_shortcuts() {
@@ -702,8 +730,11 @@ class DesignViewComponent {
 
   drag_start(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
     MouseEvent event = draggable_event.originalEvent as MouseEvent;
-    Point<double> point =
-        util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
+    Point<double> point = util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
+      event,
+      is_main_view,
+      view_svg,
+    );
     if (app.state.ui_state.edit_modes.contains(EditModeChoice.select)) {
       bool? toggle;
       if (event.ctrlKey || event.metaKey) {
@@ -721,8 +752,11 @@ class DesignViewComponent {
 
   drag(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
     MouseEvent event = draggable_event.originalEvent as MouseEvent;
-    Point<double> point =
-        util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
+    Point<double> point = util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
+      event,
+      is_main_view,
+      view_svg,
+    );
     if (edit_mode_is_select()) {
       if (event.ctrlKey || event.metaKey || event.shiftKey) {
         var action = actions.SelectionBoxSizeChange(point, is_main_view);
@@ -761,9 +795,8 @@ class DesignViewComponent {
   render_loading_dialog(AppState state) {
     react_dom.render(
       over_react_components.ErrorBoundary()(
-        (ReduxProvider()..store = app.store)(
-          set_design_loading_dialog_props(ConnectedLoadingDialog(), state)(),
-        ),
+        (ReduxProvider()
+          ..store = app.store)(set_design_loading_dialog_props(ConnectedLoadingDialog(), state)()),
       ),
       this.dialog_loading_container,
     );
@@ -783,33 +816,33 @@ class DesignViewComponent {
       render_dialog_form();
       render_loading_dialog(state);
     } else {
-//      var react_svg_pan_zoom_side = UncontrolledReactSVGPanZoom(
-//        {
-//          'width': '100%',
-//          'height': '100%',
-//        },
-//        (Dom.svg()
-//          ..id = 'side-view-svg'
-//          ..width = '100%'
-//          ..height = '100%')(
-//          (DesignSide()..store = app.state.design.helices_store)(),
-//        ),
-//      );
-//      react_dom.render(react_svg_pan_zoom_side, this.side_pane);
-//
-//      var react_svg_pan_zoom_main = UncontrolledReactSVGPanZoom(
-//        {
-//          'width': '100%',
-//          'height': '100%',
-//        },
-//        (Dom.svg()
-//          ..id = 'main-view-svg'
-//          ..width = '100%'
-//          ..height = '100%')(
-//          (DesignMain()..store = app.state)(),
-//        ),
-//      );
-//      react_dom.render(react_svg_pan_zoom_main, this.main_pane);
+      //      var react_svg_pan_zoom_side = UncontrolledReactSVGPanZoom(
+      //        {
+      //          'width': '100%',
+      //          'height': '100%',
+      //        },
+      //        (Dom.svg()
+      //          ..id = 'side-view-svg'
+      //          ..width = '100%'
+      //          ..height = '100%')(
+      //          (DesignSide()..store = app.state.design.helices_store)(),
+      //        ),
+      //      );
+      //      react_dom.render(react_svg_pan_zoom_side, this.side_pane);
+      //
+      //      var react_svg_pan_zoom_main = UncontrolledReactSVGPanZoom(
+      //        {
+      //          'width': '100%',
+      //          'height': '100%',
+      //        },
+      //        (Dom.svg()
+      //          ..id = 'main-view-svg'
+      //          ..width = '100%'
+      //          ..height = '100%')(
+      //          (DesignMain()..store = app.state)(),
+      //        ),
+      //      );
+      //      react_dom.render(react_svg_pan_zoom_main, this.main_pane);
 
       if (!this.root_element.children.contains(this.design_above_footer_pane)) {
         this.root_element.children.clear();
@@ -825,9 +858,7 @@ class DesignViewComponent {
       // side view menu
       react_dom.render(
         over_react_components.ErrorBoundary()(
-          (ReduxProvider()..store = app.store)(
-            set_side_menu_props(ConnectedSideMenu(), state)(),
-          ),
+          (ReduxProvider()..store = app.store)(set_side_menu_props(ConnectedSideMenu(), state)()),
         ),
         querySelector('#$SIDE_VIEW_MENU_ID')!,
       );
@@ -873,9 +904,7 @@ class DesignViewComponent {
                       ..context = app.context_dna_ends_move)(
                       (ReduxProvider()
                         ..store = app.store_helix_group_move
-                        ..context = app.context_helix_group_move)(
-                        (ConnectedDesignMain()..state = state)(),
-                      ),
+                        ..context = app.context_helix_group_move)((ConnectedDesignMain()..state = state)()),
                     ),
                   ),
                 ),
@@ -895,8 +924,11 @@ class DesignViewComponent {
 
       if (!svg_panzoom_has_been_set_up) {
         // Need to wrap callbacks so that Dart functions can be called in JavaScript.
-        setup_svg_panzoom_js(allowInterop(util.svg_to_png_data),
-            allowInterop(util.dispatch_set_zoom_threshold), constants.ZOOM_THRESHOLD);
+        setup_svg_panzoom_js(
+          allowInterop(util.svg_to_png_data),
+          allowInterop(util.dispatch_set_zoom_threshold),
+          constants.ZOOM_THRESHOLD,
+        );
         svg_panzoom_has_been_set_up = true;
       }
     }
@@ -904,28 +936,23 @@ class DesignViewComponent {
 
   void render_strand_or_substrand_color_picker(AppState state) {
     react_dom.render(
-        over_react_components.ErrorBoundary()(
-          (ReduxProvider()..store = app.store)(
-            (ConnectedStrandOrSubstrandColorPicker()..show = false)(),
-          ),
-        ),
-        this.strand_color_picker_container);
+      over_react_components.ErrorBoundary()(
+        (ReduxProvider()..store = app.store)((ConnectedStrandOrSubstrandColorPicker()..show = false)()),
+      ),
+      this.strand_color_picker_container,
+    );
   }
 
   void render_axis_arrows(AppState state) {
     react_dom.render(
       over_react_components.ErrorBoundary()(
-        (ReduxProvider()..store = app.store)(
-          set_axis_arrows_props(ConnectedAxisArrowsSide(), state)(),
-        ),
+        (ReduxProvider()..store = app.store)(set_axis_arrows_props(ConnectedAxisArrowsSide(), state)()),
       ),
       querySelector('#$SIDE_VIEW_ARROWS_SVG_ID')!,
     );
     react_dom.render(
       over_react_components.ErrorBoundary()(
-        (ReduxProvider()..store = app.store)(
-          set_axis_arrows_props(ConnectedAxisArrowsMain(), state)(),
-        ),
+        (ReduxProvider()..store = app.store)(set_axis_arrows_props(ConnectedAxisArrowsMain(), state)()),
       ),
       querySelector('#$MAIN_VIEW_ARROWS_SVG_ID')!,
     );
@@ -934,9 +961,7 @@ class DesignViewComponent {
   void render_design_footer(AppState state) {
     react_dom.render(
       over_react_components.ErrorBoundary()(
-        (ReduxProvider()..store = app.store)(
-          set_design_footer_props(ConnectedDesignFooter(), state)(),
-        ),
+        (ReduxProvider()..store = app.store)(set_design_footer_props(ConnectedDesignFooter(), state)()),
       ),
       this.footer_element,
     );
@@ -945,9 +970,7 @@ class DesignViewComponent {
   void render_context_menu() {
     react_dom.render(
       over_react_components.ErrorBoundary()(
-        (ReduxProvider()..store = app.store)(
-          ConnectedDesignContextMenu()(),
-        ),
+        (ReduxProvider()..store = app.store)(ConnectedDesignContextMenu()()),
       ),
       this.context_menu_container,
     );
@@ -956,9 +979,7 @@ class DesignViewComponent {
   void render_dialog_form() {
     react_dom.render(
       over_react_components.ErrorBoundary()(
-        (ReduxProvider()..store = app.store)(
-          ConnectedDesignDialogForm()(),
-        ),
+        (ReduxProvider()..store = app.store)(ConnectedDesignDialogForm()()),
       ),
       this.dialog_form_container,
     );
@@ -966,8 +987,11 @@ class DesignViewComponent {
 
   main_view_move_potential_crossover(MouseEvent event) {
     if (app.store_potential_crossover.state != null) {
-      Point<double> point =
-          util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, true, main_view_svg);
+      Point<double> point = util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
+        event,
+        true,
+        main_view_svg,
+      );
       var action = actions.PotentialCrossoverMove(point: point);
       app.dispatch(actions.ThrottledActionFast(action, 1 / 60.0));
     }
@@ -991,8 +1015,13 @@ class DesignViewComponent {
       if (!displayed_grid.is_none) {
         bool invert_y = app.state.ui_state.invert_y;
         Geometry geometry = group.geometry ?? app.state.design.geometry;
-        var new_grid_pos = util.grid_position_of_mouse_in_side_view(displayed_grid, invert_y, geometry,
-            mouse_pos: mouse_pos, event: event);
+        var new_grid_pos = util.grid_position_of_mouse_in_side_view(
+          displayed_grid,
+          invert_y,
+          geometry,
+          mouse_pos: mouse_pos,
+          event: event,
+        );
         if (app.state.ui_state.side_view_grid_position_mouse_cursor != new_grid_pos) {
           app.dispatch(actions.MouseGridPositionSideUpdate(new_grid_pos));
         }
@@ -1054,7 +1083,7 @@ BuiltSet<String> group_names_of_extensions(DNAExtensionsMove extensions_move) =>
     app.state.design.group_names_of_ends(extensions_move.ends_moving);
 
 main_view_pointer_up(MouseEvent event) {
-//  util.set_allow_pan(true);
+  //  util.set_allow_pan(true);
   if (app.state.ui_state.slice_bar_is_moving) {
     app.dispatch(actions.SliceBarMoveStop());
   }
@@ -1109,12 +1138,15 @@ main_view_pointer_up(MouseEvent event) {
   if (strand_creation != null) {
     app.dispatch(actions.StrandCreateStop());
     if (strand_creation.original_offset != strand_creation.current_offset) {
-      app.dispatch(actions.StrandCreateCommit(
+      app.dispatch(
+        actions.StrandCreateCommit(
           helix_idx: strand_creation.helix.idx,
           forward: strand_creation.forward,
           start: strand_creation.start,
           end: strand_creation.end,
-          color: strand_creation.color));
+          color: strand_creation.color,
+        ),
+      );
     }
   }
 }

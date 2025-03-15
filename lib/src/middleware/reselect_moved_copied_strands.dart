@@ -13,7 +13,7 @@ import '../state/app_state.dart';
 
 reselect_moved_copied_strands_middleware(Store<AppState> store, action, NextDispatcher next) {
   if (( //action is actions.StrandsAutoPaste ||
-          action is actions.StrandsMoveCommit) &&
+      action is actions.StrandsMoveCommit) &&
       (action.strands_move.copy || action.strands_move.strands_moving.length > 1)) {
     if (!(strands_move_reducer.in_bounds_and_allowable(store.state.design, action.strands_move) &&
         (action.strands_move.is_nontrivial || action.strands_move.copy))) {

@@ -15,10 +15,11 @@ part 'dna_extensions_move.g.dart';
 abstract class DNAExtensionsMove
     with BuiltJsonSerializable
     implements Built<DNAExtensionsMove, DNAExtensionsMoveBuilder> {
-  factory DNAExtensionsMove(
-      {required BuiltList<DNAExtensionMove> moves,
-      required Point<double> start_point,
-      required Point<double> current_point}) = _$DNAExtensionsMove._;
+  factory DNAExtensionsMove({
+    required BuiltList<DNAExtensionMove> moves,
+    required Point<double> start_point,
+    required Point<double> current_point,
+  }) = _$DNAExtensionsMove._;
 
   factory DNAExtensionsMove.from([void Function(DNAExtensionsMoveBuilder) updates]) = _$DNAExtensionsMove;
 
@@ -55,12 +56,13 @@ abstract class DNAExtensionsMove
 abstract class DNAExtensionMove
     with BuiltJsonSerializable
     implements Built<DNAExtensionMove, DNAExtensionMoveBuilder> {
-  factory DNAExtensionMove(
-      {required DNAEnd dna_end,
-      required Color color,
-      required Point<double> original_position,
-      required Point<double> attached_end_position,
-      required Extension extension}) = _$DNAExtensionMove._;
+  factory DNAExtensionMove({
+    required DNAEnd dna_end,
+    required Color color,
+    required Point<double> original_position,
+    required Point<double> attached_end_position,
+    required Extension extension,
+  }) = _$DNAExtensionMove._;
 
   factory DNAExtensionMove.from([void Function(DNAExtensionMoveBuilder) updates]) = _$DNAExtensionMove;
 

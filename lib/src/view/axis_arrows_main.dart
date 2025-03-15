@@ -16,7 +16,8 @@ import '../state/strand.dart';
 part 'axis_arrows_main.over_react.g.dart';
 
 UiFactory<AxisArrowsMainProps> ConnectedAxisArrowsMain = connect<AppState, AxisArrowsMainProps>(
-    mapStateToProps: (state) => set_axis_arrows_props(AxisArrowsMain(), state))(AxisArrowsMain);
+  mapStateToProps: (state) => set_axis_arrows_props(AxisArrowsMain(), state),
+)(AxisArrowsMain);
 
 UiFactory<AxisArrowsMainProps> AxisArrowsMain = _$AxisArrowsMain;
 
@@ -30,7 +31,8 @@ class DesignMainArrowsComponent extends UiComponent2<AxisArrowsMainProps> {
   render() {
     double mag = 50 * 0.93, circle_rad = 10, x_end_offset = circle_rad * 0.632, arrow_padding = 10;
 
-    var arrow_path = 'M 0 0 '
+    var arrow_path =
+        'M 0 0 '
         'v -$mag ' //vertical line to
         'm ${mag / 6.0} ${mag / 4.0} ' //move to
         'L 0 -${mag} ' //normal line to
@@ -44,7 +46,7 @@ class DesignMainArrowsComponent extends UiComponent2<AxisArrowsMainProps> {
 
     double font_width = 12, font_height = 17; // arbitrary dimensions found through web inspector
 
-//RGB XYZ
+    //RGB XYZ
     if (props.show_helices_axis_arrows == true) {
       return (Dom.g()
         ..className = 'arrow-group'

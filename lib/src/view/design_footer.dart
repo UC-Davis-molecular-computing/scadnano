@@ -25,7 +25,8 @@ DesignFooterProps set_design_footer_props(DesignFooterProps elt, AppState state)
 
 // https://github.com/Workiva/over_react/issues/942
 UiFactory<DesignFooterProps> ConnectedDesignFooter = connect<AppState, DesignFooterProps>(
-    mapStateToProps: (state) => set_design_footer_props(DesignFooter(), state))(DesignFooter);
+  mapStateToProps: (state) => set_design_footer_props(DesignFooter(), state),
+)(DesignFooter);
 
 UiFactory<DesignFooterProps> DesignFooter = _$DesignFooter;
 
@@ -51,13 +52,14 @@ class DesignFooterComponent extends UiComponent2<DesignFooterProps> {
       if (domain != null) {
         int domain_length = domain.dna_length();
         Strand? strand = props.strand_first_mouseover_data;
-        text += (', strand DNA index: ${mouseover_data.strand_idx}' +
-            ', domain length: ${domain_length}' +
-            ', strand length: ${strand?.dna_length}' +
-            (domain.name != null ? ', domain name: ${domain.name}' : '') +
-            (domain.label != null ? ', domain label: ${domain.label}' : '') +
-            (strand?.name != null ? ', strand name: ${strand!.name}' : '') +
-            (strand?.label != null ? ', strand label: ${strand!.label}' : ''));
+        text +=
+            (', strand DNA index: ${mouseover_data.strand_idx}' +
+                ', domain length: ${domain_length}' +
+                ', strand length: ${strand?.dna_length}' +
+                (domain.name != null ? ', domain name: ${domain.name}' : '') +
+                (domain.label != null ? ', domain label: ${domain.label}' : '') +
+                (strand?.name != null ? ', strand name: ${strand!.name}' : '') +
+                (strand?.label != null ? ', strand label: ${strand!.label}' : ''));
         ;
       }
     } else {

@@ -41,19 +41,26 @@ Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([
 
 GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.AssignDNA>(assign_dna_reducer),
-  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.AssignDomainNameComplementFromBoundStrands>(//
-      assign_domain_name_complement_from_bound_strands_reducer),
-  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.AssignDomainNameComplementFromBoundDomains>(//
-      assign_domain_name_complement_from_bound_domains_reducer),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.AssignDomainNameComplementFromBoundStrands>(
+    //
+    assign_domain_name_complement_from_bound_strands_reducer,
+  ),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.AssignDomainNameComplementFromBoundDomains>(
+    //
+    assign_domain_name_complement_from_bound_domains_reducer,
+  ),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.AssignDNAComplementFromBoundStrands>(
-      assign_dna_reducer_complement_from_bound_strands),
+    assign_dna_reducer_complement_from_bound_strands,
+  ),
   // TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandsAutoPaste>(strands_autopaste_strands_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandsMoveCommit>(strands_move_commit_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.DomainsMoveCommit>(domains_move_commit_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.DNAEndsMoveCommit>(
-      strands_dna_ends_move_commit_reducer),
+    strands_dna_ends_move_commit_reducer,
+  ),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.DNAExtensionsMoveCommit>(
-      strands_dna_extensions_move_commit_reducer),
+    strands_dna_extensions_move_commit_reducer,
+  ),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandPartAction>(strands_part_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandCreateCommit>(strand_create),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.DeleteAllSelected>(delete_all_reducer),
@@ -61,23 +68,32 @@ GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGloba
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.Nick>(nick_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.Ligate>(ligate_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.JoinStrandsByCrossover>(
-      join_strands_by_crossover_reducer),
+    join_strands_by_crossover_reducer,
+  ),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.JoinStrandsByMultipleCrossovers>(
-      join_strands_by_multiple_crossovers_reducer),
+    join_strands_by_multiple_crossovers_reducer,
+  ),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.ConvertCrossoversToLoopouts>(
-      convert_crossovers_to_loopouts_reducer),
+    convert_crossovers_to_loopouts_reducer,
+  ),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.LoopoutsLengthChange>(
-      loopouts_length_change_reducer),
+    loopouts_length_change_reducer,
+  ),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.ExtensionsNumBasesChange>(
-      extensions_num_bases_change_reducer),
+    extensions_num_bases_change_reducer,
+  ),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.InsertionsLengthChange>(
-      insertions_length_change_reducer),
+    insertions_length_change_reducer,
+  ),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.Modifications5PrimeEdit>(
-      modifications_5p_edit_reducer),
+    modifications_5p_edit_reducer,
+  ),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.Modifications3PrimeEdit>(
-      modifications_3p_edit_reducer),
+    modifications_3p_edit_reducer,
+  ),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.ModificationsInternalEdit>(
-      modifications_int_edit_reducer),
+    modifications_int_edit_reducer,
+  ),
 ]);
 
 BuiltList<Strand> replace_strands_reducer(BuiltList<Strand> strands, actions.ReplaceStrands action) {
@@ -92,7 +108,10 @@ BuiltList<Strand> replace_strands_reducer(BuiltList<Strand> strands, actions.Rep
 // takes a part of a strand and looks up the strand it's in by strand_id, then applies reducer to strand
 // action may not have the strand itself
 BuiltList<Strand> strands_part_reducer(
-    BuiltList<Strand> strands, AppState state, actions.StrandPartAction action) {
+  BuiltList<Strand> strands,
+  AppState state,
+  actions.StrandPartAction action,
+) {
   Strand strand = state.design.strands_by_id[action.strand_part.strand_id]!;
   int strand_idx = strands.indexOf(strand);
 
@@ -185,7 +204,10 @@ Strand substrand_label_set_reducer(Strand strand, actions.SubstrandLabelSet acti
 // move strands/domains
 
 BuiltList<Strand> strands_move_commit_reducer(
-    BuiltList<Strand> strands, AppState state, actions.StrandsMoveCommit action) {
+  BuiltList<Strand> strands,
+  AppState state,
+  actions.StrandsMoveCommit action,
+) {
   if (strands_move_reducer.in_bounds_and_allowable(state.design, action.strands_move) &&
       (action.strands_move.is_nontrivial || action.strands_move.copy)) {
     // if (action.strands_move.allowable && (action.strands_move.is_nontrivial || action.strands_move.copy)) {
@@ -193,8 +215,11 @@ BuiltList<Strand> strands_move_commit_reducer(
     // and wants to paste them back in same position
     var strands_list = strands.toList();
     for (var strand in action.strands_move.strands_moving) {
-      Strand new_strand =
-          one_strand_strands_move_copy_commit_reducer(state.design, strand, action.strands_move);
+      Strand new_strand = one_strand_strands_move_copy_commit_reducer(
+        state.design,
+        strand,
+        action.strands_move,
+      );
       new_strand = new_strand.initialize();
       if (action.strands_move.copy) {
         strands_list.add(new_strand);
@@ -222,12 +247,13 @@ Strand one_strand_strands_move_copy_commit_reducer(Design design, Strand strand,
   var current_group = util.current_group_from_strands_move(design, strands_move);
 
   Strand? moved_strand = move_strand(
-      strand: strand,
-      original_helices_view_order_inverse: original_helices_view_order_inverse,
-      current_group: current_group,
-      delta_view_order: delta_view_order,
-      delta_offset: delta_offset,
-      delta_forward: delta_forward);
+    strand: strand,
+    original_helices_view_order_inverse: original_helices_view_order_inverse,
+    current_group: current_group,
+    delta_view_order: delta_view_order,
+    delta_offset: delta_offset,
+    delta_forward: delta_forward,
+  );
 
   if (moved_strand == null) {
     print("WARNING: didn't expect move_strand to return null in one_strand_strands_move_copy_commit_reducer");
@@ -242,13 +268,14 @@ Strand one_strand_strands_move_copy_commit_reducer(Design design, Strand strand,
   return moved_strand;
 }
 
-Strand? move_strand(
-    {required Strand strand,
-    required BuiltMap<int, int> original_helices_view_order_inverse,
-    required HelixGroup current_group,
-    required int delta_view_order,
-    required int delta_offset,
-    required bool delta_forward}) {
+Strand? move_strand({
+  required Strand strand,
+  required BuiltMap<int, int> original_helices_view_order_inverse,
+  required HelixGroup current_group,
+  required int delta_view_order,
+  required int delta_offset,
+  required bool delta_forward,
+}) {
   List<Substrand> substrands = strand.substrands.toList();
 
   //Don't reverse domains, this is to preserve the original order of domain names
@@ -265,8 +292,10 @@ Strand? move_strand(
     // but only Domains need to be processed since only they have helix idx and start/end offsets
     if (substrand is Domain) {
       if (!original_helices_view_order_inverse.containsKey(substrand.helix) && is_moving) {
-        throw AssertionError('original_helices_view_order_inverse = $original_helices_view_order_inverse '
-            'does not contain key (helix idx) = ${substrand.helix}');
+        throw AssertionError(
+          'original_helices_view_order_inverse = $original_helices_view_order_inverse '
+          'does not contain key (helix idx) = ${substrand.helix}',
+        );
       }
       int new_helix_idx = substrand.helix;
       if (is_moving) {
@@ -280,16 +309,18 @@ Strand? move_strand(
       }
 
       Domain domain_moved = substrand.rebuild(
-        (b) => b
-          ..is_first = i == 0
-          ..is_last = i == substrands.length - 1
-          ..helix = new_helix_idx
-          ..forward = (delta_forward != substrand.forward)
-          ..start = substrand.start + delta_offset
-          ..end = substrand.end + delta_offset
-          ..deletions.replace(substrand.deletions.map((d) => d + delta_offset))
-          ..insertions.replace(
-              substrand.insertions.map((i) => i.rebuild((ib) => ib..offset = i.offset + delta_offset))),
+        (b) =>
+            b
+              ..is_first = i == 0
+              ..is_last = i == substrands.length - 1
+              ..helix = new_helix_idx
+              ..forward = (delta_forward != substrand.forward)
+              ..start = substrand.start + delta_offset
+              ..end = substrand.end + delta_offset
+              ..deletions.replace(substrand.deletions.map((d) => d + delta_offset))
+              ..insertions.replace(
+                substrand.insertions.map((i) => i.rebuild((ib) => ib..offset = i.offset + delta_offset)),
+              ),
       );
       new_substrand = domain_moved;
     }
@@ -302,14 +333,21 @@ Strand? move_strand(
 
 // replace all strands that had domains moved
 BuiltList<Strand> domains_move_commit_reducer(
-    BuiltList<Strand> strands, AppState state, actions.DomainsMoveCommit action) {
+  BuiltList<Strand> strands,
+  AppState state,
+  actions.DomainsMoveCommit action,
+) {
   if (action.domains_move.allowable && action.domains_move.is_nontrivial) {
     var strands_builder = strands.toBuilder();
     for (var strand in action.domains_move.domains_moving_from_strand.keys) {
       var domains = action.domains_move.domains_moving_from_strand[strand]!.toSet();
       int strand_idx = strands.indexOf(strand);
-      Strand new_strand =
-          one_strand_domains_move_commit_reducer(state.design, strand, domains, action.domains_move);
+      Strand new_strand = one_strand_domains_move_commit_reducer(
+        state.design,
+        strand,
+        domains,
+        action.domains_move,
+      );
       new_strand = new_strand.initialize();
       strands_builder[strand_idx] = new_strand;
     }
@@ -321,7 +359,11 @@ BuiltList<Strand> domains_move_commit_reducer(
 
 // replace strand with moved domains from that strand
 Strand one_strand_domains_move_commit_reducer(
-    Design design, Strand strand, Set<Domain> domains_on_strand, DomainsMove domains_move) {
+  Design design,
+  Strand strand,
+  Set<Domain> domains_on_strand,
+  DomainsMove domains_move,
+) {
   var substrands = strand.substrands.toList();
   for (int i = 0; i < substrands.length; i++) {
     var domain = substrands[i];
@@ -346,7 +388,10 @@ Strand one_strand_domains_move_commit_reducer(
 // move DNA ends
 
 BuiltList<Strand> strands_dna_ends_move_commit_reducer(
-    BuiltList<Strand> strands, AppState state, actions.DNAEndsMoveCommit action) {
+  BuiltList<Strand> strands,
+  AppState state,
+  actions.DNAEndsMoveCommit action,
+) {
   DNAEndsMove move = action.dna_ends_move;
   if (move.current_offset == move.original_offset) {
     return strands;
@@ -392,7 +437,10 @@ BuiltList<Strand> strands_dna_ends_move_commit_reducer(
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // move DNA extension
 BuiltList<Strand> strands_dna_extensions_move_commit_reducer(
-    BuiltList<Strand> strands, AppState state, actions.DNAExtensionsMoveCommit action) {
+  BuiltList<Strand> strands,
+  AppState state,
+  actions.DNAExtensionsMoveCommit action,
+) {
   var strands_builder = strands.toBuilder();
 
   for (var move in action.dna_extensions_move.moves) {
@@ -411,15 +459,19 @@ BuiltList<Strand> strands_dna_extensions_move_commit_reducer(
     var geometry = group.geometry ?? state.design.geometry;
 
     var length_and_angle = util.compute_extension_length_and_angle_from_point(
-        action.dna_extensions_move.current_point_of(move.dna_end)!,
-        extension_start_point,
-        extension,
-        extension.adjacent_domain,
-        geometry);
+      action.dna_extensions_move.current_point_of(move.dna_end)!,
+      extension_start_point,
+      extension,
+      extension.adjacent_domain,
+      geometry,
+    );
 
-    Extension ext_new = extension.rebuild((b) => b
-      ..display_length = length_and_angle.item1
-      ..display_angle = length_and_angle.item2);
+    Extension ext_new = extension.rebuild(
+      (b) =>
+          b
+            ..display_length = length_and_angle.item1
+            ..display_angle = length_and_angle.item2,
+    );
 
     substrands_builder[substrand_idx] = ext_new;
     strand = strand.rebuild((s) => s..substrands = substrands_builder);
@@ -440,7 +492,10 @@ class InsertionDeletionRecord {
 }
 
 Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop_reducer(
-    Strand strand, DNAEndsMove all_move, Design design) {
+  Strand strand,
+  DNAEndsMove all_move,
+  Design design,
+) {
   List<InsertionDeletionRecord> records = [];
   List<Substrand> substrands = strand.substrands.toList();
 
@@ -460,26 +515,36 @@ Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop
           //XXX: make sure to record deletions and insertions before bound_ss changes
           List<int> deletions_removed =
               bound_ss.deletions.where((d) => !remaining_deletions.contains(d)).toList();
-          List<int> insertion_offsets_removed = bound_ss.insertions
-              .where((i) => !remaining_insertions.contains(i))
-              .map((i) => i.offset)
-              .toList();
+          List<int> insertion_offsets_removed =
+              bound_ss.insertions
+                  .where((i) => !remaining_insertions.contains(i))
+                  .map((i) => i.offset)
+                  .toList();
           for (var offset in deletions_removed + insertion_offsets_removed) {
             var other_dom = find_paired_domain(design, bound_ss, offset);
             if (other_dom != null) {
               Strand other_strand = design.substrand_to_strand[other_dom]!;
               int other_ss_idx = other_strand.substrands.indexOf(other_dom);
               int other_strand_idx = design.strands.indexOf(other_strand);
-              records.add(InsertionDeletionRecord(
-                  offset: offset, strand_idx: other_strand_idx, substrand_idx: other_ss_idx));
+              records.add(
+                InsertionDeletionRecord(
+                  offset: offset,
+                  strand_idx: other_strand_idx,
+                  substrand_idx: other_ss_idx,
+                ),
+              );
             }
           }
 
           bound_ss = bound_ss.rebuild(
-              (b) => dnaend == substrand.dnaend_start ? (b..start = new_offset) : (b..end = new_offset + 1));
-          bound_ss = bound_ss.rebuild((b) => b
-            ..deletions.replace(remaining_deletions)
-            ..insertions.replace(remaining_insertions));
+            (b) => dnaend == substrand.dnaend_start ? (b..start = new_offset) : (b..end = new_offset + 1),
+          );
+          bound_ss = bound_ss.rebuild(
+            (b) =>
+                b
+                  ..deletions.replace(remaining_deletions)
+                  ..insertions.replace(remaining_insertions),
+          );
         }
       }
       new_substrand = bound_ss;
@@ -490,9 +555,10 @@ Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop
   return Tuple2<Strand, List<InsertionDeletionRecord>>(strand, records);
 }
 
-List<int> get_remaining_deletions(Domain substrand, int new_offset, DNAEnd dnaend) => substrand.deletions
-    .where((d) => (substrand.dnaend_start == dnaend ? new_offset < d : new_offset > d))
-    .toList();
+List<int> get_remaining_deletions(Domain substrand, int new_offset, DNAEnd dnaend) =>
+    substrand.deletions
+        .where((d) => (substrand.dnaend_start == dnaend ? new_offset < d : new_offset > d))
+        .toList();
 
 List<Insertion> get_remaining_insertions(Domain substrand, int new_offset, DNAEnd dnaend) =>
     substrand.insertions
@@ -524,7 +590,10 @@ DNAEndMove? find_move(BuiltList<DNAEndMove> moves, DNAEnd end) {
 // create Strand
 
 BuiltList<Strand> strand_create(
-    BuiltList<Strand> strands, AppState state, actions.StrandCreateCommit action) {
+  BuiltList<Strand> strands,
+  AppState state,
+  actions.StrandCreateCommit action,
+) {
   int helix_idx = action.helix_idx;
   int start = action.start;
   int end = action.end;
@@ -541,13 +610,14 @@ BuiltList<Strand> strand_create(
   }
 
   Domain substrand = Domain(
-      helix: helix_idx,
-      forward: forward,
-      start: start,
-      end: end,
-      is_first: true,
-      is_last: true,
-      is_scaffold: false);
+    helix: helix_idx,
+    forward: forward,
+    start: start,
+    end: end,
+    is_first: true,
+    is_last: true,
+    is_scaffold: false,
+  );
   Strand strand = Strand([substrand], color: action.color, is_scaffold: false);
   var new_strands = strands.rebuild((s) => s..add(strand));
 
@@ -559,7 +629,9 @@ BuiltList<Strand> strand_create(
 
 // Unlike a strand part reducer, this sort of action actually stores the strand itself.
 BuiltList<Strand> strands_single_strand_reducer(
-    BuiltList<Strand> strands, actions.SingleStrandAction action) {
+  BuiltList<Strand> strands,
+  actions.SingleStrandAction action,
+) {
   Strand strand = action.strand;
   int strand_idx = strands.indexOf(strand);
 
@@ -585,7 +657,8 @@ Reducer<Strand> single_strand_reducer = combineReducers([
   TypedReducer<Strand, actions.StrandNameSet>(strand_name_set_reducer),
   TypedReducer<Strand, actions.StrandLabelSet>(strand_label_set_reducer),
   TypedReducer<Strand, actions.ScalePurificationVendorFieldsAssign>(
-      scale_purification_vendor_fields_assign_reducer),
+    scale_purification_vendor_fields_assign_reducer,
+  ),
   TypedReducer<Strand, actions.PlateWellVendorFieldsAssign>(plate_well_vendor_fields_assign_reducer),
   TypedReducer<Strand, actions.PlateWellVendorFieldsRemove>(plate_well_vendor_fields_remove_reducer),
   TypedReducer<Strand, actions.VendorFieldsRemove>(vendor_fields_remove_reducer),
@@ -599,9 +672,12 @@ Strand vendor_fields_remove_reducer(Strand strand, actions.VendorFieldsRemove ac
 Strand plate_well_vendor_fields_remove_reducer(Strand strand, actions.PlateWellVendorFieldsRemove action) {
   if (strand.vendor_fields != null) {
     Strand strand_with_new_vendor_fields;
-    strand_with_new_vendor_fields = strand.rebuild((m) => m.vendor_fields
-      ..plate = null
-      ..well = null);
+    strand_with_new_vendor_fields = strand.rebuild(
+      (m) =>
+          m.vendor_fields
+            ..plate = null
+            ..well = null,
+    );
     return strand_with_new_vendor_fields;
   } else {
     return strand;
@@ -615,7 +691,9 @@ Strand plate_well_vendor_fields_assign_reducer(Strand strand, actions.PlateWellV
 }
 
 Strand scale_purification_vendor_fields_assign_reducer(
-    Strand strand, actions.ScalePurificationVendorFieldsAssign action) {
+  Strand strand,
+  actions.ScalePurificationVendorFieldsAssign action,
+) {
   Strand strand_with_new_vendor_fields;
   strand_with_new_vendor_fields = strand.rebuild((m) => m.vendor_fields.replace(action.vendor_fields));
   return strand_with_new_vendor_fields;
@@ -637,10 +715,11 @@ Strand extension_add_reducer(Strand strand, actions.ExtensionAdd action) {
   }
 
   Extension ext = Extension(
-      num_bases: action.num_bases,
-      is_5p: action.is_5p,
-      adjacent_domain: adjacent_domain,
-      is_scaffold: strand.is_scaffold);
+    num_bases: action.num_bases,
+    is_5p: action.is_5p,
+    adjacent_domain: adjacent_domain,
+    is_scaffold: strand.is_scaffold,
+  );
   if (action.is_5p) {
     substrands.insert(0, ext);
   } else {
@@ -662,7 +741,8 @@ Strand modification_add_reducer(Strand strand, actions.ModificationAdd action) {
     strand_with_new_modification = strand.rebuild((m) => m.modification_5p.replace(mod));
   } else {
     throw AssertionError(
-        'modification must be ModificationInternal, Modification3Prime, or Modification5Prime');
+      'modification must be ModificationInternal, Modification3Prime, or Modification5Prime',
+    );
   }
   return strand_with_new_modification;
 }
@@ -679,7 +759,8 @@ Strand modification_remove_reducer(Strand strand, actions.ModificationRemove act
     strand_with_new_modification = strand.rebuild((m) => m.modification_5p = null);
   } else {
     throw AssertionError(
-        'modification must be ModificationInternal, Modification3Prime, or Modification5Prime');
+      'modification must be ModificationInternal, Modification3Prime, or Modification5Prime',
+    );
   }
   return strand_with_new_modification;
 }
@@ -689,24 +770,29 @@ Strand modification_edit_reducer(Strand strand, actions.ModificationEdit action)
   // first overwrite this strand in the builder list
   var mod = action.modification;
   if (mod is ModificationInternal) {
-    strand_with_edited_modification =
-        strand.rebuild((m) => m.modifications_int[action.strand_dna_idx!] = mod);
+    strand_with_edited_modification = strand.rebuild(
+      (m) => m.modifications_int[action.strand_dna_idx!] = mod,
+    );
   } else if (mod is Modification3Prime) {
     strand_with_edited_modification = strand.rebuild((m) => m.modification_3p.replace(mod));
   } else if (mod is Modification5Prime) {
     strand_with_edited_modification = strand.rebuild((m) => m.modification_5p.replace(mod));
   } else {
     throw AssertionError(
-        'modification must be ModificationInternal, Modification3Prime, or Modification5Prime');
+      'modification must be ModificationInternal, Modification3Prime, or Modification5Prime',
+    );
   }
   return strand_with_edited_modification;
 }
 
 Strand scaffold_set_reducer(Strand strand, actions.ScaffoldSet action) {
   Color new_color = action.is_scaffold ? util.ColorCycler.scaffold_color : util.color_cycler.next();
-  strand = strand.rebuild((b) => b
-    ..is_scaffold = action.is_scaffold
-    ..color = new_color);
+  strand = strand.rebuild(
+    (b) =>
+        b
+          ..is_scaffold = action.is_scaffold
+          ..color = new_color,
+  );
   return strand;
 }
 
@@ -736,7 +822,10 @@ Strand strand_or_substrand_color_set_reducer(Strand strand, actions.StrandOrSubs
 }
 
 BuiltList<Strand> modifications_5p_edit_reducer(
-    BuiltList<Strand> strands, AppState state, actions.Modifications5PrimeEdit action) {
+  BuiltList<Strand> strands,
+  AppState state,
+  actions.Modifications5PrimeEdit action,
+) {
   var new_strands = strands.toList();
 
   List<String> strand_ids = [for (var strand in strands) strand.id];
@@ -752,7 +841,10 @@ BuiltList<Strand> modifications_5p_edit_reducer(
 }
 
 BuiltList<Strand> modifications_3p_edit_reducer(
-    BuiltList<Strand> strands, AppState state, actions.Modifications3PrimeEdit action) {
+  BuiltList<Strand> strands,
+  AppState state,
+  actions.Modifications3PrimeEdit action,
+) {
   var new_strands = strands.toList();
 
   List<String> strand_ids = [for (var strand in strands) strand.id];
@@ -768,7 +860,10 @@ BuiltList<Strand> modifications_3p_edit_reducer(
 }
 
 BuiltList<Strand> modifications_int_edit_reducer(
-    BuiltList<Strand> strands, AppState state, actions.ModificationsInternalEdit action) {
+  BuiltList<Strand> strands,
+  AppState state,
+  actions.ModificationsInternalEdit action,
+) {
   // collect all internal modifications for each strand
   Map<String, Set<SelectableModificationInternal>> strand_id_to_mods = {};
   for (var mod in action.modifications) {

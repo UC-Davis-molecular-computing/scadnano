@@ -23,14 +23,16 @@ abstract class AxisArrowsProps implements UiProps {
 // behavior in OverReact where in connected components, required props must be set not only
 // in the `mapStateToProps` function, but also when hooking up the connected component to the view
 // as in the file view/design.dart (where ConnectedAxisArrowsSide() is invoked in `react_dom.render`)
-AxisArrowsProps set_axis_arrows_props(AxisArrowsProps elt, AppState state) => elt
-  ..invert_y = state.ui_state.invert_y
-  ..show_helices_axis_arrows = state.ui_state.show_helices_axis_arrows;
+AxisArrowsProps set_axis_arrows_props(AxisArrowsProps elt, AppState state) =>
+    elt
+      ..invert_y = state.ui_state.invert_y
+      ..show_helices_axis_arrows = state.ui_state.show_helices_axis_arrows;
 // end shared between AxisArrowsMain and AxisArrowsSide
 ///////////////////////////////////////////////////////
 
 UiFactory<AxisArrowsSideProps> ConnectedAxisArrowsSide = connect<AppState, AxisArrowsSideProps>(
-    mapStateToProps: (state) => set_axis_arrows_props(AxisArrowsSide(), state))(AxisArrowsSide);
+  mapStateToProps: (state) => set_axis_arrows_props(AxisArrowsSide(), state),
+)(AxisArrowsSide);
 
 UiFactory<AxisArrowsSideProps> AxisArrowsSide = _$AxisArrowsSide;
 
@@ -44,7 +46,8 @@ class AxisArrowsComponent extends UiComponent2<AxisArrowsSideProps> {
   render() {
     double mag = 50 * 0.93, circle_rad = 10, x_end_offset = circle_rad * 0.632, arrow_padding = 10;
 
-    var arrow_path = 'M 0 0 '
+    var arrow_path =
+        'M 0 0 '
         'v -$mag ' //vertical line to
         'm ${mag / 6.0} ${mag / 4.0} ' //move to
         'L 0 -${mag} ' //normal line to
@@ -58,7 +61,7 @@ class AxisArrowsComponent extends UiComponent2<AxisArrowsSideProps> {
 
     double font_width = 12, font_height = 17; // arbitrary dimensions found through web inspector
 
-//RGB XYZ
+    //RGB XYZ
     if (props.show_helices_axis_arrows == true) {
       return (Dom.g()
         ..className = 'arrow-group'

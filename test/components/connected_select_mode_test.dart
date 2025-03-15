@@ -16,11 +16,11 @@ AppState initializeTestState() {
   List<SelectModeChoice> modes = [
     SelectModeChoice.crossover,
     SelectModeChoice.loopout,
-    SelectModeChoice.scaffold
+    SelectModeChoice.scaffold,
   ];
-  return util
-      .default_state()
-      .rebuild((b) => b.ui_state.storables.select_mode_state.replace(SelectModeState().set_modes(modes)));
+  return util.default_state().rebuild(
+    (b) => b.ui_state.storables.select_mode_state.replace(SelectModeState().set_modes(modes)),
+  );
 }
 
 const SelectModeTestId = 'scadnano.SelectModeComponent';
@@ -39,13 +39,15 @@ main() {
     setUp(() {
       utils.initialize_test_store(initializeTestState());
       selectModeRef = createRef<SelectModeComponent>();
-      mount((ReduxProvider()..store = app.store)(
-        (ConnectedSelectMode()
-          ..is_origami = false
-          ..select_mode_state = app.state.ui_state.select_mode_state
-          ..addTestId(SelectModeTestId)
-          ..ref = selectModeRef)(),
-      ));
+      mount(
+        (ReduxProvider()..store = app.store)(
+          (ConnectedSelectMode()
+            ..is_origami = false
+            ..select_mode_state = app.state.ui_state.select_mode_state
+            ..addTestId(SelectModeTestId)
+            ..ref = selectModeRef)(),
+        ),
+      );
       component = selectModeRef!.current;
       // component = getComponentByTestId(testJacket.getInstance(), SelectModeTestId);
       expect(component, isNotNull, reason: 'ConnectedSelectMode should be mounted');

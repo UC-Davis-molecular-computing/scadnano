@@ -26,7 +26,8 @@ mixin DesignMainUnpairedInsertionDeletionsProps on UiProps {
 }
 
 class DesignMainUnpairedInsertionDeletionsComponent
-    extends UiComponent2<DesignMainUnpairedInsertionDeletionsProps> with PureComponent {
+    extends UiComponent2<DesignMainUnpairedInsertionDeletionsProps>
+    with PureComponent {
   @override
   render() {
     List<ReactElement> unpaired_components = [];
@@ -51,13 +52,18 @@ class DesignMainUnpairedInsertionDeletionsComponent
             if (!keys.contains(key)) {
               // otherwise, already rendered mismatch for this insertion
               keys.add(key);
-              var mismatch_component = (DesignMainWarningStar()
-                ..base_svg_pos = base_svg_pos +
-                    Point(0, is_insertion ? geometry.base_height_svg * 2 * (unpaired.forward ? 1 : -1) : 0)
-                ..geometry = geometry
-                ..forward = domain.forward
-                ..color = 'green'
-                ..key = key)();
+              var mismatch_component =
+                  (DesignMainWarningStar()
+                    ..base_svg_pos =
+                        base_svg_pos +
+                        Point(
+                          0,
+                          is_insertion ? geometry.base_height_svg * 2 * (unpaired.forward ? 1 : -1) : 0,
+                        )
+                    ..geometry = geometry
+                    ..forward = domain.forward
+                    ..color = 'green'
+                    ..key = key)();
               domain_components.add(mismatch_component);
             }
           }
@@ -68,10 +74,12 @@ class DesignMainUnpairedInsertionDeletionsComponent
         String transform_str = group.transform_str(props.design.geometry);
 
         if (domain_components.isNotEmpty) {
-          unpaired_components.add((Dom.g()
-            ..transform = transform_str
-            ..className = 'mismatch-components-in-domain'
-            ..key = util.id_domain(domain))(domain_components));
+          unpaired_components.add(
+            (Dom.g()
+              ..transform = transform_str
+              ..className = 'mismatch-components-in-domain'
+              ..key = util.id_domain(domain))(domain_components),
+          );
         }
       }
     }

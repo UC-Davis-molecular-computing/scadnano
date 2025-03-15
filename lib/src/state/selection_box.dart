@@ -16,11 +16,14 @@ const ORIGIN = Point<double>(0.0, 0.0);
 abstract class SelectionBox with BuiltJsonSerializable implements Built<SelectionBox, SelectionBoxBuilder> {
   SelectionBox._();
 
-  factory SelectionBox(Point<double> start, bool toggle, bool is_main) => SelectionBox.from((b) => b
-    ..start = start
-    ..toggle = toggle
-    ..is_main = is_main
-    ..current = start);
+  factory SelectionBox(Point<double> start, bool toggle, bool is_main) => SelectionBox.from(
+    (b) =>
+        b
+          ..start = start
+          ..toggle = toggle
+          ..is_main = is_main
+          ..current = start,
+  );
 
   factory SelectionBox.from([void Function(SelectionBoxBuilder) updates]) = _$SelectionBox;
 
@@ -48,13 +51,15 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
 
   static const DECIMAL_PLACES = 1;
 
-  static rect_to_string(Rect bbox) => ''
+  static rect_to_string(Rect bbox) =>
+      ''
       '${bbox.x!.toStringAsFixed(DECIMAL_PLACES)} '
       '${bbox.y!.toStringAsFixed(DECIMAL_PLACES)} '
       '${bbox.width!.toStringAsFixed(DECIMAL_PLACES)} '
       '${bbox.height!.toStringAsFixed(DECIMAL_PLACES)}';
 
-  String toString() => 'start=('
+  String toString() =>
+      'start=('
       '${start.x.toStringAsFixed(DECIMAL_PLACES)}, '
       '${start.y.toStringAsFixed(DECIMAL_PLACES)})'
       '  current=('

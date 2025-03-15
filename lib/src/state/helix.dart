@@ -25,12 +25,16 @@ part 'helix.g.dart';
 abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<Helix, HelixBuilder> {
   Helix._() {
     if (grid_position == null && position_ == null) {
-      throw ArgumentError('exactly one of Helix.grid_position and Helix.position should be null, '
-          'but both are null.');
+      throw ArgumentError(
+        'exactly one of Helix.grid_position and Helix.position should be null, '
+        'but both are null.',
+      );
     }
     if (grid_position != null && position_ != null) {
-      throw ArgumentError('exactly one of Helix.grid_position and Helix.position should be null, '
-          'but both are non-null.');
+      throw ArgumentError(
+        'exactly one of Helix.grid_position and Helix.position should be null, '
+        'but both are non-null.',
+      );
     }
   }
 
@@ -69,18 +73,21 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     if (major_tick_periodic_distances == null) {
       major_tick_periodic_distances = [];
     }
-    return Helix.from((b) => b
-      ..idx = idx
-      ..group = group
-      ..grid = grid
-      ..grid_position = grid_position?.toBuilder()
-      ..position_ = position?.toBuilder()
-      ..roll = roll
-      ..min_offset = min_offset
-      ..max_offset = max_offset
-      ..major_tick_start = major_tick_start
-      ..major_tick_periodic_distances.replace(major_tick_periodic_distances!)
-      ..unused_fields.replace({}));
+    return Helix.from(
+      (b) =>
+          b
+            ..idx = idx
+            ..group = group
+            ..grid = grid
+            ..grid_position = grid_position?.toBuilder()
+            ..position_ = position?.toBuilder()
+            ..roll = roll
+            ..min_offset = min_offset
+            ..max_offset = max_offset
+            ..major_tick_start = major_tick_start
+            ..major_tick_periodic_distances.replace(major_tick_periodic_distances!)
+            ..unused_fields.replace({}),
+    );
   }
 
   static void _initializeBuilder(HelixBuilder b) {
@@ -297,17 +304,20 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     }
 
     if (json_map.containsKey(constants.major_tick_periodic_distances_key)) {
-      List<int> major_tick_periodic_distances_json =
-          List<int>.from(json_map[constants.major_tick_periodic_distances_key]!);
-      helix_builder.major_tick_periodic_distances =
-          ListBuilder<int>(List<int>.from(major_tick_periodic_distances_json));
+      List<int> major_tick_periodic_distances_json = List<int>.from(
+        json_map[constants.major_tick_periodic_distances_key]!,
+      );
+      helix_builder.major_tick_periodic_distances = ListBuilder<int>(
+        List<int>.from(major_tick_periodic_distances_json),
+      );
     }
 
     if (json_map.containsKey(constants.grid_position_key)) {
       List<dynamic> gp_list = json_map[constants.grid_position_key]!;
       if (!(gp_list.length == 2)) {
         throw ArgumentError(
-            "list of grid_position coordinates must be length 2 but this is the list: ${gp_list}");
+          "list of grid_position coordinates must be length 2 but this is the list: ${gp_list}",
+        );
       }
       helix_builder.grid_position = GridPosition.from_list(gp_list).toBuilder();
     }
@@ -327,16 +337,20 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     // knowledge of the whole design (e.g., min and max offset are based on offsets of Domains on
     // the helix).
     helix_builder.min_offset = util.optional_field_with_null_default(json_map, constants.min_offset_key);
-    helix_builder.major_tick_start =
-        util.optional_field_with_null_default(json_map, constants.major_tick_start_key);
+    helix_builder.major_tick_start = util.optional_field_with_null_default(
+      json_map,
+      constants.major_tick_start_key,
+    );
     helix_builder.idx = util.optional_field_with_null_default(json_map, constants.idx_on_helix_key);
     helix_builder.roll = util.optional_field(json_map, constants.roll_key, constants.default_roll);
 
     if (json_map.containsKey(constants.major_tick_distance_key) &&
         json_map.containsKey(constants.major_tick_periodic_distances_key)) {
-      throw IllegalDesignError('helix ${helix_builder.idx ?? ""} has both keys '
-          '${constants.major_tick_distance_key} and '
-          '${constants.major_tick_periodic_distances_key}. At most one is allow to be specified.');
+      throw IllegalDesignError(
+        'helix ${helix_builder.idx ?? ""} has both keys '
+        '${constants.major_tick_distance_key} and '
+        '${constants.major_tick_periodic_distances_key}. At most one is allow to be specified.',
+      );
     }
 
     Position3D? position = Position3D.get_position_from_helix_json_map(json_map);
@@ -372,9 +386,10 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
         ticks.add(tick);
       }
     } else {
-      int distance = major_tick_distance != null && this.major_tick_distance! > 0
-          ? this.major_tick_distance!
-          : grid.default_major_tick_distance;
+      int distance =
+          major_tick_distance != null && this.major_tick_distance! > 0
+              ? this.major_tick_distance!
+              : grid.default_major_tick_distance;
       if (distance > 0) {
         ticks = [for (int tick = major_tick_start; tick <= max_offset; tick += distance) tick];
       }
@@ -407,7 +422,10 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   }
 
   double compute_relaxed_roll_delta(
-      BuiltMap<int, Helix> helices, BuiltList<Address> crossover_addresses, Geometry geometry) {
+    BuiltMap<int, Helix> helices,
+    BuiltList<Address> crossover_addresses,
+    Geometry geometry,
+  ) {
     List<Tuple2<double, double>> angles = [];
     for (var address in crossover_addresses) {
       var other_helix = helices[address.helix_idx]!;

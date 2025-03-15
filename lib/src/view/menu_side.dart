@@ -55,33 +55,26 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
 
     if (groups.length > 1 || props.displayed_group_name != constants.default_group_name) {
       return Navbar(
-        {
-          'bg': 'light',
-          'expand': 'lg',
-        },
+        {'bg': 'light', 'expand': 'lg'},
         NavbarBrand({'key': 'side-menu-display-title'}, props.displayed_group_name),
         groups_menu(groups),
       );
     } else {
-      return Navbar(
-        {
-          'bg': 'light',
-          'expand': 'lg',
-        },
-        groups_menu(groups),
-      );
+      return Navbar({'bg': 'light', 'expand': 'lg'}, groups_menu(groups));
     }
   }
 
   groups_menu(BuiltMap<String, HelixGroup> groups) {
     var options = [];
     for (var name in groups.keys) {
-      options.add((MenuDropdownItem()
-        ..on_click = ((ev) => app.dispatch(actions.GroupDisplayedChange(group_name: name)))
-        ..display = name
-        ..active = name == props.displayed_group_name
-        ..disabled = name == props.displayed_group_name
-        ..key = 'key_for_group_name:$name')());
+      options.add(
+        (MenuDropdownItem()
+          ..on_click = ((ev) => app.dispatch(actions.GroupDisplayedChange(group_name: name)))
+          ..display = name
+          ..active = name == props.displayed_group_name
+          ..disabled = name == props.displayed_group_name
+          ..key = 'key_for_group_name:$name')(),
+      );
     }
     options.addAll([
       DropdownDivider({'key': 'divider-add-remove'}),
@@ -109,20 +102,12 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
         ..on_click = ((ev) => change_group_geometry())
         ..key = 'adjust-current-group-geometry')(),
     ]);
-    return NavDropdown({
-      'title': 'Group',
-      'id': 'group-nav-dropdown',
-      'key': 'group-nav-dropdown',
-    }, options);
+    return NavDropdown({'title': 'Group', 'id': 'group-nav-dropdown', 'key': 'group-nav-dropdown'}, options);
   }
 
   grid_menu(BuiltMap<String, HelixGroup> groups) {
     return NavDropdown(
-      {
-        'title': 'Grid',
-        'id': 'grid-nav-dropdown',
-        'key': 'grid-nav-dropdown',
-      },
+      {'title': 'Grid', 'id': 'grid-nav-dropdown', 'key': 'grid-nav-dropdown'},
       [
         for (var grid in Grid.values)
           (MenuDropdownItem()
@@ -131,7 +116,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
             ..disabled = grid == groups[props.displayed_group_name]!.grid
             ..on_click =
                 ((ev) => app.dispatch(actions.GridChange(grid: grid, group_name: props.displayed_group_name)))
-            ..key = grid.toString())()
+            ..key = grid.toString())(),
       ],
     );
   }
@@ -146,10 +131,14 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
       app.disable_keyboard_shortcuts_while(() => ask_about_new_group(existing_names));
 
   Future<void> ask_about_new_group(Iterable<String> existing_names) async {
-    var dialog = Dialog(title: 'create new Helix group', type: DialogType.create_new_helix_group, items: [
-      DialogText(label: 'name'),
-      DialogRadio(label: 'grid', options: ['square', 'honeycomb', 'hex', 'none'], selected_idx: 0),
-    ]);
+    var dialog = Dialog(
+      title: 'create new Helix group',
+      type: DialogType.create_new_helix_group,
+      items: [
+        DialogText(label: 'name'),
+        DialogRadio(label: 'grid', options: ['square', 'honeycomb', 'hex', 'none'], selected_idx: 0),
+      ],
+    );
     List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
 
@@ -190,14 +179,17 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
     items[pitch_idx] = DialogFloat(label: 'pitch', value: group.pitch);
     items[roll_idx] = DialogFloat(label: 'roll', value: group.roll);
     items[yaw_idx] = DialogFloat(label: 'yaw', value: group.yaw);
-    items[helices_view_order_idx] =
-        DialogText(label: 'helices view order (space separated)', value: group.helices_view_order.join(' '));
+    items[helices_view_order_idx] = DialogText(
+      label: 'helices view order (space separated)',
+      value: group.helices_view_order.join(' '),
+    );
 
     var dialog = Dialog(
-        title: 'adjust current Helix group (to adjust grid use Grid menu on left)',
-        type: DialogType.adjust_current_helix_group,
-        use_saved_response: false,
-        items: items);
+      title: 'adjust current Helix group (to adjust grid use Grid menu on left)',
+      type: DialogType.adjust_current_helix_group,
+      use_saved_response: false,
+      items: items,
+    );
     List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
 
@@ -272,15 +264,17 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
     var position = Position3D(x: position_x, y: position_y, z: position_z);
 
     HelixGroup new_group = HelixGroup(
-        grid: existing_grid,
-        helices_view_order: helices_view_order_chosen,
-        position: position,
-        pitch: pitch,
-        roll: roll,
-        yaw: yaw);
+      grid: existing_grid,
+      helices_view_order: helices_view_order_chosen,
+      position: position,
+      pitch: pitch,
+      roll: roll,
+      yaw: yaw,
+    );
 
     app.dispatch(
-        actions.GroupChange(old_name: props.displayed_group_name, new_name: new_name, new_group: new_group));
+      actions.GroupChange(old_name: props.displayed_group_name, new_name: new_name, new_group: new_group),
+    );
   }
 
   Future<void> ask_new_helix_indices_for_current_group(BuiltMap<String, HelixGroup> groups) async {
@@ -294,17 +288,18 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
     }
 
     var dialog = Dialog(
-        title: 'adjust Helix indices',
-        type: DialogType.adjust_helix_indices,
-        items: items,
-        process_saved_response: (saved_items) {
-          for (var saved_item in saved_items) {
-            if (!items.any((e) => e.label == saved_item.label)) {
-              return items.build();
-            }
+      title: 'adjust Helix indices',
+      type: DialogType.adjust_helix_indices,
+      items: items,
+      process_saved_response: (saved_items) {
+        for (var saved_item in saved_items) {
+          if (!items.any((e) => e.label == saved_item.label)) {
+            return items.build();
           }
-          return saved_items;
-        });
+        }
+        return saved_items;
+      },
+    );
     List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
 
@@ -331,13 +326,17 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
     int minor_groove_angle_idx = 4;
 
     var items = util.FixedList<DialogItem>(5);
-    items[rise_per_base_pair_idx] =
-        DialogFloat(label: 'rise per base pair (nm)', value: geometry.rise_per_base_pair);
+    items[rise_per_base_pair_idx] = DialogFloat(
+      label: 'rise per base pair (nm)',
+      value: geometry.rise_per_base_pair,
+    );
     items[helix_radius_idx] = DialogFloat(label: 'helix radius (nm)', value: geometry.helix_radius);
     items[inter_helix_gap_idx] = DialogFloat(label: 'inter helix gap (nm)', value: geometry.inter_helix_gap);
     items[bases_per_turn_idx] = DialogFloat(label: 'bases per turn', value: geometry.bases_per_turn);
-    items[minor_groove_angle_idx] =
-        DialogFloat(label: 'minor groove angle (degrees)', value: geometry.minor_groove_angle);
+    items[minor_groove_angle_idx] = DialogFloat(
+      label: 'minor groove angle (degrees)',
+      value: geometry.minor_groove_angle,
+    );
 
     var dialog = Dialog(
       title: 'adjust geometric parameters',
@@ -362,6 +361,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
       minor_groove_angle: minor_groove_angle,
     );
     app.dispatch(
-        actions.GeometryHelixGroupSet(group_name: props.displayed_group_name, geometry: new_geometry));
+      actions.GeometryHelixGroupSet(group_name: props.displayed_group_name, geometry: new_geometry),
+    );
   }
 }

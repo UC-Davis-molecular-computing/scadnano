@@ -208,11 +208,19 @@ Simple CSV (comma-separated value) format. Not a format used by any biotech comp
         case idt_bulk:
           return idt_bulk_export(strands_sorted, delimiter: delimiter, domain_delimiter: domain_delimiter);
         case idt_plates96:
-          return idt_plates_export(strands_sorted, PlateType.wells96, column_major_plate,
-              domain_delimiter: domain_delimiter);
+          return idt_plates_export(
+            strands_sorted,
+            PlateType.wells96,
+            column_major_plate,
+            domain_delimiter: domain_delimiter,
+          );
         case idt_plates384:
-          return idt_plates_export(strands_sorted, PlateType.wells384, column_major_plate,
-              domain_delimiter: domain_delimiter);
+          return idt_plates_export(
+            strands_sorted,
+            PlateType.wells384,
+            column_major_plate,
+            domain_delimiter: domain_delimiter,
+          );
       }
     } on ExportDNAException catch (e) {
       throw e;
@@ -235,30 +243,40 @@ class ExportDNAException implements Exception {
 
 String csv_export(Iterable<Strand> strands, String domain_delimiter) {
   var lines = strands.map(
-      (strand) => '${strand.vendor_export_name()},${vendor_sequence_null_aware(strand, domain_delimiter)}');
+    (strand) => '${strand.vendor_export_name()},${vendor_sequence_null_aware(strand, domain_delimiter)}',
+  );
   return lines.join('\n');
 }
 
 String vendor_sequence_null_aware(Strand strand, String domain_delimiter) =>
     strand.vendor_dna_sequence(domain_delimiter: domain_delimiter) ?? '*****NONE*****';
 
-String idt_bulk_export(Iterable<Strand> strands,
-    {String delimiter = ',',
-    String domain_delimiter = '',
-    String scale = '25nm',
-    String purification = 'STD'}) {
-  var lines = strands.map((strand) => '${strand.vendor_export_name()}'
-      '${delimiter}'
-      '${vendor_sequence_null_aware(strand, domain_delimiter)}'
-      '${delimiter}'
-      '${scale}'
-      '${delimiter}'
-      '${purification}');
+String idt_bulk_export(
+  Iterable<Strand> strands, {
+  String delimiter = ',',
+  String domain_delimiter = '',
+  String scale = '25nm',
+  String purification = 'STD',
+}) {
+  var lines = strands.map(
+    (strand) =>
+        '${strand.vendor_export_name()}'
+        '${delimiter}'
+        '${vendor_sequence_null_aware(strand, domain_delimiter)}'
+        '${delimiter}'
+        '${scale}'
+        '${delimiter}'
+        '${purification}',
+  );
   return lines.join('\n');
 }
 
-Future<List<int>> idt_plates_export(Iterable<Strand> strands, PlateType plate_type, bool column_major_plate,
-    {required String domain_delimiter}) async {
+Future<List<int>> idt_plates_export(
+  Iterable<Strand> strands,
+  PlateType plate_type,
+  bool column_major_plate, {
+  required String domain_delimiter,
+}) async {
   var plate_coord = _PlateCoordinate(plate_type);
   int plate = 1;
   int excel_row = 1;
@@ -277,11 +295,12 @@ Future<List<int>> idt_plates_export(Iterable<Strand> strands, PlateType plate_ty
 
   if (num_plates_needed > 10) {
     throw ExportDNAException(
-        'To put ${strands.length} strands into ${plate_type == PlateType.wells96 ? 96 : 384}-well plates '
-        'requires ${num_plates_needed} plates.\n'
-        'It is currently unsupported to create more than 10 plates in a single design.\n'
-        'Please file an issue requesting this feature here: '
-        'https://github.com/UC-Davis-molecular-computing/scadnano/issues');
+      'To put ${strands.length} strands into ${plate_type == PlateType.wells96 ? 96 : 384}-well plates '
+      'requires ${num_plates_needed} plates.\n'
+      'It is currently unsupported to create more than 10 plates in a single design.\n'
+      'Please file an issue requesting this feature here: '
+      'https://github.com/UC-Davis-molecular-computing/scadnano/issues',
+    );
   }
 
   String filename = 'excel-spreadsheets/idt-plates-empty-${num_plates_needed}plate.xlsx';
@@ -318,7 +337,7 @@ Future<List<int>> idt_plates_export(Iterable<Strand> strands, PlateType plate_ty
       on_final_plate = true;
       //TODO: add a new table with name plate_name; for now we hardcode the number of plates in advance
       // https://github.com/sestegra/spreadsheet_decoder/issues/20
-//      worksheet = self._add_new_excel_plate_sheet(plate_name, workbook);
+      //      worksheet = self._add_new_excel_plate_sheet(plate_name, workbook);
     } else {
       excel_row++;
     }

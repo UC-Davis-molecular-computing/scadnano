@@ -18,9 +18,9 @@ String testIdEditModeChoiceButton(EditModeChoice choice) {
 const EditModeComponentTestID = 'scadnano.EditModeComponent';
 
 AppState initialize_test_state() {
-  return util
-      .default_state()
-      .rebuild((b) => b.ui_state.storables.edit_modes.replace([EditModeChoice.pencil, EditModeChoice.nick]));
+  return util.default_state().rebuild(
+    (b) => b.ui_state.storables.edit_modes.replace([EditModeChoice.pencil, EditModeChoice.nick]),
+  );
 }
 
 void main() {
@@ -33,11 +33,13 @@ void main() {
     setUp(() {
       utils.initialize_test_store(initialize_test_state());
       editModeRef = createRef<EditModeComponent>();
-      mount((ReduxProvider()..store = app.store)(
-        ((ConnectedEditMode()..modes = app.state.ui_state.edit_modes)
-          ..addTestId(EditModeComponentTestID)
-          ..ref = editModeRef)(),
-      ));
+      mount(
+        (ReduxProvider()..store = app.store)(
+          ((ConnectedEditMode()..modes = app.state.ui_state.edit_modes)
+            ..addTestId(EditModeComponentTestID)
+            ..ref = editModeRef)(),
+        ),
+      );
       // final editModeComponent = editModeRef.current;
       // component = getComponentByTestId(editModeComponent, EditModeComponentTestID);
       component = editModeRef!.current;

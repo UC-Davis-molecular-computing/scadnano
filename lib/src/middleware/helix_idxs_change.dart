@@ -28,9 +28,12 @@ helix_idxs_change_middleware(Store<AppState> store, dynamic action, NextDispatch
       if (key_to_idxs.length != action.idx_replacements.length) {
         var msg = 'You tried to assign existing helices ';
 
-        msg += key_to_idxs.entries.where((element) => element.value.length != 1).map((element) {
-          return element.value.join(', ') + " to " + element.key.toString();
-        }).join(" and helices ");
+        msg += key_to_idxs.entries
+            .where((element) => element.value.length != 1)
+            .map((element) {
+              return element.value.join(', ') + " to " + element.key.toString();
+            })
+            .join(" and helices ");
 
         msg +=
             ". Each helix must have a unique new index; make sure all the integers you write are distinct from each other and do not appear elsewhere in the design";

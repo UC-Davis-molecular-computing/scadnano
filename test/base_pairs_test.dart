@@ -278,20 +278,22 @@ main() {
                  TT
        */
       var design = Design(helices: [Helix(idx: 0, max_offset: 40, grid: Grid.square)]);
-      design = design
-          .draw_strand(0, 0)
-          .move(10)
-          .with_deletions([1, 2])
-          .with_insertions([Insertion(6, 1), Insertion(7, 1)])
-          .with_sequence('A' * 10)
-          .commit();
+      design =
+          design
+              .draw_strand(0, 0)
+              .move(10)
+              .with_deletions([1, 2])
+              .with_insertions([Insertion(6, 1), Insertion(7, 1)])
+              .with_sequence('A' * 10)
+              .commit();
       design = design.draw_strand(0, 5).move(-5).with_deletions([2, 3]).with_sequence('TTT').commit();
-      design = design
-          .draw_strand(0, 10)
-          .move(-5)
-          .with_insertions([Insertion(7, 1), Insertion(8, 1)])
-          .with_sequence('T' * 7)
-          .commit();
+      design =
+          design
+              .draw_strand(0, 10)
+              .move(-5)
+              .with_insertions([Insertion(7, 1), Insertion(8, 1)])
+              .with_sequence('T' * 7)
+              .commit();
 
       var base_pairs = design.base_pairs;
       expect(base_pairs.length, 1);
@@ -313,20 +315,22 @@ main() {
                  CT
        */
       var design = Design(helices: [Helix(idx: 0, max_offset: 40, grid: Grid.square)]);
-      design = design
-          .draw_strand(0, 0)
-          .move(10)
-          .with_deletions([1, 2])
-          .with_insertions([Insertion(6, 1), Insertion(7, 1)])
-          .with_sequence('A' * 10)
-          .commit();
+      design =
+          design
+              .draw_strand(0, 0)
+              .move(10)
+              .with_deletions([1, 2])
+              .with_insertions([Insertion(6, 1), Insertion(7, 1)])
+              .with_sequence('A' * 10)
+              .commit();
       design = design.draw_strand(0, 5).move(-5).with_deletions([2, 3]).with_sequence('TTT').commit();
-      design = design
-          .draw_strand(0, 10)
-          .move(-5)
-          .with_insertions([Insertion(7, 1), Insertion(8, 1)])
-          .with_sequence('TTTCTTT')
-          .commit();
+      design =
+          design
+              .draw_strand(0, 10)
+              .move(-5)
+              .with_insertions([Insertion(7, 1), Insertion(8, 1)])
+              .with_sequence('TTTCTTT')
+              .commit();
 
       var base_pairs = design.base_pairs;
       expect(base_pairs.length, 1);
