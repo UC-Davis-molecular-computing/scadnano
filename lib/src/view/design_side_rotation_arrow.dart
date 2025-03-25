@@ -5,16 +5,16 @@ part 'design_side_rotation_arrow.over_react.g.dart';
 UiFactory<DesignSideRotationArrowProps> DesignSideRotationArrow = _$DesignSideRotationArrow;
 
 mixin DesignSideRotationArrowProps on UiProps {
-  double angle_degrees;
-  double radius;
-  String color;
-  bool invert_y;
+  late double angle_degrees;
+  late double radius;
+  late String color;
+  late bool invert_y;
 }
 
 class DesignSideRotationArrowComponent extends UiComponent2<DesignSideRotationArrowProps> {
   @override
   render() {
-    num mag = this.props.radius * 0.93;
+    double mag = this.props.radius * 0.93;
     var path_description = 'M 0 0 '
         'v -$mag '
         'm ${mag / 6.0} ${mag / 4.0} '
@@ -22,7 +22,7 @@ class DesignSideRotationArrowComponent extends UiComponent2<DesignSideRotationAr
         'm -${mag / 6.0} ${mag / 4.0} '
         'L 0 -${mag} ';
 
-    num angle_degrees = this.props.angle_degrees;
+    double angle_degrees = this.props.angle_degrees;
     if (props.invert_y) {
       angle_degrees += 180;
     }

@@ -19,15 +19,15 @@ abstract class PotentialVerticalCrossover
   static Serializer<PotentialVerticalCrossover> get serializer => _$potentialVerticalCrossoverSerializer;
 
   factory PotentialVerticalCrossover({
-    int helix_idx_top,
-    int helix_idx_bot,
-    int offset,
-    bool forward_top,
-    String color,
-    Domain domain_top,
-    Domain domain_bot,
-    DNAEnd dna_end_top,
-    DNAEnd dna_end_bot,
+    required int helix_idx_top,
+    required int helix_idx_bot,
+    required int offset,
+    required bool forward_top,
+    required String color,
+    required Domain domain_top,
+    required Domain domain_bot,
+    required DNAEnd dna_end_top,
+    required DNAEnd dna_end_bot,
   }) = _$PotentialVerticalCrossover._;
 
   @memoized

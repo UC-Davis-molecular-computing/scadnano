@@ -4,6 +4,9 @@
 # Remove the following pattern if you wish to check in your lock file
 # pubspec.lock
 
+# I used this to add `// @dart=2.9` to the top of all dart files
+add-line.py
+
 # Conventional directory for build outputs
 build/
 

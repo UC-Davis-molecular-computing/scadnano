@@ -13,6 +13,7 @@ import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/substrand.dart';
 import '../state/design.dart';
+import '../state/extension.dart';
 import '../state/grid.dart';
 
 import '../json_serializable.dart';
@@ -21,14 +22,12 @@ import '../state/app_state.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
 
-export_cadnano_or_codenano_file_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
+export_cadnano_file_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   next(action);
 
   AppState state = store.state;
   if (action is actions.ExportCadnanoFile) {
     _save_file_cadnano(state, action.whitespace);
-  } else if (action is actions.ExportCodenanoFile) {
-    _save_file_codenano(state);
   }
 }
 
@@ -47,73 +46,13 @@ _save_file_cadnano(AppState state, bool whitespace) async {
   }
 }
 
-_save_file_codenano(AppState state) async {
-  Design design = state.design;
-  if (design == null) {
-    return;
-  }
-
-  var grids = design.groups.values.map((group) => group.grid).toSet();
-  if (!(grids.length == 1 && grids.first == Grid.none)) {
-    var msg = 'Grid must be set to none for all helix groups to export to codenano. '
-        'First convert all grids to none.';
-    window.alert(msg);
-    return;
-  }
-
-  Map design_json = state.design.to_json_serializable(suppress_indent: true);
-
-  // codenano parameters; taken from an example file
-  design_json['parameters'] = {
-    "z_step": 0.332,
-    "helix_radius": 1.0,
-    "bases_per_turn": 10.5,
-    "groove_angle": -2.2175948142986774,
-    "inter_helix_gap": 0.65,
-  };
-
-  // change version to version of codenano when I got the example file
-  design_json[constants.version_key] = '0.4.12';
-
-  List helices_json = design_json[constants.helices_key];
-  for (Map helix_json in helices_json) {
-    // add pitch, roll, and yaw defaults explicitly, and convert to radians
-    for (var angle_key in [constants.pitch_key, constants.roll_key, constants.yaw_key]) {
-      num degrees = helix_json[angle_key];
-      helix_json[angle_key] = degrees == null ? 0.0 : util.to_radians(degrees);
-    }
-    // change "position" to "origin"
-    var pos = helix_json[constants.position_key];
-    helix_json.remove(constants.position_key);
-    helix_json['origin'] = pos;
-  }
-
-  List strands_json = design_json[constants.strands_key];
-  for (Map strand_json in strands_json) {
-    // change color to integer convention
-    if (strand_json.containsKey(constants.color_key)) {
-      var color = strand_json[constants.color_key];
-      var color_int = util.color_hex_to_decimal_int(color);
-      strand_json[constants.color_key] = color_int;
-    }
-    // change "forward" to "right"
-    for (NoIndent no_indent_json in strand_json[constants.substrands_key]) {
-      Map domain_json = no_indent_json.value;
-      if (!domain_json.containsKey(constants.forward_key)) {
-        window.alert('To export, strands cannot have any loopouts. '
-            'Please remove all loopouts before exporting.');
-        return;
-      }
-      bool forward = domain_json[constants.forward_key];
-      domain_json.remove(constants.forward_key);
-      domain_json['right'] = forward;
-    }
-  }
-
-  var encoder = SuppressableIndentEncoder(Replacer(), suppress: true);
-  var json_str = encoder.convert(design_json);
-  var default_filename = path.setExtension(state.ui_state.loaded_filename, '-codenano.json');
-  util.save_file(default_filename, json_str);
+/// Converts the design to the cadnano v2 format.
+/// Please see the spec [`misc/cadnano-format-specs/v2.txt`](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/main/misc/cadnano-format-specs/v2.txt)
+/// for more info on that format.
+String to_cadnano_v2_json(Design design, [String name = ""]) {
+  var encoder = SuppressableIndentEncoder(Replacer());
+  var content_serializable = to_cadnano_v2_serializable(design, name);
+  return encoder.convert(content_serializable);
 }
 
 /// Converts the design to the cadnano v2 format.
@@ -136,8 +75,8 @@ Map<String, dynamic> to_cadnano_v2_serializable(Design design, [String name = ""
     assert(design.groups.length > 0);
     Grid grid_type = Grid.none;
     for (String group_name in design.groups.keys) {
-      grid_used[design.groups[group_name].grid] = true;
-      grid_type = design.groups[group_name].grid;
+      grid_used[design.groups[group_name]!.grid] = true;
+      grid_type = design.groups[group_name]!.grid;
     }
     if (grid_used.length > 1) {
       throw new IllegalCadnanoDesignError(
@@ -154,9 +93,6 @@ Map<String, dynamic> to_cadnano_v2_serializable(Design design, [String name = ""
   //     if num_bases % 21 == 0: then we are on grid honey
   int num_bases = 0;
   for (Helix helix in design.helices.values) {
-    if (helix.max_offset == null) {
-      throw new IllegalCadnanoDesignError('must have helix.max_offset set');
-    }
     num_bases = max(num_bases, helix.max_offset);
   }
 
@@ -173,31 +109,32 @@ Map<String, dynamic> to_cadnano_v2_serializable(Design design, [String name = ""
   // have the scaffold go backward.
   for (Strand strand in design.strands) {
     for (Substrand substrand in strand.substrands) {
-      if (substrand is Loopout) {
-        throw new IllegalCadnanoDesignError(
-            'We cannot handle designs with Loopouts as it is not a cadnano v2 concept');
+      if (substrand is Loopout || substrand is Extension) {
+        throw new IllegalCadnanoDesignError('We cannot handle designs with Loopouts or Extensions, '
+            'since they are not cadnano v2 concepts.');
       }
 
-      bool right_direction;
+      bool cadnano_expected_direction;
 
-      Domain domain = substrand;
+      Domain domain = substrand as Domain;
       if (strand.is_scaffold) {
         if (domain.helix % 2 == 0) {
-          right_direction = domain.forward;
+          cadnano_expected_direction = domain.forward;
         } else {
-          right_direction = !domain.forward;
+          cadnano_expected_direction = !domain.forward;
         }
       } else {
         if (domain.helix % 2 == 0) {
-          right_direction = !domain.forward;
+          cadnano_expected_direction = !domain.forward;
         } else {
-          right_direction = domain.forward;
+          cadnano_expected_direction = domain.forward;
         }
       }
 
-      if (!right_direction) {
+      if (!cadnano_expected_direction) {
         throw new IllegalCadnanoDesignError(
-            'We can only convert designs where even helices have the scaffold going forward and odd helices have the scaffold going backward see the spec v2.txt Note 4. ${domain}');
+            'We can only convert designs where even helices have the scaffold going forward and odd helices '
+            'have the scaffold going backward see the spec v2.txt Note 4. ${domain}');
       }
     }
   }
@@ -210,15 +147,6 @@ Map<String, dynamic> to_cadnano_v2_serializable(Design design, [String name = ""
   }
 
   return dct;
-}
-
-/// Converts the design to the cadnano v2 format.
-/// Please see the spec [`misc/cadnano-format-specs/v2.txt`](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/main/misc/cadnano-format-specs/v2.txt)
-/// for more info on that format.
-String to_cadnano_v2_json(Design design, [String name = ""]) {
-  var encoder = SuppressableIndentEncoder(Replacer());
-  var content_serializable = to_cadnano_v2_serializable(design, name);
-  return encoder.convert(content_serializable);
 }
 
 int _get_multiple_of_x_sup_closest_to_y(int x, int y) {
@@ -236,8 +164,8 @@ Map<int, int> _cadnano_v2_fill_blank(
 
     if (design_grid == Grid.square || design_grid == Grid.honeycomb) {
       assert(helix.grid_position != null);
-      helix_dct['row'] = helix.grid_position.v;
-      helix_dct['col'] = helix.grid_position.h;
+      helix_dct['row'] = helix.grid_position!.v;
+      helix_dct['col'] = helix.grid_position!.h;
     }
 
     helix_dct['scaf'] = [];
@@ -275,12 +203,11 @@ void _cadnano_v2_place_strand(Strand strand, Map<String, dynamic> dct, Map<int, 
           'cannot convert Strand ${strand} to cadnanov2 format, since it has Loopouts');
     }
 
-    int which_helix_id = helices_ids_reverse[domain.helix];
+    int which_helix_id = helices_ids_reverse[domain.helix]!;
     Map<String, dynamic> which_helix = dct['vstrands'][which_helix_id];
 
     if (strand_type == 'stap') {
-      Color color = strand.color != null ? strand.color : new RgbColor(0, 0, 0);
-      which_helix['stap_colors'].add(_cadnano_v2_color_of_stap(color, domain));
+      which_helix['stap_colors'].add(_cadnano_v2_color_of_stap(strand.color, domain));
     }
 
     _cadnano_v2_place_strand_segment(which_helix, domain, strand_type);
@@ -292,7 +219,7 @@ void _cadnano_v2_place_strand(Strand strand, Map<String, dynamic> dct, Map<int, 
             'cannot convert Strand ${strand} to cadnanov2 format, since it has Loopouts');
       }
 
-      int next_helix_id = helices_ids_reverse[next_domain.helix];
+      int next_helix_id = helices_ids_reverse[next_domain.helix]!;
       Map<String, dynamic> next_helix = dct['vstrands'][next_helix_id];
       _cadnano_v2_place_crossover(which_helix, next_helix, domain, next_domain, strand_type);
     }
@@ -422,9 +349,21 @@ void _cadnano_v2_place_crossover(Map<String, dynamic> helix_from_dct, Map<String
     helix_from_dct[strand_type][end_from - 1]
         .setRange(2, helix_from_dct[strand_type][end_from - 1].length, [helix_to, start_to]);
     helix_to_dct[strand_type][end_to - 1].setRange(0, 2, [helix_from, start_from]);
+    if (helix_from_dct['row'] % 2 != helix_to_dct['row'] % 2) {
+      throw new IllegalCadnanoDesignError('''\
+Paranemic crossovers are only allowed between helices that have the same parity of 
+row number, here helix num ${helix_from_dct['num']} and helix num ${helix_to_dct['num']} 
+have different parity of row number: respectively ${helix_from_dct['row']} and ${helix_to_dct['row']}''');
+    }
   } else if (!forward_from && !forward_to) {
     helix_from_dct[strand_type][start_from]
         .setRange(2, helix_from_dct[strand_type][start_from].length, [helix_to, end_to - 1]);
-    helix_to_dct[strand_type][start_to].setRange(0, 2, [helix_from, end_from - 1]);
+    helix_to_dct[strand_type][end_to - 1].setRange(0, 2, [helix_from, start_from]);
+    if (helix_from_dct['row'] % 2 != helix_to_dct['row'] % 2) {
+      throw new IllegalCadnanoDesignError('''\
+Paranemic crossovers are only allowed between helices that have the same parity of 
+row number, here helix num ${helix_from_dct['num']} and helix num ${helix_to_dct['num']} 
+have different parity of row number: respectively ${helix_from_dct['row']} and ${helix_to_dct['row']}''');
+    }
   }
 }

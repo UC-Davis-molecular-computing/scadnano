@@ -7,6 +7,7 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
+import 'package:scadnano/src/reducers/app_ui_state_reducer.dart';
 
 import '../util.dart';
 import 'design_main_strand_and_domain_texts.dart';
@@ -44,56 +45,52 @@ import 'pure_component.dart';
 
 part 'design_main_strand.over_react.g.dart';
 
-@Factory()
+typedef ContextMenuStrand = List<ContextMenuItem> Function(Strand strand,
+    {required Domain domain, required Address address, ModificationType modification_type});
+
 UiFactory<DesignMainStrandProps> DesignMainStrand = _$DesignMainStrand;
 
-@Props()
-mixin DesignMainStrandPropsMixin on UiProps {
-  Strand strand;
+mixin DesignMainStrandProps on UiProps implements TransformByHelixGroupPropsMixin {
+  late Strand strand;
 
-  BuiltSet<int> side_selected_helix_idxs; // null if only_display_selected_helices is false
-  bool only_display_selected_helices;
+  BuiltSet<int>? side_selected_helix_idxs; // null if only_display_selected_helices is false
+  late bool only_display_selected_helices;
 
-  BuiltSet<DNAEnd> selected_ends_in_strand;
-  BuiltSet<Crossover> selected_crossovers_in_strand;
-  BuiltSet<Loopout> selected_loopouts_in_strand;
-  BuiltSet<Extension> selected_extensions_in_strand;
-  BuiltSet<Domain> selected_domains_in_strand;
-  BuiltSet<SelectableDeletion> selected_deletions_in_strand;
-  BuiltSet<SelectableInsertion> selected_insertions_in_strand;
-  BuiltSet<SelectableModification> selected_modifications_in_strand;
+  late BuiltSet<DNAEnd> selected_ends_in_strand;
+  late BuiltSet<Crossover> selected_crossovers_in_strand;
+  late BuiltSet<Loopout> selected_loopouts_in_strand;
+  late BuiltSet<Extension> selected_extensions_in_strand;
+  late BuiltSet<Domain> selected_domains_in_strand;
+  late BuiltSet<SelectableDeletion> selected_deletions_in_strand;
+  late BuiltSet<SelectableInsertion> selected_insertions_in_strand;
+  late BuiltSet<SelectableModification> selected_modifications_in_strand;
 
-  BuiltMap<int, Helix> helices;
-  BuiltMap<String, HelixGroup> groups;
-  Geometry geometry;
+  late BuiltMap<int, Helix> helices;
+  late BuiltMap<String, HelixGroup> groups;
+  late Geometry geometry;
 
-  bool selected;
-  bool drawing_potential_crossover;
-  bool moving_dna_ends;
-  DNAAssignOptions dna_assign_options;
-  bool modification_display_connector;
-  bool show_dna;
-  bool show_modifications;
-  bool display_reverse_DNA_right_side_up;
-  bool show_strand_names;
-  bool show_strand_labels;
-  bool show_domain_names;
-  bool show_domain_labels;
-  num strand_name_font_size;
-  num strand_label_font_size;
-  num domain_name_font_size;
-  num domain_label_font_size;
-  num modification_font_size;
-  bool invert_y;
-  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
-  bool retain_strand_color_on_selection;
+  late bool selected;
+  late bool drawing_potential_crossover;
+  late bool moving_dna_ends;
+  late DNAAssignOptions dna_assign_options;
+  late bool modification_display_connector;
+  late bool show_dna;
+  late bool show_modifications;
+  late bool display_reverse_DNA_right_side_up;
+  late bool show_strand_names;
+  late bool show_strand_labels;
+  late bool show_domain_names;
+  late bool show_domain_labels;
+  late double strand_name_font_size;
+  late double strand_label_font_size;
+  late double domain_name_font_size;
+  late double domain_label_font_size;
+  late double modification_font_size;
+  late BuiltMap<int, Point<double>> helix_idx_to_svg_position_map;
+  late bool retain_strand_color_on_selection;
 }
 
-class DesignMainStrandProps = UiProps with DesignMainStrandPropsMixin, TransformByHelixGroupPropsMixin;
-
-@Component2()
-class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
-    with PureComponent, TransformByHelixGroup<DesignMainStrandProps> {
+class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with PureComponent {
   @override
   render() {
     if (props.strand.substrands.length == 0) {
@@ -113,22 +110,22 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     }
 
     // only store enough of helix svg positions for helices this strand has
-    Map<int, Point<num>> helix_idx_to_svg_position_y_map_on_strand_unbuilt = {};
+    Map<int, Point<double>> helix_idx_to_svg_position_y_map_on_strand_unbuilt = {};
     var helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map;
     for (var domain in props.strand.domains) {
       int helix_idx = domain.helix;
-      if (props.side_selected_helix_idxs == null || props.side_selected_helix_idxs.contains(helix_idx)) {
+      if (props.side_selected_helix_idxs == null || props.side_selected_helix_idxs!.contains(helix_idx)) {
         // If props.side_selected_helix_idxs == null, then we are displaying all helices and need to
         // include this helix. Otherwise we are not displaying unselected helices.
         // In that case if props.side_selected_helix_idxs.contains(helix_idx) is false,
         // then helix_idx will not even be in helix_idx_to_svg_position_map.
         // since the memoized getter for AppState.helix_idx_to_svg_position_map skips it.
         // But we won't need it anyway in that case.
-        var svg_pos = helix_idx_to_svg_position_map[helix_idx];
+        var svg_pos = helix_idx_to_svg_position_map[helix_idx]!;
         helix_idx_to_svg_position_y_map_on_strand_unbuilt[domain.helix] = svg_pos;
       }
     }
-    BuiltMap<int, Point<num>> helix_idx_to_svg_position_y_map_on_strand =
+    BuiltMap<int, Point<double>> helix_idx_to_svg_position_y_map_on_strand =
         helix_idx_to_svg_position_y_map_on_strand_unbuilt.build();
 
     return (Dom.g()
@@ -252,7 +249,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     app.dispatch(action);
   }
 
-  assign_domain_name_complement_from_bound_strands({Domain domain}) {
+  assign_domain_name_complement_from_bound_strands(Domain domain) {
     if (app.state.ui_state.select_mode_state.domains_selectable) {
       List<Domain> domains_selected = app.state.ui_state.selectables_store.selected_domains.toList();
 
@@ -276,22 +273,20 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       app.disable_keyboard_shortcuts_while(
           () => ask_for_add_modification(props.strand, substrand, address, type));
 
-  focus_base_oxview(Strand strand, Substrand substrand, Address address, ModificationType type) {
+  focus_base_oxview(Strand strand, Domain domain, Address address, ModificationType type) {
     int strand_idx = app.state.design.strands.indexOf(strand);
-    int nt_idx_in_strand = address != null ? clicked_strand_dna_idx(substrand, address, strand) : 0;
+    int nt_idx_in_strand = clicked_strand_dna_idx(domain, address, strand);
     String js_highlight_base = '''\
 let base = systems[0].strands[${strand_idx}].getMonomers()[${nt_idx_in_strand}];
 api.findElement(base);
 api.selectElements([base]);''';
-    String text_blob_type = blob_type_to_string(BlobType.text);
-    Blob blob_js_highlight_base = new Blob([js_highlight_base], text_blob_type);
+    Blob blob_js_highlight_base = new Blob([js_highlight_base], blob_type_to_string(BlobType.text));
     Map<String, dynamic> message_js_commands = {
       'message': 'iframe_drop',
       'files': [blob_js_highlight_base],
       'ext': ['js'],
     };
-    app.view.oxview_view.frame.contentWindow
-        ?.postMessage(message_js_commands, 'https://sulcgroup.github.io/oxdna-viewer/');
+    app.view.oxview_view.frame.contentWindow?.postMessage(message_js_commands, constants.OXVIEW_URL);
   }
 
   assign_scale_purification_fields() =>
@@ -313,19 +308,23 @@ api.selectElements([base]);''';
         () => ask_for_label(props.strand, substrand, get_selected_domains()));
   }
 
-  ReactElement _insertions() {
+  ReactElement? _insertions() {
     List<ReactElement> paths = [];
     for (Domain domain in props.strand.domains) {
-      Helix helix = props.helices[domain.helix];
-      if (should_draw_domain(domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
+      Helix helix = props.helices[domain.helix]!;
+      var group = props.groups[helix.group]!;
+      var geometry = group.geometry ?? props.geometry;
+      if (should_draw_domain_on_strand(
+          domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
         for (var selectable_insertion in domain.selectable_insertions) {
           paths.add((DesignMainStrandInsertion()
             ..selectable_insertion = selectable_insertion
             ..selected = props.selected_insertions_in_strand.contains(selectable_insertion)
             ..helix = helix
+            ..geometry = geometry
             ..color = props.strand.color
-            ..transform = transform_of_helix(domain.helix)
-            ..svg_position_y = props.helix_idx_to_svg_position_map[helix.idx].y
+            ..transform = transform_of_helix2(props, domain.helix)
+            ..svg_position_y = props.helix_idx_to_svg_position_map[helix.idx]!.y
             ..display_reverse_DNA_right_side_up = props.display_reverse_DNA_right_side_up
             ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
             ..key = util.id_insertion(domain, selectable_insertion.insertion.offset))());
@@ -343,25 +342,29 @@ api.selectElements([base]);''';
   /// returns CSS transform String that can be passed to SVG components that need to be transformed
   /// specific to a HelixGroup.
   String compute_helix_transform(int helix_idx) {
-    Helix helix = props.helices[helix_idx];
-    var group = props.groups[helix.group];
+    Helix helix = props.helices[helix_idx]!;
+    var group = props.groups[helix.group]!;
     var transform_str = group.transform_str(props.geometry);
     return transform_str;
   }
 
-  ReactElement _deletions() {
+  ReactElement? _deletions() {
     List<ReactElement> paths = [];
     for (Domain domain in props.strand.domains) {
-      Helix helix = props.helices[domain.helix];
-      if (should_draw_domain(domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
+      Helix helix = props.helices[domain.helix]!;
+      if (should_draw_domain_on_strand(
+          domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
+        var group = props.groups[helix.group]!;
+        var geometry = group.geometry ?? props.geometry;
         for (var selectable_deletion in domain.selectable_deletions) {
           String id = util.id_deletion(domain, selectable_deletion.offset);
           paths.add((DesignMainStrandDeletion()
             ..selectable_deletion = selectable_deletion
             ..helix = helix
+            ..geometry = geometry
             ..selected = props.selected_deletions_in_strand.contains(selectable_deletion)
-            ..transform = transform_of_helix(domain.helix)
-            ..svg_position_y = props.helix_idx_to_svg_position_map[domain.helix].y
+            ..transform = transform_of_helix2(props, domain.helix)
+            ..svg_position_y = props.helix_idx_to_svg_position_map[domain.helix]!.y
             ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
             ..key = id)());
         }
@@ -411,9 +414,9 @@ api.selectElements([base]);''';
   }
 
   List<ContextMenuItem> context_menu_strand(Strand strand,
-      {@required Substrand substrand,
-      @required Address address,
-      ModificationType type = ModificationType.internal}) {
+      {required Domain domain,
+      required Address address,
+      ModificationType modification_type = ModificationType.internal}) {
     var items = [
       ContextMenuItem(
           title: 'edit DNA',
@@ -442,12 +445,12 @@ assigned, assign the complementary DNA sequence to this strand.
           ].build()),
       ContextMenuItem(
         title: 'add modification',
-        on_click: () => add_modification(substrand, address, type),
+        on_click: () => add_modification(domain, address, modification_type),
       ),
       if (app.state.ui_state.show_oxview)
         ContextMenuItem(
           title: 'focus in oxView',
-          on_click: () => focus_base_oxview(props.strand, substrand, address, type),
+          on_click: () => focus_base_oxview(props.strand, domain, address, modification_type),
         ),
       ContextMenuItem(
           title: 'edit vendor fields',
@@ -493,12 +496,12 @@ assigned, assign the complementary DNA sequence to this strand.
             ContextMenuItem(
                 title: 'set domain color',
                 on_click: () => app.dispatch(
-                    actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: substrand))),
-            if (substrand.color != null)
+                    actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: domain))),
+            if (domain.color != null)
               ContextMenuItem(
                   title: 'remove domain color',
                   on_click: () => app.dispatch(actions.StrandOrSubstrandColorSet(
-                      strand: props.strand, substrand: substrand, color: null))),
+                      strand: props.strand, substrand: domain, color: null))),
           ].build()),
       ContextMenuItem(
           title: 'edit name',
@@ -517,23 +520,32 @@ assigned, assign the complementary DNA sequence to this strand.
                       'remove strand name'))),
             ContextMenuItem(
               title: 'set domain name',
-              on_click: () => set_domain_names(get_selected_domains()),
+              on_click: () => set_domain_names(
+                  util.add_if_not_null(app.state.ui_state.selectables_store.selected_domains, domain)),
             ),
             ContextMenuItem(
               title: 'assign domain name complement from bound strands',
               tooltip: '''\
 If other strands bound to this strand (or the selected strands) have domain names already 
-assigned, assign the complementary domain names sequence to this strand. To use this
-feature for individual domains, set select mode to domain.
-''',
-              on_click: () => assign_domain_name_complement_from_bound_strands(domain: substrand),
+assigned, assign the complementary domain names sequence to this strand.
+
+To use this feature for individual domains instead of all domains on the strand, 
+set select mode to domain. Then only clicked and selected domains will be affected.''',
+              on_click: () => assign_domain_name_complement_from_bound_strands(domain),
             ),
-            if (substrand.name != null)
+            if (domain.name != null)
               ContextMenuItem(
                   title: 'remove domain name',
-                  on_click: () => app.dispatch(actions.BatchAction(
-                      get_selected_domains().map((d) => actions.SubstrandNameSet(name: null, substrand: d)),
-                      'remove domain names'))),
+                  on_click: () {
+                    var domains =
+                        util.add_if_not_null(app.state.ui_state.selectables_store.selected_domains, domain);
+                    var action = domains.length > 1
+                        ? actions.BatchAction(
+                            domains.map((d) => actions.SubstrandNameSet(name: null, substrand: d)).toList(),
+                            'remove domain names')
+                        : actions.SubstrandNameSet(name: null, substrand: domain);
+                    app.dispatch(action);
+                  }),
           ].build()),
       ContextMenuItem(
           title: 'edit label',
@@ -552,14 +564,21 @@ feature for individual domains, set select mode to domain.
                       'remove strand label'))),
             ContextMenuItem(
               title: 'set domain label',
-              on_click: () => set_domain_labels(substrand, get_selected_domains()),
+              on_click: () => set_domain_labels(domain, get_selected_domains()),
             ),
-            if (substrand.label != null)
+            if (domain.label != null)
               ContextMenuItem(
                   title: 'remove domain label',
-                  on_click: () => app.dispatch(actions.BatchAction(
-                      get_selected_domains().map((d) => actions.SubstrandLabelSet(label: null, substrand: d)),
-                      'remove domain labels'))),
+                  on_click: () {
+                    var domains =
+                        util.add_if_not_null(app.state.ui_state.selectables_store.selected_domains, domain);
+                    var action = domains.length > 1
+                        ? actions.BatchAction(
+                            domains.map((d) => actions.SubstrandLabelSet(label: null, substrand: d)).toList(),
+                            'remove domain labels')
+                        : actions.SubstrandLabelSet(label: null, substrand: domain);
+                    app.dispatch(action);
+                  }),
           ].build()),
       ContextMenuItem(
           title: 'reflect',
@@ -627,14 +646,15 @@ after:
           ].build()),
       ContextMenuItem(
           title: 'add extension',
-          on_click: () => app.disable_keyboard_shortcuts_while(() => ask_for_add_extension(strand)),
+          on_click: () => app.disable_keyboard_shortcuts_while(
+              () => ask_for_add_extension(strand, (modification_type == ModificationType.five_prime))),
           disabled: strand.has_5p_extension && strand.has_3p_extension),
     ];
 
     return items;
   }
 
-  Future<void> ask_for_add_extension(Strand strand) async {
+  Future<void> ask_for_add_extension(Strand strand, bool five_prime) async {
     if (strand.has_5p_extension && strand.has_3p_extension) {
       // This shouldn't be reachable since the context menu should not include the
       // add extension option in this case, but let's check just in case.
@@ -651,19 +671,22 @@ after:
     }
     assert(options.isNotEmpty);
 
-    int selected_index = 0;
+    int selected_radio_index = 0;
+    if (!five_prime && (options.length > 1)) {
+      selected_radio_index = 1;
+    }
     int extension_end_idx = 0;
     int num_bases_idx = 1;
-    var items = List<DialogItem>.filled(2, null);
+    var items = util.FixedList<DialogItem>(2);
     items[extension_end_idx] =
-        DialogRadio(label: 'end of strand', options: options, selected_idx: selected_index);
+        DialogRadio(label: 'end of strand', options: options, selected_idx: selected_radio_index);
     items[num_bases_idx] = DialogInteger(
         label: 'number of bases', value: 5, tooltip: 'number of bases to include in this extension');
 
     var dialog = Dialog(
         title: 'add extension', items: items, type: DialogType.add_extension, use_saved_response: false);
 
-    List<DialogItem> results = await util.dialog(dialog);
+    List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
 
     String extension_end = (results[extension_end_idx] as DialogRadio).value;
@@ -684,8 +707,8 @@ after:
     app.dispatch(action);
   }
 
-  select_index_for_one_strand(String vendor_option, Set<String> options, bool default_index) {
-    if (options.contains(vendor_option)) {
+  select_index_for_one_strand(String? vendor_option, Set<String> options, bool default_index) {
+    if (vendor_option != null && options.contains(vendor_option)) {
       return options.toList().indexOf(vendor_option);
     } else if (default_index) {
       return 1;
@@ -753,7 +776,7 @@ after:
     int purification_custom_idx = 5;
     var all_strands = app.state.ui_state.selectables_store.selected_strands.toList();
     if (all_strands.length == 0) all_strands.add(props.strand);
-    var items = List<DialogItem>.filled(6, null, growable: true);
+    var items = util.FixedList<DialogItem>(6);
     var options_purification = {"", "STD", "PAGE", "HPLC", "IEHPLC", "RNASE", "DUALHPLC", "PAGEHPLC"};
     var options_scale = {
       "",
@@ -832,7 +855,7 @@ PAGEHPLC : Dual PAGE & HPLC
           scale_options_idx: [custom_scale_check_idx],
           purification_options_idx: [custom_purification_check_idx]
         });
-    List<DialogItem> results = await util.dialog(dialog);
+    List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
     String scale, purification;
 
@@ -851,9 +874,9 @@ PAGEHPLC : Dual PAGE & HPLC
     if (all_strands.length > 1) {
       for (var strand in all_strands) {
         var vendor_fields = VendorFields(
-            scale: (scale == "" && strand.vendor_fields?.scale != null) ? strand.vendor_fields.scale : scale,
-            purification: (purification == "" && strand.vendor_fields?.purification != null)
-                ? strand.vendor_fields.purification
+            scale: (scale == "" && strand.vendor_fields != null) ? strand.vendor_fields!.scale : scale,
+            purification: (purification == "" && strand.vendor_fields != null)
+                ? strand.vendor_fields!.purification
                 : purification,
             plate: strand.vendor_fields?.plate,
             well: strand.vendor_fields?.well);
@@ -874,12 +897,12 @@ PAGEHPLC : Dual PAGE & HPLC
     int well_idx = 1;
     var all_strands = app.state.ui_state.selectables_store.selected_strands.toList();
     if (all_strands.length == 0) all_strands.add(props.strand);
-    var items = List<DialogItem>.filled(2, null, growable: true);
+    var items = util.FixedList<DialogItem>(2);
 
     items[plate_idx] = DialogText(label: "plate", value: select_plate_number(all_strands) ?? "");
     items[well_idx] = DialogText(
         label: "well",
-        value: props.strand.vendor_fields?.well != null ? props.strand.vendor_fields.well : "",
+        value: props.strand.vendor_fields?.well != null ? props.strand.vendor_fields!.well! : "",
         tooltip: all_strands.length > 1 ? "Only individual strands can have a well assigned." : "");
     var dialog = Dialog(
         title: "assign plate/well vendor fields",
@@ -887,7 +910,7 @@ PAGEHPLC : Dual PAGE & HPLC
         items: items,
         disable: {if (all_strands.length > 1) well_idx});
 
-    List<DialogItem> results = await util.dialog(dialog);
+    List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
     String well, plate;
     plate = (results[plate_idx] as DialogText).value;
@@ -898,10 +921,10 @@ PAGEHPLC : Dual PAGE & HPLC
           conflicting_strands.add("${strand.address_5p}");
         else {
           var vendor_fields = VendorFields(
-              scale: strand.vendor_fields.scale,
-              purification: strand.vendor_fields.purification,
-              plate: (plate == "") ? strand.vendor_fields.plate : plate,
-              well: (strand.vendor_fields?.well != null) ? strand.vendor_fields.well : "");
+              scale: strand.vendor_fields!.scale,
+              purification: strand.vendor_fields!.purification,
+              plate: (plate == "") ? strand.vendor_fields!.plate : plate,
+              well: (strand.vendor_fields?.well != null) ? strand.vendor_fields!.well : "");
           var action = actions.PlateWellVendorFieldsAssign(vendor_fields: vendor_fields, strand: strand);
           app.dispatch(action);
         }
@@ -912,8 +935,8 @@ PAGEHPLC : Dual PAGE & HPLC
         conflicting_strands.add("${props.strand.address_5p}");
       else {
         var vendor_fields = VendorFields(
-            scale: props.strand.vendor_fields.scale,
-            purification: props.strand.vendor_fields.purification,
+            scale: props.strand.vendor_fields!.scale,
+            purification: props.strand.vendor_fields!.purification,
             plate: plate,
             well: well);
         var action = actions.PlateWellVendorFieldsAssign(vendor_fields: vendor_fields, strand: props.strand);
@@ -951,12 +974,12 @@ PAGEHPLC : Dual PAGE & HPLC
 
   Future<void> ask_for_strand_name(Strand strand, BuiltSet<Strand> selected_strands) async {
     int name_idx = 0;
-    var items = List<DialogItem>.filled(1, null);
+    var items = util.FixedList<DialogItem>(1);
     items[name_idx] = DialogText(label: 'name', value: props.strand.name ?? '');
     var dialog = Dialog(
         title: 'set strand name', type: DialogType.set_strand_name, items: items, use_saved_response: false);
 
-    List<DialogItem> results = await util.dialog(dialog);
+    List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
 
     String name = (results[name_idx] as DialogText).value;
@@ -967,15 +990,16 @@ PAGEHPLC : Dual PAGE & HPLC
 
   Future<void> ask_for_domain_names(BuiltSet<Domain> domains) async {
     int name_idx = 0;
-    var items = List<DialogItem>.filled(1, null);
+    var items = util.FixedList<DialogItem>(1);
     items[name_idx] = DialogText(label: 'name', value: "");
+    var first_domain = domains.first;
     var dialog = Dialog(
-        title: 'set ${domains.first.type_description()} name',
+        title: 'set ${first_domain.type_description()} name',
         items: items,
         type: DialogType.set_domain_name,
         use_saved_response: false);
 
-    List<DialogItem> results = await util.dialog(dialog);
+    List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
 
     String name = (results[name_idx] as DialogText).value;
@@ -984,21 +1008,22 @@ PAGEHPLC : Dual PAGE & HPLC
   }
 }
 
+//TODO: make substrand nullable
 Future<void> ask_for_label<T extends SelectableMixin>(
-    Strand strand, Substrand substrand, BuiltSet<T> selected_strands) async {
+    Strand strand, Substrand? substrand, BuiltSet<T> selected) async {
   String part_name = 'strand';
   if (substrand != null) {
     part_name = substrand.type_description();
   }
 
   int label_idx = 0;
-  var items = List<DialogItem>.filled(1, null);
+  var items = util.FixedList<DialogItem>(1);
 
   String existing_label = '';
   if (substrand == null && strand.label != null) {
-    existing_label = strand.label;
+    existing_label = strand.label!;
   } else if (substrand != null && substrand.label != null) {
-    existing_label = substrand.label;
+    existing_label = substrand.label!;
   }
 
   items[label_idx] = DialogTextArea(
@@ -1014,19 +1039,30 @@ Future<void> ask_for_label<T extends SelectableMixin>(
       items: items,
       use_saved_response: false);
 
-  List<DialogItem> results = await util.dialog(dialog);
+  List<DialogItem>? results = await util.dialog(dialog);
   if (results == null) return;
 
   String label = (results[label_idx] as DialogTextArea).value;
 
   actions.UndoableAction action;
   if (substrand == null) {
-    action = batch_if_multiple_selected(label_set_strand_action_creator(label), strand,
-        selected_strands as BuiltSet<Strand>, "set strand label");
+    // setting strand label(s)
+    action = batch_if_multiple_selected(
+        label_set_strand_action_creator(label), strand, selected as BuiltSet<Strand>, "set strand label");
   } else {
-    action = actions.BatchAction(
-        selected_strands.map((s) => actions.SubstrandLabelSet(label: label, substrand: (s as Substrand))),
-        "set substrand labels");
+    // setting substrand label(s)
+    Set<Substrand> selected_substrands = Set<Substrand>.from(selected);
+    if (!selected_substrands.contains(substrand)) {
+      selected_substrands.add(substrand);
+    }
+    if (selected_substrands.length == 1) {
+      assert(selected_substrands.first == substrand);
+      action = actions.SubstrandLabelSet(label: label, substrand: substrand);
+    } else {
+      action = actions.BatchAction(
+          selected_substrands.map((Substrand s) => actions.SubstrandLabelSet(label: label, substrand: s)),
+          "set ${part_name} labels");
+    }
   }
 
   app.dispatch(action);
@@ -1034,7 +1070,7 @@ Future<void> ask_for_label<T extends SelectableMixin>(
 
 actions.UndoableAction batch_if_multiple_selected(StrandActionCreator action_creator, Strand strand,
     BuiltSet<Strand> selected_strands, String short_description) {
-  actions.Action action;
+  actions.UndoableAction action;
   if (selected_strands.isEmpty || selected_strands.length == 1 && selected_strands.first == strand) {
     // set for single strand if nothing is selected, or exactly this strand is selected
     action = action_creator(strand);
@@ -1053,7 +1089,7 @@ actions.UndoableAction batch_if_multiple_selected(StrandActionCreator action_cre
 // as opposed to just using "selected_strands"
 BuiltSet<Domain> get_selected_domains() {
   return BuiltSet<Domain>(app.state.ui_state.selectables_store.selected_strands
-          .map((s) => s.substrands)
+          .map((s) => s.domains)
           .expand((l) => l)
           .toBuiltSet())
       .union(app.state.ui_state.selectables_store.selected_domains);
@@ -1092,13 +1128,14 @@ String tooltip_text(Strand strand) =>
     "    5' end=${tooltip_end(strand.first_domain, strand.dnaend_5p)}\n" +
     "    3' end=${tooltip_end(strand.last_domain, strand.dnaend_3p)}\n" +
     (strand.label == null ? "" : "    label=${strand.label.toString()}\n") +
-    (strand.vendor_fields == null ? "" : "    vendor fields=\n${strand.vendor_fields.tooltip()}");
+    (strand.vendor_fields == null ? "" : "    vendor fields=\n${strand.vendor_fields!.tooltip()}");
 
 String tooltip_end(Domain ss, DNAEnd end) => "(helix=${ss.helix}, offset=${end.offset_inclusive})";
 
-bool should_draw_domain(
-        Domain ss, BuiltSet<int> side_selected_helix_idxs, bool only_display_selected_helices) =>
-    !only_display_selected_helices || side_selected_helix_idxs.contains(ss.helix);
+/// [side_selected_helix_idxs] is `null` if [only_display_selected_helices] is false.
+bool should_draw_domain_on_strand(
+        Domain domain, BuiltSet<int>? side_selected_helix_idxs, bool only_display_selected_helices) =>
+    !only_display_selected_helices || side_selected_helix_idxs!.contains(domain.helix);
 
 class DNARemoveOptions {
   bool remove_complements; // remove from this strand and all strands bound to it
@@ -1127,7 +1164,7 @@ Future<void> ask_for_assign_dna_sequence(Strand strand, DNAAssignOptions options
   int idx_assign_complements = 5;
   int idx_disable_change_sequence_bound_strand = 6;
 
-  List<DialogItem> items = [null, null, null, null, null, null, null];
+  var items = util.FixedList<DialogItem>(idx_disable_change_sequence_bound_strand + 1);
 
   items[idx_sequence] =
       DialogTextArea(label: 'sequence', value: strand.dna_sequence ?? '', rows: 4, cols: 80);
@@ -1136,12 +1173,35 @@ Future<void> ask_for_assign_dna_sequence(Strand strand, DNAAssignOptions options
   items[idx_predefined_sequence_name] =
       DialogRadio(label: 'predefined DNA sequence', options: DNASequencePredefined.display_names);
   items[idx_rotation] =
-      DialogInteger(label: 'rotation of predefined DNA sequence', value: options.m13_rotation);
-  items[idx_assign_complements] =
-      DialogCheckbox(label: 'assign complement to bound strands', value: options.assign_complements);
+      DialogInteger(label: 'rotation of predefined DNA sequence', value: options.m13_rotation, tooltip: '''\
+The standard M13 sequence (p7249) is circular, so GenBank lists its bases 
+starting at a particular point we call 0. The "rotation" here means to 
+advance the start of the sequence by this many bases from the one GenBank
+calls position 0. For example, for the circular sequence AACCGGTT:
+- rotation 0: AACCGGTT
+- rotation 1: ACCGGTTA
+- rotation 2: CCGGTTAA
+- rotation 3: CGGTTAAC
+- rotation 4: GGTTAACC
+- ...''');
+  items[idx_assign_complements] = DialogCheckbox(
+      label: 'assign complement to bound strands', value: options.assign_complements, tooltip: '''\
+If checked, then assign the complement of the DNA sequence to all strands that
+are bound to this one. The typical use of this option is that you assign a 
+sequence such as M13 to the scaffold strand, and this option will automatically 
+assign the complement of the M13 sequence to all staple strands bound to 
+the scaffold.''');
   items[idx_disable_change_sequence_bound_strand] = DialogCheckbox(
       label: 'disallow assigning different sequence to bound strand with existing sequence',
-      value: options.disable_change_sequence_bound_strand);
+      value: options.disable_change_sequence_bound_strand,
+      tooltip: '''\
+If checked, then if a bound strand already has a DNA sequence assigned, this 
+option will prevent you from assigning a different DNA sequence to it.
+This is useful if you have assigned DNA to some strands, but not others, and you 
+want to use the "assign complement to bound strands" option to the unassigned 
+strands, and you believe that the sequence being assigned is compatible with the 
+already-assigned strands, but want to have scadnano check this for you so you 
+don't accidentally change an existing sequence.''');
   items[idx_predefine_sequence_link] = DialogLink(
       label: 'Information about sequence variants',
       link: 'https://scadnano-python-package.readthedocs.io/en/latest/#scadnano.M13Variant');
@@ -1159,7 +1219,7 @@ Future<void> ask_for_assign_dna_sequence(Strand strand, DNAAssignOptions options
         idx_rotation: [idx_use_predefined_dna_sequence],
         idx_disable_change_sequence_bound_strand: [idx_assign_complements],
       });
-  List<DialogItem> results = await util.dialog(dialog);
+  List<DialogItem>? results = await util.dialog(dialog);
   if (results == null) return;
 
   String dna_sequence;
@@ -1201,7 +1261,7 @@ Future<void> ask_for_remove_dna_sequence(Strand strand, BuiltSet<Strand> selecte
     DialogCheckbox(label: 'remove from bound strands', value: true),
     DialogCheckbox(label: 'remove from all strands', value: false),
   ]);
-  List<DialogItem> results = await util.dialog(dialog);
+  List<DialogItem>? results = await util.dialog(dialog);
   if (results == null) return;
 
   bool remove_complements = (results[0] as DialogCheckbox).value;
@@ -1219,11 +1279,10 @@ Future<void> ask_for_color(Strand strand, BuiltSet<Strand> selected_strands) asy
   var dialog = Dialog(title: 'set color', type: DialogType.set_color, items: [
     DialogText(
       label: 'color',
-//      label: 'color (hex rgb, e.g., "#00ff00")',
       value: strand.color.toHexColor().toCssString(),
     ),
   ]);
-  List<DialogItem> results = await util.dialog(dialog);
+  List<DialogItem>? results = await util.dialog(dialog);
   if (results == null) return;
 
   String color_hex = (results[0] as DialogText).value;

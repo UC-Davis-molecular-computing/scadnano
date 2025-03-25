@@ -12,6 +12,7 @@ import '../state/local_storage_design_choice.dart';
 import '../json_serializable.dart';
 import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
+import '../constants.dart' as constants;
 import '../util.dart' as util;
 
 part 'local_storage.g.dart';
@@ -35,11 +36,9 @@ const String _LOCAL_STORAGE_PREFIX = "scadnano:";
 
 save(AppState state, Storable storable) {
   String storable_key = storable.key_name;
-  String value_string;
+  String? value_string = null;
   if (storable == Storable.design) {
-    var design = state.design;
-//    value_string = json_encode(design);
-    value_string = json_encode(design, false);
+    value_string = json_encode(state.maybe_design, false);
   } else if (storable == Storable.app_ui_state_storables) {
     value_string = jsonEncode(standard_serializers.serialize(state.ui_state.storables));
   }
@@ -47,9 +46,13 @@ save(AppState state, Storable storable) {
   if (value_string != null) window.localStorage[storable_key] = value_string;
 }
 
-String side_pane_width() => window.localStorage[_LOCAL_STORAGE_PREFIX + 'side-pane-width'];
+String side_pane_width() =>
+    window.localStorage[_LOCAL_STORAGE_PREFIX + 'side-pane-width'] ??
+    '${constants.default_side_pane_width_percent}%';
+
 String design_width() =>
-    window.localStorage[_LOCAL_STORAGE_PREFIX + 'design-and-modes-buttons-container-width'];
+    window.localStorage[_LOCAL_STORAGE_PREFIX + 'design-and-modes-buttons-container-width'] ??
+    '${constants.default_design_width_percent}%';
 
 restore(Store<AppState> store, Storable storable) {
   try {
@@ -67,18 +70,18 @@ restore(Store<AppState> store, Storable storable) {
 _restore(Store<AppState> store, Storable storable) {
   String storable_key = storable.key_name;
   if (window.localStorage.containsKey(storable_key)) {
-    var json_str = window.localStorage[storable_key];
+    var json_str = window.localStorage[storable_key]!;
 
-    actions.Action action = null;
+    actions.Action? action = null;
 
     if (storable == Storable.design) {
       // TODO(benlee12): Ugly because this forces design to be loaded before the app
       // state because the filename could be overwritten.
-      var storable_json_str = window.localStorage[Storable.app_ui_state_storables.key_name];
+      var storable_json_str = window.localStorage[Storable.app_ui_state_storables.key_name]!;
       var storable_json_map = json.decode(storable_json_str);
-      AppUIStateStorables storables = null;
+      AppUIStateStorables? storables = null;
       try {
-        storables = standard_serializers.deserialize(storable_json_map);
+        storables = standard_serializers.deserialize(storable_json_map) as AppUIStateStorables;
       } catch (e, stackTrace) {
         print('ERROR: in loading storables from localStorage in order to find loaded_filename for design, '
             'encountered this error, so a default filename has been chosen:'
@@ -94,7 +97,7 @@ _restore(Store<AppState> store, Storable storable) {
       var storable_json_map = json.decode(json_str);
       AppUIStateStorables storables;
       try {
-        storables = standard_serializers.deserialize(storable_json_map);
+        storables = standard_serializers.deserialize(storable_json_map) as AppUIStateStorables;
       } catch (e, stackTrace) {
         print('ERROR: in loading storables from localStorage, encountered this error trying to load '
             'app_ui_state_storables, so using defaults for UI settings:'
@@ -127,10 +130,10 @@ save_storable_async(AppState state, Storable storable) async {
 
 local_storage_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   AppUIStateStorables storables_before = store.state.ui_state.storables;
-  Design design_before = store.state.design;
+  Design? design_before = store.state.maybe_design;
   next(action);
   AppUIStateStorables storables_after = store.state.ui_state.storables;
-  Design design_after = store.state.design;
+  Design? design_after = store.state.maybe_design;
   var state_after = store.state;
 
   if (storables_before != storables_after) {

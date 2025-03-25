@@ -1,5 +1,4 @@
 import 'dart:html';
-import 'dart:math';
 
 import 'package:meta/meta.dart';
 import 'package:built_collection/built_collection.dart';
@@ -8,7 +7,6 @@ import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
 import 'package:scadnano/src/state/modification_type.dart';
 import 'package:scadnano/src/state/substrand.dart';
-import 'package:scadnano/src/view/transform_by_helix_group.dart';
 
 import '../state/strand.dart';
 import '../state/address.dart';
@@ -19,6 +17,7 @@ import '../state/helix.dart';
 import '../state/domain.dart';
 import '../util.dart' as util;
 import '../state/selectable.dart';
+import 'design_main_strand.dart';
 import 'design_main_strand_dna_end.dart';
 import 'pure_component.dart';
 import '../state/context_menu.dart';
@@ -27,47 +26,38 @@ import '../constants.dart' as constants;
 
 part 'design_main_strand_domain.over_react.g.dart';
 
-@Factory()
 UiFactory<DesignMainDomainProps> DesignMainDomain = _$DesignMainDomain;
 
-@Props()
-mixin DesignMainDomainPropsMixin on UiProps {
-  Domain domain;
-  Color strand_color;
+mixin DesignMainDomainProps on UiProps {
+  late Domain domain;
+  late Color strand_color;
 
-  Helix helix;
-  String strand_tooltip;
-  Strand strand;
-  String transform;
-  Point<num> helix_svg_position;
+  late Helix helix;
+  late String strand_tooltip;
+  late Strand strand;
+  late String transform;
+  late Point<double> helix_svg_position;
 
-  List<ContextMenuItem> Function(Strand strand,
-      {@required Substrand substrand,
-      @required Address address,
-      @required ModificationType type}) context_menu_strand;
+  late ContextMenuStrand context_menu_strand;
 
-  bool selected;
+  late bool selected;
 
-  BuiltMap<int, Helix> helices;
-  BuiltMap<String, HelixGroup> groups;
-  Geometry geometry;
-  bool retain_strand_color_on_selection;
+  late BuiltMap<int, Helix> helices;
+  late BuiltMap<String, HelixGroup> groups;
+  late Geometry geometry;
+  late bool retain_strand_color_on_selection;
 }
 
-class DesignMainDomainProps = UiProps with DesignMainDomainPropsMixin, TransformByHelixGroupPropsMixin;
-
-@Component2()
-class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
-    with PureComponent, TransformByHelixGroup<DesignMainDomainProps> {
+class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with PureComponent {
   @override
   render() {
     Domain domain = props.domain;
     String id = domain.id;
 
-    Point<num> start_svg =
-        props.helix.svg_base_pos(domain.offset_5p, domain.forward, props.helix_svg_position.y);
-    Point<num> end_svg =
-        props.helix.svg_base_pos(domain.offset_3p, domain.forward, props.helix_svg_position.y);
+    Point<double> start_svg = props.helix
+        .svg_base_pos(domain.offset_5p, domain.forward, props.helix_svg_position.y, props.geometry);
+    Point<double> end_svg = props.helix
+        .svg_base_pos(domain.offset_3p, domain.forward, props.helix_svg_position.y, props.geometry);
 
     var classname = constants.css_selector_domain;
     if (props.selected) {
@@ -111,7 +101,7 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
     if (edit_mode_is_nick() || edit_mode_is_insertion() || edit_mode_is_deletion()) {
       var domain = props.domain;
       MouseEvent event = event_syn.nativeEvent;
-      var group = app.state.design.groups[props.helix.group];
+      var group = app.state.design.groups[props.helix.group]!;
       var geometry = app.state.design.geometry;
       var address = util.get_address_on_helix(event, props.helix, group, geometry, props.helix_svg_position);
       int offset = address.offset;
@@ -172,29 +162,27 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
   // https://medium.com/@ericclemmons/react-event-preventdefault-78c28c950e46
   @override
   componentDidMount() {
-    var element = querySelector('#${props.domain.id}');
+    var element = querySelector('#${props.domain.id}')!;
     element.addEventListener('contextmenu', on_context_menu);
   }
 
   @override
   componentWillUnmount() {
-    var element = querySelector('#${props.domain.id}');
+    var element = querySelector('#${props.domain.id}')!;
     element.removeEventListener('contextmenu', on_context_menu);
     super.componentWillUnmount();
   }
 
   on_context_menu(Event ev) {
-    MouseEvent event = ev;
+    MouseEvent event = ev as MouseEvent;
     if (!event.shiftKey) {
       event.preventDefault();
       event.stopPropagation();
       Address address = util.get_address_on_helix(
-          event, props.helix, props.groups[props.helix.group], props.geometry, props.helix_svg_position);
+          event, props.helix, props.groups[props.helix.group]!, props.geometry, props.helix_svg_position);
+      var items = props.context_menu_strand(props.strand, domain: props.domain, address: address).build();
       app.dispatch(actions.ContextMenuShow(
-          context_menu: ContextMenu(
-              items:
-                  props.context_menu_strand(props.strand, substrand: props.domain, address: address).build(),
-              position: event.page)));
+          context_menu: ContextMenu(items: items, position: util.from_point_num(event.page))));
     }
   }
 }

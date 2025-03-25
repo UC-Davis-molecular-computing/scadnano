@@ -18,9 +18,9 @@ helix_idxs_change_middleware(Store<AppState> store, dynamic action, NextDispatch
       Map<int, List<int>> key_to_idxs = new Map<int, List<int>>();
 
       for (var old_index in old_idxs) {
-        var new_index = action.idx_replacements[old_index];
+        var new_index = action.idx_replacements[old_index]!;
         if (key_to_idxs.containsKey(new_index))
-          key_to_idxs[new_index].add(old_index);
+          key_to_idxs[new_index]!.add(old_index);
         else
           key_to_idxs[new_index] = [old_index];
       }

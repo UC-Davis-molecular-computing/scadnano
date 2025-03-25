@@ -1,5 +1,4 @@
 import 'package:built_collection/built_collection.dart';
-import 'package:built_collection/src/map.dart';
 import 'dart:math';
 
 import 'package:built_value/built_value.dart';
@@ -16,16 +15,29 @@ part 'app_state.g.dart';
 final DEFAULT_AppState = AppStateBuilder().build();
 
 abstract class AppState implements Built<AppState, AppStateBuilder> {
-  @nullable
-  Design get design;
+  // This is a bit hacky. When we migrated to null safety, I didn't want to have to put
+  // ! operators every time `app.state.design` is read, so I made `design` into a "true"
+  // getter and let `maybe_design` be the nullable `Design`. There were a few bugs where some
+  // code was checking whether `design` is null, which now didn't work (accessing the getter
+  // raised an exception). But since almost all the code in this repo executes only when a
+  // proper design is loaded, this is much more ergonomic. But we need to be careful in the
+  // rare circumstances (loading the app initially, some testing) when `state.maybe_design`
+  // might be null.
+  Design? get maybe_design;
+
+  Design get design {
+    if (this.maybe_design != null) {
+      return this.maybe_design!;
+    } else {
+      throw AssertionError(util.ASSERTION_ERROR_MESSAGE);
+    }
+  }
 
   AppUIState get ui_state;
 
   UndoRedo get undo_redo;
 
-  String get error_message;
-
-  String get editor_content;
+  String? get error_message;
 
   /// Maps helix indices to helix svg position.
   ///
@@ -50,16 +62,16 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
   /// changed that required them to be recomputed (e.g., moving helices to a new group). It was also more
   /// code to maintain; several reducers had to call util.helices_assign_svg.
   @memoized
-  BuiltMap<int, Point<num>> get helix_idx_to_svg_position_map {
+  BuiltMap<int, Point<double>> get helix_idx_to_svg_position_map {
     // var sw = Stopwatch()..start();
 
-    BuiltSet<int> helix_idxs_to_calculate = ui_state.side_selected_helix_idxs;
+    BuiltSet<int>? helix_idxs_to_calculate = ui_state.side_selected_helix_idxs;
     if (!ui_state.only_display_selected_helices) {
       helix_idxs_to_calculate = null; // let helices_assign_svg automatically set this to all helices
     }
 
-    BuiltMap<int, Point<num>> ret = util
-        .helices_assign_svg(design.geometry, ui_state.invert_y, design.helices, design.groups,
+    BuiltMap<int, Point<double>> ret = util
+        .helices_assign_svg(design, ui_state.invert_y, design.helices, design.groups,
             helix_idxs_to_calculate: helix_idxs_to_calculate)
         .build();
 
@@ -69,31 +81,30 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
   }
 
   static void _initializeBuilder(AppStateBuilder b) {
-    b.design = null;
+    b.maybe_design = null;
     b.ui_state.replace(DEFAULT_AppUIState);
     b.error_message = constants.NO_DESIGN_MESSAGE_HTML;
-    b.editor_content = "";
     b.undo_redo = DEFAULT_UndoRedoBuilder;
   }
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> map = {};
-    map['design'] = design?.to_json_serializable(suppress_indent: false);
+    var design_to_store =
+        this.maybe_design != null ? design.to_json_serializable(suppress_indent: false) : null;
+    map['design'] = design_to_store;
     map['ui_state'] = ui_state.toJson();
     map['error_message'] = error_message;
-    map['editor_content'] = editor_content;
     return map;
   }
 
   @memoized
-  bool get has_error => error_message != null && error_message.length > 0;
+  bool get has_error => error_message != null && error_message!.length > 0;
 
   /*********************************** begin built_value boilerplate ***********************************/
 
   AppState._();
 
-  factory AppState([void Function(AppStateBuilder) updates]) =>
-      _$AppState((m) => m..replace(DEFAULT_AppState));
+  factory AppState(void Function(AppStateBuilder) updates) => _$AppState((m) => m..replace(DEFAULT_AppState));
 
   static Serializer<AppState> get serializer => _$appStateSerializer;
 

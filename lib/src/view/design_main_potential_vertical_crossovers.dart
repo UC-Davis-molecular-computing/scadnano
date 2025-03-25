@@ -13,15 +13,15 @@ UiFactory<DesignMainPotentialVerticalCrossoversProps> DesignMainPotentialVertica
     _$DesignMainPotentialVerticalCrossovers;
 
 mixin DesignMainPotentialVerticalCrossoversProps on UiProps {
-  BuiltList<PotentialVerticalCrossover> potential_vertical_crossovers;
+  late BuiltList<PotentialVerticalCrossover> potential_vertical_crossovers;
 
-  BuiltMap<int, Helix> helices;
-  BuiltMap<String, HelixGroup> groups;
-  Geometry geometry;
+  late BuiltMap<int, Helix> helices;
+  late BuiltMap<String, HelixGroup> groups;
+  late Geometry geometry;
 
-  bool only_display_selected_helices;
-  BuiltSet<int> side_selected_helix_idxs;
-  BuiltMap<int, num> helix_idx_to_svg_position_y_map;
+  late bool only_display_selected_helices;
+  late BuiltSet<int> side_selected_helix_idxs;
+  late BuiltMap<int, double> helix_idx_to_svg_position_y_map;
 }
 
 class DesignMainPotentialVerticalCrossoversComponent
@@ -41,17 +41,20 @@ class DesignMainPotentialVerticalCrossoversComponent
       }
       BuiltMap<int, Helix> helices_of_crossover =
           (props.helices.toMap()..removeWhere((idx, _) => !(idx == idx_top || idx == idx_bot))).build();
-      var group_top = helices_of_crossover[idx_top].group;
-      var group_bot = helices_of_crossover[idx_bot].group;
+      var group_top_name = helices_of_crossover[idx_top]!.group;
+      var group_bot_name = helices_of_crossover[idx_bot]!.group;
 
       // we only render if both helices are in same group
-      if (group_top == group_bot) {
-        BuiltMap<String, HelixGroup> groups_of_crossover = {group_bot: props.groups[group_bot]}.build();
+      if (group_top_name == group_bot_name) {
+        var group_top = props.groups[group_top_name]!;
+        var geometry = group_top.geometry ?? props.geometry;
+        BuiltMap<String, HelixGroup> groups_of_crossover =
+            {group_bot_name: props.groups[group_bot_name]!}.build();
         crossover_components.add((DesignMainPotentialVerticalCrossover()
           ..potential_vertical_crossover = potential_vertical_crossover
           ..helices = helices_of_crossover
           ..groups = groups_of_crossover
-          ..geometry = props.geometry
+          ..geometry = geometry
           ..helix_idx_to_svg_position_y_map = props.helix_idx_to_svg_position_y_map
           ..key = potential_vertical_crossover.dna_end_top.id)());
       }

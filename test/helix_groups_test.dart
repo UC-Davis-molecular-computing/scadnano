@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'dart:convert';
 import 'dart:math';
 
@@ -37,7 +35,7 @@ main() {
       // select helices 3 and 4 (out of 0, 1, 2, 3, 4, 5)
       state = state.rebuild((b) => b..ui_state.storables.side_selected_helix_idxs.replace([3, 4]));
       var action = actions.HelixRemoveAllSelected();
-      design = helix_remove_all_selected_design_global_reducer(design, state, action);
+      design = helix_remove_all_selected_design_global_reducer(design, state, action)!;
 
       expect(design.default_group().helices_view_order.toList(), [0, 1, 2, 5]);
     });
@@ -57,20 +55,20 @@ main() {
           app_state_reducer(state, MoveHelicesToGroup(helix_idxs: [0, 1, 2].build(), group_name: "Second"));
       design = state.design;
 
-      expect(design.groups["First"].helices_view_order.toList(), [3, 4]);
-      expect(design.groups["Second"].helices_view_order.toList(), [5, 6, 7, 8, 9, 0, 1, 2]);
+      expect(design.groups["First"]!.helices_view_order.toList(), [3, 4]);
+      expect(design.groups["Second"]!.helices_view_order.toList(), [5, 6, 7, 8, 9, 0, 1, 2]);
 
-      expect(design.helices[0].group, "Second");
-      expect(design.helices[1].group, "Second");
-      expect(design.helices[2].group, "Second");
-      expect(design.helices[5].group, "Second");
-      expect(design.helices[6].group, "Second");
-      expect(design.helices[7].group, "Second");
-      expect(design.helices[8].group, "Second");
-      expect(design.helices[9].group, "Second");
+      expect(design.helices[0]!.group, "Second");
+      expect(design.helices[1]!.group, "Second");
+      expect(design.helices[2]!.group, "Second");
+      expect(design.helices[5]!.group, "Second");
+      expect(design.helices[6]!.group, "Second");
+      expect(design.helices[7]!.group, "Second");
+      expect(design.helices[8]!.group, "Second");
+      expect(design.helices[9]!.group, "Second");
 
-      expect(design.helices[3].group, "First");
-      expect(design.helices[4].group, "First");
+      expect(design.helices[3]!.group, "First");
+      expect(design.helices[4]!.group, "First");
     });
 
     test('move_helices__to_self_group', () {
@@ -89,20 +87,20 @@ main() {
           app_state_reducer(state, MoveHelicesToGroup(helix_idxs: [0, 1, 2].build(), group_name: "First"));
       design = state.design;
 
-      expect(design.groups["First"].helices_view_order.toList(), [0, 1, 2, 3, 4]);
-      expect(design.groups["Second"].helices_view_order.toList(), [5, 6, 7, 8, 9]);
+      expect(design.groups["First"]!.helices_view_order.toList(), [0, 1, 2, 3, 4]);
+      expect(design.groups["Second"]!.helices_view_order.toList(), [5, 6, 7, 8, 9]);
 
-      expect(design.helices[0].group, "First");
-      expect(design.helices[1].group, "First");
-      expect(design.helices[2].group, "First");
-      expect(design.helices[3].group, "First");
-      expect(design.helices[4].group, "First");
+      expect(design.helices[0]!.group, "First");
+      expect(design.helices[1]!.group, "First");
+      expect(design.helices[2]!.group, "First");
+      expect(design.helices[3]!.group, "First");
+      expect(design.helices[4]!.group, "First");
 
-      expect(design.helices[5].group, "Second");
-      expect(design.helices[6].group, "Second");
-      expect(design.helices[7].group, "Second");
-      expect(design.helices[8].group, "Second");
-      expect(design.helices[9].group, "Second");
+      expect(design.helices[5]!.group, "Second");
+      expect(design.helices[6]!.group, "Second");
+      expect(design.helices[7]!.group, "Second");
+      expect(design.helices[8]!.group, "Second");
+      expect(design.helices[9]!.group, "Second");
     });
 
     test('move_helices__from_multiple_groups__to_same_group', () {
@@ -123,32 +121,32 @@ main() {
           state, MoveHelicesToGroup(helix_idxs: [0, 1, 2, 5, 6].build(), group_name: "Third"));
       design = state.design;
 
-      expect(design.groups["First"].helices_view_order.toList(), [3, 4]);
-      expect(design.groups["Second"].helices_view_order.toList(), [7, 8, 9]);
+      expect(design.groups["First"]!.helices_view_order.toList(), [3, 4]);
+      expect(design.groups["Second"]!.helices_view_order.toList(), [7, 8, 9]);
       expect(
-          design.groups["Third"].helices_view_order.toList(),
+          design.groups["Third"]!.helices_view_order.toList(),
           anyOf([
             [10, 11, 12, 13, 14, 0, 1, 2, 5, 6],
             [10, 11, 12, 13, 14, 5, 6, 0, 1, 2],
           ]));
 
-      expect(design.helices[0].group, "Third");
-      expect(design.helices[1].group, "Third");
-      expect(design.helices[2].group, "Third");
-      expect(design.helices[3].group, "First");
-      expect(design.helices[4].group, "First");
+      expect(design.helices[0]!.group, "Third");
+      expect(design.helices[1]!.group, "Third");
+      expect(design.helices[2]!.group, "Third");
+      expect(design.helices[3]!.group, "First");
+      expect(design.helices[4]!.group, "First");
 
-      expect(design.helices[5].group, "Third");
-      expect(design.helices[6].group, "Third");
-      expect(design.helices[7].group, "Second");
-      expect(design.helices[8].group, "Second");
-      expect(design.helices[9].group, "Second");
+      expect(design.helices[5]!.group, "Third");
+      expect(design.helices[6]!.group, "Third");
+      expect(design.helices[7]!.group, "Second");
+      expect(design.helices[8]!.group, "Second");
+      expect(design.helices[9]!.group, "Second");
 
-      expect(design.helices[10].group, "Third");
-      expect(design.helices[11].group, "Third");
-      expect(design.helices[12].group, "Third");
-      expect(design.helices[13].group, "Third");
-      expect(design.helices[14].group, "Third");
+      expect(design.helices[10]!.group, "Third");
+      expect(design.helices[11]!.group, "Third");
+      expect(design.helices[12]!.group, "Third");
+      expect(design.helices[13]!.group, "Third");
+      expect(design.helices[14]!.group, "Third");
     });
 
     test('move_helices__from_multiple_groups__to_self_group', () {
@@ -167,20 +165,20 @@ main() {
           state, MoveHelicesToGroup(helix_idxs: [0, 1, 2, 5, 6].build(), group_name: "First"));
       design = state.design;
 
-      expect(design.groups["First"].helices_view_order.toList(), [0, 1, 2, 3, 4, 5, 6]);
-      expect(design.groups["Second"].helices_view_order.toList(), [7, 8, 9]);
+      expect(design.groups["First"]!.helices_view_order.toList(), [0, 1, 2, 3, 4, 5, 6]);
+      expect(design.groups["Second"]!.helices_view_order.toList(), [7, 8, 9]);
 
-      expect(design.helices[0].group, "First");
-      expect(design.helices[1].group, "First");
-      expect(design.helices[2].group, "First");
-      expect(design.helices[3].group, "First");
-      expect(design.helices[4].group, "First");
+      expect(design.helices[0]!.group, "First");
+      expect(design.helices[1]!.group, "First");
+      expect(design.helices[2]!.group, "First");
+      expect(design.helices[3]!.group, "First");
+      expect(design.helices[4]!.group, "First");
 
-      expect(design.helices[5].group, "First");
-      expect(design.helices[6].group, "First");
-      expect(design.helices[7].group, "Second");
-      expect(design.helices[8].group, "Second");
-      expect(design.helices[9].group, "Second");
+      expect(design.helices[5]!.group, "First");
+      expect(design.helices[6]!.group, "First");
+      expect(design.helices[7]!.group, "Second");
+      expect(design.helices[8]!.group, "Second");
+      expect(design.helices[9]!.group, "Second");
     });
 
     test('remove_2_helices__different_groups__helix_idx_in_numerical_order', () {
@@ -196,16 +194,16 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
       var state = app_state_from_design(design);
 
-      expect(design.groups["First"].helices_view_order.toList(), [0, 1, 2, 3, 4]);
-      expect(design.groups["Second"].helices_view_order.toList(), [5, 6, 7, 8, 9]);
+      expect(design.groups["First"]!.helices_view_order.toList(), [0, 1, 2, 3, 4]);
+      expect(design.groups["Second"]!.helices_view_order.toList(), [5, 6, 7, 8, 9]);
 
       // select helices 3 and 6
       state = state.rebuild((b) => b..ui_state.storables.side_selected_helix_idxs.replace([3, 6]));
       var action = actions.HelixRemoveAllSelected();
-      design = helix_remove_all_selected_design_global_reducer(design, state, action);
+      design = helix_remove_all_selected_design_global_reducer(design, state, action)!;
 
-      expect(design.groups["First"].helices_view_order.toList(), [0, 1, 2, 4]);
-      expect(design.groups["Second"].helices_view_order.toList(), [5, 7, 8, 9]);
+      expect(design.groups["First"]!.helices_view_order.toList(), [0, 1, 2, 4]);
+      expect(design.groups["Second"]!.helices_view_order.toList(), [5, 7, 8, 9]);
     });
 
     test('remove_2_helices__different_groups__helix_idx_in_nonnumerical_order', () {
@@ -221,16 +219,16 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
       var state = app_state_from_design(design);
 
-      expect(design.groups["First"].helices_view_order.toList(), [9, 8, 7, 6, 5]);
-      expect(design.groups["Second"].helices_view_order.toList(), [4, 3, 2, 1, 0]);
+      expect(design.groups["First"]!.helices_view_order.toList(), [9, 8, 7, 6, 5]);
+      expect(design.groups["Second"]!.helices_view_order.toList(), [4, 3, 2, 1, 0]);
 
       // select helices 3 and 6
       state = state.rebuild((b) => b..ui_state.storables.side_selected_helix_idxs.replace([3, 6]));
       var action = actions.HelixRemoveAllSelected();
-      design = helix_remove_all_selected_design_global_reducer(design, state, action);
+      design = helix_remove_all_selected_design_global_reducer(design, state, action)!;
 
-      expect(design.groups["First"].helices_view_order.toList(), [9, 8, 7, 5]);
-      expect(design.groups["Second"].helices_view_order.toList(), [4, 2, 1, 0]);
+      expect(design.groups["First"]!.helices_view_order.toList(), [9, 8, 7, 5]);
+      expect(design.groups["Second"]!.helices_view_order.toList(), [4, 2, 1, 0]);
     });
 
     test('remove_2_helices__same_group__helix_idx_in_nonnumerical_order', () {
@@ -242,14 +240,14 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
       var state = app_state_from_design(design);
 
-      expect(design.groups["First"].helices_view_order.toList(), [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]);
+      expect(design.groups["First"]!.helices_view_order.toList(), [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]);
 
       // select helices 3 and 6
       state = state.rebuild((b) => b..ui_state.storables.side_selected_helix_idxs.replace([3, 6]));
       var action = actions.HelixRemoveAllSelected();
-      design = helix_remove_all_selected_design_global_reducer(design, state, action);
+      design = helix_remove_all_selected_design_global_reducer(design, state, action)!;
 
-      expect(design.groups["First"].helices_view_order.toList(), [9, 8, 7, 5, 4, 2, 1, 0]);
+      expect(design.groups["First"]!.helices_view_order.toList(), [9, 8, 7, 5, 4, 2, 1, 0]);
     });
 
     test('remove_helix__same_group__helix_idx_in_numerical_order', () {
@@ -261,14 +259,14 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
       var state = app_state_from_design(design);
 
-      expect(design.groups["First"].helices_view_order.toList(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      expect(design.groups["First"]!.helices_view_order.toList(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
       // select helices 6
       state = state.rebuild((b) => b..ui_state.storables.side_selected_helix_idxs.replace([6]));
       var action = actions.HelixRemoveAllSelected();
-      design = helix_remove_all_selected_design_global_reducer(design, state, action);
+      design = helix_remove_all_selected_design_global_reducer(design, state, action)!;
 
-      expect(design.groups["First"].helices_view_order.toList(), [0, 1, 2, 3, 4, 5, 7, 8, 9]);
+      expect(design.groups["First"]!.helices_view_order.toList(), [0, 1, 2, 3, 4, 5, 7, 8, 9]);
     });
   });
 
@@ -300,7 +298,7 @@ main() {
   ]
 }
     ''';
-    var design = Design.from_json_str(json_str);
+    var design = Design.from_json_str(json_str)!;
     var json_map_export = design.to_json_serializable(suppress_indent: false);
     expect(json_map_export.containsKey(constants.grid_key), true);
     expect(json_map_export.containsKey(constants.groups_key), false);
@@ -551,21 +549,21 @@ main() {
 
       expect(groups.length, 4);
 
-      expect(groups[n].helices_view_order, [0, 1, 2, 3, 4, 5]);
-      expect(groups[s].helices_view_order, [7, 6]);
-      expect(groups[w].helices_view_order, [8, 9]);
-      expect(groups[e].helices_view_order, [13, 15]);
+      expect(groups[n]!.helices_view_order, [0, 1, 2, 3, 4, 5]);
+      expect(groups[s]!.helices_view_order, [7, 6]);
+      expect(groups[w]!.helices_view_order, [8, 9]);
+      expect(groups[e]!.helices_view_order, [13, 15]);
 
-      expect(groups[n].grid, Grid.honeycomb);
-      expect(groups[e].grid, Grid.square);
-      expect(groups[s].grid, Grid.square);
-      expect(groups[w].grid, Grid.none);
+      expect(groups[n]!.grid, Grid.honeycomb);
+      expect(groups[e]!.grid, Grid.square);
+      expect(groups[s]!.grid, Grid.square);
+      expect(groups[w]!.grid, Grid.none);
 
       num eps = 0.000001;
-      expect(groups[n].pitch, closeTo(0, eps));
-      expect(groups[e].pitch, closeTo(45, eps));
-      expect(groups[s].pitch, closeTo(0, eps));
-      expect(groups[w].pitch, closeTo(0, eps));
+      expect(groups[n]!.pitch, closeTo(0, eps));
+      expect(groups[e]!.pitch, closeTo(45, eps));
+      expect(groups[s]!.pitch, closeTo(0, eps));
+      expect(groups[w]!.pitch, closeTo(0, eps));
 
       Map<String, dynamic> json_map_export = design.to_json_serializable(suppress_indent: false);
       expect(json_map_export.containsKey(constants.groups_key), true);
@@ -613,10 +611,10 @@ main() {
       expect(group_w[constants.pitch_key], null);
 
       // test auto-assignment of grid_positions based on helices view order
-      expect(design.helices[6].grid_position, GridPosition(0, 0));
-      expect(design.helices[7].grid_position, GridPosition(0, 1));
-      expect(design.helices[13].grid_position, GridPosition(0, 0));
-      expect(design.helices[15].grid_position, GridPosition(0, 1));
+      expect(design.helices[6]!.grid_position, GridPosition(0, 0));
+      expect(design.helices[7]!.grid_position, GridPosition(0, 1));
+      expect(design.helices[13]!.grid_position, GridPosition(0, 0));
+      expect(design.helices[15]!.grid_position, GridPosition(0, 1));
     });
 
     test('helix_add_correct_view_order', () {
@@ -624,30 +622,30 @@ main() {
       var new_grid_position = GridPosition(0, 2);
       state = state.rebuild((b) => b..ui_state.storables.displayed_group_name = group_name);
       var action = HelixAdd(grid_position: new_grid_position);
-      var new_design = design_whole_global_reducer(design, state, action);
+      var new_design = design_whole_global_reducer(design, state, action)!;
 
       expect(new_design.helices.length, 13);
       expect(new_design.helices.keys.max, 16);
 
-      var new_helix = new_design.helices[16];
+      var new_helix = new_design.helices[16]!;
       expect(new_helix.group, group_name);
       expect(new_helix.grid_position, new_grid_position);
 
-      expect(new_design.groups[s].helices_view_order[0], 7);
-      expect(new_design.groups[s].helices_view_order[1], 6);
-      expect(new_design.groups[s].helices_view_order[2], 16);
+      expect(new_design.groups[s]!.helices_view_order[0], 7);
+      expect(new_design.groups[s]!.helices_view_order[1], 6);
+      expect(new_design.groups[s]!.helices_view_order[2], 16);
     });
 
     test('helix_remove_correct_view_order', () {
       var group_name = s;
       state = state.rebuild((b) => b..ui_state.storables.displayed_group_name = group_name);
       var action = HelixRemove(7);
-      var new_design = design_whole_global_reducer(design, state, action);
+      var new_design = design_whole_global_reducer(design, state, action)!;
 
       expect(new_design.helices.length, 11);
       expect(new_design.helices.keys.max, 15);
 
-      expect(new_design.groups[s].helices_view_order[0], 6);
+      expect(new_design.groups[s]!.helices_view_order[0], 6);
     });
   });
 
@@ -755,15 +753,15 @@ main() {
 
     expect(groups.length, 2);
 
-    expect(groups[w].helices_view_order, [8, 9]);
-    expect(groups[e].helices_view_order, [13, 15]);
+    expect(groups[w]!.helices_view_order, [8, 9]);
+    expect(groups[e]!.helices_view_order, [13, 15]);
 
-    expect(groups[e].grid, Grid.square);
-    expect(groups[w].grid, Grid.none);
+    expect(groups[e]!.grid, Grid.square);
+    expect(groups[w]!.grid, Grid.none);
 
     num eps = 0.000001;
-    expect(groups[e].pitch, closeTo(45, eps));
-    expect(groups[w].pitch, closeTo(0, eps));
+    expect(groups[e]!.pitch, closeTo(45, eps));
+    expect(groups[w]!.pitch, closeTo(0, eps));
 
     Map<String, dynamic> json_map_export = design.to_json_serializable(suppress_indent: false);
     expect(json_map_export.containsKey(constants.groups_key), true);
@@ -797,11 +795,11 @@ main() {
     expect(group_w[constants.pitch_key], null);
 
     // test auto-assignment of grid_positions based on helices view order
-    expect(design.helices[13].grid_position, GridPosition(0, 0));
-    expect(design.helices[15].grid_position, GridPosition(0, 1));
+    expect(design.helices[13]!.grid_position, GridPosition(0, 0));
+    expect(design.helices[15]!.grid_position, GridPosition(0, 1));
 
     // test that x and z cordinate swapped for helices in helix group using none grid
-    expect(design.helices[8].position, Position3D(x: 7, y: 8, z: 6));
-    expect(design.helices[9].position, Position3D(x: 1, y: 2.5, z: 2));
+    expect(design.helices[8]!.position(design.geometry), Position3D(x: 7, y: 8, z: 6));
+    expect(design.helices[9]!.position(design.geometry), Position3D(x: 1, y: 2.5, z: 2));
   });
 }

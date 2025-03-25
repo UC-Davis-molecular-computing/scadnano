@@ -28,8 +28,8 @@ import 'unused_fields.dart';
 part 'strand.g.dart';
 
 abstract class Strand
-    with SelectableMixin, BuiltJsonSerializable, UnusedFields, JSONSerializable
-    implements Built<Strand, StrandBuilder> {
+    with SelectableMixin, BuiltJsonSerializable, UnusedFields
+    implements Built<Strand, StrandBuilder>, JSONSerializable {
   Strand._();
 
   factory Strand.from([void Function(StrandBuilder) updates]) = _$Strand;
@@ -44,16 +44,16 @@ abstract class Strand
   //FIXME: this is not pure since it consults util.color_cycler
   factory Strand(
     Iterable<Substrand> substrands, {
-    Color color = null,
+    Color? color = null,
     bool circular = false,
-    String dna_sequence = null,
-    VendorFields vendor_fields = null,
+    String? dna_sequence = null,
+    VendorFields? vendor_fields = null,
     bool is_scaffold = false,
-    Modification5Prime modification_5p = null,
-    Modification3Prime modification_3p = null,
+    Modification5Prime? modification_5p = null,
+    Modification3Prime? modification_3p = null,
     Map<int, ModificationInternal> modifications_int = const {},
-    String name = null,
-    String label = null,
+    String? name = null,
+    String? label = null,
   }) {
     if (color == null) {
       color = is_scaffold ? util.scaffold_color : util.color_cycler.next();
@@ -90,7 +90,7 @@ abstract class Strand
     } else {
       assert(first_ss is Extension);
       assert(builder.substrands.length > 1);
-      first_dom = builder.substrands[1];
+      first_dom = builder.substrands[1] as Domain;
     }
     String id = id_from_data(first_dom.helix, first_dom.offset_5p, first_dom.forward);
     // ensure Loopouts have appropriate prev and next indices for adjacent Domains
@@ -198,7 +198,7 @@ abstract class Strand
   }
 
   Substrand _rebuild_substrand_with_dna_sequence_to_match_its_length(Substrand substrand) {
-    String old_sequence = substrand.dna_sequence == null ? '' : substrand.dna_sequence;
+    String old_sequence = substrand.dna_sequence == null ? '' : substrand.dna_sequence!;
     return substrand
         .set_dna_sequence(_trim_or_pad_sequence_to_desired_length(old_sequence, substrand.dna_length()));
   }
@@ -285,29 +285,27 @@ abstract class Strand
   BuiltList<Substrand> get substrands;
 
   @memoized
-  String get dna_sequence {
+  String? get dna_sequence {
     String sequence = "";
     for (Substrand s in this.substrands) {
       if (s.dna_sequence == null) {
         return null;
+      } else {
+        sequence += s.dna_sequence!;
       }
-      sequence += s.dna_sequence;
     }
     return sequence;
   }
 
-  @nullable
-  VendorFields get vendor_fields;
+  VendorFields? get vendor_fields;
 
   bool get is_scaffold;
 
   bool get circular;
 
-  @nullable
-  Modification5Prime get modification_5p;
+  Modification5Prime? get modification_5p;
 
-  @nullable
-  Modification3Prime get modification_3p;
+  Modification3Prime? get modification_3p;
 
   BuiltMap<int, ModificationInternal> get modifications_int;
 
@@ -317,15 +315,13 @@ abstract class Strand
 //  @BuiltValueField(compare: false)
   Color get color;
 
-  @nullable
-  String get name;
+  String? get name;
 
-  @nullable
-  String get label;
+  String? get label;
 
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
 
-  String vendor_dna_sequence({String domain_delimiter = ''}) {
+  String? vendor_dna_sequence({String domain_delimiter = ''}) {
     if (dna_sequence == null) {
       return null;
     }
@@ -333,24 +329,28 @@ abstract class Strand
     List<String> ret_list = [];
 
     // 5' mod
-    if (modification_5p != null && modification_5p.vendor_code != null) {
-      ret_list.add(modification_5p.vendor_code);
+    if (this.modification_5p != null) {
+      ret_list.add(modification_5p!.vendor_code);
     }
 
     // DNA sequence and internal mods
     for (var substrand in this.substrands) {
-      ret_list.add(vendor_dna_sequence_substrand(substrand));
+      var substrand_dna_sequence = vendor_dna_sequence_substrand(substrand);
+      if (substrand_dna_sequence == null) {
+        return null;
+      }
+      ret_list.add(substrand_dna_sequence);
     }
 
     // 3' mods
-    if (modification_3p != null && modification_3p.vendor_code != null) {
-      ret_list.add(modification_3p.vendor_code);
+    if (this.modification_3p != null) {
+      ret_list.add(modification_3p!.vendor_code);
     }
 
     return ret_list.join(domain_delimiter);
   }
 
-  String vendor_dna_sequence_substrand(Substrand substrand) {
+  String? vendor_dna_sequence_substrand(Substrand substrand) {
     if (this.dna_sequence == null) {
       return null;
     }
@@ -365,26 +365,24 @@ abstract class Strand
     }
 
     List<String> new_seq_list = [];
-    for (int pos = 0; pos < substrand.dna_sequence.length; pos++) {
-      String base = substrand.dna_sequence[pos];
+    for (int pos = 0; pos < substrand.dna_sequence!.length; pos++) {
+      String base = substrand.dna_sequence![pos];
       new_seq_list.add(base);
       int strand_pos = pos + len_dna_prior;
       if (strand.modifications_int.containsKey(strand_pos)) {
         // if internal mod attached to base, replace base
-        var mod = strand.modifications_int[strand_pos];
-        if (mod.vendor_code != null) {
-          var vendor_code_with_delim = mod.vendor_code;
-          if (mod.allowed_bases != null) {
-            if (!mod.allowed_bases.contains(base)) {
-              var msg = ('internal modification ${mod} can only replace one of these bases: '
-                  '${mod.allowed_bases.join(",")}, '
-                  'but the base at position ${strand_pos} is ${base}');
-              throw IllegalDesignError(msg);
-            }
-            new_seq_list.last = vendor_code_with_delim; // replace base with modified base
-          } else {
-            new_seq_list.add(vendor_code_with_delim); // append modification between two bases
+        var mod = strand.modifications_int[strand_pos]!;
+        var vendor_code_with_delim = mod.vendor_code;
+        if (mod.allowed_bases != null) {
+          if (!mod.allowed_bases!.contains(base)) {
+            var msg = ('internal modification ${mod} can only replace one of these bases: '
+                '${mod.allowed_bases!.join(",")}, '
+                'but the base at position ${strand_pos} is ${base}');
+            throw IllegalDesignError(msg);
           }
+          new_seq_list.last = vendor_code_with_delim; // replace base with modified base
+        } else {
+          new_seq_list.add(vendor_code_with_delim); // append modification between two bases
         }
       }
     }
@@ -417,45 +415,42 @@ abstract class Strand
       ].build();
 
   @memoized
-  SelectableModification5Prime get selectable_modification_5p => modification_5p == null
+  SelectableModification5Prime? get selectable_modification_5p => modification_5p == null
       ? null
-      : SelectableModification5Prime(modification: modification_5p, strand: this);
+      : SelectableModification5Prime(modification: modification_5p!, strand: this);
 
   @memoized
-  SelectableModification3Prime get selectable_modification_3p => modification_3p == null
+  SelectableModification3Prime? get selectable_modification_3p => modification_3p == null
       ? null
-      : SelectableModification3Prime(modification: modification_3p, strand: this);
+      : SelectableModification3Prime(modification: modification_3p!, strand: this);
 
   @memoized
   BuiltList<SelectableModificationInternal> get selectable_modifications_int {
     List<SelectableModificationInternal> mods = [];
-    for (int i = 0; i < substrands.length; i++) {
-      var substrand = substrands[i];
-      if (substrand is Domain) {
-        // TODO: support displaying mods on loopouts and extensions eventually
-        BuiltMap<int, ModificationInternal> mods_on_ss = internal_modifications_on_substrand[i];
-        for (int dna_idx_ss in mods_on_ss.keys) {
-          var mod = mods_on_ss[dna_idx_ss];
-          int dna_idx = get_seq_start_idx(substrand) + dna_idx_ss;
-          var selectable_mod = SelectableModificationInternal(
-              modification: mod, strand: this, domain: substrand, dna_idx: dna_idx);
-          mods.add(selectable_mod);
-        }
+    for (var domain in this.domains) {
+      // TODO: support displaying mods on loopouts and extensions eventually
+      BuiltMap<int, ModificationInternal> mods_on_ss = internal_modifications_on_substrand[i]!;
+      for (int dna_idx_ss in mods_on_ss.keys) {
+        var mod = mods_on_ss[dna_idx_ss]!;
+        int dna_idx = get_seq_start_idx(domain) + dna_idx_ss;
+        var selectable_mod =
+            SelectableModificationInternal(modification: mod, strand: this, domain: domain, dna_idx: dna_idx);
+        mods.add(selectable_mod);
       }
     }
     return mods.build();
   }
 
   @memoized
-  BuiltList<Selectable> get selectable_modifications {
-    List<Selectable> mods = [];
+  BuiltList<SelectableModification> get selectable_modifications {
+    List<SelectableModification> mods = [];
     if (selectable_modification_5p != null) {
-      mods.add(selectable_modification_5p);
+      mods.add(selectable_modification_5p!);
     }
     if (selectable_modification_3p != null) {
-      mods.add(selectable_modification_3p);
+      mods.add(selectable_modification_3p!);
     }
-    var mods_int = List<Selectable>.from(selectable_modifications_int_by_dna_idx.values);
+    var mods_int = List<SelectableModification>.from(selectable_modifications_int_by_dna_idx.values);
     mods.addAll(mods_int);
     return mods.build();
   }
@@ -469,7 +464,7 @@ abstract class Strand
         // TODO: support displaying mods on loopouts and extensions
         BuiltMap<int, ModificationInternal> mods_on_ss = internal_modifications_on_substrand_absolute_idx[i];
         for (int dna_idx in mods_on_ss.keys) {
-          var mod = mods_on_ss[dna_idx];
+          var mod = mods_on_ss[dna_idx]!;
           var selectable_mod = SelectableModificationInternal(
               modification: mod, strand: this, domain: substrand, dna_idx: dna_idx);
           mods[dna_idx] = selectable_mod;
@@ -483,10 +478,10 @@ abstract class Strand
   BuiltList<SelectableModification> get all_modifications_selectable {
     List<SelectableModification> mods = [];
     if (selectable_modification_5p != null) {
-      mods.add(selectable_modification_5p);
+      mods.add(selectable_modification_5p!);
     }
     if (selectable_modification_3p != null) {
-      mods.add(selectable_modification_3p);
+      mods.add(selectable_modification_3p!);
     }
     mods.addAll(selectable_modifications_int);
     return mods.build();
@@ -498,13 +493,14 @@ abstract class Strand
   /// (i.e., index on the whole strand) to the modification.
   @memoized
   BuiltList<BuiltMap<int, ModificationInternal>> get internal_modifications_on_substrand_absolute_idx {
-    var mods = List<Map<int, ModificationInternal>>.filled(substrands.length, null);
+    // var mods = List<Map<int, ModificationInternal>>.filled(substrands.length, null);
+    var mods = util.FixedList<Map<int, ModificationInternal>>(substrands.length);
     for (int i = 0; i < substrands.length; i++) {
       mods[i] = Map<int, ModificationInternal>();
     }
 
     for (var mod_idx in modifications_int.keys) {
-      var mod = modifications_int[mod_idx];
+      var mod = modifications_int[mod_idx]!;
       var ss_and_idx = _substrand_of_dna_idx(mod_idx);
       Substrand ss = ss_and_idx.item1;
       int ss_idx = index_of_substrand(ss);
@@ -537,15 +533,15 @@ abstract class Strand
     }
 
     for (var mod_idx in modifications_int.keys) {
-      var mod = modifications_int[mod_idx];
+      var mod = modifications_int[mod_idx]!;
       var ss_and_idx = _substrand_of_dna_idx(mod_idx);
       Substrand ss = ss_and_idx.item1;
       int idx_within_ss = ss_and_idx.item2;
-      mods[ss][idx_within_ss] = mod;
+      mods[ss]![idx_within_ss] = mod;
     }
 
     Map<Substrand, BuiltMap<int, ModificationInternal>> mods_built = {
-      for (var ss in mods.keys) ss: mods[ss].build()
+      for (var ss in mods.keys) ss: mods[ss]!.build()
     };
 
     return mods_built.build();
@@ -575,14 +571,14 @@ abstract class Strand
     var domains_map = Map<int, List<Domain>>();
     for (var substrand in domains) {
       if (domains_map.containsKey(substrand.helix)) {
-        domains_map[substrand.helix].add(substrand);
+        domains_map[substrand.helix]!.add(substrand);
       } else {
         domains_map[substrand.helix] = [substrand];
       }
     }
     var domains_partially_built_map = Map<int, BuiltList<Domain>>();
     for (var helix in domains_map.keys) {
-      domains_partially_built_map[helix] = domains_map[helix].build();
+      domains_partially_built_map[helix] = domains_map[helix]!.build();
     }
     return domains_partially_built_map.build();
   }
@@ -593,7 +589,7 @@ abstract class Strand
     for (int i = 0; i < substrands.length - 1; i++) {
       if (substrands[i] is Domain) {
         if (substrands[i + 1] is Domain) {
-          linkers.add(Crossover(i, i + 1, id, is_scaffold));
+          linkers.add(Crossover(i, i + 1, is_scaffold, this.id));
         } else if (substrands[i + 1] is Loopout) {
           var loopout = substrands[i + 1];
           assert(loopout is Loopout);
@@ -605,7 +601,7 @@ abstract class Strand
     }
 
     if (circular) {
-      linkers.add(Crossover(substrands.length - 1, 0, id, is_scaffold));
+      linkers.add(Crossover(this.substrands.length - 1, 0, this.is_scaffold, this.id));
     }
 
     return linkers.build();
@@ -675,16 +671,14 @@ abstract class Strand
       json_map[constants.circular_key] = circular;
     }
 
-    if (this.color != null) {
-      json_map[constants.color_key] = color.toHexColor().toCssString();
-    }
+    json_map[constants.color_key] = color.toHexColor().toCssString();
 
     if (this.dna_sequence != null) {
       json_map[constants.dna_sequence_key] = this.dna_sequence;
     }
 
     if (this.vendor_fields != null) {
-      var vendor_fields_json = this.vendor_fields.to_json_serializable(suppress_indent: suppress_indent);
+      var vendor_fields_json = this.vendor_fields!.to_json_serializable(suppress_indent: suppress_indent);
       json_map[constants.vendor_fields_key] =
           suppress_indent ? NoIndent(vendor_fields_json) : vendor_fields_json;
     }
@@ -698,15 +692,15 @@ abstract class Strand
     ];
 
     if (this.modification_5p != null) {
-      json_map[constants.modification_5p_key] = this.modification_5p.vendor_code;
+      json_map[constants.modification_5p_key] = this.modification_5p!.vendor_code;
     }
     if (this.modification_3p != null) {
-      json_map[constants.modification_3p_key] = this.modification_3p.vendor_code;
+      json_map[constants.modification_3p_key] = this.modification_3p!.vendor_code;
     }
     if (this.modifications_int.isNotEmpty) {
       Map<String, dynamic> mods_map = {};
       for (int offset in this.modifications_int.keys) {
-        var mod = this.modifications_int[offset];
+        var mod = this.modifications_int[offset]!;
         mods_map['${offset}'] = mod.vendor_code;
       }
       json_map[constants.modifications_int_key] = suppress_indent ? NoIndent(mods_map) : mods_map;
@@ -795,7 +789,7 @@ abstract class Strand
       Map<int, int> insertion_map =
           Map<int, int>.fromIterable(domain.insertions, key: (e) => e.offset, value: (e) => e.length);
       if (insertion_map.containsKey(offset_edge)) {
-        int insertion_length = insertion_map[offset_edge];
+        int insertion_length = insertion_map[offset_edge]!;
         length_increase += insertion_length;
       }
     }
@@ -831,7 +825,7 @@ abstract class Strand
     Map<int, Domain> domains = {};
     int num_substrands = substrand_jsons.length;
     // we'll fill in Domains and Extensions in this loop, then calculate Loopouts later
-    var substrands = List<Substrand>.filled(num_substrands, null);
+    var substrands = util.FixedList<Substrand>(num_substrands);
     int start_dna_idx_ss = 0; // help identify dna_length of each substrand
     for (int i = 0; i < num_substrands; i++) {
       var substrand_json = substrand_jsons[i];
@@ -863,7 +857,7 @@ abstract class Strand
         ssb.is_first = (i == 0);
         ssb.is_last = (i == substrand_jsons.length - 1);
         int num_insertions = Domain.num_insertions_in_list(ssb.insertions.build());
-        int dna_length = ssb.end - ssb.start + num_insertions - ssb.deletions.length;
+        int dna_length = ssb.end! - ssb.start! + num_insertions - ssb.deletions.length;
         ssb.is_scaffold = is_scaffold;
         end_dna_idx_ss = start_dna_idx_ss + dna_length;
         domains[i] = substrands[i] = ssb.build();
@@ -891,38 +885,31 @@ abstract class Strand
 
     // insert Loopouts into appropriate positions in the List substrands
     for (int i in loopouts.keys) {
-      substrands[i] = loopouts[i];
+      substrands[i] = loopouts[i]!;
     }
 
     // go through extensions and set adjacent domains and adjacent helices
     for (int i = 0; i < substrands.length; i++) {
       if (substrands[i] is Extension) {
-        Extension ext = substrands[i];
+        Extension ext = substrands[i] as Extension;
         Domain adjacent_domain = ext.is_5p ? substrands[i + 1] as Domain : substrands[i - 1] as Domain;
         ext = ext.rebuild((b) => b..adjacent_domain.replace(adjacent_domain));
         substrands[i] = ext;
       }
     }
 
-    for (int i = 0; i < num_substrands; i++) {
-      if (substrands[i] == null) {
-        throw AssertionError('should not have any null entries in substrands but ${i} is null:\n'
-            'substrands = ${substrands}');
-      }
-    }
-
     // Now that all Substrand dna_lengths are known, we can assign DNA sequences to them
     //XXX: important to do this check after setting substrands so dna_length() is well-defined
-    var dna_sequence = util.optional_field_with_null_default(json_map, constants.dna_sequence_key,
+    String? dna_sequence = util.optional_field_with_null_default(json_map, constants.dna_sequence_key,
         legacy_keys: constants.legacy_dna_sequence_keys);
 
     Color color = json_map.containsKey(constants.color_key)
         ? util.parse_json_color(json_map[constants.color_key])
         : DEFAULT_STRAND_COLOR;
 
-    String name = util.optional_field_with_null_default(json_map, constants.name_key);
+    String? name = util.optional_field_with_null_default(json_map, constants.name_key);
 
-    String label = util.optional_field_with_null_default(json_map, constants.label_key);
+    String? label = util.optional_field_with_null_default(json_map, constants.label_key);
 
     var unused_fields = util.unused_fields_map(json_map, constants.strand_keys);
 
@@ -932,10 +919,10 @@ abstract class Strand
     //   vendor_fields_dict = json_map[constants.vendor_fields_key];
     //   vendor_fields = VendorFields.from_json(vendor_fields_dict);
     // }
-    Map<String, dynamic> vendor_fields_dict = util.optional_field_with_null_default(
+    Map<String, dynamic>? vendor_fields_dict = util.optional_field_with_null_default(
         json_map, constants.vendor_fields_key,
         legacy_keys: constants.legacy_vendor_fields_keys);
-    VendorFields vendor_fields =
+    VendorFields? vendor_fields =
         vendor_fields_dict == null ? null : VendorFields.from_json(vendor_fields_dict);
 
     // legacy:
@@ -1016,14 +1003,14 @@ abstract class Strand
     return self_seq_idx_start;
   }
 
-  String dna_sequence_in(Substrand substrand) {
+  String? dna_sequence_in(Substrand substrand) {
     if (this.dna_sequence == null) {
       return null;
     } else {
       int start_idx = get_seq_start_idx(substrand);
       int ss_dna_length = substrand.dna_length();
       int end_idx = start_idx + ss_dna_length;
-      return dna_sequence.substring(start_idx, end_idx);
+      return dna_sequence!.substring(start_idx, end_idx);
     }
   }
 
@@ -1034,8 +1021,9 @@ abstract class Strand
   DNAEnd get dnaend_5p => first_domain.dnaend_5p;
 
   /// If this and other are ligatable (they have a pair of 5'/3' ends adjacent)
-  /// return the two [DNAEnd]s that can be ligated, in other (this.end, other.end).
-  Tuple2<DNAEnd, DNAEnd> ligatable_ends_with(Strand other) {
+  /// return the two [DNAEnd]s that can be ligated, in other (this.end, other.end),
+  /// otherwise return null.
+  Tuple2<DNAEnd, DNAEnd>? ligatable_ends_with(Strand other) {
     if (_ligatable_3p_to_5p_of(other)) {
       return Tuple2<DNAEnd, DNAEnd>(dnaend_3p, other.dnaend_5p);
     } else if (_ligatable_5p_to_3p_of(other)) {
@@ -1067,7 +1055,7 @@ abstract class Strand
   /// Prefer idt.name if defined, then this.name if defined, then default_export_name().
   String vendor_export_name() {
     if (name != null) {
-      return name;
+      return name!;
     } else {
       return default_export_name();
     }

@@ -8,6 +8,17 @@ import '../state/strand.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
 import '../util.dart' as util;
+import '../util.dart';
+
+String get_cause(Object e) {
+  if (e is Exception) {
+    return e.toString();
+  } else if (e is Error) {
+    return e.toString();
+  } else {
+    return e.toString();
+  }
+}
 
 export_dna_sequences_middleware(Store<AppState> store, action, NextDispatcher next) {
   next(action);
@@ -28,13 +39,8 @@ export_dna_sequences_middleware(Store<AppState> store, action, NextDispatcher ne
       String content = result;
       util.save_file(filename, content, blob_type: blob_type);
     } catch (e, stackTrace) {
-      var cause = "";
-      if (has_cause(e)) {
-        cause = e.cause;
-      } else if (has_message(e)) {
-        cause = e.message;
-      }
-      var msg = cause + '\n\n' + stackTrace.toString();
+      var cause = get_cause(e);
+      String msg = '$cause\n\n$stackTrace';
       store.dispatch(actions.ErrorMessageSet(msg));
       app.view.design_view.render(store.state);
     }
@@ -92,13 +98,8 @@ export_dna_sequences_middleware(Store<AppState> store, action, NextDispatcher ne
       }
       // .then((content) => util.save_file(filename, content, blob_type: blob_type))
     } catch (e, stackTrace) {
-      var cause = "";
-      if (has_cause(e)) {
-        cause = e.cause;
-      } else if (has_message(e)) {
-        cause = e.message;
-      }
-      var msg = cause + '\n\n' + stackTrace.toString();
+      var cause = get_cause(e);
+      String msg = '$cause\n\n$stackTrace';
       store.dispatch(actions.ErrorMessageSet(msg));
       app.view.design_view.render(store.state);
     }
@@ -121,7 +122,7 @@ Future<void> export_dna() async {
   int idx_column_major_strand = 8;
   int idx_strand_order_str = 9;
 
-  List<DialogItem> items = List<DialogItem>.filled(idx_strand_order_str + 1, null);
+  FixedList<DialogItem> items = FixedList<DialogItem>(idx_strand_order_str + 1);
 
   items[idx_delimiter] = DialogText(label: 'delimiter between IDT fields', value: ',', tooltip: '''\
 Delimiter to separate IDT fields in a "bulk input" text file, for instance if set to ";", then a line 
@@ -205,7 +206,7 @@ which part of the strand to use as the address.
         },
       });
 
-  List<DialogItem> results = await util.dialog(dialog);
+  List<DialogItem>? results = await util.dialog(dialog);
   if (results == null) return;
 
   bool include_scaffold = (results[idx_include_scaffold] as DialogCheckbox).value;
@@ -213,7 +214,7 @@ which part of the strand to use as the address.
   bool exclude_selected_strands = (results[idx_exclude_selected_strands] as DialogCheckbox).value;
   String format_str = (results[idx_format_str] as DialogRadio).value;
   bool sort = (results[idx_sort] as DialogCheckbox).value;
-  StrandOrder strand_order = null;
+  StrandOrder? strand_order = null;
   bool column_major_strand = true;
   if (sort) {
     column_major_strand = (results[idx_column_major_strand] as DialogCheckbox).value;
@@ -242,25 +243,25 @@ which part of the strand to use as the address.
 
 String cando_compatible_csv_export(Iterable<Strand> strands) {
   StringBuffer buf = StringBuffer();
-// Write the CSV header
+  // Write the CSV header
   buf.writeln('Start,End,Sequence,Length,Color');
   for (var strand in strands) {
-// If the export name contains 'SCAF', then it's a scaffold strand, so we do not export it for cando.
+    // If the export name contains 'SCAF', then it's a scaffold strand, so we do not export it for cando.
     if (strand.vendor_export_name().contains('SCAF')) {
       continue;
     }
-// Remove the characters 'ST' from the start of the export name as cando doesn't understand them.
+    // Remove the characters 'ST' from the start of the export name as cando doesn't understand them.
     var cando_strand = strand.vendor_export_name().replaceAll(RegExp(r'^ST'), '');
-// Split the export name into the start and end positions.
+    // Split the export name into the start and end positions.
     RegExp cando_split_regex = RegExp(r'\d+\[\d+\]');
-    List<String> cando_split_name =
+    List<String?> cando_split_name =
         cando_split_regex.allMatches(cando_strand).map((match) => match.group(0)).toList();
     if (cando_split_name.length != 2) {
       throw ExportDNAException('Invalid strand name: ${strand.vendor_export_name()}');
     }
-    var cando_strand_end = cando_split_name[1];
-    var cando_strand_start = cando_split_name[0];
-// Write the strand to the CSV file.
+    String cando_strand_end = cando_split_name[1]!;
+    String cando_strand_start = cando_split_name[0]!;
+    // Write the strand to the CSV file.
     buf.writeln('${cando_strand_start},${cando_strand_end}'
         ',${vendor_sequence_null_aware(strand, "")}'
         ',${vendor_sequence_null_aware(strand, "").length}'

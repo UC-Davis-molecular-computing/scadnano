@@ -18,13 +18,14 @@ import 'package:scadnano/src/state/helix_group_move.dart';
 import 'package:scadnano/src/state/dna_extensions_move.dart';
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:scadnano/src/state/selection_rope.dart';
-import 'package:scadnano/src/view/design_main_arrows.dart';
+import 'package:scadnano/src/view/axis_arrows_main.dart';
 import 'package:scadnano/src/view/strand_color_picker.dart';
 
 import '../state/address.dart';
 import '../state/dna_ends_move.dart';
 import '../state/edit_mode.dart';
 import '../state/helix.dart';
+import '../state/select_mode.dart';
 import '../state/strand_creation.dart';
 import '../state/strands_move.dart';
 
@@ -34,7 +35,7 @@ import 'design_context_menu.dart';
 import 'design_dialog_form.dart';
 import 'design_loading_dialog.dart';
 import 'design_main_error_boundary.dart';
-import 'design_side_arrows.dart';
+import 'axis_arrows_side.dart';
 import 'menu_side.dart';
 import 'view.dart';
 import 'design_side.dart';
@@ -84,18 +85,18 @@ class DesignViewComponent {
   DivElement strand_color_picker_container = DivElement()
     ..attributes = {'id': 'strand-color-picker-container'};
 
-  svg.SvgSvgElement side_view_svg;
-  svg.SvgSvgElement main_view_svg;
+  late svg.SvgSvgElement side_view_svg;
+  late svg.SvgSvgElement main_view_svg;
 
-  ErrorMessageComponent error_message_component;
+  late ErrorMessageComponent error_message_component;
 
-  DivElement side_pane;
-  DivElement main_pane;
+  late DivElement side_pane;
+  late DivElement main_pane;
 
   bool svg_panzoom_has_been_set_up = false;
 
-  Point<num> side_view_mouse_position = Point<num>(0, 0);
-  Point<num> main_view_mouse_position = Point<num>(0, 0);
+  Point<double> side_view_mouse_position = Point<double>(0, 0);
+  Point<double> main_view_mouse_position = Point<double>(0, 0);
 
   DesignViewComponent(this.root_element) {
     this.side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
@@ -182,23 +183,20 @@ class DesignViewComponent {
 
   set_side_main_pane_widths() {
     String side_pane_width = local_storage.side_pane_width();
-    if (side_pane_width == null) {
-      side_pane_width = constants.default_side_pane_width;
-    }
     num main_pane_width_int = 100.0 - num.parse(side_pane_width.substring(0, side_pane_width.length - 1));
     String main_pane_width = '${main_pane_width_int.toString()}%';
     side_pane.setAttribute('style', 'width: $side_pane_width');
     main_pane.setAttribute('style', 'width: $main_pane_width');
   }
 
-  Map<DraggableComponent, Draggable> draggables = {
+  Map<DraggableComponent, Draggable?> draggables = {
     DraggableComponent.main: null,
     DraggableComponent.side: null,
   };
 
   handle_keyboard_mouse_events() {
     document.onClick.listen((MouseEvent event) {
-      Element target = event.target;
+      Element target = event.target as Element;
       // put away context menu if click occurred anywhere outside of it
       if (app.state.ui_state.context_menu != null) {
         var context_menu_elt = querySelector('#context-menu');
@@ -217,7 +215,7 @@ class DesignViewComponent {
 
     side_view_svg.onMouseLeave.listen((_) => side_view_mouse_leave_update_mouseover());
     side_view_svg.onMouseMove.listen((event) {
-      side_view_mouse_position = event.client;
+      side_view_mouse_position = util.from_point_num(event.client);
       side_view_update_position(event: event);
     });
 
@@ -244,7 +242,7 @@ class DesignViewComponent {
       bool left_mouse_button_is_down = util.left_mouse_button_pressed_during_mouse_event(event);
 
       // move potential crossover
-      main_view_mouse_position = event.client;
+      main_view_mouse_position = util.from_point_num(event.client);
       main_view_move_potential_crossover(event);
 
       // redraw potential next point for selection rope
@@ -253,7 +251,7 @@ class DesignViewComponent {
           (event.ctrlKey || event.metaKey || event.shiftKey)) {
         bool is_main_view = true;
         var view_svg = main_view_svg;
-        Point<num> point =
+        Point<double> point =
             util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
         var action = actions.SelectionRopeMouseMove(point: point, is_main_view: is_main_view);
         app.dispatch(actions.ThrottledActionFast(action, 1 / 60.0));
@@ -262,11 +260,12 @@ class DesignViewComponent {
       // move slice bar
       if (left_mouse_button_is_down && app.state.ui_state.slice_bar_is_moving) {
         String displayed_group_name = app.state.ui_state.displayed_group_name;
-        var group = app.state.design.groups[displayed_group_name];
+        var group = app.state.design.groups[displayed_group_name]!;
+        var geometry = group.geometry ?? app.state.design.geometry;
         var helices_in_group = app.state.design.helices_in_group(displayed_group_name).values;
-        int old_offset = app.state.ui_state.storables.slice_bar_offset;
-        var new_offset = util.find_closest_offset(event, helices_in_group, group, app.state.design.geometry,
-            app.state.helix_idx_to_svg_position_map[helices_in_group.first.idx].x);
+        int? old_offset = app.state.ui_state.storables.slice_bar_offset;
+        int new_offset = util.find_closest_offset(event, helices_in_group, group, geometry,
+            app.state.helix_idx_to_svg_position_map[helices_in_group.first.idx]!.x);
 
         if (old_offset != new_offset) {
           app.dispatch(actions.SliceBarOffsetSet(new_offset));
@@ -276,20 +275,20 @@ class DesignViewComponent {
       // DNAEnds, Strands, and HelixGroup move only should happen while left click is enabled
       if (left_mouse_button_is_down) {
         // move selected DNA ends
-        DNAEndsMove moves_store = app.store_dna_ends_move.state;
+        DNAEndsMove? moves_store = app.store_dna_ends_move.state;
         if (moves_store != null) {
           var group_names = group_names_of_ends(moves_store);
           if (group_names.length != 1) {
             var msg = 'Cannot move or copy DNA ends unless they are all on the same helix group.\n'
-                'The selected ends occupy the following helix groups: ${group_names?.join(", ")}';
+                'The selected ends occupy the following helix groups: ${group_names.join(", ")}';
             window.alert(msg);
           } else {
             Helix helix = moves_store.helix;
-            var group = app.state.design.groups[helix.group];
-            var geometry = app.state.design.geometry;
+            var group = app.state.design.groups[helix.group]!;
+            var geometry = group.geometry ?? app.state.design.geometry;
             int offset = util
                 .get_address_on_helix(
-                    event, helix, group, geometry, app.state.helix_idx_to_svg_position_map[helix.idx])
+                    event, helix, group, geometry, app.state.helix_idx_to_svg_position_map[helix.idx]!)
                 .offset;
             int old_offset = moves_store.current_offset;
             if (offset != old_offset) {
@@ -297,16 +296,16 @@ class DesignViewComponent {
             }
           }
         }
-        DNAExtensionsMove extensions_move_store = app.store_extensions_move.state;
+        DNAExtensionsMove? extensions_move_store = app.store_extensions_move.state;
         if (extensions_move_store != null) {
           var group_names = group_names_of_extensions(extensions_move_store);
           if (group_names.length != 1) {
             var msg = 'Cannot move or copy DNA extensions unless they are all on the same helix group.\n'
-                'The selected ends occupy the following helix groups: ${group_names?.join(", ")}';
+                'The selected ends occupy the following helix groups: ${group_names.join(", ")}';
             window.alert(msg);
           } else {
-            Point<num> old_point = extensions_move_store.current_point;
-            Point<num> point =
+            Point<double> old_point = extensions_move_store.current_point;
+            Point<double> point =
                 util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, true, main_view_svg);
             if (point != old_point) {
               app.dispatch(actions.DNAExtensionsMoveAdjustPosition(position: point));
@@ -316,7 +315,7 @@ class DesignViewComponent {
       }
 
       // move selected Strands
-      StrandsMove strands_move = app.state.ui_state.strands_move;
+      StrandsMove? strands_move = app.state.ui_state.strands_move;
       if (strands_move != null) {
         if (strands_move.copy || left_mouse_button_is_down) {
           // ugg... when copy/pasting, the left click doesn't have to be depressed.
@@ -333,10 +332,10 @@ class DesignViewComponent {
           // on copying with Ctrl+C if the original helices were from different groups).
           bool can_paste = true;
           if (!strands_move.copy) {
-            var group_names = group_names_of_strands(strands_move);
+            BuiltSet<String>? group_names = group_names_of_strands(strands_move);
             if (group_names != null && group_names.length != 1) {
               var msg = 'Cannot move or copy strands unless they are all on the same helix group.\n'
-                  'These strands occupy the following helix groups: ${group_names?.join(", ")}';
+                  'These strands occupy the following helix groups: ${group_names.join(", ")}';
               window.alert(msg);
               can_paste = false;
             }
@@ -349,8 +348,10 @@ class DesignViewComponent {
                       if (app.state.ui_state.side_selected_helix_idxs.contains(helix.idx)) helix
                   ]
                 : app.state.design.helices.values;
-            var address = util.find_closest_address(event, visible_helices, app.state.design.groups,
-                app.state.design.geometry, app.state.helix_idx_to_svg_position_map);
+            var group = app.state.design.groups[app.state.ui_state.displayed_group_name]!;
+            var geometry = group.geometry ?? app.state.design.geometry;
+            var address = util.find_closest_address(event, visible_helices, app.state.design.groups, geometry,
+                app.state.helix_idx_to_svg_position_map);
             if (address != old_address) {
               app.dispatch(actions.StrandsMoveAdjustAddress(address: address));
             }
@@ -359,13 +360,13 @@ class DesignViewComponent {
       }
 
       // move selected Domains
-      DomainsMove domains_move = app.state.ui_state.domains_move;
+      DomainsMove? domains_move = app.state.ui_state.domains_move;
       if (domains_move != null) {
         if (left_mouse_button_is_down) {
           var group_names = group_names_of_domains(domains_move);
           if (group_names.length != 1) {
             var msg = 'Cannot move or copy domains unless they are all on the same helix group.\n'
-                'These domains occupy the following helix groups: ${group_names?.join(", ")}';
+                'These domains occupy the following helix groups: ${group_names.join(", ")}';
             window.alert(msg);
           } else {
             var old_address = domains_move.current_address;
@@ -375,8 +376,10 @@ class DesignViewComponent {
                       if (app.state.ui_state.side_selected_helix_idxs.contains(helix.idx)) helix
                   ]
                 : app.state.design.helices.values;
-            var address = util.find_closest_address(event, visible_helices, app.state.design.groups,
-                app.state.design.geometry, app.state.helix_idx_to_svg_position_map);
+            var group = app.state.design.groups[app.state.ui_state.displayed_group_name]!;
+            var geometry = group.geometry ?? app.state.design.geometry;
+            var address = util.find_closest_address(event, visible_helices, app.state.design.groups, geometry,
+                app.state.helix_idx_to_svg_position_map);
             if (address != old_address) {
               app.dispatch(actions.DomainsMoveAdjustAddress(address: address));
             }
@@ -385,21 +388,21 @@ class DesignViewComponent {
       }
 
       // move strand creation
-      StrandCreation strand_creation = app.state.ui_state.strand_creation;
+      StrandCreation? strand_creation = app.state.ui_state.strand_creation;
       if (strand_creation != null) {
-        var group = app.state.design.groups[strand_creation.helix.group];
-        var geometry = app.state.design.geometry;
+        var group = app.state.design.groups[strand_creation.helix.group]!;
+        var geometry = group.geometry ?? app.state.design.geometry;
         // int new_offset = util
         //     .get_address_on_helix(event, strand_creation.helix, group, geometry,
         //         app.state.helix_idx_to_svg_position_map[strand_creation.helix.idx])
         //     .offset;
-        Helix strand_creation_helix = app.state.design.helices.toMap()[strand_creation.helix.idx];
+        Helix strand_creation_helix = app.state.design.helices[strand_creation.helix.idx]!;
         Address updated_function_offset = util.find_closest_address_with_infinite_helix_boundaries(
             event,
             strand_creation_helix,
             {strand_creation.helix.group: group}.build(),
             geometry,
-            {strand_creation.helix.idx: app.state.helix_idx_to_svg_position_map[strand_creation.helix.idx]}
+            {strand_creation.helix.idx: app.state.helix_idx_to_svg_position_map[strand_creation.helix.idx]!}
                 .build(),
             strand_creation);
         app.dispatch(actions.StrandCreateAdjustOffset(offset: updated_function_offset.offset));
@@ -409,9 +412,9 @@ class DesignViewComponent {
     // need to install and uninstall Draggable on each cycle of Ctrl/Shift key-down/up,
     // because while installed, Draggable stops the mouse events that the svg-pan-zoom library listens to.
     window.onKeyDown.listen((ev) {
-      int key = ev.which;
+      int key = ev.which!;
 
-      if (!ev.repeat) {
+      if (!ev.repeat!) {
         app.keys_pressed.add(key);
 
         if (key == KeyCode.ESC) {
@@ -436,7 +439,7 @@ class DesignViewComponent {
       // if rope-selecting, send actions to select items and remove displayed rope
       if (edit_mode_is_rope_select()) {
         // print('key up: ${key}');
-        SelectionRope rope = app.store_selection_rope.state;
+        SelectionRope? rope = app.store_selection_rope.state;
         if (rope != null) {
           bool toggle = rope.toggle;
           var action_adjust = null;
@@ -460,7 +463,7 @@ class DesignViewComponent {
     window.onBlur.listen((_) => end_select_mode());
 
     window.onKeyUp.listen((ev) {
-      int key = ev.which;
+      int key = ev.which!;
 
       app.keys_pressed.remove(key);
 
@@ -488,7 +491,7 @@ class DesignViewComponent {
         bool left_click = util.left_mouse_button_caused_mouse_event(event);
         bool selection_rope_exists = app.state.ui_state.selection_rope != null;
         if (selection_rope_exists && left_click && edit_mode_is_rope_select()) {
-          Point<num> point =
+          Point<double> point =
               util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, svg_elt);
           app.dispatch(actions.SelectionRopeAddPoint(point: point, is_main_view: is_main_view));
         }
@@ -533,7 +536,7 @@ class DesignViewComponent {
     if (app.state.ui_state.side_selected_helix_idxs.isNotEmpty) {
       app.dispatch(actions.HelixSelectionsClear());
     }
-    if (app.state.ui_state.potential_crossover_is_drawing) {
+    if (app.state.ui_state.drawing_potential_crossover) {
       app.dispatch(actions.PotentialCrossoverRemove());
     }
     if (app.state.ui_state.strands_move != null) {
@@ -583,7 +586,7 @@ class DesignViewComponent {
         !ev.altKey &&
         EditModeChoice.key_code_to_mode.keys.contains(key)) {
       // switch edit mode based on keyboard shortcut
-      app.dispatch(actions.EditModeToggle(EditModeChoice.key_code_to_mode[key]));
+      app.dispatch(actions.EditModeToggle(EditModeChoice.key_code_to_mode[key]!));
     } else if (key == KeyCode.DELETE || (operatingSystem.isMac && key == KeyCode.BACKSPACE)) {
       // delete selected objects
       ev.preventDefault(); // ensure backspace doesn't go to previous page
@@ -640,6 +643,33 @@ class DesignViewComponent {
       // Alt+Shift+A for Select all with same
       ev.preventDefault();
       app.disable_keyboard_shortcuts_while(ask_for_select_all_with_same_as_selected);
+    } else if ((app.state.ui_state.edit_modes.contains(EditModeChoice.select) ||
+            app.state.ui_state.edit_modes.contains(EditModeChoice.rope_select)) &&
+        ev.altKey &&
+        !(ev.ctrlKey || ev.metaKey)) {
+      // Alt+? for select modes
+      ev.preventDefault(); // for some reason this is not stopping Alt+D,
+      // so we also let the user type Alt+O since Alt+D has a special meaning in Chrome
+
+      if (key == KeyCode.S) {
+        app.dispatch(actions.SelectModeToggle(SelectModeChoice.strand));
+      } else if (key == KeyCode.O || key == KeyCode.D) {
+        app.dispatch(actions.SelectModeToggle(SelectModeChoice.domain));
+      } else if (key == KeyCode.E) {
+        app.dispatch(actions.SelectModesAdd(modes: SelectModeChoice.ends));
+      } else if (key == KeyCode.C) {
+        app.dispatch(actions.SelectModeToggle(SelectModeChoice.crossover));
+      } else if (key == KeyCode.L) {
+        app.dispatch(actions.SelectModeToggle(SelectModeChoice.loopout));
+      } else if (key == KeyCode.X) {
+        app.dispatch(actions.SelectModeToggle(SelectModeChoice.extension_));
+      } else if (key == KeyCode.I) {
+        app.dispatch(actions.SelectModeToggle(SelectModeChoice.insertion));
+      } else if (key == KeyCode.N) {
+        app.dispatch(actions.SelectModeToggle(SelectModeChoice.deletion));
+      } else if (key == KeyCode.M) {
+        app.dispatch(actions.SelectModeToggle(SelectModeChoice.modification));
+      }
     }
 
     if (key == EditModeChoice.pencil.key_code()) {
@@ -649,11 +679,11 @@ class DesignViewComponent {
 
   uninstall_draggable(bool is_main_view, DraggableComponent draggable_component) {
     if (draggables[draggable_component] != null) {
-      draggables[draggable_component].destroy();
+      draggables[draggable_component]!.destroy();
       draggables[draggable_component] = null;
       // class .dnd-drag-occurring not removed if Shift or Ctrl key depressed while mouse is lifted,
       // so we need to remove it manually just in case
-      document.body.classes.remove('dnd-drag-occurring');
+      document.body!.classes.remove('dnd-drag-occurring');
       if (app.store_selection_box.state != null) {
         app.dispatch(actions.SelectionBoxRemove(is_main_view));
       }
@@ -671,11 +701,11 @@ class DesignViewComponent {
   }
 
   drag_start(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
-    MouseEvent event = draggable_event.originalEvent;
-    Point<num> point =
+    MouseEvent event = draggable_event.originalEvent as MouseEvent;
+    Point<double> point =
         util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
     if (app.state.ui_state.edit_modes.contains(EditModeChoice.select)) {
-      bool toggle;
+      bool? toggle;
       if (event.ctrlKey || event.metaKey) {
         toggle = true;
       } else if (event.shiftKey) {
@@ -690,8 +720,8 @@ class DesignViewComponent {
   }
 
   drag(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
-    MouseEvent event = draggable_event.originalEvent;
-    Point<num> point =
+    MouseEvent event = draggable_event.originalEvent as MouseEvent;
+    Point<double> point =
         util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
     if (edit_mode_is_select()) {
       if (event.ctrlKey || event.metaKey || event.shiftKey) {
@@ -712,12 +742,12 @@ class DesignViewComponent {
         return;
       }
       var action_remove = actions.SelectionBoxRemove(is_main_view);
-      bool toggle = app.store_selection_box.state.toggle;
+      bool toggle = app.store_selection_box.state!.toggle;
       var action_adjust;
       if (is_main_view) {
         action_adjust = actions.SelectionsAdjustMainView(toggle: toggle, box: true);
       } else {
-        action_adjust = actions.HelixSelectionsAdjust(toggle, app.store_selection_box.state);
+        action_adjust = actions.HelixSelectionsAdjust(toggle, app.store_selection_box.state!);
       }
       // call this first so selection box is still in view when selections are made,
       // so we can detect intersection
@@ -728,11 +758,11 @@ class DesignViewComponent {
     }
   }
 
-  render_loading_dialog() {
+  render_loading_dialog(AppState state) {
     react_dom.render(
       over_react_components.ErrorBoundary()(
         (ReduxProvider()..store = app.store)(
-          ConnectedLoadingDialog()(),
+          set_design_loading_dialog_props(ConnectedLoadingDialog(), state)(),
         ),
       ),
       this.dialog_loading_container,
@@ -750,23 +780,8 @@ class DesignViewComponent {
       }
       this.error_message_component.render(state.error_message);
 
-      react_dom.render(
-        over_react_components.ErrorBoundary()(
-          (ReduxProvider()..store = app.store)(
-            ConnectedDesignDialogForm()(),
-          ),
-        ),
-        this.dialog_form_container,
-      );
-
-      react_dom.render(
-        over_react_components.ErrorBoundary()(
-          (ReduxProvider()..store = app.store)(
-            ConnectedLoadingDialog()(),
-          ),
-        ),
-        this.dialog_loading_container,
-      );
+      render_dialog_form();
+      render_loading_dialog(state);
     } else {
 //      var react_svg_pan_zoom_side = UncontrolledReactSVGPanZoom(
 //        {
@@ -811,29 +826,31 @@ class DesignViewComponent {
       react_dom.render(
         over_react_components.ErrorBoundary()(
           (ReduxProvider()..store = app.store)(
-            ConnectedSideMenu()(),
+            set_side_menu_props(ConnectedSideMenu(), state)(),
           ),
         ),
-        querySelector('#$SIDE_VIEW_MENU_ID'),
+        querySelector('#$SIDE_VIEW_MENU_ID')!,
       );
 
       // side view svg
-      react_dom.render(
-        over_react_components.ErrorBoundary()(
-          (ReduxProvider()..store = app.store)(
-            (ReduxProvider()
-              ..store = app.store_selection_rope
-              ..context = app.context_selection_rope)(
+      if (!state.has_error) {
+        react_dom.render(
+          over_react_components.ErrorBoundary()(
+            (ReduxProvider()..store = app.store)(
               (ReduxProvider()
-                ..store = app.store_selection_box
-                ..context = app.context_selection_box)(
-                ConnectedDesignSide()(),
+                ..store = app.store_selection_rope
+                ..context = app.context_selection_rope)(
+                (ReduxProvider()
+                  ..store = app.store_selection_box
+                  ..context = app.context_selection_box)(
+                  set_design_side_props(ConnectedDesignSide(), state)(),
+                ),
               ),
             ),
           ),
-        ),
-        querySelector('#$SIDE_VIEW_SVG_VIEWPORT_GROUP'),
-      );
+          querySelector('#$SIDE_VIEW_SVG_VIEWPORT_GROUP')!,
+        );
+      }
 
       // main view
       react_dom.render(
@@ -857,7 +874,7 @@ class DesignViewComponent {
                       (ReduxProvider()
                         ..store = app.store_helix_group_move
                         ..context = app.context_helix_group_move)(
-                        ConnectedDesignMain()(),
+                        (ConnectedDesignMain()..state = state)(),
                       ),
                     ),
                   ),
@@ -866,76 +883,15 @@ class DesignViewComponent {
             ),
           ),
         ),
-        querySelector('#$MAIN_VIEW_SVG_VIEWPORT_GROUP'),
+        querySelector('#$MAIN_VIEW_SVG_VIEWPORT_GROUP')!,
       );
 
-      // main arrows
-      react_dom.render(
-        over_react_components.ErrorBoundary()(
-          (ReduxProvider()..store = app.store)(
-            ConnectedDesignMainArrows()(),
-          ),
-        ),
-        querySelector('#$MAIN_VIEW_ARROWS_SVG_ID'),
-      );
-
-      // side arrows
-      react_dom.render(
-        over_react_components.ErrorBoundary()(
-          (ReduxProvider()..store = app.store)(
-            ConnectedDesignSideArrows()(),
-          ),
-        ),
-        querySelector('#$SIDE_VIEW_ARROWS_SVG_ID'),
-      );
-
-      // footer
-      react_dom.render(
-        over_react_components.ErrorBoundary()(
-          (ReduxProvider()..store = app.store)(
-            ConnectedDesignFooter()(),
-          ),
-        ),
-        this.footer_element,
-      );
-
-      // context menu
-      react_dom.render(
-        over_react_components.ErrorBoundary()(
-          (ReduxProvider()..store = app.store)(
-            ConnectedDesignContextMenu()(),
-          ),
-        ),
-        this.context_menu_container,
-      );
-
-      // interactive dialog
-      react_dom.render(
-        over_react_components.ErrorBoundary()(
-          (ReduxProvider()..store = app.store)(
-            ConnectedDesignDialogForm()(),
-          ),
-        ),
-        this.dialog_form_container,
-      );
-
-      // loading dialog
-      react_dom.render(
-        over_react_components.ErrorBoundary()(
-          (ReduxProvider()..store = app.store)(
-            ConnectedLoadingDialog()(),
-          ),
-        ),
-        this.dialog_loading_container,
-      );
-
-      react_dom.render(
-          over_react_components.ErrorBoundary()(
-            (ReduxProvider()..store = app.store)(
-              ConnectedStrandOrSubstrandColorPicker()(),
-            ),
-          ),
-          this.strand_color_picker_container);
+      render_axis_arrows(state);
+      render_design_footer(state);
+      render_context_menu();
+      render_dialog_form();
+      render_loading_dialog(state);
+      render_strand_or_substrand_color_picker(state);
 
       if (!svg_panzoom_has_been_set_up) {
         // Need to wrap callbacks so that Dart functions can be called in JavaScript.
@@ -946,9 +902,71 @@ class DesignViewComponent {
     }
   }
 
+  void render_strand_or_substrand_color_picker(AppState state) {
+    react_dom.render(
+        over_react_components.ErrorBoundary()(
+          (ReduxProvider()..store = app.store)(
+            (ConnectedStrandOrSubstrandColorPicker()..show = false)(),
+          ),
+        ),
+        this.strand_color_picker_container);
+  }
+
+  void render_axis_arrows(AppState state) {
+    react_dom.render(
+      over_react_components.ErrorBoundary()(
+        (ReduxProvider()..store = app.store)(
+          set_axis_arrows_props(ConnectedAxisArrowsSide(), state)(),
+        ),
+      ),
+      querySelector('#$SIDE_VIEW_ARROWS_SVG_ID')!,
+    );
+    react_dom.render(
+      over_react_components.ErrorBoundary()(
+        (ReduxProvider()..store = app.store)(
+          set_axis_arrows_props(ConnectedAxisArrowsMain(), state)(),
+        ),
+      ),
+      querySelector('#$MAIN_VIEW_ARROWS_SVG_ID')!,
+    );
+  }
+
+  void render_design_footer(AppState state) {
+    react_dom.render(
+      over_react_components.ErrorBoundary()(
+        (ReduxProvider()..store = app.store)(
+          set_design_footer_props(ConnectedDesignFooter(), state)(),
+        ),
+      ),
+      this.footer_element,
+    );
+  }
+
+  void render_context_menu() {
+    react_dom.render(
+      over_react_components.ErrorBoundary()(
+        (ReduxProvider()..store = app.store)(
+          ConnectedDesignContextMenu()(),
+        ),
+      ),
+      this.context_menu_container,
+    );
+  }
+
+  void render_dialog_form() {
+    react_dom.render(
+      over_react_components.ErrorBoundary()(
+        (ReduxProvider()..store = app.store)(
+          ConnectedDesignDialogForm()(),
+        ),
+      ),
+      this.dialog_form_container,
+    );
+  }
+
   main_view_move_potential_crossover(MouseEvent event) {
     if (app.store_potential_crossover.state != null) {
-      Point<num> point =
+      Point<double> point =
           util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, true, main_view_svg);
       var action = actions.PotentialCrossoverMove(point: point);
       app.dispatch(actions.ThrottledActionFast(action, 1 / 60.0));
@@ -964,14 +982,15 @@ class DesignViewComponent {
     }
   }
 
-  side_view_update_position({Point<num> mouse_pos = null, MouseEvent event = null}) {
+  side_view_update_position({Point<double>? mouse_pos = null, MouseEvent? event = null}) {
     assert(!(mouse_pos == null && event == null));
     if (edit_mode_is_pencil()) {
       var displayed_group_name = app.state.ui_state.displayed_group_name;
-      var displayed_grid = app.state.design.groups[displayed_group_name].grid;
+      var group = app.state.design.groups[displayed_group_name]!;
+      var displayed_grid = app.state.design.groups[displayed_group_name]!.grid;
       if (!displayed_grid.is_none) {
         bool invert_y = app.state.ui_state.invert_y;
-        Geometry geometry = app.state.design.geometry;
+        Geometry geometry = group.geometry ?? app.state.design.geometry;
         var new_grid_pos = util.grid_position_of_mouse_in_side_view(displayed_grid, invert_y, geometry,
             mouse_pos: mouse_pos, event: event);
         if (app.state.ui_state.side_view_grid_position_mouse_cursor != new_grid_pos) {
@@ -1004,7 +1023,7 @@ paste_strands_manually() {
   // it was much easier to handle the asynchronous read (seems to be the only way to read the clipboard)
   // here than to handle it in middleware;
   // unit testing especially seemed to be very difficult with all the asynchronous calls
-  clipboard.read().then((String content) {
+  clipboard.read().then((String? content) {
     if (content != null && content.isNotEmpty) {
       app.dispatch(actions.ManualPasteInitiate(clipboard_content: content));
     }
@@ -1015,22 +1034,23 @@ paste_strands_auto() {
   // it was much easier to handle the asynchronous read (seems to be the only way to read the clipboard)
   // here than to handle it in middleware;
   // unit testing especially seemed to be very difficult with all the asynchronous calls
-  clipboard.read().then((String content) {
+  clipboard.read().then((String? content) {
     if (content != null && content.isNotEmpty) {
       app.dispatch(actions.AutoPasteInitiate(clipboard_content: content));
     }
   });
 }
 
-group_names_of_strands(StrandsMove strands_move) =>
+BuiltSet<String>? group_names_of_strands(StrandsMove strands_move) =>
     app.state.design.group_names_of_strands(strands_move.strands_moving);
 
-group_names_of_domains(DomainsMove domains_move) =>
+BuiltSet<String> group_names_of_domains(DomainsMove domains_move) =>
     app.state.design.group_names_of_domains(domains_move.domains_moving);
 
-group_names_of_ends(DNAEndsMove ends_move) => app.state.design.group_names_of_ends(ends_move.ends_moving);
+BuiltSet<String> group_names_of_ends(DNAEndsMove ends_move) =>
+    app.state.design.group_names_of_ends(ends_move.ends_moving);
 
-group_names_of_extensions(DNAExtensionsMove extensions_move) =>
+BuiltSet<String> group_names_of_extensions(DNAExtensionsMove extensions_move) =>
     app.state.design.group_names_of_ends(extensions_move.ends_moving);
 
 main_view_pointer_up(MouseEvent event) {
@@ -1039,7 +1059,7 @@ main_view_pointer_up(MouseEvent event) {
     app.dispatch(actions.SliceBarMoveStop());
   }
 
-  DNAEndsMove dna_ends_move = app.store_dna_ends_move.state;
+  DNAEndsMove? dna_ends_move = app.store_dna_ends_move.state;
   if (dna_ends_move != null) {
     app.dispatch(actions.DNAEndsMoveStop());
     if (dna_ends_move.is_nontrivial) {
@@ -1047,7 +1067,7 @@ main_view_pointer_up(MouseEvent event) {
     }
   }
 
-  DNAExtensionsMove extensions_move = app.store_extensions_move.state;
+  DNAExtensionsMove? extensions_move = app.store_extensions_move.state;
   if (extensions_move != null) {
     app.dispatch(actions.DNAExtensionsMoveStop());
     if (extensions_move.is_nontrivial) {
@@ -1055,7 +1075,7 @@ main_view_pointer_up(MouseEvent event) {
     }
   }
 
-  HelixGroupMove helix_group_move = app.store_helix_group_move.state;
+  HelixGroupMove? helix_group_move = app.store_helix_group_move.state;
   if (helix_group_move != null) {
     app.dispatch(actions.HelixGroupMoveStop());
     if (helix_group_move.is_nontrivial) {
@@ -1063,7 +1083,7 @@ main_view_pointer_up(MouseEvent event) {
     }
   }
 
-  StrandsMove strands_move = app.state.ui_state.strands_move;
+  StrandsMove? strands_move = app.state.ui_state.strands_move;
   if (strands_move != null) {
     app.dispatch(actions.StrandsMoveStop());
     // XXX: strands_move.allowable may or may not be meaningful in general
@@ -1077,7 +1097,7 @@ main_view_pointer_up(MouseEvent event) {
     }
   }
 
-  DomainsMove domains_move = app.state.ui_state.domains_move;
+  DomainsMove? domains_move = app.state.ui_state.domains_move;
   if (domains_move != null) {
     app.dispatch(actions.DomainsMoveStop());
     if (domains_move.allowable && domains_move.is_nontrivial) {
@@ -1085,7 +1105,7 @@ main_view_pointer_up(MouseEvent event) {
     }
   }
 
-  StrandCreation strand_creation = app.state.ui_state.strand_creation;
+  StrandCreation? strand_creation = app.state.ui_state.strand_creation;
   if (strand_creation != null) {
     app.dispatch(actions.StrandCreateStop());
     if (strand_creation.original_offset != strand_creation.current_offset) {

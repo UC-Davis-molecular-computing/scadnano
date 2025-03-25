@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'dart:convert';
 
 import 'package:color/color.dart';
@@ -36,7 +34,7 @@ main() {
       var dom1_color = Color.rgb(1, 0, 0);
       var dom2_color = Color.rgb(2, 0, 0);
       var loop_color = Color.rgb(3, 0, 0);
-      Color dom3_color = null;
+      Color? dom3_color = null;
       var ext_3p_color = Color.rgb(4, 0, 0);
       var strand_color = Color.rgb(5, 0, 0);
       design = design

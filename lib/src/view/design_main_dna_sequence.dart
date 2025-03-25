@@ -1,10 +1,8 @@
-import 'dart:html';
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:platform_detect/platform_detect.dart';
-import 'package:react/react_client/react_interop.dart';
 import 'package:scadnano/src/state/group.dart';
 import 'package:scadnano/src/view/transform_by_helix_group.dart';
 import 'package:tuple/tuple.dart';
@@ -22,27 +20,23 @@ part 'design_main_dna_sequence.over_react.g.dart';
 
 UiFactory<DesignMainDNASequenceProps> DesignMainDNASequence = _$DesignMainDNASequence;
 
-mixin DesignMainDNASequencePropsMixin on UiProps {
-  Strand strand;
-  BuiltSet<int> side_selected_helix_idxs;
-  bool only_display_selected_helices;
-  bool display_reverse_DNA_right_side_up;
+mixin DesignMainDNASequenceProps on UiProps implements TransformByHelixGroupPropsMixin {
+  late Strand strand;
+  late BuiltSet<int> side_selected_helix_idxs;
+  late bool only_display_selected_helices;
+  late bool display_reverse_DNA_right_side_up;
 
-  BuiltMap<int, Helix> helices;
-  BuiltMap<String, HelixGroup> groups;
-  Geometry geometry;
-  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
+  late BuiltMap<int, Helix> helices;
+  late BuiltMap<String, HelixGroup> groups;
+  late Geometry geometry;
+  late BuiltMap<int, Point<double>> helix_idx_to_svg_position_map;
 }
-
-class DesignMainDNASequenceProps = UiProps
-    with DesignMainDNASequencePropsMixin, TransformByHelixGroupPropsMixin;
 
 bool should_draw_domain(
         Domain ss, BuiltSet<int> side_selected_helix_idxs, bool only_display_selected_helices) =>
     !only_display_selected_helices || side_selected_helix_idxs.contains(ss.helix);
 
-class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceProps>
-    with PureComponent, TransformByHelixGroup<DesignMainDNASequenceProps> {
+class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceProps> with PureComponent {
   @override
   render() {
     BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;
@@ -61,7 +55,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
             domain_elts.add(this._dna_sequence_on_insertion(domain, offset, length));
           }
           dna_sequence_elts.add((Dom.g()
-            ..transform = transform_of_helix(domain.helix)
+            ..transform = transform_of_helix2(props, domain.helix)
             ..className = 'dna-seq-on-domain-group'
             ..key = util.id_domain(domain))(domain_elts));
         }
@@ -69,8 +63,8 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
         assert(0 < i);
         assert(i < this.props.strand.substrands.length - 1);
         Loopout loopout = substrand;
-        Domain prev_dom = this.props.strand.substrands[i - 1];
-        Domain next_dom = this.props.strand.substrands[i + 1];
+        Domain prev_dom = this.props.strand.substrands[i - 1] as Domain;
+        Domain next_dom = this.props.strand.substrands[i + 1] as Domain;
         if (should_draw_domain(prev_dom, side_selected_helix_idxs, props.only_display_selected_helices) &&
             should_draw_domain(next_dom, side_selected_helix_idxs, props.only_display_selected_helices)) {
           dna_sequence_elts.add(this._dna_sequence_on_loopout(loopout, prev_dom, next_dom));
@@ -95,41 +89,43 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
   static const charWidth = 6.59375;
 
   ReactElement _dna_sequence_on_domain(Domain domain) {
+    var helix = props.helices[domain.helix]!;
+    var group = props.groups[helix.group]!;
+    var geometry = group.geometry ?? props.geometry;
     var seq_to_draw = domain.dna_sequence_deletions_insertions_to_spaces(
         reverse: props.display_reverse_DNA_right_side_up && !domain.forward);
 
     var rotate_degrees = 0;
     int offset = domain.offset_5p;
-    var helix = props.helices[domain.helix];
-    Point<num> pos =
-        helix.svg_base_pos(offset, domain.forward, props.helix_idx_to_svg_position_map[domain.helix].y);
+    Point<double> pos = helix.svg_base_pos(
+        offset, domain.forward, props.helix_idx_to_svg_position_map[domain.helix]!.y, props.geometry);
     var rotate_x = pos.x;
     var rotate_y = pos.y;
 
     // this is needed to make complementary DNA bases line up more nicely (still not perfect)
-    var x_adjust = -props.geometry.base_width_svg * 0.32;
+    var x_adjust = -geometry.base_width_svg * 0.32;
     var dy, x, y;
-    var text_length = props.geometry.base_width_svg * (domain.visual_length - 0.342);
+    var text_length = geometry.base_width_svg * (domain.visual_length - 0.342);
 
     //extension, loopout,
 
     if (domain.forward) {
       //rotation and displacement for forward text
       rotate_degrees = 0;
-      dy = -props.geometry.base_height_svg * 0.25;
+      dy = -geometry.base_height_svg * 0.25;
       x = pos.x + x_adjust;
       y = pos.y;
     } else {
       if (props.display_reverse_DNA_right_side_up) {
         rotate_degrees = 0;
         //displacement for reverse text
-        dy = props.geometry.base_height_svg * 0.75;
+        dy = geometry.base_height_svg * 0.75;
         x = pos.x - x_adjust - text_length;
-        y = pos.y + props.geometry.base_height_svg;
+        y = pos.y + geometry.base_height_svg;
       } else {
         rotate_degrees = 180;
         //displacement for reverse text if option not enabled
-        dy = -props.geometry.base_height_svg * 0.25;
+        dy = -geometry.base_height_svg * 0.25;
         x = pos.x + x_adjust;
         y = pos.y;
       }
@@ -156,6 +152,9 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
   }
 
   ReactElement _dna_sequence_on_insertion(Domain domain, int offset, int length) {
+    var helix = props.helices[domain.helix]!;
+    var group = props.groups[helix.group]!;
+    var geometry = group.geometry ?? props.geometry;
     var reverse_right_side_up = props.display_reverse_DNA_right_side_up && !domain.forward;
 
     var subseq = domain.dna_sequence_in(offset, offset, reverse: reverse_right_side_up);
@@ -164,11 +163,11 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
 //    num path_length = insertion_path_elt.getTotalLength();
 
     var start_offset = '50%';
-    var dy = '${0.1 * props.geometry.base_width_svg}';
+    var dy = '${0.1 * geometry.base_width_svg}';
 
-    Tuple2<num, num> ls_fs = _calculate_letter_spacing_and_font_size_insertion(length);
-    num letter_spacing = ls_fs.item1;
-    num font_size = ls_fs.item2;
+    Tuple2<double?, int> ls_fs = _calculate_letter_spacing_and_font_size_insertion(length);
+    double? letter_spacing = ls_fs.item1;
+    int font_size = ls_fs.item2;
 
     Map<String, dynamic> style_map;
     if (letter_spacing != null) {
@@ -195,20 +194,23 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
   }
 
   ReactElement _dna_sequence_on_loopout(Loopout loopout, Domain prev_domain, Domain next_domain) {
-    var subseq = loopout.dna_sequence;
+    var helix = props.helices[prev_domain.helix]!;
+    var group = props.groups[helix.group]!;
+    var geometry = group.geometry ?? props.geometry;
+    String subseq = loopout.dna_sequence!;
     var length = subseq.length;
 
     var start_offset = '50%';
-    var dy = '${0.1 * props.geometry.base_height_svg}';
+    var dy = '${0.1 * geometry.base_height_svg}';
 
-    Tuple2<num, num> ls_fs;
+    Tuple2<double?, int> ls_fs;
     if (util.is_hairpin(prev_domain, next_domain)) {
       ls_fs = _calculate_letter_spacing_and_font_size_hairpin(length);
     } else {
       ls_fs = _calculate_letter_spacing_and_font_size_loopout(length);
     }
-    num letter_spacing = ls_fs.item1;
-    num font_size = ls_fs.item2;
+    double? letter_spacing = ls_fs.item1;
+    int font_size = ls_fs.item2;
 
     Map<String, dynamic> style_map;
     if (letter_spacing != null) {
@@ -230,22 +232,19 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
   }
 
   ReactElement _dna_sequence_on_extension(Extension ext) {
+    var helix = props.helices[ext.adjacent_domain.helix]!;
+    var group = props.groups[helix.group]!;
+    var geometry = group.geometry ?? props.geometry;
     var subseq = ext.dna_sequence;
 
     var start_offset = '50%';
-    var dy = '${0.1 * props.geometry.base_height_svg}';
+    var dy = '${0.1 * geometry.base_height_svg}';
 
-    Tuple2<num, num> ls_fs;
-    ls_fs = _calculate_letter_spacing_and_font_size_extension(ext);
-    num letter_spacing = ls_fs.item1;
-    num font_size = ls_fs.item2;
+    Tuple2<double, int> ls_fs = _calculate_letter_spacing_and_font_size_extension(ext);
+    double letter_spacing = ls_fs.item1;
+    int font_size = ls_fs.item2;
 
-    Map<String, dynamic> style_map;
-    if (letter_spacing != null) {
-      style_map = {'letterSpacing': '${letter_spacing}em', 'fontSize': '${font_size}px'};
-    } else {
-      style_map = {'fontSize': '${font_size}px'};
-    }
+    Map<String, dynamic> style_map = {'letterSpacing': '${letter_spacing}em', 'fontSize': '${font_size}px'};
 
     SvgProps text_path_props = (Dom.textPath()
       ..className = classname_dna_sequence + '-extension'
@@ -259,21 +258,21 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
   }
 }
 
-Tuple2<num, num> _calculate_letter_spacing_and_font_size_loopout(int len) {
-  num letter_spacing = 0;
-  num font_size = 12;
-  return Tuple2<num, num>(letter_spacing, font_size);
+Tuple2<double, int> _calculate_letter_spacing_and_font_size_loopout(int len) {
+  double letter_spacing = 0;
+  int font_size = 12;
+  return Tuple2<double, int>(letter_spacing, font_size);
 }
 
-Tuple2<num, num> _calculate_letter_spacing_and_font_size_extension(Extension ext) {
-  num letter_spacing = 0;
-  num font_size = 12;
-  return Tuple2<num, num>(letter_spacing, font_size);
+Tuple2<double, int> _calculate_letter_spacing_and_font_size_extension(Extension ext) {
+  double letter_spacing = 0;
+  int font_size = 12;
+  return Tuple2<double, int>(letter_spacing, font_size);
 }
 
-Tuple2<num, num> _calculate_letter_spacing_and_font_size_hairpin(int len) {
-  num letter_spacing;
-  num font_size = max(6, 12 - max(0, len - 6));
+Tuple2<double?, int> _calculate_letter_spacing_and_font_size_hairpin(int len) {
+  double? letter_spacing;
+  int font_size = max(6, 12 - max(0, len - 6));
   if (browser.isChrome) {
     if (len == 1) {
       letter_spacing = 0;
@@ -299,13 +298,13 @@ Tuple2<num, num> _calculate_letter_spacing_and_font_size_hairpin(int len) {
     }
     letter_spacing = null;
   }
-  return Tuple2<num, num>(letter_spacing, font_size);
+  return Tuple2<double?, int>(letter_spacing, font_size);
 }
 
-Tuple2<num, num> _calculate_letter_spacing_and_font_size_insertion(int num_insertions) {
+Tuple2<double?, int> _calculate_letter_spacing_and_font_size_insertion(int num_insertions) {
   // UGGG
-  num letter_spacing;
-  num font_size = max(6, 12 - (num_insertions - 1));
+  double? letter_spacing;
+  int font_size = max(6, 12 - (num_insertions - 1));
   if (browser.isChrome) {
     if (num_insertions == 1) {
       letter_spacing = 0;
@@ -331,7 +330,7 @@ Tuple2<num, num> _calculate_letter_spacing_and_font_size_insertion(int num_inser
     }
     letter_spacing = null;
   }
-  return Tuple2<num, num>(letter_spacing, font_size);
+  return Tuple2<double?, int>(letter_spacing, font_size);
 }
 
 // keep this around in case this is how we want to export to an SVG file and it doesn't do textLength well
@@ -350,7 +349,7 @@ Tuple2<num, num> _calculate_letter_spacing_and_font_size_insertion(int num_inser
 //        offset_from_start = -i;
 //      }
 //      int offset = substrand.offset_5p + offset_from_start;
-//      Point<num> pos = Helix.svg_base_pos(substrand.helix_idx, offset, substrand.direction);
+//      Point<double> pos = Helix.svg_base_pos(substrand.helix_idx, offset, substrand.direction);
 //      var rotate_x = pos.x;
 //      var rotate_y = pos.y;
 //      if (substrand.direction == Direction.left) {

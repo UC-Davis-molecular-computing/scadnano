@@ -18,5 +18,6 @@ class DNAFileType extends EnumClass {
   static const DNAFileType cadnano_file = _$cadnano_file;
 
   static BuiltSet<DNAFileType> get values => _$values;
+
   static DNAFileType valueOf(String name) => _$valueOf(name);
 }

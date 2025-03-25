@@ -39,15 +39,17 @@ abstract class AppUIStateStorables
 
   bool get show_base_pair_lines;
 
+  bool get export_base_pair_lines_if_other_strand_not_selected;
+
   bool get show_base_pair_lines_with_mismatches;
 
-  num get strand_name_font_size;
+  double get strand_name_font_size;
 
-  num get strand_label_font_size;
+  double get strand_label_font_size;
 
-  num get domain_name_font_size;
+  double get domain_name_font_size;
 
-  num get domain_label_font_size;
+  double get domain_label_font_size;
 
   bool get show_modifications;
 
@@ -67,13 +69,13 @@ abstract class AppUIStateStorables
   /// main view. False means all helices should be drawn.
   bool get only_display_selected_helices;
 
-  num get modification_font_size;
+  double get modification_font_size;
 
-  num get major_tick_offset_font_size;
+  double get major_tick_offset_font_size;
 
-  num get major_tick_width_font_size;
+  double get major_tick_width_font_size;
 
-  num get zoom_speed;
+  double get zoom_speed;
 
   bool get modification_display_connector;
 
@@ -119,8 +121,7 @@ abstract class AppUIStateStorables
 
   String get displayed_group_name;
 
-  @nullable
-  int get slice_bar_offset;
+  int? get slice_bar_offset;
 
   bool get disable_png_caching_dna_sequences;
 
@@ -148,6 +149,7 @@ abstract class AppUIStateStorables
     b.show_domain_labels = false;
     b.base_pair_display_type = BasePairDisplayType.none;
     b.show_base_pair_lines = false;
+    b.export_base_pair_lines_if_other_strand_not_selected = false;
     b.show_base_pair_lines_with_mismatches = false;
     b.strand_name_font_size = constants.default_strand_name_font_size;
     b.strand_label_font_size = constants.default_strand_label_font_size;

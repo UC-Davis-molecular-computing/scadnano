@@ -36,6 +36,8 @@ dna_ends_move_start_middleware(Store<AppState> store, action, NextDispatcher nex
       strands_affected.add(strand);
     }
     next(action);
+    var group = design.groups[action.helix.group]!;
+    var geometry = group.geometry ?? design.geometry;
 
     // important that we dispatch to app, not to store, because the app dispatch will know to route this
     // to the appropriate optimized store for moving DNAEnds
@@ -43,7 +45,8 @@ dna_ends_move_start_middleware(Store<AppState> store, action, NextDispatcher nex
         original_offset: action.offset,
         moves: moves.toBuiltList(),
         helix: action.helix,
-        strands_affected: strands_affected.toBuiltSet()));
+        strands_affected: strands_affected.toBuiltSet(),
+        geometry: geometry));
   } else {
     next(action);
   }
@@ -53,7 +56,7 @@ dna_ends_move_start_middleware(Store<AppState> store, action, NextDispatcher nex
 /// moved to. This depends on what is the closest end that is not selected, and how many selected ends
 /// are in between this end and that one.
 int find_allowable_offset(Design design, DNAEnd end, BuiltSet<DNAEnd> selected_ends, bool highest) {
-  Domain substrand = design.end_to_domain[end];
+  Domain substrand = design.end_to_domain[end]!;
   int helix_idx = substrand.helix;
   Set<int> selected_offsets = selected_ends.map((e) => e.offset_inclusive).toSet();
 
@@ -81,7 +84,7 @@ int find_allowable_offset(Design design, DNAEnd end, BuiltSet<DNAEnd> selected_e
   }
 
   if (unselected_end_offsets_to_one_side.isEmpty) {
-    Helix helix = design.helices[helix_idx];
+    Helix helix = design.helices[helix_idx]!;
     return highest ? helix.max_offset - 1 : helix.min_offset;
   }
 

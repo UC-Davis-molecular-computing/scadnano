@@ -14,14 +14,12 @@ class NoIndent implements JSONSerializable {
 
   dynamic to_json_serializable({bool suppress_indent = false}) => this.value;
 
-//  dynamic toJson() => this.value;
-
   String toString() => 'NoIndent(\n  ${value}\n)';
 }
 
-String json_encode(JSONSerializable obj, [bool suppress_indent = true]) {
+String json_encode(JSONSerializable? obj, [bool suppress_indent = true]) {
   if (obj == null) {
-    return null;
+    return "null";
   }
   var encoder = SuppressableIndentEncoder(Replacer(), suppress: suppress_indent);
   var serializable = obj.to_json_serializable(suppress_indent: suppress_indent);
@@ -29,7 +27,7 @@ String json_encode(JSONSerializable obj, [bool suppress_indent = true]) {
   return json_str;
 }
 
-class SuppressableIndentEncoder extends JsonEncoder {
+class SuppressableIndentEncoder {
   final String indent;
   final bool suppress;
   final Replacer replacer;
@@ -38,13 +36,12 @@ class SuppressableIndentEncoder extends JsonEncoder {
 
   SuppressableIndentEncoder(Replacer replacer, {String this.indent = "  ", bool this.suppress = true})
       : this.replacer = replacer,
-        this.encoder_indent = JsonEncoder.withIndent(indent),
-        super(replacer.default_encode);
+        this.encoder_indent = JsonEncoder.withIndent(indent, replacer.default_encode);
 
-  String convert(Object obj) {
-    String result = super.convert(obj);
+  String convert(Object? obj) {
+    String result = this.encoder_indent.convert(obj);
     for (var key in this.replacer.replacement_map.keys) {
-      String val = this.replacer.replacement_map[key];
+      String val = this.replacer.replacement_map[key]!;
 
       // Dart *really* minifies its JSON; let's make it a bit more readable
       // using a cheap hack to avoid replacing those ':' that occur within a JSON string key
@@ -59,7 +56,7 @@ class SuppressableIndentEncoder extends JsonEncoder {
 
 class Replacer {
   int unique_id = 0;
-  final Map replacement_map = {};
+  final Map<int, String> replacement_map = {};
   final JsonEncoder encoder_no_indent = JsonEncoder();
 
   dynamic default_encode(dynamic obj) {

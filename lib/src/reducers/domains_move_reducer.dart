@@ -15,22 +15,23 @@ import '../actions/actions.dart' as actions;
 import '../extension_methods.dart';
 import 'strands_move_reducer.dart';
 
-GlobalReducer<DomainsMove, AppState> domains_move_global_reducer = combineGlobalReducers([
-  TypedGlobalReducer<DomainsMove, AppState, actions.DomainsMoveStartSelectedDomains>(
+GlobalReducer<DomainsMove?, AppState> domains_move_global_reducer = combineGlobalReducers([
+  TypedGlobalReducer<DomainsMove?, AppState, actions.DomainsMoveStartSelectedDomains>(
       domains_move_start_selected_domains_reducer),
-  TypedGlobalReducer<DomainsMove, AppState, actions.DomainsMoveAdjustAddress>(domains_adjust_address_reducer),
+  TypedGlobalReducer<DomainsMove?, AppState, actions.DomainsMoveAdjustAddress>(
+      domains_adjust_address_reducer),
 ]);
 
-Reducer<DomainsMove> domains_move_local_reducer = combineReducers([
-  TypedReducer<DomainsMove, actions.DomainsMoveStop>(domains_move_stop_reducer),
+Reducer<DomainsMove?> domains_move_local_reducer = combineReducers([
+  TypedReducer<DomainsMove?, actions.DomainsMoveStop>(domains_move_stop_reducer),
 ]);
 
-DomainsMove domains_move_start_selected_domains_reducer(
-    DomainsMove _, AppState state, actions.DomainsMoveStartSelectedDomains action) {
+DomainsMove? domains_move_start_selected_domains_reducer(
+    DomainsMove? _, AppState state, actions.DomainsMoveStartSelectedDomains action) {
   Set<Domain> selected_domains =
       Set<Domain>.from(state.ui_state.selectables_store.selected_items.where((s) => s is Domain));
   Set<Strand> strands_of_selected_domains = {
-    for (var domain in selected_domains) state.design.substrand_to_strand[domain]
+    for (var domain in selected_domains) state.design.substrand_to_strand[domain]!
   };
   return DomainsMove(
       domains_moving: selected_domains.toBuiltList(),
@@ -42,7 +43,7 @@ DomainsMove domains_move_start_selected_domains_reducer(
       original_address: action.address);
 }
 
-DomainsMove domains_move_stop_reducer(DomainsMove domains_move, actions.DomainsMoveStop action) => null;
+DomainsMove? domains_move_stop_reducer(DomainsMove? domains_move, actions.DomainsMoveStop action) => null;
 
 // - in_bounds checks whether the domain is in a legal address given the helices, but allows it to overlap
 // other domains
@@ -51,9 +52,9 @@ DomainsMove domains_move_stop_reducer(DomainsMove domains_move, actions.DomainsM
 bool in_bounds_and_allowable(Design design, DomainsMove domains_move) =>
     in_bounds(design, domains_move) && is_allowable(design, domains_move);
 
-DomainsMove domains_adjust_address_reducer(
-    DomainsMove domains_move, AppState state, actions.DomainsMoveAdjustAddress action) {
-  DomainsMove new_domains_move = domains_move.rebuild((b) => b..current_address.replace(action.address));
+DomainsMove? domains_adjust_address_reducer(
+    DomainsMove? domains_move, AppState state, actions.DomainsMoveAdjustAddress action) {
+  DomainsMove new_domains_move = domains_move!.rebuild((b) => b..current_address.replace(action.address));
   if (in_bounds(state.design, new_domains_move)) {
     bool allowable = is_allowable(state.design, new_domains_move);
     return new_domains_move.rebuild((b) => b..allowable = allowable);
@@ -66,13 +67,13 @@ DomainsMove domains_adjust_address_reducer(
 // where the domains would go if it were allowable.
 bool in_bounds(Design design, DomainsMove domains_move) {
   var current_address_helix_idx = domains_move.current_address.helix_idx;
-  var current_helix = design.helices[current_address_helix_idx];
-  var current_group = design.groups[current_helix.group];
+  var current_helix = design.helices[current_address_helix_idx]!;
+  var current_group = design.groups[current_helix.group]!;
   var num_helices_in_group = design.helices_in_group(current_helix.group).length;
 
   int original_helix_idx = domains_move.original_address.helix_idx;
-  var original_helix = design.helices[original_helix_idx];
-  var original_group = design.groups[original_helix.group];
+  var original_helix = design.helices[original_helix_idx]!;
+  var original_group = design.groups[original_helix.group]!;
 
   int delta_view_order = domains_move.delta_view_order;
   int delta_offset = domains_move.delta_offset;
@@ -86,12 +87,12 @@ bool in_bounds(Design design, DomainsMove domains_move) {
 
   // look for offset out of bounds
   for (int original_helix_idx in design.helices.keys) {
-    if (domains_move.domains_moving_on_helix[original_helix_idx].isEmpty) continue;
+    if (domains_move.domains_moving_on_helix[original_helix_idx]!.isEmpty) continue;
 
-    int view_order_orig = original_group.helices_view_order_inverse[original_helix_idx];
+    int view_order_orig = original_group.helices_view_order_inverse[original_helix_idx]!;
     int new_helix_idx = current_group.helices_view_order[view_order_orig + delta_view_order];
-    Helix helix = design.helices[new_helix_idx];
-    for (var domain in domains_move.domains_moving_on_helix[original_helix_idx]) {
+    Helix helix = design.helices[new_helix_idx]!;
+    for (var domain in domains_move.domains_moving_on_helix[original_helix_idx]!) {
       if (domain.start + delta_offset < helix.min_offset) return false;
       if (domain.end + delta_offset > helix.max_offset) return false;
     }
@@ -103,7 +104,7 @@ bool in_bounds(Design design, DomainsMove domains_move) {
 Set<int> view_order_moving(DomainsMove domains_move, HelixGroup original_group) {
   Set<int> ret = {};
   for (var domain in domains_move.domains_moving) {
-    ret.add(original_group.helices_view_order_inverse[domain.helix]);
+    ret.add(original_group.helices_view_order_inverse[domain.helix]!);
   }
   return ret;
 }
@@ -111,8 +112,8 @@ Set<int> view_order_moving(DomainsMove domains_move, HelixGroup original_group) 
 // XXX: assumes in_bounds check has already passed
 bool is_allowable(Design design, DomainsMove domains_move) {
   var current_address_helix_idx = domains_move.current_address.helix_idx;
-  var current_helix = design.helices[current_address_helix_idx];
-  var current_group = design.groups[current_helix.group];
+  var current_helix = design.helices[current_address_helix_idx]!;
+  var current_group = design.groups[current_helix.group]!;
 
   int delta_view_order = domains_move.delta_view_order;
   int delta_offset = domains_move.delta_offset;
@@ -120,18 +121,18 @@ bool is_allowable(Design design, DomainsMove domains_move) {
 
   // look for moving domains overlapping fixed domains
   for (int original_helix_idx in design.helices.keys) {
-    var domains_moving = domains_move.domains_moving_on_helix[original_helix_idx];
+    var domains_moving = domains_move.domains_moving_on_helix[original_helix_idx]!;
     if (domains_moving.isEmpty) continue;
 
     // if we made it here then there are substrands actually moving, so if the reducer that processed
     // the move events did its job, original_helix_idx + delta_helix_idx should be in bounds
-    Helix original_helix = design.helices[original_helix_idx];
-    HelixGroup original_group = design.groups[original_helix.group];
-    int view_order_orig = original_group.helices_view_order_inverse[original_helix_idx];
+    Helix original_helix = design.helices[original_helix_idx]!;
+    HelixGroup original_group = design.groups[original_helix.group]!;
+    int view_order_orig = original_group.helices_view_order_inverse[original_helix_idx]!;
     int new_helix_idx = current_group.helices_view_order[view_order_orig + delta_view_order];
 
-    Helix new_helix = design.helices[new_helix_idx];
-    var domains_fixed = domains_move.domains_fixed_on_helix[new_helix_idx];
+    Helix new_helix = design.helices[new_helix_idx]!;
+    var domains_fixed = domains_move.domains_fixed_on_helix[new_helix_idx]!;
     if (domains_fixed.isEmpty) continue;
 
     // below, note that delta_forward != dom.forward is equivalent to delta_forward XOR dom.forward, i.e.,
@@ -160,17 +161,16 @@ bool is_allowable(Design design, DomainsMove domains_move) {
 }
 
 Domain move_domain(
-    {Domain domain,
-    HelixGroup original_group,
-    HelixGroup current_group,
-    int delta_view_order,
-    int delta_offset,
-    bool delta_forward,
+    {required Domain domain,
+    required HelixGroup original_group,
+    required HelixGroup current_group,
+    required int delta_view_order,
+    required int delta_offset,
+    required bool delta_forward,
     bool set_first_last_false = false}) {
-  num original_view_order = original_group.helices_view_order_inverse[domain.helix];
-  num new_view_order = original_view_order + delta_view_order;
+  int original_view_order = original_group.helices_view_order_inverse[domain.helix]!;
+  int new_view_order = original_view_order + delta_view_order;
   int new_helix_idx = current_group.helices_view_order[new_view_order];
-  assert(new_helix_idx != null);
   Domain domain_moved = domain.rebuild(
     (b) => b
       ..is_first = set_first_last_false ? false : b.is_first

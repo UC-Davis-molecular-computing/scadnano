@@ -1,5 +1,4 @@
 import 'dart:html';
-import 'dart:math';
 
 import 'package:meta/meta.dart';
 import 'package:built_collection/built_collection.dart';
@@ -8,7 +7,6 @@ import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
 
 import 'package:scadnano/src/state/modification_type.dart';
-import 'package:scadnano/src/view/transform_by_helix_group.dart';
 
 import '../state/strand.dart';
 import '../state/dialog.dart';
@@ -30,36 +28,31 @@ import '../constants.dart' as constants;
 
 part 'design_main_strand_extension.over_react.g.dart';
 
-@Factory()
 UiFactory<DesignMainExtensionProps> DesignMainExtension = _$DesignMainExtension;
 
-@Props()
-mixin DesignMainExtensionPropsMixin on UiProps {
-  Extension ext;
+mixin DesignMainExtensionProps on UiProps {
+  late Extension ext;
 
-  Domain adjacent_domain;
-  Helix adjacent_helix;
+  late Domain adjacent_domain;
+  late Helix adjacent_helix;
 
-  Color strand_color;
+  late Color strand_color;
 
-  Strand strand;
-  String strand_tooltip;
-  String transform;
-  Point<num> adjacent_helix_svg_position;
+  late Strand strand;
+  late String strand_tooltip;
+  late String transform;
+  late Point<double> adjacent_helix_svg_position;
 
-  bool selected;
+  late bool selected;
 
-  BuiltMap<int, Helix> helices;
-  BuiltMap<String, HelixGroup> groups;
-  Geometry geometry;
-  bool retain_strand_color_on_selection;
+  late BuiltMap<int, Helix> helices;
+  late BuiltMap<String, HelixGroup> groups;
+  late Geometry geometry;
+  late bool retain_strand_color_on_selection;
 }
 
-class DesignMainExtensionProps = UiProps with DesignMainExtensionPropsMixin, TransformByHelixGroupPropsMixin;
-
 @Component2()
-class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps>
-    with PureComponent, TransformByHelixGroup<DesignMainExtensionProps> {
+class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps> with PureComponent {
   @override
   render() {
     var ext = props.ext;
@@ -68,10 +61,10 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     var adj_helix = props.adjacent_helix;
     var adj_helix_svg_y = props.adjacent_helix_svg_position.y;
 
-    Point<num> extension_attached_end_svg =
-        util.compute_extension_attached_end_svg(ext, adj_dom, adj_helix, adj_helix_svg_y);
+    Point<double> extension_attached_end_svg =
+        util.compute_extension_attached_end_svg(ext, adj_dom, adj_helix, adj_helix_svg_y, props.geometry);
 
-    Point<num> extension_free_end_svg =
+    Point<double> extension_free_end_svg =
         util.compute_extension_free_end_svg(extension_attached_end_svg, ext, adj_dom, props.geometry);
 
     var classname = constants.css_selector_extension;
@@ -155,23 +148,25 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
 
   @override
   componentDidMount() {
-    var element = querySelector('#${props.ext.id}');
+    var element = querySelector('#${props.ext.id}')!;
     element.addEventListener('contextmenu', on_context_menu);
   }
 
   @override
   componentWillUnmount() {
-    var element = querySelector('#${props.ext.id}');
+    super.componentWillUnmount();
+    var element = querySelector('#${props.ext.id}')!;
     element.removeEventListener('contextmenu', on_context_menu);
   }
 
   on_context_menu(Event ev) {
-    MouseEvent event = ev;
+    MouseEvent event = ev as MouseEvent;
     if (!event.shiftKey) {
       event.preventDefault();
       event.stopPropagation(); // needed to prevent strand context menu from popping up
       app.dispatch(actions.ContextMenuShow(
-          context_menu: ContextMenu(items: context_menu_extension().build(), position: event.page)));
+          context_menu: ContextMenu(
+              items: context_menu_extension().build(), position: util.from_point_num(event.page))));
     }
   }
 
@@ -191,10 +186,15 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
         if (props.ext.name != null)
           ContextMenuItem(
               title: 'remove extension name',
-              on_click: () => app.dispatch(actions.BatchAction(
-                  app.state.ui_state.selectables_store.selected_extensions
-                      .map((e) => actions.SubstrandNameSet(name: null, substrand: e)),
-                  "remove extension names"))),
+              on_click: () {
+                var exts =
+                    util.add_if_not_null(app.state.ui_state.selectables_store.selected_extensions, props.ext);
+                var action = exts.length > 1
+                    ? actions.BatchAction(exts.map((l) => actions.SubstrandNameSet(name: null, substrand: l)),
+                        "remove extension names")
+                    : actions.SubstrandNameSet(name: null, substrand: props.ext);
+                app.dispatch(action);
+              }),
         ContextMenuItem(
           title: 'set extension label',
           on_click: set_extension_label,
@@ -202,10 +202,16 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
         if (props.ext.label != null)
           ContextMenuItem(
               title: 'remove extension label',
-              on_click: () => app.dispatch(actions.BatchAction(
-                  app.state.ui_state.selectables_store.selected_extensions
-                      .map((e) => actions.SubstrandLabelSet(label: null, substrand: e)),
-                  "remove extension labels"))),
+              on_click: () {
+                var exts =
+                    util.add_if_not_null(app.state.ui_state.selectables_store.selected_extensions, props.ext);
+                var action = exts.length > 1
+                    ? actions.BatchAction(
+                        exts.map((l) => actions.SubstrandLabelSet(label: null, substrand: l)),
+                        "remove extension labels")
+                    : actions.SubstrandLabelSet(label: null, substrand: props.ext);
+                app.dispatch(action);
+              }),
         ContextMenuItem(
           title: 'set extension color',
           on_click: () => app
@@ -223,7 +229,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
         'change extension number of bases',
         current_num_bases: props.ext.num_bases,
         lower_bound: 1));
-    if (new_num_bases == null || new_num_bases == props.ext.num_bases) {
+    if (new_num_bases == props.ext.num_bases) {
       return;
     }
     var selected_extensions = app.state.ui_state.selectables_store.selected_extensions;
@@ -246,11 +252,11 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
 
   Future<void> ask_for_extension_name() async {
     int name_idx = 0;
-    var items = List<DialogItem>.filled(1, null);
+    var items = util.FixedList<DialogItem>(1);
     items[name_idx] = DialogText(label: 'name', value: props.ext.name ?? '');
     var dialog = Dialog(title: 'set extension name', items: items, type: DialogType.set_extension_name);
 
-    List<DialogItem> results = await util.dialog(dialog);
+    List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
 
     String name = (results[name_idx] as DialogText).value;
@@ -272,22 +278,20 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
   Future<void> ask_for_extension_display_length_and_angle() async {
     int display_length_idx = 0;
     int display_angle_idx = 1;
-    var items = List<DialogItem>.filled(2, null);
-    items[display_length_idx] =
-        DialogFloat(label: 'display length (nm)', value: props.ext.display_length ?? '');
-    items[display_angle_idx] =
-        DialogFloat(label: 'display angle (degrees)', value: props.ext.display_angle ?? '');
+    var items = util.FixedList<DialogItem>(2);
+    items[display_length_idx] = DialogFloat(label: 'display length (nm)', value: props.ext.display_length);
+    items[display_angle_idx] = DialogFloat(label: 'display angle (degrees)', value: props.ext.display_angle);
     var dialog = Dialog(
         title: 'set extension display length/angle',
         items: items,
         type: DialogType.set_extension_display_length_angle,
         use_saved_response: false);
 
-    List<DialogItem> results = await util.dialog(dialog);
+    List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
 
-    num display_length = (results[display_length_idx] as DialogFloat).value;
-    num display_angle = (results[display_angle_idx] as DialogFloat).value;
+    double display_length = (results[display_length_idx] as DialogFloat).value;
+    double display_angle = (results[display_angle_idx] as DialogFloat).value;
     if (display_length <= 0) {
       window.alert('display_length must be positive, but is ${display_length}');
     } else {
@@ -305,9 +309,10 @@ tooltip_text(Extension ext) =>
     (ext.name == null ? "" : "\n    name=${ext.name}") +
     (ext.label == null ? "" : "\n    label=${ext.label.toString()}");
 
-Future<int> ask_for_num_bases(String title, {int current_num_bases, int lower_bound}) async {
+Future<int> ask_for_num_bases(String title,
+    {required int current_num_bases, required int lower_bound}) async {
   int num_bases_idx = 0;
-  var items = List<DialogItem>.filled(1, null);
+  var items = util.FixedList<DialogItem>(1);
   items[num_bases_idx] = DialogInteger(label: 'number of bases:', value: current_num_bases);
   var dialog = Dialog(
     title: title,
@@ -316,7 +321,7 @@ Future<int> ask_for_num_bases(String title, {int current_num_bases, int lower_bo
     use_saved_response: false,
   );
 
-  List<DialogItem> results = await util.dialog(dialog);
+  List<DialogItem>? results = await util.dialog(dialog);
   if (results == null) return current_num_bases;
 
   int num_bases = (results[num_bases_idx] as DialogInteger).value;

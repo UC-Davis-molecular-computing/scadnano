@@ -27,6 +27,7 @@ import '../state/extension.dart';
 import '../app.dart';
 import '5p_end.dart';
 import '3p_end.dart';
+import 'design_main_strand.dart';
 import 'design_main_strand_dna_end_moving.dart';
 import 'pure_component.dart';
 import '../actions/actions.dart' as actions;
@@ -40,29 +41,25 @@ UiFactory<DesignMainDNAEndProps> DesignMainDNAEnd = _$DesignMainDNAEnd;
 
 @Props()
 mixin DesignMainDNAEndPropsMixin on UiProps {
-  Strand strand;
-  Domain domain;
-  Extension ext;
-  Color strand_color;
-  bool is_5p;
-  bool is_scaffold;
-  bool is_on_extension;
+  late Strand strand;
+  Domain? domain; // exactly one of domain or ext will be non-null
+  Extension? ext;
+  late Color strand_color;
+  late bool is_5p;
+  late bool is_scaffold;
 
-  String transform;
-  Helix helix;
-  HelixGroup group;
-  Geometry geometry;
-  bool selected;
+  late String transform;
+  late Helix helix;
+  late HelixGroup group;
+  late Geometry geometry;
+  late bool selected;
 
-  List<ContextMenuItem> Function(Strand strand,
-      {@required Substrand substrand,
-      @required Address address,
-      @required ModificationType type}) context_menu_strand;
+  late ContextMenuStrand context_menu_strand;
 
-  bool drawing_potential_crossover;
-  bool moving_this_dna_end;
-  Point<num> helix_svg_position;
-  bool retain_strand_color_on_selection;
+  late bool drawing_potential_crossover;
+  late bool moving_this_dna_end;
+  late Point<double> helix_svg_position;
+  late bool retain_strand_color_on_selection;
 }
 
 class DesignMainDNAEndProps = UiProps with DesignMainDNAEndPropsMixin;
@@ -70,16 +67,20 @@ class DesignMainDNAEndProps = UiProps with DesignMainDNAEndPropsMixin;
 @Component2()
 class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with PureComponent {
   DNAEnd get dna_end => props.domain != null
-      ? (props.is_5p ? props.domain.dnaend_5p : props.domain.dnaend_3p)
-      : props.ext.dnaend_free;
+      ? (props.is_5p ? props.domain!.dnaend_5p : props.domain!.dnaend_3p)
+      : props.ext!.dnaend_free;
 
-  bool get is_first => props.domain != null ? props.domain.is_first && props.is_5p : props.is_5p;
+  bool get is_first => props.domain != null ? props.domain!.is_first && props.is_5p : props.is_5p;
 
-  bool get is_last => props.domain != null ? props.domain.is_last && !props.is_5p : !props.is_5p;
+  bool get is_last => props.domain != null ? props.domain!.is_last && !props.is_5p : !props.is_5p;
+
+  bool get is_on_extension => props.ext != null;
 
   @override
   render() {
-    var classname;
+    assert(props.domain == null && props.ext != null || props.domain != null && props.ext == null);
+
+    String classname;
     if (props.is_5p) {
       if (is_first && props.is_5p) {
         classname = constants.css_selector_end_5p_strand;
@@ -105,47 +106,46 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       classname += ' ' + constants.css_selector_scaffold;
     }
 
-    assert((props.is_on_extension && props.domain == null && props.ext != null) ||
-        (!props.is_on_extension && props.domain != null && props.ext == null));
-
     EndEitherPrimeProps end_props = (props.is_5p ? End5Prime() : End3Prime());
-    EndMovingProps end_moving_props = ConnectedEndMoving();
+    EndMovingProps end_moving_props = ConnectedEndMoving()..svg_position_y = props.helix_svg_position.y;
 
     ExtensionEndMovingProps extension_end_moving_props = ConnectedExtensionEndMoving();
 
     DNAEnd dna_end;
     int offset;
-    Point<num> pos;
+    Point<double> pos;
     bool forward;
     double rotation_degrees = 0;
 
-    Point<num> extension_attached_end_svg;
-    var color = props.strand_color;
+    Point<double>? extension_attached_end_svg = null;
+    Color color = props.strand_color;
 
-    if (!props.is_on_extension) {
+    if (!this.is_on_extension) {
       //XXX: need to listen to onPointerDown instead of onMouseDown for when draggable is enabled,
       // which it is when Shift or Ctrl (or Meta) keys are pressed
       // see here: https://github.com/marcojakob/dart-dnd/issues/27
-      forward = props.domain.forward;
-      dna_end = props.is_5p ? props.domain.dnaend_5p : props.domain.dnaend_3p;
-      offset = props.is_5p ? props.domain.offset_5p : props.domain.offset_3p;
-      pos = props.helix.svg_base_pos(offset, props.domain.forward, props.helix_svg_position.y);
-      if (props.domain.color != null) {
-        color = props.domain.color;
+      Domain domain = props.domain!;
+      forward = domain.forward;
+      dna_end = props.is_5p ? domain.dnaend_5p : domain.dnaend_3p;
+      offset = props.is_5p ? domain.offset_5p : domain.offset_3p;
+      pos = props.helix.svg_base_pos(offset, domain.forward, props.helix_svg_position.y, props.geometry);
+      if (domain.color != null) {
+        color = domain.color!;
       }
     } else {
       // is on extension
-      forward = props.ext.adjacent_domain.forward;
-      dna_end = props.ext.dnaend_free;
+      Extension ext = props.ext!;
+      forward = ext.adjacent_domain.forward;
+      dna_end = ext.dnaend_free;
 
       extension_attached_end_svg = util.compute_extension_attached_end_svg(
-          props.ext, props.ext.adjacent_domain, props.helix, props.helix_svg_position.y);
+          ext, ext.adjacent_domain, props.helix, props.helix_svg_position.y, props.geometry);
       pos = util.compute_extension_free_end_svg(
-          extension_attached_end_svg, props.ext, props.ext.adjacent_domain, props.geometry);
+          extension_attached_end_svg, ext, ext.adjacent_domain, props.geometry);
 
-      rotation_degrees = props.ext.compute_rotation();
-      if (props.ext.color != null) {
-        color = props.ext.color;
+      rotation_degrees = ext.compute_rotation();
+      if (ext.color != null) {
+        color = ext.color!;
       }
     }
 
@@ -156,12 +156,12 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       ..on_mouse_enter = handle_on_mouse_enter
       ..on_mouse_leave = handle_on_mouse_leave
       ..on_mouse_move = handle_on_mouse_move
-      ..pos = pos
-      ..color = color
       ..classname = classname
+      ..pos = pos // TODO: why doesn't this the overreact analyzer error since pos is required?
+      ..color = color
       ..forward = forward
       ..transform = 'rotate(${rotation_degrees})'
-      ..id = dna_end.id
+      ..id_ = dna_end.id
       ..key = 'nonmoving-end';
 
     // draw avatar of moving DNA end if it is moving
@@ -201,11 +201,11 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
   componentDidMount() {
     String id;
     if (props.is_5p) {
-      id = props.domain != null ? props.domain.dnaend_5p.id : props.ext.dnaend_free.id;
+      id = props.domain != null ? props.domain!.dnaend_5p.id : props.ext!.dnaend_free.id;
     } else {
-      id = props.domain != null ? props.domain.dnaend_3p.id : props.ext.dnaend_free.id;
+      id = props.domain != null ? props.domain!.dnaend_3p.id : props.ext!.dnaend_free.id;
     }
-    var element = querySelector('#${id}');
+    var element = querySelector('#${id}')!;
     element.addEventListener('contextmenu', on_context_menu);
   }
 
@@ -213,39 +213,41 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
   componentWillUnmount() {
     String id;
     if (props.is_5p) {
-      id = props.domain != null ? props.domain.dnaend_5p.id : props.ext.dnaend_free.id;
+      id = props.domain != null ? props.domain!.dnaend_5p.id : props.ext!.dnaend_free.id;
     } else {
-      id = props.domain != null ? props.domain.dnaend_3p.id : props.ext.dnaend_free.id;
+      id = props.domain != null ? props.domain!.dnaend_3p.id : props.ext!.dnaend_free.id;
     }
-    var element = querySelector('#${id}');
+    var element = querySelector('#${id}')!;
     element.removeEventListener('contextmenu', on_context_menu);
     super.componentWillUnmount();
   }
 
   on_context_menu(Event ev) {
-    MouseEvent event = ev;
+    MouseEvent event = ev as MouseEvent;
     if (!event.shiftKey) {
       event.preventDefault();
       event.stopPropagation();
-      Address address = null;
-      if (props.domain != null) {
-        address = props.is_5p ? props.domain.address_5p : props.domain.address_3p;
-      }
+      // If they clicked on a domain, send the domain's address to the context menu
+      // otherwise it's an extension, then we send the address of the adjacent domain's 5'/3' end.
+      Domain domain = this.is_on_extension ? props.ext!.adjacent_domain : props.domain!;
+      Address address = props.is_5p ? domain.address_5p : domain.address_3p;
+
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
               items: props
                   .context_menu_strand(props.strand,
-                      substrand: props.domain ?? props.ext,
+                      domain: domain,
                       address: address,
-                      type: (props.is_5p ? ModificationType.five_prime : ModificationType.three_prime))
+                      modification_type:
+                          (props.is_5p ? ModificationType.five_prime : ModificationType.three_prime))
                   .build(),
-              position: event.page)));
+              position: util.from_point_num(event.page))));
     }
   }
 
   handle_end_click_select_and_or_move_start(react.SyntheticPointerEvent event_synthetic) {
     if (end_selectable(dna_end)) {
-      if (!props.is_on_extension) {
+      if (!this.is_on_extension) {
         // select end
         MouseEvent event = event_synthetic.nativeEvent;
         //On a mac event.button is: 0-left, 1-middle, 2-right.
@@ -258,6 +260,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         // set up drag detection for moving DNA ends
         app.dispatch(actions.DNAEndsMoveStart(offset: dna_end.offset_inclusive, helix: props.helix));
       } else {
+        Extension ext = props.ext!;
         // select end
         MouseEvent event = event_synthetic.nativeEvent;
         //On a mac event.button is: 0-left, 1-middle, 2-right.
@@ -268,15 +271,15 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         }
         dna_end.handle_selection_mouse_down(event);
         // set up drag detection for moving DNA ends
-        Point<num> extension_attached_end_svg = util.compute_extension_attached_end_svg(
-            props.ext, props.ext.adjacent_domain, props.helix, props.helix_svg_position.y);
+        Point<double> extension_attached_end_svg = util.compute_extension_attached_end_svg(
+            ext, ext.adjacent_domain, props.helix, props.helix_svg_position.y, props.geometry);
 
         // extension_start_point is in helix group coordinate space, so add it with helix group position
         // to get canvas coordinate space
         extension_attached_end_svg += props.group.translation(props.geometry);
 
-        Point<num> pos = util.compute_extension_free_end_svg(
-            extension_attached_end_svg, props.ext, props.ext.adjacent_domain, props.geometry);
+        Point<double> pos = util.compute_extension_free_end_svg(
+            extension_attached_end_svg, ext, ext.adjacent_domain, props.geometry);
         app.dispatch(actions.DNAExtensionsMoveStart(start_point: pos, helix: props.helix));
       }
     }
@@ -298,17 +301,21 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       return;
     }
 
-    if (props.is_on_extension) {
+    if (this.is_on_extension) {
       return;
     }
 
     if (edit_mode_is_pencil() && !props.drawing_potential_crossover && (is_first || is_last)) {
+      var domain = props.domain;
+      if (domain == null) {
+        throw AssertionError('domain should not be null');
+      }
       // If clicking on end of a strand, start drawing a new crossover
-      int offset = props.is_5p ? props.domain.offset_5p : props.domain.offset_3p;
+      int offset = props.is_5p ? domain.offset_5p : domain.offset_3p;
       var start_point_untransformed =
-          props.helix.svg_base_pos(offset, props.domain.forward, props.helix_svg_position.y);
+          props.helix.svg_base_pos(offset, domain.forward, props.helix_svg_position.y, props.geometry);
       var start_point = props.group.transform_point_main_view(start_point_untransformed, props.geometry);
-      var address = Address(helix_idx: props.helix.idx, offset: offset, forward: props.domain.forward);
+      var address = Address(helix_idx: props.helix.idx, offset: offset, forward: domain.forward);
       var potential_crossover = PotentialCrossover(
         address: address,
         color: props.strand_color.toHexColor().toCssString(),
@@ -318,9 +325,13 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       );
       app.dispatch(actions.PotentialCrossoverCreate(potential_crossover: potential_crossover));
     } else if (edit_mode_is_pencil() && !props.drawing_potential_crossover && !(is_first || is_last)) {
+      var domain = props.domain;
+      if (domain == null) {
+        throw AssertionError('domain should not be null');
+      }
       // If clicking on end of a domain within a strand (i.e., end of a crossover or loopout),
       // start moving the existing crossover/loopout
-      int domain_idx = props.strand.domains.indexOf(props.domain); // XXX: idx in domains, not substrands
+      int domain_idx = props.strand.domains.indexOf(domain); // XXX: idx in domains, not substrands
       // unlike above, need to find the OPPOSITE end of the crossover/loopout from DNAEnd that was clicked
       Linker linker;
       DNAEnd other_end;
@@ -336,7 +347,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         assert(domain_idx > 0); // since !is_first
         linker = props.strand.linkers[domain_idx - 1];
         int other_domain_idx_in_substrands = linker.prev_domain_idx;
-        other_domain = props.strand.substrands[other_domain_idx_in_substrands];
+        other_domain = props.strand.substrands[other_domain_idx_in_substrands] as Domain;
         other_end = other_domain.dnaend_3p; // since clicked end was 5'
       } else {
         /*
@@ -350,14 +361,14 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         assert(domain_idx < props.strand.linkers.length); // since one fewer linker than Domain
         linker = props.strand.linkers[domain_idx];
         int other_domain_idx_in_substrands = linker.next_domain_idx;
-        other_domain = props.strand.substrands[other_domain_idx_in_substrands];
+        other_domain = props.strand.substrands[other_domain_idx_in_substrands] as Domain;
         other_end = other_domain.dnaend_5p; // since clicked end was 3'
       }
       int other_offset = other_end.offset_inclusive;
       int other_helix_idx = other_domain.helix;
-      Point<num> other_helix_svg = app.state.helix_idx_to_svg_position_map[other_helix_idx];
+      Point<double> other_helix_svg = app.state.helix_idx_to_svg_position_map[other_helix_idx]!;
       var start_point_untransformed =
-          props.helix.svg_base_pos(other_offset, other_domain.forward, other_helix_svg.y);
+          props.helix.svg_base_pos(other_offset, other_domain.forward, other_helix_svg.y, props.geometry);
       var start_point = props.group.transform_point_main_view(start_point_untransformed, props.geometry);
       var address = Address(helix_idx: other_helix_idx, offset: other_offset, forward: other_domain.forward);
       var potential_crossover = PotentialCrossover(
@@ -371,7 +382,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       app.dispatch(actions.PotentialCrossoverCreate(potential_crossover: potential_crossover));
     } else if (edit_mode_is_pencil() && props.drawing_potential_crossover && (is_first || is_last)) {
       // if clicking while drawing new potential crossover, make it into an actual crossover
-      PotentialCrossover potential_crossover = app.store_potential_crossover.state;
+      PotentialCrossover potential_crossover = app.store_potential_crossover.state!;
       if (props.is_5p == potential_crossover.dna_end_first_click.is_5p) {
         // can only connect opposite type ends with crossover
         return;

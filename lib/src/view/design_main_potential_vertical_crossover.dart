@@ -18,21 +18,17 @@ part 'design_main_potential_vertical_crossover.over_react.g.dart';
 UiFactory<DesignMainPotentialVerticalCrossoverProps> DesignMainPotentialVerticalCrossover =
     _$DesignMainPotentialVerticalCrossover;
 
-mixin DesignMainPotentialVerticalCrossoverPropsMixin on UiProps {
-  PotentialVerticalCrossover potential_vertical_crossover;
+mixin DesignMainPotentialVerticalCrossoverProps on UiProps implements TransformByHelixGroupPropsMixin {
+  late PotentialVerticalCrossover potential_vertical_crossover;
 
-  BuiltMap<int, Helix> helices;
-  BuiltMap<String, HelixGroup> groups;
-  Geometry geometry;
-  BuiltMap<int, num> helix_idx_to_svg_position_y_map;
+  late BuiltMap<int, Helix> helices;
+  late BuiltMap<String, HelixGroup> groups;
+  late Geometry geometry;
+  late BuiltMap<int, double> helix_idx_to_svg_position_y_map;
 }
 
-class DesignMainPotentialVerticalCrossoverProps = UiProps
-    with DesignMainPotentialVerticalCrossoverPropsMixin, TransformByHelixGroupPropsMixin;
-
 class DesignMainPotentialVerticalCrossoverComponent
-    extends UiComponent2<DesignMainPotentialVerticalCrossoverProps>
-    with PureComponent, TransformByHelixGroup<DesignMainPotentialVerticalCrossoverProps> {
+    extends UiComponent2<DesignMainPotentialVerticalCrossoverProps> with PureComponent {
   @override
   render() {
     PotentialVerticalCrossover crossover = props.potential_vertical_crossover;
@@ -44,8 +40,8 @@ class DesignMainPotentialVerticalCrossoverComponent
       next_domain = crossover.domain_top;
     }
 
-    var prev_group = props.helices[prev_domain.helix].group;
-    var next_group = props.helices[next_domain.helix].group;
+    var prev_group = props.helices[prev_domain.helix]!.group;
+    var next_group = props.helices[next_domain.helix]!.group;
     bool within_group = prev_group == next_group;
     if (!within_group) {
       // don't render these unless both helices are in the same group
@@ -58,8 +54,8 @@ class DesignMainPotentialVerticalCrossoverComponent
         next_domain,
         props.helices,
         props.geometry,
-        props.helix_idx_to_svg_position_y_map[prev_domain.helix],
-        props.helix_idx_to_svg_position_y_map[next_domain.helix]);
+        props.helix_idx_to_svg_position_y_map[prev_domain.helix]!,
+        props.helix_idx_to_svg_position_y_map[next_domain.helix]!);
     var color = crossover.color;
 
     String tooltip = 'click to add a crossover';
@@ -68,7 +64,7 @@ class DesignMainPotentialVerticalCrossoverComponent
       ..d = path
       ..stroke = color
       ..className = classname_this_curve
-      ..transform = transform_of_helix(prev_domain.helix)
+      ..transform = transform_of_helix2(props, prev_domain.helix)
       ..onPointerDown = ((ev) {
         if (ev.nativeEvent.button == constants.LEFT_CLICK_BUTTON) {
           app.dispatch(actions.JoinStrandsByCrossover(

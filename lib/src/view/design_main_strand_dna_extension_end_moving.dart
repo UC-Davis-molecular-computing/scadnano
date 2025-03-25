@@ -25,13 +25,26 @@ typedef PointerDownHandler = void Function(react.SyntheticPointerEvent);
 typedef MouseUpHandler = void Function(react.SyntheticMouseEvent);
 
 UiFactory<ExtensionEndMovingProps> ConnectedExtensionEndMoving =
-    connect<DNAExtensionsMove, ExtensionEndMovingProps>(
+    connect<DNAExtensionsMove?, ExtensionEndMovingProps>(
   mapStateToPropsWithOwnProps: (dna_extensions_move, props) {
-    Point<num> current_point = dna_extensions_move?.current_point_of(props.dna_end);
+    if (dna_extensions_move == null || props.dna_end == null) {
+      return ExtensionEndMoving()..render = false;
+    }
+    Point<double>? current_point = dna_extensions_move.current_point_of(props.dna_end!);
     if (current_point == null) {
       return ExtensionEndMoving()..render = false;
     }
-    return ExtensionEndMoving()..current_point = current_point;
+    return ExtensionEndMoving()
+      ..current_point = current_point
+      ..dna_end = dna_extensions_move.ends_moving.first
+      ..ext = dna_extensions_move.moves.first.extension
+      ..geometry = props.geometry
+      ..helix = props.helix
+      ..group = props.group
+      ..color = props.color
+      ..forward = props.dna_end!.forward
+      ..is_5p = props.dna_end!.is_5p
+      ..attached_end_svg = props.attached_end_svg;
   },
   context: app.context_extensions_move,
 )(ExtensionEndMoving);
@@ -39,19 +52,19 @@ UiFactory<ExtensionEndMovingProps> ConnectedExtensionEndMoving =
 UiFactory<ExtensionEndMovingProps> ExtensionEndMoving = _$ExtensionEndMoving;
 
 mixin ExtensionEndMovingProps on UiProps {
-  DNAEnd dna_end;
-  Extension ext;
-  Geometry geometry;
-  Point<num> attached_end_svg;
-  Helix helix;
-  HelixGroup group;
-  Color color;
-  bool forward;
-  bool is_5p;
-  bool allowable;
+  DNAEnd? dna_end;
+  Extension? ext;
+  Geometry? geometry;
+  Point<double>? attached_end_svg;
+  Helix? helix;
+  HelixGroup? group;
+  Color? color;
+  bool? forward;
+  bool? is_5p;
+  Point<double>? current_point;
 
-  Point<num> current_point;
-  bool render;
+  late bool render;
+  late bool allowable;
 }
 
 class ExtensionEndMovingComponent extends UiComponent2<ExtensionEndMovingProps> {
@@ -68,21 +81,19 @@ class ExtensionEndMovingComponent extends UiComponent2<ExtensionEndMovingProps> 
 
     // current_point is in canvas coordinate space, so subtract it with helix group position
     // to get helix group coordinate space (since translation transform is already applied to DesignMainDNAEndComponent))
-    Point<num> pos = props.current_point - props.group.translation(props.geometry);
+    Point<double> pos = props.current_point! - props.group!.translation(props.geometry!);
 
-    EndEitherPrimeProps end_props = (props.is_5p ? End5Prime() : End3Prime());
-    String classname = (props.is_5p ? 'five-prime-end-moving' : 'three-prime-end-moving') +
+    EndEitherPrimeProps end_props = (props.is_5p! ? End5Prime() : End3Prime());
+    String classname = (props.is_5p! ? 'five-prime-end-moving' : 'three-prime-end-moving') +
         (props.allowable ? '' : ' disallowed-end');
     end_props = end_props
-      ..on_pointer_down = null
-      ..on_mouse_up = null
-      ..pos = pos
-      ..color = props.color
       ..classname = classname
-      ..forward = props.forward;
+      ..pos = pos
+      ..color = props.color!
+      ..forward = props.forward!;
     var display_angle = util.compute_extension_length_and_angle_from_point(
-        pos, props.attached_end_svg, props.ext, props.ext.adjacent_domain, props.geometry);
-    var rotation_degrees = util.compute_end_rotation(display_angle.item2, props.forward, props.is_5p);
+        pos, props.attached_end_svg!, props.ext!, props.ext!.adjacent_domain, props.geometry!);
+    var rotation_degrees = util.compute_end_rotation(display_angle.item2, props.forward!, props.is_5p!);
     // https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-center-in-svg
     end_props = end_props..transform = "rotate($rotation_degrees)";
     return end_props();

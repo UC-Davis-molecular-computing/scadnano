@@ -22,11 +22,13 @@ autostaple_and_autobreak_middleware(Store<AppState> store, dynamic action, NextD
 }
 
 _autostaple(Store<AppState> store) async {
+  print("autostaple, sending design to server ${constants.autostaple_url}");
   var response = await http.post(
-    constants.autostaple_url,
+    Uri.parse(constants.autostaple_url),
     body: json_encode(store.state.design),
     headers: {"Content-Type": "application/json"},
   );
+  print("response: ${response.body}");
 
   _handle_response(store, response, "autostaple");
 }
@@ -42,7 +44,7 @@ _autobreak(Store<AppState> store, actions.Autobreak action) async {
     'design': store.state.design.to_json_serializable()
   });
   var response = await http.post(
-    constants.autobreak_url,
+    Uri.parse(constants.autobreak_url),
     body: body,
     headers: {"Content-Type": "application/json"},
   );
@@ -53,7 +55,13 @@ _autobreak(Store<AppState> store, actions.Autobreak action) async {
 void _handle_response(Store<AppState> store, http.Response response, String short_description) {
   if (response.statusCode == 200) {
     var json_model_text = response.body;
-    var design_new = Design.from_json_str(json_model_text, store.state.ui_state.invert_y);
+    Design design_new;
+    try {
+      design_new = Design.from_json_str(json_model_text, store.state.ui_state.invert_y)!;
+    } catch (e) {
+      window.alert('Error: Received invalid JSON from server: ${e}');
+      return;
+    }
     store.dispatch(actions.NewDesignSet(design_new, short_description));
   } else {
     Map response_body_json = jsonDecode(response.body);

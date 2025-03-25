@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'dart:convert';
 
 import 'package:scadnano/src/json_serializable.dart';
@@ -59,10 +57,10 @@ main() {
 
     /* 0       8
        |-------|
-          ABC        
+          ABC
     0  [-------\
         <------/
-          XYZ      
+          XYZ
     */
     test('self_complementary_strand__both_domains_named__noncomplementary', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
@@ -90,10 +88,10 @@ main() {
 
     /* 0       8
        |-------|
-                  
+
     0  [-------\
        <-------/
-                
+
     */
     test('self_complementary_strand__both_domains_not_named__complementary', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
@@ -114,10 +112,10 @@ main() {
 
     /* 0       8
        |-------|
-         ABC        
+         ABC
     0  [------>
        <------]
-          XYZ      
+          XYZ
     */
     test('separate_strands__both_domains_named__complementary__both_domains_selected', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
@@ -144,10 +142,10 @@ main() {
 
     /* 0       8
        |-------|-
-         ABC        
+         ABC
     0  [------->
        <------]
-          XYZ      
+          XYZ
     */
     test('separate_strands__both_domains_named__noncomplementary__both_domains_selected', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
@@ -220,10 +218,10 @@ main() {
 
     /* 0       8
        |-------|
-          ABC        
+          ABC
     0  [------>
        <------]
-          XYZ      
+          XYZ
     */
     test('separate_strands__both_domains_named__complementary__one_domain_selected', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
@@ -245,10 +243,10 @@ main() {
 
     /* 0     8
        |-------|-
-          ABC        
+          ABC
     0  [------->
        <------]
-          XYZ      
+          XYZ
     */
     test('separate_strands__both_domains_named__noncomplementary__one_domain_selected', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
@@ -270,10 +268,10 @@ main() {
 
     /* 0       8
        |-------|
-                  
+
     0  [------>
        <------]
-                
+
     */
     test('separate_strands__both_domains_not_named__complementary__one_domain_selected', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
@@ -295,10 +293,10 @@ main() {
 
     /* 0      8
        |-------|-
-                  
+
     0  [------->
        <------]
-                
+
     */
     test('separate_strands__both_domains_not_named__noncomplementary__one_domain_selected', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
@@ -320,7 +318,7 @@ main() {
   });
 
   group('DomainNameBoundComplements_CircularDesigns', () {
-    /* 0       8       
+    /* 0       8
        |-------|
          ABC
     0  /------\
@@ -349,7 +347,7 @@ main() {
       expect(all_strands[0].domains[1].name, "ABC*");
     });
 
-    /* 0       8       
+    /* 0       8
        |-------|
     0  [------\
        <------/
@@ -370,7 +368,7 @@ main() {
       expect(all_strands[0].domains[1].name, "DEF");
     });
 
-    /* 0       8       
+    /* 0       8
        |-------|
          JKL
     0  /------\
@@ -401,7 +399,7 @@ main() {
       expect(all_strands[0].domains[1].name, "JKL*");
     });
 
-    /* 0       8       
+    /* 0       8
        |-------|
          ABC
     0  /------\
@@ -440,7 +438,7 @@ main() {
     /////////////////////////
     // Only 1 domain Selected
 
-    /* 0       8       
+    /* 0       8
        |-------|
          ABC
     0  /------\
@@ -471,7 +469,7 @@ main() {
       expect(all_strands[0].domains[1].name, "JKL*");
     });
 
-    /* 0       8       
+    /* 0       8
        |-------|
          ABC
     0  /------\
@@ -500,7 +498,7 @@ main() {
       expect(all_strands[0].domains[1].name, null);
     });
 
-    /* 0       8       
+    /* 0       8
        |-------|
          ABC
     0  /------\
@@ -529,7 +527,7 @@ main() {
       expect(all_strands[0].domains[1].name, "ABC*");
     });
 
-    /* 0       8       
+    /* 0       8
        |-------|
           JKL
     0  [------\
@@ -558,7 +556,7 @@ main() {
       expect(all_strands[0].domains[1].name, "JKL*");
     });
 
-    /* 0       8       
+    /* 0       8
        |-------|
           JKL
     0  [------\

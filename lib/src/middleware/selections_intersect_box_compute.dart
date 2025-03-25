@@ -24,7 +24,6 @@ import '../extension_methods.dart';
 selections_intersect_box_compute_middleware(Store<AppState> store, action, NextDispatcher next) {
   if (action is actions.SelectionsAdjustMainView) {
     var state = store.state;
-    var selectables_store = state.ui_state.selectables_store;
 
     bool is_origami = state.design.is_origami;
     var select_modes = state.ui_state.select_mode_state.modes;
@@ -32,9 +31,10 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
     Set<svg.SvgElement> elts_overlapping;
     if (action.box) {
       // use selection box
-      svg.RectElement select_box = querySelector('#selection-box-main') as svg.RectElement;
+      svg.RectElement? select_box = querySelector('#selection-box-main') as svg.RectElement?;
       if (select_box == null) {
-        return selectables_store;
+        print('no selection box found, so not changing selections');
+        return;
       }
 
       Rectangle<num> select_box_bbox = select_box.getBoundingClientRect();
@@ -50,13 +50,13 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
           .toSet();
     } else {
       // use selection rope
-      svg.PolygonElement rope_elt = querySelector('#selection-rope-main') as svg.PolygonElement;
+      svg.PolygonElement? rope_elt = querySelector('#selection-rope-main') as svg.PolygonElement?;
       if (rope_elt == null) {
         print('no selection rope found, so not changing selections');
         return;
       }
 
-      List<Point<num>> points = points_of_polygon_elt(rope_elt);
+      List<Point<double>> points = points_of_polygon_elt(rope_elt);
       bool selection_box_intersection = store.state.ui_state.selection_box_intersection;
       elts_overlapping = elements_intersecting_polygon(
               MAIN_VIEW_SVG_ID, points, select_modes, is_origami, selection_box_intersection)
@@ -66,7 +66,7 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
     var selectable_by_id = state.design.selectable_by_id;
     List<Selectable> overlapping_now = [
       for (var elt in elts_overlapping)
-        if (selectable_by_id.containsKey(elt.id)) selectable_by_id[elt.id]
+        if (selectable_by_id.containsKey(elt.id)) selectable_by_id[elt.id]!
     ];
 
     List<Selectable> overlapping_now_select_mode_enabled = [];
@@ -83,18 +83,20 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
   }
 }
 
-/// Get points in SVG polygon element as list of math.Point<num>
+/// Get points in SVG polygon element as list of math.Point<double>
 /// Note that rope_elt.points are after the SVG transforms have been applied, so we have to undo them.
-List<Point<num>> points_of_polygon_elt(svg.PolygonElement rope_elt) {
+List<Point<double>> points_of_polygon_elt(svg.PolygonElement rope_elt) {
   svg.PointList point_list = rope_elt.points; // SVG representation
-  List<svg.Point> points_svg = [for (int i = 0; i < point_list.length; i++) point_list.getItem(i)];
-  List<Point<num>> points = [for (var point_svg in points_svg) Point<num>(point_svg.x, point_svg.y)];
+  List<svg.Point> points_svg = [for (int i = 0; i < point_list.length!; i++) point_list.getItem(i)];
+  List<Point<double>> points = [
+    for (var point_svg in points_svg) Point<double>(point_svg.x! as double, point_svg.y! as double)
+  ];
   return points;
 }
 
 /// gets list of elements associated to Selectables that intersect selection rope [rope]
 /// (described as list of points in non-self-intersecting polygon) in elements with classname
-List<svg.SvgElement> elements_intersecting_polygon(String classname, List<Point<num>> polygon,
+List<svg.SvgElement> elements_intersecting_polygon(String classname, List<Point<double>> polygon,
     Iterable<SelectModeChoice> select_modes, bool is_origami, bool selection_box_intersection) {
   var overlap = selection_box_intersection ? polygon_intersects_rect : polygon_contains_rect;
   return generalized_intersection_list_polygon(classname, polygon, select_modes, is_origami, overlap);
@@ -110,12 +112,12 @@ List<svg.SvgElement> elements_intersecting_box(String classname, Rectangle<num> 
 /// Like generalized_intersection_list_box, but where selection is described by a polygon instead of rect.
 generalized_intersection_list_polygon(
     String classname,
-    List<Point<num>> polygon,
+    List<Point<double>> polygon,
     Iterable<SelectModeChoice> select_modes,
     bool is_origami,
-    bool overlap(List<Point<num>> polygon, Rectangle<num> rect)) {
+    bool overlap(List<Point<double>> polygon, Rectangle<num> rect)) {
   List<svg.SvgElement> elts_intersecting = [];
-  List<Element> selectable_elts = find_selectable_elements(select_modes, is_origami);
+  List<svg.GraphicsElement> selectable_elts = find_selectable_elements(select_modes, is_origami);
 
   for (svg.GraphicsElement elt in selectable_elts) {
     // getBBox uses SVG coordinates, same as those in the polygon, whereas get getBoundingClientRect()
@@ -139,7 +141,7 @@ generalized_intersection_list_polygon(
 generalized_intersection_list_box(String classname, Rectangle<num> select_box_bbox,
     Iterable<SelectModeChoice> select_modes, bool is_origami, bool overlap(num l1, num h1, num l2, num h2)) {
   List<svg.SvgElement> elts_intersecting = [];
-  List<Element> selectable_elts = find_selectable_elements(select_modes, is_origami);
+  List<svg.GraphicsElement> selectable_elts = find_selectable_elements(select_modes, is_origami);
 
   for (svg.GraphicsElement elt in selectable_elts) {
     Rectangle<num> elt_bbox = elt.getBoundingClientRect();
@@ -171,15 +173,15 @@ bool interval_intersect(num l1, num h1, num l2, num h2) {
 }
 
 /// indicates if polygon completely contains rectangle, i.e., it contains all 4 corner points
-bool polygon_contains_rect(List<Point<num>> polygon, Rectangle<num> rect) {
-  num x1 = rect.left;
-  num y1 = rect.top;
-  num x2 = x1 + rect.width;
-  num y2 = y1 + rect.height;
-  var up_left = Point<num>(x1, y1);
-  var up_right = Point<num>(x2, y1);
-  var low_left = Point<num>(x1, y2);
-  var low_right = Point<num>(x2, y2);
+bool polygon_contains_rect(List<Point<double>> polygon, Rectangle<num> rect) {
+  double x1 = rect.left as double;
+  double y1 = rect.top as double;
+  double x2 = x1 + rect.width;
+  double y2 = y1 + rect.height;
+  var up_left = Point<double>(x1, y1);
+  var up_right = Point<double>(x2, y1);
+  var low_left = Point<double>(x1, y2);
+  var low_right = Point<double>(x2, y2);
 
   for (var corner in [up_left, up_right, low_left, low_right]) {
     if (!polygon_contains_point(polygon, corner)) {
@@ -191,7 +193,7 @@ bool polygon_contains_rect(List<Point<num>> polygon, Rectangle<num> rect) {
 }
 
 /// indicates if rectangle completely contains polygon, i.e., it contains all 4 corner points
-bool rect_contains_polygon(Rectangle<num> rect, List<Point<num>> polygon) {
+bool rect_contains_polygon(Rectangle<num> rect, List<Point<double>> polygon) {
   for (var polygon_vertex in polygon) {
     if (!rect_contains_point(rect, polygon_vertex)) {
       return false;
@@ -202,7 +204,7 @@ bool rect_contains_polygon(Rectangle<num> rect, List<Point<num>> polygon) {
 }
 
 /// indicates if polygon intersects rectangle
-bool polygon_intersects_rect(List<Point<num>> polygon, Rectangle<num> rect) {
+bool polygon_intersects_rect(List<Point<double>> polygon, Rectangle<num> rect) {
   // Three ways for polygon to intersect rectangle:
   // (1) rectangle entirely within polygon
   // (2) polygon entirely within rectangle
@@ -225,11 +227,11 @@ bool polygon_intersects_rect(List<Point<num>> polygon, Rectangle<num> rect) {
 
 /// indicates if [polygon] contains point
 /// https://www.geeksforgeeks.org/how-to-check-if-a-given-point-lies-inside-a-polygon/
-bool polygon_contains_point(List<Point<num>> polygon, Point<num> point) {
+bool polygon_contains_point(List<Point<double>> polygon, Point<double> point) {
   // create ray "infinitely" far to the right (really just 1 beyond max x of polygon) from point
   List<num> xs = [for (var polygon_point in polygon) polygon_point.x];
   num max_x = xs.max;
-  var point_infinite_to_right = Point<num>(max_x + 1, point.y);
+  var point_infinite_to_right = Point<double>(max_x + 1, point.y);
   Line infinite_line_from_point = Line(point, point_infinite_to_right);
 
   var lines = lines_of_polygon(polygon);
@@ -244,7 +246,7 @@ bool polygon_contains_point(List<Point<num>> polygon, Point<num> point) {
 }
 
 /// indicates if [rect] contains point
-bool rect_contains_point(Rectangle<num> rect, Point<num> point) {
+bool rect_contains_point(Rectangle<num> rect, Point<double> point) {
   num x1 = rect.left;
   num y1 = rect.top;
   num x2 = x1 + rect.width;
@@ -254,7 +256,7 @@ bool rect_contains_point(Rectangle<num> rect, Point<num> point) {
 }
 
 /// returns the lines in [polygon]
-List<Line> lines_of_polygon(List<Point<num>> polygon) {
+List<Line> lines_of_polygon(List<Point<double>> polygon) {
   List<Line> lines = [];
   for (int i = 0; i < polygon.length - 1; i++) {
     var p1 = polygon[i];
@@ -270,14 +272,14 @@ List<Line> lines_of_polygon(List<Point<num>> polygon) {
 
 /// returns the lines in [rect]
 List<Line> lines_of_rect(Rectangle<num> rect) {
-  num x1 = rect.left;
-  num y1 = rect.top;
-  num x2 = x1 + rect.width;
-  num y2 = y1 + rect.height;
-  var up_left = Point<num>(x1, y1);
-  var up_right = Point<num>(x2, y1);
-  var bot_left = Point<num>(x1, y2);
-  var bot_right = Point<num>(x2, y2);
+  double x1 = rect.left as double;
+  double y1 = rect.top as double;
+  double x2 = x1 + rect.width;
+  double y2 = y1 + rect.height;
+  var up_left = Point<double>(x1, y1);
+  var up_right = Point<double>(x2, y1);
+  var bot_left = Point<double>(x1, y2);
+  var bot_right = Point<double>(x2, y2);
   var top_line = Line(up_left, up_right);
   var bot_line = Line(bot_left, bot_right);
   var left_line = Line(up_left, bot_left);
@@ -286,7 +288,7 @@ List<Line> lines_of_rect(Rectangle<num> rect) {
   return [top_line, bot_line, left_line, right_line];
 }
 
-List<Element> find_selectable_elements(Iterable<SelectModeChoice> select_modes, bool is_origami) {
+List<svg.GraphicsElement> find_selectable_elements(Iterable<SelectModeChoice> select_modes, bool is_origami) {
   List<SelectModeChoice> select_modes_not_scaffold_or_staple = [
     for (var mode in select_modes)
       if (mode != SelectModeChoice.scaffold && mode != SelectModeChoice.staple) mode
@@ -316,7 +318,7 @@ List<Element> find_selectable_elements(Iterable<SelectModeChoice> select_modes, 
       selectors.add('.${mode.css_selector()}');
     }
   }
-  List<Element> selectable_elts = querySelectorAll(selectors.join(', '));
+  List<svg.GraphicsElement> selectable_elts = querySelectorAll(selectors.join(', '));
   return selectable_elts;
 }
 
@@ -324,31 +326,37 @@ List<Element> find_selectable_elements(Iterable<SelectModeChoice> select_modes, 
 // intersection geometry
 
 class Box {
-  num height;
-  num width;
+  num height = -1; // This is guaranteed to be assigned but Dart can't tell that.
+  num width = -1; // This is guaranteed to be assigned but Dart can't tell that.
   num x;
   num y;
 
   factory Box.from(svg.Rect svg_rect) =>
-      Box(svg_rect.x, svg_rect.y, width: svg_rect.width, height: svg_rect.height);
+      Box(svg_rect.x!, svg_rect.y!, width: svg_rect.width!, height: svg_rect.height!);
 
   factory Box.from_selection_box(SelectionBox box) => Box(box.x, box.y, width: box.width, height: box.height);
 
-  Box(this.x, this.y, {num height = null, num width = null, num x2 = null, num y2 = null}) {
+  Box(this.x, this.y, {num? height = null, num? width = null, num? x2 = null, num? y2 = null}) {
     if (width == null && x2 == null) {
-      throw ArgumentError('at least one of height or x2 must be non-null');
+      throw ArgumentError('at least one of width or x2 must be non-null');
     } else if (x2 == null) {
-      this.width = width;
+      // width cannot be null by the logic of these if statements
+      this.width = width!;
     } else if (width == null) {
       this.width = x2 - x;
+    } else {
+      throw AssertionError("unreachable");
     }
 
     if (height == null && y2 == null) {
       throw ArgumentError('at least one of height or x2 must be non-null');
     } else if (y2 == null) {
-      this.height = height;
+      // height cannot be null by the logic of these if statements
+      this.height = height!;
     } else if (height == null) {
       this.height = y2 - y;
+    } else {
+      throw AssertionError("unreachable");
     }
   }
 

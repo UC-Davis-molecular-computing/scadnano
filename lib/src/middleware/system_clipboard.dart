@@ -51,7 +51,7 @@ void handle_manual_paste_initiate(
 
   // now state.ui_state.strands_copy_info has been set by reducer, use it to initiate StrandsMoveStart
   // to let user pick where to paste
-  var copy_info = store.state.ui_state.copy_info;
+  var copy_info = store.state.ui_state.copy_info!;
   var paste_start_action = actions.StrandsMoveStart(
     strands: copy_info.strands,
     address: copy_info.copied_address,
@@ -69,7 +69,7 @@ void handle_autopaste_initiate(Store<AppState> store, actions.AutoPasteInitiate 
   next(action);
 
   // now state.ui_state.strands_copy_info has been set by reducer, use it to paste in a default location
-  var copy_info = store.state.ui_state.copy_info;
+  var copy_info = store.state.ui_state.copy_info!;
 
   // test to see if we can paste at original address; if so then this is a new Design
   // (or user deleted originally copied strands). If so then paste there, otherwise go with
@@ -119,7 +119,7 @@ bool paste_is_impossible_from_clipboard(String clipboard_content, bool in_browse
   if (strands_and_helices_view_order == null) return true;
 
   List<Strand> strands = strands_and_helices_view_order.item1;
-  List<int> helices_view_order = strands_and_helices_view_order.item2;
+  List<int>? helices_view_order = strands_and_helices_view_order.item2;
 
   if (strands.isEmpty) return true;
 
@@ -149,9 +149,9 @@ void put_strand_info_on_clipboard(Store<AppState> store) {
 
     // if strand domains are all on same group, output helices_view_order to JSON as well
     // helices_view_order will be null if not all copied strands came from same HelixGroup
-    List<int> helices_view_order = null;
+    List<int>? helices_view_order = null;
     var design = store.state.design;
-    var group_names = design.group_names_of_strands(strands);
+    var group_names = design.group_names_of_strands(strands)!;
     if (group_names.length == 1) {
       HelixGroup group = design.group_of_domain(strands.first.first_domain);
       helices_view_order = group.helices_view_order.toList();
@@ -159,7 +159,6 @@ void put_strand_info_on_clipboard(Store<AppState> store) {
 
     //Get modifcations from all strands
     var modifications = all_modifications(strands.toBuiltList());
-    List<String> mod_clipboard_strings = [];
     var encoder = SuppressableIndentEncoder(Replacer(), suppress: true);
     Map<String, dynamic> mods_map = {};
     if (modifications.length > 0) {

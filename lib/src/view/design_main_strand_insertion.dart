@@ -1,5 +1,4 @@
 import 'dart:html';
-import 'dart:math';
 
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
@@ -24,31 +23,27 @@ part 'design_main_strand_insertion.over_react.g.dart';
 
 typedef Tuple2<Insertion, Domain> PairedInsertionFinder(Insertion insertion, Domain substrand);
 
-@Factory()
 UiFactory<DesignMainStrandInsertionProps> DesignMainStrandInsertion = _$DesignMainStrandInsertion;
 
-@Props()
-mixin DesignMainStrandInsertionPropsMixin on UiProps {
-  SelectableInsertion selectable_insertion;
-  Helix helix;
-  String transform;
-  Color color;
-  bool selected;
-  bool display_reverse_DNA_right_side_up;
-  num svg_position_y;
+mixin DesignMainStrandInsertionProps on UiProps {
+  late SelectableInsertion selectable_insertion;
+  late Helix helix;
+  late String transform;
+  late Color color;
+  late bool selected;
+  late bool display_reverse_DNA_right_side_up;
+  late double svg_position_y;
 
-  Insertion get insertion => selectable_insertion.insertion;
-
-  Domain get domain => selectable_insertion.domain;
-
-  bool retain_strand_color_on_selection;
+  late bool retain_strand_color_on_selection;
+  late Geometry geometry;
 }
 
-class DesignMainStrandInsertionProps = UiProps with DesignMainStrandInsertionPropsMixin;
-
-@Component2()
 class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandInsertionProps>
     with PureComponent {
+  Insertion get insertion => props.selectable_insertion.insertion;
+
+  Domain get domain => props.selectable_insertion.domain;
+
   @override
   render() {
     var classname = constants.css_selector_insertion_group;
@@ -63,8 +58,8 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       classname += ' ' + constants.css_selector_scaffold;
     }
 
-    Point<num> pos =
-        props.helix.svg_base_pos(props.insertion.offset, props.domain.forward, props.svg_position_y);
+    Point<double> pos = props.helix
+        .svg_base_pos(this.insertion.offset, this.domain.forward, props.svg_position_y, props.geometry);
     ReactElement insertion_background = _insertion_background(pos);
     ReactElement insertion_path = _insertion_path();
     ReactElement text_num_insertions = _text_number_of_insertions(pos);
@@ -89,21 +84,22 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
   }
 
   ReactElement _insertion_path() {
-    Geometry geometry = props.helix.geometry;
-    int offset = props.insertion.offset;
+    Geometry geometry = props.geometry;
+    int offset = this.insertion.offset;
     Color color = props.color;
 
-    Point<num> pos = props.helix.svg_base_pos(offset, props.domain.forward, props.svg_position_y);
+    Point<double> pos =
+        props.helix.svg_base_pos(offset, this.domain.forward, props.svg_position_y, props.geometry);
 
     num dx1 = geometry.base_width_svg;
     num dx2 = 0.5 * geometry.base_width_svg;
-    if (props.display_reverse_DNA_right_side_up && !props.domain.forward) {
+    if (props.display_reverse_DNA_right_side_up && !this.domain.forward) {
       dx1 = -dx1;
       dx2 = -dx2;
     }
     num dy1 = 2 * geometry.base_height_svg;
     num dy2 = 2 * geometry.base_height_svg;
-    if (props.domain.forward) {
+    if (this.domain.forward) {
       dy1 = -dy1;
       dy2 = -dy2;
       dx1 = -dx1;
@@ -130,14 +126,14 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       ..d = 'M $x0 $y0 '
           'C $x1 $y1, $x2 $y2, $x3 $y2 '
           'C $x4 $y2, $x5 $y1, $x0 $y0 '
-      ..key = props.id)();
+      ..key = props.selectable_insertion.id)();
     return insertion_path;
   }
 
-  ReactElement _text_number_of_insertions(Point<num> pos) {
-    Geometry geometry = props.helix.geometry;
-    int offset = props.insertion.offset;
-    Insertion insertion = props.insertion;
+  ReactElement _text_number_of_insertions(Point<double> pos) {
+    Geometry geometry = props.geometry;
+    int offset = this.insertion.offset;
+    Insertion insertion = this.insertion;
 
     // write number of insertions inside insertion loop
     int length = insertion.length;
@@ -152,13 +148,13 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
     num background_height = 1.5 * geometry.base_height_svg;
     num background_x = pos.x - background_width / 2;
     num background_y = pos.y - geometry.base_height_svg / 2;
-    if (props.domain.forward) {
+    if (this.domain.forward) {
       background_y -= background_height;
     } else {
       background_y += geometry.base_height_svg;
     }
 
-    String key = 'num-insertion-H${props.domain.helix}-${offset}';
+    String key = 'num-insertion-H${this.domain.helix}-${offset}';
     SvgProps text_path_props = Dom.textPath()
       ..startOffset = '50%'
 //      ..href = '#${util.id_insertion(substrand, offset)}'
@@ -173,23 +169,23 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
 
     return (Dom.g()..key = key)(
         (Dom.rect()
-          ..x = background_x
-          ..y = background_y
-          ..width = background_width
-          ..height = background_height
-          ..className = 'insertion-background'
-          // ..onClick = ((_) => change_insertion_length())
-          ..key = 'rect')(),
+              ..x = background_x
+              ..y = background_y
+              ..width = background_width
+              ..height = background_height
+              ..className = 'insertion-background'
+            // ..onClick = ((_) => change_insertion_length())
+            )(),
         (Dom.text()
-          // ..onClick = ((_) => change_insertion_length())
-          ..dy = dy_text
-          // ..id = props.selectable_insertion.id()
-          ..key = 'text')(text_path_props('${length}')));
+              // ..onClick = ((_) => change_insertion_length())
+              ..dy = dy_text
+            // ..id = props.selectable_insertion.id()
+            )(text_path_props('${length}')));
   }
 
-  ReactElement _insertion_background(Point<num> pos) {
-    Geometry geometry = props.helix.geometry;
-    String key_background = 'insertion-background-H${props.domain.helix}-${props.insertion.offset}';
+  ReactElement _insertion_background(Point<double> pos) {
+    Geometry geometry = props.geometry;
+    String key_background = 'insertion-background-H${this.domain.helix}-${this.insertion.offset}';
     num background_width = geometry.base_width_svg;
     num background_height = geometry.base_height_svg;
     num background_x = pos.x - background_width / 2;
@@ -202,7 +198,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       ..height = background_height
       ..onClick = (_) {
         if (edit_mode_is_insertion()) {
-          app.dispatch(actions.InsertionRemove(domain: props.domain, insertion: props.insertion));
+          app.dispatch(actions.InsertionRemove(domain: this.domain, insertion: this.insertion));
         }
       }
       ..key = key_background)();
@@ -210,25 +206,26 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
 
   @override
   componentDidMount() {
-    var element = querySelector('#${props.selectable_insertion.id_group}');
+    var element = querySelector('#${props.selectable_insertion.id_group}')!;
     element.addEventListener('contextmenu', on_context_menu);
     super.componentDidMount();
   }
 
   @override
   componentWillUnmount() {
-    var element = querySelector('#${props.selectable_insertion.id_group}');
+    var element = querySelector('#${props.selectable_insertion.id_group}')!;
     element.removeEventListener('contextmenu', on_context_menu);
     super.componentWillUnmount();
   }
 
   on_context_menu(Event ev) {
-    MouseEvent event = ev;
+    MouseEvent event = ev as MouseEvent;
     if (!event.shiftKey) {
       event.preventDefault();
       event.stopPropagation(); // needed to prevent strand context menu from popping up
       app.dispatch(actions.ContextMenuShow(
-          context_menu: ContextMenu(items: context_menu_insertion().build(), position: event.page)));
+          context_menu: ContextMenu(
+              items: context_menu_insertion().build(), position: util.from_point_num(event.page))));
     }
   }
 
@@ -241,7 +238,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
 
   change_insertion_length() async {
     int new_length = await ask_for_length('change insertion length',
-        current_length: props.insertion.length,
+        current_length: this.insertion.length,
         lower_bound: 1,
         dialog_type: DialogType.set_insertion_length,
         tooltip: """\
@@ -251,7 +248,7 @@ Keep in mind that the insertion length is the number of *extra* bases.
 So for example an insertion length of 1 would represent at that offset
 2 total bases: the original base and the 1 extra base from the insertion.
 """);
-    if (new_length == props.insertion.length) {
+    if (new_length == this.insertion.length) {
       return;
     }
 
@@ -263,7 +260,7 @@ So for example an insertion length of 1 would represent at that offset
       action = actions.InsertionsLengthChange(insertions: insertions, domains: domains, length: new_length);
     } else {
       action =
-          actions.InsertionLengthChange(domain: props.domain, insertion: props.insertion, length: new_length);
+          actions.InsertionLengthChange(domain: this.domain, insertion: this.insertion, length: new_length);
     }
 
     app.dispatch(action);

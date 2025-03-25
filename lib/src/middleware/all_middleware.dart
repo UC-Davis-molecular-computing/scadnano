@@ -6,7 +6,7 @@ import 'dna_extensions_move_start.dart';
 import 'forbid_create_circular_strand_no_crossovers_middleware.dart';
 import 'helix_group_move_start.dart';
 import 'adjust_grid_position.dart';
-import 'export_cadnano_or_codenano_file.dart';
+import 'export_cadnano_file.dart';
 import 'assign_dna.dart';
 import 'check_mirror_strands_legal.dart';
 import 'edit_select_mode_change.dart';
@@ -34,7 +34,6 @@ import 'export_svg.dart';
 import 'local_storage.dart';
 import 'selections_intersect_box_compute.dart';
 import 'strand_create.dart';
-import 'move_ensure_same_group.dart';
 import 'throttle.dart';
 import 'helix_remove.dart';
 import 'helices_positions_set_based_on_crossovers.dart';
@@ -45,12 +44,11 @@ import 'zoom_speed.dart';
 final all_middleware = List<Middleware<AppState>>.unmodifiable([
   reset_local_storage_middleware,
   local_storage_middleware,
-  move_ensure_all_in_same_helix_group_middleware,
   forbid_create_circular_strand_no_crossovers_middleware,
   export_svg_middleware,
   save_file_middleware,
   load_file_middleware,
-  export_cadnano_or_codenano_file_middleware,
+  export_cadnano_file_middleware,
   example_design_selected_middleware,
   throttle_middleware,
   assign_dna_middleware,

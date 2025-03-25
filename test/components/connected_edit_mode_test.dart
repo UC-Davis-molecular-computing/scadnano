@@ -1,15 +1,8 @@
-// @dart=2.9
-
 @TestOn('browser')
-// import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:over_react_test/jacket.dart';
 import 'package:over_react_test/over_react_test.dart';
 import 'package:react/react_client/react_interop.dart';
-// import 'package:react/react_client.dart';
-// import 'package:redux/redux.dart';
 import 'package:scadnano/src/app.dart';
-// import '../reducers/app_state_reducer.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/view/edit_mode.dart';
@@ -34,20 +27,20 @@ void main() {
   utils.initializeComponentTests();
 
   group('ConnectedEditModes', () {
-    Ref<EditModeComponent> editModeRef;
-    EditModeComponent component;
+    Ref<EditModeComponent?>? editModeRef;
+    EditModeComponent? component;
 
     setUp(() {
       utils.initialize_test_store(initialize_test_state());
-      editModeRef = createRef();
+      editModeRef = createRef<EditModeComponent>();
       mount((ReduxProvider()..store = app.store)(
-        (ConnectedEditMode()
+        ((ConnectedEditMode()..modes = app.state.ui_state.edit_modes)
           ..addTestId(EditModeComponentTestID)
           ..ref = editModeRef)(),
       ));
       // final editModeComponent = editModeRef.current;
       // component = getComponentByTestId(editModeComponent, EditModeComponentTestID);
-      component = editModeRef.current;
+      component = editModeRef!.current;
 
       expect(component, isNotNull, reason: 'ConnectedEditMode should be mounted');
     });
@@ -62,7 +55,7 @@ void main() {
         final select_button = getByTestId(component, testIdEditModeChoiceButton(EditModeChoice.select));
         expect(select_button, isNotNull);
       });
-      test('that renders the pencil button', () {
+      test('that_renders_the_pencil_button', () {
         final pencil_button = getByTestId(component, testIdEditModeChoiceButton(EditModeChoice.pencil));
         expect(pencil_button, isNotNull);
       });
@@ -93,7 +86,7 @@ void main() {
         click(nick_button);
         expect(app.state.ui_state.edit_modes.contains(EditModeChoice.nick), false);
 
-        final redrawCount = await component.didRedraw().future.timeout(Duration(milliseconds: 20));
+        final redrawCount = await component!.didRedraw().future.timeout(Duration(milliseconds: 20));
         expect(redrawCount, 1);
         ClassNameMatcher matcher = ClassNameMatcher.expected('edit-mode-button-unselected');
         expect(nick_button.className, matcher);

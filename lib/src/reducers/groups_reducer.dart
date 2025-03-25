@@ -13,6 +13,7 @@ Reducer<BuiltMap<String, HelixGroup>> groups_local_reducer = combineReducers([
   TypedReducer<BuiltMap<String, HelixGroup>, actions.GroupRemove>(group_remove_reducer),
   TypedReducer<BuiltMap<String, HelixGroup>, actions.GroupChange>(group_change_reducer),
   TypedReducer<BuiltMap<String, HelixGroup>, actions.GridChange>(grid_change_reducer),
+  TypedReducer<BuiltMap<String, HelixGroup>, actions.GeometryHelixGroupSet>(geometry_helix_group_set_reducer),
 ]);
 
 GlobalReducer<BuiltMap<String, HelixGroup>, AppState> groups_global_reducer = combineGlobalReducers([
@@ -25,6 +26,15 @@ BuiltMap<String, HelixGroup> grid_change_reducer(
     groups.map_values((name, group) {
       if (name == action.group_name) {
         group = group.rebuild((b) => b..grid = action.grid);
+      }
+      return group;
+    });
+
+BuiltMap<String, HelixGroup> geometry_helix_group_set_reducer(
+        BuiltMap<String, HelixGroup> groups, actions.GeometryHelixGroupSet action) =>
+    groups.map_values((name, group) {
+      if (name == action.group_name) {
+        group = group.rebuild((b) => b..geometry.replace(action.geometry));
       }
       return group;
     });
@@ -57,7 +67,7 @@ BuiltMap<String, HelixGroup> move_helices_to_group_groups_reducer(
   var to_group_name = action.group_name;
 
   //TODO: this should not have duplicates
-  List<String> from_group_names = [for (int idx in action.helix_idxs) state.design.helices[idx].group];
+  List<String> from_group_names = [for (int idx in action.helix_idxs) state.design.helices[idx]!.group];
 
   // ensure that relative order of helix idxs in new helices_view_order is the same.
   // if there are helices already in the new group, start with those, and append new helix idxs to
@@ -68,10 +78,10 @@ BuiltMap<String, HelixGroup> move_helices_to_group_groups_reducer(
   // in all cases, then keep that default behavior,
   // i.e., new helices_view_order should just be sorted by helix.idx.
   var groups = state.design.groups.toMap();
-  var to_group = groups[to_group_name];
+  var to_group = groups[to_group_name]!;
   List<int> new_helices_view_order = to_group.helices_view_order.toList();
   for (var from_group_name in from_group_names) {
-    var from_group = groups[from_group_name];
+    var from_group = groups[from_group_name]!;
     var new_from_helices_group_order = from_group.helices_view_order.toList();
 
     for (int idx in from_group.helices_view_order) {

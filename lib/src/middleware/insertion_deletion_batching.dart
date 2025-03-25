@@ -25,7 +25,7 @@ insertion_deletion_batching_middleware(Store<AppState> store, dynamic action, Ne
       }
     } else {
       // add deletion/insertion to other domain at this offset on this helix, if it exists
-      Domain paired_domain = find_paired_domain(store.state.design, action.domain, action.offset);
+      Domain? paired_domain = find_paired_domain(store.state.design, action.domain, action.offset);
       if (paired_domain == null) {
         next(action);
       } else {
@@ -43,11 +43,11 @@ insertion_deletion_batching_middleware(Store<AppState> store, dynamic action, Ne
 /// in same HelixGroup as [domain].
 List<Domain> find_other_domains(Design design, Domain domain, int offset) {
   String group_name = design.group_name_of_domain(domain);
-  var helix_idxs_in_group = design.helix_idxs_in_group[group_name];
+  var helix_idxs_in_group = design.helix_idxs_in_group[group_name]!;
   List<Domain> other_domains = [];
   for (var helix_idx in helix_idxs_in_group) {
     if (helix_idx == domain.helix) {
-      var paired_domain = find_paired_domain(design, domain, offset);
+      Domain? paired_domain = find_paired_domain(design, domain, offset);
       if (paired_domain != null) {
         other_domains.add(paired_domain);
       }
@@ -60,7 +60,7 @@ List<Domain> find_other_domains(Design design, Domain domain, int offset) {
   return other_domains;
 }
 
-Domain find_paired_domain(Design design, Domain domain, int offset) {
+Domain? find_paired_domain(Design design, Domain domain, int offset) {
   var other_domains = design.domains_on_helix_at_offset_internal(domain.helix, offset);
   for (var other_domain in other_domains) {
     if (other_domain != domain) {

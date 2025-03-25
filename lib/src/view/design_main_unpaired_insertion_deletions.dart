@@ -19,21 +19,16 @@ UiFactory<DesignMainUnpairedInsertionDeletionsProps> DesignMainUnpairedInsertion
     _$DesignMainUnpairedInsertionDeletions;
 
 mixin DesignMainUnpairedInsertionDeletionsProps on UiProps {
-  Design design;
-  bool only_display_selected_helices;
-  BuiltSet<int> side_selected_helix_idxs;
-  BuiltMap<int, num> helix_idx_to_svg_position_y_map;
+  late Design design;
+  late bool only_display_selected_helices;
+  late BuiltSet<int> side_selected_helix_idxs;
+  late BuiltMap<int, num> helix_idx_to_svg_position_y_map;
 }
 
 class DesignMainUnpairedInsertionDeletionsComponent
     extends UiComponent2<DesignMainUnpairedInsertionDeletionsProps> with PureComponent {
   @override
   render() {
-    List<ReactElement> unpaired_components = this._create_unpaired_components();
-    return (Dom.g()..className = 'mismatches-main-view')(unpaired_components);
-  }
-
-  List<ReactElement> _create_unpaired_components() {
     List<ReactElement> unpaired_components = [];
     Set<String> keys = {};
     for (Strand strand in props.design.strands) {
@@ -42,22 +37,24 @@ class DesignMainUnpairedInsertionDeletionsComponent
 
         List<ReactElement> domain_components = [];
         for (Address unpaired in unpaireds) {
-          var helix = props.design.helices[domain.helix];
+          var helix = props.design.helices[domain.helix]!;
           if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(helix.idx)) {
-            var base_svg_pos = helix.svg_base_pos(
-                unpaired.offset, domain.forward, props.helix_idx_to_svg_position_y_map[helix.idx]);
+            var group = props.design.groups[helix.group]!;
+            var geometry = group.geometry ?? props.design.geometry;
+            var svg_position_y = props.helix_idx_to_svg_position_y_map[helix.idx]!;
+            var base_svg_pos = helix.svg_base_pos(unpaired.offset, domain.forward, svg_position_y, geometry);
 
             bool is_insertion = domain.insertion_offset_to_length[unpaired.offset] != null;
 
             String key = '${base_svg_pos};${domain.forward}';
+
             if (!keys.contains(key)) {
               // otherwise, already rendered mismatch for this insertion
               keys.add(key);
               var mismatch_component = (DesignMainWarningStar()
                 ..base_svg_pos = base_svg_pos +
-                    Point(0,
-                        is_insertion ? helix.geometry.base_height_svg * 2 * (unpaired.forward ? 1 : -1) : 0)
-                ..geometry = props.design.geometry
+                    Point(0, is_insertion ? geometry.base_height_svg * 2 * (unpaired.forward ? 1 : -1) : 0)
+                ..geometry = geometry
                 ..forward = domain.forward
                 ..color = 'green'
                 ..key = key)();
@@ -66,8 +63,8 @@ class DesignMainUnpairedInsertionDeletionsComponent
           }
         }
 
-        Helix helix = props.design.helices[domain.helix];
-        HelixGroup group = props.design.groups[helix.group];
+        Helix helix = props.design.helices[domain.helix]!;
+        HelixGroup group = props.design.groups[helix.group]!;
         String transform_str = group.transform_str(props.design.geometry);
 
         if (domain_components.isNotEmpty) {
@@ -79,6 +76,6 @@ class DesignMainUnpairedInsertionDeletionsComponent
       }
     }
 
-    return unpaired_components;
+    return (Dom.g()..className = 'mismatches-main-view')(unpaired_components);
   }
 }

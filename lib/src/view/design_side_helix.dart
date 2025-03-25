@@ -1,11 +1,11 @@
 import 'dart:html';
-import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/state/design_side_rotation_data.dart';
 import '../state/context_menu.dart';
 import '../state/edit_mode.dart';
+import '../state/geometry.dart';
 import '../state/grid.dart';
 import '../state/position3d.dart';
 
@@ -22,20 +22,22 @@ import 'helix_context_menu.dart';
 part 'design_side_helix.over_react.g.dart';
 
 const String SIDE_VIEW_PREFIX = 'side-view';
+const SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX = false;
 
 UiFactory<DesignSideHelixProps> DesignSideHelix = _$DesignSideHelix;
 
 mixin DesignSideHelixProps on UiProps {
-  Helix helix;
-  int slice_bar_offset;
-  bool selected;
-  bool mouse_is_over;
-  bool helix_change_apply_to_all;
-  bool show_grid_coordinates;
-  bool invert_y;
-  Grid grid;
-  DesignSideRotationData rotation_data;
-  BuiltSet<EditModeChoice> edit_modes;
+  late Helix helix;
+  int? slice_bar_offset;
+  late bool selected;
+  late bool mouse_is_over;
+  late bool helix_change_apply_to_all;
+  late bool show_grid_coordinates;
+  late bool invert_y;
+  late Grid grid;
+  DesignSideRotationData? rotation_data;
+  late BuiltSet<EditModeChoice> edit_modes;
+  late Geometry geometry;
 }
 
 class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with PureComponent {
@@ -52,27 +54,26 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
     // set SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX to true to print helix coordinates in side view instead
     // of idx, which is useful for making figures in the documentation showing how the grids work
 //    bool SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX = true;
-    bool SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX = false;
     int precision = constants.NUM_DIGITS_PRECISION_POSITION_DISPLAYED;
 
     String grid_position_str;
     String position_str;
     if (props.grid.is_none) {
-      var pos = props.helix.position3d;
+      var pos = props.helix.position3d(props.geometry);
       position_str = '${pos.x.toStringAsFixed(precision)}, ${pos.y.toStringAsFixed(precision)}';
       grid_position_str = '${pos.x.toStringAsFixed(1)},${pos.y.toStringAsFixed(1)}';
     } else {
-      var pos = props.helix.grid_position;
+      var pos = props.helix.grid_position!;
       position_str = '${pos.h}, ${pos.v}';
       grid_position_str = position_str.replaceAll(' ', '');
     }
 
     // these aren't defined if slice bar is not showing, so check for null
     var forward_angle = props.slice_bar_offset != null
-        ? props.helix.backbone_angle_at_offset(props.slice_bar_offset, true)
+        ? props.helix.backbone_angle_at_offset(props.slice_bar_offset!, true, props.geometry)
         : null;
     var reverse_angle = props.slice_bar_offset != null
-        ? props.helix.backbone_angle_at_offset(props.slice_bar_offset, false)
+        ? props.helix.backbone_angle_at_offset(props.slice_bar_offset!, false, props.geometry)
         : null;
     var tooltip = '''\
 position:  ${position_str}
@@ -84,10 +85,10 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
     var children = [
       (Dom.circle()
         ..className = classname_circle
-        ..r = '${props.helix.geometry.helix_radius_svg}'
+        ..r = '${props.geometry.helix_radius_svg}'
         ..onClick = ((e) => this._handle_click(e, props.helix))
         ..id = helix_circle_id()
-        ..key = 'circle')((Dom.svgTitle()..key = 'circle-tooltip')(tooltip)),
+        ..key = 'circle')((Dom.svgTitle())(tooltip)),
       (Dom.text()
             ..style = SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX ? {'fontSize': 20} : {}
             ..className = '$SIDE_VIEW_PREFIX-helix-text'
@@ -95,30 +96,30 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
             ..onClick = ((e) => this._handle_click(e, props.helix))
             ..key = 'text-idx')(
           SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX ? grid_position_str : props.helix.idx.toString(),
-          (Dom.svgTitle()..key = 'text-idx-tooltip')(tooltip)),
+          (Dom.svgTitle())(tooltip)),
       if (props.show_grid_coordinates)
         (Dom.text()
           ..fontSize = 10
           ..dominantBaseline = 'text-before-edge'
           ..textAnchor = 'middle'
-          ..y = props.helix.geometry.helix_radius_svg / 2
+          ..y = props.geometry.helix_radius_svg / 2
           ..key = 'text-grid-position')(grid_position_str),
       ((Dom.svgTitle()..key = 'text-grid-position-tooltip')(tooltip)),
     ];
 
     if (props.rotation_data != null) {
-      assert(props.rotation_data.helix.idx == this.props.helix.idx);
+      assert(props.rotation_data!.helix.idx == this.props.helix.idx);
       var rot_component = (DesignSideRotation()
-        ..radius = props.helix.geometry.helix_radius_svg
-        ..data = props.rotation_data
+        ..radius = props.geometry.helix_radius_svg
+        ..data = props.rotation_data!
         ..invert_y = props.invert_y
         ..className = '$SIDE_VIEW_PREFIX-helix-rotation'
         ..key = 'rotation')();
       children.add(rot_component);
     }
 
-    Position3D pos3d = props.helix.position3d;
-    Point<num> center = util.position3d_to_side_view_svg(pos3d, props.invert_y, props.helix.geometry);
+    Position3D pos3d = props.helix.position3d(props.geometry);
+    Point<double> center = util.position3d_to_side_view_svg(pos3d, props.invert_y, props.geometry);
 
     return (Dom.g()
       ..transform = 'translate(${center.x} ${center.y})'
@@ -155,13 +156,13 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
   }
 
   on_context_menu(Event ev) {
-    MouseEvent event = ev;
+    MouseEvent event = ev as MouseEvent;
     if (!event.shiftKey) {
       event.preventDefault();
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
-              items: context_menu_helix(props.helix, props.helix_change_apply_to_all).build(),
-              position: event.page)));
+              items: context_menu_helix(props.helix, props.helix_change_apply_to_all),
+              position: util.from_point_num(event.page))));
     }
   }
 

@@ -1,6 +1,5 @@
 import 'dart:html';
 
-import 'package:quiver/async.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/actions/actions.dart';
 import 'package:scadnano/src/middleware/edit_select_mode_change.dart';
@@ -30,19 +29,22 @@ load_file_middleware(Store<AppState> store, action, NextDispatcher next) {
   } else if (action is actions.LoadDNAFile && !action.unit_testing) {
     next(action);
 
-    document.title = action.filename;
-    var design_view = app?.view?.design_view;
-    if (design_view != null) {
-      design_view.render(store.state);
+    var fn = action.filename;
+    if (fn != null) {
+      document.title = fn;
     }
+    var design_view = app.view.design_view;
+    design_view.render(store.state);
 
     // re-center if necessary
-    if (store.state.ui_state.autofit && store.state.design != null) {
+    if (store.state.ui_state.autofit && store.state.maybe_design != null) {
       util.fit_and_center();
     }
     store.dispatch(actions.LoadingDialogHide());
-    set_selectables_css_style_rules(
-        store.state.design, store.state.ui_state.edit_modes, store.state.ui_state.select_mode_state.modes);
+    if (store.state.maybe_design != null) {
+      set_selectables_css_style_rules(
+          store.state.design, store.state.ui_state.edit_modes, store.state.ui_state.select_mode_state.modes);
+    }
   } else {
     next(action);
   }

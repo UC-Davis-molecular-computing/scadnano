@@ -13,21 +13,21 @@ abstract class Substrand implements JSONSerializable, StrandPart {
 
   bool is_extension();
 
-  String get dna_sequence;
+  String? get dna_sequence;
 
-  Substrand set_dna_sequence(String seq);
+  Substrand set_dna_sequence(String? seq);
 
   toJson();
 
-  String get name;
+  String? get name;
 
-  String get label;
+  String? get label;
 
   String type_description();
 
   String get id;
 
-  Color get color;
+  Color? get color;
 
   toBuilder();
 }

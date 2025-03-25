@@ -7,6 +7,7 @@ import 'package:over_react/src/component/error_boundary_recoverable.dart';
 import '../app.dart';
 import '../constants.dart' as constants;
 import '../actions/actions.dart' as actions;
+import '../util.dart' as util;
 
 part 'design_main_error_boundary.over_react.g.dart';
 
@@ -29,7 +30,7 @@ class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
   @override
   get defaultProps => (newProps()
     ..identicalErrorFrequencyTolerance = Duration(seconds: 5)
-    ..loggerName = defaultErrorBoundaryLoggerName
+    ..loggerName = constants.default_error_boundary_logger_name
     ..shouldLogErrors = true);
 
   @override
@@ -46,13 +47,13 @@ class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
   @override
   void componentDidCatch(error, ReactErrorInfo info) {
     if (props.onComponentDidCatch != null) {
-      props.onComponentDidCatch(error, info);
+      props.onComponentDidCatch!(error, info);
     }
 
     _logErrorCaughtByErrorBoundary(error, info);
 
     if (props.onComponentIsUnrecoverable != null) {
-      props.onComponentIsUnrecoverable(error, info);
+      props.onComponentIsUnrecoverable!(error, info);
     }
   }
 
@@ -61,11 +62,9 @@ class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
     if (state.hasError) {
       var error = state.error;
 //      var escaper = HtmlEscape();
-      var escaped_error_message = 'You have discovered a bug in scadnano.  '
-          'Please file a bug report as a GitHub issue at\n'
-          '  ${constants.BUG_REPORT_URL}\n'
-          'and include the following information:\n\n'
-          '${error.toString()}\n\nstack trace:\n${error.stackTrace}' //escaper.convert(
+      var escaped_error_message = util.ASSERTION_ERROR_MESSAGE +
+              '\n\n' +
+              '${error.toString()}\n\nstack trace:\n${error.stackTrace}' //escaper.convert(
           //  )
           ;
 
@@ -82,8 +81,8 @@ class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
     // If the child is different, and the error boundary is currently in an error state,
     // give the children a chance to mount.
     if (state.hasError) {
-      final childThatCausedError = typedPropsFactory(prevProps).children.single;
-      if (childThatCausedError != props.children.single) {
+      final childThatCausedError = typedPropsFactory(prevProps).children?.single;
+      if (childThatCausedError != props.children?.single) {
         reset();
       }
     }
@@ -98,17 +97,13 @@ class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
   }
 
   String get _loggerName {
-    if (props.logger != null) return props.logger.name;
+    if (props.logger != null) return props.logger!.name;
 
-    return props.loggerName ?? defaultErrorBoundaryLoggerName;
+    return props.loggerName ?? constants.default_error_boundary_logger_name;
   }
 
-  void _logErrorCaughtByErrorBoundary(
-    /*Error|Exception*/ dynamic error,
-    ReactErrorInfo info, {
-    bool isRecoverable = true,
-  }) {
-    if (!props.shouldLogErrors) return;
+  void _logErrorCaughtByErrorBoundary(/*Error|Exception*/ dynamic error, ReactErrorInfo info) {
+    if (props.shouldLogErrors != null && !props.shouldLogErrors!) return;
 
     final message =
         'An unrecoverable error was caught by an ErrorBoundary (attempting to remount it was unsuccessful): '

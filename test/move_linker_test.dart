@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'dart:convert';
 import 'dart:math';
 
@@ -76,8 +74,8 @@ main() {
           address: Address(helix_idx: 2, forward: true, offset: 0),
           color: '000000',
           dna_end_first_click: end_click1,
-          start_point: Point<num>(0, 0),
-          current_point: Point<num>(0, 0),
+          start_point: Point<double>(0, 0),
+          current_point: Point<double>(0, 0),
           linker: orig_crossover);
       state = app_state_reducer(
           state, MoveLinker(potential_crossover: potential_crossover, dna_end_second_click: end_click2));
@@ -157,8 +155,8 @@ main() {
           address: Address(helix_idx: 1, forward: false, offset: 0),
           color: '000000',
           dna_end_first_click: end_click1,
-          start_point: Point<num>(0, 0),
-          current_point: Point<num>(0, 0),
+          start_point: Point<double>(0, 0),
+          current_point: Point<double>(0, 0),
           linker: orig_crossover);
       state = app_state_reducer(
           state, MoveLinker(potential_crossover: potential_crossover, dna_end_second_click: end_click2));
@@ -237,8 +235,8 @@ main() {
           address: Address(helix_idx: 2, forward: true, offset: 0),
           color: '000000',
           dna_end_first_click: end_click1,
-          start_point: Point<num>(0, 0),
-          current_point: Point<num>(0, 0),
+          start_point: Point<double>(0, 0),
+          current_point: Point<double>(0, 0),
           linker: orig_loopout);
       state = app_state_reducer(
           state, MoveLinker(potential_crossover: potential_crossover, dna_end_second_click: end_click2));
@@ -321,8 +319,8 @@ main() {
           address: Address(helix_idx: 1, forward: false, offset: 0),
           color: '000000',
           dna_end_first_click: end_click1,
-          start_point: Point<num>(0, 0),
-          current_point: Point<num>(0, 0),
+          start_point: Point<double>(0, 0),
+          current_point: Point<double>(0, 0),
           linker: orig_loopout);
       state = app_state_reducer(
           state, MoveLinker(potential_crossover: potential_crossover, dna_end_second_click: end_click2));

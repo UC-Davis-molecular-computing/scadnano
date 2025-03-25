@@ -5,22 +5,26 @@ part 'menu_dropdown_item.over_react.g.dart';
 
 UiFactory<MenuDropdownItemProps> MenuDropdownItem = _$MenuDropdownItem;
 
-mixin MenuDropdownItemPropsMixin on UiProps {
-  String display;
-  dynamic Function(SyntheticMouseEvent) on_click;
-  String keyboard_shortcut;
-  bool disabled;
-  bool active;
-  String tooltip;
-}
+mixin MenuDropdownItemProps on UiProps {
+  late String display;
+  late dynamic Function(SyntheticMouseEvent) on_click;
 
-class MenuDropdownItemProps = UiProps with MenuDropdownItemPropsMixin;
+  // optional
+  String? keyboard_shortcut;
+
+  // optional to specify, but non-nullable since they have default values
+  // https://github.com/Workiva/over_react/blob/master/doc/null_safety_and_required_props.md#defaulting-props-class-components
+  late bool disabled;
+  late bool active;
+  late String tooltip;
+}
 
 class MenuDropdownItemComponent extends UiComponent2<MenuDropdownItemProps> {
   @override
   get defaultProps => (newProps()
     ..disabled = false
-    ..active = false);
+    ..active = false
+    ..tooltip = '');
 
   @override
   render() {
@@ -34,11 +38,7 @@ class MenuDropdownItemComponent extends UiComponent2<MenuDropdownItemProps> {
       props.keyboard_shortcut,
     );
 
-    if (props.tooltip == null) {
-      return dropdown_item;
-    } else {
-      return (Dom.span() // had to put outside of DropdownItem to make tooltip show up when disabled
-        ..title = props.tooltip)(dropdown_item);
-    }
+    return (Dom.span() // had to put outside of DropdownItem to make tooltip show up when disabled
+      ..title = props.tooltip)(dropdown_item);
   }
 }

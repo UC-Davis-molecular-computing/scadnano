@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'dart:convert';
 import 'dart:html';
 import 'package:built_collection/built_collection.dart';
@@ -229,22 +227,22 @@ main() {
     // ensure x and z are swapped after reading in
     //TODO: test for swapping x and z positions in versions < 0.9.0 temporarily disabled until
     // codenano/scadnano versions are aligned
-    expect(design.helices[0].position3d.x, 30);
-    expect(design.helices[0].position3d.y, 60);
-    expect(design.helices[0].position3d.z, 10);
-    expect(design.helices[1].position3d.x, 50);
-    expect(design.helices[1].position3d.y, 80);
-    expect(design.helices[1].position3d.z, 20);
+    expect(design.helices[0]!.position3d(design.geometry).x, 30);
+    expect(design.helices[0]!.position3d(design.geometry).y, 60);
+    expect(design.helices[0]!.position3d(design.geometry).z, 10);
+    expect(design.helices[1]!.position3d(design.geometry).x, 50);
+    expect(design.helices[1]!.position3d(design.geometry).y, 80);
+    expect(design.helices[1]!.position3d(design.geometry).z, 20);
   });
 
   group('strand_maker_tests', () {
     List<Helix> helices = [
-      Helix(idx: 0, geometry: Geometry(), grid_position: GridPosition(0, 0), grid: Grid.square),
-      Helix(idx: 1, geometry: Geometry(), grid_position: GridPosition(0, 1), grid: Grid.square),
-      Helix(idx: 2, geometry: Geometry(), grid_position: GridPosition(0, 2), grid: Grid.square),
-      Helix(idx: 3, geometry: Geometry(), grid_position: GridPosition(0, 3), grid: Grid.square),
-      Helix(idx: 4, geometry: Geometry(), grid_position: GridPosition(0, 4), grid: Grid.square),
-      Helix(idx: 5, geometry: Geometry(), grid_position: GridPosition(0, 5), grid: Grid.square),
+      Helix(idx: 0, grid_position: GridPosition(0, 0), grid: Grid.square),
+      Helix(idx: 1, grid_position: GridPosition(0, 1), grid: Grid.square),
+      Helix(idx: 2, grid_position: GridPosition(0, 2), grid: Grid.square),
+      Helix(idx: 3, grid_position: GridPosition(0, 3), grid: Grid.square),
+      Helix(idx: 4, grid_position: GridPosition(0, 4), grid: Grid.square),
+      Helix(idx: 5, grid_position: GridPosition(0, 5), grid: Grid.square),
     ];
     test('test_strand__0_0_to_10_cross_1_to_5', () {
       Design actual_design = new Design(grid: Grid.square, helices: helices);
@@ -373,7 +371,7 @@ main() {
                   display_text: 'Cy3',
                   vendor_code: '/iCy3/',
                   allowed_bases: null,
-                  unused_fields: BuiltMap<String, Object>()))
+                  unused_fields: BuiltMap<String, dynamic>()))
           .commit();
       actual_design = actual_design
           .draw_strand(0, 10)
@@ -381,7 +379,7 @@ main() {
           .cross(1)
           .to(10)
           .with_modification_5p(Modification5Prime(
-              display_text: 'B', vendor_code: '/5Biosg/', unused_fields: BuiltMap<String, Object>()))
+              display_text: 'B', vendor_code: '/5Biosg/', unused_fields: BuiltMap<String, dynamic>()))
           .commit();
 
       Design expected_design = new Design(grid: Grid.square, helices: helices);
@@ -397,7 +395,7 @@ main() {
                 display_text: 'Cy3',
                 vendor_code: '/iCy3/',
                 allowed_bases: null,
-                unused_fields: BuiltMap<String, Object>())
+                unused_fields: BuiltMap<String, dynamic>())
           },
           is_scaffold: true,
         )));
@@ -408,7 +406,7 @@ main() {
         ],
             color: Color.rgb(247, 67, 8),
             modification_5p: Modification5Prime(
-                display_text: 'B', vendor_code: '/5Biosg/', unused_fields: BuiltMap<String, Object>()))));
+                display_text: 'B', vendor_code: '/5Biosg/', unused_fields: BuiltMap<String, dynamic>()))));
       expect(actual_design.strands, expected_design.strands);
     });
     test('test_strand__call_to_twice_legally', () {
@@ -442,10 +440,10 @@ main() {
     """;
     Design design = Design.from_json(jsonDecode(four_helix_min_offsets_nonzero_design), false);
 
-    expect(design.helices[0].major_tick_start, 0);
-    expect(design.helices[1].major_tick_start, 1);
-    expect(design.helices[2].major_tick_start, 2);
-    expect(design.helices[3].major_tick_start, 3);
+    expect(design.helices[0]!.major_tick_start, 0);
+    expect(design.helices[1]!.major_tick_start, 1);
+    expect(design.helices[2]!.major_tick_start, 2);
+    expect(design.helices[3]!.major_tick_start, 3);
   });
 
   // See issue #551: https://github.com/UC-Davis-molecular-computing/scadnano/issues/551
@@ -460,17 +458,18 @@ main() {
     // Tweak rise per base pair so that svg base width will be exactly 10
     var rise_per_base_pair = 10 / 30.12;
     var helix = Helix(
-        idx: 0,
-        grid: Grid.square,
-        svg_position: Point(1, 2),
-        min_offset: -5,
-        max_offset: 8,
-        geometry: Geometry(rise_per_base_pair: rise_per_base_pair));
+      idx: 0,
+      grid: Grid.square,
+      svg_position: Point(1, 2),
+      min_offset: -5,
+      max_offset: 8,
+    );
 
-    expect(helix.svg_x_to_offset(1, 0), -5);
-    expect(helix.svg_x_to_offset(3, 0), -5); // base interior
-    expect(helix.svg_x_to_offset(11, 0), -4);
-    expect(helix.svg_x_to_offset(15, 0), -4); // base interior
-    expect(helix.svg_x_to_offset(21, 0), -3);
+    var geometry = Geometry(rise_per_base_pair: rise_per_base_pair);
+    expect(helix.svg_x_to_offset(1, 0, geometry), -5);
+    expect(helix.svg_x_to_offset(3, 0, geometry), -5); // base interior
+    expect(helix.svg_x_to_offset(11, 0, geometry), -4);
+    expect(helix.svg_x_to_offset(15, 0, geometry), -4); // base interior
+    expect(helix.svg_x_to_offset(21, 0, geometry), -3);
   });
 }

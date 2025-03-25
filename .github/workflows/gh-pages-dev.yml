@@ -19,8 +19,8 @@ jobs:
         with:
           ref: gh-pages
           path: gh-pages-repo
-        
-          
+
+
 
       - name: Setup Dart SDK Step 1
         run: sudo apt-get update
@@ -31,20 +31,20 @@ jobs:
       - name: Setup Dart SDK Step 4
         run: sudo sh -c 'wget -qO- https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_stable.list > /etc/apt/sources.list.d/dart_stable.list'
       - name: Setup Dart SDK Step 5
-        run: wget -O /tmp/dart_2.13.4-1_amd64.deb https://storage.googleapis.com/dart-archive/channels/stable/release/2.13.4/linux_packages/dart_2.13.4-1_amd64.deb
+        run: wget -O /tmp/dart_3.5.4-1_amd64.deb https://storage.googleapis.com/dart-archive/channels/stable/release/3.5.4/linux_packages/dart_3.5.4-1_amd64.deb
       - name: Setup Dart SDK Step 6
-        run: sudo apt install /tmp/dart_2.13.4-1_amd64.deb
+        run: sudo apt install /tmp/dart_3.5.4-1_amd64.deb
 
       - name: Install dependencies
-        run: PATH="$PATH:/usr/lib/dart/bin" pub get
-        
+        run: PATH="$PATH:/usr/lib/dart/bin" dart pub get
+
       - name: Install webdev
-        run: PATH="$PATH:/usr/lib/dart/bin" pub global activate webdev
-      
+        run: PATH="$PATH:/usr/lib/dart/bin" dart pub global activate webdev
+
 
       - name: Build into gh-pages repo
-        run: PATH="$PATH:/usr/lib/dart/bin" pub global run webdev build -o web:gh-pages-repo/dev
-      
+        run: PATH="$PATH:/usr/lib/dart/bin" dart pub global run webdev build -o web:gh-pages-repo/dev
+
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3

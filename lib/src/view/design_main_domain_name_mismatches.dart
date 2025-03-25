@@ -17,10 +17,10 @@ UiFactory<DesignMainDomainNameMismatchesProps> DesignMainDomainNameMismatches =
     _$DesignMainDomainNameMismatches;
 
 mixin DesignMainDomainNameMismatchesProps on UiProps {
-  Design design;
-  bool only_display_selected_helices;
-  BuiltSet<int> side_selected_helix_idxs;
-  BuiltMap<int, Point<num>> helix_idx_to_svg_position_map;
+  late Design design;
+  late bool only_display_selected_helices;
+  late BuiltSet<int> side_selected_helix_idxs;
+  late BuiltMap<int, Point<double>> helix_idx_to_svg_position_map;
 }
 
 class DesignMainDomainNameMismatchesComponent extends UiComponent2<DesignMainDomainNameMismatchesProps>
@@ -39,22 +39,26 @@ class DesignMainDomainNameMismatchesComponent extends UiComponent2<DesignMainDom
         continue;
       }
 
-      BuiltList<DomainNameMismatch> domain_name_mismatches = props.design.domain_name_mismatches[helix.idx];
+      BuiltList<DomainNameMismatch> domain_name_mismatches = props.design.domain_name_mismatches[helix.idx]!;
 
       for (var domain_name_mismatch in domain_name_mismatches) {
         Domain forward_domain = domain_name_mismatch.forward_domain;
         Domain reverse_domain = domain_name_mismatch.reverse_domain;
-        Tuple2<int, int> overlap = forward_domain.compute_overlap(reverse_domain);
-        assert(overlap != null);
+        Tuple2<int, int>? overlap = forward_domain.compute_overlap(reverse_domain);
+        if (overlap == null) throw AssertionError('overlap should not be null');
+
         // draw mismatch stars at midpoint of overlap of domains
         int mid = (overlap.item1 + overlap.item2) ~/ 2;
         for (Domain domain in [forward_domain, reverse_domain]) {
-          var base_svg_pos =
-              helix.svg_base_pos(mid, domain.forward, props.helix_idx_to_svg_position_map[helix.idx].y);
+          var helix = props.design.helices[domain.helix]!;
+          var group = props.design.groups[helix.group]!;
+          var geometry = group.geometry ?? props.design.geometry;
+          var base_svg_pos = helix.svg_base_pos(
+              mid, domain.forward, props.helix_idx_to_svg_position_map[helix.idx]!.y, geometry);
           String key = '${domain.helix};${domain.forward};${domain.start};${mid};${domain.end}';
           var mismatch_component = (DesignMainWarningStar()
             ..base_svg_pos = base_svg_pos
-            ..geometry = props.design.geometry
+            ..geometry = geometry
             ..forward = domain.forward
             ..color = 'blue'
             ..key = key)();

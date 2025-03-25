@@ -3,5 +3,5 @@ import 'package:built_collection/built_collection.dart';
 
 mixin UnusedFields {
   @BuiltValueField(serialize: false)
-  BuiltMap<String, Object> get unused_fields;
+  BuiltMap<String, dynamic> get unused_fields;
 }

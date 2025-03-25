@@ -18,15 +18,13 @@ UiFactory<DesignMainStrandDeletionProps> DesignMainStrandDeletion = _$DesignMain
 
 @Props()
 mixin DesignMainStrandDeletionPropsMixin on UiProps {
-  SelectableDeletion selectable_deletion;
-  Helix helix;
-  String transform;
-  bool selected;
-
-  Domain get domain => selectable_deletion.domain;
-  int get deletion => selectable_deletion.offset;
-  num svg_position_y;
-  bool retain_strand_color_on_selection;
+  late SelectableDeletion selectable_deletion;
+  late Helix helix;
+  late bool selected;
+  late String transform;
+  late num svg_position_y;
+  late bool retain_strand_color_on_selection;
+  late Geometry geometry;
 }
 
 class DesignMainStrandDeletionProps = UiProps with DesignMainStrandDeletionPropsMixin;
@@ -34,13 +32,18 @@ class DesignMainStrandDeletionProps = UiProps with DesignMainStrandDeletionProps
 @Component2()
 class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDeletionProps>
     with PureComponent {
+  Domain get domain => props.selectable_deletion.domain;
+
+  int get deletion => props.selectable_deletion.offset;
+
   @override
   render() {
-    Geometry geometry = props.helix.geometry;
-    Domain domain = props.domain;
-    int deletion_offset = props.deletion;
+    Geometry geometry = props.geometry;
+    Domain domain = this.domain;
+    int deletion_offset = this.deletion;
 
-    Point<num> pos = props.helix.svg_base_pos(deletion_offset, domain.forward, props.svg_position_y);
+    Point<double> pos =
+        props.helix.svg_base_pos(deletion_offset, domain.forward, props.svg_position_y, props.geometry);
 
     // deletion
     var width = 0.8 * geometry.base_width_svg;
@@ -89,7 +92,7 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
           ..height = background_height
           ..onClick = ((_) {
             if (edit_mode_is_deletion()) {
-              app.dispatch(actions.DeletionRemove(domain: props.domain, offset: props.deletion));
+              app.dispatch(actions.DeletionRemove(domain: this.domain, offset: this.deletion));
             }
           })
           ..key = key_background)(),
@@ -99,7 +102,7 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
           ..d = path_cmds
           ..onClick = ((_) {
             if (edit_mode_is_deletion()) {
-              app.dispatch(actions.DeletionRemove(domain: props.domain, offset: props.deletion));
+              app.dispatch(actions.DeletionRemove(domain: this.domain, offset: this.deletion));
             }
           })
           ..id = props.selectable_deletion.id

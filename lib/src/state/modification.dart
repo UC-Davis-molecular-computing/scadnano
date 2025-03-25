@@ -12,21 +12,19 @@ import 'unused_fields.dart';
 
 part 'modification.g.dart';
 
-abstract class Modification {
+abstract class Modification with UnusedFields {
   String get display_text;
 
   String get vendor_code;
 
   int get connector_length;
 
-  BuiltMap<String, Object> get unused_fields;
-
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false});
 
   static Map<String, dynamic> mod_to_json_serializable(Modification mod, bool suppress_indent) {
     Map<String, dynamic> map = {
       constants.mod_display_text_key: mod.display_text,
-      if (mod.vendor_code != null) constants.mod_vendor_code_key: mod.vendor_code,
+      constants.mod_vendor_code_key: mod.vendor_code,
       if (mod.connector_length != constants.default_modification_connector_length)
         constants.mod_connector_length_key: mod.connector_length,
     };
@@ -35,7 +33,7 @@ abstract class Modification {
   }
 
   static Modification from_json(Map<String, dynamic> json_map) {
-    String location = json_map[constants.mod_location_key];
+    String location = json_map[constants.mod_location_key]! as String;
     Modification mod;
     var unused_fields = util.unused_fields_map(json_map, constants.modification_keys);
     if (location == "5'") {
@@ -64,11 +62,11 @@ abstract class Modification5Prime
     with BuiltJsonSerializable, UnusedFields
     implements Built<Modification5Prime, Modification5PrimeBuilder>, Modification {
   factory Modification5Prime(
-      {String display_text,
-      String vendor_code,
+      {required String display_text,
+      required String vendor_code,
       int connector_length = constants.default_modification_connector_length,
-      BuiltMap<String, Object> unused_fields}) {
-    var unused_fields_to_assign = unused_fields ?? BuiltMap<String, Object>();
+      BuiltMap<String, dynamic>? unused_fields = null}) {
+    var unused_fields_to_assign = unused_fields ?? BuiltMap<String, dynamic>();
     return Modification5Prime.from((b) => b
       ..display_text = display_text
       ..vendor_code = vendor_code
@@ -102,8 +100,8 @@ abstract class Modification5Prime
   }
 
   static Modification5Prime from_json(Map<String, dynamic> json_map) {
-    String display_text = json_map[constants.mod_display_text_key];
-    String location = json_map[constants.mod_location_key];
+    String display_text = json_map[constants.mod_display_text_key] as String;
+    String location = json_map[constants.mod_location_key] as String;
     assert(location == "5'");
     String vendor_code = util.mandatory_field(json_map, constants.mod_vendor_code_key, "Modification5Prime",
         legacy_keys: constants.legacy_mod_vendor_code_keys);
@@ -123,11 +121,11 @@ abstract class Modification3Prime
     with BuiltJsonSerializable, UnusedFields
     implements Built<Modification3Prime, Modification3PrimeBuilder>, Modification {
   factory Modification3Prime(
-      {String display_text,
-      String vendor_code,
+      {required String display_text,
+      required String vendor_code,
       int connector_length = constants.default_modification_connector_length,
-      BuiltMap<String, Object> unused_fields}) {
-    var unused_fields_to_assign = unused_fields ?? BuiltMap<String, Object>();
+      BuiltMap<String, dynamic>? unused_fields = null}) {
+    var unused_fields_to_assign = unused_fields ?? BuiltMap<String, dynamic>();
     return Modification3Prime.from((b) => b
       ..display_text = display_text
       ..vendor_code = vendor_code
@@ -182,12 +180,12 @@ abstract class ModificationInternal
     with BuiltJsonSerializable, UnusedFields
     implements Built<ModificationInternal, ModificationInternalBuilder>, Modification {
   factory ModificationInternal(
-      {String display_text,
-      String vendor_code,
+      {required String display_text,
+      required String vendor_code,
       int connector_length = constants.default_modification_connector_length,
-      BuiltSet<String> allowed_bases,
-      BuiltMap<String, Object> unused_fields}) {
-    var unused_fields_to_assign = unused_fields ?? BuiltMap<String, Object>();
+      BuiltSet<String>? allowed_bases = null,
+      BuiltMap<String, dynamic>? unused_fields = null}) {
+    var unused_fields_to_assign = unused_fields ?? BuiltMap<String, dynamic>();
     return ModificationInternal.from((b) => b
       ..display_text = display_text
       ..vendor_code = vendor_code
@@ -214,8 +212,7 @@ abstract class ModificationInternal
 
   int get connector_length;
 
-  @nullable
-  BuiltSet<String> get allowed_bases;
+  BuiltSet<String>? get allowed_bases;
 
   bool get attached_to_base => this.allowed_bases != null;
 
@@ -226,20 +223,20 @@ abstract class ModificationInternal
     ret[constants.mod_location_key] = "internal";
     if (allowed_bases != null) {
       ret[constants.mod_allowed_bases_key] =
-          suppress_indent ? NoIndent(allowed_bases.toList()) : allowed_bases.toList();
+          suppress_indent ? NoIndent(allowed_bases!.toList()) : allowed_bases!.toList();
     }
     return ret;
   }
 
   static ModificationInternal from_json(Map<String, dynamic> json_map) {
-    String display_text = json_map[constants.mod_display_text_key];
-    String location = json_map[constants.mod_location_key];
+    String display_text = json_map[constants.mod_display_text_key] as String;
+    String location = json_map[constants.mod_location_key] as String;
     assert(location == "internal");
     String vendor_code = util.mandatory_field(json_map, constants.mod_vendor_code_key, "ModificationInternal",
         legacy_keys: constants.legacy_mod_vendor_code_keys);
     int connector_length = util.optional_field(
         json_map, constants.mod_connector_length_key, constants.default_modification_connector_length);
-    var allowed_bases_json = json_map[constants.mod_allowed_bases_key];
+    List? allowed_bases_json = json_map[constants.mod_allowed_bases_key] as List?;
     var allowed_bases = allowed_bases_json == null ? null : BuiltSet<String>(allowed_bases_json);
     var unused_fields = util.unused_fields_map(json_map, constants.modification_keys).build();
 
@@ -251,5 +248,5 @@ abstract class ModificationInternal
         unused_fields: unused_fields);
   }
 
-  bool base_is_allowed(String base) => this.allowed_bases == null || this.allowed_bases.contains(base);
+  bool base_is_allowed(String base) => this.allowed_bases == null || this.allowed_bases!.contains(base);
 }

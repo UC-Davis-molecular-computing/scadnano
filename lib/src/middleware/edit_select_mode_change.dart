@@ -39,9 +39,8 @@ edit_select_mode_change_middleware(Store<AppState> store, action, NextDispatcher
       action is actions.SetAppUIStateStorable) {
     var select_modes = store.state.ui_state.select_mode_state.modes;
     var edit_modes = store.state.ui_state.edit_modes;
-    var design = store.state.design;
-    if (design != null) {
-      set_selectables_css_style_rules(design, edit_modes, select_modes);
+    if (store.state.maybe_design != null) {
+      set_selectables_css_style_rules(store.state.design, edit_modes, select_modes);
     }
   }
 }
@@ -72,12 +71,12 @@ set_selectables_css_style_rules(
 
 set_strand_part_selectable_css_style_rules(
   BuiltSet<SelectModeChoice> select_modes, {
-  bool all_parts_selectable,
-  bool staple_parts_selectable,
-  bool scaffold_parts_selectable,
-  SelectModeChoice select_mode_choice,
-  bool is_origami,
-  bool edit_mode_is_select_or_rope_select,
+  required bool all_parts_selectable,
+  required bool staple_parts_selectable,
+  required bool scaffold_parts_selectable,
+  required SelectModeChoice select_mode_choice,
+  required bool is_origami,
+  required bool edit_mode_is_select_or_rope_select,
 }) {
   bool select_mode_contains_part = select_modes.contains(select_mode_choice);
   var selectable_css_style_this_choice;
@@ -124,7 +123,7 @@ css_class_set_style(String selector, Map<String, String> new_style_map) {
   var rule = style_rule_with_selector(stylesheet, selector);
   if (rule == null) {
     int new_index = stylesheet.insertRule(selector + ' {}');
-    rule = stylesheet.cssRules[new_index];
+    rule = stylesheet.cssRules[new_index] as CssStyleRule;
   }
   var style = rule.style;
   for (var style_key in new_style_map.keys) {
@@ -135,18 +134,18 @@ css_class_set_style(String selector, Map<String, String> new_style_map) {
 
 css_class_remove_style(String selector) {
   var stylesheet = util.get_scadnano_stylesheet();
-  int idx = style_rule_index_with_selector(stylesheet, selector);
+  int? idx = style_rule_index_with_selector(stylesheet, selector);
   if (idx != null) {
     stylesheet.removeRule(idx);
   }
 }
 
-CssStyleRule style_rule_with_selector(CssStyleSheet stylesheet, String selector) {
-  int idx = style_rule_index_with_selector(stylesheet, selector);
-  return idx == null ? null : stylesheet.cssRules[idx];
+CssStyleRule? style_rule_with_selector(CssStyleSheet stylesheet, String selector) {
+  int? idx = style_rule_index_with_selector(stylesheet, selector);
+  return idx == null ? null : stylesheet.cssRules[idx] as CssStyleRule;
 }
 
-int style_rule_index_with_selector(CssStyleSheet stylesheet, String selector) {
+int? style_rule_index_with_selector(CssStyleSheet stylesheet, String selector) {
   for (int i = 0; i < stylesheet.cssRules.length; i++) {
     CssRule rule = stylesheet.cssRules[i];
     if (rule is CssStyleRule && rule.selectorText == selector) {
