@@ -1108,7 +1108,7 @@ https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-cen
 .form-file-dropdown .custom-file-input + .custom-file-label {
     display: block;
     width: 100%;
-    padding: .25rem 1.5rem;
+    padding: 0;
     margin-bottom: 0%;
     /* Removes label browser default */
     clear: both;
