@@ -53,7 +53,11 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
     Point<double> pos;
     if (props.ext == null) {
       pos = props.helix.svg_base_pos(
-          this.address.offset, this.address.forward, props.helix_svg_position_y, props.geometry);
+        this.address.offset,
+        this.address.forward,
+        props.helix_svg_position_y,
+        props.geometry,
+      );
       // if internal modification that goes between bases, adjust x offset to be after the given base,
       // instead of on it
       if (this.modification is ModificationInternal) {
@@ -68,8 +72,13 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
       var adj_dom = ext.adjacent_domain;
       var adj_helix = props.helix;
       var adj_helix_svg_y = props.helix_svg_position_y;
-      Point<double> extension_attached_end_svg =
-          util.compute_extension_attached_end_svg(ext, adj_dom, adj_helix, adj_helix_svg_y, props.geometry);
+      Point<double> extension_attached_end_svg = util.compute_extension_attached_end_svg(
+        ext,
+        adj_dom,
+        adj_helix,
+        adj_helix_svg_y,
+        props.geometry,
+      );
       pos = util.compute_extension_free_end_svg(extension_attached_end_svg, ext, adj_dom, props.geometry);
     }
     bool display_connector = props.display_connector;
@@ -136,20 +145,30 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
     if (!event.shiftKey) {
       event.preventDefault();
       event.stopPropagation(); // needed to prevent strand context menu from popping up
-      app.dispatch(actions.ContextMenuShow(
+      app.dispatch(
+        actions.ContextMenuShow(
           context_menu: ContextMenu(
-              items: context_menu_modification(this.strand).build(),
-              position: util.from_point_num(event.page))));
+            items: context_menu_modification(this.strand).build(),
+            position: util.from_point_num(event.page),
+          ),
+        ),
+      );
     }
   }
 
   List<ContextMenuItem> context_menu_modification(Strand strand) => [
-        ContextMenuItem(title: 'remove modification', on_click: remove_modification),
-        ContextMenuItem(
-            title: 'edit modification',
-            on_click: () => edit_modification(
-                this.modification, props.selectable_modification, this.strand, props.dna_idx_mod)),
-      ];
+    ContextMenuItem(title: 'remove modification', on_click: remove_modification),
+    ContextMenuItem(
+      title: 'edit modification',
+      on_click:
+          () => edit_modification(
+            this.modification,
+            props.selectable_modification,
+            this.strand,
+            props.dna_idx_mod,
+          ),
+    ),
+  ];
 
   remove_modification() {
     List<SelectableModification> selectable_mods =
@@ -161,7 +180,10 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
     actions.UndoableAction action;
     if (selectable_mods.length == 1) {
       action = actions.ModificationRemove(
-          strand: this.strand, modification: this.modification, strand_dna_idx: props.dna_idx_mod);
+        strand: this.strand,
+        modification: this.modification,
+        strand_dna_idx: props.dna_idx_mod,
+      );
     } else if (selectable_mods.length > 1) {
       action = actions.DeleteAllSelected();
     } else {
@@ -193,7 +215,11 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
   }
 
   ReactElement _modification_svg(
-      Point<double> pos, bool forward, bool display_connector, int connector_length) {
+    Point<double> pos,
+    bool forward,
+    bool display_connector,
+    int connector_length,
+  ) {
     num y_delta = y_delta_mod();
     double y_del_small = (forward ? -y_delta : y_delta).toDouble();
     double font_size = props.font_size;
@@ -218,8 +244,12 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
   double x_delta_mod() => props.geometry.base_width_svg / 3.0;
 }
 
-Future<void> ask_for_add_modification(Strand strand, Substrand substrand, Address address,
-    [ModificationType type = ModificationType.internal]) async {
+Future<void> ask_for_add_modification(
+  Strand strand,
+  Substrand substrand,
+  Address address, [
+  ModificationType type = ModificationType.internal,
+]) async {
   /*
     substrand -  selected substrand (domain or extension)
     address - address of DNA base (nullable if substrand is an extension)
@@ -245,7 +275,10 @@ Future<void> ask_for_add_modification(Strand strand, Substrand substrand, Addres
   int allowed_bases_idx = 6;
   var items = util.FixedList<DialogItem>(7);
   items[modification_type_idx] = DialogRadio(
-      label: 'modification type', options: {"3'", "5'", "internal"}, selected_idx: selected_index);
+    label: 'modification type',
+    options: {"3'", "5'", "internal"},
+    selected_idx: selected_index,
+  );
 
   String initial_display_text = "";
   String initial_vendor_code = "";
@@ -272,23 +305,39 @@ Future<void> ask_for_add_modification(Strand strand, Substrand substrand, Addres
     initial_connector_length = last_mod.connector_length;
   }
 
-  items[display_text_idx] =
-      DialogText(label: 'display text', value: initial_display_text, tooltip: tooltip_display_text_textfield);
-  items[vendor_code_idx] =
-      DialogText(label: 'vendor code', value: initial_vendor_code, tooltip: tooltip_vendor_code_textfield);
+  items[display_text_idx] = DialogText(
+    label: 'display text',
+    value: initial_display_text,
+    tooltip: tooltip_display_text_textfield,
+  );
+  items[vendor_code_idx] = DialogText(
+    label: 'vendor code',
+    value: initial_vendor_code,
+    tooltip: tooltip_vendor_code_textfield,
+  );
   items[connector_length_idx] = DialogInteger(
-      label: 'connector length',
-      value: initial_connector_length,
-      tooltip: tooltip_connector_length_textfield);
+    label: 'connector length',
+    value: initial_connector_length,
+    tooltip: tooltip_connector_length_textfield,
+  );
 
   items[index_of_dna_base_idx] = DialogInteger(
-      label: 'index of DNA base', value: strand_dna_idx, tooltip: tooltip_index_of_dna_base_textfield);
+    label: 'index of DNA base',
+    value: strand_dna_idx,
+    tooltip: tooltip_index_of_dna_base_textfield,
+  );
 
-  items[attached_to_base_idx] =
-      DialogCheckbox(label: 'attached to base?', value: true, tooltip: tooltip_attached_to_base_checkbox);
+  items[attached_to_base_idx] = DialogCheckbox(
+    label: 'attached to base?',
+    value: true,
+    tooltip: tooltip_attached_to_base_checkbox,
+  );
 
-  items[allowed_bases_idx] =
-      DialogText(label: 'allowed bases', value: 'ACGT', tooltip: tooltip_allowed_bases_textfield);
+  items[allowed_bases_idx] = DialogText(
+    label: 'allowed bases',
+    value: 'ACGT',
+    tooltip: tooltip_allowed_bases_textfield,
+  );
 
   // don't allow to modify index of DNA base when 3' or 5' is selected
   var dialog = Dialog(
@@ -300,17 +349,17 @@ Future<void> ask_for_add_modification(Strand strand, Substrand substrand, Addres
     use_saved_response: false,
     disable_when_any_radio_button_selected: {
       index_of_dna_base_idx: {
-        modification_type_idx: ["3'", "5'"]
+        modification_type_idx: ["3'", "5'"],
       },
       attached_to_base_idx: {
-        modification_type_idx: ["3'", "5'"]
+        modification_type_idx: ["3'", "5'"],
       },
       allowed_bases_idx: {
-        modification_type_idx: ["3'", "5'"]
+        modification_type_idx: ["3'", "5'"],
       },
     },
     disable_when_any_checkboxes_off: {
-      allowed_bases_idx: [attached_to_base_idx]
+      allowed_bases_idx: [attached_to_base_idx],
     },
   );
 
@@ -372,8 +421,11 @@ Future<void> ask_for_add_modification(Strand strand, Substrand substrand, Addres
       List<actions.ModificationAdd> all_actions = [];
       for (var end_selected in ends_selected) {
         var strand_of_end_selected = app.state.design.end_to_strand(end_selected);
-        var new_action =
-            actions.ModificationAdd(strand: strand_of_end_selected, modification: mod, strand_dna_idx: null);
+        var new_action = actions.ModificationAdd(
+          strand: strand_of_end_selected,
+          modification: mod,
+          strand_dna_idx: null,
+        );
         all_actions.add(new_action);
       }
       action = actions.BatchAction(all_actions, "add modifications");
@@ -386,8 +438,12 @@ Future<void> ask_for_add_modification(Strand strand, Substrand substrand, Addres
   app.dispatch(action);
 }
 
-edit_modification(Modification modification, SelectableModification selectable_modification, Strand strand,
-    int? dna_idx_mod) async {
+edit_modification(
+  Modification modification,
+  SelectableModification selectable_modification,
+  Strand strand,
+  int? dna_idx_mod,
+) async {
   int display_text_idx = 0;
   int vendor_code_idx = 1;
   int connector_length_idx = 2;
@@ -398,23 +454,36 @@ edit_modification(Modification modification, SelectableModification selectable_m
   int num_items = is_internal ? 5 : 3;
   var items = util.FixedList<DialogItem>(num_items);
   items[display_text_idx] = DialogText(
-      label: 'display text', value: modification.display_text, tooltip: tooltip_display_text_textfield);
+    label: 'display text',
+    value: modification.display_text,
+    tooltip: tooltip_display_text_textfield,
+  );
   items[vendor_code_idx] = DialogText(
-      label: 'vendor code', value: modification.vendor_code, tooltip: tooltip_vendor_code_textfield);
+    label: 'vendor code',
+    value: modification.vendor_code,
+    tooltip: tooltip_vendor_code_textfield,
+  );
   items[connector_length_idx] = DialogInteger(
-      label: 'connector length',
-      value: modification.connector_length,
-      tooltip: tooltip_connector_length_textfield);
+    label: 'connector length',
+    value: modification.connector_length,
+    tooltip: tooltip_connector_length_textfield,
+  );
 
   if (is_internal) {
     bool attached_to_base_old = modification.allowed_bases != null;
     items[attached_to_base_idx] = DialogCheckbox(
-        label: 'attached to base?', value: attached_to_base_old, tooltip: tooltip_attached_to_base_checkbox);
+      label: 'attached to base?',
+      value: attached_to_base_old,
+      tooltip: tooltip_attached_to_base_checkbox,
+    );
 
     var allowed_bases_old =
         modification.allowed_bases != null ? modification.allowed_bases!.join('') : 'ACGT';
     items[allowed_bases_idx] = DialogText(
-        label: 'allowed bases', value: allowed_bases_old, tooltip: tooltip_allowed_bases_textfield);
+      label: 'allowed bases',
+      value: allowed_bases_old,
+      tooltip: tooltip_allowed_bases_textfield,
+    );
   }
 
   var dialog = Dialog(
@@ -422,11 +491,12 @@ edit_modification(Modification modification, SelectableModification selectable_m
     type: DialogType.edit_modification,
     items: items,
     use_saved_response: false,
-    disable_when_any_checkboxes_off: is_internal
-        ? {
-            allowed_bases_idx: [attached_to_base_idx]
-          }
-        : {},
+    disable_when_any_checkboxes_off:
+        is_internal
+            ? {
+              allowed_bases_idx: [attached_to_base_idx],
+            }
+            : {},
   );
   List<DialogItem>? results = await util.dialog(dialog);
   if (results == null) return;
@@ -477,17 +547,22 @@ edit_modification(Modification modification, SelectableModification selectable_m
   } else if (selectable_mods.length > 1) {
     if (new_mod is Modification5Prime) {
       var selectable_mods_5p = List<SelectableModification5Prime>.from(
-          selectable_mods.where((mod) => mod is SelectableModification5Prime));
+        selectable_mods.where((mod) => mod is SelectableModification5Prime),
+      );
       action = actions.Modifications5PrimeEdit(modifications: selectable_mods_5p, new_modification: new_mod);
     } else if (new_mod is Modification3Prime) {
       var selectable_mods_3p = List<SelectableModification3Prime>.from(
-          selectable_mods.where((mod) => mod is SelectableModification3Prime));
+        selectable_mods.where((mod) => mod is SelectableModification3Prime),
+      );
       action = actions.Modifications3PrimeEdit(modifications: selectable_mods_3p, new_modification: new_mod);
     } else if (new_mod is ModificationInternal) {
       var selectable_mods_int = List<SelectableModificationInternal>.from(
-          selectable_mods.where((mod) => mod is SelectableModificationInternal));
-      action =
-          actions.ModificationsInternalEdit(modifications: selectable_mods_int, new_modification: new_mod);
+        selectable_mods.where((mod) => mod is SelectableModificationInternal),
+      );
+      action = actions.ModificationsInternalEdit(
+        modifications: selectable_mods_int,
+        new_modification: new_mod,
+      );
     } else {
       throw AssertionError('should be unreachable');
     }

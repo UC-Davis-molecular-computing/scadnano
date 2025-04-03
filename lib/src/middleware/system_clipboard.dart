@@ -41,7 +41,10 @@ system_clipboard_middleware(Store<AppState> store, action, NextDispatcher next) 
 }
 
 void handle_manual_paste_initiate(
-    Store<AppState> store, actions.ManualPasteInitiate action, NextDispatcher next) {
+  Store<AppState> store,
+  actions.ManualPasteInitiate action,
+  NextDispatcher next,
+) {
   // This re-does some of the work of manual_paste_initiate_reducer in the call to next(action) below,
   // but it keeps the side effect of printing an error message out of the reducer.
   if (paste_is_impossible_from_clipboard(action.clipboard_content, action.in_browser)) return;
@@ -88,10 +91,14 @@ void handle_autopaste_initiate(Store<AppState> store, actions.AutoPasteInitiate 
       for (int helix_idx in new_strand_moving_details['offsets'].keys) {
         if (new_strand_moving_details['status'] == constants.strand_bounds_status.min_offset_out_of_bounds)
           helices_offset_change_action = actions.HelixOffsetChange(
-              helix_idx: helix_idx, min_offset: new_strand_moving_details['offsets'][helix_idx]);
+            helix_idx: helix_idx,
+            min_offset: new_strand_moving_details['offsets'][helix_idx],
+          );
         else
           helices_offset_change_action = actions.HelixOffsetChange(
-              helix_idx: helix_idx, max_offset: new_strand_moving_details['offsets'][helix_idx]);
+            helix_idx: helix_idx,
+            max_offset: new_strand_moving_details['offsets'][helix_idx],
+          );
 
         batch_actions_list.add(helices_offset_change_action);
       }
@@ -104,8 +111,10 @@ void handle_autopaste_initiate(Store<AppState> store, actions.AutoPasteInitiate 
           constants.strand_bounds_status.in_bounds_with_max_offset_changes) {
     var paste_commit_action = actions.StrandsMoveCommit(strands_move: strands_move, autopaste: true);
     batch_actions_list.add(paste_commit_action);
-    var batch_action =
-        actions.BatchAction(batch_actions_list, 'Changing helix offsets and then executing autopaste');
+    var batch_action = actions.BatchAction(
+      batch_actions_list,
+      'Changing helix offsets and then executing autopaste',
+    );
     store.dispatch(batch_action);
   }
 }
@@ -186,15 +195,15 @@ void put_strand_info_on_clipboard(Store<AppState> store) {
 BuiltSet<Modification> all_modifications(Iterable<Strand> strands) {
   var mods_5p = BuiltSet<Modification>({
     for (var strand in strands)
-      if (strand.modification_5p != null) strand.modification_5p
+      if (strand.modification_5p != null) strand.modification_5p,
   });
   var mods_3p = BuiltSet<Modification>({
     for (var strand in strands)
-      if (strand.modification_3p != null) strand.modification_3p
+      if (strand.modification_3p != null) strand.modification_3p,
   });
   var mods_int = BuiltSet<Modification>({
     for (var strand in strands)
-      for (var mod in strand.modifications_int.values) mod
+      for (var mod in strand.modifications_int.values) mod,
   });
   return mods_5p.union(mods_3p).union(mods_int);
 }

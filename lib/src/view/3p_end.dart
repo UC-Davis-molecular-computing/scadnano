@@ -33,32 +33,36 @@ class End3PrimeComponent extends UiComponent2<End3PrimeProps> {
     double scale = 3.7;
     Point<double> pos = props.pos;
     if (!props.forward) {
-      points = '${pos.x - scale},${pos.y} '
+      points =
+          '${pos.x - scale},${pos.y} '
           '${pos.x + 0.9 * scale},${pos.y + scale} '
           '${pos.x + 0.9 * scale},${pos.y - scale}';
     } else {
-      points = '${pos.x + scale},${pos.y} '
+      points =
+          '${pos.x + scale},${pos.y} '
           '${pos.x - 0.9 * scale},${pos.y + scale} '
           '${pos.x - 0.9 * scale},${pos.y - scale}';
     }
 
-    var poly_props = Dom.polygon()
-      ..className = props.classname
-      ..points = points
-      ..fill = props.color.toHexColor().toCssString();
+    var poly_props =
+        Dom.polygon()
+          ..className = props.classname
+          ..points = points
+          ..fill = props.color.toHexColor().toCssString();
 
     if (props.transform != null) {
       // if it is present, then this is a "real" end, not moving,
       // so all the other option props will also be present
-      poly_props = poly_props
-        ..id = props.id_
-        ..transform = props.transform
-        ..onPointerDown = props.on_pointer_down
-        ..onPointerUp = props.on_pointer_up
-        ..onMouseUp = props.on_mouse_up
-        ..onMouseEnter = props.on_mouse_enter
-        ..onMouseLeave = props.on_mouse_leave
-        ..onMouseMove = props.on_mouse_move;
+      poly_props =
+          poly_props
+            ..id = props.id_
+            ..transform = props.transform
+            ..onPointerDown = props.on_pointer_down
+            ..onPointerUp = props.on_pointer_up
+            ..onMouseUp = props.on_mouse_up
+            ..onMouseEnter = props.on_mouse_enter
+            ..onMouseLeave = props.on_mouse_leave
+            ..onMouseMove = props.on_mouse_move;
     }
     return poly_props();
   }

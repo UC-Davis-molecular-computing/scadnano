@@ -33,10 +33,14 @@ DesignSideProps set_design_side_props(DesignSideProps elt, AppState state) {
     ..geometry = geometry
     ..helix_change_apply_to_all = state.ui_state.helix_change_apply_to_all
     ..helix_idxs_selected = state.ui_state.side_selected_helix_idxs
-    ..rotation_datas = state.ui_state.show_slice_bar
-        ? util.rotation_datas_at_offset_in_group(
-            state.ui_state.slice_bar_offset, state.design, state.ui_state.displayed_group_name)
-        : BuiltList<DesignSideRotationData>()
+    ..rotation_datas =
+        state.ui_state.show_slice_bar
+            ? util.rotation_datas_at_offset_in_group(
+              state.ui_state.slice_bar_offset,
+              state.design,
+              state.ui_state.displayed_group_name,
+            )
+            : BuiltList<DesignSideRotationData>()
     ..slice_bar_offset = state.ui_state.slice_bar_offset
     ..edit_modes = state.ui_state.edit_modes
     ..displayed_group = displayed_group
@@ -50,7 +54,8 @@ DesignSideProps set_design_side_props(DesignSideProps elt, AppState state) {
 // there is an error message to display instead of a DNADesign (since the components for DesignSide and DesignMain
 // are rendered manually top-level by vanilla Dart DOM code), we need to say what to do here when state has an error.
 UiFactory<DesignSideProps> ConnectedDesignSide = connect<AppState, DesignSideProps>(
-    mapStateToProps: (state) => set_design_side_props(DesignSide(), state))(DesignSide);
+  mapStateToProps: (state) => set_design_side_props(DesignSide(), state),
+)(DesignSide);
 
 UiFactory<DesignSideProps> DesignSide = _$DesignSide;
 
@@ -75,7 +80,7 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> with PureCompone
   render() {
     BuiltList<DesignSideRotationData> rotation_datas = props.rotation_datas;
     Map<int, DesignSideRotationData> helix_idx_to_rotation_data = {
-      for (var rotation_data in rotation_datas) rotation_data.helix.idx: rotation_data
+      for (var rotation_data in rotation_datas) rotation_data.helix.idx: rotation_data,
     };
     BuiltSet<int> helix_idxs_selected = props.helix_idxs_selected;
 
@@ -87,38 +92,47 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> with PureCompone
         mouse_is_over = true;
       } else if (helix.grid.is_none && props.mouse_svg_pos != null) {
         // or if non-grid position overlaps the helix circle
-        Position3D mouse_pos_nm_3d =
-            util.svg_side_view_to_position3d(props.mouse_svg_pos!, props.invert_y, props.geometry);
+        Position3D mouse_pos_nm_3d = util.svg_side_view_to_position3d(
+          props.mouse_svg_pos!,
+          props.invert_y,
+          props.geometry,
+        );
         Point<double> mouse_pos_nm_xy = Point<double>(mouse_pos_nm_3d.x, mouse_pos_nm_3d.y);
-        Point<double> helix_pos_nm_xy =
-            Point<double>(helix.position(props.geometry).x, helix.position(props.geometry).y);
+        Point<double> helix_pos_nm_xy = Point<double>(
+          helix.position(props.geometry).x,
+          helix.position(props.geometry).y,
+        );
         double distance = (helix_pos_nm_xy - mouse_pos_nm_xy).magnitude;
         if (distance < props.geometry.helix_radius) {
           mouse_is_over = true;
         }
       }
-      helices_components.add((DesignSideHelix()
-        ..helix = helix
-        ..geometry = props.geometry
-        ..slice_bar_offset = props.slice_bar_offset
-        ..grid = props.displayed_group.grid
-        ..invert_y = props.invert_y
-        ..helix_change_apply_to_all = props.helix_change_apply_to_all
-        ..edit_modes = props.edit_modes
-        ..mouse_is_over = mouse_is_over
-        ..show_grid_coordinates = props.show_grid_coordinates
-        ..selected = helix_idxs_selected.contains(helix.idx)
-        ..rotation_data = helix_idx_to_rotation_data[helix.idx] // might be null
-        ..key = '${helix.position_ == null ? helix.grid_position : helix.position_}')());
+      helices_components.add(
+        (DesignSideHelix()
+          ..helix = helix
+          ..geometry = props.geometry
+          ..slice_bar_offset = props.slice_bar_offset
+          ..grid = props.displayed_group.grid
+          ..invert_y = props.invert_y
+          ..helix_change_apply_to_all = props.helix_change_apply_to_all
+          ..edit_modes = props.edit_modes
+          ..mouse_is_over = mouse_is_over
+          ..show_grid_coordinates = props.show_grid_coordinates
+          ..selected = helix_idxs_selected.contains(helix.idx)
+          ..rotation_data =
+              helix_idx_to_rotation_data[helix.idx] // might be null
+          ..key = '${helix.position_ == null ? helix.grid_position : helix.position_}')(),
+      );
     }
 
     bool should_display_potential_helix;
 
     if (!props.displayed_group.grid.is_none) {
       Set<GridPosition> existing_helix_grid_positions = {
-        for (var helix in props.helices.values) helix.grid_position!
+        for (var helix in props.helices.values) helix.grid_position!,
       };
-      should_display_potential_helix = props.mouse_svg_pos != null ||
+      should_display_potential_helix =
+          props.mouse_svg_pos != null ||
           (props.grid_position_mouse_cursor != null &&
               !existing_helix_grid_positions.contains(props.grid_position_mouse_cursor));
     } else {

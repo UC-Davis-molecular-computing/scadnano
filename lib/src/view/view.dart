@@ -21,8 +21,11 @@ import '../middleware/local_storage.dart' as local_storage;
 import '../constants.dart' as constants;
 
 @JS(constants.js_function_name_setup_svg_panzoom)
-external setup_svg_panzoom_js(void Function() svg_cache_callback,
-    void Function(bool) dispatch_zoom_threshold_callback, num zoom_threshold);
+external setup_svg_panzoom_js(
+  void Function() svg_cache_callback,
+  void Function(bool) dispatch_zoom_threshold_callback,
+  num zoom_threshold,
+);
 
 @JS(constants.js_function_name_setup_splits)
 external setup_splits(bool show_oxview);
@@ -53,10 +56,10 @@ class View {
   DivElement nonmenu_panes_container_element = DivElement()..attributes = {'id': NONMENU_PANES_CONTAINED_ID};
   DivElement design_element = DivElement()..attributes = {'id': DESIGN_ID};
 
-  DivElement design_and_modes_buttons_container_element = DivElement()
-    ..attributes = {'id': DESIGN_AND_MODES_BUTTONS_CONTAINER_ID, 'class': 'split'};
-  DivElement design_oxview_separator = DivElement()
-    ..attributes = {'id': 'design-oxview-separator', 'class': 'draggable-separator'};
+  DivElement design_and_modes_buttons_container_element =
+      DivElement()..attributes = {'id': DESIGN_AND_MODES_BUTTONS_CONTAINER_ID, 'class': 'split'};
+  DivElement design_oxview_separator =
+      DivElement()..attributes = {'id': 'design-oxview-separator', 'class': 'draggable-separator'};
 
   late DesignViewComponent design_view;
   late OxviewViewComponent oxview_view;
@@ -94,9 +97,7 @@ class View {
 
     react_dom.render(
       over_react_components.ErrorBoundary()(
-        (ReduxProvider()..store = store)(
-          set_menu_props(ConnectedMenu(), state)(),
-        ),
+        (ReduxProvider()..store = store)(set_menu_props(ConnectedMenu(), state)()),
       ),
       this.menu_element,
     );

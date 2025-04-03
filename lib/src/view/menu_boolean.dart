@@ -20,9 +20,10 @@ mixin MenuBooleanProps on UiProps {
 
 class MenuBooleanComponent extends UiComponent2<MenuBooleanProps> {
   @override
-  get defaultProps => (newProps()
-    ..hide = false
-    ..tooltip = '');
+  get defaultProps =>
+      (newProps()
+        ..hide = false
+        ..tooltip = '');
 
   @override
   render() {
@@ -38,14 +39,15 @@ class MenuBooleanComponent extends UiComponent2<MenuBooleanProps> {
       ..id = '${name}-span'
       ..style = {'display': 'block'})(
       (Dom.label()..title = props.tooltip)(
-          (Dom.input()
-            ..style = {'marginRight': '1em'}
-            ..checked = props.value
-            ..onChange = props.on_change
-            // TODO(benlee12): Add unit tests that use this.
-            // ..addTestId('scadnano.MenuComponent.MenuBooleanComponent.input.${name}')
-            ..type = 'checkbox')(),
-          props.display),
+        (Dom.input()
+          ..style = {'marginRight': '1em'}
+          ..checked = props.value
+          ..onChange = props.on_change
+          // TODO(benlee12): Add unit tests that use this.
+          // ..addTestId('scadnano.MenuComponent.MenuBooleanComponent.input.${name}')
+          ..type = 'checkbox')(),
+        props.display,
+      ),
     );
   }
 }

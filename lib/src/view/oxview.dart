@@ -14,13 +14,14 @@ class OxviewViewComponent {
 
   OxviewViewComponent() {
     this.div = DivElement()..attributes = {'id': OXVIEW_ID, 'class': 'split'};
-    this.frame = IFrameElement()
-      ..attributes = {
-        'height': '100%',
-        'width': '100%',
-        'src': 'https://sulcgroup.github.io/oxdna-viewer/',
-        'id': 'oxview-frame'
-      };
+    this.frame =
+        IFrameElement()
+          ..attributes = {
+            'height': '100%',
+            'width': '100%',
+            'src': 'https://sulcgroup.github.io/oxdna-viewer/',
+            'id': 'oxview-frame',
+          };
     this.div.children.add(this.frame);
   }
 }

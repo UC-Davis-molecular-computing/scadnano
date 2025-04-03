@@ -57,14 +57,16 @@ abstract class CopyInfo with BuiltJsonSerializable implements Built<CopyInfo, Co
   AddressDifference? get translation;
 
   // next address to paste into (no strands exist at this Address yet)
-  Address? get next_paste_address => this.translation == null || this.prev_paste_address == null
-      ? null
-      : prev_paste_address!.sum(this.translation!, helices_view_order, helices_view_order_inverse);
+  Address? get next_paste_address =>
+      this.translation == null || this.prev_paste_address == null
+          ? null
+          : prev_paste_address!.sum(this.translation!, helices_view_order, helices_view_order_inverse);
 
   // first address to paste into based on translation
-  Address? get first_paste_address => this.translation == null
-      ? null
-      : copied_address.sum(this.translation!, helices_view_order, helices_view_order_inverse);
+  Address? get first_paste_address =>
+      this.translation == null
+          ? null
+          : copied_address.sum(this.translation!, helices_view_order, helices_view_order_inverse);
 
   BuiltList<int> get helices_view_order;
 
@@ -77,12 +79,15 @@ abstract class CopyInfo with BuiltJsonSerializable implements Built<CopyInfo, Co
     required BuiltList<int> helices_view_order,
     required BuiltMap<int, int> helices_view_order_inverse,
   }) {
-    return CopyInfo.from((b) => b
-      ..strands.replace(strands)
-      ..copied_address.replace(copied_address)
-      ..translation = translation?.toBuilder()
-      ..helices_view_order.replace(helices_view_order)
-      ..helices_view_order_inverse.replace(helices_view_order_inverse));
+    return CopyInfo.from(
+      (b) =>
+          b
+            ..strands.replace(strands)
+            ..copied_address.replace(copied_address)
+            ..translation = translation?.toBuilder()
+            ..helices_view_order.replace(helices_view_order)
+            ..helices_view_order_inverse.replace(helices_view_order_inverse),
+    );
   }
 
   CopyInfo move_to_next(AppState state) {
@@ -102,7 +107,8 @@ abstract class CopyInfo with BuiltJsonSerializable implements Built<CopyInfo, Co
       return false;
     }
     var strands_move = create_strands_move(state);
-    bool in_bounds_and_legal = strands_move_reducer.in_bounds(state.design, strands_move) &&
+    bool in_bounds_and_legal =
+        strands_move_reducer.in_bounds(state.design, strands_move) &&
         strands_move_reducer.is_allowable(state.design, strands_move);
     return in_bounds_and_legal;
   }

@@ -25,7 +25,10 @@ import '../state/app_state.dart';
 /// Dispatches a normal HelixPositionSet action (many of them batched).
 /// Also changes the roll of each Helix to point those crossovers at each other in the new positions.
 helix_positions_set_based_on_crossovers_middleware(
-    Store<AppState> store, dynamic action, NextDispatcher next) {
+  Store<AppState> store,
+  dynamic action,
+  NextDispatcher next,
+) {
   next(action);
   if (action is actions.HelicesPositionsSetBasedOnCrossovers) {
     var all_actions = get_helix_position_and_roll_actions(store.state);
@@ -43,8 +46,10 @@ List<actions.UndoableAction> get_helix_position_and_roll_actions(AppState state)
     }
   }
   if (group_names_to_skip.isNotEmpty) {
-    window.alert('Skipping helix groups ${group_names_to_skip.join(", ")} '
-        'because their grids are not "none".');
+    window.alert(
+      'Skipping helix groups ${group_names_to_skip.join(", ")} '
+      'because their grids are not "none".',
+    );
   }
 
   List<actions.UndoableAction> all_actions = [];
@@ -60,8 +65,13 @@ List<actions.UndoableAction> get_helix_position_and_roll_actions(AppState state)
       continue;
     }
     double first_roll = helices[0].roll;
-    List<RollXY> rolls_and_positions =
-        _calculate_rolls_and_positions(state.design, geometry, helices, addresses, first_roll);
+    List<RollXY> rolls_and_positions = _calculate_rolls_and_positions(
+      state.design,
+      geometry,
+      helices,
+      addresses,
+      first_roll,
+    );
     var all_actions_this_group = set_rolls_and_positions(helices, rolls_and_positions, geometry);
     all_actions.addAll(all_actions_this_group);
   }
@@ -80,7 +90,8 @@ List<Helix> _get_helices_to_process(AppState state, HelixGroup group) {
     helices = [for (var helix_idx in selected_helix_idxs) design.helices[helix_idx]!];
   }
   helices.sort(
-      (h1, h2) => group.helices_view_order_inverse[h1.idx]! - group.helices_view_order_inverse[h2.idx]!);
+    (h1, h2) => group.helices_view_order_inverse[h1.idx]! - group.helices_view_order_inverse[h2.idx]!,
+  );
   return helices;
 }
 
@@ -127,8 +138,13 @@ Please select only one, or select none to default to the first crossover between
       if (!state.design.is_origami) {
         use_scaffold = use_staple = true;
       }
-      address_top_bot = _first_crossover_addresses_between_helices(helix_top, helix_bot, design,
-          use_scaffold: use_scaffold, use_staple: use_staple);
+      address_top_bot = _first_crossover_addresses_between_helices(
+        helix_top,
+        helix_bot,
+        design,
+        use_scaffold: use_scaffold,
+        use_staple: use_staple,
+      );
 
       if (address_top_bot == null) {
         var msg = 'Must have at least one crossover between helices ${helix_top.idx} and ${helix_bot.idx}';
@@ -145,8 +161,12 @@ Please select only one, or select none to default to the first crossover between
 
 // "First" refers to having the lowest offset on helix h1.
 Tuple2<Address, Address>? _first_crossover_addresses_between_helices(
-    Helix helix_top, Helix helix_bot, Design design,
-    {required bool use_scaffold, required bool use_staple}) {
+  Helix helix_top,
+  Helix helix_bot,
+  Design design, {
+  required bool use_scaffold,
+  required bool use_staple,
+}) {
   BuiltList<Tuple2<Address, Crossover>> address_crossovers_on_top =
       design.address_crossover_pairs_by_helix_idx[helix_top.idx]!;
   BuiltList<Tuple2<Address, Crossover>> address_crossovers_on_bot =
@@ -154,14 +174,16 @@ Tuple2<Address, Address>? _first_crossover_addresses_between_helices(
 
   // if not using scaffold or crossovers when finding leftmost, filter those out
   if (!use_scaffold) {
-    address_crossovers_on_bot = address_crossovers_on_bot
-        .where((address_crossover) => !address_crossover.item2.is_scaffold)
-        .toBuiltList();
+    address_crossovers_on_bot =
+        address_crossovers_on_bot
+            .where((address_crossover) => !address_crossover.item2.is_scaffold)
+            .toBuiltList();
   }
   if (!use_staple) {
-    address_crossovers_on_bot = address_crossovers_on_bot
-        .where((address_crossover) => address_crossover.item2.is_scaffold)
-        .toBuiltList();
+    address_crossovers_on_bot =
+        address_crossovers_on_bot
+            .where((address_crossover) => address_crossover.item2.is_scaffold)
+            .toBuiltList();
   }
 
   // find first crossover on h1 that also goes to h2
@@ -192,7 +214,10 @@ Tuple2<Address, Address>? _first_crossover_addresses_between_helices(
 // }
 // Sorts each list by the offset on its first helix (first meaning first in order in helices)
 Map<Tuple2<int, int>, List<Tuple2<Address, Address>>> _get_addresses_of_selected_crossovers_by_prev_helix_idx(
-    BuiltSet<Crossover> selected_crossovers, List<Helix> helices, Design design) {
+  BuiltSet<Crossover> selected_crossovers,
+  List<Helix> helices,
+  Design design,
+) {
   // this is essentially what we return, but each crossover also carries with it the start offset of
   // the helix earlier in the ordering, which helps to sort the lists of crossovers before returning
   Map<Tuple2<int, int>, List<Tuple2<Address, Address>>> addresses_top_bot_crossovers = {};
@@ -278,8 +303,13 @@ class RollXY {
 /// Return list of rolls, same length as [helices], giving the roll that each should be to point
 /// each pair of helix backbones at each other through the given [addresses].
 /// The first roll is [first_roll].
-List<RollXY> _calculate_rolls_and_positions(Design design, Geometry geometry, List<Helix> helices,
-    List<Tuple2<Address, Address>> addresses, double first_roll) {
+List<RollXY> _calculate_rolls_and_positions(
+  Design design,
+  Geometry geometry,
+  List<Helix> helices,
+  List<Tuple2<Address, Address>> addresses,
+  double first_roll,
+) {
   assert(helices.length == addresses.length + 1);
 
   double x = helices[0].position3d(geometry).z;
@@ -323,7 +353,10 @@ List<RollXY> _calculate_rolls_and_positions(Design design, Geometry geometry, Li
 }
 
 List<actions.UndoableAction> set_rolls_and_positions(
-    List<Helix> helices, List<RollXY> rolls_and_positions, Geometry geometry) {
+  List<Helix> helices,
+  List<RollXY> rolls_and_positions,
+  Geometry geometry,
+) {
   List<actions.UndoableAction> all_actions = [];
   for (int i = 0; i < helices.length; i++) {
     var helix = helices[i];
@@ -335,5 +368,5 @@ List<actions.UndoableAction> set_rolls_and_positions(
     all_actions.add(pos_action);
   }
   return all_actions;
-//  store.dispatch(actions.BatchAction(all_actions));
+  //  store.dispatch(actions.BatchAction(all_actions));
 }

@@ -55,11 +55,12 @@ Design design_from_string(String str) {
 /// Returns an [AppState] based on design.
 AppState app_state_from_design(Design design, {bool in_browser = false}) {
   var ui_state = AppUIState.from_design(design);
-  var state = (DEFAULT_AppState.toBuilder()
-        ..maybe_design.replace(design)
-        ..ui_state.replace(ui_state)
-        ..error_message = '')
-      .build();
+  var state =
+      (DEFAULT_AppState.toBuilder()
+            ..maybe_design.replace(design)
+            ..ui_state.replace(ui_state)
+            ..error_message = '')
+          .build();
   return state;
 }
 

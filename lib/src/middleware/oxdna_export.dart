@@ -100,7 +100,7 @@ String to_oxview_format(Design design, List<Strand> strands_to_export) {
       'class': 'NucleicAcidStrand',
       'end5': nuc_count,
       'end3': nuc_count + system.strands[i].nucleotides.length,
-      'monomers': oxvnucs
+      'monomers': oxvnucs,
     };
     oxview_strand_map[sc_strand.id] = oxv_strand;
 
@@ -133,7 +133,8 @@ String to_oxview_format(Design design, List<Strand> strands_to_export) {
   }
 
   if (strand_names_without_dna.isNotEmpty) {
-    var msg = 'The following strands do not have complete DNA sequences assigned: '
+    var msg =
+        'The following strands do not have complete DNA sequences assigned: '
         '${strand_names_without_dna.join(", ")}. '
         'These strands will be exported with a default sequence of "T" '
         'for each nucleotide whose base is not specified. '
@@ -143,8 +144,12 @@ String to_oxview_format(Design design, List<Strand> strands_to_export) {
   }
 
   //TODO: this hasn't been tested well
-  var base_pairs_map =
-      design.base_pairs_with_domain_strand(false, true, strands_to_export.toSet().build(), true);
+  var base_pairs_map = design.base_pairs_with_domain_strand(
+    false,
+    true,
+    strands_to_export.toSet().build(),
+    true,
+  );
   for (int helix in base_pairs_map.keys) {
     for (var offset_dom_strands in base_pairs_map[helix]!) {
       int offset = offset_dom_strands.item1;
@@ -161,8 +166,10 @@ String to_oxview_format(Design design, List<Strand> strands_to_export) {
       oxv_strand1['monomers'][d1]['bp'] = s2_nuc_idx + d2;
       if (oxv_strand2['monomers'][d2].containsKey('bp')) {
         if (oxv_strand2['monomers'][d2]['bp'] != s1_nuc_idx + d1) {
-          print('${s2_nuc_idx + d2} ${s1_nuc_idx + d1} '
-              '${oxv_strand2['monomers'][d2]['bp']} ${domain1} ${domain2}');
+          print(
+            '${s2_nuc_idx + d2} ${s1_nuc_idx + d1} '
+            '${oxv_strand2['monomers'][d2]['bp']} ${domain1} ${domain2}',
+          );
           window.alert("You have found a bug in scadnano, please file a bug report.");
         }
       }
@@ -175,7 +182,7 @@ String to_oxview_format(Design design, List<Strand> strands_to_export) {
     'box': [b.x, b.y, b.z],
     'date': DateTime.now().toIso8601String(),
     'systems': [
-      {'id': 0, 'strands': oxview_strands}
+      {'id': 0, 'strands': oxview_strands},
     ],
     'forces': [],
     'selections': [],
@@ -316,11 +323,7 @@ class OxdnaSystem {
   Tuple2<String, String> oxdna_output() {
     OxdnaVector bbox = compute_bounding_box();
 
-    List<String> dat_list = [
-      't = 0',
-      'b = ${bbox.x} ${bbox.y} ${bbox.z}',
-      'E = 0 0 0',
-    ];
+    List<String> dat_list = ['t = 0', 'b = ${bbox.x} ${bbox.y} ${bbox.z}', 'E = 0 0 0'];
     List<String> top_list = [];
 
     int nuc_count = 0;
@@ -340,11 +343,13 @@ class OxdnaSystem {
         nuc_index += 1;
 
         top_list.add('${strand_count} ${nuc.base} ${n3} ${n5}');
-        dat_list.add('${nuc.r.x} ${nuc.r.y} ${nuc.r.z} ' +
-            '${nuc.b.x} ${nuc.b.y} ${nuc.b.z} ' +
-            '${nuc.n.x} ${nuc.n.y} ${nuc.n.z} ' +
-            '${nuc.v.x} ${nuc.v.y} ${nuc.v.z} ' +
-            '${nuc.L.x} ${nuc.L.y} ${nuc.L.z}');
+        dat_list.add(
+          '${nuc.r.x} ${nuc.r.y} ${nuc.r.z} ' +
+              '${nuc.b.x} ${nuc.b.y} ${nuc.b.z} ' +
+              '${nuc.n.x} ${nuc.n.y} ${nuc.n.z} ' +
+              '${nuc.v.x} ${nuc.v.y} ${nuc.v.z} ' +
+              '${nuc.L.x} ${nuc.L.y} ${nuc.L.z}',
+        );
       }
     }
 
@@ -412,9 +417,10 @@ Tuple3<OxdnaVector, OxdnaVector, OxdnaVector> oxdna_get_helix_vectors(Design des
     position_in_helix_group = util.grid_position_to_position3d(helix.grid_position!, grid, geometry);
   }
 
-  var position_in_helix_group_rotated = ((pitch_axis * position_in_helix_group.x) +
-      (yaw_axis * position_in_helix_group.y) +
-      (roll_axis * position_in_helix_group.z));
+  var position_in_helix_group_rotated =
+      ((pitch_axis * position_in_helix_group.x) +
+          (yaw_axis * position_in_helix_group.y) +
+          (roll_axis * position_in_helix_group.z));
 
   var helix_group_offset = OxdnaVector(group.position.x, group.position.y, group.position.z);
 
@@ -462,7 +468,7 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand>? strands
   // for efficiency just calculate each helix's vector once
   var helix_vectors = {
     for (var idx_helix in design.helices.entries)
-      idx_helix.key: oxdna_get_helix_vectors(design, idx_helix.value)
+      idx_helix.key: oxdna_get_helix_vectors(design, idx_helix.value),
   };
 
   for (var strand in strands_to_export) {
@@ -515,7 +521,8 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand>? strands
             if (insertions.containsKey(offset)) {
               int num = insertions[offset]!;
               for (int i = 0; i < num; i++) {
-                var cen = origin +
+                var cen =
+                    origin +
                     forward * (offset + mod - num + i) * geometry.rise_per_base_pair * NM_TO_OX_UNITS;
                 var norm = normal.rotate(step_rot * (offset + mod - num + i), forward);
                 var forw = domain.forward ? -forward : forward;
@@ -560,12 +567,13 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand>? strands
         var group = design.groups[helix.group]!;
         var geometry = group.geometry ?? design.geometry;
         var nucleotides = _compute_extension_nucleotides(
-            design: design,
-            geometry: geometry,
-            strand: strand,
-            is_5p: is_5p,
-            helix_vectors: helix_vectors,
-            mod_map: mod_map);
+          design: design,
+          geometry: geometry,
+          strand: strand,
+          is_5p: is_5p,
+          helix_vectors: helix_vectors,
+          mod_map: mod_map,
+        );
         ox_strand.nucleotides.addAll(nucleotides);
         strand_domains.add(Tuple2<OxdnaStrand, bool>(ox_strand, false));
       } else {
@@ -605,13 +613,14 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand>? strands
   return system;
 }
 
-List<OxdnaNucleotide> _compute_extension_nucleotides(
-    {required Design design,
-    required Geometry geometry,
-    required Strand strand,
-    required bool is_5p,
-    required Map<int, Tuple3<OxdnaVector, OxdnaVector, OxdnaVector>> helix_vectors,
-    required Map<int, List<int>> mod_map}) {
+List<OxdnaNucleotide> _compute_extension_nucleotides({
+  required Design design,
+  required Geometry geometry,
+  required Strand strand,
+  required bool is_5p,
+  required Map<int, Tuple3<OxdnaVector, OxdnaVector, OxdnaVector>> helix_vectors,
+  required Map<int, List<int>> mod_map,
+}) {
   var step_rot = -360 / geometry.bases_per_turn;
 
   var adj_dom = is_5p ? strand.domains.first : strand.domains.last;

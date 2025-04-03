@@ -82,9 +82,10 @@ int find_allowable_offset(Design design, DNAEnd end, BuiltSet<DNAEnd> selected_e
   }
 
   int closest_unselected_offset = unselected_end_offsets_to_one_side.reduce(highest ? min : max);
-  int num_selected_offsets_between = selected_end_offsets_to_one_side
-      .where((o) => highest ? o < closest_unselected_offset : o > closest_unselected_offset)
-      .length;
+  int num_selected_offsets_between =
+      selected_end_offsets_to_one_side
+          .where((o) => highest ? o < closest_unselected_offset : o > closest_unselected_offset)
+          .length;
   int adjust_factor = highest ? -1 - num_selected_offsets_between : 1 + num_selected_offsets_between;
 
   return closest_unselected_offset + adjust_factor;

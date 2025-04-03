@@ -58,7 +58,8 @@ restore(Store<AppState> store, Storable storable) {
   try {
     _restore(store, storable);
   } catch (e, stackTrace) {
-    var error_message = 'ERROR: loading ${storable} from localStorage, encountered this error:'
+    var error_message =
+        'ERROR: loading ${storable} from localStorage, encountered this error:'
         '\n${e.toString()}'
         '\n\nstack trace:'
         '\n\n${stackTrace}';
@@ -83,27 +84,32 @@ _restore(Store<AppState> store, Storable storable) {
       try {
         storables = standard_serializers.deserialize(storable_json_map) as AppUIStateStorables;
       } catch (e, stackTrace) {
-        print('ERROR: in loading storables from localStorage in order to find loaded_filename for design, '
-            'encountered this error, so a default filename has been chosen:'
-            '\n${e.toString()}'
-            '\n\nstack trace:'
-            '\n\n${stackTrace}');
+        print(
+          'ERROR: in loading storables from localStorage in order to find loaded_filename for design, '
+          'encountered this error, so a default filename has been chosen:'
+          '\n${e.toString()}'
+          '\n\nstack trace:'
+          '\n\n${stackTrace}',
+        );
       }
       action = actions.PrepareToLoadDNAFile(
-          content: json_str,
-          filename: storables?.loaded_filename ?? 'default_filename.sc',
-          write_local_storage: false);
+        content: json_str,
+        filename: storables?.loaded_filename ?? 'default_filename.sc',
+        write_local_storage: false,
+      );
     } else if (storable == Storable.app_ui_state_storables) {
       var storable_json_map = json.decode(json_str);
       AppUIStateStorables storables;
       try {
         storables = standard_serializers.deserialize(storable_json_map) as AppUIStateStorables;
       } catch (e, stackTrace) {
-        print('ERROR: in loading storables from localStorage, encountered this error trying to load '
-            'app_ui_state_storables, so using defaults for UI settings:'
-            '\n${e.toString()}'
-            '\n\nstack trace:'
-            '\n\n${stackTrace}');
+        print(
+          'ERROR: in loading storables from localStorage, encountered this error trying to load '
+          'app_ui_state_storables, so using defaults for UI settings:'
+          '\n${e.toString()}'
+          '\n\nstack trace:'
+          '\n\n${stackTrace}',
+        );
         storables = DEFAULT_AppUIStateStorable;
       }
       action = actions.SetAppUIStateStorable(storables);
@@ -156,9 +162,11 @@ local_storage_middleware(Store<AppState> store, dynamic action, NextDispatcher n
         action is! actions.HelicesPositionsSetBasedOnCrossovers &&
         action is! actions.Undo &&
         action is! actions.Redo) {
-      print('WARNING: some Action changed the design, so I am writing the Design to localStorage,\n'
-          'but that action is not UndoableAction, LoadDNAFile, Undo, or Redo\n'
-          'action is ${action}');
+      print(
+        'WARNING: some Action changed the design, so I am writing the Design to localStorage,\n'
+        'but that action is not UndoableAction, LoadDNAFile, Undo, or Redo\n'
+        'action is ${action}',
+      );
     }
     save_storable_async(state_after, Storable.design);
   }

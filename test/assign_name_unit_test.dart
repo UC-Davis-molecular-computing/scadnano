@@ -128,8 +128,9 @@ main() {
       design = design.draw_strand(0, 8).move(-8).with_name("XYZ").commit();
 
       var action = actions.JoinStrandsByCrossover(
-          dna_end_first_click: design.strands[0].dnaend_3p,
-          dna_end_second_click: design.strands[1].dnaend_5p);
+        dna_end_first_click: design.strands[0].dnaend_3p,
+        dna_end_second_click: design.strands[1].dnaend_5p,
+      );
       var state = app_state_from_design(design);
       var all_strands = join_strands_by_crossover_reducer(design.strands, state, action);
 
@@ -144,8 +145,9 @@ main() {
       design = design.draw_strand(0, 8).move(-8).with_name("XYZ").commit();
 
       var action = actions.JoinStrandsByCrossover(
-          dna_end_first_click: design.strands[1].dnaend_3p,
-          dna_end_second_click: design.strands[0].dnaend_5p);
+        dna_end_first_click: design.strands[1].dnaend_3p,
+        dna_end_second_click: design.strands[0].dnaend_5p,
+      );
       var state = app_state_from_design(design);
       var all_strands = join_strands_by_crossover_reducer(design.strands, state, action);
 
@@ -188,8 +190,9 @@ main() {
       design = design.draw_strand(0, 8).move(-8).with_name("XYZ").as_scaffold().commit();
 
       var action = actions.JoinStrandsByCrossover(
-          dna_end_first_click: design.strands[0].dnaend_3p,
-          dna_end_second_click: design.strands[1].dnaend_5p);
+        dna_end_first_click: design.strands[0].dnaend_3p,
+        dna_end_second_click: design.strands[1].dnaend_5p,
+      );
       var state = app_state_from_design(design);
       var all_strands = join_strands_by_crossover_reducer(design.strands, state, action);
 
@@ -204,8 +207,9 @@ main() {
       design = design.draw_strand(0, 8).move(-8).with_name("XYZ").as_scaffold().commit();
 
       var action = actions.JoinStrandsByCrossover(
-          dna_end_first_click: design.strands[1].dnaend_3p,
-          dna_end_second_click: design.strands[0].dnaend_5p);
+        dna_end_first_click: design.strands[1].dnaend_3p,
+        dna_end_second_click: design.strands[0].dnaend_5p,
+      );
       var state = app_state_from_design(design);
       var all_strands = join_strands_by_crossover_reducer(design.strands, state, action);
 
@@ -244,8 +248,9 @@ main() {
       expect(design.strands.length, 2);
 
       var action = actions.JoinStrandsByCrossover(
-          dna_end_first_click: design.strands[1].dnaend_3p,
-          dna_end_second_click: design.strands[0].dnaend_5p);
+        dna_end_first_click: design.strands[1].dnaend_3p,
+        dna_end_second_click: design.strands[0].dnaend_5p,
+      );
       var state = app_state_from_design(design);
       var all_strands = join_strands_by_crossover_reducer(design.strands, state, action);
 

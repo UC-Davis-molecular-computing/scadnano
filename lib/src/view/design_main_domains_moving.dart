@@ -17,7 +17,9 @@ import 'design_main_domain_moving.dart';
 part 'design_main_domains_moving.over_react.g.dart';
 
 DesignMainDomainsMovingProps set_design_main_domains_moving_props(
-    DesignMainDomainsMovingProps elt, AppState state) {
+  DesignMainDomainsMovingProps elt,
+  AppState state,
+) {
   if (state.ui_state.domains_move == null) {
     return elt
       ..domains_move = null
@@ -31,8 +33,10 @@ DesignMainDomainsMovingProps set_design_main_domains_moving_props(
       ..geometry = Geometry();
   }
 
-  HelixGroup original_group =
-      util.original_group_from_domains_move(state.design, state.ui_state.domains_move!);
+  HelixGroup original_group = util.original_group_from_domains_move(
+    state.design,
+    state.ui_state.domains_move!,
+  );
   HelixGroup current_group = util.current_group_from_domains_move(state.design, state.ui_state.domains_move!);
 
   // Need to check this here, because we need to allow the middleware to let through the domains_move
@@ -61,8 +65,8 @@ DesignMainDomainsMovingProps set_design_main_domains_moving_props(
 
 UiFactory<DesignMainDomainsMovingProps> ConnectedDesignMainDomainsMoving =
     connect<AppState, DesignMainDomainsMovingProps>(
-        mapStateToProps: (state) =>
-            set_design_main_domains_moving_props(DesignMainDomainsMoving(), state))(DesignMainDomainsMoving);
+      mapStateToProps: (state) => set_design_main_domains_moving_props(DesignMainDomainsMoving(), state),
+    )(DesignMainDomainsMoving);
 
 UiFactory<DesignMainDomainsMovingProps> DesignMainDomainsMoving = _$DesignMainDomainsMoving;
 
@@ -105,25 +109,27 @@ class DesignMainDomainsMovingComponent extends UiComponent2<DesignMainDomainsMov
       var group = props.groups[helix.group]!;
       var geometry = group.geometry ?? props.geometry;
 
-      domains_moving.add((DesignMainDomainMoving()
-        ..domain_moved = domain_moved
-        ..color = props.color_of_domain[domain]!
-        ..delta_view_order = domains_move.delta_view_order
-        ..original_group = props.original_group
-        ..current_group = props.current_group
-        ..delta_offset = domains_move.delta_offset
-        ..delta_forward = domains_move.delta_forward
-        ..side_selected_helix_idxs = props.side_selected_helix_idxs
-        ..helices = props.helices
-        ..groups = props.groups
-        ..allowable = domains_move.allowable
-        ..geometry = geometry
-        ..domain_helix_svg_position_y = domain_helix_svg_position_y
-        ..key = key++)());
+      domains_moving.add(
+        (DesignMainDomainMoving()
+          ..domain_moved = domain_moved
+          ..color = props.color_of_domain[domain]!
+          ..delta_view_order = domains_move.delta_view_order
+          ..original_group = props.original_group
+          ..current_group = props.current_group
+          ..delta_offset = domains_move.delta_offset
+          ..delta_forward = domains_move.delta_forward
+          ..side_selected_helix_idxs = props.side_selected_helix_idxs
+          ..helices = props.helices
+          ..groups = props.groups
+          ..allowable = domains_move.allowable
+          ..geometry = geometry
+          ..domain_helix_svg_position_y = domain_helix_svg_position_y
+          ..key = key++)(),
+      );
     }
 
-    return (Dom.g()
-      ..className =
-          'domains-moving-main-view' + (domains_move.allowable ? '' : ' disallowed'))(domains_moving);
+    return (Dom.g()..className = 'domains-moving-main-view' + (domains_move.allowable ? '' : ' disallowed'))(
+      domains_moving,
+    );
   }
 }

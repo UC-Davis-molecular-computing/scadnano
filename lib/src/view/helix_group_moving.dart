@@ -17,13 +17,16 @@ import '../extension_methods.dart';
 part 'helix_group_moving.over_react.g.dart';
 
 HelixGroupMovingProps set_helix_group_moving_props(
-    HelixGroupMovingProps elt, HelixGroupMove? helix_group_move) {
+  HelixGroupMovingProps elt,
+  HelixGroupMove? helix_group_move,
+) {
   return elt..helix_group_move = helix_group_move;
 }
 
 UiFactory<HelixGroupMovingProps> ConnectedHelixGroupMoving = connect<HelixGroupMove?, HelixGroupMovingProps>(
-  mapStateToProps: (HelixGroupMove? helix_group_move) =>
-      set_helix_group_moving_props(HelixGroupMoving(), helix_group_move),
+  mapStateToProps:
+      (HelixGroupMove? helix_group_move) =>
+          set_helix_group_moving_props(HelixGroupMoving(), helix_group_move),
   context: app.context_helix_group_move,
 )(HelixGroupMoving);
 
@@ -60,20 +63,22 @@ class HelixGroupMovingComponent extends UiComponent2<HelixGroupMovingProps> with
 
       if (only_display_selected_helices && side_selected_helix_idxs.contains(helix.idx) ||
           !only_display_selected_helices) {
-        children.add((DesignMainHelix()
-          ..helix = helix
-          ..geometry = helix_group_move.geometry
-          ..selected = side_selected_helix_idxs.contains(helix.idx)
-          ..major_tick_offset_font_size = props.major_tick_offset_font_size
-          ..major_tick_width_font_size = props.major_tick_width_font_size
-          ..show_dna = false
-          ..show_domain_labels = props.show_domain_labels
-          ..show_helix_circles = props.show_helix_circles
-          ..helix_change_apply_to_all = false
-          ..display_base_offsets_of_major_ticks = false
-          ..display_major_tick_widths = false
-          ..helix_svg_position = props.helix_idx_to_svg_position_map[helix.idx]!
-          ..key = helix.idx.toString())());
+        children.add(
+          (DesignMainHelix()
+            ..helix = helix
+            ..geometry = helix_group_move.geometry
+            ..selected = side_selected_helix_idxs.contains(helix.idx)
+            ..major_tick_offset_font_size = props.major_tick_offset_font_size
+            ..major_tick_width_font_size = props.major_tick_width_font_size
+            ..show_dna = false
+            ..show_domain_labels = props.show_domain_labels
+            ..show_helix_circles = props.show_helix_circles
+            ..helix_change_apply_to_all = false
+            ..display_base_offsets_of_major_ticks = false
+            ..display_major_tick_widths = false
+            ..helix_svg_position = props.helix_idx_to_svg_position_map[helix.idx]!
+            ..key = helix.idx.toString())(),
+        );
       }
     }
 

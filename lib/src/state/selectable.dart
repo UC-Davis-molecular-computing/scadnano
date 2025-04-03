@@ -138,32 +138,37 @@ abstract class SelectablesStore
     return rebuild((s) => s..selected_items = selected_items_builder);
   }
 
-  BuiltSet<DNAEnd> selected_ends_in_strand(Strand strand) => {
+  BuiltSet<DNAEnd> selected_ends_in_strand(Strand strand) =>
+      {
         for (var domain in strand.domains)
           for (var end in [domain.dnaend_5p, domain.dnaend_3p])
             if (selected_dna_ends.contains(end)) end,
         for (var ext in strand.extensions)
-          if (selected_dna_ends.contains(ext.dnaend_free)) ext.dnaend_free
+          if (selected_dna_ends.contains(ext.dnaend_free)) ext.dnaend_free,
       }.build();
 
-  BuiltSet<Crossover> selected_crossovers_in_strand(Strand strand) => {
+  BuiltSet<Crossover> selected_crossovers_in_strand(Strand strand) =>
+      {
         for (var crossover in strand.crossovers)
-          if (selected_crossovers.contains(crossover)) crossover
+          if (selected_crossovers.contains(crossover)) crossover,
       }.build();
 
-  BuiltSet<Loopout> selected_loopouts_in_strand(Strand strand) => {
+  BuiltSet<Loopout> selected_loopouts_in_strand(Strand strand) =>
+      {
         for (var loopout in strand.loopouts)
-          if (selected_loopouts.contains(loopout)) loopout
+          if (selected_loopouts.contains(loopout)) loopout,
       }.build();
 
-  BuiltSet<Extension> selected_extensions_in_strand(Strand strand) => {
+  BuiltSet<Extension> selected_extensions_in_strand(Strand strand) =>
+      {
         for (var ext in strand.extensions)
-          if (selected_extensions.contains(ext)) ext
+          if (selected_extensions.contains(ext)) ext,
       }.build();
 
-  BuiltSet<Domain> selected_domains_in_strand(Strand strand) => {
+  BuiltSet<Domain> selected_domains_in_strand(Strand strand) =>
+      {
         for (var domain in strand.domains)
-          if (selected_domains.contains(domain)) domain
+          if (selected_domains.contains(domain)) domain,
       }.build();
 
   BuiltSet<SelectableDeletion> selected_deletions_in_strand(Strand strand) {
@@ -278,10 +283,11 @@ abstract class SelectableInsertion
 
   /************************ begin BuiltValue boilerplate ************************/
 
-  factory SelectableInsertion(
-      {required Insertion insertion,
-      required Domain domain,
-      required bool is_scaffold}) = _$SelectableInsertion._;
+  factory SelectableInsertion({
+    required Insertion insertion,
+    required Domain domain,
+    required bool is_scaffold,
+  }) = _$SelectableInsertion._;
 
   factory SelectableInsertion.from([void Function(SelectableInsertionBuilder) updates]) =
       _$SelectableInsertion;
@@ -398,14 +404,16 @@ abstract class SelectableModificationInternal
 
   /************************ begin BuiltValue boilerplate ************************/
 
-  factory SelectableModificationInternal(
-      {required ModificationInternal modification,
-      required Strand strand,
-      required Domain domain,
-      required int dna_idx}) = _$SelectableModificationInternal._;
+  factory SelectableModificationInternal({
+    required ModificationInternal modification,
+    required Strand strand,
+    required Domain domain,
+    required int dna_idx,
+  }) = _$SelectableModificationInternal._;
 
-  factory SelectableModificationInternal.from(
-      [void Function(SelectableModificationInternalBuilder) updates]) = _$SelectableModificationInternal;
+  factory SelectableModificationInternal.from([
+    void Function(SelectableModificationInternalBuilder) updates,
+  ]) = _$SelectableModificationInternal;
 
   SelectableModificationInternal._();
 
@@ -443,7 +451,7 @@ mixin SelectableMixin implements Selectable {
   //XXX: Previously the type of event was SyntheticMouseEvent, but now we have a pointer event since
   // the Dart dnd library intercepts and prevent mouse events. Luckily that event has the
   // ctrlKey, metaKey, and shiftKey properties we need to check for.
-//  handle_selection(react.SyntheticPointerEvent event) {
+  //  handle_selection(react.SyntheticPointerEvent event) {
   handle_selection_mouse_down(MouseEvent event) {
     if (event.button == constants.LEFT_CLICK_BUTTON) {
       if (event.ctrlKey || event.metaKey) {
@@ -679,9 +687,13 @@ Future<void> ask_for_select_all_with_same_as_selected() async {
     var trait = all_traits[idx];
     items[idx] = DialogCheckbox(label: trait.description, value: false);
   }
-  items[all_traits.length] = DialogCheckbox(label: '(Exclude scaffold(s))', value: false, tooltip: '''\
+  items[all_traits.length] = DialogCheckbox(
+    label: '(Exclude scaffold(s))',
+    value: false,
+    tooltip: '''\
 If checked, then only strands that are not scaffolds will be selected. 
-However, *currently* selected scaffold strands will remain selected.''');
+However, *currently* selected scaffold strands will remain selected.''',
+  );
 
   var dialog = Dialog(
     title: "Select all strands with same traits as currently selected strand(s)",

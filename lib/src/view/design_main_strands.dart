@@ -46,7 +46,8 @@ DesignMainStrandsProps set_design_main_strands_props(DesignMainStrandsProps elt,
 }
 
 UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands = connect<AppState, DesignMainStrandsProps>(
-    mapStateToProps: (state) => set_design_main_strands_props(DesignMainStrands(), state))(DesignMainStrands);
+  mapStateToProps: (state) => set_design_main_strands_props(DesignMainStrands(), state),
+)(DesignMainStrands);
 
 UiFactory<DesignMainStrandsProps> DesignMainStrands = _$DesignMainStrands;
 
@@ -101,42 +102,44 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> wi
       var selected_insertions_in_strand = props.selectables_store.selected_insertions_in_strand(strand);
       var selected_modifications_in_strand = props.selectables_store.selected_modifications_in_strand(strand);
 
-      elts.add((DesignMainStrand()
-        ..strand = strand
-        ..side_selected_helix_idxs =
-            props.only_display_selected_helices ? props.side_selected_helix_idxs : null
-        ..selected = props.selectables_store.selected(strand)
-        ..helices = helices_used_in_strand
-        ..groups = groups_in_strand
-        ..selected_ends_in_strand = selected_ends_in_strand
-        ..selected_crossovers_in_strand = selected_crossovers_in_strand
-        ..selected_loopouts_in_strand = selected_loopouts_in_strand
-        ..selected_extensions_in_strand = selected_extensions_in_strand
-        ..selected_domains_in_strand = selected_domains_in_strand
-        ..selected_deletions_in_strand = selected_deletions_in_strand
-        ..selected_insertions_in_strand = selected_insertions_in_strand
-        ..selected_modifications_in_strand = selected_modifications_in_strand
-        ..drawing_potential_crossover = props.drawing_potential_crossover
-        ..moving_dna_ends = props.moving_dna_ends
-        ..dna_assign_options = props.dna_assign_options
-        ..only_display_selected_helices = props.only_display_selected_helices
-        ..show_dna = props.show_dna
-        ..show_modifications = props.show_modifications
-        ..show_strand_names = props.show_strand_names
-        ..show_strand_labels = props.show_strand_labels
-        ..show_domain_names = props.show_domain_names
-        ..show_domain_labels = props.show_domain_labels
-        ..strand_name_font_size = props.strand_name_font_size
-        ..strand_label_font_size = props.strand_label_font_size
-        ..domain_name_font_size = props.domain_name_font_size
-        ..domain_label_font_size = props.domain_label_font_size
-        ..modification_font_size = props.modification_font_size
-        ..modification_display_connector = props.modification_display_connector
-        ..geometry = props.geometry
-        ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
-        ..display_reverse_DNA_right_side_up = props.display_reverse_DNA_right_side_up
-        ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
-        ..key = key++)());
+      elts.add(
+        (DesignMainStrand()
+          ..strand = strand
+          ..side_selected_helix_idxs =
+              props.only_display_selected_helices ? props.side_selected_helix_idxs : null
+          ..selected = props.selectables_store.selected(strand)
+          ..helices = helices_used_in_strand
+          ..groups = groups_in_strand
+          ..selected_ends_in_strand = selected_ends_in_strand
+          ..selected_crossovers_in_strand = selected_crossovers_in_strand
+          ..selected_loopouts_in_strand = selected_loopouts_in_strand
+          ..selected_extensions_in_strand = selected_extensions_in_strand
+          ..selected_domains_in_strand = selected_domains_in_strand
+          ..selected_deletions_in_strand = selected_deletions_in_strand
+          ..selected_insertions_in_strand = selected_insertions_in_strand
+          ..selected_modifications_in_strand = selected_modifications_in_strand
+          ..drawing_potential_crossover = props.drawing_potential_crossover
+          ..moving_dna_ends = props.moving_dna_ends
+          ..dna_assign_options = props.dna_assign_options
+          ..only_display_selected_helices = props.only_display_selected_helices
+          ..show_dna = props.show_dna
+          ..show_modifications = props.show_modifications
+          ..show_strand_names = props.show_strand_names
+          ..show_strand_labels = props.show_strand_labels
+          ..show_domain_names = props.show_domain_names
+          ..show_domain_labels = props.show_domain_labels
+          ..strand_name_font_size = props.strand_name_font_size
+          ..strand_label_font_size = props.strand_label_font_size
+          ..domain_name_font_size = props.domain_name_font_size
+          ..domain_label_font_size = props.domain_label_font_size
+          ..modification_font_size = props.modification_font_size
+          ..modification_display_connector = props.modification_display_connector
+          ..geometry = props.geometry
+          ..helix_idx_to_svg_position_map = props.helix_idx_to_svg_position_map
+          ..display_reverse_DNA_right_side_up = props.display_reverse_DNA_right_side_up
+          ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
+          ..key = key++)(),
+      );
     }
 
     return (Dom.g()..className = 'strands-main-view')(elts);

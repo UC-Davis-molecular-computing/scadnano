@@ -65,30 +65,36 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
 
         if (only_display_selected_helices && side_selected_helix_idxs.contains(helix.idx) ||
             !only_display_selected_helices) {
-          children.add((DesignMainHelix()
-            ..helix = helix
-            ..geometry = geometry
-            ..selected = side_selected_helix_idxs.contains(helix.idx)
-            ..major_tick_offset_font_size = props.major_tick_offset_font_size
-            ..major_tick_width_font_size = props.major_tick_width_font_size
-            ..helix_change_apply_to_all = props.helix_change_apply_to_all
-            ..show_dna = props.show_dna
-            ..show_domain_labels = props.show_domain_labels
-            ..show_helix_circles = props.show_helix_circles
-            ..display_base_offsets_of_major_ticks = props.display_base_offsets_of_major_ticks &&
-                (!props.display_base_offsets_of_major_ticks_only_first_helix ||
-                    view_order == first_helix_view_order)
-            ..display_major_tick_widths = props.display_major_tick_widths &&
-                (props.display_major_tick_widths_all_helices || view_order == first_helix_view_order)
-            ..key = helix.idx.toString()
-            ..helix_svg_position = props.helix_idx_to_svg_position_map[helix.idx]!)());
+          children.add(
+            (DesignMainHelix()
+              ..helix = helix
+              ..geometry = geometry
+              ..selected = side_selected_helix_idxs.contains(helix.idx)
+              ..major_tick_offset_font_size = props.major_tick_offset_font_size
+              ..major_tick_width_font_size = props.major_tick_width_font_size
+              ..helix_change_apply_to_all = props.helix_change_apply_to_all
+              ..show_dna = props.show_dna
+              ..show_domain_labels = props.show_domain_labels
+              ..show_helix_circles = props.show_helix_circles
+              ..display_base_offsets_of_major_ticks =
+                  props.display_base_offsets_of_major_ticks &&
+                  (!props.display_base_offsets_of_major_ticks_only_first_helix ||
+                      view_order == first_helix_view_order)
+              ..display_major_tick_widths =
+                  props.display_major_tick_widths &&
+                  (props.display_major_tick_widths_all_helices || view_order == first_helix_view_order)
+              ..key = helix.idx.toString()
+              ..helix_svg_position = props.helix_idx_to_svg_position_map[helix.idx]!)(),
+          );
         }
       }
 
-      group_views.add((Dom.g()
-        ..className = 'helices-main-view-group-${group_name}'
-        ..transform = group.transform_str(geometry)
-        ..key = '${group_name}')(children));
+      group_views.add(
+        (Dom.g()
+          ..className = 'helices-main-view-group-${group_name}'
+          ..transform = group.transform_str(geometry)
+          ..key = '${group_name}')(children),
+      );
     }
 
     return (Dom.g()..className = 'helices-main-view')(group_views);

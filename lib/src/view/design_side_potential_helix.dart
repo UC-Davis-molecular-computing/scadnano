@@ -38,8 +38,12 @@ class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotential
     if (grid.is_none) {
       svg_ideal_pos = props.mouse_svg_pos!;
     } else {
-      svg_ideal_pos =
-          util.side_view_grid_to_svg(props.grid_position!, props.grid, props.invert_y, props.geometry);
+      svg_ideal_pos = util.side_view_grid_to_svg(
+        props.grid_position!,
+        props.grid,
+        props.invert_y,
+        props.geometry,
+      );
     }
 
     String tooltip = '';
@@ -63,8 +67,11 @@ class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotential
     // unlike DesignSideHelix, no need to check edit_mode here since PotentialHelix only displayed when
     // edit mode has helix on
     if (props.grid.is_none) {
-      Position3D position =
-          util.svg_side_view_to_position3d(props.mouse_svg_pos!, props.invert_y, props.geometry);
+      Position3D position = util.svg_side_view_to_position3d(
+        props.mouse_svg_pos!,
+        props.invert_y,
+        props.geometry,
+      );
       app.dispatch(actions.HelixAdd(position: position));
     } else {
       app.dispatch(actions.HelixAdd(grid_position: props.grid_position));

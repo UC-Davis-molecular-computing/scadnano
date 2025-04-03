@@ -29,8 +29,11 @@ abstract class Address with BuiltJsonSerializable implements Built<Address, Addr
 
   String toString() => 'H${helix_idx}-${forward ? "F" : "R"}-${offset}';
 
-  Address sum(AddressDifference diff, BuiltList<int> helices_view_order,
-      BuiltMap<int, int> helices_view_order_inverse) {
+  Address sum(
+    AddressDifference diff,
+    BuiltList<int> helices_view_order,
+    BuiltMap<int, int> helices_view_order_inverse,
+  ) {
     int order_this = helices_view_order_inverse[helix_idx]!;
     int order_sum = order_this + diff.helix_idx_delta;
 
@@ -61,7 +64,10 @@ abstract class Address with BuiltJsonSerializable implements Built<Address, Addr
     int offset_delta = offset - other.offset;
     bool forward_delta = (forward != other.forward);
     return AddressDifference(
-        helix_idx_delta: helix_idx_delta, offset_delta: offset_delta, forward_delta: forward_delta);
+      helix_idx_delta: helix_idx_delta,
+      offset_delta: offset_delta,
+      forward_delta: forward_delta,
+    );
   }
 }
 
@@ -69,10 +75,11 @@ abstract class Address with BuiltJsonSerializable implements Built<Address, Addr
 abstract class AddressDifference
     with BuiltJsonSerializable
     implements Built<AddressDifference, AddressDifferenceBuilder> {
-  factory AddressDifference(
-      {required int helix_idx_delta,
-      required int offset_delta,
-      required bool forward_delta}) = _$AddressDifference._;
+  factory AddressDifference({
+    required int helix_idx_delta,
+    required int offset_delta,
+    required bool forward_delta,
+  }) = _$AddressDifference._;
 
   factory AddressDifference.from([void Function(AddressDifferenceBuilder) updates]) = _$AddressDifference;
 
@@ -97,8 +104,9 @@ abstract class AddressDifference
       forward_delta_new = true;
     }
     return AddressDifference(
-        helix_idx_delta: helix_idx_delta * multiplier,
-        offset_delta: offset_delta * multiplier,
-        forward_delta: forward_delta_new);
+      helix_idx_delta: helix_idx_delta * multiplier,
+      offset_delta: offset_delta * multiplier,
+      forward_delta: forward_delta_new,
+    );
   }
 }

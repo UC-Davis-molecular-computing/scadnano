@@ -242,11 +242,13 @@ strand, 5' domain, 3' domain.
 
   static SelectModeChoice from_json(String json_name) => valueOf(json_name);
 
-  static final BuiltList<SelectModeChoice> all_choices =
-      BuiltList<SelectModeChoice>(non_origami_choices.toList() + [scaffold, staple]);
+  static final BuiltList<SelectModeChoice> all_choices = BuiltList<SelectModeChoice>(
+    non_origami_choices.toList() + [scaffold, staple],
+  );
 
-  static final BuiltList<SelectModeChoice> non_origami_choices =
-      BuiltList<SelectModeChoice>([strand] + strand_parts.toList());
+  static final BuiltList<SelectModeChoice> non_origami_choices = BuiltList<SelectModeChoice>(
+    [strand] + strand_parts.toList(),
+  );
 
   static final BuiltList<SelectModeChoice> strand_parts = BuiltList<SelectModeChoice>([
     domain,

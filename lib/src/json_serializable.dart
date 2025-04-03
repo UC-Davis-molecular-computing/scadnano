@@ -35,8 +35,8 @@ class SuppressableIndentEncoder {
   final JsonEncoder encoder_indent;
 
   SuppressableIndentEncoder(Replacer replacer, {String this.indent = "  ", bool this.suppress = true})
-      : this.replacer = replacer,
-        this.encoder_indent = JsonEncoder.withIndent(indent, replacer.default_encode);
+    : this.replacer = replacer,
+      this.encoder_indent = JsonEncoder.withIndent(indent, replacer.default_encode);
 
   String convert(Object? obj) {
     String result = this.encoder_indent.convert(obj);

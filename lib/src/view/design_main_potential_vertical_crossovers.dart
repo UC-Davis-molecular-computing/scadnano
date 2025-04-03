@@ -50,13 +50,15 @@ class DesignMainPotentialVerticalCrossoversComponent
         var geometry = group_top.geometry ?? props.geometry;
         BuiltMap<String, HelixGroup> groups_of_crossover =
             {group_bot_name: props.groups[group_bot_name]!}.build();
-        crossover_components.add((DesignMainPotentialVerticalCrossover()
-          ..potential_vertical_crossover = potential_vertical_crossover
-          ..helices = helices_of_crossover
-          ..groups = groups_of_crossover
-          ..geometry = geometry
-          ..helix_idx_to_svg_position_y_map = props.helix_idx_to_svg_position_y_map
-          ..key = potential_vertical_crossover.dna_end_top.id)());
+        crossover_components.add(
+          (DesignMainPotentialVerticalCrossover()
+            ..potential_vertical_crossover = potential_vertical_crossover
+            ..helices = helices_of_crossover
+            ..groups = groups_of_crossover
+            ..geometry = geometry
+            ..helix_idx_to_svg_position_y_map = props.helix_idx_to_svg_position_y_map
+            ..key = potential_vertical_crossover.dna_end_top.id)(),
+        );
       }
     }
     return (Dom.g()..className = 'potential-vertical-crossovers')(crossover_components);

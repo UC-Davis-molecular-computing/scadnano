@@ -9,26 +9,29 @@ import 'helix.dart';
 part 'dna_end.g.dart';
 
 abstract class DNAEnd with SelectableMixin, BuiltJsonSerializable implements Built<DNAEnd, DNAEndBuilder> {
-  factory DNAEnd(
-          {int? offset = null,
-          required bool is_5p,
-          required bool is_start,
-          required bool forward,
-          required bool substrand_is_first,
-          required bool substrand_is_last,
-          required String substrand_id,
-          required bool is_scaffold,
-          required bool is_on_extension}) =>
-      DNAEnd.from((b) => b
-        ..offset = offset
-        ..is_5p = is_5p
-        ..is_start = is_start
-        ..forward = forward
-        ..substrand_is_first = substrand_is_first
-        ..substrand_is_last = substrand_is_last
-        ..substrand_id = substrand_id
-        ..is_scaffold = is_scaffold
-        ..is_on_extension = is_on_extension);
+  factory DNAEnd({
+    int? offset = null,
+    required bool is_5p,
+    required bool is_start,
+    required bool forward,
+    required bool substrand_is_first,
+    required bool substrand_is_last,
+    required String substrand_id,
+    required bool is_scaffold,
+    required bool is_on_extension,
+  }) => DNAEnd.from(
+    (b) =>
+        b
+          ..offset = offset
+          ..is_5p = is_5p
+          ..is_start = is_start
+          ..forward = forward
+          ..substrand_is_first = substrand_is_first
+          ..substrand_is_last = substrand_is_last
+          ..substrand_id = substrand_id
+          ..is_scaffold = is_scaffold
+          ..is_on_extension = is_on_extension,
+  );
 
   factory DNAEnd.from([void Function(DNAEndBuilder) updates]) = _$DNAEnd;
 
@@ -64,7 +67,7 @@ abstract class DNAEnd with SelectableMixin, BuiltJsonSerializable implements Bui
 
   String get substrand_id;
 
-//  DNAEnd(this.is_5p, this.substrand_is_first, this.substrand_is_last, this.substrand_id);
+  //  DNAEnd(this.is_5p, this.substrand_is_first, this.substrand_is_last, this.substrand_id);
 
   @memoized
   SelectModeChoice get select_mode {

@@ -17,9 +17,11 @@ import 'strands_move_reducer.dart';
 
 GlobalReducer<DomainsMove?, AppState> domains_move_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<DomainsMove?, AppState, actions.DomainsMoveStartSelectedDomains>(
-      domains_move_start_selected_domains_reducer),
+    domains_move_start_selected_domains_reducer,
+  ),
   TypedGlobalReducer<DomainsMove?, AppState, actions.DomainsMoveAdjustAddress>(
-      domains_adjust_address_reducer),
+    domains_adjust_address_reducer,
+  ),
 ]);
 
 Reducer<DomainsMove?> domains_move_local_reducer = combineReducers([
@@ -27,20 +29,25 @@ Reducer<DomainsMove?> domains_move_local_reducer = combineReducers([
 ]);
 
 DomainsMove? domains_move_start_selected_domains_reducer(
-    DomainsMove? _, AppState state, actions.DomainsMoveStartSelectedDomains action) {
-  Set<Domain> selected_domains =
-      Set<Domain>.from(state.ui_state.selectables_store.selected_items.where((s) => s is Domain));
+  DomainsMove? _,
+  AppState state,
+  actions.DomainsMoveStartSelectedDomains action,
+) {
+  Set<Domain> selected_domains = Set<Domain>.from(
+    state.ui_state.selectables_store.selected_items.where((s) => s is Domain),
+  );
   Set<Strand> strands_of_selected_domains = {
-    for (var domain in selected_domains) state.design.substrand_to_strand[domain]!
+    for (var domain in selected_domains) state.design.substrand_to_strand[domain]!,
   };
   return DomainsMove(
-      domains_moving: selected_domains.toBuiltList(),
-      all_domains: state.design.all_domains,
-      strands_with_domains_moving: strands_of_selected_domains.toBuiltList(),
-      original_helices_view_order_inverse: action.original_helices_view_order_inverse,
-      helices: state.design.helices,
-      groups: state.design.groups,
-      original_address: action.address);
+    domains_moving: selected_domains.toBuiltList(),
+    all_domains: state.design.all_domains,
+    strands_with_domains_moving: strands_of_selected_domains.toBuiltList(),
+    original_helices_view_order_inverse: action.original_helices_view_order_inverse,
+    helices: state.design.helices,
+    groups: state.design.groups,
+    original_address: action.address,
+  );
 }
 
 DomainsMove? domains_move_stop_reducer(DomainsMove? domains_move, actions.DomainsMoveStop action) => null;
@@ -53,7 +60,10 @@ bool in_bounds_and_allowable(Design design, DomainsMove domains_move) =>
     in_bounds(design, domains_move) && is_allowable(design, domains_move);
 
 DomainsMove? domains_adjust_address_reducer(
-    DomainsMove? domains_move, AppState state, actions.DomainsMoveAdjustAddress action) {
+  DomainsMove? domains_move,
+  AppState state,
+  actions.DomainsMoveAdjustAddress action,
+) {
   DomainsMove new_domains_move = domains_move!.rebuild((b) => b..current_address.replace(action.address));
   if (in_bounds(state.design, new_domains_move)) {
     bool allowable = is_allowable(state.design, new_domains_move);
@@ -139,18 +149,20 @@ bool is_allowable(Design design, DomainsMove domains_move) {
     // if delta_forward is false (i.e., the forward bit isn't changing) then use the value of dom.forward,
     // otherwise use its negation
     for (bool forward in [true, false]) {
-      List<Point<int>> intervals_moving = domains_moving
-          .where((dom) => delta_forward != (dom.forward == forward))
-          .map((dom) => Point<int>(dom.start + delta_offset, dom.end - 1 + delta_offset))
-          .toList();
+      List<Point<int>> intervals_moving =
+          domains_moving
+              .where((dom) => delta_forward != (dom.forward == forward))
+              .map((dom) => Point<int>(dom.start + delta_offset, dom.end - 1 + delta_offset))
+              .toList();
       sort_intervals_by_start(intervals_moving);
       if (intervals_moving.isNotEmpty) {
         if (intervals_moving[0].x < new_helix.min_offset) return false;
         if (intervals_moving[intervals_moving.length - 1].y >= new_helix.max_offset) return false;
-        List<Point<int>> intervals_fixed = domains_fixed
-            .where((dom) => dom.forward == forward)
-            .map((dom) => Point<int>(dom.start, dom.end - 1))
-            .toList();
+        List<Point<int>> intervals_fixed =
+            domains_fixed
+                .where((dom) => dom.forward == forward)
+                .map((dom) => Point<int>(dom.start, dom.end - 1))
+                .toList();
         sort_intervals_by_start(intervals_fixed);
         if (intersection(intervals_moving, intervals_fixed)) return false;
       }
@@ -160,28 +172,31 @@ bool is_allowable(Design design, DomainsMove domains_move) {
   return true;
 }
 
-Domain move_domain(
-    {required Domain domain,
-    required HelixGroup original_group,
-    required HelixGroup current_group,
-    required int delta_view_order,
-    required int delta_offset,
-    required bool delta_forward,
-    bool set_first_last_false = false}) {
+Domain move_domain({
+  required Domain domain,
+  required HelixGroup original_group,
+  required HelixGroup current_group,
+  required int delta_view_order,
+  required int delta_offset,
+  required bool delta_forward,
+  bool set_first_last_false = false,
+}) {
   int original_view_order = original_group.helices_view_order_inverse[domain.helix]!;
   int new_view_order = original_view_order + delta_view_order;
   int new_helix_idx = current_group.helices_view_order[new_view_order];
   Domain domain_moved = domain.rebuild(
-    (b) => b
-      ..is_first = set_first_last_false ? false : b.is_first
-      ..is_last = set_first_last_false ? false : b.is_last
-      ..helix = new_helix_idx
-      ..forward = (delta_forward != domain.forward)
-      ..start = domain.start + delta_offset
-      ..end = domain.end + delta_offset
-      ..deletions.replace(domain.deletions.map((d) => d + delta_offset))
-      ..insertions
-          .replace(domain.insertions.map((i) => i.rebuild((ib) => ib..offset = i.offset + delta_offset))),
+    (b) =>
+        b
+          ..is_first = set_first_last_false ? false : b.is_first
+          ..is_last = set_first_last_false ? false : b.is_last
+          ..helix = new_helix_idx
+          ..forward = (delta_forward != domain.forward)
+          ..start = domain.start + delta_offset
+          ..end = domain.end + delta_offset
+          ..deletions.replace(domain.deletions.map((d) => d + delta_offset))
+          ..insertions.replace(
+            domain.insertions.map((i) => i.rebuild((ib) => ib..offset = i.offset + delta_offset)),
+          ),
   );
   return domain_moved;
 }

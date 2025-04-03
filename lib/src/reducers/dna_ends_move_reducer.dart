@@ -3,9 +3,7 @@ import '../state/dna_ends_move.dart';
 
 import '../actions/actions.dart' as actions;
 
-Reducer<DNAEndsMove?> optimized_dna_ends_move_reducer = combineReducers([
-  dna_ends_move_reducer,
-]);
+Reducer<DNAEndsMove?> optimized_dna_ends_move_reducer = combineReducers([dna_ends_move_reducer]);
 
 Reducer<DNAEndsMove?> dna_ends_move_reducer = combineReducers([
   TypedReducer<DNAEndsMove?, actions.DNAEndsMoveSetSelectedEnds>(dna_ends_move_set_selected_ends_reducer),
@@ -14,13 +12,15 @@ Reducer<DNAEndsMove?> dna_ends_move_reducer = combineReducers([
 ]);
 
 DNAEndsMove? dna_ends_move_set_selected_ends_reducer(
-        DNAEndsMove? _, actions.DNAEndsMoveSetSelectedEnds action) =>
-    DNAEndsMove(
-        moves: action.moves,
-        original_offset: action.original_offset,
-        current_offset: action.original_offset,
-        helix: action.helix,
-        geometry: action.geometry);
+  DNAEndsMove? _,
+  actions.DNAEndsMoveSetSelectedEnds action,
+) => DNAEndsMove(
+  moves: action.moves,
+  original_offset: action.original_offset,
+  current_offset: action.original_offset,
+  helix: action.helix,
+  geometry: action.geometry,
+);
 
 DNAEndsMove? dna_ends_move_adjust_reducer(DNAEndsMove? move, actions.DNAEndsMoveAdjustOffset action) =>
     move?.rebuild((b) => b..current_offset = action.offset);

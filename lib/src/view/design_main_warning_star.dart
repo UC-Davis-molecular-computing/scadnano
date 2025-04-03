@@ -28,7 +28,7 @@ class DesignMainWarningStarComponent extends UiComponent2<DesignMainWarningStarP
 
     num x0 = props.base_svg_pos.x;
     num y0 = props.base_svg_pos.y - 1.0 * props.geometry.base_width_svg;
-// translate from origin
+    // translate from origin
     for (int i = 0; i < xs.length; i++) {
       xs[i] += x0;
       ys[i] += y0;
@@ -42,10 +42,7 @@ class DesignMainWarningStarComponent extends UiComponent2<DesignMainWarningStarP
     return (Dom.polygon()
       ..className = 'warning-star'
       ..points = points.join(' ')
-      ..style = {
-        "stroke": "${props.color}",
-        "fill": "${props.color}",
-      }
+      ..style = {"stroke": "${props.color}", "fill": "${props.color}"}
       ..transform = 'rotate(${rotate_degrees} ${props.base_svg_pos.x} ${props.base_svg_pos.y})')();
   }
 

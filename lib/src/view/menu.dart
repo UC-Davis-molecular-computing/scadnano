@@ -57,9 +57,10 @@ mixin MenuProps on UiProps {
 class MenuComponent extends UiComponent2<MenuProps> {
   bool get enable_copy => props.state.ui_state.selectables_store.selected_strands.isNotEmpty;
 
-  bool get no_grid_is_none => props.state.maybe_design == null
-      ? false
-      : props.state.design.groups.values.every((group) => group.grid != Grid.none);
+  bool get no_grid_is_none =>
+      props.state.maybe_design == null
+          ? false
+          : props.state.design.groups.values.every((group) => group.grid != Grid.none);
 
   /*
   // this is needed in case the user selects the same filename, to reload the file in case it has changed.
@@ -76,10 +77,7 @@ class MenuComponent extends UiComponent2<MenuProps> {
   @override
   render() {
     return Navbar(
-      {
-        'bg': 'light',
-        'expand': 'lg',
-      },
+      {'bg': 'light', 'expand': 'lg'},
       NavbarBrand({}, 'scadnano'),
       file_menu(),
       edit_menu(),
@@ -96,156 +94,175 @@ class MenuComponent extends UiComponent2<MenuProps> {
         'variant': 'light',
         'onClick': (_) {
           window.alert('Dummy!');
-        }
+        },
       },
       'Dummy',
     );
   }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// file menu
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // file menu
 
   file_menu() {
-    return NavDropdown({
-      'title': 'File',
-      'id': 'file-nav-dropdown',
-    }, [
-      (MenuDropdownItem()
-        ..on_click = ((_) => app.disable_keyboard_shortcuts_while(load_example_dialog))
-        ..display = '📄 Load example'
-        ..key = 'load-example')(),
-      (MenuFormFile()
-        ..id_ = 'open-form-file'
-        ..accept = constants.all_scadnano_file_extensions.map((ext) => '.' + ext).join(",")
-        ..on_change = ((e) => request_load_file_from_file_chooser(e.target, scadnano_file_loaded))
-        ..display = '📂 Open'
-        ..keyboard_shortcut = 'Ctrl+O'
-        ..key = 'open-form-file')(),
-      DropdownDivider({'key': 'divider-file-load'}),
-      (MenuDropdownItem()
-        ..on_click = ((_) => app.dispatch(actions.SaveDNAFile()))
-        ..display = '💾 Save'
-        ..keyboard_shortcut = 'Ctrl+S'
-        ..key = 'save-file')(),
-      (MenuBoolean()
-        ..value = props.state.ui_state.warn_on_exit_if_unsaved
-        ..display = 'Warn on exit if unsaved'
-        ..tooltip = '''\
+    return NavDropdown(
+      {'title': 'File', 'id': 'file-nav-dropdown'},
+      [
+        (MenuDropdownItem()
+          ..on_click = ((_) => app.disable_keyboard_shortcuts_while(load_example_dialog))
+          ..display = '📄 Load example'
+          ..key = 'load-example')(),
+        (MenuFormFile()
+          ..id_ = 'open-form-file'
+          ..accept = constants.all_scadnano_file_extensions.map((ext) => '.' + ext).join(",")
+          ..on_change = ((e) => request_load_file_from_file_chooser(e.target, scadnano_file_loaded))
+          ..display = '📂 Open'
+          ..keyboard_shortcut = 'Ctrl+O'
+          ..key = 'open-form-file')(),
+        DropdownDivider({'key': 'divider-file-load'}),
+        (MenuDropdownItem()
+          ..on_click = ((_) => app.dispatch(actions.SaveDNAFile()))
+          ..display = '💾 Save'
+          ..keyboard_shortcut = 'Ctrl+S'
+          ..key = 'save-file')(),
+        (MenuBoolean()
+          ..value = props.state.ui_state.warn_on_exit_if_unsaved
+          ..display = 'Warn on exit if unsaved'
+          ..tooltip = '''\
 If checked, before attempting to close or refresh the page, if the design has 
 changed since it was last saved, a warning dialog is displayed to ask if you
 really want to exit without saving.'''
-        ..on_change = ((_) =>
-            app.dispatch(actions.WarnOnExitIfUnsavedSet(warn: !props.state.ui_state.warn_on_exit_if_unsaved)))
-        ..key = 'warn-on-exit-if-unsaved')(),
-      DropdownDivider({'key': 'divider-save'}),
-      (MenuFormFile()
-        ..id_ = 'import-cadnano-form-file'
-        ..accept = '.json'
-        ..on_change = ((e) => request_load_file_from_file_chooser(e.target, cadnano_file_loaded))
-        ..display = 'Import cadnano v2'
-        ..key = 'import-cadnano')(),
-      DropdownDivider({'key': 'divider-import-cadnano'}),
-      (MenuDropdownItem()
-        ..on_click = ((_) {
-          bool reset = window.confirm('''\
+          ..on_change =
+              ((_) => app.dispatch(
+                actions.WarnOnExitIfUnsavedSet(warn: !props.state.ui_state.warn_on_exit_if_unsaved),
+              ))
+          ..key = 'warn-on-exit-if-unsaved')(),
+        DropdownDivider({'key': 'divider-save'}),
+        (MenuFormFile()
+          ..id_ = 'import-cadnano-form-file'
+          ..accept = '.json'
+          ..on_change = ((e) => request_load_file_from_file_chooser(e.target, cadnano_file_loaded))
+          ..display = 'Import cadnano v2'
+          ..key = 'import-cadnano')(),
+        DropdownDivider({'key': 'divider-import-cadnano'}),
+        (MenuDropdownItem()
+          ..on_click = ((_) {
+            bool reset = window.confirm('''\
 WARNING! This will reset all local settings stored in your browser, 
 including the current design.
 
 Are you sure you want to continue?''');
-          if (reset) {
-            app.dispatch(actions.ResetLocalStorage());
-          }
-        })
-        ..display = 'Reset local storage'
-        ..tooltip = '''\
+            if (reset) {
+              app.dispatch(actions.ResetLocalStorage());
+            }
+          })
+          ..display = 'Reset local storage'
+          ..tooltip = '''\
 Clear the stored design, reset all local settings, and reload the page.'''
-        ..key = 'reset-local-storage')(),
-      file_menu_save_design_local_storage_options(),
-      DropdownDivider({'key': 'divide-clear-helix-selection-when-loading-new-design'}),
-      (MenuBoolean()
-        ..value = props.state.ui_state.clear_helix_selection_when_loading_new_design
-        ..display = 'Clear helix selection when loading new design'
-        ..on_change = ((_) => app.dispatch(actions.ClearHelixSelectionWhenLoadingNewDesignSet(
-            clear: !props.state.ui_state.clear_helix_selection_when_loading_new_design)))
-        ..tooltip = '''\
+          ..key = 'reset-local-storage')(),
+        file_menu_save_design_local_storage_options(),
+        DropdownDivider({'key': 'divide-clear-helix-selection-when-loading-new-design'}),
+        (MenuBoolean()
+          ..value = props.state.ui_state.clear_helix_selection_when_loading_new_design
+          ..display = 'Clear helix selection when loading new design'
+          ..on_change =
+              ((_) => app.dispatch(
+                actions.ClearHelixSelectionWhenLoadingNewDesignSet(
+                  clear: !props.state.ui_state.clear_helix_selection_when_loading_new_design,
+                ),
+              ))
+          ..tooltip = '''\
 If checked, the selected helices will be clear when loading a new design.
 Otherwise, helix selection is not cleared, meaning that all the selected helices in the current
 design will be selected (based on helix index) on the loaded design.'''
-        ..key = 'clear-helix-selection-when-loading-new-design')(),
-    ]);
+          ..key = 'clear-helix-selection-when-loading-new-design')(),
+      ],
+    );
   }
 
   ReactElement file_menu_save_design_local_storage_options() => (MenuDropdownRight()
-        ..title_ = 'Local storage design save options'
-        ..id_ = 'file_menu_local-storage-options'
-        ..key = 'file_menu_local-storage-options'
-        ..className = 'submenu_item')([
-        (MenuBoolean()
-          ..value =
-              props.state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.on_edit
-          ..display = 'Save design in localStorage on every edit'
-          ..tooltip = '''\
+    ..title_ = 'Local storage design save options'
+    ..id_ = 'file_menu_local-storage-options'
+    ..key = 'file_menu_local-storage-options'
+    ..className = 'submenu_item')([
+    (MenuBoolean()
+      ..value = props.state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.on_edit
+      ..display = 'Save design in localStorage on every edit'
+      ..tooltip = '''\
 On every edit, save current design in localStorage (in your web browser).
 
 Disabling this minimizes the time needed to render large designs.'''
-          ..on_change = ((_) => app.dispatch(actions.LocalStorageDesignChoiceSet(
-              choice: props.state.ui_state.local_storage_design_choice.to_on_edit())))
-          ..key = 'save-dna-design-in-local-storage')(),
-        (MenuBoolean()
-          ..value =
-              props.state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.on_exit
-          ..display = 'Save design in localStorage before exiting'
-          ..tooltip = '''\
+      ..on_change =
+          ((_) => app.dispatch(
+            actions.LocalStorageDesignChoiceSet(
+              choice: props.state.ui_state.local_storage_design_choice.to_on_edit(),
+            ),
+          ))
+      ..key = 'save-dna-design-in-local-storage')(),
+    (MenuBoolean()
+      ..value = props.state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.on_exit
+      ..display = 'Save design in localStorage before exiting'
+      ..tooltip = '''\
 Before exiting, save current design in localStorage (in your web browser). 
 For large designs, this is faster than saving on every edit, but if the browser crashes, 
 all changes made will be lost, so it is not as safe as storing on every edit.'''
-          ..on_change = ((_) => app.dispatch(actions.LocalStorageDesignChoiceSet(
-              choice: props.state.ui_state.local_storage_design_choice.to_on_exit())))
-          ..key = 'save-dna-design-in-local-storage-on-exit')(),
-        (MenuBoolean()
-          ..value = props.state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.never
-          ..display = 'Do not save design in localStorage'
-          ..tooltip = '''\
+      ..on_change =
+          ((_) => app.dispatch(
+            actions.LocalStorageDesignChoiceSet(
+              choice: props.state.ui_state.local_storage_design_choice.to_on_exit(),
+            ),
+          ))
+      ..key = 'save-dna-design-in-local-storage-on-exit')(),
+    (MenuBoolean()
+      ..value = props.state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.never
+      ..display = 'Do not save design in localStorage'
+      ..tooltip = '''\
 Never saves the design in localStorage.
 
 WARNING: you must save your design manually by pressing Ctrl+S or selecting 
 File-->Save, or your design will be lost when you close the browser tab.'''
-          ..on_change = ((_) => app.dispatch(actions.LocalStorageDesignChoiceSet(
-              choice: props.state.ui_state.local_storage_design_choice.to_never())))
-          ..key = 'never-save-dna-design-in-local-storage')(),
-        (MenuBoolean()
-          ..value =
-              props.state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.periodic
-          ..display = 'Save design in localStorage periodically'
-          ..tooltip = '''\
+      ..on_change =
+          ((_) => app.dispatch(
+            actions.LocalStorageDesignChoiceSet(
+              choice: props.state.ui_state.local_storage_design_choice.to_never(),
+            ),
+          ))
+      ..key = 'never-save-dna-design-in-local-storage')(),
+    (MenuBoolean()
+      ..value = props.state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.periodic
+      ..display = 'Save design in localStorage periodically'
+      ..tooltip = '''\
 Every <period> seconds, save current design in localStorage (in your web browser). 
 Also saves before exiting.
 This is safer than never saving, or saving only before exiting, but will not save edits
 that occurred between the last save and a browser crash.'''
-          ..on_change = ((_) => app.dispatch(actions.LocalStorageDesignChoiceSet(
-              choice: props.state.ui_state.local_storage_design_choice.to_periodic())))
-          ..key = 'save-dna-design-in-local-storage-periodically')(),
-        (MenuNumber()
-          ..display = 'period (seconds)'
-          ..min_value = 1
-          ..default_value = props.state.ui_state.local_storage_design_choice.period_seconds
-          ..hide =
-              props.state.ui_state.local_storage_design_choice.option != LocalStorageDesignOption.periodic
-          ..tooltip = 'Number of seconds between saving design to localStorage.'
-          ..on_new_value = ((num period) => app.dispatch(actions.LocalStorageDesignChoiceSet(
-              choice: LocalStorageDesignChoice(LocalStorageDesignOption.periodic, period.toInt()))))
-          ..key = 'period-of-save-dna-design-in-local-storage-periodically')(),
-      ]);
+      ..on_change =
+          ((_) => app.dispatch(
+            actions.LocalStorageDesignChoiceSet(
+              choice: props.state.ui_state.local_storage_design_choice.to_periodic(),
+            ),
+          ))
+      ..key = 'save-dna-design-in-local-storage-periodically')(),
+    (MenuNumber()
+      ..display = 'period (seconds)'
+      ..min_value = 1
+      ..default_value = props.state.ui_state.local_storage_design_choice.period_seconds
+      ..hide = props.state.ui_state.local_storage_design_choice.option != LocalStorageDesignOption.periodic
+      ..tooltip = 'Number of seconds between saving design to localStorage.'
+      ..on_new_value =
+          ((num period) => app.dispatch(
+            actions.LocalStorageDesignChoiceSet(
+              choice: LocalStorageDesignChoice(LocalStorageDesignOption.periodic, period.toInt()),
+            ),
+          ))
+      ..key = 'period-of-save-dna-design-in-local-storage-periodically')(),
+  ]);
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// edit menu
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // edit menu
 
   edit_menu() {
     return NavDropdown(
-      {
-        'title': 'Edit',
-        'id': 'edit-nav-dropdown',
-      },
+      {'title': 'Edit', 'id': 'edit-nav-dropdown'},
       (MenuDropdownRight()
         ..title_ = 'Undo'
         ..id_ = "edit_menu_undo-dropdown"
@@ -268,8 +285,12 @@ Expand helices dynamically when strand(s) is moved or created according to the s
 If checked, helices will update with strand movement'''
         ..name = 'dynamically-update-helices'
         ..key = 'dynamically-update-helices'
-        ..on_change = ((_) => app.dispatch(actions.DynamicHelixUpdateSet(
-            dynamically_update_helices: !props.state.ui_state.dynamically_update_helices)))
+        ..on_change =
+            ((_) => app.dispatch(
+              actions.DynamicHelixUpdateSet(
+                dynamically_update_helices: !props.state.ui_state.dynamically_update_helices,
+              ),
+            ))
         ..value = props.state.ui_state.dynamically_update_helices)(),
 
       DropdownDivider({}),
@@ -309,8 +330,10 @@ to the first end e2 after it in this order, if
       // Set geometric parameters
       DropdownDivider({}),
       (MenuDropdownItem()
-        ..on_click = ((_) =>
-            app.disable_keyboard_shortcuts_while(() => ask_for_geometry(props.state.maybe_design?.geometry)))
+        ..on_click =
+            ((_) => app.disable_keyboard_shortcuts_while(
+              () => ask_for_geometry(props.state.maybe_design?.geometry),
+            ))
         ..display = 'Set geometric parameters'
         ..tooltip = '''\
 Set geometric parameters affecting how the design is displayed.
@@ -363,21 +386,30 @@ It will also only work on scadnano designs that are exportable to cadnano.
   }
 
   List<ReactElement> undo_or_redo_dropdowns(
-      ActionFromIntCreator undo_or_redo_action_creator, BuiltList<UndoRedoItem> stack, String action_name) {
+    ActionFromIntCreator undo_or_redo_action_creator,
+    BuiltList<UndoRedoItem> stack,
+    String action_name,
+  ) {
     List<ReactElement> dropdowns = [];
     int num_times = 1;
     bool most_recent = true;
     for (var item in stack.reversed) {
-      dropdowns
-          .add(undo_or_redo_dropdown(item, undo_or_redo_action_creator, num_times, action_name, most_recent));
+      dropdowns.add(
+        undo_or_redo_dropdown(item, undo_or_redo_action_creator, num_times, action_name, most_recent),
+      );
       num_times += 1;
       most_recent = false;
     }
     return dropdowns;
   }
 
-  ReactElement undo_or_redo_dropdown(UndoRedoItem item, ActionFromIntCreator undo_or_redo_action_creator,
-      int num_times, String action_name, bool is_most_recent) {
+  ReactElement undo_or_redo_dropdown(
+    UndoRedoItem item,
+    ActionFromIntCreator undo_or_redo_action_creator,
+    int num_times,
+    String action_name,
+    bool is_most_recent,
+  ) {
     String key = '${action_name.toLowerCase()}-${num_times}';
     return (MenuDropdownItem()
       ..display = '${action_name} "${item.short_description}"' + (is_most_recent ? " [Most Recent]" : "")
@@ -478,16 +510,22 @@ If unchecked, select any object *entirely contained within* the selection shape.
 
 If checked, select any object *intersecting* the selection shape, even if some parts lie 
 outside the selection shape.'''
-        ..on_change = ((_) => app.dispatch(actions.SelectionBoxIntersectionRuleSet(
-            intersect: !props.state.ui_state.selection_box_intersection))))(),
+        ..on_change =
+            ((_) => app.dispatch(
+              actions.SelectionBoxIntersectionRuleSet(
+                intersect: !props.state.ui_state.selection_box_intersection,
+              ),
+            )))(),
       (MenuBoolean()
         ..value = props.state.ui_state.strand_paste_keep_color
         ..display = 'Pasted strands keep original color'
         ..tooltip = '''\
 If checked, when copying and pasting a strand, the color is preserved.
 If unchecked, then a new color is generated.'''
-        ..on_change = ((_) => app.dispatch(
-            actions.StrandPasteKeepColorSet(keep: !props.state.ui_state.strand_paste_keep_color))))(),
+        ..on_change =
+            ((_) => app.dispatch(
+              actions.StrandPasteKeepColorSet(keep: !props.state.ui_state.strand_paste_keep_color),
+            )))(),
     );
   }
 
@@ -550,9 +588,12 @@ Ignored if design is not an origami (i.e., does not have at least one scaffold).
         ..on_change = (_) {
           // disallow if both would be unchecked
           if (props.state.ui_state.default_crossover_type_staple_for_setting_helix_rolls) {
-            app.dispatch(actions.DefaultCrossoverTypeForSettingHelixRollsSet(
+            app.dispatch(
+              actions.DefaultCrossoverTypeForSettingHelixRollsSet(
                 scaffold: !props.state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls,
-                staple: props.state.ui_state.default_crossover_type_staple_for_setting_helix_rolls));
+                staple: props.state.ui_state.default_crossover_type_staple_for_setting_helix_rolls,
+              ),
+            );
           }
         })(),
       (MenuBoolean()
@@ -572,16 +613,19 @@ Ignored if design is not an origami (i.e., does not have at least one scaffold).
         ..on_change = (_) {
           // disallow if both would be unchecked
           if (props.state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls) {
-            app.dispatch(actions.DefaultCrossoverTypeForSettingHelixRollsSet(
+            app.dispatch(
+              actions.DefaultCrossoverTypeForSettingHelixRollsSet(
                 scaffold: props.state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls,
-                staple: !props.state.ui_state.default_crossover_type_staple_for_setting_helix_rolls));
+                staple: !props.state.ui_state.default_crossover_type_staple_for_setting_helix_rolls,
+              ),
+            );
           }
         })(),
     );
   }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// view menu
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // view menu
 
   view_menu() {
     var elts = [
@@ -600,10 +644,7 @@ Ignored if design is not an origami (i.e., does not have at least one scaffold).
       DropdownDivider({'key': 'divider-zoom_speed'}),
       ...view_menu_misc(),
     ];
-    return NavDropdown({
-      'title': 'View',
-      'id': 'view-nav-dropdown',
-    }, elts);
+    return NavDropdown({'title': 'View', 'id': 'view-nav-dropdown'}, elts);
   }
 
   ReactElement view_menu_autofit() {
@@ -667,7 +708,8 @@ Show mismatches between domain names assigned to one strand and the strand on th
 helix with the opposite orientation.'''
         ..on_change = (_) {
           app.dispatch(
-              actions.ShowDomainNameMismatchesSet(!props.state.ui_state.show_domain_name_mismatches));
+            actions.ShowDomainNameMismatchesSet(!props.state.ui_state.show_domain_name_mismatches),
+          );
         }
         ..key = 'show-domain-name-mismatches')(),
       (MenuBoolean()
@@ -679,8 +721,11 @@ a strand, where another strand is at the same (helix,offset) (in the opposite di
 which lacks the insertion/deletion. It does NOT show a warning if there is no other
 strand at the same (helix,offset).'''
         ..on_change = (_) {
-          app.dispatch(actions.ShowUnpairedInsertionDeletionsSet(
-              !props.state.ui_state.show_unpaired_insertion_deletions));
+          app.dispatch(
+            actions.ShowUnpairedInsertionDeletionsSet(
+              !props.state.ui_state.show_unpaired_insertion_deletions,
+            ),
+          );
         }
         ..key = 'show-unpaired-insertion-deletions')(),
     ]);
@@ -780,8 +825,10 @@ If this is unchecked, then the modification is displayed directly on top of
 the 5'/3' end or the base. This is useful for visualizing the exact position
 of the modifications, e.g., to see where a pattern of biotins will appear on
 the surface of a DNA origami."""
-        ..on_change = ((_) => app.dispatch(
-            actions.SetModificationDisplayConnector(!props.state.ui_state.modification_display_connector)))
+        ..on_change =
+            ((_) => app.dispatch(
+              actions.SetModificationDisplayConnector(!props.state.ui_state.modification_display_connector),
+            ))
         ..key = 'display-mod-connector')(),
       (MenuNumber()
         ..display = 'Modification font size'
@@ -805,8 +852,10 @@ the surface of a DNA origami."""
         ..display = 'Display only selected helices'
         ..tooltip = 'Only helices selected in the side view are displayed in the main view.'
         ..name = 'display-only-selected-helices'
-        ..on_change = ((_) => app.dispatch(
-            actions.SetOnlyDisplaySelectedHelices(!props.state.ui_state.only_display_selected_helices)))
+        ..on_change =
+            ((_) => app.dispatch(
+              actions.SetOnlyDisplaySelectedHelices(!props.state.ui_state.only_display_selected_helices),
+            ))
         ..key = 'display-only-selected-helices')(),
       (MenuBoolean()
         ..value = props.state.ui_state.show_helix_components_main_view
@@ -816,8 +865,12 @@ Shows helix representation in main view. Hiding them hides all view elements
 associated with a helix: grid lines depicting offsets, circles with helix index,
 major tick offsets.'''
         ..name = 'show-helix-components-main-view'
-        ..on_change = ((_) => app.dispatch(actions.ShowHelixComponentsMainViewSet(
-            show_helix_components: !props.state.ui_state.show_helix_components_main_view)))
+        ..on_change =
+            ((_) => app.dispatch(
+              actions.ShowHelixComponentsMainViewSet(
+                show_helix_components: !props.state.ui_state.show_helix_components_main_view,
+              ),
+            ))
         ..key = 'show-helix-components-main-view')(),
       (MenuBoolean()
         ..value = props.state.ui_state.show_helix_circles_main_view
@@ -829,8 +882,12 @@ designs that have overlapping non-parallel helices.
 To hide all view elements associated with helices (e.g., major ticks),
 toggle "Show main view helices".'''
         ..name = 'show-helix-circles-main-view'
-        ..on_change = ((_) => app.dispatch(actions.ShowHelixCirclesMainViewSet(
-            show_helix_circles_main_view: !props.state.ui_state.show_helix_circles_main_view)))
+        ..on_change =
+            ((_) => app.dispatch(
+              actions.ShowHelixCirclesMainViewSet(
+                show_helix_circles_main_view: !props.state.ui_state.show_helix_circles_main_view,
+              ),
+            ))
         ..key = 'show-helix-circles-main-view')(),
       (MenuBoolean()
         ..value = props.state.ui_state.show_grid_coordinates_side_view
@@ -839,8 +896,12 @@ toggle "Show main view helices".'''
 Displays coordinates of each helix in the side view (either grid coordinates 
 or real coordinates in nanometers, depending on whether a grid is selected).'''
         ..name = 'show-grid-coordinates-side-view'
-        ..on_change = ((_) => app.dispatch(actions.ShowGridCoordinatesSideViewSet(
-            show_grid_coordinates_side_view: !props.state.ui_state.show_grid_coordinates_side_view)))
+        ..on_change =
+            ((_) => app.dispatch(
+              actions.ShowGridCoordinatesSideViewSet(
+                show_grid_coordinates_side_view: !props.state.ui_state.show_grid_coordinates_side_view,
+              ),
+            ))
         ..key = 'show-grid-coordinates-side-view')(),
     ]);
   }
@@ -855,16 +916,22 @@ or real coordinates in nanometers, depending on whether a grid is selected).'''
         ..value = props.state.ui_state.display_base_offsets_of_major_ticks
         ..display = 'Display major tick offsets'
         ..tooltip = 'Display the integer base offset to the right of each major tick, on the first helix.'
-        ..on_change = ((_) => app.dispatch(
-            actions.DisplayMajorTicksOffsetsSet(!props.state.ui_state.display_base_offsets_of_major_ticks)))
+        ..on_change =
+            ((_) => app.dispatch(
+              actions.DisplayMajorTicksOffsetsSet(!props.state.ui_state.display_base_offsets_of_major_ticks),
+            ))
         ..key = 'display-major-tick-offsets')(),
       (MenuBoolean()
         ..value = !props.state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
         ..hide = !props.state.ui_state.display_base_offsets_of_major_ticks
         ..display = '... on all helices'
         ..tooltip = 'Display the integer base offset to the right of each major tick, for all helices.'
-        ..on_change = ((_) => app.dispatch(actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(
-            !props.state.ui_state.display_base_offsets_of_major_ticks_only_first_helix)))
+        ..on_change =
+            ((_) => app.dispatch(
+              actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(
+                !props.state.ui_state.display_base_offsets_of_major_ticks_only_first_helix,
+              ),
+            ))
         ..key = 'display-major-tick-offsets-on-all-helices')(),
       (MenuNumber()
         ..display = 'major tick offset font size'
@@ -880,16 +947,22 @@ or real coordinates in nanometers, depending on whether a grid is selected).'''
         ..display = 'Display major tick widths'
         ..tooltip =
             'Display the number of bases between each adjacent pair of major ticks, on the first helix.'
-        ..on_change = ((_) =>
-            app.dispatch(actions.SetDisplayMajorTickWidths(!props.state.ui_state.display_major_tick_widths)))
+        ..on_change =
+            ((_) => app.dispatch(
+              actions.SetDisplayMajorTickWidths(!props.state.ui_state.display_major_tick_widths),
+            ))
         ..key = 'display-major-tick-widths')(),
       (MenuBoolean()
         ..value = props.state.ui_state.display_major_tick_widths_all_helices
         ..hide = !props.state.ui_state.display_major_tick_widths
         ..display = '...on all helices'
         ..tooltip = 'Display the number of bases between each adjacent pair of major ticks, on all helices.'
-        ..on_change = ((_) => app.dispatch(actions.SetDisplayMajorTickWidthsAllHelices(
-            !props.state.ui_state.display_major_tick_widths_all_helices)))
+        ..on_change =
+            ((_) => app.dispatch(
+              actions.SetDisplayMajorTickWidthsAllHelices(
+                !props.state.ui_state.display_major_tick_widths_all_helices,
+              ),
+            ))
         ..key = 'display-major-tick-widths-on-all-helices')(),
       (MenuNumber()
         ..display = 'Major tick width font size'
@@ -929,9 +1002,13 @@ Edit-->Copy/Paste/Select-->Copy image (Ctrl+I), or through
 Export-->SVG of selected strands, where it is possible that some strands are not selected,
 but are bound to strands that are selected, this determines whether to export the base pair 
 lines connecting the exported strand to the other (non-exported) strand.'''
-        ..on_change = ((_) => app.dispatch(actions.ExportBasePairLinesIfOtherStrandNotSelectedSet(
-            export_base_pair_lines_if_other_strand_not_selected:
-                !props.state.ui_state.export_base_pair_lines_if_other_strand_not_selected)))
+        ..on_change =
+            ((_) => app.dispatch(
+              actions.ExportBasePairLinesIfOtherStrandNotSelectedSet(
+                export_base_pair_lines_if_other_strand_not_selected:
+                    !props.state.ui_state.export_base_pair_lines_if_other_strand_not_selected,
+              ),
+            ))
         ..key = 'display-major-tick-offsets-on-all-helices')(),
       (MenuBoolean()
         ..value = props.state.ui_state.base_pair_display_type.toIndex() == 2
@@ -953,9 +1030,13 @@ lines connecting the exported strand to the other (non-exported) strand.'''
 Lines are drawn between all pairs of bases at the same offset on the same helix, 
 regardless of whether the bases are complementary. If unchecked then lines are 
 only shown between pairs of complementary bases.'''
-        ..on_change = (_) => app.dispatch(actions.ShowBasePairLinesWithMismatchesSet(
-            show_base_pair_lines_with_mismatches:
-                !props.state.ui_state.show_base_pair_lines_with_mismatches)))(),
+        ..on_change =
+            (_) => app.dispatch(
+              actions.ShowBasePairLinesWithMismatchesSet(
+                show_base_pair_lines_with_mismatches:
+                    !props.state.ui_state.show_base_pair_lines_with_mismatches,
+              ),
+            ))(),
     ]);
   }
 
@@ -982,8 +1063,9 @@ Displays DNA right-side up on reverse strands.'''
         ..name = 'display-reverse-DNA-right-side-up'
         ..hide = !props.state.ui_state.show_dna
         ..on_change = (_) {
-          app.dispatch(actions.DisplayReverseDNARightSideUpSet(
-              !props.state.ui_state.display_reverse_DNA_right_side_up));
+          app.dispatch(
+            actions.DisplayReverseDNARightSideUpSet(!props.state.ui_state.display_reverse_DNA_right_side_up),
+          );
         }
         ..key = 'display-reverse-DNA-right-side-up')(),
     ]);
@@ -1058,8 +1140,12 @@ Red : X-axis
 Green : Y-axis
 Blue : Z-axis'''
         ..name = 'show-helices-axis-arrows'
-        ..on_change = ((_) => app.dispatch(actions.ShowAxisArrowsSet(
-            show_helices_axis_arrows: !props.state.ui_state.show_helices_axis_arrows)))
+        ..on_change =
+            ((_) => app.dispatch(
+              actions.ShowAxisArrowsSet(
+                show_helices_axis_arrows: !props.state.ui_state.show_helices_axis_arrows,
+              ),
+            ))
         ..key = 'show-helices-axis-arrows')(),
       (MenuBoolean()
         ..value = props.state.ui_state.show_loopout_extension_length
@@ -1067,8 +1153,12 @@ Blue : Z-axis'''
         ..tooltip = '''\
 When selected, the length of each loopout and extension is displayed next to it.'''
         ..name = 'show-loopout-extension-length'
-        ..on_change = ((_) => app.dispatch(actions.ShowLoopoutExtensionLengthSet(
-            show_length: !props.state.ui_state.show_loopout_extension_length)))
+        ..on_change =
+            ((_) => app.dispatch(
+              actions.ShowLoopoutExtensionLengthSet(
+                show_length: !props.state.ui_state.show_loopout_extension_length,
+              ),
+            ))
         ..key = 'show-loopout-extension-length')(),
       (MenuBoolean()
         ..value = props.state.ui_state.show_slice_bar
@@ -1111,8 +1201,9 @@ Select this option to disable this PNG caching of DNA sequences. This can be use
 debugging, but be warned that it will be very slow to render a large number of DNA bases.'''
         ..name = 'disable-png-caching-dna-sequences'
         ..on_change = (_) {
-          app.dispatch(actions.DisablePngCachingDnaSequencesSet(
-              !props.state.ui_state.disable_png_caching_dna_sequences));
+          app.dispatch(
+            actions.DisablePngCachingDnaSequencesSet(!props.state.ui_state.disable_png_caching_dna_sequences),
+          );
         }
         ..key = 'disable-png-caching-dna-sequences')(),
       (MenuBoolean()
@@ -1125,22 +1216,20 @@ A highlighting effect will still appear.
         '''
         ..name = 'retain-strand-color-on-selection'
         ..on_change = (_) {
-          app.dispatch(actions.RetainStrandColorOnSelectionSet(
-              !props.state.ui_state.retain_strand_color_on_selection));
+          app.dispatch(
+            actions.RetainStrandColorOnSelectionSet(!props.state.ui_state.retain_strand_color_on_selection),
+          );
         }
         ..key = 'retain-strand-color-on-selection')(),
     ];
   }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// export menu
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // export menu
 
   export_menu() {
     return NavDropdown(
-      {
-        'title': 'Export',
-        'id': 'export-nav-dropdown',
-      },
+      {'title': 'Export', 'id': 'export-nav-dropdown'},
       (MenuDropdownItem()
         ..on_click = ((_) => app.dispatch(actions.ExportSvg(type: actions.ExportSvgType.side)))
         ..tooltip = "Export SVG figure of side view (cross-section of helices on the left side of screen)."
@@ -1172,7 +1261,8 @@ is less expressive than SVG and can render the text strangely.'''
         ..display = 'DNA sequences')(),
       (MenuDropdownItem()
         ..on_click = ((_) => app.dispatch(actions.ExportCanDoDNA()))
-        ..tooltip = "Export design's DNA sequences as a CSV in the same way as cadnano v2.\n"
+        ..tooltip =
+            "Export design's DNA sequences as a CSV in the same way as cadnano v2.\n"
             "This is useful, for example, with CanDo's atomic model generator."
         ..display = 'DNA sequences (cadnano v2 format)')(),
       DropdownDivider({'key': 'divider-export-dna'}),
@@ -1181,18 +1271,15 @@ is less expressive than SVG and can render the text strangely.'''
         ..tooltip = "Export design to cadnano (version 2) .json file."
         ..display = 'cadnano v2'
         ..key = 'export-cadnano')(),
-      DropdownItem(
-        {
-          'href': 'https://scadnano-python-package.readthedocs.io/en/latest/#interoperability-cadnano-v2',
-          'target': '_blank',
-          'title': """\
+      DropdownItem({
+        'href': 'https://scadnano-python-package.readthedocs.io/en/latest/#interoperability-cadnano-v2',
+        'target': '_blank',
+        'title': """\
 Read constraints that the scadnano design must obey to exportable to cadnano v2.
 The constraints are the same for the scadnano Python package (described at the 
 linked page) as for the web interface.
-"""
-        },
-        'cadnano v2 export instructions',
-      ),
+""",
+      }, 'cadnano v2 export instructions'),
       (MenuDropdownItem()
         ..on_click = ((_) => app.dispatch(actions.ExportCadnanoFile(whitespace: false)))
         ..tooltip = """\
@@ -1204,14 +1291,22 @@ cadnano files that have whitespace. ("Bad .json file format is detected in
         ..key = 'export-cadnano-no-whitespace')(),
       DropdownDivider({'key': 'divider-cadnano'}),
       (MenuDropdownItem()
-        ..on_click = ((_) => app.dispatch(actions.OxviewExport(
-            selected_strands_only: props.state.ui_state.ox_export_only_selected_strands)))
+        ..on_click =
+            ((_) => app.dispatch(
+              actions.OxviewExport(
+                selected_strands_only: props.state.ui_state.ox_export_only_selected_strands,
+              ),
+            ))
         ..tooltip = "Export design to oxView files, which can be loaded in oxView."
         ..display = 'oxView'
         ..key = 'export-oxview')(),
       (MenuDropdownItem()
-        ..on_click = ((_) => app.dispatch(
-            actions.OxdnaExport(selected_strands_only: props.state.ui_state.ox_export_only_selected_strands)))
+        ..on_click =
+            ((_) => app.dispatch(
+              actions.OxdnaExport(
+                selected_strands_only: props.state.ui_state.ox_export_only_selected_strands,
+              ),
+            ))
         ..tooltip = "Export design to oxDNA .dat and .top files, which can be loaded in oxDNA or oxView."
         ..display = 'oxDNA'
         ..key = 'export-oxdna')(),
@@ -1222,80 +1317,61 @@ cadnano files that have whitespace. ("Bad .json file format is detected in
 When selected, only selected strands will be exported to oxDNA or oxView formats.'''
         ..name = 'ox-export-only-selected-strands'
         ..on_change = (_) {
-          app.dispatch(actions.OxExportOnlySelectedStrandsSet(
-              only_selected: !props.state.ui_state.ox_export_only_selected_strands));
+          app.dispatch(
+            actions.OxExportOnlySelectedStrandsSet(
+              only_selected: !props.state.ui_state.ox_export_only_selected_strands,
+            ),
+          );
         }
         ..key = 'ox-export-only-selected-strands')(),
     );
   }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// help menu
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // help menu
 
   help_menu() {
     List<ReactElement> version_dropdown_items = [];
     bool first = true;
     for (var version in constants.scadnano_versions_to_link) {
-      var version_dropdown_item = DropdownItem(
-        {
-          'href': 'https://scadnano.org/v${version}/index.html',
-          'target': '_blank',
-          'key': version,
-          'title': '''\
-    Version v${version} of scadnano, located at https://scadnano.org/v${version}/index.html.'''
-        },
-        'v${version}' + (first ? ' (current version)' : ''),
-      );
+      var version_dropdown_item = DropdownItem({
+        'href': 'https://scadnano.org/v${version}/index.html',
+        'target': '_blank',
+        'key': version,
+        'title': '''\
+    Version v${version} of scadnano, located at https://scadnano.org/v${version}/index.html.''',
+      }, 'v${version}' + (first ? ' (current version)' : ''));
       first = false;
       version_dropdown_items.add(version_dropdown_item);
     }
 
     return NavDropdown(
-      {
-        'title': 'Help',
-        'id': 'help-nav-dropdown',
-      },
-      DropdownItem(
-        {
-          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano#readme',
-          'target': '_blank',
-        },
-        'help (web interface)',
-      ),
-      DropdownItem(
-        {
-          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/main/tutorial/tutorial.md',
-          'target': '_blank',
-        },
-        'tutorial (web interface)',
-      ),
-      DropdownItem(
-        {
-          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano-python-package#readme',
-          'target': '_blank',
-        },
-        'help (Python scripting)',
-      ),
-      DropdownItem(
-        {
-          'href':
-              'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/main/tutorial/tutorial.md',
-          'target': '_blank',
-        },
-        'tutorial (Python scripting)',
-      ),
-      DropdownItem(
-        {
-          'href': 'https://scadnano-python-package.readthedocs.io',
-          'target': '_blank',
-        },
-        'Python scripting API',
-      ),
-      DropdownItem(
-        {
-          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/issues',
-          'target': '_blank',
-          'title': '''\
+      {'title': 'Help', 'id': 'help-nav-dropdown'},
+      DropdownItem({
+        'href': 'https://github.com/UC-Davis-molecular-computing/scadnano#readme',
+        'target': '_blank',
+      }, 'help (web interface)'),
+      DropdownItem({
+        'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/main/tutorial/tutorial.md',
+        'target': '_blank',
+      }, 'tutorial (web interface)'),
+      DropdownItem({
+        'href': 'https://github.com/UC-Davis-molecular-computing/scadnano-python-package#readme',
+        'target': '_blank',
+      }, 'help (Python scripting)'),
+      DropdownItem({
+        'href':
+            'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/main/tutorial/tutorial.md',
+        'target': '_blank',
+      }, 'tutorial (Python scripting)'),
+      DropdownItem({
+        'href': 'https://scadnano-python-package.readthedocs.io',
+        'target': '_blank',
+      }, 'Python scripting API'),
+      DropdownItem({
+        'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/issues',
+        'target': '_blank',
+        'title': '''\
 To file a bug report or feature request for the scadnano web interface, 
 click on "New issue" on the top right of the Issues page on at the 
 scadnano Github repository.
@@ -1306,15 +1382,12 @@ that caused the error, and an exact description of the steps needed to
 help us reproduce the error.
 
 Note that you cannot upload a .sc file directly to GitHub, but if you put 
-the .sc file in a .zip file, then it can be uploaded.'''
-        },
-        'Bug report/feature request (web interface)',
-      ),
-      DropdownItem(
-        {
-          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues',
-          'target': '_blank',
-          'title': '''\
+the .sc file in a .zip file, then it can be uploaded.''',
+      }, 'Bug report/feature request (web interface)'),
+      DropdownItem({
+        'href': 'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues',
+        'target': '_blank',
+        'title': '''\
 To file a bug report or feature request for the Python scripting library, 
 click on "New issue" on the top right of the Issues page on at the 
 scadnano-python-package Github repository.
@@ -1324,24 +1397,16 @@ possible, including a copy of the .sc file that caused the error, and an
 exact description of the steps needed to help us reproduce the error.
 
 Note that you cannot upload a .sc file directly to GitHub, but if you put 
-the .sc file in a .zip file, then it can be uploaded.'''
-        },
-        'Bug report/feature request (Python scripting)',
-      ),
-      DropdownItem(
-        {
-          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/releases',
-          'target': '_blank',
-        },
-        'Release notes (web interface)',
-      ),
-      DropdownItem(
-        {
-          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/releases',
-          'target': '_blank',
-        },
-        'Release notes (Python scripting)',
-      ),
+the .sc file in a .zip file, then it can be uploaded.''',
+      }, 'Bug report/feature request (Python scripting)'),
+      DropdownItem({
+        'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/releases',
+        'target': '_blank',
+      }, 'Release notes (web interface)'),
+      DropdownItem({
+        'href': 'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/releases',
+        'target': '_blank',
+      }, 'Release notes (Python scripting)'),
       // older_versions_link_dropdown,
       (MenuDropdownRight()
         ..title_ = "Other versions"
@@ -1357,12 +1422,11 @@ https://scadnano.org/dev is the newest version, containing newer features
 (those marked "closed in dev" on the scadnano issues page: 
 https://github.com/UC-Davis-molecular-computing/scadnano/issues), 
 but it may be less stable than the current version.''')([
-        DropdownItem(
-          {
-            'href': 'https://scadnano.org/dev',
-            'target': '_blank',
-            'key': 'dev',
-            'title': '''\
+        DropdownItem({
+          'href': 'https://scadnano.org/dev',
+          'target': '_blank',
+          'key': 'dev',
+          'title': '''\
 Development version of scadnano, located at https://scadnano.org/dev.
 
 This site is updated more frequently than the main site at https://scadnano.org.
@@ -1370,43 +1434,43 @@ This site is updated more frequently than the main site at https://scadnano.org.
 This includes open issues that have been handled in the dev branch but not the main branch:
 https://github.com/UC-Davis-molecular-computing/scadnano/labels/closed%20in%20dev
 
-However, it may be less stable than the main site.'''
-          },
-          'dev',
-        ),
-        version_dropdown_items
+However, it may be less stable than the main site.''',
+        }, 'dev'),
+        version_dropdown_items,
       ]),
       (MenuDropdownItem()
-        ..on_click = ((_) => window.alert(''
-            'scadnano version ${constants.CURRENT_VERSION}'
-            '\n\nscadnano is a program for designing synthetic DNA structures such as DNA origami. '
-            '\n\nscadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group. '
-            'Though similar in design, scadnano is distinct from cadnano (https://cadnano.org), '
-            'which is developed and maintained by the Douglas lab (https://bionano.ucsf.edu/) at UCSF.'))
+        ..on_click =
+            ((_) => window.alert(
+              ''
+              'scadnano version ${constants.CURRENT_VERSION}'
+              '\n\nscadnano is a program for designing synthetic DNA structures such as DNA origami. '
+              '\n\nscadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group. '
+              'Though similar in design, scadnano is distinct from cadnano (https://cadnano.org), '
+              'which is developed and maintained by the Douglas lab (https://bionano.ucsf.edu/) at UCSF.',
+            ))
         ..display = 'About')(),
-//       DropdownItem(
-//         {
-//           'href':
-//           'https://github.com/UC-Davis-molecular-computing/scadnano/releases',
-//           'target': '_blank',
-//           //TODO: figure out how to give a DropdownItem a tooltip
-// //          'title': 'Only a valid link on the main site scadnano.org, not on scadnano.org/dev'
-//         },
-//         'About',
-//       ),
+      //       DropdownItem(
+      //         {
+      //           'href':
+      //           'https://github.com/UC-Davis-molecular-computing/scadnano/releases',
+      //           'target': '_blank',
+      //           //TODO: figure out how to give a DropdownItem a tooltip
+      // //          'title': 'Only a valid link on the main site scadnano.org, not on scadnano.org/dev'
+      //         },
+      //         'About',
+      //       ),
     );
   }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// helper methods
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // helper methods
 
   Future<void> load_example_dialog() async {
-    var dialog = Dialog(title: 'Load example DNA design', type: DialogType.load_example_dna_design, items: [
-      DialogRadio(
-        label: 'designs',
-        options: props.state.ui_state.example_designs.filenames,
-      ),
-    ]);
+    var dialog = Dialog(
+      title: 'Load example DNA design',
+      type: DialogType.load_example_dna_design,
+      items: [DialogRadio(label: 'designs', options: props.state.ui_state.example_designs.filenames)],
+    );
     List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
 
@@ -1429,7 +1493,10 @@ Future<void> ask_for_autobreak_parameters() async {
   items[min_distance_to_xover_idx] = DialogInteger(label: 'min distance to xover', value: 3);
 
   var dialog = Dialog(
-      title: 'Choose autobreak parameters', type: DialogType.choose_autobreak_parameters, items: items);
+    title: 'Choose autobreak parameters',
+    type: DialogType.choose_autobreak_parameters,
+    items: items,
+  );
   List<DialogItem>? results = await util.dialog(dialog);
   if (results == null) return;
 
@@ -1438,11 +1505,14 @@ Future<void> ask_for_autobreak_parameters() async {
   int max_length = (results[max_length_idx] as DialogInteger).value;
   int min_distance_to_xover = (results[min_distance_to_xover_idx] as DialogInteger).value;
 
-  app.dispatch(actions.Autobreak(
+  app.dispatch(
+    actions.Autobreak(
       target_length: target_length,
       min_length: min_length,
       max_length: max_length,
-      min_distance_to_xover: min_distance_to_xover));
+      min_distance_to_xover: min_distance_to_xover,
+    ),
+  );
 }
 
 Future<void> ask_for_geometry(Geometry? geometry) async {
@@ -1457,13 +1527,17 @@ Future<void> ask_for_geometry(Geometry? geometry) async {
   int minor_groove_angle_idx = 4;
 
   var items = util.FixedList<DialogItem>(5);
-  items[rise_per_base_pair_idx] =
-      DialogFloat(label: 'rise per base pair (nm)', value: geometry.rise_per_base_pair);
+  items[rise_per_base_pair_idx] = DialogFloat(
+    label: 'rise per base pair (nm)',
+    value: geometry.rise_per_base_pair,
+  );
   items[helix_radius_idx] = DialogFloat(label: 'helix radius (nm)', value: geometry.helix_radius);
   items[inter_helix_gap_idx] = DialogFloat(label: 'inter helix gap (nm)', value: geometry.inter_helix_gap);
   items[bases_per_turn_idx] = DialogFloat(label: 'bases per turn', value: geometry.bases_per_turn);
-  items[minor_groove_angle_idx] =
-      DialogFloat(label: 'minor groove angle (degrees)', value: geometry.minor_groove_angle);
+  items[minor_groove_angle_idx] = DialogFloat(
+    label: 'minor groove angle (degrees)',
+    value: geometry.minor_groove_angle,
+  );
 
   var dialog = Dialog(
     title: 'adjust geometric parameters',
@@ -1491,7 +1565,9 @@ Future<void> ask_for_geometry(Geometry? geometry) async {
 }
 
 request_load_file_from_file_chooser(
-    FileUploadInputElement file_chooser, void Function(FileReader, String) onload_callback) {
+  FileUploadInputElement file_chooser,
+  void Function(FileReader, String) onload_callback,
+) {
   List<File>? files = file_chooser.files;
   if (files == null) {
     window.alert('No files selected');
@@ -1500,7 +1576,7 @@ request_load_file_from_file_chooser(
   assert(files.isNotEmpty);
   File file = files[0];
 
-//  var basefilename = path.basenameWithoutExtension(file.name);
+  //  var basefilename = path.basenameWithoutExtension(file.name);
   var basefilename = path.basename(file.name);
 
   FileReader file_reader = new FileReader();
@@ -1522,8 +1598,13 @@ cadnano_file_loaded(FileReader file_reader, String filename) async {
   try {
     String json_cadnano_text = file_reader.result as String;
     filename = path.setExtension(filename, '.${constants.default_scadnano_file_extension}');
-    app.dispatch(actions.PrepareToLoadDNAFile(
-        content: json_cadnano_text, filename: filename, dna_file_type: DNAFileType.cadnano_file));
+    app.dispatch(
+      actions.PrepareToLoadDNAFile(
+        content: json_cadnano_text,
+        filename: filename,
+        dna_file_type: DNAFileType.cadnano_file,
+      ),
+    );
   } on Exception catch (e) {
     window.alert('Error importing file: ${e}');
   }

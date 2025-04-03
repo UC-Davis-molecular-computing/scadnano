@@ -116,8 +116,13 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
     // get IDT names of strands exported, and return them joined into a single string
     ExportDNAFormat format = ExportDNAFormat.idt_bulk;
     //XXX: export can return a Future<List<int>>, but only when exporting to Excel files.
-    String idt_str = format.export(strands,
-        delimiter: ',', domain_delimiter: '', strand_order: strand_order, column_major_strand: column_major);
+    String idt_str = format.export(
+      strands,
+      delimiter: ',',
+      domain_delimiter: '',
+      strand_order: strand_order,
+      column_major_strand: column_major,
+    );
 
     List<String> idt_lines = idt_str.split('\n');
     List<String> names = [];
@@ -133,18 +138,19 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
     var strand_name = 's1';
     var helices = [for (int i = 0; i < 6; i++) Helix(idx: i, max_offset: 100, grid: Grid.square)];
     var design = Design(helices: helices, grid: Grid.square);
-    design = design
-        .draw_strand(0, 0)
-        .move(5)
-        .with_domain_sequence('AAAAA')
-        .cross(1)
-        .move(-5)
-        .with_domain_sequence('CCCCC')
-        .cross(2)
-        .move(5)
-        .with_domain_sequence('GGGGG')
-        .with_name(strand_name)
-        .commit();
+    design =
+        design
+            .draw_strand(0, 0)
+            .move(5)
+            .with_domain_sequence('AAAAA')
+            .cross(1)
+            .move(-5)
+            .with_domain_sequence('CCCCC')
+            .cross(2)
+            .move(5)
+            .with_domain_sequence('GGGGG')
+            .with_name(strand_name)
+            .commit();
 
     var strand = design.strands[0];
     var strand_idt_dna_sequence = strand.vendor_dna_sequence(domain_delimiter: ' ');
@@ -158,26 +164,30 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
     var strand_name = 's1';
     var mod_5 = Modification5Prime(display_text: 'B', vendor_code: '/5Biosg/');
     var mod_3 = Modification3Prime(display_text: 'Cy3', vendor_code: '/3Cy3Sp/');
-    var mod_i =
-        ModificationInternal(display_text: 'B', vendor_code: '/iBiodT/', allowed_bases: {'T'}.build());
+    var mod_i = ModificationInternal(
+      display_text: 'B',
+      vendor_code: '/iBiodT/',
+      allowed_bases: {'T'}.build(),
+    );
 
     var helices = [for (int i = 0; i < 6; i++) Helix(idx: i, max_offset: 100, grid: Grid.square)];
     var design = Design(helices: helices, grid: Grid.square);
-    design = design
-        .draw_strand(0, 0)
-        .move(5)
-        .with_domain_sequence('AAAAA')
-        .cross(1)
-        .move(-5)
-        .with_domain_sequence('CCCCT')
-        .cross(2)
-        .move(5)
-        .with_domain_sequence('GGGGG')
-        .with_name(strand_name)
-        .with_modification_5p(mod_5)
-        .with_modification_internal(9, mod_i)
-        .with_modification_3p(mod_3)
-        .commit();
+    design =
+        design
+            .draw_strand(0, 0)
+            .move(5)
+            .with_domain_sequence('AAAAA')
+            .cross(1)
+            .move(-5)
+            .with_domain_sequence('CCCCT')
+            .cross(2)
+            .move(5)
+            .with_domain_sequence('GGGGG')
+            .with_name(strand_name)
+            .with_modification_5p(mod_5)
+            .with_modification_internal(9, mod_i)
+            .with_modification_3p(mod_3)
+            .commit();
 
     var strand = design.strands[0];
     var strand_idt_dna_sequence = strand.vendor_dna_sequence(domain_delimiter: ' ');
@@ -193,19 +203,20 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
 
     var helices = [for (int i = 0; i < 6; i++) Helix(idx: i, max_offset: 100, grid: Grid.square)];
     var design = Design(helices: helices, grid: Grid.square);
-    design = design
-        .draw_strand(0, 0)
-        .move(5)
-        .with_domain_sequence('AAAAA')
-        .cross(1)
-        .move(-5)
-        .with_domain_sequence('CCCCT')
-        .cross(2)
-        .move(5)
-        .with_domain_sequence('GGGGG')
-        .with_name(strand_name)
-        .with_modification_internal(8, mod_i)
-        .commit();
+    design =
+        design
+            .draw_strand(0, 0)
+            .move(5)
+            .with_domain_sequence('AAAAA')
+            .cross(1)
+            .move(-5)
+            .with_domain_sequence('CCCCT')
+            .cross(2)
+            .move(5)
+            .with_domain_sequence('GGGGG')
+            .with_name(strand_name)
+            .with_modification_internal(8, mod_i)
+            .commit();
 
     var strand = design.strands[0];
     var strand_idt_dna_sequence = strand.vendor_dna_sequence(domain_delimiter: ' ');

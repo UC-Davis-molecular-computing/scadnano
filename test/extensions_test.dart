@@ -111,13 +111,14 @@ main() {
     });
 
     test('extension_3p_with_label', () {
-      design = design
-          .draw_strand(0, 0)
-          .to(10)
-          .extension_3p(5)
-          .with_domain_label('ext1')
-          .with_color(color)
-          .commit();
+      design =
+          design
+              .draw_strand(0, 0)
+              .to(10)
+              .extension_3p(5)
+              .with_domain_label('ext1')
+              .with_color(color)
+              .commit();
 
       var domain = Domain(helix: 0, forward: true, start: 0, end: 10, is_first: true, is_last: false);
       var expected_strand = Strand([
@@ -129,13 +130,14 @@ main() {
     });
 
     test('extension_5p_with_label', () {
-      design = design
-          .draw_strand(0, 0)
-          .extension_5p(5)
-          .with_domain_label('ext1')
-          .to(10)
-          .with_color(color)
-          .commit();
+      design =
+          design
+              .draw_strand(0, 0)
+              .extension_5p(5)
+              .with_domain_label('ext1')
+              .to(10)
+              .with_color(color)
+              .commit();
 
       var domain = Domain(helix: 0, forward: true, start: 0, end: 10, is_first: false, is_last: true);
       var expected_strand = Strand([
@@ -147,16 +149,24 @@ main() {
     });
 
     test('with_sequence_on_3p_extension', () {
-      design = design
-          .draw_strand(0, 0)
-          .to(10)
-          .extension_3p(5)
-          .with_sequence("A" * 10 + "G" * 5)
-          .with_color(color)
-          .commit();
+      design =
+          design
+              .draw_strand(0, 0)
+              .to(10)
+              .extension_3p(5)
+              .with_sequence("A" * 10 + "G" * 5)
+              .with_color(color)
+              .commit();
 
       var domain = Domain(
-          helix: 0, forward: true, start: 0, end: 10, dna_sequence: 'A' * 10, is_first: true, is_last: false);
+        helix: 0,
+        forward: true,
+        start: 0,
+        end: 10,
+        dna_sequence: 'A' * 10,
+        is_first: true,
+        is_last: false,
+      );
       var expected_strand = Strand([
         domain,
         Extension(num_bases: 5, dna_sequence: 'G' * 5, adjacent_domain: domain, is_5p: false),
@@ -166,16 +176,24 @@ main() {
     });
 
     test('with_sequence_on_5p_extension', () {
-      design = design
-          .draw_strand(0, 0)
-          .extension_5p(5)
-          .to(10)
-          .with_sequence("C" * 5 + "T" * 10)
-          .with_color(color)
-          .commit();
+      design =
+          design
+              .draw_strand(0, 0)
+              .extension_5p(5)
+              .to(10)
+              .with_sequence("C" * 5 + "T" * 10)
+              .with_color(color)
+              .commit();
 
       var domain = Domain(
-          helix: 0, forward: true, start: 0, end: 10, dna_sequence: 'T' * 10, is_first: false, is_last: true);
+        helix: 0,
+        forward: true,
+        start: 0,
+        end: 10,
+        dna_sequence: 'T' * 10,
+        is_first: false,
+        is_last: true,
+      );
       var expected_strand = Strand([
         Extension(num_bases: 5, dna_sequence: 'C' * 5, adjacent_domain: domain, is_5p: true),
         domain,
@@ -185,16 +203,24 @@ main() {
     });
 
     test('with_domain_sequence_on_extension', () {
-      design = design
-          .draw_strand(0, 0)
-          .to(10)
-          .extension_3p(5)
-          .with_domain_sequence("G" * 5)
-          .with_color(color)
-          .commit();
+      design =
+          design
+              .draw_strand(0, 0)
+              .to(10)
+              .extension_3p(5)
+              .with_domain_sequence("G" * 5)
+              .with_color(color)
+              .commit();
 
       var domain = Domain(
-          helix: 0, forward: true, start: 0, end: 10, dna_sequence: '?' * 10, is_first: true, is_last: false);
+        helix: 0,
+        forward: true,
+        start: 0,
+        end: 10,
+        dna_sequence: '?' * 10,
+        is_first: true,
+        is_last: false,
+      );
       var expected_strand = Strand([
         domain,
         Extension(num_bases: 5, dna_sequence: 'G' * 5, adjacent_domain: domain, is_5p: false),
@@ -270,7 +296,12 @@ main() {
       var last_domain = Domain(helix: 2, forward: true, start: 0, end: 16);
       var expected_strand = Strand([
         Extension(
-            num_bases: 5, display_length: 2, display_angle: 30, adjacent_domain: first_domain, is_5p: true),
+          num_bases: 5,
+          display_length: 2,
+          display_angle: 30,
+          adjacent_domain: first_domain,
+          is_5p: true,
+        ),
         first_domain,
         Domain(helix: 1, forward: false, start: 0, end: 16),
         Loopout(loopout_num_bases: 3, prev_domain_idx: 2),
