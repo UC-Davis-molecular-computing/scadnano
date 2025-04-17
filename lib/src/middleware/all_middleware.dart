@@ -1,4 +1,5 @@
 import 'package:redux/redux.dart';
+import 'package:scadnano/src/middleware/reselected_strands_after_props_updated.dart';
 import 'package:scadnano/src/middleware/system_clipboard.dart';
 
 import '../state/app_state.dart';
@@ -68,6 +69,7 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   reselect_moved_dna_extension_ends_middleware,
   reselect_moved_copied_strands_middleware,
   reselect_moved_domains_middleware,
+  reselected_strands_after_props_updated,
   selections_intersect_box_compute_middleware,
   insertion_deletion_batching_middleware,
   adjust_grid_position_middleware,

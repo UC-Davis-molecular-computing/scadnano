@@ -79,6 +79,8 @@ mixin UndoableAction implements DesignChangingAction {
 /// Fast actions are not dispatched to normal store for optimization
 abstract class FastAction extends Action {}
 
+abstract class ChangePropertiesAction extends Action {}
+
 // Wrap an UndoableAction in a SkipUndo in order to apply it, but skip its effect on the undo/redo stacks.
 abstract class SkipUndo with BuiltJsonSerializable implements Action, Built<SkipUndo, SkipUndoBuilder> {
   UndoableAction get undoable_action;
@@ -383,7 +385,7 @@ abstract class SelectModesSet
 // used to set or remove (set name=null to remove)
 abstract class StrandNameSet
     with BuiltJsonSerializable, UndoableAction
-    implements SingleStrandAction, Built<StrandNameSet, StrandNameSetBuilder> {
+    implements SingleStrandAction, ChangePropertiesAction, Built<StrandNameSet, StrandNameSetBuilder> {
   String? get name;
 
   Strand get strand;
@@ -405,7 +407,7 @@ abstract class StrandNameSet
 // used to set or remove (set name=null to remove)
 abstract class StrandLabelSet
     with BuiltJsonSerializable, UndoableAction
-    implements SingleStrandAction, Built<StrandLabelSet, StrandLabelSetBuilder> {
+    implements SingleStrandAction, ChangePropertiesAction, Built<StrandLabelSet, StrandLabelSetBuilder> {
   String? get label;
 
   Strand get strand;
@@ -428,7 +430,7 @@ abstract class StrandLabelSet
 // used for Domains, Loopouts, and Extensions
 abstract class SubstrandNameSet
     with BuiltJsonSerializable, UndoableAction
-    implements StrandPartAction, Built<SubstrandNameSet, SubstrandNameSetBuilder> {
+    implements StrandPartAction, ChangePropertiesAction, Built<SubstrandNameSet, SubstrandNameSetBuilder> {
   String? get name;
 
   Substrand get substrand;
@@ -454,7 +456,7 @@ abstract class SubstrandNameSet
 // used for Domains, Loopouts, and Extensions
 abstract class SubstrandLabelSet
     with BuiltJsonSerializable, UndoableAction
-    implements StrandPartAction, Built<SubstrandLabelSet, SubstrandLabelSetBuilder> {
+    implements StrandPartAction, ChangePropertiesAction, Built<SubstrandLabelSet, SubstrandLabelSetBuilder> {
   String? get label;
 
   Substrand get substrand;
@@ -2320,7 +2322,7 @@ abstract class ExtensionDisplayLengthAngleSet
 
 abstract class ExtensionAdd
     with BuiltJsonSerializable, UndoableAction
-    implements SingleStrandAction, Built<ExtensionAdd, ExtensionAddBuilder> {
+    implements SingleStrandAction, ChangePropertiesAction, Built<ExtensionAdd, ExtensionAddBuilder> {
   Strand get strand;
 
   bool get is_5p;
@@ -2639,7 +2641,7 @@ abstract class JoinStrandsByMultipleCrossovers
 
 abstract class StrandsReflect
     with BuiltJsonSerializable
-    implements Action, Built<StrandsReflect, StrandsReflectBuilder> {
+    implements Action, ChangePropertiesAction, Built<StrandsReflect, StrandsReflectBuilder> {
   BuiltList<Strand> get strands;
 
   bool get horizontal;
@@ -3279,7 +3281,7 @@ abstract class HelixGroupMoveCommit
 
 abstract class AssignDNA
     with BuiltJsonSerializable, UndoableAction
-    implements Built<AssignDNA, AssignDNABuilder> {
+    implements ChangePropertiesAction, Built<AssignDNA, AssignDNABuilder> {
   Strand get strand;
 
   DNAAssignOptions get dna_assign_options;
@@ -3311,7 +3313,9 @@ abstract class AssignDNA
 /// assign/replace its DNA with the complement of those
 abstract class AssignDNAComplementFromBoundStrands
     with BuiltJsonSerializable, UndoableAction
-    implements Built<AssignDNAComplementFromBoundStrands, AssignDNAComplementFromBoundStrandsBuilder> {
+    implements
+        ChangePropertiesAction,
+        Built<AssignDNAComplementFromBoundStrands, AssignDNAComplementFromBoundStrandsBuilder> {
   BuiltList<Strand> get strands;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -3365,6 +3369,7 @@ abstract class AssignDomainNameComplementFromBoundStrands
 abstract class AssignDomainNameComplementFromBoundDomains
     with BuiltJsonSerializable, UndoableAction
     implements
+        ChangePropertiesAction,
         Built<AssignDomainNameComplementFromBoundDomains, AssignDomainNameComplementFromBoundDomainsBuilder> {
   BuiltList<Domain> get domains;
 
@@ -3391,7 +3396,7 @@ abstract class AssignDomainNameComplementFromBoundDomains
 
 abstract class RemoveDNA
     with BuiltJsonSerializable, UndoableAction
-    implements SingleStrandAction, Built<RemoveDNA, RemoveDNABuilder> {
+    implements SingleStrandAction, ChangePropertiesAction, Built<RemoveDNA, RemoveDNABuilder> {
   Strand get strand;
 
   bool get remove_complements;
@@ -3641,6 +3646,7 @@ abstract class ScalePurificationVendorFieldsAssign
     with BuiltJsonSerializable, UndoableAction
     implements
         SingleStrandAction,
+        ChangePropertiesAction,
         Built<ScalePurificationVendorFieldsAssign, ScalePurificationVendorFieldsAssignBuilder> {
   Strand get strand;
 
@@ -3663,7 +3669,10 @@ abstract class ScalePurificationVendorFieldsAssign
 // assign plate/well IDT fields of strands
 abstract class PlateWellVendorFieldsAssign
     with BuiltJsonSerializable, UndoableAction
-    implements SingleStrandAction, Built<PlateWellVendorFieldsAssign, PlateWellVendorFieldsAssignBuilder> {
+    implements
+        SingleStrandAction,
+        ChangePropertiesAction,
+        Built<PlateWellVendorFieldsAssign, PlateWellVendorFieldsAssignBuilder> {
   Strand get strand;
 
   VendorFields get vendor_fields;
@@ -3684,7 +3693,10 @@ abstract class PlateWellVendorFieldsAssign
 // remove plate/well vendor fields of strands
 abstract class PlateWellVendorFieldsRemove
     with BuiltJsonSerializable, UndoableAction
-    implements SingleStrandAction, Built<PlateWellVendorFieldsRemove, PlateWellVendorFieldsRemoveBuilder> {
+    implements
+        SingleStrandAction,
+        ChangePropertiesAction,
+        Built<PlateWellVendorFieldsRemove, PlateWellVendorFieldsRemoveBuilder> {
   Strand get strand;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -3702,7 +3714,10 @@ abstract class PlateWellVendorFieldsRemove
 // remove vendor fields of strands
 abstract class VendorFieldsRemove
     with BuiltJsonSerializable, UndoableAction
-    implements SingleStrandAction, Built<VendorFieldsRemove, VendorFieldsRemoveBuilder> {
+    implements
+        SingleStrandAction,
+        ChangePropertiesAction,
+        Built<VendorFieldsRemove, VendorFieldsRemoveBuilder> {
   Strand get strand;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -4130,7 +4145,7 @@ abstract class SingleStrandAction implements Action {
 
 abstract class ScaffoldSet
     with BuiltJsonSerializable, UndoableAction
-    implements SingleStrandAction, Built<ScaffoldSet, ScaffoldSetBuilder> {
+    implements SingleStrandAction, ChangePropertiesAction, Built<ScaffoldSet, ScaffoldSetBuilder> {
   Strand get strand;
 
   bool get is_scaffold;
@@ -4151,7 +4166,10 @@ abstract class ScaffoldSet
 
 abstract class StrandOrSubstrandColorSet
     with BuiltJsonSerializable, UndoableAction
-    implements SingleStrandAction, Built<StrandOrSubstrandColorSet, StrandOrSubstrandColorSetBuilder> {
+    implements
+        SingleStrandAction,
+        ChangePropertiesAction,
+        Built<StrandOrSubstrandColorSet, StrandOrSubstrandColorSetBuilder> {
   Strand get strand;
 
   Substrand? get substrand;
