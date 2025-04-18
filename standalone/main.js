@@ -1,27 +1,49 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, dialog } = require('electron');
 const path = require('path');
 
+let win;
+
 function createWindow() {
-    const win = new BrowserWindow({
+    win = new BrowserWindow({
         width: 800,
         height: 600,
         webPreferences: {
-            nodeIntegration: false // Security feature. Should be set to false for modern electron apps.
+            nodeIntegration: false, // Security feature. Keep it false.
+            contextIsolation: true,
+            preload: path.join(__dirname, 'preload.js') // Preload script
         },
     });
 
     win.loadFile(path.join(__dirname, '../build/index.html'));
 
-    // Uncomment to allow devtools (for debugging)
-    // This is similar to Chrome DevTools. (Because it literally is chrome's devtools!)
+    // DEBUG: Uncomment to allow devtools for debugging
     // win.webContents.openDevTools();
+
+    // Handle close event
+    win.on('close', async (event) => {
+        const shouldWarn = await win.webContents.executeJavaScript('window.warnOnExit || false');
+
+        if (shouldWarn) {
+            event.preventDefault(); // Stop the window from closing
+            const result = await dialog.showMessageBox(win, {
+                type: 'warning',
+                buttons: ['Cancel', 'Exit'],
+                defaultId: 0,
+                message: 'You have unsaved changes. Are you sure you want to exit?',
+            });
+
+            if (result.response === 1) { // "Exit" clicked
+                win.destroy(); // Allow closing
+            }
+        }
+    });
 }
 
 app.whenReady().then(() => {
     createWindow();
 
     app.on('activate', () => {
-        // MacOS. Re-open when clicked on dock.
+        // MacOS: Re-open when clicked on dock.
         if (BrowserWindow.getAllWindows().length === 0) {
             createWindow();
         }

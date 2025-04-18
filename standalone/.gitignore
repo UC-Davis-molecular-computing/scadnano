@@ -1,3 +1,10 @@
+# IDE
+.idea/
+
+# Node
 /node_modules/
 
+# Build Files
 out/
+dist/
+*.exe

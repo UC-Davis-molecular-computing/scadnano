@@ -3,16 +3,43 @@
   "version": "0.1.0",
   "description": "[scadnano](http://scadnano.org)\r (\"scriptable-cadnano\", [source code repository here](https://github.com/UC-Davis-molecular-computing/scadnano))\r is a program for designing synthetic DNA structures such as DNA origami.\r The scadnano project is developed and maintained by the UC Davis Molecular Computing group.\r Note that [cadnano](https://cadnano.org) is a separate project, developed and maintained by\r the [Douglas lab](https://bionano.ucsf.edu/) at UCSF.",
   "main": "main.js",
-  "directories": {
-    "lib": "./lib",
-    "test": "./test"
+  "build": {
+    "appId": "org.scadnano.app",
+    "productName": "scadnano",
+    "files": [
+      "**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "../build",
+        "to": "build"
+      }
+    ],
+    "asar": true,
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    }
   },
   "scripts": {
-    "init": "cd .. && webdev build",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npm run init && electron-forge start",
-    "build": "npm run init && electron-forge make",
-    "package": "electron-forge package"
+    "init": "cd .. && dart pub global activate webdev && webdev build",
+    "dev": "electron-forge start",
+    "package": "electron-builder --dir",
+    "buildWin": "npm run init && electron-builder --win --x64",
+    "buildMac": "npm run init && electron-builder --mac --x64",
+    "buildLinux": "npm run init && electron-builder --linux --x64"
   },
   "repository": {
     "type": "git",
@@ -35,7 +62,8 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.7.0",
     "@electron-forge/plugin-fuses": "^7.7.0",
     "@electron/fuses": "^1.8.0",
-    "electron": "^35.0.0"
+    "electron": "^35.0.0",
+    "electron-builder": "^26.0.12"
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1"
