@@ -638,66 +638,42 @@ main() {
     });
 
     test('minimum_strain_angle_0_10_20_relative_to_0', () {
-      List<(double, double)> relative_angles = [
-        (0, 0),
-        (10, 0),
-        (20, 0),
-      ];
+      List<(double, double)> relative_angles = [(0, 0), (10, 0), (20, 0)];
       var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 350.0;
       expect(act_min_strain_angle, closeTo(exp_min_strain_angle, epsilon));
     });
 
     test('minimum_strain_angle_0_10_50_relative_to_0', () {
-      List<(double, double)> relative_angles = [
-        (0, 0),
-        (10, 0),
-        (50, 0),
-      ];
+      List<(double, double)> relative_angles = [(0, 0), (10, 0), (50, 0)];
       var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 340.0;
       expect(act_min_strain_angle, closeTo(exp_min_strain_angle, epsilon));
     });
 
     test('minimum_strain_angle_0_10_80_relative_to_0', () {
-      List<(double, double)> relative_angles = [
-        (0, 0),
-        (10, 0),
-        (80, 0),
-      ];
+      List<(double, double)> relative_angles = [(0, 0), (10, 0), (80, 0)];
       var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 330.0;
       expect(act_min_strain_angle, closeTo(exp_min_strain_angle, epsilon));
     });
 
     test('minimum_strain_angle_350_0_10_relative_to_0', () {
-      List<(double, double)> relative_angles = [
-        (350, 0),
-        (0, 0),
-        (10, 0),
-      ];
+      List<(double, double)> relative_angles = [(350, 0), (0, 0), (10, 0)];
       var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 0.0;
       expect(act_min_strain_angle, closeTo(exp_min_strain_angle, epsilon));
     });
 
     test('minimum_strain_angle_350_0_40_relative_to_0', () {
-      List<(double, double)> relative_angles = [
-        (350, 0),
-        (0, 0),
-        (40, 0),
-      ];
+      List<(double, double)> relative_angles = [(350, 0), (0, 0), (40, 0)];
       var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 350.0;
       expect(act_min_strain_angle, closeTo(exp_min_strain_angle, epsilon));
     });
 
     test('minimum_strain_angle_350_10_60_relative_to_0', () {
-      List<(double, double)> relative_angles = [
-        (350, 0),
-        (10, 0),
-        (60, 0),
-      ];
+      List<(double, double)> relative_angles = [(350, 0), (10, 0), (60, 0)];
       var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 340.0;
       expect(act_min_strain_angle, closeTo(exp_min_strain_angle, epsilon));
@@ -735,11 +711,7 @@ main() {
     });
 
     test('minimum_strain_angle_174_179_184_relative_to_0', () {
-      List<(double, double)> relative_angles = [
-        (174, 0),
-        (179, 0),
-        (184, 0),
-      ];
+      List<(double, double)> relative_angles = [(174, 0), (179, 0), (184, 0)];
       var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 181.0;
       expect(act_min_strain_angle, closeTo(exp_min_strain_angle, epsilon));

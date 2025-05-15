@@ -151,7 +151,7 @@ String to_oxview_format(Design design, List<Strand> strands_to_export) {
     for (var offset_dom_strands in base_pairs_map[helix]!) {
       // (int, Domain, Domain, Strand, Strand)
       var (offset, domain1, domain2, sc_strand1, sc_strand2) = offset_dom_strands;
-      
+
       Map<String, dynamic> oxv_strand1 = oxview_strand_map[sc_strand1.id];
       Map<String, dynamic> oxv_strand2 = oxview_strand_map[sc_strand2.id];
       int d1 = sc_strand1.domain_offset_to_strand_dna_idx(domain1, offset, false);

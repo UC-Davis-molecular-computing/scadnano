@@ -176,7 +176,9 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     var start_offset = '50%';
     var dy = '${0.1 * geometry.base_width_svg}';
 
-    var (letter_spacing, font_size) = _calculate_letter_spacing_and_font_size_insertion(length); // (double?, int)
+    var (letter_spacing, font_size) = _calculate_letter_spacing_and_font_size_insertion(
+      length,
+    ); // (double?, int)
 
     Map<String, dynamic> style_map;
     if (letter_spacing != null) {

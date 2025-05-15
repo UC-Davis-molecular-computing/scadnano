@@ -1285,11 +1285,11 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     bool using_groups = json_map.containsKey(constants.groups_key);
 
     // (Map<int, HelixBuilder>, Map<String, HelixPitchYaw>, Map<HelixPitchYaw, List<HelixBuilder>>)
-    var (
-      helix_builders_map,
-      group_to_pitch_yaw,
-      pitch_yaw_to_helices
-    ) = _helices_from_json(json_map, invert_y, geometry);
+    var (helix_builders_map, group_to_pitch_yaw, pitch_yaw_to_helices) = _helices_from_json(
+      json_map,
+      invert_y,
+      geometry,
+    );
 
     Map<String, HelixGroupBuilder> group_builders_map = _groups_from_json(
       json_map,
@@ -1357,10 +1357,12 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     );
 
     // (Map<int, HelixBuilder>, Map<String, HelixGroupBuilder>)
-    var (
-      helix_builders_map,
-      group_builders_map
-    ) = Design._helices_and_groups_from_json(json_map, invert_y, position_x_z_should_swap, geometry);
+    var (helix_builders_map, group_builders_map) = Design._helices_and_groups_from_json(
+      json_map,
+      invert_y,
+      position_x_z_should_swap,
+      geometry,
+    );
 
     // strands
     List<Strand> strands = [];
@@ -2271,7 +2273,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     for (int idx in this.helices.keys) {
       List<(int, Domain, Domain, Strand, Strand)> offsets_and_domain_strand = [];
       List<(Domain, Domain)> overlapping_domains = find_overlapping_domains_on_helix(idx);
-      for (var (dom1, dom2) in overlapping_domains) { // (Domain, Domain)
+      for (var (dom1, dom2) in overlapping_domains) {
+        // (Domain, Domain)
         if (!allow_unassigned_dna && (dom1.dna_sequence == null || dom2.dna_sequence == null)) {
           // If not allowing unassigned DNA, then skip if either has no DNA sequence
           continue;
@@ -2312,15 +2315,13 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
                       base1 == constants.DNA_BASE_WILDCARD ||
                       base2 == constants.DNA_BASE_WILDCARD)) ||
               util.reverse_complementary(base1, base2, allow_wildcard: true)) {
-            offsets_and_domain_strand.add(
-              (
-                offset,
-                dom1,
-                dom2,
-                this.substrand_to_strand[dom1]!,
-                this.substrand_to_strand[dom2]!,
-              ),
-            );
+            offsets_and_domain_strand.add((
+              offset,
+              dom1,
+              dom2,
+              this.substrand_to_strand[dom1]!,
+              this.substrand_to_strand[dom2]!,
+            ));
           }
         }
       }
@@ -2517,11 +2518,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     if (id_from == -1 && base_from == -1 && id_to == -1 && base_to == -1) return null;
 
     // (int, int, bool)
-    var (
-      strand_5_end_helix,
-      strand_5_end_base,
-      is_circular
-    ) = Design._cadnano_v2_import_find_5_end(
+    var (strand_5_end_helix, strand_5_end_base, is_circular) = Design._cadnano_v2_import_find_5_end(
       vstrands,
       strand_type,
       helix_num,
