@@ -461,6 +461,8 @@ packages/intl/src/data/dates/symbols/zu.json
 packages/node_preamble/preamble.js
 packages/node_preamble/preamble.min.js
 packages/over_react/src/builder/README.md
+packages/react/js/react.dev.js
+packages/react/js/react.min.js
 packages/react/react.js
 packages/react/react_dom.js
 packages/react/react_dom_prod.js
