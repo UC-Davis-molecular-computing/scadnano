@@ -1,0 +1,70 @@
+name: Build Standalone scadnano App
+
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened, ready_for_review ]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    name: Build on Linux
+    steps:
+      - name: Checkout Branch
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+
+      - name: Setup Dart SDK  # This will use the latest version of dart unless specified otherwise.
+        uses: dart-lang/setup-dart@v1  # https://github.com/dart-lang/setup-dart
+
+      - name: Install Node.js dependencies
+        working-directory: ./standalone
+        run: npm install
+
+      - name: Build scadnano for Linux  # This should also automatically install dart dependencies as well.
+        working-directory: ./standalone
+        run: npm run buildLin
+
+  build-windows:
+    runs-on: windows-latest
+    name: Build on Windows
+    steps:
+      - name: Checkout Branch
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+
+      - name: Setup Dart SDK  # This will use the latest version of dart unless specified otherwise.
+        uses: dart-lang/setup-dart@v1  # https://github.com/dart-lang/setup-dart
+
+      - name: Install Node.js dependencies
+        working-directory: ./standalone
+        run: npm install
+
+      - name: Build scadnano for Windows  # This should also automatically install dart dependencies as well.
+        working-directory: ./standalone
+        run: npm run buildWin
+
+  build-macos:
+    # Uncomment this job if you have access to GitHub macOS runners
+    runs-on: macos-latest
+    name: Build on macOS
+    steps:
+      - name: Checkout Branch
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+
+      - name: Setup Dart SDK  # This will use the latest version of dart unless specified otherwise.
+        uses: dart-lang/setup-dart@v1  # https://github.com/dart-lang/setup-dart
+
+      - name: Install Node.js dependencies
+        working-directory: ./standalone
+        run: npm install
+
+      - name: Build scadnano for MacOS  # This should also automatically install dart dependencies as well.
+        working-directory: ./standalone
+        run: npm run buildMac

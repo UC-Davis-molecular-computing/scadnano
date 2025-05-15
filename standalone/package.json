@@ -34,12 +34,12 @@
     }
   },
   "scripts": {
-    "init": "cd .. && dart pub global activate webdev && webdev build",
+    "init": "cd .. && dart pub get && dart pub global activate webdev && webdev build",
     "dev": "electron-forge start",
     "package": "electron-builder --dir",
     "buildWin": "npm run init && electron-builder --win --x64",
     "buildMac": "npm run init && electron-builder --mac --x64",
-    "buildLinux": "npm run init && electron-builder --linux --x64"
+    "buildLin": "npm run init && electron-builder --linux --x64"
   },
   "repository": {
     "type": "git",

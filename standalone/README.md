@@ -16,8 +16,19 @@ npm run dev
 
 To build an executable, run the following command.
 
+### Windows
 ```shell
-npm run build
+npm run buildWin
+```
+
+### MacOS
+```shell
+npm run buildMac
+```
+
+### Linux
+```shell
+npm run buildLin
 ```
 
 > The output should be located in `./standalone/out`.
