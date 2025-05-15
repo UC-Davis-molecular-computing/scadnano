@@ -19,10 +19,8 @@ jobs:
           ref: gh-pages
           path: gh-pages-repo
 
-      - name: Setup Dart SDK
+      - name: Setup Dart SDK  # This will use the latest version of dart unless specified otherwise.
         uses: dart-lang/setup-dart@v1  # https://github.com/dart-lang/setup-dart
-        with:
-          sdk: 3.7
 
       - name: Install dependencies
         run: dart pub get
