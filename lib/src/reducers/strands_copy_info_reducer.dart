@@ -3,7 +3,6 @@ import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/modification.dart';
-import 'package:tuple/tuple.dart';
 
 import '../state/copy_info.dart';
 import '../state/strands_move.dart';
@@ -40,8 +39,7 @@ CopyInfo? manual_paste_initiate_reducer(CopyInfo? _, AppState state, actions.Man
     return null;
   }
 
-  List<Strand> strands = strands_and_helices_view_order.item1;
-  List<int>? helices_view_order = strands_and_helices_view_order.item2;
+  var (strands, helices_view_order) = strands_and_helices_view_order; // (List<Strand>, List<int>?)
 
   if (strands.isEmpty) return null;
   // indicates helices came from more than one HelixGroup, so no way to paste
@@ -62,8 +60,7 @@ CopyInfo? autopaste_initiate_reducer(CopyInfo? copy_info, AppState state, action
     return null;
   }
 
-  List<Strand> strands = strands_and_helices_view_order.item1;
-  List<int>? helices_view_order = strands_and_helices_view_order.item2;
+  var (strands, helices_view_order) = strands_and_helices_view_order; // (List<Strand>, List<int>?)
 
   if (strands.isEmpty) return null;
   // indicates helices came from more than one HelixGroup, so no way to paste
@@ -79,7 +76,7 @@ CopyInfo? autopaste_initiate_reducer(CopyInfo? copy_info, AppState state, action
 }
 
 /// returns null on JSON decode error
-Tuple2<List<Strand>, List<int>?>? parse_strands_and_helices_view_order_from_clipboard(
+(List<Strand>, List<int>?)? parse_strands_and_helices_view_order_from_clipboard(
   String clipboard_content,
 ) {
   String error_msg =
@@ -160,7 +157,7 @@ Tuple2<List<Strand>, List<int>?>? parse_strands_and_helices_view_order_from_clip
     strands.add(strand);
   }
 
-  return Tuple2<List<Strand>, List<int>?>(strands, helices_view_order);
+  return (strands, helices_view_order);
 }
 
 // need to pass in helices_view_order from clipboard since these strands may be from a different design

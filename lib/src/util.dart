@@ -31,7 +31,6 @@ import 'state/domains_move.dart';
 import 'state/group.dart';
 import 'state/strands_move.dart';
 import 'view/design.dart';
-import 'package:tuple/tuple.dart';
 import 'package:quiver/iterables.dart' as quiver;
 
 import 'app.dart';
@@ -406,14 +405,14 @@ Map<int, Helix> helices_list_to_map(List<Helix> helices) => {for (var helix in h
 dynamic unwrap_from_noindent(dynamic obj) => obj is NoIndent ? obj.value : obj;
 
 /// Finds two indices of elements in list that repeat, returning null if all elements are distinct.
-Tuple2<int, int>? repeated_element_indices<T>(List<T> list) {
+(int, int)? repeated_element_indices<T>(List<T> list) {
   Map<T, int> elt_to_idx = {};
   // should take time n log n; we don't do linear search for indices until we know which element repeats
   for (int i2 = 0; i2 < list.length; i2++) {
     T elt = list[i2];
     int? i1 = elt_to_idx[elt];
     if (i1 != null) {
-      return Tuple2<int, int>(i1, i2);
+      return (i1, i2);
     }
     elt_to_idx[elt] = i2;
   }
@@ -1942,7 +1941,7 @@ Point<double> compute_extension_free_end_svg(
   return ext_end_svg;
 }
 
-Tuple2<double, double> compute_extension_length_and_angle_from_point(
+(double, double) compute_extension_length_and_angle_from_point(
   Point<double> current_mouse_point,
   Point<double> attached_end_svg,
   Extension ext,
@@ -1963,7 +1962,7 @@ Tuple2<double, double> compute_extension_length_and_angle_from_point(
   if ((adjacent_domain.forward && ext.is_5p) || (!adjacent_domain.forward && !ext.is_5p)) {
     angle_radians = pi - angle_radians;
   }
-  return Tuple2(display_length, angle_radians * 180 / pi);
+  return (display_length, angle_radians * 180 / pi);
 }
 
 update_mouseover(SyntheticMouseEvent event_syn, Helix helix, Point<double> helix_svg_position) {
@@ -2103,8 +2102,8 @@ double angle_from_helix_to_helix(Helix helix, Helix other_helix, Geometry geomet
 //     angle :math:`\theta` by which to rotate all angles :math:`\theta_i`
 //     (but not changing any "zero angle" :math:`\mu_i`)
 //     such that :math:`\sum_i [(\theta + \theta_i) - \mu_i]^2` is minimized.
-double minimum_strain_angle(List<Tuple2<double, double>> relative_angles) {
-  var adjusted_angles = [for (var angle in relative_angles) angle.item1 - angle.item2];
+double minimum_strain_angle(List<(double, double)> relative_angles) {
+  var adjusted_angles = [for (var angle in relative_angles) angle.$1 - angle.$2];
   var ave_angle = average_angle(adjusted_angles);
   var min_strain_angle = -ave_angle;
   min_strain_angle %= 360;

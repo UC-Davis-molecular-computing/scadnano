@@ -7,7 +7,6 @@ import 'package:platform_detect/platform_detect.dart';
 import 'package:scadnano/src/state/context_menu.dart';
 import 'package:scadnano/src/state/dialog.dart';
 import 'package:scadnano/src/state/geometry.dart';
-import 'package:tuple/tuple.dart';
 
 import '../state/selectable.dart';
 import '../state/helix.dart';
@@ -21,7 +20,7 @@ import 'design_main_strand_loopout.dart';
 
 part 'design_main_strand_insertion.over_react.g.dart';
 
-typedef Tuple2<Insertion, Domain> PairedInsertionFinder(Insertion insertion, Domain substrand);
+typedef (Insertion, Domain) PairedInsertionFinder(Insertion insertion, Domain substrand);
 
 UiFactory<DesignMainStrandInsertionProps> DesignMainStrandInsertion = _$DesignMainStrandInsertion;
 

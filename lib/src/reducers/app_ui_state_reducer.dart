@@ -12,7 +12,6 @@ import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/copy_info.dart';
 import 'package:scadnano/src/state/substrand.dart';
 import 'package:scadnano/src/util.dart';
-import 'package:tuple/tuple.dart';
 import '../reducers/context_menu_reducer.dart';
 import '../state/example_designs.dart';
 import '../state/grid_position.dart';
