@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:html';
 
-import 'package:dialog/dialog.dart';
 import 'package:meta/meta.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';

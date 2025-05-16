@@ -246,14 +246,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.8"
-  dialog:
-    dependency: "direct main"
-    description:
-      name: dialog
-      sha256: ed34ef7add51e3c1a5bbc042b39f5baf399d4494be47362ebe9999e236be459f
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.8.0"
   dnd:
     dependency: "direct main"
     description:
@@ -390,14 +382,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.12.17"
-  memoize:
-    dependency: transitive
-    description:
-      name: memoize
-      sha256: "51481d328c86cbdc59711369179bac88551ca0556569249be5317e66fc796cac"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.0"
   meta:
     dependency: "direct main"
     description:
@@ -534,14 +518,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.0"
-  reselect:
-    dependency: "direct main"
-    description:
-      name: reselect
-      sha256: "7b01878d91ab22148001bd04b0da9577444d27636d940110524772ac664f5b88"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.5.0"
   scratch_space:
     dependency: transitive
     description:
@@ -743,7 +719,7 @@ packages:
     source: hosted
     version: "3.0.1"
   watcher:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: watcher
       sha256: "69da27e49efa56a15f8afe8f4438c4ec02eff0a117df1b22ea4aad194fe1c104"
