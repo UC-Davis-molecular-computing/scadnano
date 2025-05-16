@@ -214,7 +214,6 @@ packages/build_runner/src/server/graph_viz.html
 packages/build_runner/src/server/graph_viz.js
 packages/build_runner/src/server/graph_viz_main.dart.js
 packages/build_web_compilers/src/dev_compiler_stack_trace/stack_trace_mapper.dart.js
-packages/dialog/bootstrap.css
 packages/intl/src/data/dates/README.txt
 packages/intl/src/data/dates/patterns/af.json
 packages/intl/src/data/dates/patterns/am.json
