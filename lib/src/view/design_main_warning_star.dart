@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/state/geometry.dart';
-import 'package:tuple/tuple.dart';
 
 part 'design_main_warning_star.over_react.g.dart';
 
@@ -18,8 +17,8 @@ mixin DesignMainWarningStarProps on UiProps {
 class DesignMainWarningStarComponent extends UiComponent2<DesignMainWarningStarProps> {
   @override
   render() {
-    List<double> xs = List<double>.from(_star_at_origin().item1);
-    List<double> ys = List<double>.from(_star_at_origin().item2);
+    List<double> xs = List<double>.from(_star_at_origin().$1);
+    List<double> ys = List<double>.from(_star_at_origin().$2);
 
     num rotate_degrees = 0;
     if (!props.forward) {
@@ -46,7 +45,7 @@ class DesignMainWarningStarComponent extends UiComponent2<DesignMainWarningStarP
       ..transform = 'rotate(${rotate_degrees} ${props.base_svg_pos.x} ${props.base_svg_pos.y})')();
   }
 
-  Tuple2<List<double>, List<double>> _star_at_origin() {
+  (List<double>, List<double>) _star_at_origin() {
     // assume bottom points of star are at origin
     List<double> xs = [];
     List<double> ys = [];
@@ -69,6 +68,6 @@ class DesignMainWarningStarComponent extends UiComponent2<DesignMainWarningStarP
       inner_angle += 2 * pi / num_points;
       outer_angle += 2 * pi / num_points;
     }
-    return Tuple2<List<double>, List<double>>(xs, ys);
+    return (xs, ys);
   }
 }

@@ -5,7 +5,6 @@ import 'dart:svg' as svg;
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/selection_rope.dart';
-import 'package:tuple/tuple.dart';
 
 import '../state/select_mode.dart';
 import '../state/selection_box.dart';

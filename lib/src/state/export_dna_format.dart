@@ -6,7 +6,6 @@ import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/view/menu_form_file.dart';
 import 'package:spreadsheet_decoder/spreadsheet_decoder.dart';
-import 'package:tuple/tuple.dart';
 
 import '../util.dart' as util;
 import 'strand.dart';
@@ -16,7 +15,7 @@ part 'export_dna_format.g.dart';
 
 typedef StrandComparison = int Function(Strand s1, Strand s2);
 
-Tuple2<int, int> strand_helix_offset_key(Strand strand, StrandOrder strand_order, bool column_major) {
+(int, int) strand_helix_offset_key(Strand strand, StrandOrder strand_order, bool column_major) {
   int helix_idx;
   int offset;
   if (strand_order == StrandOrder.five_prime) {
@@ -59,33 +58,29 @@ Tuple2<int, int> strand_helix_offset_key(Strand strand, StrandOrder strand_order
   } else {
     throw ArgumentError('${strand_order} is not a valid StrandOrder');
   }
-  return Tuple2<int, int>(helix_idx, offset);
+  return (helix_idx, offset);
 }
 
 /// Returns comparison function that can be used to sort Strands
 StrandComparison strands_comparison_function(StrandOrder strand_order, bool column_major) {
   int compare(Strand strand1, Strand strand2) {
-    var helix_offset1 = strand_helix_offset_key(strand1, strand_order, column_major);
-    var helix_offset2 = strand_helix_offset_key(strand2, strand_order, column_major);
-    int helix_idx1 = helix_offset1.item1;
-    int offset1 = helix_offset1.item2;
-    int helix_idx2 = helix_offset2.item1;
-    int offset2 = helix_offset2.item2;
+    var (helix_idx1, offset1) = strand_helix_offset_key(strand1, strand_order, column_major); // (int, int)
+    var (helix_idx2, offset2) = strand_helix_offset_key(strand2, strand_order, column_major); // (int, int)
 
-    var tuple1;
-    var tuple2;
+    (int, int) tuple1;
+    (int, int) tuple2;
     if (column_major) {
-      tuple1 = Tuple2<int, int>(offset1, helix_idx1);
-      tuple2 = Tuple2<int, int>(offset2, helix_idx2);
+      tuple1 = (offset1, helix_idx1);
+      tuple2 = (offset2, helix_idx2);
     } else {
-      tuple1 = Tuple2<int, int>(helix_idx1, offset1);
-      tuple2 = Tuple2<int, int>(helix_idx2, offset2);
+      tuple1 = (helix_idx1, offset1);
+      tuple2 = (helix_idx2, offset2);
     }
 
-    if (tuple1.item1 != tuple2.item1) {
-      return tuple1.item1 - tuple2.item1;
+    if (tuple1.$1 != tuple2.$1) {
+      return tuple1.$1 - tuple2.$1;
     } else {
-      return tuple1.item2 - tuple2.item2;
+      return tuple1.$2 - tuple2.$2;
     }
   }
 

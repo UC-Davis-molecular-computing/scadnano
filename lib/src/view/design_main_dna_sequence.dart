@@ -5,7 +5,6 @@ import 'package:built_collection/built_collection.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:scadnano/src/state/group.dart';
 import 'package:scadnano/src/view/transform_by_helix_group.dart';
-import 'package:tuple/tuple.dart';
 
 import '../state/helix.dart';
 import 'package:scadnano/src/state/geometry.dart';
@@ -177,9 +176,9 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     var start_offset = '50%';
     var dy = '${0.1 * geometry.base_width_svg}';
 
-    Tuple2<double?, int> ls_fs = _calculate_letter_spacing_and_font_size_insertion(length);
-    double? letter_spacing = ls_fs.item1;
-    int font_size = ls_fs.item2;
+    var (letter_spacing, font_size) = _calculate_letter_spacing_and_font_size_insertion(
+      length,
+    ); // (double?, int)
 
     Map<String, dynamic> style_map;
     if (letter_spacing != null) {
@@ -216,14 +215,14 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     var start_offset = '50%';
     var dy = '${0.1 * geometry.base_height_svg}';
 
-    Tuple2<double?, int> ls_fs;
+    (double?, int) ls_fs;
     if (util.is_hairpin(prev_domain, next_domain)) {
       ls_fs = _calculate_letter_spacing_and_font_size_hairpin(length);
     } else {
       ls_fs = _calculate_letter_spacing_and_font_size_loopout(length);
     }
-    double? letter_spacing = ls_fs.item1;
-    int font_size = ls_fs.item2;
+
+    var (letter_spacing, font_size) = ls_fs; // (double?, int)
 
     Map<String, dynamic> style_map;
     if (letter_spacing != null) {
@@ -255,9 +254,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     var start_offset = '50%';
     var dy = '${0.1 * geometry.base_height_svg}';
 
-    Tuple2<double, int> ls_fs = _calculate_letter_spacing_and_font_size_extension(ext);
-    double letter_spacing = ls_fs.item1;
-    int font_size = ls_fs.item2;
+    var (letter_spacing, font_size) = _calculate_letter_spacing_and_font_size_extension(ext); // (double, int)
 
     Map<String, dynamic> style_map = {'letterSpacing': '${letter_spacing}em', 'fontSize': '${font_size}px'};
 
@@ -275,19 +272,19 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
   }
 }
 
-Tuple2<double, int> _calculate_letter_spacing_and_font_size_loopout(int len) {
+(double, int) _calculate_letter_spacing_and_font_size_loopout(int len) {
   double letter_spacing = 0;
   int font_size = 12;
-  return Tuple2<double, int>(letter_spacing, font_size);
+  return (letter_spacing, font_size);
 }
 
-Tuple2<double, int> _calculate_letter_spacing_and_font_size_extension(Extension ext) {
+(double, int) _calculate_letter_spacing_and_font_size_extension(Extension ext) {
   double letter_spacing = 0;
   int font_size = 12;
-  return Tuple2<double, int>(letter_spacing, font_size);
+  return (letter_spacing, font_size);
 }
 
-Tuple2<double?, int> _calculate_letter_spacing_and_font_size_hairpin(int len) {
+(double?, int) _calculate_letter_spacing_and_font_size_hairpin(int len) {
   double? letter_spacing;
   int font_size = max(6, 12 - max(0, len - 6));
   if (browser.isChrome) {
@@ -315,10 +312,10 @@ Tuple2<double?, int> _calculate_letter_spacing_and_font_size_hairpin(int len) {
     }
     letter_spacing = null;
   }
-  return Tuple2<double?, int>(letter_spacing, font_size);
+  return (letter_spacing, font_size);
 }
 
-Tuple2<double?, int> _calculate_letter_spacing_and_font_size_insertion(int num_insertions) {
+(double?, int) _calculate_letter_spacing_and_font_size_insertion(int num_insertions) {
   // UGGG
   double? letter_spacing;
   int font_size = max(6, 12 - (num_insertions - 1));
@@ -347,7 +344,7 @@ Tuple2<double?, int> _calculate_letter_spacing_and_font_size_insertion(int num_i
     }
     letter_spacing = null;
   }
-  return Tuple2<double?, int>(letter_spacing, font_size);
+  return (letter_spacing, font_size);
 }
 
 // keep this around in case this is how we want to export to an SVG file and it doesn't do textLength well

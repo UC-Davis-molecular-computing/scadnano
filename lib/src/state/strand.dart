@@ -3,7 +3,6 @@ import 'package:color/color.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart';
-import 'package:tuple/tuple.dart';
 
 import 'address.dart';
 import 'helix.dart';
@@ -531,7 +530,7 @@ abstract class Strand
     for (var mod_idx in modifications_int.keys) {
       var mod = modifications_int[mod_idx]!;
       var ss_and_idx = _substrand_of_dna_idx(mod_idx);
-      Substrand ss = ss_and_idx.item1;
+      Substrand ss = ss_and_idx.$1;
       int ss_idx = index_of_substrand(ss);
       mods[ss_idx][mod_idx] = mod;
     }
@@ -563,9 +562,8 @@ abstract class Strand
 
     for (var mod_idx in modifications_int.keys) {
       var mod = modifications_int[mod_idx]!;
-      var ss_and_idx = _substrand_of_dna_idx(mod_idx);
-      Substrand ss = ss_and_idx.item1;
-      int idx_within_ss = ss_and_idx.item2;
+      var (ss, idx_within_ss) = _substrand_of_dna_idx(mod_idx);
+
       mods[ss]![idx_within_ss] = mod;
     }
 
@@ -576,7 +574,7 @@ abstract class Strand
     return mods_built.build();
   }
 
-  Tuple2<Substrand, int> _substrand_of_dna_idx(int dna_idx) {
+  (Substrand, int) _substrand_of_dna_idx(int dna_idx) {
     if (dna_idx < 0) {
       throw ArgumentError('dna_idx cannot be negative but is ${dna_idx}');
     }
@@ -590,7 +588,7 @@ abstract class Strand
     for (var ss in substrands) {
       int dna_idx_cur_ss_end = dna_idx_cur_ss_start + ss.dna_length();
       if (dna_idx_cur_ss_start <= dna_idx && dna_idx < dna_idx_cur_ss_end) {
-        return Tuple2<Substrand, int>(ss, dna_idx - dna_idx_cur_ss_start);
+        return (ss, dna_idx - dna_idx_cur_ss_start);
       }
       dna_idx_cur_ss_start = dna_idx_cur_ss_end;
     }
@@ -1074,11 +1072,11 @@ abstract class Strand
   /// If this and other are ligatable (they have a pair of 5'/3' ends adjacent)
   /// return the two [DNAEnd]s that can be ligated, in other (this.end, other.end),
   /// otherwise return null.
-  Tuple2<DNAEnd, DNAEnd>? ligatable_ends_with(Strand other) {
+  (DNAEnd, DNAEnd)? ligatable_ends_with(Strand other) {
     if (_ligatable_3p_to_5p_of(other)) {
-      return Tuple2<DNAEnd, DNAEnd>(dnaend_3p, other.dnaend_5p);
+      return (dnaend_3p, other.dnaend_5p);
     } else if (_ligatable_5p_to_3p_of(other)) {
-      return Tuple2<DNAEnd, DNAEnd>(dnaend_5p, other.dnaend_3p);
+      return (dnaend_5p, other.dnaend_3p);
     } else {
       return null;
     }
