@@ -1,0 +1,7 @@
+version: 2
+updates:
+  - package-ecosystem: "pub"
+    directory: "/" # Directory of pubspec.yaml
+    target-branch: "dev"
+    schedule:
+      interval: "weekly" # daily, weekly, monthly
