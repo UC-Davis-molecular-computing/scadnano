@@ -43,17 +43,17 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
   // their latest responses.
   @override
   Map getDerivedStateFromProps(Map nextPropsUntyped, Map prevStateUntyped) {
-    // new_props has the current dialog type, which we use to look up the React state (in particular
+    // next_props has the current dialog type, which we use to look up the React state (in particular
     // the previous responses) the last time this type of Dialog was used.
-    var new_props = typedPropsFactory(nextPropsUntyped);
+    var next_props = typedPropsFactory(nextPropsUntyped);
     var prev_state = typedStateFactory(prevStateUntyped);
-    if (new_props.dialog != null) {
+    if (next_props.dialog != null) {
       // next if statement is true if the Dialog has just popped up,
       // OR if the dialog type changes (e.g., if the user has one dialog open and then opens another),
       // In either case, user hasn't typed any current responses for this dialog type yet,
-      // though some may be saved in TODO: saved where?
-      if (prev_state.current_responses == null || new_props.dialog!.type != prev_state.dialog_type) {
-        Dialog dialog = new_props.dialog!;
+      // though some may be saved in `prev_state.saved_responses`
+      if (prev_state.current_responses == null || next_props.dialog!.type != prev_state.dialog_type) {
+        Dialog dialog = next_props.dialog!;
         assert(dialog.process_saved_response != null);
         var dialog_type = dialog.type;
         return newState()
