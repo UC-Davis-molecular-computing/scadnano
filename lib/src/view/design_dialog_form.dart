@@ -48,10 +48,12 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
     var new_props = typedPropsFactory(nextPropsUntyped);
     var prev_state = typedStateFactory(prevStateUntyped);
     if (new_props.dialog != null) {
-      Dialog dialog = new_props.dialog!;
-      // next if statement is true if the Dialog has just popped up, so user hasn't typed any
-      // current responses yet, though some may be saved in TODO: saved where?
-      if (prev_state.current_responses == null) {
+      // next if statement is true if the Dialog has just popped up,
+      // OR if the dialog type changes (e.g., if the user has one dialog open and then opens another),
+      // In either case, user hasn't typed any current responses for this dialog type yet,
+      // though some may be saved in TODO: saved where?
+      if (prev_state.current_responses == null || new_props.dialog!.type != prev_state.dialog_type) {
+        Dialog dialog = new_props.dialog!;
         assert(dialog.process_saved_response != null);
         var dialog_type = dialog.type;
         return newState()
