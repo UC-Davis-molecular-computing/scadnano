@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:html';
+import 'package:web/web.dart';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
@@ -18,8 +18,8 @@ import 'local_storage.dart';
 reset_local_storage_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   next(action);
   if (action is actions.ResetLocalStorage) {
-    window.localStorage.remove(Storable.design.key_name);
-    window.localStorage.remove(Storable.app_ui_state_storables.key_name);
+    window.localStorage.removeItem(Storable.design.key_name);
+    window.localStorage.removeItem(Storable.app_ui_state_storables.key_name);
     window.location.reload();
   }
 }

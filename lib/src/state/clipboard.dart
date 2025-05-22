@@ -1,5 +1,5 @@
-import 'dart:html';
-
+import 'package:web/web.dart';
+import "dart:js_interop";
 import 'package:platform_detect/platform_detect.dart';
 
 abstract class Clipboard {
@@ -10,13 +10,13 @@ abstract class Clipboard {
 
 class BrowserClipboard implements Clipboard {
   write(String input) {
-    window.navigator.clipboard?.writeText(input);
+    window.navigator.clipboard.writeText(input);
   }
 
   Future<String> read() async {
     try {
-      String text = await window.navigator.clipboard!.readText();
-      return text;
+      final text = await window.navigator.clipboard.readText().toDart;
+      return text.toDart;
     } on NoSuchMethodError {
       if (browser.isFirefox) {
         var msg = """\

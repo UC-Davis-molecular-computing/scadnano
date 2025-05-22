@@ -1,4 +1,4 @@
-import 'dart:html';
+import 'package:web/web.dart';
 
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
@@ -8,7 +8,7 @@ import 'package:scadnano/src/state/context_menu.dart';
 import 'package:scadnano/src/state/dialog.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:tuple/tuple.dart';
-
+import 'dart:math';
 import '../state/selectable.dart';
 import '../state/helix.dart';
 import '../app.dart';

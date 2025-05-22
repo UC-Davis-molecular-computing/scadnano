@@ -1,9 +1,10 @@
-import 'dart:html';
+import 'package:web/web.dart';
 
 import 'package:meta/meta.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/substrand.dart';
+import 'dart:math';
 
 import '../state/group.dart';
 import '../state/geometry.dart';

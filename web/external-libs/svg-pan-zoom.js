@@ -640,7 +640,7 @@ SvgPanZoom.prototype.setupHandlers = function() {
   // Init custom events handler if available
   if (this.options.customEventsHandler != null) { // jshint ignore:line
     this.options.customEventsHandler.init({
-      svgElement: this.svg
+      SVGElement: this.svg
     , eventsListenerElement: this.options.eventsListenerElement
     , instance: this.getPublicInstance()
     })
@@ -1097,7 +1097,7 @@ SvgPanZoom.prototype.destroy = function() {
   // Destroy custom event handlers
   if (this.options.customEventsHandler != null) { // jshint ignore:line
     this.options.customEventsHandler.destroy({
-      svgElement: this.svg
+      SVGElement: this.svg
     , eventsListenerElement: this.options.eventsListenerElement
     , instance: this.getPublicInstance()
     })

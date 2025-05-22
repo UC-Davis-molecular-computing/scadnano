@@ -1,6 +1,6 @@
 import 'dart:collection';
 import 'dart:convert';
-import 'dart:html';
+import 'package:web/web.dart';
 import 'dart:math';
 import 'package:color/color.dart';
 import 'package:http/http.dart' as http;

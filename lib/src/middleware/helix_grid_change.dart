@@ -1,4 +1,4 @@
-import 'dart:html';
+import 'package:web/web.dart';
 
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/geometry.dart';

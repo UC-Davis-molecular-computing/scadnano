@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:html';
+import 'package:web/web.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
@@ -1493,10 +1493,6 @@ Future<void> ask_for_geometry(Geometry? geometry) async {
 request_load_file_from_file_chooser(
     FileUploadInputElement file_chooser, void Function(FileReader, String) onload_callback) {
   List<File>? files = file_chooser.files;
-  if (files == null) {
-    window.alert('No files selected');
-    return;
-  }
   assert(files.isNotEmpty);
   File file = files[0];
 

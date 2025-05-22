@@ -1,9 +1,9 @@
 @JS()
 library view_design;
 
-import 'dart:html';
-import 'dart:svg' as svg;
-
+import 'package:web/web.dart';
+//import 'dart:svg' as svg;
+import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:dnd/dnd.dart';
 import 'package:js/js.dart';
@@ -68,30 +68,32 @@ const SELECTION_BOX_DRAWABLE_CLASS = 'selection-box-drawable';
 enum DraggableComponent { main, side }
 
 class DesignViewComponent {
-  DivElement root_element;
+  HTMLDivElement root_element;
 
-  DivElement design_above_footer_pane = DivElement()..attributes = {'id': 'design'};
-  DivElement footer_separator = DivElement()
-    ..attributes = {'id': 'design-footer-separator', 'class': 'fixed-separator'};
-  DivElement footer_element = DivElement()..attributes = {'id': FOOTER_ID};
-  DivElement modes_element = DivElement()..attributes = {'id': MODES_ID};
-  DivElement error_message_pane = DivElement()..attributes = {'id': 'error-message-pane'};
+  HTMLDivElement design_above_footer_pane = HTMLDivElement()..setAttribute('id', 'design');
+  HTMLDivElement footer_separator = HTMLDivElement()
+    ..setAttribute('id', 'design-footer-separator')
+    ..setAttribute('class', 'fixed-separator');
+  HTMLDivElement footer_element = HTMLDivElement()..setAttribute('id', FOOTER_ID);
+  HTMLDivElement modes_element = HTMLDivElement()..setAttribute('id', MODES_ID);
+  HTMLDivElement error_message_pane = HTMLDivElement()..setAttribute('id', 'error-message-pane');
 
-  DivElement side_view_menu = DivElement()..attributes = {'id': SIDE_VIEW_MENU_ID};
+  HTMLDivElement side_view_menu = HTMLDivElement()..setAttribute('id', SIDE_VIEW_MENU_ID);
 
-  DivElement context_menu_container = DivElement()..attributes = {'id': 'context-menu-container'};
-  DivElement dialog_form_container = DivElement()..attributes = {'class': 'dialog-form-container'};
-  DivElement dialog_loading_container = DivElement()..attributes = {'class': 'dialog-loading-container'};
-  DivElement strand_color_picker_container = DivElement()
-    ..attributes = {'id': 'strand-color-picker-container'};
+  HTMLDivElement context_menu_container = HTMLDivElement()..setAttribute('id', 'context-menu-container');
+  HTMLDivElement dialog_form_container = HTMLDivElement()..setAttribute('class', 'dialog-form-container');
+  HTMLDivElement dialog_loading_container = HTMLDivElement()
+    ..setAttribute('class', 'dialog-loading-container');
+  HTMLDivElement strand_color_picker_container = HTMLDivElement()
+    ..setAttribute('id', 'strand-color-picker-container');
 
-  late svg.SvgSvgElement side_view_svg;
-  late svg.SvgSvgElement main_view_svg;
+  late SVGSVGElement side_view_svg;
+  late SVGSVGElement main_view_svg;
 
   late ErrorMessageComponent error_message_component;
 
-  late DivElement side_pane;
-  late DivElement main_pane;
+  late HTMLDivElement side_pane;
+  late HTMLDivElement main_pane;
 
   bool svg_panzoom_has_been_set_up = false;
 
@@ -99,81 +101,80 @@ class DesignViewComponent {
   Point<double> main_view_mouse_position = Point<double>(0, 0);
 
   DesignViewComponent(this.root_element) {
-    this.side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
-    var side_main_separator = DivElement()
-      ..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
-    this.main_pane = DivElement()..attributes = {'id': 'main-pane', 'class': 'split'};
+    this.side_pane = HTMLDivElement()
+      ..setAttribute('id', 'side-pane')
+      ..setAttribute('class', 'split');
+    var side_main_separator = HTMLDivElement()
+      ..setAttribute('id', 'side-main-separator')
+      ..setAttribute('class', 'draggable-separator');
+    this.main_pane = HTMLDivElement()
+      ..setAttribute('id', 'main-pane')
+      ..setAttribute('class', 'split');
 
-    side_view_svg = svg.SvgSvgElement()
-      ..attributes = {
-        'id': SIDE_VIEW_SVG_ID,
-        'class': PANZOOMABLE_CLASS,
-        'width': '100%',
-        'height': '100%',
-      };
+    side_view_svg = SVGSVGElement()
+      ..setAttribute('id', SIDE_VIEW_SVG_ID)
+      ..setAttribute('class', PANZOOMABLE_CLASS)
+      ..setAttribute('width', '100%')
+      ..setAttribute('height', '100%');
 
-    main_view_svg = svg.SvgSvgElement()
-      ..attributes = {
-        'id': MAIN_VIEW_SVG_ID,
-        'class': PANZOOMABLE_CLASS,
-        'width': '100%',
-        'height': '100%',
-      };
+    main_view_svg = SVGSVGElement()
+      ..setAttribute('id', MAIN_VIEW_SVG_ID)
+      ..setAttribute('class', PANZOOMABLE_CLASS)
+      ..setAttribute('width', '100%')
+      ..setAttribute('height', '100%');
     add_shadow_filter(main_view_svg);
 
-    var main_arrows = svg.SvgSvgElement()
-      ..attributes = {
-        'id': MAIN_VIEW_ARROWS_SVG_ID,
-        'width': '85px',
-        'height': '85px',
-      };
+    var main_arrows = SVGSVGElement()
+      ..setAttribute('id', MAIN_VIEW_ARROWS_SVG_ID)
+      ..setAttribute('width', '85px')
+      ..setAttribute('height', '85px');
 
-    var side_arrows = svg.SvgSvgElement()
-      ..attributes = {
-        'id': SIDE_VIEW_ARROWS_SVG_ID,
-        'width': '85px',
-        'height': '85px',
-      };
+    var side_arrows = SVGSVGElement()
+      ..setAttribute('id', SIDE_VIEW_ARROWS_SVG_ID)
+      ..setAttribute('width', '85px')
+      ..setAttribute('height', '85px');
 
-    var side_view_svg_viewport = svg.GElement()
-      ..attributes = {
-        'id': SIDE_VIEW_SVG_VIEWPORT_GROUP,
-      };
-    var main_view_svg_viewport = svg.GElement()
-      ..attributes = {
-        'id': MAIN_VIEW_SVG_VIEWPORT_GROUP,
-      };
+    var side_view_svg_viewport = SVGGElement()..setAttribute('id', SIDE_VIEW_SVG_VIEWPORT_GROUP);
+    var main_view_svg_viewport = SVGGElement()..setAttribute('id', MAIN_VIEW_SVG_VIEWPORT_GROUP);
 
-    side_view_svg.children.add(side_view_svg_viewport);
-    main_view_svg.children.add(main_view_svg_viewport);
+    side_view_svg.append(side_view_svg_viewport);
+    main_view_svg.append(main_view_svg_viewport);
 
-    var side_view_dummy_elt = svg.CircleElement()
-      ..attributes = {'id': 'dummy-elt-side-view', 'r': '100', 'cx': '100', 'cy': '50', 'fill': 'white'};
-    var main_view_dummy_elt = svg.CircleElement()
-      ..attributes = {'id': 'dummy-elt-main-view', 'r': '200', 'cx': '100', 'cy': '100', 'fill': 'white'};
-    side_view_svg_viewport.children.add(side_view_dummy_elt);
-    main_view_svg_viewport.children.add(main_view_dummy_elt);
+    var side_view_dummy_elt = SVGCircleElement()
+      ..setAttribute('id', 'dummy-elt-side-view')
+      ..setAttribute('r', '100')
+      ..setAttribute('cx', '100')
+      ..setAttribute('cy', '50')
+      ..setAttribute('fill', 'white');
+    var main_view_dummy_elt = SVGCircleElement()
+      ..setAttribute('id', 'dummy-elt-main-view')
+      ..setAttribute('r', '200')
+      ..setAttribute('cx', '100')
+      ..setAttribute('cy', '100')
+      ..setAttribute('fill', 'white');
+    side_view_svg_viewport.append(side_view_dummy_elt);
+    main_view_svg_viewport.append(main_view_dummy_elt);
 
-    this.root_element.children.add(design_above_footer_pane);
-    this.root_element.children.add(this.context_menu_container);
-    this.root_element.children.add(this.dialog_form_container);
-    this.root_element.children.add(this.dialog_loading_container);
-    this.root_element.children.add(this.strand_color_picker_container);
-    this.root_element.children.add(this.footer_separator);
-    this.root_element.children.add(this.footer_element);
+    this.root_element.append(design_above_footer_pane);
+    this.root_element.append(this.context_menu_container);
+    this.root_element.append(this.dialog_form_container);
+    this.root_element.append(this.dialog_loading_container);
+    this.root_element.append(this.strand_color_picker_container);
+    this.root_element.append(this.footer_separator);
+    this.root_element.append(this.footer_element);
 
-    design_above_footer_pane.children.add(side_pane);
-    design_above_footer_pane.children.add(side_main_separator);
-    design_above_footer_pane.children.add(main_pane);
+    design_above_footer_pane.append(side_pane);
+    design_above_footer_pane.append(side_main_separator);
+    design_above_footer_pane.append(main_pane);
     setup_splits(false);
 
     this.error_message_component = ErrorMessageComponent(error_message_pane);
 
-    side_pane.children.add(side_view_menu);
-    side_pane.children.add(side_view_svg);
-    side_pane.children.add(side_arrows);
-    main_pane.children.add(main_view_svg);
-    main_pane.children.add(main_arrows);
+    side_pane.append(side_view_menu);
+    side_pane.append(side_view_svg);
+    side_pane.append(side_arrows);
+    main_pane.append(main_view_svg);
+    main_pane.append(main_arrows);
 
     set_side_main_pane_widths();
     handle_keyboard_mouse_events();
@@ -195,7 +196,7 @@ class DesignViewComponent {
   };
 
   handle_keyboard_mouse_events() {
-    document.onClick.listen((MouseEvent event) {
+    document.addEventListener('click', (event = Event)=> {
       Element target = event.target as Element;
       // put away context menu if click occurred anywhere outside of it
       if (app.state.ui_state.context_menu != null) {
@@ -222,7 +223,7 @@ class DesignViewComponent {
     // disable pan in svg-pan-zoom unless background SVG object was clicked
     for (var view_svg in [main_view_svg, side_view_svg]) {
       view_svg.onMouseDown.listen((event) {
-        util.set_allow_pan(event.target is svg.SvgSvgElement);
+        util.set_allow_pan(event.target is SVGSVGElement);
       });
       //XXX: Dart doesn't have onPointerUp, so we have to trigger from JS,
       // which calls [main_view_pointer_up]
@@ -412,9 +413,9 @@ class DesignViewComponent {
     // need to install and uninstall Draggable on each cycle of Ctrl/Shift key-down/up,
     // because while installed, Draggable stops the mouse events that the svg-pan-zoom library listens to.
     window.onKeyDown.listen((ev) {
-      int key = ev.which!;
+      int key = ev.which;
 
-      if (!ev.repeat!) {
+      if (!ev.repeat) {
         app.keys_pressed.add(key);
 
         if (key == KeyCode.ESC) {
@@ -432,8 +433,8 @@ class DesignViewComponent {
 
       // restore panzoomable class to change CSS cursor
       for (var svg_elt in [this.main_view_svg, this.side_view_svg]) {
-        svg_elt.classes.add(PANZOOMABLE_CLASS);
-        svg_elt.classes.remove(SELECTION_BOX_DRAWABLE_CLASS);
+        svg_elt.classList.add(PANZOOMABLE_CLASS);
+        svg_elt.classList.remove(SELECTION_BOX_DRAWABLE_CLASS);
       }
 
       // if rope-selecting, send actions to select items and remove displayed rope
@@ -498,14 +499,14 @@ class DesignViewComponent {
 
         // close grabbing hand if mouse key is going down
         if (left_click) {
-          svg_elt.classes.add(DRAGGING_CLASS);
+          svg_elt.classList.add(DRAGGING_CLASS);
         }
       });
 
       // open grabbing hand if mouse key is going up
       svg_elt.onMouseUp.listen((MouseEvent event) {
         if (util.left_mouse_button_caused_mouse_event(event)) {
-          svg_elt.classes.remove(DRAGGING_CLASS);
+          svg_elt.classList.remove(DRAGGING_CLASS);
         }
       });
     }
@@ -577,8 +578,8 @@ class DesignViewComponent {
 
       // remove panzoomable class to change CSS cursor
       for (var svg_elt in [this.main_view_svg, this.side_view_svg]) {
-        svg_elt.classes.remove(PANZOOMABLE_CLASS);
-        svg_elt.classes.add(SELECTION_BOX_DRAWABLE_CLASS);
+        svg_elt.classList.remove(PANZOOMABLE_CLASS);
+        svg_elt.classList.add(SELECTION_BOX_DRAWABLE_CLASS);
       }
     } else if (!ev.ctrlKey &&
         !ev.metaKey &&
@@ -603,8 +604,8 @@ class DesignViewComponent {
       // but we don't want the draggable installed in rope select mode.
       // remove panzoomable class to change CSS cursor
       for (var svg_elt in [this.main_view_svg, this.side_view_svg]) {
-        svg_elt.classes.remove(PANZOOMABLE_CLASS);
-        svg_elt.classes.add(SELECTION_BOX_DRAWABLE_CLASS);
+        svg_elt.classList.remove(PANZOOMABLE_CLASS);
+        svg_elt.classList.add(SELECTION_BOX_DRAWABLE_CLASS);
       }
 
       // We do want to turn off panning in rope select mode.
@@ -683,14 +684,14 @@ class DesignViewComponent {
       draggables[draggable_component] = null;
       // class .dnd-drag-occurring not removed if Shift or Ctrl key depressed while mouse is lifted,
       // so we need to remove it manually just in case
-      document.body!.classes.remove('dnd-drag-occurring');
+      document.body!.classList.remove('dnd-drag-occurring');
       if (app.store_selection_box.state != null) {
         app.dispatch(actions.SelectionBoxRemove(is_main_view));
       }
     }
   }
 
-  install_draggable(bool is_main_view, DraggableComponent draggable_component, svg.SvgSvgElement view_svg) {
+  install_draggable(bool is_main_view, DraggableComponent draggable_component, SVGSVGElement view_svg) {
     if (draggables[draggable_component] != null) {
       return;
     }
@@ -700,7 +701,7 @@ class DesignViewComponent {
     draggable.onDragEnd.listen((ev) => drag_end(ev, view_svg, is_main_view));
   }
 
-  drag_start(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
+  drag_start(DraggableEvent draggable_event, SVGSVGElement view_svg, bool is_main_view) {
     MouseEvent event = draggable_event.originalEvent as MouseEvent;
     Point<double> point =
         util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
@@ -719,7 +720,7 @@ class DesignViewComponent {
     }
   }
 
-  drag(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
+  drag(DraggableEvent draggable_event, SVGSVGElement view_svg, bool is_main_view) {
     MouseEvent event = draggable_event.originalEvent as MouseEvent;
     Point<double> point =
         util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
@@ -736,7 +737,7 @@ class DesignViewComponent {
     }
   }
 
-  drag_end(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
+  drag_end(DraggableEvent draggable_event, SVGSVGElement view_svg, bool is_main_view) {
     if (edit_mode_is_select()) {
       if (app.store_selection_box.state == null) {
         return;
@@ -771,12 +772,12 @@ class DesignViewComponent {
 
   render(AppState state) {
     if (state.has_error) {
-      if (!root_element.children.contains(this.error_message_pane)) {
+      if (!root_element.contains(this.error_message_pane)) {
         this.root_element.children.clear();
-        this.root_element.children.add(this.error_message_pane);
-        this.root_element.children.add(this.dialog_form_container);
-        this.root_element.children.add(this.dialog_loading_container);
-        this.root_element.children.add(this.strand_color_picker_container);
+        this.root_element.append(this.error_message_pane);
+        this.root_element.append(this.dialog_form_container);
+        this.root_element.append(this.dialog_loading_container);
+        this.root_element.append(this.strand_color_picker_container);
       }
       this.error_message_component.render(state.error_message);
 
@@ -811,15 +812,15 @@ class DesignViewComponent {
 //      );
 //      react_dom.render(react_svg_pan_zoom_main, this.main_pane);
 
-      if (!this.root_element.children.contains(this.design_above_footer_pane)) {
+      if (!this.root_element.contains(this.design_above_footer_pane)) {
         this.root_element.children.clear();
-        this.root_element.children.add(this.design_above_footer_pane);
-        this.root_element.children.add(this.footer_separator);
-        this.root_element.children.add(this.footer_element);
-        this.root_element.children.add(this.dialog_form_container);
-        this.root_element.children.add(this.dialog_loading_container);
-        this.root_element.children.add(this.strand_color_picker_container);
-        this.root_element.children.add(this.context_menu_container);
+        this.root_element.append(this.design_above_footer_pane);
+        this.root_element.append(this.footer_separator);
+        this.root_element.append(this.footer_element);
+        this.root_element.append(this.dialog_form_container);
+        this.root_element.append(this.dialog_loading_container);
+        this.root_element.append(this.strand_color_picker_container);
+        this.root_element.append(this.context_menu_container);
       }
 
       // side view menu
@@ -1053,6 +1054,7 @@ BuiltSet<String> group_names_of_ends(DNAEndsMove ends_move) =>
 BuiltSet<String> group_names_of_extensions(DNAExtensionsMove extensions_move) =>
     app.state.design.group_names_of_ends(extensions_move.ends_moving);
 
+@JSExport()
 main_view_pointer_up(MouseEvent event) {
 //  util.set_allow_pan(true);
   if (app.state.ui_state.slice_bar_is_moving) {

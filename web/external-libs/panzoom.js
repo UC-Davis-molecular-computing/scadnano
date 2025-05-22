@@ -1262,13 +1262,13 @@ function getRequestAnimationFrame() {
 },{}],5:[function(require,module,exports){
 module.exports = makeSvgController
 
-function makeSvgController(svgElement, options) {
-  var elementValid = (svgElement instanceof SVGElement)
+function makeSvgController(SVGElement, options) {
+  var elementValid = (SVGElement instanceof SVGElement)
   if (!elementValid) {
     throw new Error('svg element is required for svg.panzoom to work')
   }
 
-  var owner = svgElement.ownerSVGElement
+  var owner = SVGElement.ownerSVGElement
   if (!owner) {
     throw new Error(
       'Do not apply panzoom to the root <svg> element. ' +
@@ -1295,7 +1295,7 @@ function makeSvgController(svgElement, options) {
   }
 
   function getBBox() {
-    var bbox =  svgElement.getBBox()
+    var bbox =  SVGElement.getBBox()
     return {
       left: bbox.x,
       top: bbox.y,
@@ -1309,7 +1309,7 @@ function makeSvgController(svgElement, options) {
   }
 
   function initTransform(transform) {
-    var screenCTM = svgElement.getCTM()
+    var screenCTM = SVGElement.getCTM()
     transform.x = screenCTM.e;
     transform.y = screenCTM.f;
     transform.scale = screenCTM.a;
@@ -1317,7 +1317,7 @@ function makeSvgController(svgElement, options) {
   }
 
   function applyTransform(transform) {
-    svgElement.setAttribute('transform', 'matrix(' +
+    SVGElement.setAttribute('transform', 'matrix(' +
       transform.scale + ' 0 0 ' +
       transform.scale + ' ' +
       transform.x + ' ' + transform.y + ')')

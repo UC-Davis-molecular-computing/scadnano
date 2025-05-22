@@ -1,6 +1,6 @@
-import 'dart:html' hide Rectangle;
+//import 'dart:html' hide Rectangle;
+import 'package:web/web.dart';
 import 'dart:math';
-import 'dart:svg' as svg;
 
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
@@ -28,10 +28,10 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
     bool is_origami = state.design.is_origami;
     var select_modes = state.ui_state.select_mode_state.modes;
 
-    Set<svg.SvgElement> elts_overlapping;
+    Set<SVGSVGElement> elts_overlapping;
     if (action.box) {
       // use selection box
-      svg.RectElement? select_box = querySelector('#selection-box-main') as svg.RectElement?;
+      SVGRectElement? select_box = document.querySelector('#selection-box-main') as SVGRectElement?;
       if (select_box == null) {
         print('no selection box found, so not changing selections');
         return;
@@ -50,7 +50,7 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
           .toSet();
     } else {
       // use selection rope
-      svg.PolygonElement? rope_elt = querySelector('#selection-rope-main') as svg.PolygonElement?;
+      SVGPolygonElement? rope_elt = document.querySelector('#selection-rope-main') as SVGPolygonElement?;
       if (rope_elt == null) {
         print('no selection rope found, so not changing selections');
         return;
@@ -85,25 +85,25 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
 
 /// Get points in SVG polygon element as list of math.Point<double>
 /// Note that rope_elt.points are after the SVG transforms have been applied, so we have to undo them.
-List<Point<double>> points_of_polygon_elt(svg.PolygonElement rope_elt) {
-  svg.PointList point_list = rope_elt.points; // SVG representation
-  List<svg.Point> points_svg = [for (int i = 0; i < point_list.length!; i++) point_list.getItem(i)];
+List<Point<double>> points_of_polygon_elt(SVGPolygonElement rope_elt) {
+  SVGPointList point_list = rope_elt.points; // SVG representation
+  List<Point> points_svg = [for (int i = 0; i < point_list.length; i++) point_list.getItem(i)];
   List<Point<double>> points = [
-    for (var point_svg in points_svg) Point<double>(point_svg.x! as double, point_svg.y! as double)
+    for (var point_svg in points_svg) Point<double>(point_svg.x as double, point_svg.y as double)
   ];
   return points;
 }
 
 /// gets list of elements associated to Selectables that intersect selection rope [rope]
 /// (described as list of points in non-self-intersecting polygon) in elements with classname
-List<svg.SvgElement> elements_intersecting_polygon(String classname, List<Point<double>> polygon,
+List<SVGSVGElement> elements_intersecting_polygon(String classname, List<Point<double>> polygon,
     Iterable<SelectModeChoice> select_modes, bool is_origami, bool selection_box_intersection) {
   var overlap = selection_box_intersection ? polygon_intersects_rect : polygon_contains_rect;
   return generalized_intersection_list_polygon(classname, polygon, select_modes, is_origami, overlap);
 }
 
 // gets list of elements associated to Selectables that intersect select_box_bbox in elements with classname
-List<svg.SvgElement> elements_intersecting_box(String classname, Rectangle<num> select_box_bbox,
+List<SVGSVGElement> elements_intersecting_box(String classname, Rectangle<num> select_box_bbox,
     Iterable<SelectModeChoice> select_modes, bool is_origami, bool selection_box_intersection) {
   var overlap = selection_box_intersection ? interval_intersect : interval_contained;
   return generalized_intersection_list_box(classname, select_box_bbox, select_modes, is_origami, overlap);
@@ -116,13 +116,13 @@ generalized_intersection_list_polygon(
     Iterable<SelectModeChoice> select_modes,
     bool is_origami,
     bool overlap(List<Point<double>> polygon, Rectangle<num> rect)) {
-  List<svg.SvgElement> elts_intersecting = [];
-  List<svg.GraphicsElement> selectable_elts = find_selectable_elements(select_modes, is_origami);
+  List<SVGSVGElement> elts_intersecting = [];
+  List<SVGGraphicsElement> selectable_elts = find_selectable_elements(select_modes, is_origami);
 
-  for (svg.GraphicsElement elt in selectable_elts) {
+  for (SVGGraphicsElement elt in selectable_elts) {
     // getBBox uses SVG coordinates, same as those in the polygon, whereas get getBoundingClientRect()
     // uses coordinates within the "viewport"
-    svg.Rect elt_bbox_svg_rect = elt.getBBox();
+    DOMRect elt_bbox_svg_rect = elt.getBBox();
     Rectangle<num> elt_bbox = util.svg_rect_to_rectangle(elt_bbox_svg_rect);
     if (overlap(polygon, elt_bbox)) {
       elts_intersecting.add(elt);
@@ -140,10 +140,10 @@ generalized_intersection_list_polygon(
 /// or the default interval contained, that the second completely contains the first)
 generalized_intersection_list_box(String classname, Rectangle<num> select_box_bbox,
     Iterable<SelectModeChoice> select_modes, bool is_origami, bool overlap(num l1, num h1, num l2, num h2)) {
-  List<svg.SvgElement> elts_intersecting = [];
-  List<svg.GraphicsElement> selectable_elts = find_selectable_elements(select_modes, is_origami);
+  List<SVGSVGElement> elts_intersecting = [];
+  List<SVGGraphicsElement> selectable_elts = find_selectable_elements(select_modes, is_origami);
 
-  for (svg.GraphicsElement elt in selectable_elts) {
+  for (SVGGraphicsElement elt in selectable_elts) {
     Rectangle<num> elt_bbox = elt.getBoundingClientRect();
     if (bboxes_intersect_generalized(elt_bbox, select_box_bbox, overlap)) {
       elts_intersecting.add(elt);
@@ -288,7 +288,7 @@ List<Line> lines_of_rect(Rectangle<num> rect) {
   return [top_line, bot_line, left_line, right_line];
 }
 
-List<svg.GraphicsElement> find_selectable_elements(Iterable<SelectModeChoice> select_modes, bool is_origami) {
+List<SVGGraphicsElement> find_selectable_elements(Iterable<SelectModeChoice> select_modes, bool is_origami) {
   List<SelectModeChoice> select_modes_not_scaffold_or_staple = [
     for (var mode in select_modes)
       if (mode != SelectModeChoice.scaffold && mode != SelectModeChoice.staple) mode
@@ -318,7 +318,7 @@ List<svg.GraphicsElement> find_selectable_elements(Iterable<SelectModeChoice> se
       selectors.add('.${mode.css_selector()}');
     }
   }
-  List<svg.GraphicsElement> selectable_elts = querySelectorAll(selectors.join(', '));
+  List<SVGGraphicsElement> selectable_elts = document.querySelectorAll(selectors.join(', '));
   return selectable_elts;
 }
 
@@ -331,8 +331,8 @@ class Box {
   num x;
   num y;
 
-  factory Box.from(svg.Rect svg_rect) =>
-      Box(svg_rect.x!, svg_rect.y!, width: svg_rect.width!, height: svg_rect.height!);
+  factory Box.from(DOMRect svg_rect) =>
+      Box(svg_rect.x, svg_rect.y, width: svg_rect.width, height: svg_rect.height);
 
   factory Box.from_selection_box(SelectionBox box) => Box(box.x, box.y, width: box.width, height: box.height);
 
@@ -440,6 +440,6 @@ bool boxes_intersect_generalized(Box elt_bbox, Box select_box, bool overlap(num 
 // to call getBoundingClientRect() on *everything*, which essentially untransforms all of them all the
 // way up to the root of the whole DOM and gives absolute coordinates within the browser's viewport.
 //// gets list of elements associated to Selectables that intersect select_box_bbox in elements with classname
-//List<SvgElement> intersection_list_in_elt(String classname, Rect select_box_bbox) {
+//List<SVGElement> intersection_list_in_elt(String classname, Rect select_box_bbox) {
 //  return generalized_intersection_list_in_elt(classname, select_box_bbox, intervals_overlap);
 //}

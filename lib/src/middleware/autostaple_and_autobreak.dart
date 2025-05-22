@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:html';
+import 'package:web/web.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:redux/redux.dart';

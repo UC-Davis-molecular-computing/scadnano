@@ -1,10 +1,11 @@
-import 'dart:html';
+import 'package:web/web.dart';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/modification_type.dart';
 import 'package:scadnano/src/state/substrand.dart';
+import 'dart:math';
 
 import '../state/domain.dart';
 import '../state/extension.dart';

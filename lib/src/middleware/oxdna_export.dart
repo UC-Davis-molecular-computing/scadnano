@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:html';
+import 'package:web/web.dart';
 import 'dart:math';
 import 'package:path/path.dart' as path;
 import 'package:quiver/iterables.dart' as quiver;

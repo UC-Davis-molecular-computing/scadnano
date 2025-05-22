@@ -1,4 +1,4 @@
-import 'dart:html';
+import 'package:web/web.dart';
 
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
@@ -11,7 +11,7 @@ import 'package:scadnano/src/state/linker.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/modification_type.dart';
 import 'package:scadnano/src/view/design_main_strand_dna_extension_end_moving.dart';
-
+import 'dart:math';
 import '../state/address.dart';
 import '../state/context_menu.dart';
 import '../state/geometry.dart';
@@ -205,7 +205,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     } else {
       id = props.domain != null ? props.domain!.dnaend_3p.id : props.ext!.dnaend_free.id;
     }
-    var element = querySelector('#${id}')!;
+    var element = document.querySelector('#${id}')!;
     element.addEventListener('contextmenu', on_context_menu);
   }
 
@@ -217,7 +217,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     } else {
       id = props.domain != null ? props.domain!.dnaend_3p.id : props.ext!.dnaend_free.id;
     }
-    var element = querySelector('#${id}')!;
+    var element = document.querySelector('#${id}')!;
     element.removeEventListener('contextmenu', on_context_menu);
     super.componentWillUnmount();
   }

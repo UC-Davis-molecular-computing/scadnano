@@ -1,4 +1,4 @@
-import 'dart:html';
+import 'package:web/web.dart';
 
 import 'package:color/color.dart';
 import 'package:over_react/components.dart';

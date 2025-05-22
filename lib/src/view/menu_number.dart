@@ -1,4 +1,4 @@
-import 'dart:html';
+import 'package:web/web.dart';
 
 import 'package:over_react/over_react.dart';
 
@@ -58,7 +58,7 @@ class MenuNumberComponent extends UiComponent2<MenuNumberProps> {
             ..step = '${props.step}'
             ..id = input_elt_id
             ..onChange = (_) {
-              InputElement inputElement = document.getElementById(input_elt_id) as InputElement;
+              HTMLInputElement inputElement = document.getElementById(input_elt_id) as HTMLInputElement;
               num? new_value = num.tryParse(inputElement.value ?? '');
               if (new_value != null) {
                 props.on_new_value(new_value);

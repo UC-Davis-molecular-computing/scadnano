@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'dart:html';
+import 'dart:math';
+import 'package:web/web.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:scadnano/src/json_serializable.dart';

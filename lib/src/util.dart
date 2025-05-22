@@ -1,13 +1,14 @@
 @JS()
 library util;
 
-import 'dart:html';
+import 'package:web/web.dart';
 import 'dart:collection';
-import 'dart:js' as js;
+//import 'dart:js' as js;
 import 'dart:math';
 import 'dart:async';
-import 'dart:svg' hide Point, ImageElement;
+//import 'dart:svg' hide Point, ImageElement;
 import 'dart:typed_data';
+import "dart:js_interop";
 
 import 'package:xml/xml.dart';
 
@@ -15,8 +16,8 @@ import 'package:collection/collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
-import 'package:js/js.dart';
-import 'package:js/js_util.dart';
+// import 'package:js/js.dart';
+// import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:scadnano/src/reducers/helices_reducer.dart';
 import 'package:scadnano/src/state/strand_creation.dart';
@@ -66,9 +67,9 @@ into the bug report any additional error information displayed in the app. Thank
 /////////////////////////////////////////////////////////////////////////////
 // interop between Dart and JS
 
-make_dart_function_available_to_js(String js_function_name, Function dart_func) {
-  setProperty(window, js_function_name, allowInterop(dart_func));
-}
+// make_dart_function_available_to_js(String js_function_name, Function dart_func) {
+//   setProperty(window, js_function_name, allowInterop(dart_func));
+// }
 
 @JS()
 external void set_allow_pan(bool allow);
@@ -273,7 +274,7 @@ Future<List<DialogItem>?> dialog(Dialog dialog) async {
 /// Gets grid position of mouse cursor in side view.
 GridPosition grid_position_of_mouse_in_side_view(Grid grid, bool invert_y, Geometry geometry,
     {Point<double>? mouse_pos = null, MouseEvent? event = null}) {
-  SvgSvgElement side_view_elt = querySelector('#${SIDE_VIEW_SVG_ID}') as SvgSvgElement;
+  SVGSVGElement side_view_elt = querySelector('#${SIDE_VIEW_SVG_ID}') as SVGSVGElement;
   var svg_pos = transformed_svg_point(side_view_elt, false, mouse_pos: mouse_pos, event: event);
   var grid_pos = side_view_svg_to_grid(grid, svg_pos, invert_y, geometry);
   return grid_pos;
@@ -411,7 +412,7 @@ Tuple2<int, int>? repeated_element_indices<T>(List<T> list) {
 /// even if the left button was not the one pressed, e.g., if it is pressed while moving or pressing
 /// the right button.
 /// NOTE: Returns false if left mouse button goes up. For that use left_mouse_button_caused_mouse_event.
-bool left_mouse_button_pressed_during_mouse_event(MouseEvent event) => event.buttons! & 1 == 1;
+bool left_mouse_button_pressed_during_mouse_event(MouseEvent event) => event.buttons & 1 == 1;
 
 /// Indicates if left mouse button going down or up caused [event].
 bool left_mouse_button_caused_mouse_event(MouseEvent event) => event.button == 0;
@@ -629,36 +630,37 @@ Point<double> svg_position_of_mouse_click(MouseEvent event) {
   if (browser.isFirefox) {
     offset_in_svg_elt = get_svg_point(event);
   } else {
-    offset_in_svg_elt = from_point_num(event.offset);
+    offset_in_svg_elt = new Point<double>(event.offsetX, event.offsetY);
   }
   return transform_mouse_coord_to_svg_current_panzoom(offset_in_svg_elt, true);
 }
 
 Point<double> get_svg_point(MouseEvent event) {
   if (browser.isFirefox) {
-    SvgElement target = event.target as SvgElement;
+    SVGElement target = event.target as SVGElement;
     Element svg_elt = svg_ancestor(target);
-    var rect = svg_elt.getBoundingClientRect().topLeft;
-    var offset = event.client - rect;
-    return from_point_num(offset);
+    //TODO: May be wrong
+    var rect = svg_elt.getBoundingClientRect();
+    return new Point<double>(
+        rect.x - rect.width / 2 - event.clientX, rect.y - rect.width / 2 - event.clientY);
   } else {
     return from_point_num(event.client);
   }
 }
 
-SvgSvgElement svg_ancestor(SvgElement elt) {
-  while (!(elt is SvgSvgElement)) {
-    elt = elt.parent as SvgElement;
+SVGSVGElement svg_ancestor(SVGElement elt) {
+  while (elt is! SVGElement) {
+    elt = elt.parentNode! as SVGElement;
   }
-  return elt;
+  return elt as SVGSVGElement;
 }
 
-Point<double> rect_to_point(Rect rect) => Point<double>(rect.x! as double, rect.y! as double);
+Point<double> rect_to_point(DOMRect rect) => Point<double>(rect.x, rect.y);
 
 Point<int> round_point(Point<double> point) => Point<int>(point.x.round(), point.y.round());
 
 Point<double> transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
-    MouseEvent event, bool is_main_view, SvgSvgElement view_svg) {
+    MouseEvent event, bool is_main_view, SVGSVGElement view_svg) {
   Point<double> point;
   if (!browser.isFirefox) {
     point = from_point_num(event.offset);
@@ -673,7 +675,7 @@ Point<double> transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
 /// Gets untransformed coordinates of mouse_pos. If mouse_pos==null, get it from mouse event.client.
 /// XXX: Firefox is the only browser to handle this correctly; cross-browser solution taken from
 /// https://stackoverflow.com/questions/19713320/svg-viewbox-doesnt-return-correct-mouse-points-with-nested-svg-in-firefox
-Point<double> untransformed_svg_point(SvgSvgElement svg_elt,
+Point<double> untransformed_svg_point(SVGSVGElement svg_elt,
     {Point<double>? mouse_pos = null, MouseEvent? event = null}) {
   var svg_point_SVG = svg_elt.createSvgPoint();
   if (mouse_pos == null) {
@@ -691,7 +693,7 @@ Point<double> untransformed_svg_point(SvgSvgElement svg_elt,
 /// Gets untransformed coordinates of mouse event in svg_elt.
 /// XXX: Firefox is the only browser to handle this correctly; cross-browser solution taken from
 /// https://stackoverflow.com/questions/19713320/svg-viewbox-doesnt-return-correct-mouse-points-with-nested-svg-in-firefox
-Point<double> transformed_svg_point(SvgSvgElement svg_elt, bool is_main,
+Point<double> transformed_svg_point(SVGSVGElement svg_elt, bool is_main,
     {Point<double>? mouse_pos = null, MouseEvent? event = null}) {
   var svg_pos_untransformed = untransformed_svg_point(svg_elt, mouse_pos: mouse_pos, event: event);
   var svg_pos = transform_mouse_coord_to_svg_current_panzoom(svg_pos_untransformed, is_main);
@@ -721,38 +723,38 @@ Point<double> transform_svg_to_mouse_coord(Point<double> point, Point<double> pa
   }
 }
 
-Rectangle<double> svg_rect_to_rectangle(Rect rect) =>
-    Rectangle<double>(rect.x! as double, rect.y! as double, rect.width! as double, rect.height! as double);
+Rectangle<double> svg_rect_to_rectangle(DOMRect rect) =>
+    Rectangle<double>(rect.x, rect.y, rect.width, rect.height);
 
-transform_rect(Point<double> transform(Point<double> p, Point<double> pan, double zoom), Rect rect,
+transform_rect(Point<double> transform(Point<double> p, Point<double> pan, double zoom), DOMRect rect,
     Point<double> pan, double zoom) {
-  var up_left = Point<double>(rect.x! as double, rect.y! as double);
-  var low_right = Point<double>(rect.x! + rect.width! as double, rect.y! + rect.height! as double);
+  var up_left = Point<double>(rect.x, rect.y);
+  var low_right = Point<double>(rect.x + rect.width, rect.y + rect.height);
   var up_left_tran = transform(up_left, pan, zoom);
   var low_right_tran = transform(low_right, pan, zoom);
   rect.x = up_left_tran.x;
   rect.y = up_left_tran.y;
-  rect.width = low_right_tran.x - rect.x!;
-  rect.height = low_right_tran.y - rect.y!;
+  rect.width = low_right_tran.x - rect.x;
+  rect.height = low_right_tran.y - rect.y;
 }
 
 ///Modifies Rect in place because there doesn't seem to be a constructor:
 /// https://api.dartlang.org/stable/2.5.2/dart-svg/Rect-class.html
-transform_rect_mouse_coord_to_svg(Rect rect, Point<double> pan, double zoom) {
+transform_rect_mouse_coord_to_svg(DOMRect rect, Point<double> pan, double zoom) {
   transform_rect(transform_mouse_coord_to_svg, rect, pan, zoom);
 }
 
 ///Modifies Rect in place because there doesn't seem to be a constructor:
 /// https://api.dartlang.org/stable/2.5.2/dart-svg/Rect-class.html
-transform_rect_svg_to_mouse_coord(Rect rect, Point<double> pan, double zoom) {
+transform_rect_svg_to_mouse_coord(DOMRect rect, Point<double> pan, double zoom) {
   transform_rect(transform_svg_to_mouse_coord, rect, pan, zoom);
 }
 
-transform_rect_mouse_coord_to_svg_main_view(Rect rect) {
+transform_rect_mouse_coord_to_svg_main_view(DOMRect rect) {
   transform_rect_mouse_coord_to_svg(rect, current_pan(true), current_zoom(true));
 }
 
-transform_rect_svg_to_mouse_coord_main_view(Rect rect) {
+transform_rect_svg_to_mouse_coord_main_view(DOMRect rect) {
   transform_rect_svg_to_mouse_coord(rect, current_pan(true), current_zoom(true));
 }
 
@@ -1046,7 +1048,7 @@ double sigmoid(num x) {
 external clipboard_write(String blob_type_string, Blob content);
 
 @JS(constants.js_function_name_cache_svg)
-external ImageElement cache_svg(String svg_elt_id);
+external HTMLImageElement cache_svg(String svg_elt_id);
 
 @JS(constants.js_function_name_current_zoom_main)
 external double current_zoom_main_js();
@@ -1096,15 +1098,15 @@ Point<double> current_pan(bool is_main) {
 
 double current_zoom(bool is_main) => is_main ? current_zoom_main_js() : current_zoom_side_js();
 
-CssStyleSheet get_scadnano_stylesheet() {
-  for (var stylesheet in document.styleSheets!) {
+CSSStyleSheet get_scadnano_stylesheet() {
+  for (var stylesheet in document.styleSheets) {
     if (stylesheet.href != null && stylesheet.href!.contains(constants.scadnano_css_stylesheet_name)) {
-      return stylesheet as CssStyleSheet;
+      return stylesheet as CSSStyleSheet;
     }
   }
   throw AssertionError('cannot find stylesheet containing "${constants.scadnano_css_stylesheet_name}" '
       'in its href\nlist of stylesheet hrefs:\n'
-      '${[for (var sheet in document.styleSheets!) sheet.href].join("\n")}');
+      '${[for (var sheet in document.styleSheets) sheet.href].join("\n")}');
 }
 
 /// Indicates if loopout between two given strands is a hairpin.
@@ -1132,9 +1134,9 @@ String blob_type_to_string(BlobType blob_type) {
   }
 }
 
-String serialize_svg(SvgSvgElement svg_element, {bool pretty = true}) {
+String serialize_svg(SVGSVGElement svg_element, {bool pretty = true}) {
   // Clone the SVG element to avoid modifying the original
-  var cloned_svg = svg_element.clone(true) as SvgSvgElement;
+  var cloned_svg = svg_element.clone(true) as SVGSVGElement;
 
   // Ensure the svg namespace is declared
   cloned_svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
@@ -1159,24 +1161,27 @@ String serialize_svg(SvgSvgElement svg_element, {bool pretty = true}) {
   return serialized;
 }
 
-copy_svg_as_png(SvgSvgElement svg_element) async {
+copy_svg_as_png(SVGSVGElement svg_element) async {
   try {
     String source = serialize_svg(svg_element);
-    var svgUrl = Url.createObjectUrlFromBlob(new Blob([source], 'image/svg+xml'));
-    var svgImage = new ImageElement(src: svgUrl);
+    var svgUrl = URL.createObjectURL(new Blob([source], BlobPropertyBag(type: 'image/svg+xml')));
+    var svgImage = new HTMLImageElement();
+    svgImage.src = svgUrl;
     document.body!.append(svgImage);
-    svgImage.addEventListener('load', (event) async {
-      var canvas = new CanvasElement();
-      canvas.width = svg_element.viewBox!.baseVal!.width! * 2 as int;
-      canvas.height = svg_element.viewBox!.baseVal!.height! * 2 as int;
-      var canvasCtx = canvas.context2D;
-      canvasCtx.drawImage(svgImage, 0, 0);
-      var imgData = await canvas.toBlob('image/png');
-      clipboard_write('image/png', imgData);
-      svgImage.remove();
+    svgImage.addEventListener(
+        'load',
+        (event) async {
+          var canvas = new HTMLCanvasElement();
+          canvas.width = (svg_element.viewBox.baseVal.width * 2).toInt();
+          canvas.height = (svg_element.viewBox.baseVal.height * 2).toInt();
+          var canvasCtx = canvas.getContext('2d') as CanvasRenderingContext2D;
+          canvasCtx.drawImage(svgImage, 0, 0);
+          var imgData = await canvas.toBlob('image/png');
+          clipboard_write('image/png', imgData);
+          svgImage.remove();
 
-      Url.revokeObjectUrl(svgUrl);
-    });
+          URL.revokeObjectURL(svgUrl);
+        } as EventListener?);
     svgImage.src = svgUrl;
 
     // window.navigator.clipboard.write(DataTransfer()..setData(blob_type_string, content));
@@ -1198,8 +1203,8 @@ save_file(String default_filename, var content,
   try {
     String blob_type_string = blob_type_to_string(blob_type);
     Blob blob = new Blob([content], blob_type_string);
-    String url = Url.createObjectUrlFromBlob(blob);
-    var link = new AnchorElement()
+    String url = URL.createObjectUrlFromBlob(blob);
+    var link = new HTMLAnchorElement()
       ..href = url
       ..download = default_filename;
 
@@ -1215,7 +1220,7 @@ save_file(String default_filename, var content,
       link.remove();
     }
 
-    Url.revokeObjectUrl(url);
+    URL.revokeObjectUrl(url);
     if (and_then != null) {
       and_then();
     }
@@ -1580,28 +1585,29 @@ void svg_to_png_data() {
       // or if there is no strands
       strands_element_list.isEmpty ||
       // or if there is no dna sequence due to design
-      (dna_sequence_element_list.first as GraphicsElement).children.isEmpty ||
+      (dna_sequence_element_list.first as SVGElement).children.length == 0 ||
       // or if cache already exists
       app.state.ui_state.dna_sequence_png_uri != null) {
     return;
   }
 
   // Assigns neccessary DOM elements (guaranteed by conditionals above).
-  GraphicsElement dna_sequence_element = dna_sequence_element_list.first as GraphicsElement;
-  GraphicsElement strands_element = strands_element_list.first as GraphicsElement;
+  SVGGraphicsElement dna_sequence_element = dna_sequence_element_list.first as SVGGraphicsElement;
+  SVGGraphicsElement strands_element = strands_element_list.first as SVGGraphicsElement;
 
   // Wraps dna_sequence_element in a SVG Element because required for Blob
-  SvgSvgElement svg = SvgSvgElement();
-  GraphicsElement dna_sequence_element_copy = clone_and_apply_style(dna_sequence_element) as GraphicsElement;
+  SVGSVGElement svg = SVGSVGElement();
+  SVGGraphicsElement dna_sequence_element_copy =
+      clone_and_apply_style(dna_sequence_element) as SVGGraphicsElement;
 
-  GraphicsElement strands_element_copy = clone_and_apply_style(strands_element) as GraphicsElement;
+  SVGGraphicsElement strands_element_copy = clone_and_apply_style(strands_element) as SVGGraphicsElement;
   strands_element_copy.setAttribute('display', 'none');
 
   // Translates dna_sequence_element_copy down so that it's Blob uri captures the topmost dna sequence
   // inside of it's view box.
-  Rect bbox = dna_sequence_element.getBBox();
-  double dna_sequence_png_horizontal_offset = constants.DNA_SEQUENCE_HORIZONTAL_OFFSET - bbox.x!;
-  double dna_sequence_png_vertical_offset = constants.DNA_SEQUENCE_VERTICAL_OFFSET - bbox.y!;
+  DOMRect bbox = dna_sequence_element.getBBox();
+  double dna_sequence_png_horizontal_offset = constants.DNA_SEQUENCE_HORIZONTAL_OFFSET - bbox.x;
+  double dna_sequence_png_vertical_offset = constants.DNA_SEQUENCE_VERTICAL_OFFSET - bbox.y;
   dna_sequence_element_copy.setAttribute(
       'transform', 'translate(${dna_sequence_png_horizontal_offset}, ${dna_sequence_png_vertical_offset})');
 
@@ -1611,8 +1617,8 @@ void svg_to_png_data() {
 
   // Firefox requires explicit size on svg to draw on canvas.
   // https://stackoverflow.com/questions/34706891/canvas-draw-image-issue-on-firefox-works-well-in-chrome
-  var svg_width = (bbox.width! + constants.DNA_SEQUENCE_HORIZONTAL_OFFSET).toInt();
-  var svg_height = (bbox.height! + constants.DNA_SEQUENCE_VERTICAL_OFFSET).toInt();
+  var svg_width = (bbox.width + constants.DNA_SEQUENCE_HORIZONTAL_OFFSET).toInt();
+  var svg_height = (bbox.height + constants.DNA_SEQUENCE_VERTICAL_OFFSET).toInt();
   svg.setAttribute('width', svg_width.toString());
   svg.setAttribute('height', svg_height.toString());
 
@@ -1620,10 +1626,10 @@ void svg_to_png_data() {
   String data = serialize_svg(svg);
 
   // Constructs a Blob that contains `data` as MIME type of svg.
-  Blob svg_blob = Blob([data], blob_type_to_string(BlobType.image));
+  Blob svg_blob = new Blob([data].toJS, BlobPropertyBag(type: blob_type_to_string(BlobType.image)));
 
   // Creates a DOMString containing the URL representing the svg.
-  String url = Url.createObjectUrl(svg_blob);
+  String url = URL.createObjectURL(svg_blob);
 
   // Debug: print content of svg blob
   // HttpRequest.getString(url).then((String fileContents) {
@@ -1634,26 +1640,27 @@ void svg_to_png_data() {
 
   // IF (DEBUGGING)
   // Uncomment out canvas-dev element in view.dart to use
-  // CanvasElement canvas = document.getElementById('canvas-dev');
+  // HTMLCanvasElement canvas = document.getElementById('canvas-dev');
   // ELSE
-  CanvasElement canvas = document.createElement('canvas') as CanvasElement;
+  HTMLCanvasElement canvas = document.createElement('canvas') as HTMLCanvasElement;
 
   canvas.width = svg_width;
   canvas.height = svg_height;
   canvas.setAttribute('style', 'width: ${canvas.width}px; height: ${canvas.height}px;');
 
   CanvasRenderingContext2D ctx = canvas.context2D;
-  ctx.clearRect(0, 0, bbox.width!, bbox.height!);
+  ctx.clearRect(0, 0, bbox.width, bbox.height);
 
   // IF (DEBUGGING)
   // ImageElement img = document.getElementById('img-dev');
   // img.src = url;
   // ELSE
-  ImageElement img = new ImageElement(src: url);
+  HTMLImageElement img = new HTMLImageElement();
+  img.src = url;
 
   img.onLoad.listen((_) {
     ctx.drawImage(img, 0, 0);
-    Url.revokeObjectUrl(url);
+    URL.revokeObjectURL(url);
     String img_uri = canvas.toDataUrl('image/png');
     app.dispatch(actions.LoadDnaSequenceImageUri(
         img_uri, -dna_sequence_png_horizontal_offset, -dna_sequence_png_vertical_offset));
@@ -1796,8 +1803,8 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix, Point<double> helix
       Point<double> pan = current_pan(true);
       num zoom = current_zoom(true);
       print('mouse event: '
-          'x = ${event.offset.x},   '
-          'y = ${event.offset.y},   '
+          'x = ${event.offsetX},   '
+          'y = ${event.offsetY},   '
           'pan = (${pan.x.toStringAsFixed(2)}, ${pan.y.toStringAsFixed(2)}),   '
           'zoom = ${zoom.toStringAsFixed(2)},   '
           //        'svg_x = ${svg_x.toStringAsFixed(2)},   '

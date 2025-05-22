@@ -1,4 +1,5 @@
-import 'dart:svg' hide Point;
+//import 'dart:svg' hide Point;
+import 'package:web/web.dart';
 import 'dart:math';
 
 import 'package:built_value/serializer.dart';
@@ -48,11 +49,11 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
 
   static const DECIMAL_PLACES = 1;
 
-  static rect_to_string(Rect bbox) => ''
-      '${bbox.x!.toStringAsFixed(DECIMAL_PLACES)} '
-      '${bbox.y!.toStringAsFixed(DECIMAL_PLACES)} '
-      '${bbox.width!.toStringAsFixed(DECIMAL_PLACES)} '
-      '${bbox.height!.toStringAsFixed(DECIMAL_PLACES)}';
+  static rect_to_string(DOMRect bbox) => ''
+      '${bbox.x.toStringAsFixed(DECIMAL_PLACES)} '
+      '${bbox.y.toStringAsFixed(DECIMAL_PLACES)} '
+      '${bbox.width.toStringAsFixed(DECIMAL_PLACES)} '
+      '${bbox.height.toStringAsFixed(DECIMAL_PLACES)}';
 
   String toString() => 'start=('
       '${start.x.toStringAsFixed(DECIMAL_PLACES)}, '
@@ -77,17 +78,17 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
 //}
 //
 //// gets list of elements associated to Selectables that intersect select_box_bbox
-//List<SvgElement> get_intersection_list(Rect select_box_bbox) {
+//List<SVGElement> get_intersection_list(Rect select_box_bbox) {
 //  return get_generalized_intersection_list(select_box_bbox, intervals_overlap);
 //}
 //
 //// gets list of elements associated to Selectables that intersect select_box_bbox
-//List<SvgElement> get_enclosure_list(Rect select_box_bbox) {
+//List<SVGElement> get_enclosure_list(Rect select_box_bbox) {
 //  return get_generalized_intersection_list(select_box_bbox, interval_contained);
 //}
 //
 //get_generalized_intersection_list(Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
-//  List<SvgElement> elts_intersecting = [];
+//  List<SVGElement> elts_intersecting = [];
 //  List<Element> selectable_elts = querySelectorAll('.selectable');
 //  for (GraphicsElement elt in selectable_elts) {
 //    Rect elt_bbox = elt.getBBox();

@@ -1,8 +1,8 @@
-import 'dart:html';
+import 'package:web/web.dart';
 
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-
+import 'dart:math';
 import '../state/app_state.dart';
 import '../state/context_menu.dart';
 import '../app.dart';
@@ -26,7 +26,7 @@ mixin DesignContextMenuProps on UiProps {
 mixin DesignContextMenuState on UiState {
   late int width;
   late int height;
-  late Ref<DivElement?> menu_HTML_element_ref;
+  late Ref<HTMLDivElement?> menu_HTML_element_ref;
 }
 
 class DesignContextMenuComponent extends UiStatefulComponent2<DesignContextMenuProps, DesignContextMenuState>
@@ -37,7 +37,7 @@ class DesignContextMenuComponent extends UiStatefulComponent2<DesignContextMenuP
   Map get initialState => (newState()
     ..width = 0
     ..height = 0
-    ..menu_HTML_element_ref = createRef<DivElement>());
+    ..menu_HTML_element_ref = createRef<HTMLDivElement>());
 
   // how to find width and height of a React element:
   // https://stackoverflow.com/a/43824598
@@ -83,10 +83,9 @@ class DesignContextMenuComponent extends UiStatefulComponent2<DesignContextMenuP
   Point<double> calculate_menu_position() {
     double left = props.context_menu!.position.x, top = props.context_menu!.position.y;
 
-    if (left + state.width > window.innerWidth!)
-      left -= left + state.width - window.innerWidth! + MENU_PADDING;
-    if (top + state.height > window.innerHeight!)
-      top -= top + state.height - window.innerHeight! + MENU_PADDING;
+    if (left + state.width > window.innerWidth) left -= left + state.width - window.innerWidth + MENU_PADDING;
+    if (top + state.height > window.innerHeight)
+      top -= top + state.height - window.innerHeight + MENU_PADDING;
 
     return Point(left, top);
   }
@@ -121,7 +120,7 @@ mixin DesignContextSubmenuState on UiState {
   late int height; // height of submenu as it appears on screen
   late num left; // position of left edge of submenu RELATIVE TO ENTIRE SCREEN
   late num top; // position of top edge of submenu RELATIVE TO ENTIRE SCREEN
-  late Ref<DivElement?> submenu_HTML_element_ref;
+  late Ref<HTMLDivElement?> submenu_HTML_element_ref;
 }
 
 class DesignContextSubmenuComponent
@@ -132,7 +131,7 @@ class DesignContextSubmenuComponent
     ..height = 0
     ..left = 0
     ..top = 0
-    ..submenu_HTML_element_ref = createRef<DivElement>());
+    ..submenu_HTML_element_ref = createRef<HTMLDivElement>());
 
   // how to find width and height of a React element (same links as DesignContextMenuComponent):
   // https://stackoverflow.com/a/43824598
@@ -206,8 +205,8 @@ class DesignContextSubmenuComponent
   // are set to as if the Submenu is positioned to the bottom right of its parent menu/submenu li element
   List<String> get_classnames_from_bounding_box() {
     return [
-      state.left + state.width > window.innerWidth! ? 'left' : 'right',
-      state.top + state.height > window.innerHeight! ? 'top' : 'bottom',
+      state.left + state.width > window.innerWidth ? 'left' : 'right',
+      state.top + state.height > window.innerHeight ? 'top' : 'bottom',
     ];
   }
 

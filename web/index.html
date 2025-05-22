@@ -168,7 +168,7 @@
 
                 // Init Hammer
                 // Listen only for pointer and touch events
-                this.hammer = Hammer(options.svgElement, {
+                this.hammer = Hammer(options.SVGElement, {
                     inputClass: Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput
                 });
 
@@ -206,7 +206,7 @@
                 });
 
                 // Prevent moving the page on some devices when panning over SVG
-                options.svgElement.addEventListener('touchmove', function (e) {
+                options.SVGElement.addEventListener('touchmove', function (e) {
                     e.preventDefault();
                 });
             }

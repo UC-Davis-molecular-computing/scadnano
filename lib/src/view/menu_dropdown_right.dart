@@ -1,4 +1,4 @@
-import 'dart:html';
+import 'package:web/web.dart';
 
 import 'package:over_react/over_react.dart';
 import '../view/react_bootstrap.dart';
@@ -27,14 +27,14 @@ mixin MenuDropdownRightProps on UiProps {
 
 mixin MenuDropdownRightState on UiState {
   num? top;
-  late Ref<DivElement?> HTML_element;
+  late Ref<HTMLDivElement?> HTML_element;
 }
 
 class MenuDropdownRightComponent
     extends UiStatefulComponent2<MenuDropdownRightProps, MenuDropdownRightState> {
   @override
   Map get initialState => (newState()
-    ..HTML_element = createRef<DivElement>()
+    ..HTML_element = createRef<HTMLDivElement>()
     ..top = null);
 
   @override

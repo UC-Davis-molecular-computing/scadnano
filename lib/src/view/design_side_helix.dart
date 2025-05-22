@@ -1,5 +1,5 @@
-import 'dart:html';
-
+import 'package:web/web.dart';
+import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/state/design_side_rotation_data.dart';

@@ -1,7 +1,7 @@
 @JS()
 library app;
 
-import 'dart:html';
+import 'package:web/web.dart';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
@@ -106,7 +106,7 @@ class App {
       // print("8");
       setup_save_design_to_localStorage_before_unload();
       // print("9");
-      make_dart_functions_available_to_js(state);
+      //make_dart_functions_available_to_js(state);
       // print("10");
       setup_view();
       // print("11");
@@ -228,19 +228,19 @@ class App {
     });
   }
 
-  make_dart_functions_available_to_js(AppState state) {
-    util.make_dart_function_available_to_js('dart_main_view_pointer_up', main_view_pointer_up);
-  }
+  // make_dart_functions_available_to_js(AppState state) {
+  //   util.make_dart_function_available_to_js('dart_main_view_pointer_up', main_view_pointer_up);
+  // }
 
   setup_view() {
-    DivElement app_root_element = querySelector('#top-container') as DivElement;
+    HTMLDivElement app_root_element = querySelector('#top-container') as HTMLDivElement;
     this.view = View(app_root_element);
     this.view.render(state);
     // Each time the oxView frame loads, tell it to adjust the camera to be the same angle as the
     // main view in scadnano: y down, z right, x out of the screen.
     this.view.oxview_view.frame.onLoad.listen((event) {
-      Blob blob_js_camera_commands =
-          new Blob(['camera.up.multiplyScalar(-1)'], blob_type_to_string(BlobType.text));
+      Blob blob_js_camera_commands = new Blob(
+          ['camera.up.multiplyScalar(-1)'].toJS, BlobPropertyBag(type: blob_type_to_string(BlobType.text)));
       Map<String, dynamic> message = {
         'message': 'iframe_drop',
         'files': [blob_js_camera_commands],
@@ -268,7 +268,7 @@ setup_undo_redo_keyboard_listeners() {
   // below doesn't work with onKeyPress
   // previous solution with onKeyPress used event.code == 'KeyZ' and worked inconsistently
   window.onKeyDown.listen((KeyboardEvent event) {
-    int key = event.which!;
+    int key = event.which;
 //    print('*' * 100);
 //    print('charCode: ${event.charCode}');
 //    print(' keyCode: ${event.keyCode}');
@@ -295,7 +295,7 @@ setup_undo_redo_keyboard_listeners() {
 
 setup_save_open_dna_file_keyboard_listeners() {
   window.onKeyDown.listen((KeyboardEvent event) {
-    int key = event.which!;
+    int key = event.which;
     // ctrl+S to save
     if ((event.ctrlKey || event.metaKey) && !event.shiftKey && key == KeyCode.S && !event.altKey) {
       event.preventDefault();
@@ -312,7 +312,7 @@ setup_save_open_dna_file_keyboard_listeners() {
 
 copy_selected_strands_to_clipboard_image_keyboard_listeners() {
   window.onKeyDown.listen((KeyboardEvent event) {
-    int key = event.which!;
+    int key = event.which;
     // Ctrl+I to copy image of selected strands to clipboard
     if ((event.ctrlKey || event.metaKey) && !event.shiftKey && key == KeyCode.I && !event.altKey) {
       event.preventDefault();

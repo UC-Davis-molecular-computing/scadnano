@@ -1,7 +1,7 @@
 @JS()
 library view;
 
-import 'dart:html';
+import 'package:web/web.dart';
 
 import 'package:js/js.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
@@ -47,16 +47,20 @@ const FIXED_HORIZONTAL_SEPARATOR = 'fixed-horizontal-separator';
 /// only one View object is ever created during the lifetime of the app. (in particular we should not need
 /// to call setup_splits() more than once).
 class View {
-  final DivElement root_element;
-  DivElement edit_and_select_modes_element = DivElement()..attributes = {'id': EDIT_AND_SELECT_MODES_ID};
-  DivElement menu_element = DivElement()..attributes = {'id': MENU_ID};
-  DivElement nonmenu_panes_container_element = DivElement()..attributes = {'id': NONMENU_PANES_CONTAINED_ID};
-  DivElement design_element = DivElement()..attributes = {'id': DESIGN_ID};
+  final HTMLDivElement root_element;
+  HTMLDivElement edit_and_select_modes_element = HTMLDivElement()
+    ..setAttribute('id', EDIT_AND_SELECT_MODES_ID);
+  HTMLDivElement menu_element = HTMLDivElement()..setAttribute('id', MENU_ID);
+  HTMLDivElement nonmenu_panes_container_element = HTMLDivElement()
+    ..setAttribute('id', NONMENU_PANES_CONTAINED_ID);
+  HTMLDivElement design_element = HTMLDivElement()..setAttribute('id', DESIGN_ID);
 
-  DivElement design_and_modes_buttons_container_element = DivElement()
-    ..attributes = {'id': DESIGN_AND_MODES_BUTTONS_CONTAINER_ID, 'class': 'split'};
-  DivElement design_oxview_separator = DivElement()
-    ..attributes = {'id': 'design-oxview-separator', 'class': 'draggable-separator'};
+  HTMLDivElement design_and_modes_buttons_container_element = HTMLDivElement()
+    ..setAttribute('id', DESIGN_AND_MODES_BUTTONS_CONTAINER_ID)
+    ..setAttribute('class', 'split');
+  HTMLDivElement design_oxview_separator = HTMLDivElement()
+    ..setAttribute('id', 'design-oxview-separator')
+    ..setAttribute('class', 'draggable-separator');
 
   late DesignViewComponent design_view;
   late OxviewViewComponent oxview_view;
@@ -66,23 +70,23 @@ class View {
   View(this.root_element) {
     setup_file_drag_and_drop_listener(root_element);
 
-    this.root_element.children.add(menu_element);
-    var menu_design_separator = DivElement()..attributes = {'class': FIXED_HORIZONTAL_SEPARATOR};
-    this.root_element.children.add(menu_design_separator);
-    this.root_element.children.add(this.nonmenu_panes_container_element);
+    this.root_element.append(menu_element);
+    var menu_design_separator = HTMLDivElement()..setAttribute('class', FIXED_HORIZONTAL_SEPARATOR);
+    this.root_element.append(menu_design_separator);
+    this.root_element.append(this.nonmenu_panes_container_element);
 
-    this.nonmenu_panes_container_element.children.add(this.design_and_modes_buttons_container_element);
+    this.nonmenu_panes_container_element.append(this.design_and_modes_buttons_container_element);
 
-    this.design_and_modes_buttons_container_element.children.add(design_element);
-    var design_mode_separator = DivElement()..attributes = {'class': FIXED_VERTICAL_SEPARATOR};
-    this.design_and_modes_buttons_container_element.children.add(design_mode_separator);
+    this.design_and_modes_buttons_container_element.append(design_element);
+    var design_mode_separator = HTMLDivElement()..setAttribute('class', FIXED_VERTICAL_SEPARATOR);
+    this.design_and_modes_buttons_container_element.append(design_mode_separator);
 
-    this.design_and_modes_buttons_container_element.children.add(edit_and_select_modes_element);
+    this.design_and_modes_buttons_container_element.append(edit_and_select_modes_element);
 
     this.design_view = DesignViewComponent(design_element);
     this.oxview_view = OxviewViewComponent();
-    this.nonmenu_panes_container_element.children.add(design_oxview_separator);
-    this.nonmenu_panes_container_element.children.add(this.oxview_view.div);
+    this.nonmenu_panes_container_element.append(design_oxview_separator);
+    this.nonmenu_panes_container_element.append(this.oxview_view.div);
 
     this.update_showing_oxview();
   }

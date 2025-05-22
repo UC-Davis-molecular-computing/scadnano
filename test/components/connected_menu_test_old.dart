@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:html';
+import 'package:web/web.dart';
 
 import 'package:test/test.dart';
 import 'package:over_react/over_react_redux.dart';
@@ -115,7 +115,7 @@ main() {
 
       test('that Grid can be adjusted to none', () async {
         // TODO(benlee12): figure out how to simulate select events
-        SelectElement select_grid = getByTestId(component, 'scadnano.MenuComponent.select.grid');
+        HTMLSelectElement select_grid = getByTestId(component, 'scadnano.MenuComponent.select.grid');
         expect(select_grid, isNotNull);
         expect(select_grid.value, 'square');
 

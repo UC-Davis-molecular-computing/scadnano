@@ -1,4 +1,7 @@
-import 'dart:html';
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
+
+import 'package:web/web.dart';
 
 import 'package:built_collection/src/set.dart';
 import 'package:redux/redux.dart';
@@ -123,12 +126,12 @@ css_class_set_style(String selector, Map<String, String> new_style_map) {
   var rule = style_rule_with_selector(stylesheet, selector);
   if (rule == null) {
     int new_index = stylesheet.insertRule(selector + ' {}');
-    rule = stylesheet.cssRules[new_index] as CssStyleRule;
+    rule = stylesheet.cssRules.item(new_index) as CSSStyleRule;
   }
   var style = rule.style;
   for (var style_key in new_style_map.keys) {
     var style_val = new_style_map[style_key];
-    style.setProperty(style_key, style_val);
+    style.setProperty(style_key.toJS, style_val!.toJS);
   }
 }
 
@@ -140,15 +143,15 @@ css_class_remove_style(String selector) {
   }
 }
 
-CssStyleRule? style_rule_with_selector(CssStyleSheet stylesheet, String selector) {
+CSSStyleRule? style_rule_with_selector(CSSStyleSheet stylesheet, String selector) {
   int? idx = style_rule_index_with_selector(stylesheet, selector);
-  return idx == null ? null : stylesheet.cssRules[idx] as CssStyleRule;
+  return idx == null ? null : stylesheet.cssRules.item(idx) as CSSStyleRule;
 }
 
-int? style_rule_index_with_selector(CssStyleSheet stylesheet, String selector) {
+int? style_rule_index_with_selector(CSSStyleSheet stylesheet, String selector) {
   for (int i = 0; i < stylesheet.cssRules.length; i++) {
-    CssRule rule = stylesheet.cssRules[i];
-    if (rule is CssStyleRule && rule.selectorText == selector) {
+    CSSRule? rule = stylesheet.cssRules.item(i);
+    if (rule is CSSStyleRule && rule.selectorText == selector) {
       return i;
     }
   }

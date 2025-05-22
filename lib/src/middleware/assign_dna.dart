@@ -1,4 +1,4 @@
-import 'dart:html';
+import 'package:web/web.dart';
 
 import 'package:redux/redux.dart';
 import '../reducers/assign_or_remove_dna_reducer.dart';

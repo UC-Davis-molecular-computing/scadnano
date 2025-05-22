@@ -1,5 +1,5 @@
-import 'dart:html';
-import 'dart:math' as Math;
+import 'package:web/web.dart';
+import 'dart:math';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/group.dart';
@@ -45,8 +45,8 @@ class DesignMainSliceBarComponent extends UiComponent2<DesignMainSliceBarProps> 
       if (only_display_selected_helices && side_selected_helix_idxs.contains(helix.idx) ||
           !only_display_selected_helices) {
         var y = props.helix_idx_to_svg_position_map[helix_idx]!.y;
-        displayed_helices_max_y = Math.max(displayed_helices_max_y, y);
-        displayed_helices_min_y = Math.min(displayed_helices_min_y, y);
+        displayed_helices_max_y = max(displayed_helices_max_y, y);
+        displayed_helices_min_y = min(displayed_helices_min_y, y);
       }
     }
     // No helices are displayed, so no slice bar is needed

@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:html';
+import 'package:web/web.dart';
 
 import 'package:built_value/serializer.dart';
 import 'package:built_value/built_value.dart';
@@ -109,18 +109,24 @@ abstract class SelectModeState implements Built<SelectModeState, SelectModeState
   // to wastefully re-render all strands just because we want to make 5' ends selectable
   static add_selectable_css_selectors(SelectModeChoice mode) {
     if (OPTIMIZE_SELECTABLE_CSS_CLASS_MODIFICATION) {
-      var elts = querySelectorAll('.${mode.css_selector()}');
-      for (var elt in elts) {
-        elt.classes.add('selectable');
+      var elts = document.querySelectorAll('.${mode.css_selector()}');
+      for (var i = 0; i < elts.length; i++) {
+        final elt = elts.item(i);
+        if (elt is Element) {
+          elt.classList.add('selectable');
+        }
       }
     }
   }
 
   static remove_selectable_css_selectors(SelectModeChoice mode) {
     if (OPTIMIZE_SELECTABLE_CSS_CLASS_MODIFICATION) {
-      var elts = querySelectorAll('.${mode.css_selector()}');
-      for (var elt in elts) {
-        elt.classes.remove('selectable');
+      var elts = document.querySelectorAll('.${mode.css_selector()}');
+      for (var i = 0; i < elts.length; i++) {
+        final elt = elts.item(i);
+        if (elt is Element) {
+          elt.classList.add('selectable');
+        }
       }
     }
   }

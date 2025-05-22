@@ -1,11 +1,11 @@
-import 'dart:html';
+import 'package:web/web.dart';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/address.dart';
 import 'package:scadnano/src/state/group.dart';
 import 'package:scadnano/src/state/helix.dart';
-
+import 'dart:math';
 import '../state/design.dart';
 import '../state/strand.dart';
 import '../state/domain.dart';

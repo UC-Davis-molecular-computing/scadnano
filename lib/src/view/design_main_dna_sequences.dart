@@ -1,4 +1,4 @@
-import 'dart:html';
+import 'package:web/web.dart';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
@@ -8,7 +8,7 @@ import '../actions/actions.dart' as actions;
 import '../app.dart';
 import '../state/helix.dart';
 import '../util.dart';
-
+import 'dart:math';
 import '../state/strand.dart';
 import 'pure_component.dart';
 import '../constants.dart' as constants;

@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'dart:html';
+import 'package:web/web.dart';
 
 import '../constants.dart' as constants;
 
 class ErrorMessageComponent {
-  DivElement root_element;
+  HTMLDivElement root_element;
 
   ErrorMessageComponent(this.root_element) {
     this.root_element.attributes = {'class': 'error-message'};
@@ -22,7 +22,7 @@ class ErrorMessageComponent {
         this.root_element.children.add(no_design_message_elt);
       } else {
         // otherwise escape to display plain text
-        var pre = PreElement();
+        var pre = HTMLPreElement();
         var escaper = HtmlEscape();
         var escaped_error_message = escaper.convert(error_message);
         pre.setInnerHtml(escaped_error_message);

@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:html';
+import 'package:web/web.dart';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
@@ -69,7 +69,7 @@ restore(Store<AppState> store, Storable storable) {
 
 _restore(Store<AppState> store, Storable storable) {
   String storable_key = storable.key_name;
-  if (window.localStorage.containsKey(storable_key)) {
+  if (window.localStorage.getItem(storable_key) != null) {
     var json_str = window.localStorage[storable_key]!;
 
     actions.Action? action = null;

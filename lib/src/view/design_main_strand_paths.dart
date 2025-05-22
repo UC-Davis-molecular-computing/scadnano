@@ -1,4 +1,4 @@
-import 'dart:html';
+import 'package:web/web.dart';
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';

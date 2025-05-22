@@ -1,9 +1,9 @@
-import 'dart:html';
+import 'package:web/web.dart';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:tuple/tuple.dart';
-
+import 'dart:math';
 import '../state/domain_name_mismatch.dart';
 import '../state/design.dart';
 import '../state/domain.dart';

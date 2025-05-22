@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:html';
+import 'package:web/web.dart';
 import 'dart:js';
 import 'dart:math';
 import 'package:path/path.dart' as path;
@@ -47,14 +47,14 @@ oxview_update_view_middleware(Store<AppState> store, dynamic action, NextDispatc
 // but on startup, `app.view` is not yet initialized (we're in the View constructor
 // the first time we call `update_oxview_view`), so from that constructor, we send the frame explicitly
 // to this function just after creating it, but before it can be accessed via `app.view.oxview_view?.frame`.
-void update_oxview_view(Design design, [IFrameElement? frame = null]) {
+void update_oxview_view(Design design, [HTMLIFrameElement? frame = null]) {
   if (frame == null) {
     frame = app.view.oxview_view.frame;
   }
 
   // reset oxview in case it has nucleotides already
-  Blob blob_js_reset_commands =
-      new Blob(['resetScene(resetCamera = false);'], blob_type_to_string(BlobType.text));
+  Blob blob_js_reset_commands = new Blob(
+      ['resetScene(resetCamera = false);'], BlobPropertyBag(type: blob_type_to_string(BlobType.text)));
   Map<String, dynamic> message = {
     'message': 'iframe_drop',
     'files': [blob_js_reset_commands],
@@ -70,8 +70,8 @@ void update_oxview_view(Design design, [IFrameElement? frame = null]) {
   String dat = dat_top.item1;
   String top = dat_top.item2;
 
-  Blob blob_dat = new Blob([dat], blob_type_to_string(BlobType.text));
-  Blob blob_top = new Blob([top], blob_type_to_string(BlobType.text));
+  Blob blob_dat = new Blob([dat], BlobPropertyBag(type: blob_type_to_string(BlobType.text)));
+  Blob blob_top = new Blob([top], BlobPropertyBag(type: blob_type_to_string(BlobType.text)));
 
   message = {
     'message': 'iframe_drop',

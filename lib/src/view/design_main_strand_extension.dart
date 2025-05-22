@@ -1,4 +1,4 @@
-import 'dart:html';
+import 'package:web/web.dart';
 
 import 'package:meta/meta.dart';
 import 'package:built_collection/built_collection.dart';
@@ -7,7 +7,7 @@ import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
 
 import 'package:scadnano/src/state/modification_type.dart';
-
+import 'dart:math';
 import '../state/strand.dart';
 import '../state/dialog.dart';
 import '../state/address.dart';

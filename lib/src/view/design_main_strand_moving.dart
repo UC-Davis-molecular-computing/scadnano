@@ -1,8 +1,8 @@
-import 'dart:html';
+import 'package:web/web.dart';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
-
+import 'dart:math';
 import 'pure_component.dart';
 import 'design_main_strand_loopout.dart';
 import 'transform_by_helix_group.dart';
@@ -36,7 +36,7 @@ mixin DesignMainStrandMovingProps on UiProps implements TransformByHelixGroupPro
   late BuiltMap<int, Helix> helices;
   late BuiltMap<String, HelixGroup> groups;
   late Geometry geometry;
-  late BuiltMap<int, Point<double>> helix_idx_to_svg_position_map;
+  late BuiltMap<int, Point> helix_idx_to_svg_position_map;
 }
 
 class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovingProps> with PureComponent {
