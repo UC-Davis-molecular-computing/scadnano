@@ -1,7 +1,7 @@
 import 'package:web/web.dart';
 import "dart:js_interop";
 import 'dart:math' as math;
-
+import 'package:js/js_util.dart' as js_util;
 import 'package:xml/xml.dart';
 
 import 'package:built_collection/built_collection.dart';
@@ -11,7 +11,6 @@ import 'package:scadnano/src/middleware/system_clipboard.dart';
 import 'package:scadnano/src/state/base_pair_display_type.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/view/design_main_dna_sequence.dart';
-
 import '../app.dart';
 import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
@@ -101,7 +100,10 @@ List<Element> get_svg_elements_of_strands(BuiltSet<Strand> strands) {
       var strand_elt = document.getElementById(strand.id)!;
       var dna_seq_elt = document.getElementById('dna-sequence-${strand.id}');
       var mismatch_elts = document.querySelectorAll('.mismatch-${strand.id}');
-      elts.addAll([strand_elt, if (dna_seq_elt != null) dna_seq_elt, ...mismatch_elts]);
+      elts.addAll([strand_elt, if (dna_seq_elt != null) dna_seq_elt]);
+      for (var i = 0; i < mismatch_elts.length; i++) {
+        elts.add(mismatch_elts.item(i) as Element);
+      }
     }
   }
   return elts;
@@ -134,31 +136,32 @@ double get_text_height(String font) {
 DOMMatrix dominant_baseline_matrix(String dominant_baseline, double rot, String font) {
   switch (dominant_baseline) {
     case "ideographic":
-      return new DOMMatrix([
+      return new DOMMatrix(js_util.jsify([
         1,
         0,
         0,
         1,
         ...rotate_vector([0, (-3 * get_text_height(font)) / 12], rot)
-      ]);
+      ]));
     case "hanging":
-      return new DOMMatrix([
+      return new DOMMatrix(js_util.jsify([
         1,
         0,
         0,
         1,
         ...rotate_vector([0, (9 * get_text_height(font)) / 12], rot)
-      ]);
+      ]));
     case "central":
-      return new DOMMatrix([
+      return new DOMMatrix(js_util.jsify([
         1,
         0,
         0,
         1,
         ...rotate_vector([0, (4 * get_text_height(font)) / 12], rot)
-      ]);
+      ]));
     default:
-      return new DOMMatrix([1, 0, 0, 1, 0, 0]);
+      return new DOMMatrix(js_util.jsify([1, 0, 0, 1, 0, 0]));
+      ;
   }
 }
 
@@ -282,8 +285,10 @@ SVGSVGElement make_portable(SVGSVGElement src) {
 }
 
 SVGSVGElement get_cloned_svg_element_with_style(List<Element> selected_elts, bool separate_text) {
-  var cloned_svg_element_with_style = SVGSVGElement()
-    ..children = selected_elts.map(clone_and_apply_style).toList();
+  var cloned_svg_element_with_style = SVGSVGElement();
+  for (var elt in selected_elts.map(clone_and_apply_style)) {
+    cloned_svg_element_with_style.append(elt);
+  }
   if (separate_text) {
     cloned_svg_element_with_style = make_portable(cloned_svg_element_with_style);
   }
@@ -397,7 +402,7 @@ clone_and_apply_style_rec(Element elt_styled, Element elt_orig, {int depth = 0})
   }
 
   if (relevant_styles.keys.contains(tag_name)) {
-    var style_def = elt_orig.getComputedStyle();
+    var style_def = window.getComputedStyle(elt_orig);
     // print(
     // 'id ${elt_styled.id} fill ${style_def.getPropertyValue("fill")} relevant_styles ${relevant_styles[tag_name]}');
     //TODO: figure out how to remove nodes that aren't visible;
@@ -413,9 +418,9 @@ clone_and_apply_style_rec(Element elt_styled, Element elt_orig, {int depth = 0})
         // https://bugs.launchpad.net/inkscape/+bug/1577763
         if (style_name == 'visibility' && style_value == 'hidden') {
           // style_strings.add('display: none');
-          elt_styled.style.setProperty('display', 'none');
+          elt_styled.setAttribute('style', 'display: none');
         }
-        elt_styled.style.setProperty(style_name, style_value);
+        elt_styled.setAttribute('style', '$style_name: $style_value');
         // style_strings.add('${style_name}: ${style_value};');
       }
     }

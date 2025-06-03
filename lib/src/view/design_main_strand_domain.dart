@@ -8,6 +8,7 @@ import 'package:react/react.dart' as react;
 import 'package:scadnano/src/state/modification_type.dart';
 import 'package:scadnano/src/state/substrand.dart';
 import 'dart:math';
+import 'dart:js_interop';
 import '../state/strand.dart';
 import '../state/address.dart';
 import '../state/geometry.dart';
@@ -163,13 +164,13 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with
   @override
   componentDidMount() {
     var element = querySelector('#${props.domain.id}')!;
-    element.addEventListener('contextmenu', on_context_menu);
+    element.addEventListener('contextmenu', on_context_menu.toJS);
   }
 
   @override
   componentWillUnmount() {
     var element = querySelector('#${props.domain.id}')!;
-    element.removeEventListener('contextmenu', on_context_menu);
+    element.removeEventListener('contextmenu', on_context_menu.toJS);
     super.componentWillUnmount();
   }
 
@@ -182,7 +183,7 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with
           event, props.helix, props.groups[props.helix.group]!, props.geometry, props.helix_svg_position);
       var items = props.context_menu_strand(props.strand, domain: props.domain, address: address).build();
       app.dispatch(actions.ContextMenuShow(
-          context_menu: ContextMenu(items: items, position: util.from_point_num(event.page))));
+          context_menu: ContextMenu(items: items, position: new Point(event.pageX, event.pageY))));
     }
   }
 }

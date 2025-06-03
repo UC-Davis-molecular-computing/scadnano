@@ -285,9 +285,8 @@ Future<List<int>> idt_plates_export(Iterable<Strand> strands, PlateType plate_ty
   }
 
   String filename = 'excel-spreadsheets/idt-plates-empty-${num_plates_needed}plate.xlsx';
-  ByteBuffer data = await util.get_binary_file_content(filename);
-  List<int> bytes = Uint8List.view(data);
-  var decoder = SpreadsheetDecoder.decodeBytes(bytes, update: true, verify: true);
+  Uint8List data = await util.get_binary_file_content(filename);
+  var decoder = SpreadsheetDecoder.decodeBytes(data, update: true, verify: true);
 
   int num_strands_remaining = strands.length;
   bool on_final_plate = num_plates_needed == 1;

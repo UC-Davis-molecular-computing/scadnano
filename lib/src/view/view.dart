@@ -2,8 +2,7 @@
 library view;
 
 import 'package:web/web.dart';
-
-import 'package:js/js.dart';
+import 'dart:js_interop';
 import 'package:over_react/react_dom.dart' as react_dom;
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react_redux.dart';
@@ -121,14 +120,14 @@ class View {
   update_showing_oxview() {
     bool show_oxview = app.state.ui_state.show_oxview;
     if (!this.currently_showing_oxview && show_oxview) {
-      this.design_oxview_separator.hidden = false;
-      this.oxview_view.div.hidden = false;
+      this.design_oxview_separator.hidden = false.toJS;
+      this.oxview_view.div.hidden = false.toJS;
       this.currently_showing_oxview = true;
       this.set_design_oxview_pane_widths();
       setup_splits(show_oxview);
     } else if (!show_oxview) {
-      this.design_oxview_separator.hidden = true;
-      this.oxview_view.div.hidden = true;
+      this.design_oxview_separator.hidden = true.toJS;
+      this.oxview_view.div.hidden = true.toJS;
       if (this.currently_showing_oxview) {
         this.currently_showing_oxview = false;
         setup_splits(show_oxview);
@@ -146,47 +145,52 @@ class View {
 }
 
 setup_file_drag_and_drop_listener(Element drop_zone) {
-  drop_zone.onDragOver.listen((event) {
-    event.stopPropagation();
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'copy';
-  });
+  drop_zone.addEventListener(
+      "dragover",
+      ((DragEvent event) {
+        event.stopPropagation();
+        event.preventDefault();
+        event.dataTransfer?.dropEffect = 'copy';
+      }).toJS);
 
-  drop_zone.onDrop.listen((event) {
-    event.stopPropagation();
-    event.preventDefault();
+  drop_zone.addEventListener(
+      "drop",
+      (DragEvent event) {
+        event.stopPropagation();
+        event.preventDefault();
 
-    var files = event.dataTransfer.files;
-    if (files == null || files.isEmpty) {
-      return;
-    }
+        var files = event.dataTransfer?.files;
+        if (files == null || files.length == 0) {
+          return;
+        }
 
-    var dot_exts = constants.all_scadnano_file_extensions.map((ext) => '.' + ext).toList();
-    var extensions_str = dot_exts.sublist(0, dot_exts.length - 1).join(', ') + ', or ' + dot_exts.last;
-    if (files.length > 1) {
-      window.alert('More than one file dropped! Please drop only one ${extensions_str} file.');
-      return;
-    }
+        var dot_exts = constants.all_scadnano_file_extensions.map((ext) => '.' + ext).toList();
+        var extensions_str = dot_exts.sublist(0, dot_exts.length - 1).join(', ') + ', or ' + dot_exts.last;
+        if (files.length > 1) {
+          window.alert('More than one file dropped! Please drop only one ${extensions_str} file.');
+          return;
+        }
 
-    var file = files.first;
-    var filename = file.name;
-    var ext = path.extension(filename);
-    var ext_lower = ext.toLowerCase();
-    if (dot_exts.contains(ext_lower)) {
-      var confirm =
-          app.state.has_error || window.confirm('Are you sure you want to replace the current design?');
+        var file = files.item(0);
+        var filename = file?.name ?? '';
+        var ext = path.extension(filename);
+        var ext_lower = ext.toLowerCase();
+        if (dot_exts.contains(ext_lower)) {
+          var confirm =
+              app.state.has_error || window.confirm('Are you sure you want to replace the current design?');
 
-      if (confirm) {
-        FileReader file_reader = new FileReader();
-        //XXX: Technically to be clean Redux (or Elm architecture), this should be an Action,
-        // and what is done in file_loaded should be another Action.
-        file_reader.onLoad.listen((_) => scadnano_file_loaded(file_reader, filename));
-        var err_msg = "error reading file: ${file_reader.error.toString()}";
-        file_reader.onError.listen((_) => window.alert(err_msg));
-        file_reader.readAsText(file);
-      }
-    } else {
-      window.alert('scadnano does not support "${ext}" type files. Please drop a ${extensions_str} file.');
-    }
-  });
+          if (confirm) {
+            FileReader file_reader = new FileReader();
+            //XXX: Technically to be clean Redux (or Elm architecture), this should be an Action,
+            // and what is done in file_loaded should be another Action.
+            file_reader.addEventListener("load", scadnano_file_loaded(file_reader, filename).toJS);
+            var err_msg = "error reading file: ${file_reader.error.toString()}";
+            file_reader.addEventListener("error", ((_) => window.alert(err_msg)).toJS);
+            file_reader.readAsText(file);
+          }
+        } else {
+          window
+              .alert('scadnano does not support "${ext}" type files. Please drop a ${extensions_str} file.');
+        }
+      }.toJS);
 }

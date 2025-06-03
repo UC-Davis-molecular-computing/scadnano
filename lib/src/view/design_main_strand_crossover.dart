@@ -4,7 +4,8 @@ import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/dialog.dart';
 import '../state/geometry.dart';
-
+import 'dart:math';
+import 'dart:js_interop';
 import 'transform_by_helix_group.dart';
 import '../state/group.dart';
 import '../state/context_menu.dart';
@@ -148,14 +149,14 @@ class DesignMainStrandCrossoverComponent
   @override
   componentDidMount() {
     var element = querySelector('#${props.crossover.id}')!;
-    element.addEventListener('contextmenu', on_context_menu);
+    element.addEventListener('contextmenu', on_context_menu.toJS);
     super.componentDidMount();
   }
 
   @override
   componentWillUnmount() {
     var element = querySelector('#${props.crossover.id}')!;
-    element.removeEventListener('contextmenu', on_context_menu);
+    element.removeEventListener('contextmenu', on_context_menu.toJS);
     super.componentWillUnmount();
   }
 
@@ -167,7 +168,7 @@ class DesignMainStrandCrossoverComponent
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
               items: context_menu_crossover(props.strand).build(),
-              position: util.from_point_num(event.page))));
+              position: new Point(event.pageX, event.pageY))));
     }
   }
 

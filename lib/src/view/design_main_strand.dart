@@ -8,7 +8,9 @@ import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
 import 'package:scadnano/src/reducers/app_ui_state_reducer.dart';
+import 'package:js/js_util.dart' as js_util;
 import 'dart:math';
+import 'dart:js_interop';
 import '../util.dart';
 import 'design_main_strand_and_domain_texts.dart';
 import 'design_main_strand_dna_end.dart';
@@ -280,13 +282,14 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
 let base = systems[0].strands[${strand_idx}].getMonomers()[${nt_idx_in_strand}];
 api.findElement(base);
 api.selectElements([base]);''';
-    Blob blob_js_highlight_base = new Blob([js_highlight_base], blob_type_to_string(BlobType.text));
-    Map<String, dynamic> message_js_commands = {
+    Blob blob_js_highlight_base = new Blob(
+        js_util.jsify([js_highlight_base]), BlobPropertyBag(type: blob_type_to_string(BlobType.text)));
+    JSArray message_js_commands = js_util.jsify({
       'message': 'iframe_drop',
       'files': [blob_js_highlight_base],
       'ext': ['js'],
-    };
-    app.view.oxview_view.frame.contentWindow?.postMessage(message_js_commands, constants.OXVIEW_URL);
+    });
+    app.view.oxview_view.frame.contentWindow?.postMessage(message_js_commands, constants.OXVIEW_URL.toJS);
   }
 
   assign_scale_purification_fields() =>

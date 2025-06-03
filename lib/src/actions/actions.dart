@@ -6,7 +6,7 @@ import 'dart:math';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
-import 'package:js/js.dart';
+import 'dart:js_interop';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/dna_file_type.dart';
 import 'package:scadnano/src/state/dna_assign_options.dart';

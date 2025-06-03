@@ -9,7 +9,7 @@ import 'dart:async';
 //import 'dart:svg' hide Point, ImageElement;
 import 'dart:typed_data';
 import "dart:js_interop";
-
+import "dart:js_interop_unsafe";
 import 'package:xml/xml.dart';
 
 import 'package:collection/collection.dart';
@@ -17,7 +17,9 @@ import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 // import 'package:js/js.dart';
-// import 'package:js/js_util.dart';
+import 'package:js/js_util.dart' as js_util;
+import 'package:http/http.dart' as http;
+import 'package:http/browser_client.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:scadnano/src/reducers/helices_reducer.dart';
 import 'package:scadnano/src/state/strand_creation.dart';
@@ -245,10 +247,15 @@ Future<String> get_text_file_content(String url) async =>
 //  return [];
 //}
 
-Future<ByteBuffer> get_binary_file_content(String url) async {
-  return await HttpRequest.request(url, responseType: 'arraybuffer').then((request) {
-    return request.response;
-  });
+Future<Uint8List> get_binary_file_content(String url) async {
+  final client = BrowserClient(); // Create a browser-specific HTTP client
+  final response = await client.get(Uri.parse(url)); // Send a GET request
+
+  if (response.statusCode == 200) {
+    return response.bodyBytes; // Return binary data as Uint8List
+  } else {
+    throw Exception('Failed to load binary file: ${response.statusCode}');
+  }
 }
 
 /// Pops up dialog to ask user for information and returns responses.
@@ -663,7 +670,7 @@ Point<double> transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
     MouseEvent event, bool is_main_view, SVGSVGElement view_svg) {
   Point<double> point;
   if (!browser.isFirefox) {
-    point = from_point_num(event.offset);
+    point = new Point<double>(event.offsetX, event.offsetY);
     point = transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
   } else {
     point = untransformed_svg_point(view_svg, event: event);
@@ -677,7 +684,7 @@ Point<double> transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
 /// https://stackoverflow.com/questions/19713320/svg-viewbox-doesnt-return-correct-mouse-points-with-nested-svg-in-firefox
 Point<double> untransformed_svg_point(SVGSVGElement svg_elt,
     {Point<double>? mouse_pos = null, MouseEvent? event = null}) {
-  var svg_point_SVG = svg_elt.createSvgPoint();
+  var svg_point_SVG = svg_elt.createSVGPoint();
   if (mouse_pos == null) {
     assert(event != null);
     mouse_pos = from_point_num(event!.client);
@@ -685,8 +692,10 @@ Point<double> untransformed_svg_point(SVGSVGElement svg_elt,
   svg_point_SVG.x = mouse_pos.x;
   svg_point_SVG.y = mouse_pos.y;
   //TODO: consider using svg_elt.getCtm(): https://github.com/anvaka/panzoom/commit/49be4a1bd6361598b79f29fe99adc2c125d93678
-  var svg_point_SVG_1 = svg_point_SVG.matrixTransform(svg_elt.getScreenCtm().inverse());
-  Point<double> svg_point = Point<double>(svg_point_SVG_1.x! as double, svg_point_SVG_1.y! as double);
+  DOMMatrix? ctm = svg_elt.getScreenCTM()?.inverse();
+  var svg_point_SVG_1 = svg_point_SVG
+      .matrixTransform(DOMMatrixInit(a: ctm!.a, b: ctm.b, c: ctm.c, d: ctm.d, e: ctm.e, f: ctm.f));
+  Point<double> svg_point = Point<double>(svg_point_SVG_1.x, svg_point_SVG_1.y);
   return svg_point;
 }
 
@@ -955,8 +964,8 @@ Position3D svg_side_view_to_position3d(Point<double> svg_pos, bool invert_y, Geo
 /// This goes into "window", so in JS you can access window.editor_content, and in Brython you can do this:
 /// from browser import window
 /// print(window['editor_content'])
-save_editor_content_to_js_context(String new_content) {
-  js.context[constants.editor_content_js_key] = new_content;
+save_editor_content_to_js_context(JSObject new_content) {
+  globalContext[constants.editor_content_js_key] = new_content;
 }
 
 /// Tries to get value in map associated to key, but raises an exception if the key is not present.
@@ -1099,14 +1108,18 @@ Point<double> current_pan(bool is_main) {
 double current_zoom(bool is_main) => is_main ? current_zoom_main_js() : current_zoom_side_js();
 
 CSSStyleSheet get_scadnano_stylesheet() {
-  for (var stylesheet in document.styleSheets) {
-    if (stylesheet.href != null && stylesheet.href!.contains(constants.scadnano_css_stylesheet_name)) {
-      return stylesheet as CSSStyleSheet;
+  for (int i = 0; i < document.styleSheets.length; i++) {
+    if (document.styleSheets.item(i)!.href != null &&
+        document.styleSheets.item(i)!.href!.contains(constants.scadnano_css_stylesheet_name)) {
+      return document.styleSheets.item(i) as CSSStyleSheet;
     }
   }
+
   throw AssertionError('cannot find stylesheet containing "${constants.scadnano_css_stylesheet_name}" '
       'in its href\nlist of stylesheet hrefs:\n'
-      '${[for (var sheet in document.styleSheets) sheet.href].join("\n")}');
+      '${[
+    for (var i = 0; i < document.styleSheets.length; i++) document.styleSheets.item(i)?.href
+  ].join("\n")}');
 }
 
 /// Indicates if loopout between two given strands is a hairpin.
@@ -1136,19 +1149,22 @@ String blob_type_to_string(BlobType blob_type) {
 
 String serialize_svg(SVGSVGElement svg_element, {bool pretty = true}) {
   // Clone the SVG element to avoid modifying the original
-  var cloned_svg = svg_element.clone(true) as SVGSVGElement;
+  var cloned_svg = svg_element.cloneNode(true) as SVGSVGElement;
 
   // Ensure the svg namespace is declared
   cloned_svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 
   // Find all elements that use xlink
-  var xlink_elements = cloned_svg.querySelectorAll('[*|href]');
-  for (var element in xlink_elements) {
-    element.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+  NodeList xlink_elements = cloned_svg.querySelectorAll('[*|href]');
+  for (var i = 0; i < xlink_elements.length; i++) {
+    final element = xlink_elements.item(i);
+    if (element is Element) {
+      element.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+    }
   }
 
   // Serialize to string
-  var serialized = cloned_svg.outerHtml!;
+  var serialized = cloned_svg.outerHTML.toString();
 
   // Pretty print if requested
   if (pretty) {
@@ -1164,7 +1180,8 @@ String serialize_svg(SVGSVGElement svg_element, {bool pretty = true}) {
 copy_svg_as_png(SVGSVGElement svg_element) async {
   try {
     String source = serialize_svg(svg_element);
-    var svgUrl = URL.createObjectURL(new Blob([source], BlobPropertyBag(type: 'image/svg+xml')));
+    var svgUrl =
+        URL.createObjectURL(new Blob(js_util.jsify([source.toJS]), BlobPropertyBag(type: 'image/svg+xml')));
     var svgImage = new HTMLImageElement();
     svgImage.src = svgUrl;
     document.body!.append(svgImage);
@@ -1176,8 +1193,12 @@ copy_svg_as_png(SVGSVGElement svg_element) async {
           canvas.height = (svg_element.viewBox.baseVal.height * 2).toInt();
           var canvasCtx = canvas.getContext('2d') as CanvasRenderingContext2D;
           canvasCtx.drawImage(svgImage, 0, 0);
-          var imgData = await canvas.toBlob('image/png');
-          clipboard_write('image/png', imgData);
+          canvas.toBlob(
+              (Blob blob) {
+                clipboard_write('image/png', blob);
+                svgImage.remove();
+              }.toJS,
+              'image/png');
           svgImage.remove();
 
           URL.revokeObjectURL(svgUrl);
@@ -1202,8 +1223,8 @@ save_file(String default_filename, var content,
     {BlobType blob_type = BlobType.text, void Function()? and_then = null}) async {
   try {
     String blob_type_string = blob_type_to_string(blob_type);
-    Blob blob = new Blob([content], blob_type_string);
-    String url = URL.createObjectUrlFromBlob(blob);
+    Blob blob = new Blob(js_util.jsify([content]), BlobPropertyBag(type: blob_type_string));
+    String url = URL.createObjectURL(blob);
     var link = new HTMLAnchorElement()
       ..href = url
       ..download = default_filename;
@@ -1220,7 +1241,7 @@ save_file(String default_filename, var content,
       link.remove();
     }
 
-    URL.revokeObjectUrl(url);
+    URL.revokeObjectURL(url);
     if (and_then != null) {
       and_then();
     }
@@ -1575,25 +1596,25 @@ void dispatch_set_zoom_threshold(bool new_zoom_threshold) {
 /// the JavaScript code can dispatch `LoadDnaSequenceImageUri` actions.
 void svg_to_png_data() {
   // Queries for essential dom elements.
-  List<Node> dna_sequence_element_list = document.getElementsByClassName(dna_sequence_classname);
-  List<Node> strands_element_list = document.getElementsByClassName(strands_classname);
+  HTMLCollection dna_sequence_element_list = document.getElementsByClassName(dna_sequence_classname);
+  HTMLCollection strands_element_list = document.getElementsByClassName(strands_classname);
 
   // Returns if png is already being used
   if (document.getElementById(dna_sequence_png_id) != null ||
       // or if there is no dna_sequence due to Show DNA off
-      dna_sequence_element_list.isEmpty ||
+      dna_sequence_element_list.length == 0 ||
       // or if there is no strands
-      strands_element_list.isEmpty ||
+      strands_element_list.length == 0 ||
       // or if there is no dna sequence due to design
-      (dna_sequence_element_list.first as SVGElement).children.length == 0 ||
+      (dna_sequence_element_list.item(0) as SVGElement).children.length == 0 ||
       // or if cache already exists
       app.state.ui_state.dna_sequence_png_uri != null) {
     return;
   }
 
   // Assigns neccessary DOM elements (guaranteed by conditionals above).
-  SVGGraphicsElement dna_sequence_element = dna_sequence_element_list.first as SVGGraphicsElement;
-  SVGGraphicsElement strands_element = strands_element_list.first as SVGGraphicsElement;
+  SVGGraphicsElement dna_sequence_element = dna_sequence_element_list.item(0) as SVGGraphicsElement;
+  SVGGraphicsElement strands_element = strands_element_list.item(0) as SVGGraphicsElement;
 
   // Wraps dna_sequence_element in a SVG Element because required for Blob
   SVGSVGElement svg = SVGSVGElement();
@@ -1626,10 +1647,10 @@ void svg_to_png_data() {
   String data = serialize_svg(svg);
 
   // Constructs a Blob that contains `data` as MIME type of svg.
-  Blob svg_blob = new Blob([data].toJS, BlobPropertyBag(type: blob_type_to_string(BlobType.image)));
+  Blob svg_blob = new Blob(js_util.jsify([data]), BlobPropertyBag(type: blob_type_to_string(BlobType.image)));
 
   // Creates a DOMString containing the URL representing the svg.
-  String url = URL.createObjectURL(svg_blob);
+  var url = URL.createObjectURL(svg_blob);
 
   // Debug: print content of svg blob
   // HttpRequest.getString(url).then((String fileContents) {

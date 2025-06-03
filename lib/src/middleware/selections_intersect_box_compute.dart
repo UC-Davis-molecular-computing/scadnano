@@ -1,7 +1,6 @@
 //import 'dart:html' hide Rectangle;
 import 'package:web/web.dart';
 import 'dart:math';
-
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/selection_rope.dart';
@@ -37,7 +36,7 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
         return;
       }
 
-      Rectangle<num> select_box_bbox = select_box.getBoundingClientRect();
+      DOMRect select_box_bbox = select_box.getBoundingClientRect();
 
       //XXX: Firefox does not have getIntersectionList or getEnclosureList
       // (no progress for 10 years on that: https://bugzilla.mozilla.org/show_bug.cgi?id=501421)
@@ -87,7 +86,9 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
 /// Note that rope_elt.points are after the SVG transforms have been applied, so we have to undo them.
 List<Point<double>> points_of_polygon_elt(SVGPolygonElement rope_elt) {
   SVGPointList point_list = rope_elt.points; // SVG representation
-  List<Point> points_svg = [for (int i = 0; i < point_list.length; i++) point_list.getItem(i)];
+  List<Point> points_svg = [
+    for (int i = 0; i < point_list.length; i++) new Point(point_list.getItem(i).x, point_list.getItem(i).y)
+  ];
   List<Point<double>> points = [
     for (var point_svg in points_svg) Point<double>(point_svg.x as double, point_svg.y as double)
   ];
@@ -103,7 +104,7 @@ List<SVGSVGElement> elements_intersecting_polygon(String classname, List<Point<d
 }
 
 // gets list of elements associated to Selectables that intersect select_box_bbox in elements with classname
-List<SVGSVGElement> elements_intersecting_box(String classname, Rectangle<num> select_box_bbox,
+List<SVGSVGElement> elements_intersecting_box(String classname, DOMRect select_box_bbox,
     Iterable<SelectModeChoice> select_modes, bool is_origami, bool selection_box_intersection) {
   var overlap = selection_box_intersection ? interval_intersect : interval_contained;
   return generalized_intersection_list_box(classname, select_box_bbox, select_modes, is_origami, overlap);
@@ -116,7 +117,7 @@ generalized_intersection_list_polygon(
     Iterable<SelectModeChoice> select_modes,
     bool is_origami,
     bool overlap(List<Point<double>> polygon, Rectangle<num> rect)) {
-  List<SVGSVGElement> elts_intersecting = [];
+  List<SVGGraphicsElement> elts_intersecting = [];
   List<SVGGraphicsElement> selectable_elts = find_selectable_elements(select_modes, is_origami);
 
   for (SVGGraphicsElement elt in selectable_elts) {
@@ -138,13 +139,13 @@ generalized_intersection_list_polygon(
 /// and [l2], [h2] (describing the selection box), whether those rectangles overlap
 /// (so can specify either just intersection,
 /// or the default interval contained, that the second completely contains the first)
-generalized_intersection_list_box(String classname, Rectangle<num> select_box_bbox,
+generalized_intersection_list_box(String classname, DOMRect select_box_bbox,
     Iterable<SelectModeChoice> select_modes, bool is_origami, bool overlap(num l1, num h1, num l2, num h2)) {
-  List<SVGSVGElement> elts_intersecting = [];
+  List<SVGGraphicsElement> elts_intersecting = [];
   List<SVGGraphicsElement> selectable_elts = find_selectable_elements(select_modes, is_origami);
 
   for (SVGGraphicsElement elt in selectable_elts) {
-    Rectangle<num> elt_bbox = elt.getBoundingClientRect();
+    DOMRect elt_bbox = elt.getBoundingClientRect();
     if (bboxes_intersect_generalized(elt_bbox, select_box_bbox, overlap)) {
       elts_intersecting.add(elt);
     }
@@ -153,7 +154,7 @@ generalized_intersection_list_box(String classname, Rectangle<num> select_box_bb
 }
 
 bool bboxes_intersect_generalized(
-    Rectangle<num> elt_bbox, Rectangle<num> select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
+    DOMRect elt_bbox, DOMRect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
   num elt_x2 = elt_bbox.left + elt_bbox.width;
   num elt_y2 = elt_bbox.top + elt_bbox.height;
   num select_box_x2 = select_box_bbox.left + select_box_bbox.width;

@@ -8,6 +8,7 @@ import 'package:scadnano/src/state/context_menu.dart';
 import 'package:scadnano/src/state/dialog.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:tuple/tuple.dart';
+import 'dart:js_interop';
 import 'dart:math';
 import '../state/selectable.dart';
 import '../state/helix.dart';
@@ -206,15 +207,15 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
 
   @override
   componentDidMount() {
-    var element = querySelector('#${props.selectable_insertion.id_group}')!;
-    element.addEventListener('contextmenu', on_context_menu);
+    var element = document.querySelector('#${props.selectable_insertion.id_group}')!;
+    element.addEventListener('contextmenu', on_context_menu.toJS);
     super.componentDidMount();
   }
 
   @override
   componentWillUnmount() {
     var element = querySelector('#${props.selectable_insertion.id_group}')!;
-    element.removeEventListener('contextmenu', on_context_menu);
+    element.removeEventListener('contextmenu', on_context_menu.toJS);
     super.componentWillUnmount();
   }
 
@@ -225,7 +226,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       event.stopPropagation(); // needed to prevent strand context menu from popping up
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
-              items: context_menu_insertion().build(), position: util.from_point_num(event.page))));
+              items: context_menu_insertion().build(), position: new Point(event.pageX, event.pageY))));
     }
   }
 

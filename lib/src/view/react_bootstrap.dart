@@ -1,7 +1,7 @@
 @JS()
 library scadnano;
 
-import 'package:js/js.dart';
+import 'dart:js_interop';
 import 'package:react/react_client.dart';
 import 'package:react/react_client/react_interop.dart';
 

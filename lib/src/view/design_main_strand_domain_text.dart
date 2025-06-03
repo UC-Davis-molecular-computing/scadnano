@@ -5,7 +5,7 @@ import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/substrand.dart';
 import 'dart:math';
-
+import 'dart:js_interop';
 import '../state/group.dart';
 import '../state/geometry.dart';
 import '../state/domain.dart';
@@ -81,13 +81,13 @@ class DesignMainStrandDomainTextComponent extends UiComponent2<DesignMainStrandD
   @override
   componentDidMount() {
     var element = querySelector('#${id()}')!;
-    element.addEventListener('contextmenu', on_context_menu);
+    element.addEventListener('contextmenu', on_context_menu.toJS);
   }
 
   @override
   componentWillUnmount() {
     var element = querySelector('#${id()}')!;
-    element.removeEventListener('contextmenu', on_context_menu);
+    element.removeEventListener('contextmenu', on_context_menu.toJS);
     super.componentWillUnmount();
   }
 
@@ -101,7 +101,7 @@ class DesignMainStrandDomainTextComponent extends UiComponent2<DesignMainStrandD
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
               items: props.context_menu_strand(props.strand, domain: props.domain, address: address).build(),
-              position: util.from_point_num(event.page))));
+              position: new Point(event.pageX, event.pageY))));
     }
   }
 }

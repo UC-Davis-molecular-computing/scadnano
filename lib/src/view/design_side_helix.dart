@@ -8,7 +8,7 @@ import '../state/edit_mode.dart';
 import '../state/geometry.dart';
 import '../state/grid.dart';
 import '../state/position3d.dart';
-
+import 'dart:js_interop';
 import '../state/mouseover_data.dart';
 import '../app.dart';
 import '../state/helix.dart';
@@ -138,7 +138,7 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
   componentDidMount() {
     var elt = querySelector('#${group_id()}');
     if (elt != null) {
-      elt.addEventListener('contextmenu', on_context_menu);
+      elt.addEventListener('contextmenu', on_context_menu.toJS);
     } else {
       print('WARNING: no element found on page with group ID = ${group_id()}');
     }
@@ -148,7 +148,7 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
   componentWillUnmount() {
     var elt = querySelector('#${group_id()}');
     if (elt != null) {
-      elt.removeEventListener('contextmenu', on_context_menu);
+      elt.removeEventListener('contextmenu', on_context_menu.toJS);
     } else {
       print('WARNING: no element found on page with group ID = ${group_id()}');
     }
@@ -162,7 +162,7 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
               items: context_menu_helix(props.helix, props.helix_change_apply_to_all),
-              position: util.from_point_num(event.page))));
+              position: new Point(event.pageX, event.pageY))));
     }
   }
 

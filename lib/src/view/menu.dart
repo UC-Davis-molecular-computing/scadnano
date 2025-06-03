@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:web/web.dart';
+import 'package:js/js_util.dart' as js_util;
 import 'package:built_collection/built_collection.dart';
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:scadnano/src/state/base_pair_display_type.dart';
-
+import "dart:js_interop";
 import 'react_bootstrap.dart';
 
 import '../dna_file_type.dart';
@@ -394,7 +395,8 @@ It will also only work on scadnano designs that are exportable to cadnano.
       (MenuDropdownItem()
         ..on_click = (_) {
           if (this.enable_copy) {
-            window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.C, ctrlKey: true).wrapped);
+            window.dispatchEvent(
+                new KeyboardEvent('keydown', js_util.jsify({'key': 'c', 'code': 'KeyC', 'ctrlKey': true})));
           }
         }
         ..display = 'Copy'
@@ -421,8 +423,8 @@ that it stays sharp on zoom-in, use the option Export-->SVG of selected strands
 to save an SVG file of the selected strands.'''
         ..disabled = !this.enable_copy)(),
       (MenuDropdownItem()
-        ..on_click =
-            ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped))
+        ..on_click = ((_) => window.dispatchEvent(
+            new KeyboardEvent('keydown', js_util.jsify({'key': 'v', 'code': 'KeyV', 'ctrlKey': true}))))
         ..display = 'Paste'
         ..tooltip = '''\
 Paste the previously copied strand(s). They can be pasted into this design,
@@ -451,8 +453,8 @@ with some default direction chosen. Play with it and see!
 '''
         ..keyboard_shortcut = 'Ctrl+Shift+V')(),
       (MenuDropdownItem()
-        ..on_click =
-            ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.A, ctrlKey: true).wrapped))
+        ..on_click = ((_) => window.dispatchEvent(
+            new KeyboardEvent('keydown', js_util.jsify({'key': 'a', 'code': 'KeyA', 'ctrlKey': true}))))
         ..display = 'Select all'
         ..tooltip = 'Select all strands in the design.'
         ..keyboard_shortcut = 'Ctrl+A')(),
@@ -1491,10 +1493,11 @@ Future<void> ask_for_geometry(Geometry? geometry) async {
 }
 
 request_load_file_from_file_chooser(
-    FileUploadInputElement file_chooser, void Function(FileReader, String) onload_callback) {
-  List<File>? files = file_chooser.files;
-  assert(files.isNotEmpty);
-  File file = files[0];
+    HTMLInputElement file_chooser, void Function(FileReader, String) onload_callback) {
+  file_chooser.type = 'file';
+  List<File>? files = (file_chooser as dynamic).files;
+  assert(files!.isNotEmpty);
+  File file = files![0];
 
 //  var basefilename = path.basenameWithoutExtension(file.name);
   var basefilename = path.basename(file.name);
@@ -1502,10 +1505,10 @@ request_load_file_from_file_chooser(
   FileReader file_reader = new FileReader();
   //XXX: Technically to be clean Flux (or Elm architecture), this should be an Action,
   // and what is done in file_loaded should be another Action.
-  file_reader.onLoad.listen((_) => onload_callback(file_reader, basefilename));
+  file_reader.addEventListener("load", ((_) => onload_callback(file_reader, basefilename)).toJS);
   var err_msg = "error reading file: ${file_reader.error.toString()}";
   //file_reader.onError.listen((e) => error_message.text = err_msg);
-  file_reader.onError.listen((_) => window.alert(err_msg));
+  file_reader.addEventListener("error", ((_) => window.alert(err_msg)).toJS);
   file_reader.readAsText(file);
 }
 

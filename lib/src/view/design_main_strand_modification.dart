@@ -6,7 +6,7 @@ import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/modification_type.dart';
 import 'package:scadnano/src/state/substrand.dart';
 import 'dart:math';
-
+import 'dart:js_interop';
 import '../state/domain.dart';
 import '../state/extension.dart';
 import '../state/context_menu.dart';
@@ -122,14 +122,14 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
   @override
   componentDidMount() {
     var element = querySelector('#${props.selectable_modification.id}')!;
-    element.addEventListener('contextmenu', on_context_menu);
+    element.addEventListener('contextmenu', on_context_menu.toJS);
   }
 
   @override
   componentWillUnmount() {
     super.componentWillUnmount();
     var element = querySelector('#${props.selectable_modification.id}')!;
-    element.removeEventListener('contextmenu', on_context_menu);
+    element.removeEventListener('contextmenu', on_context_menu.toJS);
   }
 
   on_context_menu(Event ev) {
@@ -140,7 +140,7 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
               items: context_menu_modification(this.strand).build(),
-              position: util.from_point_num(event.page))));
+              position: new Point(event.pageX, event.pageY))));
     }
   }
 

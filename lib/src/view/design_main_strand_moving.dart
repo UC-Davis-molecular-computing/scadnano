@@ -87,7 +87,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
           ..is_5p = true //true != props.delta_forward
           ..allowable = props.allowable
           ..current_offset = end_5p_moved.offset_inclusive // + props.delta_offset
-          ..svg_position_y = props.helix_idx_to_svg_position_map[first_helix_moved.idx]!.y
+          ..svg_position_y = props.helix_idx_to_svg_position_map[first_helix_moved.idx]!.y.toDouble()
           ..key = 'end-5p')(),
       if (!strand_moved.circular)
         (EndMoving()
@@ -99,7 +99,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
           ..is_5p = false //false != props.delta_forward
           ..allowable = props.allowable
           ..current_offset = end_3p_moved.offset_inclusive // + props.delta_offset
-          ..svg_position_y = props.helix_idx_to_svg_position_map[last_helix_moved.idx]!.y
+          ..svg_position_y = props.helix_idx_to_svg_position_map[last_helix_moved.idx]!.y.toDouble()
           ..key = 'end-3p')(),
     ]);
   }

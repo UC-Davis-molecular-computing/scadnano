@@ -3,6 +3,7 @@ import 'package:web/web.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
+import 'dart:js_interop';
 import 'dart:math';
 import '../state/context_menu.dart';
 import '../state/geometry.dart';
@@ -126,7 +127,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   componentDidMount() {
     if (props.show_helix_circles) {
       var elt = querySelector('#${group_id()}')!;
-      elt.addEventListener('contextmenu', on_context_menu);
+      elt.addEventListener('contextmenu', on_context_menu.toJS);
     }
   }
 
@@ -134,7 +135,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   componentWillUnmount() {
     if (props.show_helix_circles) {
       var elt = querySelector('#${group_id()}')!;
-      elt.removeEventListener('contextmenu', on_context_menu);
+      elt.removeEventListener('contextmenu', on_context_menu.toJS);
     }
     super.componentWillUnmount();
   }
@@ -146,7 +147,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
               items: context_menu_helix(props.helix, props.helix_change_apply_to_all),
-              position: util.from_point_num(event.page))));
+              position: Point(event.pageX, event.pageY))));
     }
   }
 

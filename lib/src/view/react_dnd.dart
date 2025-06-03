@@ -1,7 +1,7 @@
 @JS()
 library react_dnd;
 
-import 'package:js/js.dart';
+import 'dart:js_interop';
 
 //@JS('ReactDnD_DndProvider')
 //external get DndProvider;

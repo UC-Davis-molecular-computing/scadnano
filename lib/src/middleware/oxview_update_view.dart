@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:web/web.dart';
-import 'dart:js';
+import 'dart:js_interop';
 import 'dart:math';
 import 'package:path/path.dart' as path;
 import 'package:quiver/iterables.dart' as quiver;
 import 'package:react/react.dart';
 import 'package:built_collection/built_collection.dart';
-
+import 'package:js/js_util.dart' as js_util;
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/domain.dart';
@@ -53,14 +53,14 @@ void update_oxview_view(Design design, [HTMLIFrameElement? frame = null]) {
   }
 
   // reset oxview in case it has nucleotides already
-  Blob blob_js_reset_commands = new Blob(
-      ['resetScene(resetCamera = false);'], BlobPropertyBag(type: blob_type_to_string(BlobType.text)));
-  Map<String, dynamic> message = {
+  Blob blob_js_reset_commands = new Blob(js_util.jsify(['resetScene(resetCamera = false);']),
+      BlobPropertyBag(type: blob_type_to_string(BlobType.text)));
+  JSAny message = js_util.jsify({
     'message': 'iframe_drop',
     'files': [blob_js_reset_commands],
     'ext': ['js'],
-  };
-  frame.contentWindow?.postMessage(message, constants.OXVIEW_URL);
+  });
+  frame.contentWindow?.postMessage(message, constants.OXVIEW_URL.toJS);
 
   // send current exported design
   List<Strand> strands_to_export = design.strands.toList();
@@ -70,14 +70,14 @@ void update_oxview_view(Design design, [HTMLIFrameElement? frame = null]) {
   String dat = dat_top.item1;
   String top = dat_top.item2;
 
-  Blob blob_dat = new Blob([dat], BlobPropertyBag(type: blob_type_to_string(BlobType.text)));
-  Blob blob_top = new Blob([top], BlobPropertyBag(type: blob_type_to_string(BlobType.text)));
+  Blob blob_dat = new Blob(js_util.jsify([dat]), BlobPropertyBag(type: blob_type_to_string(BlobType.text)));
+  Blob blob_top = new Blob(js_util.jsify([top]), BlobPropertyBag(type: blob_type_to_string(BlobType.text)));
 
-  message = {
+  message = js_util.jsify({
     'message': 'iframe_drop',
     'files': [blob_top, blob_dat],
     'ext': ['top', 'dat'],
     'inbox_settings': ["Monomer", "Origin"],
-  };
-  frame.contentWindow?.postMessage(message, constants.OXVIEW_URL);
+  });
+  frame.contentWindow?.postMessage(message, constants.OXVIEW_URL.toJS);
 }

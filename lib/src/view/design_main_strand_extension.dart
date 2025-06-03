@@ -5,7 +5,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
-
+import 'dart:js_interop';
 import 'package:scadnano/src/state/modification_type.dart';
 import 'dart:math';
 import '../state/strand.dart';
@@ -149,14 +149,14 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
   @override
   componentDidMount() {
     var element = querySelector('#${props.ext.id}')!;
-    element.addEventListener('contextmenu', on_context_menu);
+    element.addEventListener('contextmenu', on_context_menu.toJS);
   }
 
   @override
   componentWillUnmount() {
     super.componentWillUnmount();
     var element = querySelector('#${props.ext.id}')!;
-    element.removeEventListener('contextmenu', on_context_menu);
+    element.removeEventListener('contextmenu', on_context_menu.toJS);
   }
 
   on_context_menu(Event ev) {
@@ -166,7 +166,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
       event.stopPropagation(); // needed to prevent strand context menu from popping up
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(
-              items: context_menu_extension().build(), position: util.from_point_num(event.page))));
+              items: context_menu_extension().build(), position: new Point(event.pageX, event.pageY))));
     }
   }
 

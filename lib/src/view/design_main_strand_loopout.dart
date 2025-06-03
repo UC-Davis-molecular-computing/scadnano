@@ -1,6 +1,6 @@
 import 'package:web/web.dart';
 import 'dart:math';
-
+import 'dart:js_interop';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
@@ -141,14 +141,14 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
   @override
   componentDidMount() {
     var element = querySelector('#${props.loopout.id}')!;
-    element.addEventListener('contextmenu', on_context_menu);
+    element.addEventListener('contextmenu', on_context_menu.toJS);
   }
 
   @override
   componentWillUnmount() {
     super.componentWillUnmount();
     var element = querySelector('#${props.loopout.id}')!;
-    element.removeEventListener('contextmenu', on_context_menu);
+    element.removeEventListener('contextmenu', on_context_menu.toJS);
   }
 
   on_context_menu(Event ev) {
@@ -157,8 +157,8 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
       event.preventDefault();
       event.stopPropagation(); // needed to prevent strand context menu from popping up
       app.dispatch(actions.ContextMenuShow(
-          context_menu:
-              ContextMenu(items: context_menu_loopout().build(), position: util.from_point_num(event.page))));
+          context_menu: ContextMenu(
+              items: context_menu_loopout().build(), position: new Point(event.pageX, event.pageY))));
     }
   }
 

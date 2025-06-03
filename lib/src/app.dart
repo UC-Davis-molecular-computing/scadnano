@@ -5,7 +5,7 @@ import 'package:web/web.dart';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
-import 'package:js/js.dart';
+import 'dart:js_interop';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:platform_detect/platform_detect.dart';
@@ -19,7 +19,7 @@ import 'package:scadnano/src/state/dna_extensions_move.dart';
 import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/util.dart';
-
+import 'package:js/js_util.dart' as js_util;
 import 'middleware/all_middleware.dart';
 import 'middleware/oxview_update_view.dart';
 import 'middleware/throttle.dart';
@@ -211,21 +211,25 @@ class App {
   }
 
   setup_warning_before_unload() {
-    window.onBeforeUnload.listen((event) {
-      if (state.ui_state.warn_on_exit_if_unsaved && state.undo_redo.undo_stack.isNotEmpty) {
-        BeforeUnloadEvent e = event as BeforeUnloadEvent;
-        e.returnValue = 'You have unsaved work. Are you sure you want to leave?';
-      }
-    });
+    window.addEventListener(
+        "beforeunload",
+        ((event) {
+          if (state.ui_state.warn_on_exit_if_unsaved && state.undo_redo.undo_stack.isNotEmpty) {
+            BeforeUnloadEvent e = event as BeforeUnloadEvent;
+            e.returnValue = 'You have unsaved work. Are you sure you want to leave?';
+          }
+        }).toJS);
   }
 
   setup_save_design_to_localStorage_before_unload() {
-    window.onBeforeUnload.listen((_) {
-      if (state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.on_exit ||
-          state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.periodic) {
-        save(state, Storable.design);
-      }
-    });
+    window.addEventListener(
+        "beforeunload",
+        ((_) {
+          if (state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.on_exit ||
+              state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.periodic) {
+            save(state, Storable.design);
+          }
+        }).toJS);
   }
 
   // make_dart_functions_available_to_js(AppState state) {
@@ -233,20 +237,20 @@ class App {
   // }
 
   setup_view() {
-    HTMLDivElement app_root_element = querySelector('#top-container') as HTMLDivElement;
+    HTMLDivElement app_root_element = document.querySelector('#top-container') as HTMLDivElement;
     this.view = View(app_root_element);
     this.view.render(state);
     // Each time the oxView frame loads, tell it to adjust the camera to be the same angle as the
     // main view in scadnano: y down, z right, x out of the screen.
     this.view.oxview_view.frame.onLoad.listen((event) {
-      Blob blob_js_camera_commands = new Blob(
-          ['camera.up.multiplyScalar(-1)'].toJS, BlobPropertyBag(type: blob_type_to_string(BlobType.text)));
-      Map<String, dynamic> message = {
+      Blob blob_js_camera_commands = new Blob(js_util.jsify(['camera.up.multiplyScalar(-1)']),
+          BlobPropertyBag(type: blob_type_to_string(BlobType.text)));
+      JSAny message = js_util.jsify({
         'message': 'iframe_drop',
         'files': [blob_js_camera_commands],
         'ext': ['js'],
-      };
-      this.view.oxview_view.frame.contentWindow?.postMessage(message, constants.OXVIEW_URL);
+      });
+      this.view.oxview_view.frame.contentWindow?.postMessage(message, constants.OXVIEW_URL.toJS);
       if (app.state.maybe_design != null) {
         update_oxview_view(app.state.design, this.view.oxview_view.frame);
       }
@@ -305,7 +309,7 @@ setup_save_open_dna_file_keyboard_listeners() {
     if ((event.ctrlKey || event.metaKey) && !event.shiftKey && key == KeyCode.O && !event.altKey) {
       event.preventDefault();
       // TODO(benlee12): maybe this is slightly hacky.
-      document.getElementById('open-form-file')!.click();
+      document.getElementById('open-form-file')?.dispatchEvent(MouseEvent('click'));
     }
   });
 }

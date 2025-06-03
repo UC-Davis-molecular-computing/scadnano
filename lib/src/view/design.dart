@@ -3,10 +3,10 @@ library view_design;
 
 import 'package:web/web.dart';
 //import 'dart:svg' as svg;
+import 'dart:js_interop';
 import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:dnd/dnd.dart';
-import 'package:js/js.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
 import 'package:over_react/components.dart' as over_react_components;
@@ -196,23 +196,25 @@ class DesignViewComponent {
   };
 
   handle_keyboard_mouse_events() {
-    document.addEventListener('click', (event = Event)=> {
-      Element target = event.target as Element;
-      // put away context menu if click occurred anywhere outside of it
-      if (app.state.ui_state.context_menu != null) {
-        var context_menu_elt = querySelector('#context-menu');
-        if (context_menu_elt != null && !context_menu_elt.contains(target)) {
-          app.dispatch(actions.ContextMenuHide());
-        }
-      }
-      // put away strand color picker if click occurred anywhere outside of it
-      if (app.state.ui_state.color_picker_strand != null) {
-        var strand_color_picker_elt = querySelector('#strand-color-picker');
-        if (strand_color_picker_elt != null && !strand_color_picker_elt.contains(target)) {
-          app.dispatch(actions.StrandOrSubstrandColorPickerHide());
-        }
-      }
-    });
+    document.addEventListener(
+        'click',
+        ((e) {
+          Element target = e.target as Element;
+          // put away context menu if click occurred anywhere outside of it
+          if (app.state.ui_state.context_menu != null) {
+            var context_menu_elt = document.querySelector('#context-menu');
+            if (context_menu_elt != null && !context_menu_elt.contains(target)) {
+              app.dispatch(actions.ContextMenuHide());
+            }
+          }
+          // put away strand color picker if click occurred anywhere outside of it
+          if (app.state.ui_state.color_picker_strand != null) {
+            var strand_color_picker_elt = document.querySelector('#strand-color-picker');
+            if (strand_color_picker_elt != null && !strand_color_picker_elt.contains(target)) {
+              app.dispatch(actions.StrandOrSubstrandColorPickerHide());
+            }
+          }
+        }).toJS);
 
     side_view_svg.onMouseLeave.listen((_) => side_view_mouse_leave_update_mouseover());
     side_view_svg.onMouseMove.listen((event) {
@@ -461,28 +463,30 @@ class DesignViewComponent {
       }
     }
 
-    window.onBlur.listen((_) => end_select_mode());
+    window.addEventListener("blur", end_select_mode());
 
-    window.onKeyUp.listen((ev) {
-      int key = ev.which!;
+    window.addEventListener(
+        "keyup",
+        ((ev) {
+          int key = ev.which!;
 
-      app.keys_pressed.remove(key);
+          app.keys_pressed.remove(key);
 
-      if (key == constants.KEY_CODE_TOGGLE_SELECT ||
-          key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
-          key == constants.KEY_CODE_SELECT) {
-        end_select_mode();
-      }
+          if (key == constants.KEY_CODE_TOGGLE_SELECT ||
+              key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
+              key == constants.KEY_CODE_SELECT) {
+            end_select_mode();
+          }
 
-      if (key == constants.KEY_CODE_SHOW_POTENTIAL_HELIX) {
-        if (app.state.ui_state.side_view_grid_position_mouse_cursor != null) {
-          app.dispatch(actions.MouseGridPositionSideClear());
-        }
-        if (app.state.ui_state.side_view_position_mouse_cursor != null) {
-          app.dispatch(actions.MousePositionSideClear());
-        }
-      }
-    });
+          if (key == constants.KEY_CODE_SHOW_POTENTIAL_HELIX) {
+            if (app.state.ui_state.side_view_grid_position_mouse_cursor != null) {
+              app.dispatch(actions.MouseGridPositionSideClear());
+            }
+            if (app.state.ui_state.side_view_position_mouse_cursor != null) {
+              app.dispatch(actions.MousePositionSideClear());
+            }
+          }
+        }).toJS);
 
     // listen for clicks in rope select mode, and also open/close grabbing hand through CSS classes
     for (var svg_elt in [main_view_svg, side_view_svg]) {
@@ -830,7 +834,7 @@ class DesignViewComponent {
             set_side_menu_props(ConnectedSideMenu(), state)(),
           ),
         ),
-        querySelector('#$SIDE_VIEW_MENU_ID')!,
+        document.querySelector('#$SIDE_VIEW_MENU_ID')!,
       );
 
       // side view svg
@@ -849,7 +853,7 @@ class DesignViewComponent {
               ),
             ),
           ),
-          querySelector('#$SIDE_VIEW_SVG_VIEWPORT_GROUP')!,
+          document.querySelector('#$SIDE_VIEW_SVG_VIEWPORT_GROUP')!,
         );
       }
 
@@ -920,7 +924,7 @@ class DesignViewComponent {
           set_axis_arrows_props(ConnectedAxisArrowsSide(), state)(),
         ),
       ),
-      querySelector('#$SIDE_VIEW_ARROWS_SVG_ID')!,
+      document.querySelector('#$SIDE_VIEW_ARROWS_SVG_ID')!,
     );
     react_dom.render(
       over_react_components.ErrorBoundary()(
@@ -928,7 +932,7 @@ class DesignViewComponent {
           set_axis_arrows_props(ConnectedAxisArrowsMain(), state)(),
         ),
       ),
-      querySelector('#$MAIN_VIEW_ARROWS_SVG_ID')!,
+      document.querySelector('#$MAIN_VIEW_ARROWS_SVG_ID')!,
     );
   }
 
