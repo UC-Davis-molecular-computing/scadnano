@@ -34,8 +34,8 @@
     }
   },
   "scripts": {
-    "init": "cd .. && dart pub get && dart pub global activate webdev && webdev build",
-    "dev": "electron-forge start",
+    "init": "cd .. && dart pub get && dart pub global activate webdev && webdev build -- --delete-conflicting-outputs",
+    "dev": "npm run init && electron-forge start",
     "package": "electron-builder --dir",
     "buildWin": "npm run init && electron-builder --win --x64",
     "buildMac": "npm run init && electron-builder --mac --x64",
