@@ -1,8 +1,8 @@
-# scadnano Standalone
+# scadnano Standalone Application
 
 ## Development
 
-To run the development version of scadnano standalone, run the following commands in the `./standalone` directory.
+To run the development version of scadnano standalone, run the following commands in the `scadnano/standalone` directory.
 
 ```shell
 npm install
@@ -14,25 +14,16 @@ npm run dev
 
 ## Building
 
-To build an executable, run the following command.
+Building an executable for scadnano should be easy. Run the following commands for your respective platform.
 
-### Windows
-```shell
-npm run buildWin
-```
+> The executable will be located in `scadnano/standalone/dist`.
 
-### MacOS
-```shell
-npm run buildMac
-```
-
-### Linux
-```shell
-npm run buildLin
-```
-
-> The output should be located in `./standalone/out`.
+| **Platform** |    **Command**     |    **Executable Name**    |      **Cache**       |
+|:------------:|:------------------:|:-------------------------:|:--------------------:|
+|  *Windows*   | `npm run buildWin` |   `scadnano X.X.X.exe`    | `%appdata%/scadnano` |
+|   *MacOS*    | `npm run buildMac` |   `scadnano-X.X.X.dmg`    |        `TBD`         |
+|   *Ubuntu*   | `npm run buildLin` | `scadnano-X.X.X.AppImage` |        `TBD`         |
 
 ## Important Notes
 
-You may need to `CTRL + C` from the command-line to exit the electron app.
+You may need to `CTRL/CMD + C` from the command-line to exit the electron app.
