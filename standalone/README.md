@@ -1,5 +1,7 @@
 # scadnano Standalone Application
 
+If you have not yet already, please read the main [README.md](../README.md).
+
 ## Development
 
 To run the development version of scadnano standalone, run the following commands in the `scadnano/standalone` directory.
