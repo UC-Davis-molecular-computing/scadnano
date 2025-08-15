@@ -10,6 +10,8 @@ jobs:
     strategy:
       matrix:
         sdk: [3.8, stable]
+      fail-fast: false
+    name: Run Unit Tests for Dart (${{ matrix.sdk }})
     runs-on: ubuntu-22.04  # Could use ubuntu-latest
     steps:
       - name: Checkout branch
