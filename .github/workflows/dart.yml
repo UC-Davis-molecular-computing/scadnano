@@ -7,7 +7,9 @@ on:
 jobs:
   run_unit_tests:
     if: github.event.pull_request.draft == false
-
+    strategy:
+      matrix:
+        sdk: [3.8, stable]
     runs-on: ubuntu-22.04  # Could use ubuntu-latest
     steps:
       - name: Checkout branch
@@ -15,6 +17,8 @@ jobs:
 
       - name: Setup Dart SDK  # This will use the latest version of dart unless specified otherwise.
         uses: dart-lang/setup-dart@v1  # https://github.com/dart-lang/setup-dart
+        with:
+          sdk: ${{ matrix.sdk }}
 
       - name: Install dependencies
         run: dart pub get
