@@ -1,0 +1,4 @@
+*.g.dart
+#*.g 2.dart
+/test_built_value.dart
+.DS_Store
