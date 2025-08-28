@@ -16,7 +16,7 @@ class StrandOrder extends EnumClass {
     "",
     "Whichever of 5' or 3' appears first is used",
     """The "top-left-most" (smallest helix/smallest offset) domain is used for sorting,
-regardless of whether it is 5', 3', or internal."""
+regardless of whether it is 5', 3', or internal.""",
   ];
 
   const StrandOrder._(String name) : super(name);

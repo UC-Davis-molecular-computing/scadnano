@@ -79,9 +79,9 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     }
 
     //XXX: commented out for same reason as similar commented code in design_main_strand_crossover.dart
-//    if (mouse_hover) {
-//      update_mouseover_loopout();
-//    }
+    //    if (mouse_hover) {
+    //      update_mouseover_loopout();
+    //    }
 
     String tooltip = 'loopout: length ${props.loopout.loopout_num_bases}';
 
@@ -108,28 +108,29 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
 
     var color = props.loopout.color ?? props.strand_color;
 
-    var path_props = Dom.path()
-      ..className = classname
-      ..stroke = color.toHexColor().toCssString()
-      ..d = path_description
-      ..onMouseEnter = (ev) {
-        setState(newState()..mouse_hover = true);
-      }
-      ..onMouseLeave = ((_) {
-        setState(newState()..mouse_hover = false);
-      })
-      ..onPointerDown = ((ev) {
-        if (loopout_selectable(props.loopout)) {
-          props.loopout.handle_selection_mouse_down(ev.nativeEvent);
-        }
-      })
-      ..onPointerUp = ((ev) {
-        if (loopout_selectable(props.loopout)) {
-          props.loopout.handle_selection_mouse_up(ev.nativeEvent);
-        }
-      })
-      ..key = props.loopout.id
-      ..id = props.loopout.id;
+    var path_props =
+        Dom.path()
+          ..className = classname
+          ..stroke = color.toHexColor().toCssString()
+          ..d = path_description
+          ..onMouseEnter = (ev) {
+            setState(newState()..mouse_hover = true);
+          }
+          ..onMouseLeave = ((_) {
+            setState(newState()..mouse_hover = false);
+          })
+          ..onPointerDown = ((ev) {
+            if (loopout_selectable(props.loopout)) {
+              props.loopout.handle_selection_mouse_down(ev.nativeEvent);
+            }
+          })
+          ..onPointerUp = ((ev) {
+            if (loopout_selectable(props.loopout)) {
+              props.loopout.handle_selection_mouse_up(ev.nativeEvent);
+            }
+          })
+          ..key = props.loopout.id
+          ..id = props.loopout.id;
 
     if (within_group) {
       path_props.transform = transform_of_helix2(props, props.prev_helix.idx);
@@ -156,62 +157,73 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     if (!event.shiftKey) {
       event.preventDefault();
       event.stopPropagation(); // needed to prevent strand context menu from popping up
-      app.dispatch(actions.ContextMenuShow(
-          context_menu:
-              ContextMenu(items: context_menu_loopout().build(), position: util.from_point_num(event.page))));
+      app.dispatch(
+        actions.ContextMenuShow(
+          context_menu: ContextMenu(
+            items: context_menu_loopout().build(),
+            position: util.from_point_num(event.page),
+          ),
+        ),
+      );
     }
   }
 
   List<ContextMenuItem> context_menu_loopout() => [
-        ContextMenuItem(
-          title: 'change loopout length',
-          on_click: loopout_length_change,
-        ),
-        ContextMenuItem(
-          title: 'set loopout name',
-          on_click: set_loopout_name,
-        ),
-        if (props.loopout.name != null)
-          ContextMenuItem(
-              title: 'remove loopout name',
-              on_click: () {
-                var loopouts = util.add_if_not_null(
-                    app.state.ui_state.selectables_store.selected_loopouts, props.loopout);
-                var action = loopouts.length > 1
-                    ? actions.BatchAction(
-                        loopouts.map((l) => actions.SubstrandNameSet(name: null, substrand: l)),
-                        "remove loopout names")
-                    : actions.SubstrandNameSet(name: null, substrand: props.loopout);
-                app.dispatch(action);
-              }),
-        ContextMenuItem(
-          title: 'set loopout label',
-          on_click: set_loopout_label,
-        ),
-        if (props.loopout.label != null)
-          ContextMenuItem(
-              title: 'remove loopout label',
-              on_click: () {
-                var loopouts = util.add_if_not_null(
-                    app.state.ui_state.selectables_store.selected_loopouts, props.loopout);
-                var action = loopouts.length > 1
-                    ? actions.BatchAction(
-                        loopouts.map((l) => actions.SubstrandLabelSet(label: null, substrand: l)),
-                        "remove loopout labels")
-                    : actions.SubstrandLabelSet(label: null, substrand: props.loopout);
-                app.dispatch(action);
-              }),
-        ContextMenuItem(
-          title: 'set loopout color',
-          on_click: () => app.dispatch(
-              actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: props.loopout)),
-        ),
-        if (props.loopout.color != null)
-          ContextMenuItem(
-              title: 'remove loopout color',
-              on_click: () => app.dispatch(actions.StrandOrSubstrandColorSet(
-                  strand: props.strand, substrand: props.loopout, color: null))),
-      ];
+    ContextMenuItem(title: 'change loopout length', on_click: loopout_length_change),
+    ContextMenuItem(title: 'set loopout name', on_click: set_loopout_name),
+    if (props.loopout.name != null)
+      ContextMenuItem(
+        title: 'remove loopout name',
+        on_click: () {
+          var loopouts = util.add_if_not_null(
+            app.state.ui_state.selectables_store.selected_loopouts,
+            props.loopout,
+          );
+          var action =
+              loopouts.length > 1
+                  ? actions.BatchAction(
+                    loopouts.map((l) => actions.SubstrandNameSet(name: null, substrand: l)),
+                    "remove loopout names",
+                  )
+                  : actions.SubstrandNameSet(name: null, substrand: props.loopout);
+          app.dispatch(action);
+        },
+      ),
+    ContextMenuItem(title: 'set loopout label', on_click: set_loopout_label),
+    if (props.loopout.label != null)
+      ContextMenuItem(
+        title: 'remove loopout label',
+        on_click: () {
+          var loopouts = util.add_if_not_null(
+            app.state.ui_state.selectables_store.selected_loopouts,
+            props.loopout,
+          );
+          var action =
+              loopouts.length > 1
+                  ? actions.BatchAction(
+                    loopouts.map((l) => actions.SubstrandLabelSet(label: null, substrand: l)),
+                    "remove loopout labels",
+                  )
+                  : actions.SubstrandLabelSet(label: null, substrand: props.loopout);
+          app.dispatch(action);
+        },
+      ),
+    ContextMenuItem(
+      title: 'set loopout color',
+      on_click:
+          () => app.dispatch(
+            actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: props.loopout),
+          ),
+    ),
+    if (props.loopout.color != null)
+      ContextMenuItem(
+        title: 'remove loopout color',
+        on_click:
+            () => app.dispatch(
+              actions.StrandOrSubstrandColorSet(strand: props.strand, substrand: props.loopout, color: null),
+            ),
+      ),
+  ];
 
   update_mouseover_loopout() {
     Domain prev_domain = props.prev_domain;
@@ -228,11 +240,14 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
   }
 
   loopout_length_change() async {
-    int new_length = await app.disable_keyboard_shortcuts_while(() => ask_for_length(
+    int new_length = await app.disable_keyboard_shortcuts_while(
+      () => ask_for_length(
         'change loopout length (0 to convert to crossover)',
         current_length: props.loopout.loopout_num_bases,
         lower_bound: 0,
-        dialog_type: DialogType.set_loopout_length));
+        dialog_type: DialogType.set_loopout_length,
+      ),
+    );
     if (new_length == props.loopout.loopout_num_bases) {
       return;
     }
@@ -248,11 +263,13 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
 
   set_loopout_name() => app.disable_keyboard_shortcuts_while(ask_for_loopout_name);
 
-  set_loopout_label() => app.disable_keyboard_shortcuts_while(() => design_main_strand.ask_for_label(
-        props.strand,
-        props.loopout,
-        app.state.ui_state.selectables_store.selected_loopouts,
-      ));
+  set_loopout_label() => app.disable_keyboard_shortcuts_while(
+    () => design_main_strand.ask_for_label(
+      props.strand,
+      props.loopout,
+      app.state.ui_state.selectables_store.selected_loopouts,
+    ),
+  );
 
   Future<void> ask_for_loopout_name() async {
     int name_idx = 0;
@@ -267,10 +284,13 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     var loopouts = app.state.ui_state.selectables_store.selected_loopouts.toSet();
     loopouts.add(props.loopout);
 
-    var action = loopouts.isNotEmpty
-        ? actions.BatchAction(
-            loopouts.map((l) => actions.SubstrandNameSet(name: name, substrand: l)), "set loopout names")
-        : actions.SubstrandNameSet(name: name, substrand: props.loopout);
+    var action =
+        loopouts.isNotEmpty
+            ? actions.BatchAction(
+              loopouts.map((l) => actions.SubstrandNameSet(name: name, substrand: l)),
+              "set loopout names",
+            )
+            : actions.SubstrandNameSet(name: name, substrand: props.loopout);
     app.dispatch(action);
   }
 
@@ -282,9 +302,17 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     var next_group = props.groups[props.next_helix.group]!;
 
     var prev_svg_untransformed = props.prev_helix.svg_base_pos(
-        prev_offset, props.prev_domain.forward, props.prev_helix_svg_position_y, props.geometry);
+      prev_offset,
+      props.prev_domain.forward,
+      props.prev_helix_svg_position_y,
+      props.geometry,
+    );
     var next_svg_untransformed = props.next_helix.svg_base_pos(
-        next_offset, props.next_domain.forward, props.next_helix_svg_position_y, props.geometry);
+      next_offset,
+      props.next_domain.forward,
+      props.next_helix_svg_position_y,
+      props.geometry,
+    );
 
     var prev_svg = prev_group.transform_point_main_view(prev_svg_untransformed, props.geometry);
     var next_svg = next_group.transform_point_main_view(next_svg_untransformed, props.geometry);
@@ -304,7 +332,8 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     var prev_c = util.rotate(prev_c_unrotated, prev_group.pitch, origin: prev_svg);
     var next_c = util.rotate(next_c_unrotated, next_group.pitch, origin: next_svg);
 
-    var path = 'M ${prev_svg.x} ${prev_svg.y} '
+    var path =
+        'M ${prev_svg.x} ${prev_svg.y} '
         'C ${prev_c.x} ${prev_c.y} ${next_c.x} ${next_c.y} '
         '${next_svg.x} ${next_svg.y}';
 
@@ -337,8 +366,16 @@ String loopout_path_description_within_group(
 
   bool same_helix = top_helix.idx == bot_helix.idx;
   if (same_helix && top_dom.forward == bot_dom.forward) {
-    return loopout_path_description_same_helix_same_direction(loopout, prev_helix, prev_domain, next_domain,
-        include_start_M, show_loopout_labels, prev_helix_svg_position_y, prev_geometry);
+    return loopout_path_description_same_helix_same_direction(
+      loopout,
+      prev_helix,
+      prev_domain,
+      next_domain,
+      include_start_M,
+      show_loopout_labels,
+      prev_helix_svg_position_y,
+      prev_geometry,
+    );
   } else if (prev_helix_svg_position_y > next_helix_svg_position_y || same_helix && !top_dom.forward) {
     // helices are same if same_helix is true, but we'd still like top_dom/bot_dom to reflect which
     // is on top, i.e. that of the forward domain
@@ -354,10 +391,18 @@ String loopout_path_description_within_group(
   int prev_offset = top_dom_is_prev ? top_offset : bot_offset;
   int next_offset = top_dom_is_prev ? bot_offset : top_offset;
 
-  var prev_svg =
-      prev_helix.svg_base_pos(prev_offset, prev_domain.forward, prev_helix_svg_position_y, prev_geometry);
-  var next_svg =
-      next_helix.svg_base_pos(next_offset, next_domain.forward, next_helix_svg_position_y, next_geometry);
+  var prev_svg = prev_helix.svg_base_pos(
+    prev_offset,
+    prev_domain.forward,
+    prev_helix_svg_position_y,
+    prev_geometry,
+  );
+  var next_svg = next_helix.svg_base_pos(
+    next_offset,
+    next_domain.forward,
+    next_helix_svg_position_y,
+    next_geometry,
+  );
 
   var w, h;
 
@@ -396,7 +441,8 @@ String loopout_path_description_within_group(
   var c1 = Point<double>(x_offset1, y_offset1);
   var c2 = Point<double>(x_offset2, y_offset2);
 
-  var path = (include_start_M ? 'M ${prev_svg.x} ${prev_svg.y} ' : '') +
+  var path =
+      (include_start_M ? 'M ${prev_svg.x} ${prev_svg.y} ' : '') +
       'C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${next_svg.x} ${next_svg.y}';
 
   return path;
@@ -460,30 +506,24 @@ String loopout_path_description_same_helix_same_direction(
     c2 = swap;
   }
 
-  var path = (include_start_m ? 'M ${prev_svg.x} ${prev_svg.y} ' : '') +
+  var path =
+      (include_start_m ? 'M ${prev_svg.x} ${prev_svg.y} ' : '') +
       'C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${next_svg.x} ${next_svg.y}';
 
   return path;
 }
 
-Future<int> ask_for_length(String title,
-    {required int current_length,
-    required int lower_bound,
-    required DialogType dialog_type,
-    String tooltip = ""}) async {
+Future<int> ask_for_length(
+  String title, {
+  required int current_length,
+  required int lower_bound,
+  required DialogType dialog_type,
+  String tooltip = "",
+}) async {
   int length_idx = 0;
   var items = util.FixedList<DialogItem>(1);
-  items[length_idx] = DialogInteger(
-    label: 'new length:',
-    value: current_length,
-    tooltip: tooltip,
-  );
-  var dialog = Dialog(
-    title: title,
-    type: dialog_type,
-    items: items,
-    use_saved_response: false,
-  );
+  items[length_idx] = DialogInteger(label: 'new length:', value: current_length, tooltip: tooltip);
+  var dialog = Dialog(title: title, type: dialog_type, items: items, use_saved_response: false);
 
   List<DialogItem>? results = await util.dialog(dialog);
   if (results == null) return current_length;

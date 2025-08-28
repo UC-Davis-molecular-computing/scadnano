@@ -43,8 +43,9 @@ part 'design_main.over_react.g.dart';
 
 // final USING_REACT_DND = false;
 
-UiFactory<DesignMainProps> ConnectedDesignMain =
-    connect<AppState, DesignMainProps>(mapStateToProps: (state) => DesignMain()..state = state)(DesignMain);
+UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainProps>(
+  mapStateToProps: (state) => DesignMain()..state = state,
+)(DesignMain);
 
 UiFactory<DesignMainProps> DesignMain = _$DesignMain;
 
@@ -94,8 +95,9 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..design = design
           ..only_display_selected_helices = ui_state.only_display_selected_helices
           ..side_selected_helix_idxs = ui_state.side_selected_helix_idxs
-          ..helix_idx_to_svg_position_y_map = state.helix_idx_to_svg_position_map
-              .map((helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y))
+          ..helix_idx_to_svg_position_y_map = state.helix_idx_to_svg_position_map.map(
+            (helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y),
+          )
           ..key = 'mismatches')(),
 
       if (ui_state.show_domain_name_mismatches)
@@ -111,8 +113,9 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..design = design
           ..only_display_selected_helices = ui_state.only_display_selected_helices
           ..side_selected_helix_idxs = ui_state.side_selected_helix_idxs
-          ..helix_idx_to_svg_position_y_map = state.helix_idx_to_svg_position_map
-              .map((helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y))
+          ..helix_idx_to_svg_position_y_map = state.helix_idx_to_svg_position_map.map(
+            (helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y),
+          )
           ..key = 'unpaired-insertion-deletions')(),
 
       if (ui_state.base_pair_display_type == BasePairDisplayType.lines)
@@ -121,8 +124,9 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..design = design
           ..only_display_selected_helices = ui_state.only_display_selected_helices
           ..side_selected_helix_idxs = ui_state.side_selected_helix_idxs
-          ..helix_idx_to_svg_position_y_map = state.helix_idx_to_svg_position_map
-              .map((helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y))
+          ..helix_idx_to_svg_position_y_map = state.helix_idx_to_svg_position_map.map(
+            (helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y),
+          )
           ..key = 'base-pair-lines')(),
 
       if (ui_state.base_pair_display_type == BasePairDisplayType.rectangle)
@@ -131,8 +135,9 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..design = design
           ..only_display_selected_helices = ui_state.only_display_selected_helices
           ..side_selected_helix_idxs = ui_state.side_selected_helix_idxs
-          ..helix_idx_to_svg_position_y_map = state.helix_idx_to_svg_position_map
-              .map((helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y))
+          ..helix_idx_to_svg_position_y_map = state.helix_idx_to_svg_position_map.map(
+            (helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y),
+          )
           ..key = 'base-pair-rectangle')(),
 
       (set_design_main_strands_props(ConnectedDesignMainStrands()..key = 'strands', state))(),
@@ -146,8 +151,9 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..geometry = design.geometry
           ..only_display_selected_helices = ui_state.only_display_selected_helices
           ..side_selected_helix_idxs = ui_state.side_selected_helix_idxs
-          ..helix_idx_to_svg_position_y_map = state.helix_idx_to_svg_position_map
-              .map((helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y))
+          ..helix_idx_to_svg_position_y_map = state.helix_idx_to_svg_position_map.map(
+            (helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y),
+          )
           ..key = 'potential-vertical-crossovers')(),
 
       if (ui_state.strand_creation != null)
@@ -158,9 +164,10 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..end = ui_state.strand_creation!.end
           ..color = ui_state.strand_creation!.color
           ..helices = {ui_state.strand_creation!.helix.idx: ui_state.strand_creation!.helix}.build()
-          ..groups = {
-            ui_state.strand_creation!.helix.group: design.groups[ui_state.strand_creation!.helix.group]!
-          }.build()
+          ..groups =
+              {
+                ui_state.strand_creation!.helix.group: design.groups[ui_state.strand_creation!.helix.group]!,
+              }.build()
           ..geometry = design.geometry
           ..svg_position_y = state.helix_idx_to_svg_position_map[ui_state.strand_creation!.helix.idx]!.y
           ..key = 'strand-creating')(),
@@ -236,11 +243,15 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..key = 'helix-group-moving')(),
 
       (set_design_main_strands_moving_props(
-          ConnectedDesignMainStrandsMoving()..key = 'strands-moving', state))(),
+        ConnectedDesignMainStrandsMoving()..key = 'strands-moving',
+        state,
+      ))(),
 
       // (ConnectedDesignMainDomainsMoving()..key = 'domains-moving')(),
       (set_design_main_domains_moving_props(
-          ConnectedDesignMainDomainsMoving()..key = 'domains-moving', state))(),
+        ConnectedDesignMainDomainsMoving()..key = 'domains-moving',
+        state,
+      ))(),
     ]);
 
     // if (USING_REACT_DND) {

@@ -87,9 +87,9 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       ),
       if (props.display_base_offsets_of_major_ticks) _major_tick_offsets_svg_group(),
       if (props.display_major_tick_widths) _major_tick_widths_svg_group(),
-//      if (props.strand_create_enabled)
+      //      if (props.strand_create_enabled)
       (Dom.rect()
-//          ..onClick = start_strand_create
+        //          ..onClick = start_strand_create
         ..onPointerDown = (react.SyntheticPointerEvent event_syn) {
           // start creating a strand, but only if we are not currently creating a crossover
           if (app.state.ui_state.edit_modes.contains(EditModeChoice.pencil) &&
@@ -98,8 +98,13 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
             if (event.button != constants.LEFT_CLICK_BUTTON) return;
             var group = app.state.design.groups[props.helix.group]!;
             var helix_svg_position = app.state.helix_idx_to_svg_position_map[props.helix.idx]!;
-            var address =
-                util.get_address_on_helix(event, props.helix, group, props.geometry, helix_svg_position);
+            var address = util.get_address_on_helix(
+              event,
+              props.helix,
+              group,
+              props.geometry,
+              helix_svg_position,
+            );
             app.dispatch(actions.StrandCreateStart(address: address, color: util.color_cycler.next()));
           }
         }
@@ -107,10 +112,18 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         //XXX: it matters that we reference props.mouseover_datas, not a local variable
         // this ensures that when subsequent mouse events happen, the most recent mouseover_datas is examined,
         // otherwise the callback is not updated until render executes again
-        ..onMouseEnter = ((event) => util.update_mouseover(
-            event, props.helix, app.state.helix_idx_to_svg_position_map[props.helix.idx]!))
-        ..onMouseMove = ((event) => util.update_mouseover(
-            event, props.helix, app.state.helix_idx_to_svg_position_map[props.helix.idx]!))
+        ..onMouseEnter =
+            ((event) => util.update_mouseover(
+              event,
+              props.helix,
+              app.state.helix_idx_to_svg_position_map[props.helix.idx]!,
+            ))
+        ..onMouseMove =
+            ((event) => util.update_mouseover(
+              event,
+              props.helix,
+              app.state.helix_idx_to_svg_position_map[props.helix.idx]!,
+            ))
         ..x = props.helix_svg_position.x
         ..y = props.helix_svg_position.y
         ..width = '$width'
@@ -143,10 +156,14 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     MouseEvent event = ev as MouseEvent;
     if (!event.shiftKey) {
       event.preventDefault();
-      app.dispatch(actions.ContextMenuShow(
+      app.dispatch(
+        actions.ContextMenuShow(
           context_menu: ContextMenu(
-              items: context_menu_helix(props.helix, props.helix_change_apply_to_all),
-              position: util.from_point_num(event.page))));
+            items: context_menu_helix(props.helix, props.helix_change_apply_to_all),
+            position: util.from_point_num(event.page),
+          ),
+        ),
+      );
     }
   }
 
@@ -200,7 +217,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     if (props.show_domain_labels) {
       offset += props.geometry.base_height_svg;
     }
-    num y = props.helix_svg_position.y +
+    num y =
+        props.helix_svg_position.y +
         props.helix.svg_height(props.geometry) +
         DISTANCE_OFFSET_DISPLAY_FROM_HELIX +
         offset;

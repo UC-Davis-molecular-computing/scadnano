@@ -39,16 +39,17 @@ main() {
       helices = [for (int i = 0; i < num_helices; i++) Helix(idx: i, max_offset: 100, grid: Grid.square)];
       design = Design(helices: helices, grid: Grid.square);
 
-      design = design
-          .draw_strand(1, 16)
-          .move(-16)
-          .cross(0)
-          .move(32)
-          .loopout(1, 3)
-          .move(-16)
-          .with_domain_name("DEF*")
-          .as_scaffold()
-          .commit();
+      design =
+          design
+              .draw_strand(1, 16)
+              .move(-16)
+              .cross(0)
+              .move(32)
+              .loopout(1, 3)
+              .move(-16)
+              .with_domain_name("DEF*")
+              .as_scaffold()
+              .commit();
       design = design.draw_strand(1, 0).move(16).with_domain_name("ABC").cross(0).move(-16).commit();
       design = design.draw_strand(0, 32).move(-16).with_domain_name("GHI").cross(1).move(16).commit();
       design = design.draw_strand(0, 40).move(10).commit();
@@ -72,8 +73,11 @@ main() {
     test('assign_domain_name_complement_on_all_strands', () {
       var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
       var state = app_state_from_design(design);
-      var all_strands =
-          assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(
+        design.strands,
+        state,
+        action,
+      );
 
       expect(all_strands.length, 5);
 
@@ -109,8 +113,11 @@ main() {
     test('assign_domain_name_complement_on_complement_of_JKL_strand', () {
       var action = actions.AssignDomainNameComplementFromBoundStrands([design.strands[3]]);
       var state = app_state_from_design(design);
-      var all_strands =
-          assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(
+        design.strands,
+        state,
+        action,
+      );
 
       expect(all_strands.length, 5);
 
@@ -147,8 +154,11 @@ main() {
       // assign complements for ABC and JKL
       var action = actions.AssignDomainNameComplementFromBoundStrands([design.strands[0], design.strands[3]]);
       var state = app_state_from_design(design);
-      var all_strands =
-          assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(
+        design.strands,
+        state,
+        action,
+      );
 
       expect(all_strands.length, 5);
 
@@ -185,8 +195,11 @@ main() {
       var action = actions.AssignDomainNameComplementFromBoundStrands([design.strands[0], design.strands[2]]);
 
       var state = app_state_from_design(design);
-      var all_strands =
-          assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(
+        design.strands,
+        state,
+        action,
+      );
 
       expect(all_strands.length, 5);
 
@@ -222,26 +235,28 @@ main() {
       helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       design = Design(helices: helices, grid: Grid.square);
 
-      design = design
-          .draw_strand(0, 0)
-          .move(8)
-          .with_domain_name("ABC")
-          .cross(0)
-          .move(-8)
-          .cross(0)
-          .as_circular()
-          .commit();
+      design =
+          design
+              .draw_strand(0, 0)
+              .move(8)
+              .with_domain_name("ABC")
+              .cross(0)
+              .move(-8)
+              .cross(0)
+              .as_circular()
+              .commit();
       design = design.draw_strand(0, 8).move(8).cross(0).move(-8).with_domain_name("DEF").commit();
       design = design.draw_strand(0, 24).move(-8).with_domain_name("GHI").cross(0).move(8).commit();
-      design = design
-          .draw_strand(0, 25)
-          .move(8)
-          .cross(0, 29)
-          .move(-3)
-          .with_domain_name("JKL*")
-          .cross(0, 25)
-          .as_circular()
-          .commit();
+      design =
+          design
+              .draw_strand(0, 25)
+              .move(8)
+              .cross(0, 29)
+              .move(-3)
+              .with_domain_name("JKL*")
+              .cross(0, 25)
+              .as_circular()
+              .commit();
     });
 
     /* 0       8       16      24      32
@@ -254,8 +269,11 @@ main() {
     test('assign_domain_name_complement_on_all_strands_circular', () {
       var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
       var state = app_state_from_design(design);
-      var all_strands =
-          assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(
+        design.strands,
+        state,
+        action,
+      );
 
       expect(all_strands[0].substrands[0].name, "ABC");
       expect(all_strands[0].substrands[1].name, "ABC*");
@@ -280,8 +298,11 @@ main() {
     test('assign_domain_name_complement_on_ABC_circular', () {
       var action = actions.AssignDomainNameComplementFromBoundStrands([design.strands[0]]);
       var state = app_state_from_design(design);
-      var all_strands =
-          assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(
+        design.strands,
+        state,
+        action,
+      );
 
       expect(all_strands[0].substrands[0].name, "ABC");
       expect(all_strands[0].substrands[1].name, "ABC*");
@@ -299,8 +320,11 @@ main() {
     test('assign_domain_name_complement_on_ABC_and_GHI_circular', () {
       var action = actions.AssignDomainNameComplementFromBoundStrands([design.strands[0], design.strands[2]]);
       var state = app_state_from_design(design);
-      var all_strands =
-          assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(
+        design.strands,
+        state,
+        action,
+      );
 
       expect(all_strands[0].substrands[0].name, "ABC");
       expect(all_strands[0].substrands[1].name, "ABC*");
@@ -328,29 +352,34 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design
-          .draw_strand(0, 0)
-          .move(8)
-          .with_domain_name("ABC")
-          .cross(0)
-          .move(-8)
-          .with_domain_name("XYZ")
-          .commit();
+      design =
+          design
+              .draw_strand(0, 0)
+              .move(8)
+              .with_domain_name("ABC")
+              .cross(0)
+              .move(-8)
+              .with_domain_name("XYZ")
+              .commit();
 
       var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
       var state = app_state_from_design(design);
-      var all_strands =
-          assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(
+        design.strands,
+        state,
+        action,
+      );
 
       expect(all_strands.length, 1);
 
       var names = [all_strands[0].domains[0].name, all_strands[0].domains[1].name];
       expect(
-          names,
-          anyOf([
-            equals(["ABC", "ABC*"]),
-            equals(["XYZ*", "XYZ"])
-          ]));
+        names,
+        anyOf([
+          equals(["ABC", "ABC*"]),
+          equals(["XYZ*", "XYZ"]),
+        ]),
+      );
     });
 
     /* 0       8
@@ -364,19 +393,23 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design = design
-          .draw_strand(0, 0)
-          .move(9)
-          .with_domain_name("ABC")
-          .cross(0)
-          .move(-8)
-          .with_domain_name("XYZ")
-          .commit();
+      design =
+          design
+              .draw_strand(0, 0)
+              .move(9)
+              .with_domain_name("ABC")
+              .cross(0)
+              .move(-8)
+              .with_domain_name("XYZ")
+              .commit();
 
       var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
       var state = app_state_from_design(design);
-      var all_strands =
-          assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(
+        design.strands,
+        state,
+        action,
+      );
 
       expect(all_strands.length, 1);
 
@@ -399,8 +432,11 @@ main() {
 
       var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
       var state = app_state_from_design(design);
-      var all_strands =
-          assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(
+        design.strands,
+        state,
+        action,
+      );
 
       expect(all_strands.length, 1);
 
@@ -424,18 +460,22 @@ main() {
 
       var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
       var state = app_state_from_design(design);
-      var all_strands =
-          assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(
+        design.strands,
+        state,
+        action,
+      );
 
       expect(all_strands.length, 2);
 
       var names = [all_strands[0].domains[0].name, all_strands[1].domains[0].name];
       expect(
-          names,
-          anyOf([
-            equals(["ABC", "ABC*"]),
-            equals(["XYZ*", "XYZ"])
-          ]));
+        names,
+        anyOf([
+          equals(["ABC", "ABC*"]),
+          equals(["XYZ*", "XYZ"]),
+        ]),
+      );
     });
 
     /* 0       8
@@ -454,8 +494,11 @@ main() {
 
       var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
       var state = app_state_from_design(design);
-      var all_strands =
-          assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(
+        design.strands,
+        state,
+        action,
+      );
 
       expect(all_strands.length, 2);
 
@@ -478,8 +521,11 @@ main() {
 
       var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
       var state = app_state_from_design(design);
-      var all_strands =
-          assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(
+        design.strands,
+        state,
+        action,
+      );
 
       expect(all_strands.length, 2);
 
@@ -502,8 +548,11 @@ main() {
 
       var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
       var state = app_state_from_design(design);
-      var all_strands =
-          assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(
+        design.strands,
+        state,
+        action,
+      );
 
       expect(all_strands.length, 2);
 
@@ -530,8 +579,11 @@ main() {
 
       var action = actions.AssignDomainNameComplementFromBoundStrands([design.strands[0]]);
       var state = app_state_from_design(design);
-      var all_strands =
-          assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(
+        design.strands,
+        state,
+        action,
+      );
 
       expect(all_strands.length, 2);
 
@@ -555,8 +607,11 @@ main() {
 
       var action = actions.AssignDomainNameComplementFromBoundStrands([design.strands[0]]);
       var state = app_state_from_design(design);
-      var all_strands =
-          assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(
+        design.strands,
+        state,
+        action,
+      );
 
       expect(all_strands.length, 2);
 
@@ -580,8 +635,11 @@ main() {
 
       var action = actions.AssignDomainNameComplementFromBoundStrands([design.strands[0]]);
       var state = app_state_from_design(design);
-      var all_strands =
-          assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(
+        design.strands,
+        state,
+        action,
+      );
 
       expect(all_strands.length, 2);
 
@@ -605,8 +663,11 @@ main() {
 
       var action = actions.AssignDomainNameComplementFromBoundStrands([design.strands[0]]);
       var state = app_state_from_design(design);
-      var all_strands =
-          assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(
+        design.strands,
+        state,
+        action,
+      );
 
       expect(all_strands.length, 2);
 
@@ -635,32 +696,36 @@ main() {
       helices = [for (int i = 0; i < num_helices; i++) Helix(idx: i, max_offset: 100, grid: Grid.square)];
       design = Design(helices: helices, grid: Grid.square);
 
-      design = design
-          .draw_strand(1, 16)
-          .move(-16)
-          .cross(0)
-          .move(32)
-          .loopout(1, 3)
-          .move(-16)
-          .with_domain_name("DEF*")
-          .as_scaffold()
-          .commit();
+      design =
+          design
+              .draw_strand(1, 16)
+              .move(-16)
+              .cross(0)
+              .move(32)
+              .loopout(1, 3)
+              .move(-16)
+              .with_domain_name("DEF*")
+              .as_scaffold()
+              .commit();
       design = design.draw_strand(1, 0).move(16).with_domain_name("ABC").cross(0).move(-16).commit();
       design = design.draw_strand(0, 32).move(-16).with_domain_name("GHI").cross(1).move(16).commit();
-      design = design
-          .draw_strand(0, 40)
-          .move(10)
-          .cross(0)
-          .move(-10)
-          .with_domain_name("JKL")
-          .as_circular()
-          .commit();
+      design =
+          design
+              .draw_strand(0, 40)
+              .move(10)
+              .cross(0)
+              .move(-10)
+              .with_domain_name("JKL")
+              .as_circular()
+              .commit();
 
       var all_overlapping_strands = design.strands_overlapping;
 
       expect(all_overlapping_strands[design.strands[0]]!.length, 2);
-      expect(all_overlapping_strands[design.strands[0]],
-          allOf([contains(design.strands[1]), contains(design.strands[2])]));
+      expect(
+        all_overlapping_strands[design.strands[0]],
+        allOf([contains(design.strands[1]), contains(design.strands[2])]),
+      );
 
       expect(all_overlapping_strands[design.strands[1]]!.length, 1);
       expect(all_overlapping_strands[design.strands[1]], [design.strands[0]]);
@@ -725,8 +790,10 @@ main() {
       var all_overlapping_strands = design.strands_overlapping;
 
       expect(all_overlapping_strands[design.strands[0]]!.length, 2);
-      expect(all_overlapping_strands[design.strands[0]],
-          allOf([contains(design.strands[0]), contains(design.strands[1])]));
+      expect(
+        all_overlapping_strands[design.strands[0]],
+        allOf([contains(design.strands[0]), contains(design.strands[1])]),
+      );
 
       expect(all_overlapping_strands[design.strands[1]]!.length, 1);
       expect(all_overlapping_strands[design.strands[1]], allOf([contains(design.strands[0])]));

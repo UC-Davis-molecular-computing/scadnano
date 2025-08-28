@@ -12,7 +12,10 @@ import '../state/helix.dart';
 /// Disallows converting all crossovers on a circular strand to loopouts, since then the first
 /// substrand would necessarily be a loopout, currently disallowed.
 forbid_create_circular_strand_no_crossovers_middleware(
-    Store<AppState> store, dynamic action, NextDispatcher next) {
+  Store<AppState> store,
+  dynamic action,
+  NextDispatcher next,
+) {
   var msg_generic = """\
 Unfortunately it is not possible in scadnano to create a circular strand 
 with no crossovers and only loopouts. (This is because it is unsupported 

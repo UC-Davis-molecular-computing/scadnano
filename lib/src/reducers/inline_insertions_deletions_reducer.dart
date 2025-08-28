@@ -25,13 +25,20 @@ Design? inline_insertions_deletions_reducer(Design? design, actions.InlineInsert
   for (int i = 0; i < strands.length; i++) {
     strands[i] = strands[i].initialize();
   }
-  return design.rebuild((b) => b
-    ..helices.replace(helices_new)
-    ..strands.replace(strands));
+  return design.rebuild(
+    (b) =>
+        b
+          ..helices.replace(helices_new)
+          ..strands.replace(strands),
+  );
 }
 
 _inline_deletions_insertions_on_helix(
-    Design design, int helix_idx, Map<int, Helix> helices_new, List<StrandBuilder> strands_new) {
+  Design design,
+  int helix_idx,
+  Map<int, Helix> helices_new,
+  List<StrandBuilder> strands_new,
+) {
   var helices = design.helices;
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // first gather information before changing anything
@@ -41,11 +48,11 @@ _inline_deletions_insertions_on_helix(
   // gather all mods on helix
   var deletions = [
     for (var substrand in design.domains_on_helix(helix_idx))
-      for (var deletion in substrand.deletions) deletion
+      for (var deletion in substrand.deletions) deletion,
   ];
   var insertions = [
     for (var substrand in design.domains_on_helix(helix_idx))
-      for (var insertion in substrand.insertions) insertion
+      for (var insertion in substrand.insertions) insertion,
   ];
 
   // change max offset
@@ -113,11 +120,14 @@ _inline_deletions_insertions_on_helix(
       int new_start = substrand.start + delta_acc;
       delta_acc += substrand.dna_length() - substrand.visual_length;
       int new_end = substrand.end + delta_acc;
-      Domain new_substrand = substrand.rebuild((b) => b
-        ..start = new_start
-        ..end = new_end
-        ..insertions.replace([])
-        ..deletions.replace([]));
+      Domain new_substrand = substrand.rebuild(
+        (b) =>
+            b
+              ..start = new_start
+              ..end = new_end
+              ..insertions.replace([])
+              ..deletions.replace([]),
+      );
 
       // find strand where this substrand resides and replace it
       Strand strand = design.substrand_to_strand[substrand]!;

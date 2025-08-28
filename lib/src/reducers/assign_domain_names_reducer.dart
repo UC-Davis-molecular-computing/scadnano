@@ -7,7 +7,10 @@ import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
 
 BuiltList<Strand> assign_domain_name_complement_from_bound_strands_reducer(
-    BuiltList<Strand> strands, AppState state, actions.AssignDomainNameComplementFromBoundStrands action) {
+  BuiltList<Strand> strands,
+  AppState state,
+  actions.AssignDomainNameComplementFromBoundStrands action,
+) {
   List<Domain> computed_domains = [];
   List<Strand> all_strands = strands.toList();
   for (var strand_to_assign in action.strands) {
@@ -53,7 +56,10 @@ String complement_domain_name(String name) =>
 
 /////////////////////////////
 BuiltList<Strand> assign_domain_name_complement_from_bound_domains_reducer(
-    BuiltList<Strand> strands, AppState state, actions.AssignDomainNameComplementFromBoundDomains action) {
+  BuiltList<Strand> strands,
+  AppState state,
+  actions.AssignDomainNameComplementFromBoundDomains action,
+) {
   List<Domain> computed_domains = [];
   var all_strands = strands.toList();
   for (var domain_to_assign in action.domains) {
@@ -62,7 +68,11 @@ BuiltList<Strand> assign_domain_name_complement_from_bound_domains_reducer(
       var strand_idx = strands.indexOf(strand_to);
       for (var other_domain in state.design.domains_on_helix_overlapping(domain_to_assign)) {
         strand_to = compute_domain_name_complements_for_bound_domains(
-            strand_to, domain_to_assign, other_domain, computed_domains);
+          strand_to,
+          domain_to_assign,
+          other_domain,
+          computed_domains,
+        );
       }
       all_strands[strand_idx] = strand_to;
     }
@@ -71,7 +81,11 @@ BuiltList<Strand> assign_domain_name_complement_from_bound_domains_reducer(
 }
 
 Strand compute_domain_name_complements_for_bound_domains(
-    Strand strand_to, Domain domain_to_assign, Domain other_domain, List<Domain> computed_domains) {
+  Strand strand_to,
+  Domain domain_to_assign,
+  Domain other_domain,
+  List<Domain> computed_domains,
+) {
   var substrands = strand_to.substrands.toList();
   var ss_idx = substrands.indexOf(domain_to_assign); //may have to cast to Substrand
   if (ss_idx != -1) {

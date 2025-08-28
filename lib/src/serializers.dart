@@ -9,7 +9,6 @@ import 'package:scadnano/src/dna_file_type.dart';
 import 'package:scadnano/src/state/base_pair_display_type.dart';
 import 'package:scadnano/src/state/dna_extensions_move.dart';
 import 'package:scadnano/src/state/undo_redo.dart';
-import 'package:tuple/tuple.dart';
 
 import 'state/dna_assign_options.dart';
 import 'state/domains_move.dart';
@@ -377,20 +376,22 @@ part 'serializers.g.dart';
 ])
 Serializers serializers = _$serializers;
 
-Serializers standard_serializers = (serializers.toBuilder()
-      ..add(PointSerializer<num>())
-      ..add(ColorSerializer())
-      ..addPlugin(new StandardJsonPlugin())
-// https://github.com/google/built_value.dart/issues/1018#issue-849937552
-// BuiltValue does not automatically create serializer for nested BuiltMap (see dialog.dart, disable_when_any_radio_button_selected)
-// so add serializer manually here
-      ..addBuilderFactory(
-          const FullType(BuiltMap, const [
-            const FullType(int),
-            const FullType(BuiltList, const [const FullType(String)])
-          ]),
-          () => new MapBuilder<int, BuiltList<String>>()))
-    .build();
+Serializers standard_serializers =
+    (serializers.toBuilder()
+          ..add(PointSerializer<num>())
+          ..add(ColorSerializer())
+          ..addPlugin(new StandardJsonPlugin())
+          // https://github.com/google/built_value.dart/issues/1018#issue-849937552
+          // BuiltValue does not automatically create serializer for nested BuiltMap (see dialog.dart, disable_when_any_radio_button_selected)
+          // so add serializer manually here
+          ..addBuilderFactory(
+            const FullType(BuiltMap, const [
+              const FullType(int),
+              const FullType(BuiltList, const [const FullType(String)]),
+            ]),
+            () => new MapBuilder<int, BuiltList<String>>(),
+          ))
+        .build();
 
 //Serializers standard_serializers2 = (serializers.toBuilder()..addPlugin(new StandardJsonPlugin())).build();
 
@@ -433,8 +434,11 @@ class PointSerializer<T extends num> implements PrimitiveSerializer<Point<T>> {
   }
 
   @override
-  Point<T> deserialize(Serializers serializers, Object serialized,
-      {FullType specifiedType = FullType.unspecified}) {
+  Point<T> deserialize(
+    Serializers serializers,
+    Object serialized, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
     Map map = serialized as Map;
     return Point<T>(num.parse(map['x']) as T, num.parse(map['y']) as T);
   }
@@ -454,8 +458,11 @@ class ColorSerializer implements PrimitiveSerializer<Color> {
   }
 
   @override
-  Color deserialize(Serializers serializers, Object serialized,
-      {FullType specifiedType = FullType.unspecified}) {
+  Color deserialize(
+    Serializers serializers,
+    Object serialized, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
     String color_hex = serialized as String;
     return Color.hex(color_hex);
   }

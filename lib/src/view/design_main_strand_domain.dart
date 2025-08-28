@@ -54,10 +54,18 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with
     Domain domain = props.domain;
     String id = domain.id;
 
-    Point<double> start_svg = props.helix
-        .svg_base_pos(domain.offset_5p, domain.forward, props.helix_svg_position.y, props.geometry);
-    Point<double> end_svg = props.helix
-        .svg_base_pos(domain.offset_3p, domain.forward, props.helix_svg_position.y, props.geometry);
+    Point<double> start_svg = props.helix.svg_base_pos(
+      domain.offset_5p,
+      domain.forward,
+      props.helix_svg_position.y,
+      props.geometry,
+    );
+    Point<double> end_svg = props.helix.svg_base_pos(
+      domain.offset_3p,
+      domain.forward,
+      props.helix_svg_position.y,
+      props.geometry,
+    );
 
     var classname = constants.css_selector_domain;
     if (props.selected) {
@@ -133,12 +141,21 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with
         // select/deselect
         props.domain.handle_selection_mouse_down(event);
         // set up drag detection for moving domains
-        var address = util.find_closest_address(event, [props.helix], props.groups, props.geometry,
-            {props.helix.idx: props.helix_svg_position}.build());
+        var address = util.find_closest_address(
+          event,
+          [props.helix],
+          props.groups,
+          props.geometry,
+          {props.helix.idx: props.helix_svg_position}.build(),
+        );
         HelixGroup group = app.state.design.group_of_domain(props.domain);
         var view_order_inverse = group.helices_view_order_inverse;
-        app.dispatch(actions.DomainsMoveStartSelectedDomains(
-            address: address, original_helices_view_order_inverse: view_order_inverse));
+        app.dispatch(
+          actions.DomainsMoveStartSelectedDomains(
+            address: address,
+            original_helices_view_order_inverse: view_order_inverse,
+          ),
+        );
       }
     }
   }
@@ -149,7 +166,8 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with
       // want, which is that if we are moving a group of strands, and we are in a disallowed position where
       // the pointer itself (so also some strands) are positioned directly over a visible part of a strand,
       // then it would otherwise become selected on mouse up, when really we just want to end the move.
-      bool currently_moving = app.state.ui_state.strands_move != null ||
+      bool currently_moving =
+          app.state.ui_state.strands_move != null ||
           app.state.ui_state.domains_move != null ||
           app.state.ui_state.dna_ends_are_moving;
       if (domain_selectable(props.domain) && !currently_moving) {
@@ -179,10 +197,18 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with
       event.preventDefault();
       event.stopPropagation();
       Address address = util.get_address_on_helix(
-          event, props.helix, props.groups[props.helix.group]!, props.geometry, props.helix_svg_position);
+        event,
+        props.helix,
+        props.groups[props.helix.group]!,
+        props.geometry,
+        props.helix_svg_position,
+      );
       var items = props.context_menu_strand(props.strand, domain: props.domain, address: address).build();
-      app.dispatch(actions.ContextMenuShow(
-          context_menu: ContextMenu(items: items, position: util.from_point_num(event.page))));
+      app.dispatch(
+        actions.ContextMenuShow(
+          context_menu: ContextMenu(items: items, position: util.from_point_num(event.page)),
+        ),
+      );
     }
   }
 }

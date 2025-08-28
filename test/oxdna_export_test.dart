@@ -4,7 +4,6 @@ import 'package:scadnano/src/state/grid_position.dart';
 import 'package:scadnano/src/state/group.dart';
 import 'package:scadnano/src/state/position3d.dart';
 import 'package:test/test.dart';
-import 'package:tuple/tuple.dart';
 
 import 'package:scadnano/src/middleware/oxdna_export.dart';
 import 'package:scadnano/src/state/helix.dart';
@@ -36,7 +35,8 @@ main() {
       HELIX_ANGLE = pi * 2 / BASES_PER_TURN;
       RISE_PER_BASE_PAIR = 0.332;
       // square of expected distance between adjacent nucleotide centers of mass
-      EXPECTED_ADJ_NUC_CM_DIST2 = pow(2 * OX_BASE_DIST * sin(HELIX_ANGLE / 2), 2) +
+      EXPECTED_ADJ_NUC_CM_DIST2 =
+          pow(2 * OX_BASE_DIST * sin(HELIX_ANGLE / 2), 2) +
           pow(RISE_PER_BASE_PAIR * NM_TO_OX_UNITS, 2).toDouble();
     });
 
@@ -59,9 +59,9 @@ main() {
       int expected_num_nucleotides = 7 * 4;
       int expected_strand_length = 7 * 2;
 
-      Tuple2<String, String> oxdna_dat_top = to_oxdna_format(design);
-      List<String> dat_lines = oxdna_dat_top.item1.trim().split('\n');
-      List<String> top_lines = oxdna_dat_top.item2.trim().split('\n');
+      (String, String) oxdna_dat_top = to_oxdna_format(design);
+      List<String> dat_lines = oxdna_dat_top.$1.trim().split('\n');
+      List<String> top_lines = oxdna_dat_top.$2.trim().split('\n');
 
       // check length of output files are as expected (matches # of nucleotides plus header size)
       expect(dat_lines.length, expected_num_nucleotides + 3);
@@ -197,13 +197,19 @@ main() {
       */
       var helices = [
         for (int i = 0; i < 4; i++)
-          Helix(idx: i, max_offset: 7, grid: i < 2 ? Grid.honeycomb : Grid.square, group: i < 2 ? 'a' : 'b')
+          Helix(idx: i, max_offset: 7, grid: i < 2 ? Grid.honeycomb : Grid.square, group: i < 2 ? 'a' : 'b'),
       ];
       var groups = {
         'a': HelixGroup(
-            grid: Grid.honeycomb, position: Position3D(x: 0, y: 0, z: 0), helices_view_order: [0, 1]),
+          grid: Grid.honeycomb,
+          position: Position3D(x: 0, y: 0, z: 0),
+          helices_view_order: [0, 1],
+        ),
         'b': HelixGroup(
-            grid: Grid.square, position: Position3D(x: 100, y: 0, z: 0), helices_view_order: [2, 3]),
+          grid: Grid.square,
+          position: Position3D(x: 100, y: 0, z: 0),
+          helices_view_order: [2, 3],
+        ),
       };
       var design = Design(helices: helices, grid: Grid.square, groups: groups);
       design = design.draw_strand(0, 0).to(7).cross(1).move(-7).commit();
@@ -213,9 +219,9 @@ main() {
       int expected_num_nucleotides = 7 * 4;
       int expected_strand_length = 7 * 2;
 
-      Tuple2<String, String> oxdna_dat_top = to_oxdna_format(design);
-      List<String> dat_lines = oxdna_dat_top.item1.trim().split('\n');
-      List<String> top_lines = oxdna_dat_top.item2.trim().split('\n');
+      (String, String) oxdna_dat_top = to_oxdna_format(design);
+      List<String> dat_lines = oxdna_dat_top.$1.trim().split('\n');
+      List<String> top_lines = oxdna_dat_top.$2.trim().split('\n');
 
       // check length of output files are as expected (matches # of nucleotides plus header size)
       expect(dat_lines.length, expected_num_nucleotides + 3);
@@ -362,9 +368,9 @@ main() {
       int expected_num_nucleotides = 8 * 3;
       int expected_strand_length = 8 * 3;
 
-      Tuple2<String, String> oxdna_dat_top = to_oxdna_format(design);
-      List<String> dat_lines = oxdna_dat_top.item1.trim().split('\n');
-      List<String> top_lines = oxdna_dat_top.item2.trim().split('\n');
+      (String, String) oxdna_dat_top = to_oxdna_format(design);
+      List<String> dat_lines = oxdna_dat_top.$1.trim().split('\n');
+      List<String> top_lines = oxdna_dat_top.$2.trim().split('\n');
 
       // check length of output files are as expected (matches # of nucleotides plus header size)
       expect(dat_lines.length, expected_num_nucleotides + 3);
@@ -467,9 +473,9 @@ main() {
       int expected_num_nucleotides = 6;
       int expected_strand_length = 6;
 
-      Tuple2<String, String> oxdna_dat_top = to_oxdna_format(design);
-      List<String> dat_lines = oxdna_dat_top.item1.trim().split('\n');
-      List<String> top_lines = oxdna_dat_top.item2.trim().split('\n');
+      (String, String) oxdna_dat_top = to_oxdna_format(design);
+      List<String> dat_lines = oxdna_dat_top.$1.trim().split('\n');
+      List<String> top_lines = oxdna_dat_top.$2.trim().split('\n');
 
       // check length of output files are as expected (matches # of nucleotides plus header size)
       expect(dat_lines.length, expected_num_nucleotides + 3);
@@ -570,9 +576,9 @@ main() {
       int expected_num_nucleotides = 8;
       int expected_strand_length = 8;
 
-      Tuple2<String, String> oxdna_dat_top = to_oxdna_format(design);
-      List<String> dat_lines = oxdna_dat_top.item1.trim().split('\n');
-      List<String> top_lines = oxdna_dat_top.item2.trim().split('\n');
+      (String, String) oxdna_dat_top = to_oxdna_format(design);
+      List<String> dat_lines = oxdna_dat_top.$1.trim().split('\n');
+      List<String> top_lines = oxdna_dat_top.$2.trim().split('\n');
 
       // check length of output files are as expected (matches # of nucleotides plus header size)
       expect(dat_lines.length, expected_num_nucleotides + 3);
@@ -676,9 +682,9 @@ main() {
       int expected_strand_1_length = 7 + 4;
       int expected_strand_2_length = 7;
 
-      Tuple2<String, String> oxdna_dat_top = to_oxdna_format(design);
-      List<String> dat_lines = oxdna_dat_top.item1.trim().split('\n');
-      List<String> top_lines = oxdna_dat_top.item2.trim().split('\n');
+      (String, String) oxdna_dat_top = to_oxdna_format(design);
+      List<String> dat_lines = oxdna_dat_top.$1.trim().split('\n');
+      List<String> top_lines = oxdna_dat_top.$2.trim().split('\n');
 
       // check length of output files are as expected (matches # of nucleotides plus header size)
       expect(dat_lines.length, expected_num_nucleotides + 3);

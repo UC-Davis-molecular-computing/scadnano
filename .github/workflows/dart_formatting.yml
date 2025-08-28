@@ -8,30 +8,25 @@ jobs:
   check_formatting:
     if: github.event.pull_request.draft == false
 
-    runs-on: ubuntu-22.04
-
+    runs-on: ubuntu-latest
     steps:
-      - name: Setup Dart SDK Step 1
-        run: sudo apt-get update
-      - name: Setup Dart SDK Step 2
-        run: sudo apt-get install apt-transport-https
-      - name: Setup Dart SDK Step 3
-        run: sudo sh -c 'wget -qO- https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -'
-      - name: Setup Dart SDK Step 4
-        run: sudo sh -c 'wget -qO- https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_stable.list > /etc/apt/sources.list.d/dart_stable.list'
-      - name: Setup Dart SDK Step 5
-        run: wget -O /tmp/dart_3.5.4-1_amd64.deb https://storage.googleapis.com/dart-archive/channels/stable/release/3.5.4/linux_packages/dart_3.5.4-1_amd64.deb
-      - name: Setup Dart SDK Step 6
-        run: sudo apt install /tmp/dart_3.5.4-1_amd64.deb
-      - uses: actions/checkout@v4
+      - name: Checkout branch
+        uses: actions/checkout@v4
+
+      - name: Setup Dart SDK  # Using Dart 3.8 to match pubspec.yaml constraint
+        uses: dart-lang/setup-dart@v1  # https://github.com/dart-lang/setup-dart
+        with:
+          sdk: 3.8
+
       - name: Install dependencies
-        run: PATH="$PATH:/usr/lib/dart/bin" dart pub get
+        run: dart pub get
+
       - name: Verify formatting
-        run: PATH="$PATH:/usr/lib/dart/bin" dart format -l 110 --output=none --set-exit-if-changed .
+        run: dart format -l 110 --output=none --set-exit-if-changed .
 
   fail_if_pull_request_is_draft:
     if: github.event.pull_request.draft == true
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: Fails in order to indicate that pull request needs to be marked as ready to review and formatting workflow needs to pass.
         run: exit 1

@@ -47,29 +47,31 @@ class End5PrimeComponent extends UiComponent2<End5PrimeProps> {
     //XXX: width, height, rx, ry should be do-able in CSS. However, Firefox won't display properly
     // if they are specified in CSS, but it will if they are specified here.
     num width = 7;
-    var rect_props = Dom.rect()
-      ..className = props.classname
-      ..x = '${props.pos.x - width / 2}'
-      ..y = '${props.pos.y - width / 2}'
-      ..width = '${width}px'
-      ..height = '${width}px'
-      ..rx = '1.5px'
-      ..ry = '1.5px'
-      ..fill = props.color.toHexColor().toCssString();
+    var rect_props =
+        Dom.rect()
+          ..className = props.classname
+          ..x = '${props.pos.x - width / 2}'
+          ..y = '${props.pos.y - width / 2}'
+          ..width = '${width}px'
+          ..height = '${width}px'
+          ..rx = '1.5px'
+          ..ry = '1.5px'
+          ..fill = props.color.toHexColor().toCssString();
 
     if (props.transform != null) {
       // if it is present, then this is a "real" end, not moving,
       // so all the other option props will also be present
       // https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-center-in-svg
-      rect_props = rect_props
-        ..transform = props.transform
-        ..id = props.id_
-        ..onPointerDown = props.on_pointer_down
-        ..onPointerUp = props.on_pointer_up
-        ..onMouseUp = props.on_mouse_up
-        ..onMouseEnter = props.on_mouse_enter
-        ..onMouseLeave = props.on_mouse_leave
-        ..onMouseMove = props.on_mouse_move;
+      rect_props =
+          rect_props
+            ..transform = props.transform
+            ..id = props.id_
+            ..onPointerDown = props.on_pointer_down
+            ..onPointerUp = props.on_pointer_up
+            ..onMouseUp = props.on_mouse_up
+            ..onMouseEnter = props.on_mouse_enter
+            ..onMouseLeave = props.on_mouse_leave
+            ..onMouseMove = props.on_mouse_move;
     }
     return rect_props();
   }

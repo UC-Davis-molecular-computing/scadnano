@@ -41,12 +41,15 @@ dna_ends_move_start_middleware(Store<AppState> store, action, NextDispatcher nex
 
     // important that we dispatch to app, not to store, because the app dispatch will know to route this
     // to the appropriate optimized store for moving DNAEnds
-    app.dispatch(actions.DNAEndsMoveSetSelectedEnds(
+    app.dispatch(
+      actions.DNAEndsMoveSetSelectedEnds(
         original_offset: action.offset,
         moves: moves.toBuiltList(),
         helix: action.helix,
         strands_affected: strands_affected.toBuiltSet(),
-        geometry: geometry));
+        geometry: geometry,
+      ),
+    );
   } else {
     next(action);
   }
@@ -89,9 +92,10 @@ int find_allowable_offset(Design design, DNAEnd end, BuiltSet<DNAEnd> selected_e
   }
 
   int closest_unselected_offset = unselected_end_offsets_to_one_side.reduce(highest ? min : max);
-  int num_selected_offsets_between = selected_end_offsets_to_one_side
-      .where((o) => highest ? o < closest_unselected_offset : o > closest_unselected_offset)
-      .length;
+  int num_selected_offsets_between =
+      selected_end_offsets_to_one_side
+          .where((o) => highest ? o < closest_unselected_offset : o > closest_unselected_offset)
+          .length;
   int adjust_factor = highest ? -1 - num_selected_offsets_between : 1 + num_selected_offsets_between;
 
   return closest_unselected_offset + adjust_factor;

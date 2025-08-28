@@ -41,7 +41,7 @@ _autobreak(Store<AppState> store, actions.Autobreak action) async {
       'maxStapleLen': action.max_length,
       'tgtStapleLen': action.target_length,
     },
-    'design': store.state.design.to_json_serializable()
+    'design': store.state.design.to_json_serializable(),
   });
   var response = await http.post(
     Uri.parse(constants.autobreak_url),

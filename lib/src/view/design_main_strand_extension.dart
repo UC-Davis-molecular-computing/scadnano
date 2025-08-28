@@ -61,11 +61,20 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     var adj_helix = props.adjacent_helix;
     var adj_helix_svg_y = props.adjacent_helix_svg_position.y;
 
-    Point<double> extension_attached_end_svg =
-        util.compute_extension_attached_end_svg(ext, adj_dom, adj_helix, adj_helix_svg_y, props.geometry);
+    Point<double> extension_attached_end_svg = util.compute_extension_attached_end_svg(
+      ext,
+      adj_dom,
+      adj_helix,
+      adj_helix_svg_y,
+      props.geometry,
+    );
 
-    Point<double> extension_free_end_svg =
-        util.compute_extension_free_end_svg(extension_attached_end_svg, ext, adj_dom, props.geometry);
+    Point<double> extension_free_end_svg = util.compute_extension_free_end_svg(
+      extension_attached_end_svg,
+      ext,
+      adj_dom,
+      props.geometry,
+    );
 
     var classname = constants.css_selector_extension;
     if (props.selected) {
@@ -108,7 +117,8 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     // So we use Dom.path() instead of Dom.line()
     // var path_d = 'M ${left_svg.x} ${left_svg.y} '
     //     'L ${right_svg.x} ${right_svg.y}';
-    var path_d = 'M ${svg_5p.x} ${svg_5p.y} '
+    var path_d =
+        'M ${svg_5p.x} ${svg_5p.y} '
         'L ${svg_3p.x} ${svg_3p.y}';
     return (Dom.path()
       ..className = classname
@@ -137,7 +147,8 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
       // want, which is that if we are moving a group of strands, and we are in a disallowed position where
       // the pointer itself (so also some strands) are positioned directly over a visible part of a strand,
       // then it would otherwise become selected on mouse up, when really we just want to end the move.
-      bool currently_moving = app.state.ui_state.strands_move != null ||
+      bool currently_moving =
+          app.state.ui_state.strands_move != null ||
           app.state.ui_state.domains_move != null ||
           app.state.ui_state.dna_ends_are_moving;
       if (extension_selectable(props.ext) && !currently_moving) {
@@ -164,71 +175,86 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     if (!event.shiftKey) {
       event.preventDefault();
       event.stopPropagation(); // needed to prevent strand context menu from popping up
-      app.dispatch(actions.ContextMenuShow(
+      app.dispatch(
+        actions.ContextMenuShow(
           context_menu: ContextMenu(
-              items: context_menu_extension().build(), position: util.from_point_num(event.page))));
+            items: context_menu_extension().build(),
+            position: util.from_point_num(event.page),
+          ),
+        ),
+      );
     }
   }
 
   List<ContextMenuItem> context_menu_extension() => [
-        ContextMenuItem(
-          title: 'change extension display length/angle',
-          on_click: extension_display_length_and_angle_change,
-        ),
-        ContextMenuItem(
-          title: 'change extension number of bases',
-          on_click: extension_num_bases_change,
-        ),
-        ContextMenuItem(
-          title: 'set extension name',
-          on_click: set_extension_name,
-        ),
-        if (props.ext.name != null)
-          ContextMenuItem(
-              title: 'remove extension name',
-              on_click: () {
-                var exts =
-                    util.add_if_not_null(app.state.ui_state.selectables_store.selected_extensions, props.ext);
-                var action = exts.length > 1
-                    ? actions.BatchAction(exts.map((l) => actions.SubstrandNameSet(name: null, substrand: l)),
-                        "remove extension names")
-                    : actions.SubstrandNameSet(name: null, substrand: props.ext);
-                app.dispatch(action);
-              }),
-        ContextMenuItem(
-          title: 'set extension label',
-          on_click: set_extension_label,
-        ),
-        if (props.ext.label != null)
-          ContextMenuItem(
-              title: 'remove extension label',
-              on_click: () {
-                var exts =
-                    util.add_if_not_null(app.state.ui_state.selectables_store.selected_extensions, props.ext);
-                var action = exts.length > 1
-                    ? actions.BatchAction(
-                        exts.map((l) => actions.SubstrandLabelSet(label: null, substrand: l)),
-                        "remove extension labels")
-                    : actions.SubstrandLabelSet(label: null, substrand: props.ext);
-                app.dispatch(action);
-              }),
-        ContextMenuItem(
-          title: 'set extension color',
-          on_click: () => app
-              .dispatch(actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: props.ext)),
-        ),
-        if (props.ext.color != null)
-          ContextMenuItem(
-              title: 'remove extension color',
-              on_click: () => app.dispatch(actions.StrandOrSubstrandColorSet(
-                  strand: props.strand, substrand: props.ext, color: null))),
-      ];
+    ContextMenuItem(
+      title: 'change extension display length/angle',
+      on_click: extension_display_length_and_angle_change,
+    ),
+    ContextMenuItem(title: 'change extension number of bases', on_click: extension_num_bases_change),
+    ContextMenuItem(title: 'set extension name', on_click: set_extension_name),
+    if (props.ext.name != null)
+      ContextMenuItem(
+        title: 'remove extension name',
+        on_click: () {
+          var exts = util.add_if_not_null(
+            app.state.ui_state.selectables_store.selected_extensions,
+            props.ext,
+          );
+          var action =
+              exts.length > 1
+                  ? actions.BatchAction(
+                    exts.map((l) => actions.SubstrandNameSet(name: null, substrand: l)),
+                    "remove extension names",
+                  )
+                  : actions.SubstrandNameSet(name: null, substrand: props.ext);
+          app.dispatch(action);
+        },
+      ),
+    ContextMenuItem(title: 'set extension label', on_click: set_extension_label),
+    if (props.ext.label != null)
+      ContextMenuItem(
+        title: 'remove extension label',
+        on_click: () {
+          var exts = util.add_if_not_null(
+            app.state.ui_state.selectables_store.selected_extensions,
+            props.ext,
+          );
+          var action =
+              exts.length > 1
+                  ? actions.BatchAction(
+                    exts.map((l) => actions.SubstrandLabelSet(label: null, substrand: l)),
+                    "remove extension labels",
+                  )
+                  : actions.SubstrandLabelSet(label: null, substrand: props.ext);
+          app.dispatch(action);
+        },
+      ),
+    ContextMenuItem(
+      title: 'set extension color',
+      on_click:
+          () => app.dispatch(
+            actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: props.ext),
+          ),
+    ),
+    if (props.ext.color != null)
+      ContextMenuItem(
+        title: 'remove extension color',
+        on_click:
+            () => app.dispatch(
+              actions.StrandOrSubstrandColorSet(strand: props.strand, substrand: props.ext, color: null),
+            ),
+      ),
+  ];
 
   extension_num_bases_change() async {
-    int new_num_bases = await app.disable_keyboard_shortcuts_while(() => ask_for_num_bases(
+    int new_num_bases = await app.disable_keyboard_shortcuts_while(
+      () => ask_for_num_bases(
         'change extension number of bases',
         current_num_bases: props.ext.num_bases,
-        lower_bound: 1));
+        lower_bound: 1,
+      ),
+    );
     if (new_num_bases == props.ext.num_bases) {
       return;
     }
@@ -244,11 +270,13 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
 
   set_extension_name() => app.disable_keyboard_shortcuts_while(ask_for_extension_name);
 
-  set_extension_label() => app.disable_keyboard_shortcuts_while(() => design_main_strand.ask_for_label(
-        props.strand,
-        props.ext,
-        app.state.ui_state.selectables_store.selected_extensions,
-      ));
+  set_extension_label() => app.disable_keyboard_shortcuts_while(
+    () => design_main_strand.ask_for_label(
+      props.strand,
+      props.ext,
+      app.state.ui_state.selectables_store.selected_extensions,
+    ),
+  );
 
   Future<void> ask_for_extension_name() async {
     int name_idx = 0;
@@ -264,8 +292,9 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     var action;
     if (selected_exts.length > 1) {
       action = actions.BatchAction(
-          selected_exts.map((e) => actions.SubstrandNameSet(name: name, substrand: e)),
-          "set extension names");
+        selected_exts.map((e) => actions.SubstrandNameSet(name: name, substrand: e)),
+        "set extension names",
+      );
     } else {
       action = actions.SubstrandNameSet(name: name, substrand: props.ext);
     }
@@ -282,10 +311,11 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     items[display_length_idx] = DialogFloat(label: 'display length (nm)', value: props.ext.display_length);
     items[display_angle_idx] = DialogFloat(label: 'display angle (degrees)', value: props.ext.display_angle);
     var dialog = Dialog(
-        title: 'set extension display length/angle',
-        items: items,
-        type: DialogType.set_extension_display_length_angle,
-        use_saved_response: false);
+      title: 'set extension display length/angle',
+      items: items,
+      type: DialogType.set_extension_display_length_angle,
+      use_saved_response: false,
+    );
 
     List<DialogItem>? results = await util.dialog(dialog);
     if (results == null) return;
@@ -296,7 +326,10 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
       window.alert('display_length must be positive, but is ${display_length}');
     } else {
       actions.UndoableAction action = actions.ExtensionDisplayLengthAngleSet(
-          ext: props.ext, display_length: display_length, display_angle: display_angle);
+        ext: props.ext,
+        display_length: display_length,
+        display_angle: display_angle,
+      );
       app.dispatch(action);
     }
   }
@@ -309,8 +342,11 @@ tooltip_text(Extension ext) =>
     (ext.name == null ? "" : "\n    name=${ext.name}") +
     (ext.label == null ? "" : "\n    label=${ext.label.toString()}");
 
-Future<int> ask_for_num_bases(String title,
-    {required int current_num_bases, required int lower_bound}) async {
+Future<int> ask_for_num_bases(
+  String title, {
+  required int current_num_bases,
+  required int lower_bound,
+}) async {
   int num_bases_idx = 0;
   var items = util.FixedList<DialogItem>(1);
   items[num_bases_idx] = DialogInteger(label: 'number of bases:', value: current_num_bases);

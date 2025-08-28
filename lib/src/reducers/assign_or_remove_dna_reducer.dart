@@ -4,7 +4,6 @@ import '../state/domain.dart';
 import '../state/design.dart';
 import '../state/loopout.dart';
 import '../state/substrand.dart';
-import 'package:tuple/tuple.dart';
 
 import '../state/strand.dart';
 import '../state/app_state.dart';
@@ -41,7 +40,10 @@ BuiltList<Strand> remove_dna_reducer(BuiltList<Strand> strands, actions.RemoveDN
 }
 
 BuiltList<Strand> assign_dna_reducer_complement_from_bound_strands(
-    BuiltList<Strand> strands, AppState state, actions.AssignDNAComplementFromBoundStrands action) {
+  BuiltList<Strand> strands,
+  AppState state,
+  actions.AssignDNAComplementFromBoundStrands action,
+) {
   List<Strand> all_strands = strands.toList();
   for (var strand_to_assign in action.strands) {
     int strand_to_assign_idx = strands.indexOf(strand_to_assign);
@@ -87,8 +89,12 @@ BuiltList<Strand> assign_dna_reducer(BuiltList<Strand> strands, AppState state, 
         continue;
       }
       if (other_strand.overlaps(strand)) {
-        String new_dna = compute_dna_complement_from(state.design, other_strand, strand_with_new_sequence,
-            action.disable_change_sequence_bound_strand);
+        String new_dna = compute_dna_complement_from(
+          state.design,
+          other_strand,
+          strand_with_new_sequence,
+          action.disable_change_sequence_bound_strand,
+        );
         if (new_dna != other_strand.dna_sequence) {
           strands_builder[i] = other_strand.set_dna_sequence(new_dna);
         }
@@ -99,11 +105,10 @@ BuiltList<Strand> assign_dna_reducer(BuiltList<Strand> strands, AppState state, 
 }
 
 // Lexicographically compare (start,end) overlap coordinates of o1 and o2.
-int compare_overlap(Tuple2<Tuple2<int, int>, Domain> o1, Tuple2<Tuple2<int, int>, Domain> o2) {
-  int o1_start = o1.item1.item1;
-  int o1_end = o1.item1.item2;
-  int o2_start = o2.item1.item1;
-  int o2_end = o2.item1.item2;
+int compare_overlap(((int, int), Domain) o1, ((int, int), Domain) o2) {
+  var (o1_start, o1_end) = o1.$1; // (int, int)
+  var (o2_start, o2_end) = o2.$1; // (int, int)
+
   if (o1_start != o2_start) {
     return o1_start - o2_start;
   } else {
@@ -127,7 +132,11 @@ int compare_overlap(Tuple2<Tuple2<int, int>, Domain> o1, Tuple2<Tuple2<int, int>
 /// about sequence complementarity is done. This can be used to intentionally assign *mismatching*
 /// DNA sequences to :any:`Strand`'s that are bound on a :any:`Helix`.
 String compute_dna_complement_from(
-    Design design, Strand strand_to, Strand strand_from, bool error_on_change) {
+  Design design,
+  Strand strand_to,
+  Strand strand_from,
+  bool error_on_change,
+) {
   assert(strand_from.dna_sequence != null);
 
   bool already_assigned = strand_to.dna_sequence != null;
@@ -156,7 +165,8 @@ String compute_dna_complement_from(
       var unpaired_addresses = design.find_unpaired_insertion_deletions_on_domain(domain_to, true);
       if (unpaired_addresses.isNotEmpty) {
         var first_unpaired_address = unpaired_addresses.first;
-        var err_msg = "I cannot assign DNA complements when there is an unpaired deletion or insertion, "
+        var err_msg =
+            "I cannot assign DNA complements when there is an unpaired deletion or insertion, "
             "but I found one at this address:\n"
             "helix idx=${first_unpaired_address.helix_idx}, offset=${first_unpaired_address.offset}\n"
             "To view all of them in the design, go to View-->Show unpaired deletions/insertions.";
@@ -165,11 +175,11 @@ String compute_dna_complement_from(
 
       int helix_idx = domain_to.helix;
       List<Domain> domains_on_helix_from = strand_from.domains_on_helix[helix_idx]?.toList() ?? [];
-      List<Tuple2<Tuple2<int, int>, Domain>> overlaps = [];
+      List<((int, int), Domain)> overlaps = [];
       for (var domain_from in domains_on_helix_from) {
         if (domain_to != domain_from && domain_to.overlaps(domain_from)) {
-          Tuple2<int, int> overlap = domain_to.compute_overlap(domain_from)!;
-          overlaps.add(Tuple2<Tuple2<int, int>, Domain>(overlap, domain_from));
+          (int, int) overlap = domain_to.compute_overlap(domain_from)!;
+          overlaps.add((overlap, domain_from));
         }
       }
       overlaps.sort(compare_overlap);
@@ -178,9 +188,8 @@ String compute_dna_complement_from(
       int start_idx = domain_to.start;
       // repeatedly insert wildcards into gaps, then reverse WC complement
       for (var overlap in overlaps) {
-        int overlap_left = overlap.item1.item1;
-        int overlap_right = overlap.item1.item2;
-        Domain substrand_from = overlap.item2;
+        var (overlap_left, overlap_right) = overlap.$1; // (int, int)
+        Domain substrand_from = overlap.$2;
         // wildcards = DNA_base_wildcard * (overlap_left - start_idx)
         int num_wildcard_bases = domain_to.dna_length_in(start_idx, overlap_left - 1);
         String wildcards = constants.DNA_BASE_WILDCARD * num_wildcard_bases;
@@ -210,8 +219,11 @@ String compute_dna_complement_from(
     // merge with existing pre-assigned sequence
     String existing_substrand_to_dna_sequence = strand_complement_builder[ss_idx];
     var merge = error_on_change ? util.merge_wildcards : util.merge_wildcards_favor_first;
-    String merged_substrand_to_dna_sequence =
-        merge(substrand_to_dna_sequence, existing_substrand_to_dna_sequence, constants.DNA_BASE_WILDCARD);
+    String merged_substrand_to_dna_sequence = merge(
+      substrand_to_dna_sequence,
+      existing_substrand_to_dna_sequence,
+      constants.DNA_BASE_WILDCARD,
+    );
     strand_complement_builder[ss_idx] = merged_substrand_to_dna_sequence;
   }
 
@@ -223,15 +235,22 @@ String compute_dna_complement_from(
     // choice silently overwriting their DNA
     if (!error_on_change) {
       new_dna_sequence = util.merge_wildcards_favor_first(
-          new_dna_sequence, strand_to.dna_sequence!, constants.DNA_BASE_WILDCARD);
+        new_dna_sequence,
+        strand_to.dna_sequence!,
+        constants.DNA_BASE_WILDCARD,
+      );
     } else {
       try {
-        new_dna_sequence =
-            util.merge_wildcards(strand_to.dna_sequence!, new_dna_sequence, constants.DNA_BASE_WILDCARD);
+        new_dna_sequence = util.merge_wildcards(
+          strand_to.dna_sequence!,
+          new_dna_sequence,
+          constants.DNA_BASE_WILDCARD,
+        );
       } on ArgumentError {
         Domain dom_to = strand_to.first_domain;
         Domain dom_from = strand_from.first_domain;
-        var msg = 'strand starting at helix ${dom_to.helix}, offset ${dom_to.offset_5p} has '
+        var msg =
+            'strand starting at helix ${dom_to.helix}, offset ${dom_to.offset_5p} has '
             'length '
             '${strand_to.dna_length} and already has a partial DNA sequence assignment of length '
             '${strand_to.dna_sequence!.length}, which is \n'
@@ -254,7 +273,8 @@ String merge_sequences_if_necessary(Strand strand, String seq) {
       seq = util.merge_wildcards(seq, strand.dna_sequence!, constants.DNA_BASE_WILDCARD);
     } on ArgumentError {
       var first_ss = strand.first_domain;
-      var msg = 'strand starting at helix ${first_ss.helix}, offset ${first_ss.offset_5p} has '
+      var msg =
+          'strand starting at helix ${first_ss.helix}, offset ${first_ss.offset_5p} has '
           'length '
           '${strand.dna_length} and already has a DNA sequence assignment of length '
           '${strand.dna_sequence!.length}, which is \n'

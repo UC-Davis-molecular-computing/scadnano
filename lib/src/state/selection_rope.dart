@@ -13,11 +13,14 @@ abstract class SelectionRope
     implements Built<SelectionRope, SelectionRopeBuilder> {
   SelectionRope._();
 
-  factory SelectionRope(bool toggle) => SelectionRope.from((b) => b
-    ..current_point = null
-    ..toggle = toggle
-    ..points.replace([])
-    ..is_main = null);
+  factory SelectionRope(bool toggle) => SelectionRope.from(
+    (b) =>
+        b
+          ..current_point = null
+          ..toggle = toggle
+          ..points.replace([])
+          ..is_main = null,
+  );
 
   factory SelectionRope.from([void Function(SelectionRopeBuilder) updates]) = _$SelectionRope;
 
@@ -147,9 +150,12 @@ int f(int? i) {
 
 // line from (x1,y1) to (x2,y2)
 abstract class Line with BuiltJsonSerializable implements Built<Line, LineBuilder> {
-  factory Line(Point<double> p1, Point<double> p2) => Line.from((b) => b
-    ..p1 = p1
-    ..p2 = p2);
+  factory Line(Point<double> p1, Point<double> p2) => Line.from(
+    (b) =>
+        b
+          ..p1 = p1
+          ..p2 = p2,
+  );
 
   factory Line.from([void Function(LineBuilder) updates]) = _$Line;
 
@@ -248,8 +254,4 @@ abstract class Line with BuiltJsonSerializable implements Built<Line, LineBuilde
 /// the vector from p3 to p4.
 bool vectors_point_same_direction(Point<double> v1, Point<double> v2) => v1.x * v2.x + v1.y * v2.y > 0;
 
-enum Orientation {
-  collinear,
-  counterclockwise,
-  clockwise,
-}
+enum Orientation { collinear, counterclockwise, clockwise }

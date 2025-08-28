@@ -31,13 +31,16 @@ abstract class PotentialCrossover
   }) {
     // need this because Linker is not a Built type, but its two subclasses Crossover and Loopout are,
     // so need this to satisfy the compiler that they have a toBuilder() method
-    return PotentialCrossover.from((b) => b
-      ..address.replace(address)
-      ..color = color
-      ..dna_end_first_click.replace(dna_end_first_click)
-      ..start_point = start_point
-      ..current_point = current_point
-      ..linker = linker);
+    return PotentialCrossover.from(
+      (b) =>
+          b
+            ..address.replace(address)
+            ..color = color
+            ..dna_end_first_click.replace(dna_end_first_click)
+            ..start_point = start_point
+            ..current_point = current_point
+            ..linker = linker,
+    );
   }
 
   @memoized

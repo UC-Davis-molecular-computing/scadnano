@@ -3,7 +3,6 @@ import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/modification.dart';
-import 'package:tuple/tuple.dart';
 
 import '../state/copy_info.dart';
 import '../state/strands_move.dart';
@@ -40,8 +39,7 @@ CopyInfo? manual_paste_initiate_reducer(CopyInfo? _, AppState state, actions.Man
     return null;
   }
 
-  List<Strand> strands = strands_and_helices_view_order.item1;
-  List<int>? helices_view_order = strands_and_helices_view_order.item2;
+  var (strands, helices_view_order) = strands_and_helices_view_order; // (List<Strand>, List<int>?)
 
   if (strands.isEmpty) return null;
   // indicates helices came from more than one HelixGroup, so no way to paste
@@ -62,8 +60,7 @@ CopyInfo? autopaste_initiate_reducer(CopyInfo? copy_info, AppState state, action
     return null;
   }
 
-  List<Strand> strands = strands_and_helices_view_order.item1;
-  List<int>? helices_view_order = strands_and_helices_view_order.item2;
+  var (strands, helices_view_order) = strands_and_helices_view_order; // (List<Strand>, List<int>?)
 
   if (strands.isEmpty) return null;
   // indicates helices came from more than one HelixGroup, so no way to paste
@@ -79,9 +76,9 @@ CopyInfo? autopaste_initiate_reducer(CopyInfo? copy_info, AppState state, action
 }
 
 /// returns null on JSON decode error
-Tuple2<List<Strand>, List<int>?>? parse_strands_and_helices_view_order_from_clipboard(
-    String clipboard_content) {
-  String error_msg = 'no strand info found on system clipboard, so nothing to paste; '
+(List<Strand>, List<int>?)? parse_strands_and_helices_view_order_from_clipboard(String clipboard_content) {
+  String error_msg =
+      'no strand info found on system clipboard, so nothing to paste; '
       'content of system clipboard: "${clipboard_content}"';
 
   // try to parse JSON as a list
@@ -147,20 +144,26 @@ Tuple2<List<Strand>, List<int>?>? parse_strands_and_helices_view_order_from_clip
     Modification5Prime? mod5p = strand_json[constants.modification_5p_key];
     Modification3Prime? mod3p = strand_json[constants.modification_3p_key];
 
-    strand = strand.rebuild((m) => m
-      ..modification_5p = mod5p?.toBuilder()
-      ..modification_3p = mod3p?.toBuilder()
-      ..modifications_int.replace(modifications_int));
+    strand = strand.rebuild(
+      (m) =>
+          m
+            ..modification_5p = mod5p?.toBuilder()
+            ..modification_3p = mod3p?.toBuilder()
+            ..modifications_int.replace(modifications_int),
+    );
 
     strands.add(strand);
   }
 
-  return Tuple2<List<Strand>, List<int>?>(strands, helices_view_order);
+  return (strands, helices_view_order);
 }
 
 // need to pass in helices_view_order from clipboard since these strands may be from a different design
 CopyInfo? strands_copy_info_from_strand_list(
-    AppState state, List<Strand> selected_strands, List<int> helices_view_order) {
+  AppState state,
+  List<Strand> selected_strands,
+  List<int> helices_view_order,
+) {
   if (selected_strands.isEmpty) {
     return null;
   }
@@ -178,7 +181,8 @@ CopyInfo? strands_copy_info_from_strand_list(
       // HelixGroup group = state.design.group_of_domain(domain);
       // int helix_view_order = group.helices_view_order_inverse[domain.helix];
       int helix_view_order = helices_view_order_inverse[domain.helix]!;
-      bool helix_is_more_extreme = extreme_helix_view_order == null ||
+      bool helix_is_more_extreme =
+          extreme_helix_view_order == null ||
           (state.ui_state.invert_y
               ? extreme_helix_view_order < helix_view_order
               : extreme_helix_view_order > helix_view_order);
@@ -200,9 +204,16 @@ CopyInfo? strands_copy_info_from_strand_list(
   // if null, then we won't use copy_info for autopaste, but we will keep the other
   // information in copy_info for possible manual pasting
   Address? next_address = compute_default_next_address(
-      selected_strands, state.design, original_address, helices_view_order, helices_view_order_inverse);
-  AddressDifference? translation =
-      next_address?.difference(original_address, helices_view_order_inverse.build());
+    selected_strands,
+    state.design,
+    original_address,
+    helices_view_order,
+    helices_view_order_inverse,
+  );
+  AddressDifference? translation = next_address?.difference(
+    original_address,
+    helices_view_order_inverse.build(),
+  );
 
   var copy_info = CopyInfo(
     strands: selected_strands.toBuiltList(),
@@ -225,8 +236,13 @@ CopyInfo? strands_copy_info_from_strand_list(
 /// 3. Otherwise return null
 ///
 /// Always returns null if strands come from more than one HelixGroup
-Address? compute_default_next_address(List<Strand> selected_strands, Design design, Address start_address,
-    List<int> helices_view_order, Map<int, int> helices_view_order_inverse) {
+Address? compute_default_next_address(
+  List<Strand> selected_strands,
+  Design design,
+  Address start_address,
+  List<int> helices_view_order,
+  Map<int, int> helices_view_order_inverse,
+) {
   var group_names = design.group_names_of_strands(selected_strands);
   if (group_names == null) {
     // This means group does not exist in current design. In this case we forbid autopasting.
@@ -299,7 +315,10 @@ Address? compute_default_next_address(List<Strand> selected_strands, Design desi
 }
 
 CopyInfo? manual_paste_copy_info_reducer(
-    CopyInfo? copy_info, AppState state, actions.StrandsMoveCommit action) {
+  CopyInfo? copy_info,
+  AppState state,
+  actions.StrandsMoveCommit action,
+) {
   if (action.strands_move.copy) {
     // if user is pasting, copy_info should have something in it
     // (populated from clipboard by system_clipboard middleware
@@ -313,12 +332,15 @@ CopyInfo? manual_paste_copy_info_reducer(
 
     // only calculate translation vector if paste is in same HelixGroup (generalized somewhat for
     // pasting between different designs; see definition of _same_helix_group)
-    bool calculate_new_autopaste_translation = _same_helix_group(copy_info, action) &&
+    bool calculate_new_autopaste_translation =
+        _same_helix_group(copy_info, action) &&
         !action.autopaste &&
         current_address != copy_info.copied_address;
     if (calculate_new_autopaste_translation) {
-      var translation =
-          current_address.difference(copy_info.copied_address, copy_info.helices_view_order_inverse);
+      var translation = current_address.difference(
+        copy_info.copied_address,
+        copy_info.helices_view_order_inverse,
+      );
       copy_info = copy_info.rebuild((b) => b..translation = translation.toBuilder());
     }
 

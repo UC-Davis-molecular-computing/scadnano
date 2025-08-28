@@ -35,13 +35,15 @@ class DesignMainStrandLoopoutTextComponent extends UiComponent2<DesignMainStrand
 
     Map<String, dynamic> style_map = {'letterSpacing': '${letter_spacing}em', 'fontSize': '${font_size}px'};
 
-    SvgProps text_path_props = (Dom.textPath()
-      ..className = props.css_selector_text
-      ..xlinkHref = '#${props.loopout.id}'
-      ..startOffset = start_offset
-      ..style = style_map);
+    SvgProps text_path_props =
+        (Dom.textPath()
+          ..className = props.css_selector_text
+          ..xlinkHref = '#${props.loopout.id}'
+          ..startOffset = start_offset
+          ..style = style_map);
     return (Dom.text()
-      ..key = 'loopout-text-'
+      ..key =
+          'loopout-text-'
           'H${props.prev_domain.helix},${props.prev_domain.offset_3p}-'
           'H${props.next_domain.helix},${props.next_domain.offset_5p}'
       ..dy = '$dy')(text_path_props(props.text));

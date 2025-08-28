@@ -94,7 +94,11 @@ main() {
         "strands": []
       }''';
       var load_action = actions.LoadDNAFile(
-          content: json_content, filename: 'new_file.sc', write_local_storage: false, unit_testing: true);
+        content: json_content,
+        filename: 'new_file.sc',
+        write_local_storage: false,
+        unit_testing: true,
+      );
       state = test_dispatch(store, load_action);
       copy_info = state.ui_state.copy_info;
       expect(copy_info, null);
@@ -103,8 +107,10 @@ main() {
 
       // simulate Ctrl+V; view/design.dart handle the async aspect of reading from the clipboard,
       // we need to synchronously mock it here for unit testing
-      var manual_paste_initiate_action =
-          actions.ManualPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
+      var manual_paste_initiate_action = actions.ManualPasteInitiate(
+        clipboard_content: clipboard.content,
+        in_browser: false,
+      );
       state = test_dispatch(store, manual_paste_initiate_action);
       copy_info = state.ui_state.copy_info!;
       expect(copy_info.copied_address, origin_address);
@@ -115,8 +121,11 @@ main() {
       // simulate clicking to select position to paste after Ctrl+V
       // manual paste to helix 0, offset 10, forward
       var manual_pasted_address = Address(helix_idx: 1, offset: 10, forward: true);
-      var manual_pasted_translation =
-          AddressDifference(helix_idx_delta: 1, offset_delta: 10, forward_delta: false);
+      var manual_pasted_translation = AddressDifference(
+        helix_idx_delta: 1,
+        offset_delta: 10,
+        forward_delta: false,
+      );
       var next_address_after_manual_paste = Address(helix_idx: 2, offset: 20, forward: true);
       var strands_move = copy_info.create_strands_move(state);
       strands_move = strands_move.rebuild((b) => b..current_address = manual_pasted_address.toBuilder());
@@ -173,7 +182,11 @@ main() {
         "strands": []
       }''';
       var load_action = actions.LoadDNAFile(
-          content: json_content, filename: 'new_file.sc', write_local_storage: false, unit_testing: true);
+        content: json_content,
+        filename: 'new_file.sc',
+        write_local_storage: false,
+        unit_testing: true,
+      );
       state = test_dispatch(store, load_action);
       copy_info = state.ui_state.copy_info;
       expect(copy_info, null);
@@ -182,8 +195,10 @@ main() {
 
       // simulate Ctrl+V; view/design.dart handle the async aspect of reading from the clipboard,
       // we need to synchronously mock it here for unit testing
-      var manual_paste_initiate_action =
-          actions.ManualPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
+      var manual_paste_initiate_action = actions.ManualPasteInitiate(
+        clipboard_content: clipboard.content,
+        in_browser: false,
+      );
       test_dispatch(store, manual_paste_initiate_action);
       state = store.state;
       copy_info = state.ui_state.copy_info!;
@@ -260,7 +275,11 @@ main() {
         "strands": []
       }''';
       var load_action = actions.LoadDNAFile(
-          content: json_content, filename: 'new_file.sc', write_local_storage: false, unit_testing: true);
+        content: json_content,
+        filename: 'new_file.sc',
+        write_local_storage: false,
+        unit_testing: true,
+      );
       state = test_dispatch(store, load_action);
       copy_info = state.ui_state.copy_info;
       expect(copy_info, null);
@@ -269,8 +288,10 @@ main() {
 
       // simulate Ctrl+V; view/design.dart handle the async aspect of reading from the clipboard,
       // we need to synchronously mock it here for unit testing
-      var manual_paste_initiate_action =
-          actions.ManualPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
+      var manual_paste_initiate_action = actions.ManualPasteInitiate(
+        clipboard_content: clipboard.content,
+        in_browser: false,
+      );
       test_dispatch(store, manual_paste_initiate_action);
       state = store.state;
       copy_info = state.ui_state.copy_info!;
@@ -295,9 +316,9 @@ main() {
     });
 
     test(
-        'manual_paste_overlapping_strand_not_allowable_after_loading_new_design_different_helices_and_view_order',
-        () {
-      /*
+      'manual_paste_overlapping_strand_not_allowable_after_loading_new_design_different_helices_and_view_order',
+      () {
+        /*
           0         10        20        30
 
       5f
@@ -309,21 +330,21 @@ main() {
       7f
       7r
       */
-      // select top left strand
-      var select_action = actions.Select(orig_strand, toggle: false, only: true);
-      state = test_dispatch(store, select_action);
-      expect(state.ui_state.copy_info, null);
+        // select top left strand
+        var select_action = actions.Select(orig_strand, toggle: false, only: true);
+        state = test_dispatch(store, select_action);
+        expect(state.ui_state.copy_info, null);
 
-      // copy
-      var copy_action = actions.CopySelectedStrands();
-      state = test_dispatch(store, copy_action);
-      var copy_info = state.ui_state.copy_info;
-      expect(copy_info, null);
+        // copy
+        var copy_action = actions.CopySelectedStrands();
+        state = test_dispatch(store, copy_action);
+        var copy_info = state.ui_state.copy_info;
+        expect(copy_info, null);
 
-      expect(state.design.strands.length, 2);
+        expect(state.design.strands.length, 2);
 
-      // load new design
-      var json_content = '''{
+        // load new design
+        var json_content = '''{
         "grid": "square",
         "helices": [
           { "idx": 3, "grid_position": [0, 1], "max_offset": 40 },
@@ -339,39 +360,46 @@ main() {
           }
         ]
       }''';
-      var load_action = actions.LoadDNAFile(
-          content: json_content, filename: 'new_file.sc', write_local_storage: false, unit_testing: true);
-      state = test_dispatch(store, load_action);
-      copy_info = state.ui_state.copy_info;
-      expect(copy_info, null);
+        var load_action = actions.LoadDNAFile(
+          content: json_content,
+          filename: 'new_file.sc',
+          write_local_storage: false,
+          unit_testing: true,
+        );
+        state = test_dispatch(store, load_action);
+        copy_info = state.ui_state.copy_info;
+        expect(copy_info, null);
 
-      expect(state.design.strands.length, 1);
+        expect(state.design.strands.length, 1);
 
-      // simulate Ctrl+V; view/design.dart handle the async aspect of reading from the clipboard,
-      // we need to synchronously mock it here for unit testing
-      var manual_paste_initiate_action =
-          actions.ManualPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
-      state = test_dispatch(store, manual_paste_initiate_action);
-      copy_info = state.ui_state.copy_info!;
-      expect(copy_info.copied_address, origin_address);
-      expect(copy_info.prev_paste_address, null);
+        // simulate Ctrl+V; view/design.dart handle the async aspect of reading from the clipboard,
+        // we need to synchronously mock it here for unit testing
+        var manual_paste_initiate_action = actions.ManualPasteInitiate(
+          clipboard_content: clipboard.content,
+          in_browser: false,
+        );
+        state = test_dispatch(store, manual_paste_initiate_action);
+        copy_info = state.ui_state.copy_info!;
+        expect(copy_info.copied_address, origin_address);
+        expect(copy_info.prev_paste_address, null);
 
-      expect(state.design.strands.length, 1);
+        expect(state.design.strands.length, 1);
 
-      // simulate clicking to select position to paste after Ctrl+V
-      // manual paste to helix 0, offset 10, forward (should be disallowed)
-      var manual_pasted_address = Address(helix_idx: 3, offset: 10, forward: true);
-      var strands_move = copy_info.create_strands_move(state);
-      strands_move = strands_move.rebuild((b) => b..current_address = manual_pasted_address.toBuilder());
-      var manual_paste_action = actions.StrandsMoveCommit(strands_move: strands_move, autopaste: false);
-      state = test_dispatch(store, manual_paste_action);
-      copy_info = state.ui_state.copy_info!;
-      expect(copy_info.copied_address, origin_address);
-      expect(copy_info.prev_paste_address, null);
-      expect(copy_info.translation, null);
+        // simulate clicking to select position to paste after Ctrl+V
+        // manual paste to helix 0, offset 10, forward (should be disallowed)
+        var manual_pasted_address = Address(helix_idx: 3, offset: 10, forward: true);
+        var strands_move = copy_info.create_strands_move(state);
+        strands_move = strands_move.rebuild((b) => b..current_address = manual_pasted_address.toBuilder());
+        var manual_paste_action = actions.StrandsMoveCommit(strands_move: strands_move, autopaste: false);
+        state = test_dispatch(store, manual_paste_action);
+        copy_info = state.ui_state.copy_info!;
+        expect(copy_info.copied_address, origin_address);
+        expect(copy_info.prev_paste_address, null);
+        expect(copy_info.translation, null);
 
-      expect(state.design.strands.length, 1);
-    });
+        expect(state.design.strands.length, 1);
+      },
+    );
 
     test('autopaste_one_strand_after_loading_new_design', () {
       /*
@@ -406,7 +434,11 @@ main() {
         "strands": []
       }''';
       var load_action = actions.LoadDNAFile(
-          content: json_content, filename: 'new_file.sc', write_local_storage: false, unit_testing: true);
+        content: json_content,
+        filename: 'new_file.sc',
+        write_local_storage: false,
+        unit_testing: true,
+      );
       state = test_dispatch(store, load_action);
       copy_info = state.ui_state.copy_info;
       expect(copy_info, null);
@@ -414,8 +446,10 @@ main() {
       expect(state.design.strands.length, 0);
 
       // autopaste to helix 0, offset 0
-      var autopaste_action =
-          actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
+      var autopaste_action = actions.AutoPasteInitiate(
+        clipboard_content: clipboard.content,
+        in_browser: false,
+      );
       state = test_dispatch(store, autopaste_action);
       expect(state.design.strands.length, 1);
       expect(state.design.strands.last.first_domain.helix, 0);
@@ -423,8 +457,10 @@ main() {
       expect(state.design.strands.last.first_domain.forward, true);
 
       // autopaste to helix 1, offset 0
-      var autopaste_action_1 =
-          actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
+      var autopaste_action_1 = actions.AutoPasteInitiate(
+        clipboard_content: clipboard.content,
+        in_browser: false,
+      );
       state = test_dispatch(store, autopaste_action_1);
       expect(state.design.strands.length, 2);
       expect(state.design.strands.last.first_domain.helix, 1);
@@ -432,8 +468,10 @@ main() {
       expect(state.design.strands.last.first_domain.forward, true);
 
       // autopaste to helix 2, offset 0 (should have no effect because out of bounds)
-      var autopaste_action_2 =
-          actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
+      var autopaste_action_2 = actions.AutoPasteInitiate(
+        clipboard_content: clipboard.content,
+        in_browser: false,
+      );
       state = test_dispatch(store, autopaste_action_2);
       expect(state.design.strands.length, 2);
       expect(state.design.strands.last.first_domain.helix, 1);
@@ -452,13 +490,15 @@ main() {
     Strand orig_strand = Strand([Domain(helix: 0, forward: true, start: 0, end: 10)]);
     var origin_address = Address(helix_idx: 0, offset: 0, forward: true);
     List<int> all_helices = [0, 1, 2, 3, 4, 5, 6, 7];
-    Store<AppState> store = Store<AppState>(app_state_reducer,
-        initialState: app_state_from_design(Design(helices: [], grid: Grid.square)));
+    Store<AppState> store = Store<AppState>(
+      app_state_reducer,
+      initialState: app_state_from_design(Design(helices: [], grid: Grid.square)),
+    );
 
     setUp(() {
       helices = [
         for (int idx in all_helices)
-          Helix(idx: idx, max_offset: 40, grid: Grid.square, group: idx < 4 ? 'group1' : 'group2')
+          Helix(idx: idx, max_offset: 40, grid: Grid.square, group: idx < 4 ? 'group1' : 'group2'),
       ];
       var groups = {
         'group1': HelixGroup(grid: Grid.square, helices_view_order: [0, 1, 2, 3]),
@@ -555,8 +595,10 @@ main() {
       expect(state.design.strands.first.last_domain.forward, false);
 
       // simulate Ctrl+V, which allows user to pick where to paste
-      var manual_paste_initiate_action =
-          actions.ManualPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
+      var manual_paste_initiate_action = actions.ManualPasteInitiate(
+        clipboard_content: clipboard.content,
+        in_browser: false,
+      );
       state = test_dispatch(store, manual_paste_initiate_action);
       copy_info = state.ui_state.copy_info!;
       expect(copy_info.copied_address, origin_address);
@@ -664,8 +706,10 @@ main() {
 
       // simulate Ctrl+V; view/design.dart handle the async aspect of reading from the clipboard,
       // we need to synchronously mock it here for unit testing
-      var manual_paste_initiate_action =
-          actions.ManualPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
+      var manual_paste_initiate_action = actions.ManualPasteInitiate(
+        clipboard_content: clipboard.content,
+        in_browser: false,
+      );
       state = test_dispatch(store, manual_paste_initiate_action);
       copy_info = state.ui_state.copy_info!;
 
@@ -685,8 +729,10 @@ main() {
       expect(state.design.strands.last.first_domain.forward, true);
 
       // autopaste to helix 2
-      var autopaste_action_2 =
-          actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
+      var autopaste_action_2 = actions.AutoPasteInitiate(
+        clipboard_content: clipboard.content,
+        in_browser: false,
+      );
       state = test_dispatch(store, autopaste_action_2);
       copy_info = state.ui_state.copy_info;
       expect(state.design.strands.length, 3);
@@ -695,8 +741,10 @@ main() {
       expect(state.design.strands.last.first_domain.forward, true);
 
       // autopaste to helix 3
-      var autopaste_action_3 =
-          actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
+      var autopaste_action_3 = actions.AutoPasteInitiate(
+        clipboard_content: clipboard.content,
+        in_browser: false,
+      );
       state = test_dispatch(store, autopaste_action_3);
       copy_info = state.ui_state.copy_info;
       expect(state.design.strands.length, 4);
@@ -705,8 +753,10 @@ main() {
       expect(state.design.strands.last.first_domain.forward, true);
 
       // attempted autopaste to helix 4; should do nothing
-      var autopaste_action_4 =
-          actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
+      var autopaste_action_4 = actions.AutoPasteInitiate(
+        clipboard_content: clipboard.content,
+        in_browser: false,
+      );
       state = test_dispatch(store, autopaste_action_4);
       copy_info = state.ui_state.copy_info;
       expect(state.design.strands.length, 4);
@@ -745,7 +795,9 @@ main() {
 
       // autopaste to helix 1, offset 0
       state = test_dispatch(
-          store, actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false));
+        store,
+        actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false),
+      );
       expect(state.design.strands.length, 2);
       expect(state.design.strands.last.first_domain.helix, 1);
       expect(state.design.strands.last.first_domain.start, 0);
@@ -754,7 +806,9 @@ main() {
 
       // autopaste to helix 2, offset 0
       state = test_dispatch(
-          store, actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false));
+        store,
+        actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false),
+      );
       expect(state.design.strands.length, 3);
       expect(state.design.strands.last.first_domain.helix, 2);
       expect(state.design.strands.last.first_domain.start, 0);
@@ -763,7 +817,9 @@ main() {
 
       // autopaste to helix 3, offset 0
       state = test_dispatch(
-          store, actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false));
+        store,
+        actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false),
+      );
       expect(state.design.strands.length, 4);
       expect(state.design.strands.last.first_domain.helix, 3);
       expect(state.design.strands.last.first_domain.start, 0);
@@ -772,7 +828,9 @@ main() {
 
       // attempted autopaste to helix 4, offset 0, should have no effect
       state = test_dispatch(
-          store, actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false));
+        store,
+        actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false),
+      );
       expect(state.design.strands.length, 4);
       expect(state.design.strands.last.first_domain.helix, 3);
       expect(state.design.strands.last.first_domain.start, 0);
@@ -811,7 +869,9 @@ main() {
 
       // autopaste to helix 1, offset 0
       state = test_dispatch(
-          store, actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false));
+        store,
+        actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false),
+      );
       expect(state.design.strands.length, 2);
       expect(state.design.strands.last.first_domain.helix, 1);
       expect(state.design.strands.last.first_domain.start, 0);
@@ -820,7 +880,9 @@ main() {
 
       // autopaste to helix 2, offset 0
       state = test_dispatch(
-          store, actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false));
+        store,
+        actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false),
+      );
       expect(state.design.strands.length, 3);
       expect(state.design.strands.last.first_domain.helix, 2);
       expect(state.design.strands.last.first_domain.start, 0);
@@ -829,7 +891,9 @@ main() {
 
       // autopaste to helix 3, offset 0
       state = test_dispatch(
-          store, actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false));
+        store,
+        actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false),
+      );
       expect(state.design.strands.length, 4);
       expect(state.design.strands.last.first_domain.helix, 3);
       expect(state.design.strands.last.first_domain.start, 0);
@@ -838,7 +902,9 @@ main() {
 
       // autopaste to helix 4, offset 0 (should have no effect
       state = test_dispatch(
-          store, actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false));
+        store,
+        actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false),
+      );
       expect(state.design.strands.length, 4);
       expect(state.design.strands.last.first_domain.helix, 3);
       expect(state.design.strands.last.first_domain.start, 0);
@@ -896,7 +962,9 @@ main() {
 
       // autopaste to offset 10
       state = test_dispatch(
-          store, actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false));
+        store,
+        actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false),
+      );
       expect(state.design.strands.length, 5);
       expect(state.design.strands.last.first_domain.helix, 0);
       expect(state.design.strands.last.first_domain.start, 10);
@@ -904,7 +972,9 @@ main() {
 
       // autopaste to offset 20
       state = test_dispatch(
-          store, actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false));
+        store,
+        actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false),
+      );
       expect(state.design.strands.length, 6);
       expect(state.design.strands.last.first_domain.helix, 0);
       expect(state.design.strands.last.first_domain.start, 20);
@@ -912,7 +982,9 @@ main() {
 
       // autopaste to offset 30
       state = test_dispatch(
-          store, actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false));
+        store,
+        actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false),
+      );
       expect(state.design.strands.length, 7);
       expect(state.design.strands.last.first_domain.helix, 0);
       expect(state.design.strands.last.first_domain.start, 30);
@@ -920,7 +992,9 @@ main() {
 
       // autopaste to offset 40 (should have no effect)
       state = test_dispatch(
-          store, actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false));
+        store,
+        actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false),
+      );
       expect(state.design.strands.length, 7);
       expect(state.design.strands.last.first_domain.helix, 0);
       expect(state.design.strands.last.first_domain.start, 30);
@@ -944,11 +1018,15 @@ main() {
 
       // autopaste to helix 1
       state = test_dispatch(
-          store, actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false));
+        store,
+        actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false),
+      );
 
       // autopaste to helix 2
       state = test_dispatch(
-          store, actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false));
+        store,
+        actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false),
+      );
 
       // colors should all be different
       expect(state.design.strands[0].color, isNot(state.design.strands[1].color));
@@ -1001,7 +1079,9 @@ main() {
       // simulate Ctrl+V; view/design.dart handle the async aspect of reading from the clipboard,
       // we need to synchronously mock it here for unit testing
       state = test_dispatch(
-          store, actions.ManualPasteInitiate(clipboard_content: clipboard.content, in_browser: false));
+        store,
+        actions.ManualPasteInitiate(clipboard_content: clipboard.content, in_browser: false),
+      );
       var copy_info = state.ui_state.copy_info!;
 
       expect(state.design.strands.length, 1);
@@ -1091,8 +1171,10 @@ main() {
       expect(state.design.strands.length, 1);
 
       // autopaste to helix 1
-      var autopaste_action_1 =
-          actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
+      var autopaste_action_1 = actions.AutoPasteInitiate(
+        clipboard_content: clipboard.content,
+        in_browser: false,
+      );
       state = test_dispatch(store, autopaste_action_1);
       expect(state.design.strands.length, 2);
       expect(state.design.strands.last.first_domain.helix, 1);
@@ -1104,8 +1186,10 @@ main() {
       state = test_dispatch(store, unselect_action);
 
       // autopaste to helix 2
-      var autopaste_action_2 =
-          actions.AutoPasteInitiate(clipboard_content: clipboard.content, in_browser: false);
+      var autopaste_action_2 = actions.AutoPasteInitiate(
+        clipboard_content: clipboard.content,
+        in_browser: false,
+      );
       state = test_dispatch(store, autopaste_action_2);
       expect(state.design.strands.length, 3);
       expect(state.design.strands.last.first_domain.helix, 2);

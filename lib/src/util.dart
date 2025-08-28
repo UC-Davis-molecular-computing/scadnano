@@ -31,7 +31,6 @@ import 'state/domains_move.dart';
 import 'state/group.dart';
 import 'state/strands_move.dart';
 import 'view/design.dart';
-import 'package:tuple/tuple.dart';
 import 'package:quiver/iterables.dart' as quiver;
 
 import 'app.dart';
@@ -191,8 +190,8 @@ bool are_close(double x1, double x2, [double epsilon = EPSILON]) => (x1 - x2).ab
 
 /// Tests if [x1] and [x2] are within [epsilon] of each other.
 bool are_all_close(Iterable<double> x1s, Iterable<double> x2s, [double epsilon = EPSILON]) => [
-      for (var pair in quiver.zip([x1s, x2s])) pair
-    ].every((pair) => are_close(pair[0], pair[1], epsilon));
+  for (var pair in quiver.zip([x1s, x2s])) pair,
+].every((pair) => are_close(pair[0], pair[1], epsilon));
 
 /// If [val] is close to an int, return that int, otherwise return the value.
 num to_int_if_close(double val, [double epsilon = EPSILON]) =>
@@ -262,17 +261,25 @@ Future<List<DialogItem>?> dialog(Dialog dialog) async {
   }
   // https://api.dart.dev/stable/2.7.0/dart-async/Completer-class.html
   Completer<List<DialogItem>?> completer = Completer<List<DialogItem>?>();
-  dialog = dialog.rebuild((b) => b
-    ..on_submit = (List<DialogItem>? items) {
-      completer.complete(items);
-    });
+  dialog = dialog.rebuild(
+    (b) =>
+        b
+          ..on_submit = (List<DialogItem>? items) {
+            completer.complete(items);
+          },
+  );
   app.dispatch(actions.DialogShow(dialog: dialog));
   return completer.future;
 }
 
 /// Gets grid position of mouse cursor in side view.
-GridPosition grid_position_of_mouse_in_side_view(Grid grid, bool invert_y, Geometry geometry,
-    {Point<double>? mouse_pos = null, MouseEvent? event = null}) {
+GridPosition grid_position_of_mouse_in_side_view(
+  Grid grid,
+  bool invert_y,
+  Geometry geometry, {
+  Point<double>? mouse_pos = null,
+  MouseEvent? event = null,
+}) {
   SvgSvgElement side_view_elt = querySelector('#${SIDE_VIEW_SVG_ID}') as SvgSvgElement;
   var svg_pos = transformed_svg_point(side_view_elt, false, mouse_pos: mouse_pos, event: event);
   var grid_pos = side_view_svg_to_grid(grid, svg_pos, invert_y, geometry);
@@ -326,8 +333,12 @@ bool lists_contain_same_elts<T extends Comparable>(Iterable<T> elts1, Iterable<T
 
 /// Returns SVG position for helices
 Map<int, Point<double>> helices_assign_svg(
-    Design design, bool invert_y, BuiltMap<int, Helix> helices, BuiltMap<String, HelixGroup> groups,
-    {BuiltSet<int>? helix_idxs_to_calculate = null}) {
+  Design design,
+  bool invert_y,
+  BuiltMap<int, Helix> helices,
+  BuiltMap<String, HelixGroup> groups, {
+  BuiltSet<int>? helix_idxs_to_calculate = null,
+}) {
   if (helix_idxs_to_calculate == null || helix_idxs_to_calculate.isEmpty) {
     helix_idxs_to_calculate = [for (var helix in helices.values) helix.idx].toBuiltSet();
   }
@@ -359,7 +370,8 @@ Map<int, Point<double>> helices_assign_svg(
           } else {
             var prev_grid_position = prev_helix.grid_position!;
             var grid_position = helix.grid_position!;
-            delta_y = prev_grid_position.distance_lattice(grid_position, helix.grid) *
+            delta_y =
+                prev_grid_position.distance_lattice(grid_position, helix.grid) *
                 geometry.distance_between_helices_svg;
           }
           y = prev_y! + delta_y;
@@ -393,14 +405,14 @@ Map<int, Helix> helices_list_to_map(List<Helix> helices) => {for (var helix in h
 dynamic unwrap_from_noindent(dynamic obj) => obj is NoIndent ? obj.value : obj;
 
 /// Finds two indices of elements in list that repeat, returning null if all elements are distinct.
-Tuple2<int, int>? repeated_element_indices<T>(List<T> list) {
+(int, int)? repeated_element_indices<T>(List<T> list) {
   Map<T, int> elt_to_idx = {};
   // should take time n log n; we don't do linear search for indices until we know which element repeats
   for (int i2 = 0; i2 < list.length; i2++) {
     T elt = list[i2];
     int? i1 = elt_to_idx[elt];
     if (i1 != null) {
-      return Tuple2<int, int>(i1, i2);
+      return (i1, i2);
     }
     elt_to_idx[elt] = i2;
   }
@@ -424,7 +436,12 @@ bool left_mouse_button_caused_mouse_event(MouseEvent event) => event.button == 0
 /// We first unrotate the point about the upper-left corner,
 /// then calculate using the simpler method for axis-aligned rectangles.
 double distance_to_rectangle(
-    Point<double> point, Point<double> upper_left_corner, double width, double height, double angle) {
+  Point<double> point,
+  Point<double> upper_left_corner,
+  double width,
+  double height,
+  double angle,
+) {
   var distances = xy_distances_to_rectangle(point, upper_left_corner, width, height, angle);
   return sqrt(distances.x * distances.x + distances.y * distances.y);
 }
@@ -433,7 +450,12 @@ double distance_to_rectangle(
 /// point is above or below rectangle, or left or right of it.
 /// This is assuming the rectangle is "unrotated" by -angle.
 Point<double> xy_distances_to_rectangle(
-    Point<double> point, Point<double> upper_left_corner, double width, double height, double angle) {
+  Point<double> point,
+  Point<double> upper_left_corner,
+  double width,
+  double height,
+  double angle,
+) {
   Point<double> unrotated_point = rotate(point, -angle, origin: upper_left_corner);
   double x_low = upper_left_corner.x;
   double x_hi = upper_left_corner.x + width;
@@ -463,7 +485,12 @@ Point<double> xy_distances_to_rectangle(
 
 /// Finds closest point in rectangle to [point]. If [point] is inside rectangle, returns [point];
 Point<double> closest_point_in_rectangle(
-    Point<double> point, Point<double> upper_left_corner, double width, double height, double angle) {
+  Point<double> point,
+  Point<double> upper_left_corner,
+  double width,
+  double height,
+  double angle,
+) {
   var distances = xy_distances_to_rectangle(point, upper_left_corner, width, height, angle);
   Point<double> unrotated_point = rotate(point, -angle, origin: upper_left_corner);
   double x = unrotated_point.x + distances.x;
@@ -474,18 +501,30 @@ Point<double> closest_point_in_rectangle(
 }
 
 /// Return helix where click event occurred, or the closest (e.g. if click was on a crossover).
-Helix find_closest_helix(MouseEvent event, Iterable<Helix> helices, BuiltMap<String, HelixGroup> groups,
-    Geometry geometry, BuiltMap<int, Point<double>> helix_idx_to_svg_position_map) {
+Helix find_closest_helix(
+  MouseEvent event,
+  Iterable<Helix> helices,
+  BuiltMap<String, HelixGroup> groups,
+  Geometry geometry,
+  BuiltMap<int, Point<double>> helix_idx_to_svg_position_map,
+) {
   var svg_clicked_point = svg_position_of_mouse_click(event);
 
   double? min_dist = null;
   Helix? closest_helix = null;
   for (var helix in helices) {
     var group = groups[helix.group]!;
-    var helix_upper_left_corner =
-        group.transform_point_main_view(helix_idx_to_svg_position_map[helix.idx]!, geometry);
-    var dist = distance_to_rectangle(svg_clicked_point, helix_upper_left_corner, helix.svg_width(geometry),
-        helix.svg_height(geometry), group.pitch);
+    var helix_upper_left_corner = group.transform_point_main_view(
+      helix_idx_to_svg_position_map[helix.idx]!,
+      geometry,
+    );
+    var dist = distance_to_rectangle(
+      svg_clicked_point,
+      helix_upper_left_corner,
+      helix.svg_width(geometry),
+      helix.svg_height(geometry),
+      group.pitch,
+    );
     if (min_dist == null || min_dist > dist) {
       min_dist = dist;
       closest_helix = helix;
@@ -531,18 +570,29 @@ Point<int>? find_helix_group_min_max(Iterable<Helix> helices_in_group) {
 }
 
 /// Return closest offset in a helix group where click event occured.
-int find_closest_offset(MouseEvent event, Iterable<Helix> helices_in_group, HelixGroup group,
-    Geometry geometry, num helices_in_group_first_svg_position_x) {
+int find_closest_offset(
+  MouseEvent event,
+  Iterable<Helix> helices_in_group,
+  HelixGroup group,
+  Geometry geometry,
+  num helices_in_group_first_svg_position_x,
+) {
   var svg_clicked_point = svg_position_of_mouse_click(event);
-  var svg_clicked_point_untransformed =
-      group.transform_point_main_view(svg_clicked_point, geometry, inverse: true);
+  var svg_clicked_point_untransformed = group.transform_point_main_view(
+    svg_clicked_point,
+    geometry,
+    inverse: true,
+  );
 
   var range = find_helix_group_min_max(helices_in_group)!;
   var min_offset = range.x;
   var max_offset = range.y;
 
-  int closest_offset_unbounded = helices_in_group.first
-      .svg_x_to_offset(svg_clicked_point_untransformed.x, helices_in_group_first_svg_position_x, geometry);
+  int closest_offset_unbounded = helices_in_group.first.svg_x_to_offset(
+    svg_clicked_point_untransformed.x,
+    helices_in_group_first_svg_position_x,
+    geometry,
+  );
 
   // max_offset in helix is non-inclusive, so highest offset value is max_offset - 1
   return min(max_offset - 1, max(closest_offset_unbounded, min_offset));
@@ -550,7 +600,10 @@ int find_closest_offset(MouseEvent event, Iterable<Helix> helices_in_group, Heli
 
 /// Return list of mouseover data about helix group `group_name` at `offset`.
 BuiltList<DesignSideRotationData> rotation_datas_at_offset_in_group(
-    int? offset, Design design, String group_name) {
+  int? offset,
+  Design design,
+  String group_name,
+) {
   List<DesignSideRotationParams> rotation_params_list = [];
   if (offset != null) {
     for (var helix_idx in design.helix_idxs_in_group[group_name]!) {
@@ -565,41 +618,60 @@ BuiltList<DesignSideRotationData> rotation_datas_at_offset_in_group(
 }
 
 /// Return (closest) helix, offset and direction where click event occurred.
-Address find_closest_address(MouseEvent event, Iterable<Helix> helices, BuiltMap<String, HelixGroup> groups,
-    Geometry geometry, BuiltMap<int, Point<double>> helix_idx_to_svg_position_map) {
+Address find_closest_address(
+  MouseEvent event,
+  Iterable<Helix> helices,
+  BuiltMap<String, HelixGroup> groups,
+  Geometry geometry,
+  BuiltMap<int, Point<double>> helix_idx_to_svg_position_map,
+) {
   var svg_clicked_point = svg_position_of_mouse_click(event);
 
   Helix helix = find_closest_helix(event, helices, groups, geometry, helix_idx_to_svg_position_map);
   var helix_svg_position = helix_idx_to_svg_position_map[helix.idx]!;
 
   var group = groups[helix.group]!;
-  var helix_upper_left_corner =
-      group.transform_point_main_view(helix_idx_to_svg_position_map[helix.idx]!, geometry);
-  var closest_point_in_helix = closest_point_in_rectangle(svg_clicked_point, helix_upper_left_corner,
-      helix.svg_width(geometry), helix.svg_height(geometry), group.pitch);
+  var helix_upper_left_corner = group.transform_point_main_view(
+    helix_idx_to_svg_position_map[helix.idx]!,
+    geometry,
+  );
+  var closest_point_in_helix = closest_point_in_rectangle(
+    svg_clicked_point,
+    helix_upper_left_corner,
+    helix.svg_width(geometry),
+    helix.svg_height(geometry),
+    group.pitch,
+  );
 
-  var closest_point_in_helix_untransformed =
-      group.transform_point_main_view(closest_point_in_helix, geometry, inverse: true);
+  var closest_point_in_helix_untransformed = group.transform_point_main_view(
+    closest_point_in_helix,
+    geometry,
+    inverse: true,
+  );
 
   int offset = helix.svg_x_to_offset(closest_point_in_helix_untransformed.x, helix_svg_position.x, geometry);
-  bool forward =
-      helix.svg_y_is_forward(closest_point_in_helix_untransformed.y, helix_svg_position.y, geometry);
+  bool forward = helix.svg_y_is_forward(
+    closest_point_in_helix_untransformed.y,
+    helix_svg_position.y,
+    geometry,
+  );
 
-//  print('* get_closest_address *');
-//  print('  forward = ${forward}');
+  //  print('* get_closest_address *');
+  //  print('  forward = ${forward}');
   return Address(helix_idx: helix.idx, offset: offset, forward: forward);
-//  print('  closest helix: ${helix.idx}');
-//  print('  offset = ${offset}');
+  //  print('  closest helix: ${helix.idx}');
+  //  print('  offset = ${offset}');
 }
 
 /// Return (closest) helix, offset and direction where click event occurred.
 Address find_closest_address_with_infinite_helix_boundaries(
-    MouseEvent event,
-    Helix helix,
-    BuiltMap<String, HelixGroup> groups,
-    Geometry geometry,
-    BuiltMap<num, Point<double>> helix_idx_to_svg_position_map,
-    StrandCreation strand_creation) {
+  MouseEvent event,
+  Helix helix,
+  BuiltMap<String, HelixGroup> groups,
+  Geometry geometry,
+  BuiltMap<num, Point<double>> helix_idx_to_svg_position_map,
+  StrandCreation strand_creation,
+) {
   var svg_clicked_point = svg_position_of_mouse_click(event);
 
   // Helix helix = find_closest_helix(event, helices, groups, geometry, helix_idx_to_svg_position_map);
@@ -611,14 +683,20 @@ Address find_closest_address_with_infinite_helix_boundaries(
 
   var closest_point_in_helix = svg_clicked_point;
 
-  var closest_point_in_helix_untransformed =
-      group.transform_point_main_view(closest_point_in_helix, geometry, inverse: true);
+  var closest_point_in_helix_untransformed = group.transform_point_main_view(
+    closest_point_in_helix,
+    geometry,
+    inverse: true,
+  );
 
   int offset = helix.svg_x_to_offset(closest_point_in_helix_untransformed.x, helix_svg_position.x, geometry);
-  bool forward =
-      helix.svg_y_is_forward(closest_point_in_helix_untransformed.y, helix_svg_position.y, geometry);
+  bool forward = helix.svg_y_is_forward(
+    closest_point_in_helix_untransformed.y,
+    helix_svg_position.y,
+    geometry,
+  );
 
-//  print('  forward = ${forward}');
+  //  print('  forward = ${forward}');
   return Address(helix_idx: helix.idx, offset: offset, forward: forward);
 }
 
@@ -658,7 +736,10 @@ Point<double> rect_to_point(Rect rect) => Point<double>(rect.x! as double, rect.
 Point<int> round_point(Point<double> point) => Point<int>(point.x.round(), point.y.round());
 
 Point<double> transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
-    MouseEvent event, bool is_main_view, SvgSvgElement view_svg) {
+  MouseEvent event,
+  bool is_main_view,
+  SvgSvgElement view_svg,
+) {
   Point<double> point;
   if (!browser.isFirefox) {
     point = from_point_num(event.offset);
@@ -673,8 +754,11 @@ Point<double> transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
 /// Gets untransformed coordinates of mouse_pos. If mouse_pos==null, get it from mouse event.client.
 /// XXX: Firefox is the only browser to handle this correctly; cross-browser solution taken from
 /// https://stackoverflow.com/questions/19713320/svg-viewbox-doesnt-return-correct-mouse-points-with-nested-svg-in-firefox
-Point<double> untransformed_svg_point(SvgSvgElement svg_elt,
-    {Point<double>? mouse_pos = null, MouseEvent? event = null}) {
+Point<double> untransformed_svg_point(
+  SvgSvgElement svg_elt, {
+  Point<double>? mouse_pos = null,
+  MouseEvent? event = null,
+}) {
   var svg_point_SVG = svg_elt.createSvgPoint();
   if (mouse_pos == null) {
     assert(event != null);
@@ -691,8 +775,12 @@ Point<double> untransformed_svg_point(SvgSvgElement svg_elt,
 /// Gets untransformed coordinates of mouse event in svg_elt.
 /// XXX: Firefox is the only browser to handle this correctly; cross-browser solution taken from
 /// https://stackoverflow.com/questions/19713320/svg-viewbox-doesnt-return-correct-mouse-points-with-nested-svg-in-firefox
-Point<double> transformed_svg_point(SvgSvgElement svg_elt, bool is_main,
-    {Point<double>? mouse_pos = null, MouseEvent? event = null}) {
+Point<double> transformed_svg_point(
+  SvgSvgElement svg_elt,
+  bool is_main, {
+  Point<double>? mouse_pos = null,
+  MouseEvent? event = null,
+}) {
   var svg_pos_untransformed = untransformed_svg_point(svg_elt, mouse_pos: mouse_pos, event: event);
   var svg_pos = transform_mouse_coord_to_svg_current_panzoom(svg_pos_untransformed, is_main);
   return svg_pos;
@@ -724,8 +812,12 @@ Point<double> transform_svg_to_mouse_coord(Point<double> point, Point<double> pa
 Rectangle<double> svg_rect_to_rectangle(Rect rect) =>
     Rectangle<double>(rect.x! as double, rect.y! as double, rect.width! as double, rect.height! as double);
 
-transform_rect(Point<double> transform(Point<double> p, Point<double> pan, double zoom), Rect rect,
-    Point<double> pan, double zoom) {
+transform_rect(
+  Point<double> transform(Point<double> p, Point<double> pan, double zoom),
+  Rect rect,
+  Point<double> pan,
+  double zoom,
+) {
   var up_left = Point<double>(rect.x! as double, rect.y! as double);
   var low_right = Point<double>(rect.x! + rect.width! as double, rect.y! + rect.height! as double);
   var up_left_tran = transform(up_left, pan, zoom);
@@ -766,7 +858,8 @@ Point<double> side_view_grid_to_svg(GridPosition gp, Grid grid, bool invert_y, G
     point = honeycomb_grid_position_to_position2d_diameter_1_circles(gp);
   } else {
     throw ArgumentError(
-        'cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
+      'cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb',
+    );
   }
   if (invert_y) {
     double x = point.x;
@@ -782,8 +875,10 @@ enum HexGridCoordinateSystem { odd_r, even_r, odd_q, even_q }
 /// Converts from hex grid_position to absolute real-number position,
 /// assuming each grid circle has diameter 1,
 /// and the center of circle at grid_position (0,0) is the origin.
-Point<double> hex_grid_position_to_position2d_diameter_1_circles(GridPosition gp,
-    [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q]) {
+Point<double> hex_grid_position_to_position2d_diameter_1_circles(
+  GridPosition gp, [
+  HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q,
+]) {
   double x, y;
   if (coordinate_system == HexGridCoordinateSystem.odd_r) {
     x = gp.h as double; // x offset from h
@@ -837,20 +932,25 @@ Point<double> honeycomb_grid_position_to_position2d_diameter_1_circles(GridPosit
   // below inverts the rows, i.e., implements the convention
   //   "The first is used when the row is odd and the second when the row is even."
   // in the documentation above.
-//  num x, y;
-//  y = 1.5 * gp.v;
-//  if (gp.h % 2 == 0 && gp.v % 2 == 1) {
-//    y -= 0.5;
-//  } else if (gp.h % 2 == 1 && gp.v % 2 == 0) {
-//    y -= cos(2 * pi / 6);
-//  }
-//  z = gp.h * sin(2 * pi / 6);
-//  return Point<double>(z, y);
+  //  num x, y;
+  //  y = 1.5 * gp.v;
+  //  if (gp.h % 2 == 0 && gp.v % 2 == 1) {
+  //    y -= 0.5;
+  //  } else if (gp.h % 2 == 1 && gp.v % 2 == 0) {
+  //    y -= cos(2 * pi / 6);
+  //  }
+  //  z = gp.h * sin(2 * pi / 6);
+  //  return Point<double>(z, y);
 }
 
 /// Translates SVG coordinates in side view to Grid coordinates using the specified grid.
-GridPosition side_view_svg_to_grid(Grid grid, Point<double> svg_coord, bool invert_y, Geometry geometry,
-    [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q]) {
+GridPosition side_view_svg_to_grid(
+  Grid grid,
+  Point<double> svg_coord,
+  bool invert_y,
+  Geometry geometry, [
+  HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q,
+]) {
   num x = svg_coord.x / geometry.distance_between_helices_svg;
   num y = svg_coord.y / geometry.distance_between_helices_svg;
   GridPosition gp = position_2d_to_grid_position_diameter_1_circles(grid, x, y, coordinate_system);
@@ -860,8 +960,12 @@ GridPosition side_view_svg_to_grid(Grid grid, Point<double> svg_coord, bool inve
   return gp;
 }
 
-GridPosition position_2d_to_grid_position_diameter_1_circles(Grid grid, num x, num y,
-    [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q]) {
+GridPosition position_2d_to_grid_position_diameter_1_circles(
+  Grid grid,
+  num x,
+  num y, [
+  HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q,
+]) {
   int? h = null, v = null;
   // below here computes inverse of hex_grid_position_to_position2d_diameter_1_circles
   if (grid == Grid.none) {
@@ -913,7 +1017,10 @@ GridPosition position_2d_to_grid_position_diameter_1_circles(Grid grid, num x, n
 GridPosition position3d_to_grid_position(Position3D position, Grid grid, Geometry geometry) {
   var position_normalized_diameter_1 = position * (1.0 / geometry.distance_between_helices_nm);
   var gp = position_2d_to_grid_position_diameter_1_circles(
-      grid, position_normalized_diameter_1.z, position_normalized_diameter_1.y);
+    grid,
+    position_normalized_diameter_1.z,
+    position_normalized_diameter_1.y,
+  );
   return gp;
 }
 
@@ -933,7 +1040,8 @@ Position3D grid_position_to_position3d(GridPosition grid_position, Grid grid, Ge
     y = point.y * geometry.distance_between_helices_nm;
   } else {
     throw ArgumentError(
-        'cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
+      'cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb',
+    );
   }
   return Position3D(x: x, y: y, z: 0);
 }
@@ -945,10 +1053,10 @@ Point<double> position3d_to_side_view_svg(Position3D position, bool invert_y, Ge
     );
 
 Position3D svg_side_view_to_position3d(Point<double> svg_pos, bool invert_y, Geometry geometry) => Position3D(
-      x: svg_pos.x / geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
-      y: svg_pos.y / geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
-      z: 0,
-    );
+  x: svg_pos.x / geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
+  y: svg_pos.y / geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
+  z: 0,
+);
 
 /// This goes into "window", so in JS you can access window.editor_content, and in Brython you can do this:
 /// from browser import window
@@ -962,8 +1070,12 @@ save_editor_content_to_js_context(String new_content) {
 /// [legacy_keys] is a list of older key names for this same value that work in addition to [key].
 /// [name] is the name of the class in which we expect to find this key (e.g., we expect to find
 /// "domains" in Strand
-dynamic mandatory_field(Map<String, dynamic> map, String key, String name,
-    {List<String> legacy_keys = const []}) {
+dynamic mandatory_field(
+  Map<String, dynamic> map,
+  String key,
+  String name, {
+  List<String> legacy_keys = const [],
+}) {
   if (!map.containsKey(key)) {
     for (var legacy_key in legacy_keys) {
       if (map.containsKey(legacy_key)) {
@@ -986,10 +1098,14 @@ dynamic mandatory_field(Map<String, dynamic> map, String key, String name,
 /// If [key] is not present but one of [legacy_keys] is, then that value is used.
 /// If [legacy_transformer] is specified and a legacy key is used, then
 /// [legacy_transformer] is used instead of [transformer]/
-T optional_field<T, U>(Map<String, dynamic> map, String key, T default_value,
-    {T Function(U)? transformer = null,
-    List<String> legacy_keys = const [],
-    T Function(U)? legacy_transformer = null}) {
+T optional_field<T, U>(
+  Map<String, dynamic> map,
+  String key,
+  T default_value, {
+  T Function(U)? transformer = null,
+  List<String> legacy_keys = const [],
+  T Function(U)? legacy_transformer = null,
+}) {
   var value = null;
   if (!map.containsKey(key)) {
     for (var legacy_key in legacy_keys) {
@@ -1020,8 +1136,12 @@ T optional_field<T, U>(Map<String, dynamic> map, String key, T default_value,
 /// This function is needed because calling [optional_field] with default_value = null will result
 /// in a type error, since Dart generics type inference will think the return type should be Null
 /// instead of whatever is the type of the value in the map.
-T? optional_field_with_null_default<T extends Object, U extends Object>(Map<String, dynamic> map, String key,
-    {T Function(U)? transformer = null, List<String> legacy_keys = const []}) {
+T? optional_field_with_null_default<T extends Object, U extends Object>(
+  Map<String, dynamic> map,
+  String key, {
+  T Function(U)? transformer = null,
+  List<String> legacy_keys = const [],
+}) {
   if (!map.containsKey(key)) {
     for (var legacy_key in legacy_keys) {
       if (map.containsKey(legacy_key)) {
@@ -1102,14 +1222,17 @@ CssStyleSheet get_scadnano_stylesheet() {
       return stylesheet as CssStyleSheet;
     }
   }
-  throw AssertionError('cannot find stylesheet containing "${constants.scadnano_css_stylesheet_name}" '
-      'in its href\nlist of stylesheet hrefs:\n'
-      '${[for (var sheet in document.styleSheets!) sheet.href].join("\n")}');
+  throw AssertionError(
+    'cannot find stylesheet containing "${constants.scadnano_css_stylesheet_name}" '
+    'in its href\nlist of stylesheet hrefs:\n'
+    '${[for (var sheet in document.styleSheets!) sheet.href].join("\n")}',
+  );
 }
 
 /// Indicates if loopout between two given strands is a hairpin.
 bool is_hairpin(Domain prev_ss, Domain next_ss) {
-  bool is_hairpin = prev_ss.helix == next_ss.helix &&
+  bool is_hairpin =
+      prev_ss.helix == next_ss.helix &&
       prev_ss.forward != next_ss.forward &&
       (prev_ss.offset_3p - next_ss.offset_5p).abs() < 3;
   return is_hairpin;
@@ -1127,7 +1250,7 @@ String blob_type_to_string(BlobType blob_type) {
       return 'image/svg+xml;charset=utf-8,';
     case BlobType.excel:
       // https://stackoverflow.com/questions/974079/setting-mime-type-for-excel-document
-//      return 'application/vnd.ms-excel';
+      //      return 'application/vnd.ms-excel';
       return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
   }
 }
@@ -1193,15 +1316,20 @@ copy_svg_as_png(SvgSvgElement svg_element) async {
 ///   https://github.com/UC-Davis-molecular-computing/scadnano/issues/282
 ///   https://github.com/UC-Davis-molecular-computing/scadnano/issues/292
 /// then it will be nice to have it happen only if the save is successful.
-save_file(String default_filename, var content,
-    {BlobType blob_type = BlobType.text, void Function()? and_then = null}) async {
+save_file(
+  String default_filename,
+  var content, {
+  BlobType blob_type = BlobType.text,
+  void Function()? and_then = null,
+}) async {
   try {
     String blob_type_string = blob_type_to_string(blob_type);
     Blob blob = new Blob([content], blob_type_string);
     String url = Url.createObjectUrlFromBlob(blob);
-    var link = new AnchorElement()
-      ..href = url
-      ..download = default_filename;
+    var link =
+        new AnchorElement()
+          ..href = url
+          ..download = default_filename;
 
     if (browser.isFirefox) {
       document.body!.children.add(link);
@@ -1232,7 +1360,8 @@ save_file(String default_filename, var content,
 }
 
 _alert_error_saving(e, stack_trace) {
-  var msg = 'error while saving file: ${e}'
+  var msg =
+      'error while saving file: ${e}'
       '${stack_trace_message_bug_report(stack_trace)}';
   window.alert(msg);
 }
@@ -1308,8 +1437,11 @@ double rotation_between_helices(Helix helix, Helix helix_other, bool forward, Ge
 }
 
 /// Rotate [point] about [origin] by [angle_degrees] degrees.
-Point<double> rotate(Point<double> point, double angle_degrees,
-    {Point<double> origin = const Point<double>(0, 0)}) {
+Point<double> rotate(
+  Point<double> point,
+  double angle_degrees, {
+  Point<double> origin = const Point<double>(0, 0),
+}) {
   double angle_radians = to_radians(angle_degrees);
   var point_relative_to_origin = point - origin;
   double x =
@@ -1334,9 +1466,19 @@ List<int> identity_permutation(int length) => [for (int i = 0; i < length; i++) 
 
 /// Return offset and direction on helix where click event occurred.
 Address get_address_on_helix(
-    MouseEvent event, Helix helix, HelixGroup group, Geometry geometry, Point<double> helix_svg_position) {
+  MouseEvent event,
+  Helix helix,
+  HelixGroup group,
+  Geometry geometry,
+  Point<double> helix_svg_position,
+) {
   var closest_address = find_closest_address(
-      event, [helix], {helix.group: group}.build(), geometry, {helix.idx: helix_svg_position}.build());
+    event,
+    [helix],
+    {helix.group: group}.build(),
+    geometry,
+    {helix.idx: helix_svg_position}.build(),
+  );
   return closest_address;
 }
 
@@ -1434,11 +1576,13 @@ check_dna_sequence(String seq) {
       }
     }
     String seq_with_newlines = with_newlines(seq, 100);
-    throw FormatException(r'<pre>' +
-        seq_with_newlines +
-        r'</pre>' +
-        'is not a valid DNA sequence; it can only contain the symbols a c g t A C G T '
-            'but it contains the symbol ${counter_example}');
+    throw FormatException(
+      r'<pre>' +
+          seq_with_newlines +
+          r'</pre>' +
+          'is not a valid DNA sequence; it can only contain the symbols a c g t A C G T '
+              'but it contains the symbol ${counter_example}',
+    );
   }
 }
 
@@ -1486,8 +1630,10 @@ bool bases_complementary(String base1, String base2, {bool allow_wildcard = fals
   }
 
   if (base1.length != 1 || base2.length != 1) {
-    throw ArgumentError('base1 and base2 must each be a single character: '
-        'base1 = ${base1}, base2 = ${base2}');
+    throw ArgumentError(
+      'base1 and base2 must each be a single character: '
+      'base1 = ${base1}, base2 = ${base2}',
+    );
   }
   base1 = base1.toUpperCase();
   base2 = base2.toUpperCase();
@@ -1497,8 +1643,12 @@ bool bases_complementary(String base1, String base2, {bool allow_wildcard = fals
 
 /// Indicates if `seq1` and `seq2` are reverse complementary DNA sequences.
 /// Either is allowed to be null if `allow_null` is true.
-bool reverse_complementary(String? seq1, String? seq2,
-    {bool allow_wildcard = false, bool allow_null = false}) {
+bool reverse_complementary(
+  String? seq1,
+  String? seq2, {
+  bool allow_wildcard = false,
+  bool allow_null = false,
+}) {
   if (seq1 == null || seq2 == null) {
     return allow_null;
   }
@@ -1530,8 +1680,10 @@ Color parse_json_color(Object json_obj) {
       String hex_str = color_decimal_int_to_hex(json_obj);
       return HexColor(hex_str);
     } else {
-      throw ArgumentError.value('JSON object representing color must be a Map, String, or int, '
-          'but instead it is a ${json_obj.runtimeType}:\n${json_obj}');
+      throw ArgumentError.value(
+        'JSON object representing color must be a Map, String, or int, '
+        'but instead it is a ${json_obj.runtimeType}:\n${json_obj}',
+      );
     }
   } on Exception {
     print("WARNING: I couldn't understand the color specification ${json_obj}, so I'm substituting black.");
@@ -1546,10 +1698,11 @@ Color parse_json_color(Object json_obj) {
 AppState default_state({Grid grid = Grid.none}) {
   var design = Design(grid: grid);
   var ui_state = AppUIState.from_design(design);
-  var state = (DEFAULT_AppState.toBuilder()
-        ..maybe_design = design.toBuilder()
-        ..ui_state.replace(ui_state))
-      .build();
+  var state =
+      (DEFAULT_AppState.toBuilder()
+            ..maybe_design = design.toBuilder()
+            ..ui_state.replace(ui_state))
+          .build();
   return state;
 }
 
@@ -1603,7 +1756,9 @@ void svg_to_png_data() {
   double dna_sequence_png_horizontal_offset = constants.DNA_SEQUENCE_HORIZONTAL_OFFSET - bbox.x!;
   double dna_sequence_png_vertical_offset = constants.DNA_SEQUENCE_VERTICAL_OFFSET - bbox.y!;
   dna_sequence_element_copy.setAttribute(
-      'transform', 'translate(${dna_sequence_png_horizontal_offset}, ${dna_sequence_png_vertical_offset})');
+    'transform',
+    'translate(${dna_sequence_png_horizontal_offset}, ${dna_sequence_png_vertical_offset})',
+  );
 
   // Append copy to svg wrapper element.
   svg.children.add(strands_element_copy);
@@ -1655,8 +1810,13 @@ void svg_to_png_data() {
     ctx.drawImage(img, 0, 0);
     Url.revokeObjectUrl(url);
     String img_uri = canvas.toDataUrl('image/png');
-    app.dispatch(actions.LoadDnaSequenceImageUri(
-        img_uri, -dna_sequence_png_horizontal_offset, -dna_sequence_png_vertical_offset));
+    app.dispatch(
+      actions.LoadDnaSequenceImageUri(
+        img_uri,
+        -dna_sequence_png_horizontal_offset,
+        -dna_sequence_png_vertical_offset,
+      ),
+    );
   });
 }
 
@@ -1665,8 +1825,12 @@ void svg_to_png_data() {
 /// PNG will be used if there is a png uri `dna_sequence_png_uri`,
 /// and the zoom is not above threshold `is_zoom_above_threshold`,
 /// and there is no pending action `disable_png_cache_until_action_completes`.
-bool use_png(String? dna_sequence_png_uri, bool is_zoom_above_threshold,
-    actions.ExportSvg? export_svg_action_delayed_for_png_cache, bool disable_png_caching_dna_sequences) {
+bool use_png(
+  String? dna_sequence_png_uri,
+  bool is_zoom_above_threshold,
+  actions.ExportSvg? export_svg_action_delayed_for_png_cache,
+  bool disable_png_caching_dna_sequences,
+) {
   return dna_sequence_png_uri != null &&
       !is_zoom_above_threshold &&
       export_svg_action_delayed_for_png_cache == null &&
@@ -1736,16 +1900,29 @@ double compute_end_rotation(double display_angle, bool forward, bool is_5p) {
 }
 
 Point<double> compute_extension_attached_end_svg(
-    Extension ext, Domain adj_dom, Helix adj_helix, num adj_helix_svg_y, Geometry geometry) {
+  Extension ext,
+  Domain adj_dom,
+  Helix adj_helix,
+  num adj_helix_svg_y,
+  Geometry geometry,
+) {
   int end_offset = ext.is_5p ? adj_dom.offset_5p : adj_dom.offset_3p;
-  Point<double> extension_attached_end_svg =
-      adj_helix.svg_base_pos(end_offset, adj_dom.forward, adj_helix_svg_y, geometry);
+  Point<double> extension_attached_end_svg = adj_helix.svg_base_pos(
+    end_offset,
+    adj_dom.forward,
+    adj_helix_svg_y,
+    geometry,
+  );
   return extension_attached_end_svg;
 }
 
 // computes the SVG coordinates of the end of an Extension that is not shared with the adjacent Domain
 Point<double> compute_extension_free_end_svg(
-    Point<double> attached_end_svg, Extension ext, Domain adjacent_domain, Geometry geometry) {
+  Point<double> attached_end_svg,
+  Extension ext,
+  Domain adjacent_domain,
+  Geometry geometry,
+) {
   double x = attached_end_svg.x;
   double y = attached_end_svg.y;
   var angle_radians = ext.display_angle * 2 * pi / 360.0;
@@ -1764,8 +1941,13 @@ Point<double> compute_extension_free_end_svg(
   return ext_end_svg;
 }
 
-Tuple2<double, double> compute_extension_length_and_angle_from_point(Point<double> current_mouse_point,
-    Point<double> attached_end_svg, Extension ext, Domain adjacent_domain, Geometry geometry) {
+(double, double) compute_extension_length_and_angle_from_point(
+  Point<double> current_mouse_point,
+  Point<double> attached_end_svg,
+  Extension ext,
+  Domain adjacent_domain,
+  Geometry geometry,
+) {
   num new_x = current_mouse_point.x;
   num new_y = current_mouse_point.y;
   num old_x = attached_end_svg.x;
@@ -1780,7 +1962,7 @@ Tuple2<double, double> compute_extension_length_and_angle_from_point(Point<doubl
   if ((adjacent_domain.forward && ext.is_5p) || (!adjacent_domain.forward && !ext.is_5p)) {
     angle_radians = pi - angle_radians;
   }
-  return Tuple2(display_length, angle_radians * 180 / pi);
+  return (display_length, angle_radians * 180 / pi);
 }
 
 update_mouseover(SyntheticMouseEvent event_syn, Helix helix, Point<double> helix_svg_position) {
@@ -1795,16 +1977,18 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix, Point<double> helix
     if (DEBUG_PRINT_MOUSEOVER) {
       Point<double> pan = current_pan(true);
       num zoom = current_zoom(true);
-      print('mouse event: '
-          'x = ${event.offset.x},   '
-          'y = ${event.offset.y},   '
-          'pan = (${pan.x.toStringAsFixed(2)}, ${pan.y.toStringAsFixed(2)}),   '
-          'zoom = ${zoom.toStringAsFixed(2)},   '
-          //        'svg_x = ${svg_x.toStringAsFixed(2)},   '
-          //        'svg_y = ${svg_y.toStringAsFixed(2)},   '
-          'helix = ${helix.idx},   '
-          'offset = ${offset},   '
-          'forward = ${forward}');
+      print(
+        'mouse event: '
+        'x = ${event.offset.x},   '
+        'y = ${event.offset.y},   '
+        'pan = (${pan.x.toStringAsFixed(2)}, ${pan.y.toStringAsFixed(2)}),   '
+        'zoom = ${zoom.toStringAsFixed(2)},   '
+        //        'svg_x = ${svg_x.toStringAsFixed(2)},   '
+        //        'svg_y = ${svg_y.toStringAsFixed(2)},   '
+        'helix = ${helix.idx},   '
+        'offset = ${offset},   '
+        'forward = ${forward}',
+      );
     }
 
     var mouseover_params = MouseoverParams(helix.idx, offset, forward);
@@ -1814,7 +1998,8 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix, Point<double> helix
     if (needs_update(mouseover_params, mouseover_datas)) {
       //    print('dispatching MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
       app.dispatch(
-          actions.MouseoverDataUpdate(mouseover_params: BuiltList<MouseoverParams>([mouseover_params])));
+        actions.MouseoverDataUpdate(mouseover_params: BuiltList<MouseoverParams>([mouseover_params])),
+      );
     } else {
       //    print('skipping MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
     }
@@ -1824,29 +2009,29 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix, Point<double> helix
 // only needs updating if the MouseoverData that would be created is not already in the list
 bool needs_update(MouseoverParams mouseover_params, BuiltList<MouseoverData> mouseover_datas) {
   bool needs = true;
-//  print('needs update?');
-//  print('  mouseover_datas: ${mouseover_datas}');
+  //  print('needs update?');
+  //  print('  mouseover_datas: ${mouseover_datas}');
   for (var mouseover_data in mouseover_datas) {
-//    print('  old helix.idx: ${mouseover_data.helix.idx}');
-//    print('  new helix.idx: ${mouseover_params.helix_idx}');
-//    print('  old offset: ${mouseover_data.offset}');
-//    print('  new offset: ${mouseover_params.offset}');
-//    print('  old forward: ${mouseover_data.substrand?.forward}');
-//    print('  new forward: ${mouseover_params.forward}');
+    //    print('  old helix.idx: ${mouseover_data.helix.idx}');
+    //    print('  new helix.idx: ${mouseover_params.helix_idx}');
+    //    print('  old offset: ${mouseover_data.offset}');
+    //    print('  new offset: ${mouseover_params.offset}');
+    //    print('  old forward: ${mouseover_data.substrand?.forward}');
+    //    print('  new forward: ${mouseover_params.forward}');
     if (mouseover_data.helix.idx == mouseover_params.helix_idx &&
         mouseover_data.offset == mouseover_params.offset &&
         mouseover_data.domain?.forward == mouseover_params.forward) {
       needs = false;
     }
-//    else {
-//      print("need to print because "
-//          "mouseover_data.helix.idx = ${mouseover_data.helix.idx} "
-//          "mouseover_params.helix_idx = ${mouseover_params.helix_idx} "
-//          "mouseover_data.offset = ${mouseover_data.offset} "
-//          "mouseover_params.offset = ${mouseover_params.offset} "
-//          "mouseover_data.substrand.forward = ${mouseover_data.substrand.forward} "
-//          "mouseover_params.forward = ${mouseover_params.forward}");
-//    }
+    //    else {
+    //      print("need to print because "
+    //          "mouseover_data.helix.idx = ${mouseover_data.helix.idx} "
+    //          "mouseover_params.helix_idx = ${mouseover_params.helix_idx} "
+    //          "mouseover_data.offset = ${mouseover_data.offset} "
+    //          "mouseover_params.offset = ${mouseover_params.offset} "
+    //          "mouseover_data.substrand.forward = ${mouseover_data.substrand.forward} "
+    //          "mouseover_params.forward = ${mouseover_params.forward}");
+    //    }
   }
   return needs;
 }
@@ -1917,8 +2102,8 @@ double angle_from_helix_to_helix(Helix helix, Helix other_helix, Geometry geomet
 //     angle :math:`\theta` by which to rotate all angles :math:`\theta_i`
 //     (but not changing any "zero angle" :math:`\mu_i`)
 //     such that :math:`\sum_i [(\theta + \theta_i) - \mu_i]^2` is minimized.
-double minimum_strain_angle(List<Tuple2<double, double>> relative_angles) {
-  var adjusted_angles = [for (var angle in relative_angles) angle.item1 - angle.item2];
+double minimum_strain_angle(List<(double, double)> relative_angles) {
+  var adjusted_angles = [for (var angle in relative_angles) angle.$1 - angle.$2];
   var ave_angle = average_angle(adjusted_angles);
   var min_strain_angle = -ave_angle;
   min_strain_angle %= 360;
@@ -2006,8 +2191,8 @@ class FixedList<T> extends Iterable<T> {
   final List<bool> _initialized;
 
   FixedList(int length)
-      : _items = List<T?>.filled(length, null),
-        _initialized = List<bool>.filled(length, false);
+    : _items = List<T?>.filled(length, null),
+      _initialized = List<bool>.filled(length, false);
 
   void _set(int index, T value) {
     _items[index] = value;

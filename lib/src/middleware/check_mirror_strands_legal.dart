@@ -21,7 +21,8 @@ check_reflect_strands_legal_middleware(Store<AppState> store, action, NextDispat
     var group_names = design.group_names_of_strands(strands_to_reflect)!;
 
     if (group_names.length != 1) {
-      var msg = 'Cannot reflect selected strands unless they are all on the same helix group.\n'
+      var msg =
+          'Cannot reflect selected strands unless they are all on the same helix group.\n'
           '3 These strands occupy the following helix groups: ${group_names.join(", ")}';
       window.alert(msg);
       return;
@@ -29,9 +30,10 @@ check_reflect_strands_legal_middleware(Store<AppState> store, action, NextDispat
     String group_name = group_names.first;
     HelixGroup group = design.groups[group_name]!;
 
-    List<Strand> reflected_strands = action.horizontal
-        ? horizontal_reflection_of_strands(design, strands_to_reflect, action.reverse_polarity)
-        : vertical_reflection_of_strands(group, strands_to_reflect, action.reverse_polarity);
+    List<Strand> reflected_strands =
+        action.horizontal
+            ? horizontal_reflection_of_strands(design, strands_to_reflect, action.reverse_polarity)
+            : vertical_reflection_of_strands(group, strands_to_reflect, action.reverse_polarity);
 
     var altered_design = design.remove_strands(strands_to_reflect);
     altered_design = altered_design.add_strands(reflected_strands);
@@ -39,7 +41,8 @@ check_reflect_strands_legal_middleware(Store<AppState> store, action, NextDispat
     try {
       altered_design.check_strands_overlap_legally();
     } on IllegalDesignError catch (e) {
-      var msg = 'Cannot mirror these strands ${action.horizontal ? "horizontally" : "vertically"}\n'
+      var msg =
+          'Cannot mirror these strands ${action.horizontal ? "horizontally" : "vertically"}\n'
           'Strands would overlap each other:\n\n${e.cause}';
       window.alert(msg);
       return;
@@ -64,15 +67,20 @@ check_reflect_strands_legal_middleware(Store<AppState> store, action, NextDispat
 //XXX: it's critical that these functions return strands in the same order they were received because
 // the ReplaceStrands action replaces them "in place" where the index of the original strand was.
 List<Strand> horizontal_reflection_of_strands(
-    Design design, List<Strand> strands_to_mirror, bool reverse_polarity) {
-  int min_offset = [
-    for (var strand in strands_to_mirror)
-      for (var domain in strand.domains) domain.start
-  ].min;
-  int max_offset = [
-    for (var strand in strands_to_mirror)
-      for (var domain in strand.domains) domain.end
-  ].max;
+  Design design,
+  List<Strand> strands_to_mirror,
+  bool reverse_polarity,
+) {
+  int min_offset =
+      [
+        for (var strand in strands_to_mirror)
+          for (var domain in strand.domains) domain.start,
+      ].min;
+  int max_offset =
+      [
+        for (var strand in strands_to_mirror)
+          for (var domain in strand.domains) domain.end,
+      ].max;
 
   List<Strand> mirrored_strands = [];
   for (var strand in strands_to_mirror) {
@@ -91,14 +99,17 @@ List<Strand> horizontal_reflection_of_strands(
         bool is_last =
             (i == 0 && reverse_polarity) || (i == mirrored_substrands.length - 1 && !reverse_polarity);
 
-        mirrored_substrands[i] = domain.rebuild((b) => b
-          ..start = reflected_end
-          ..end = reflected_start
-          ..forward = reverse_polarity ? domain.forward : !domain.forward
-          ..deletions.replace(reflected_deletions)
-          ..insertions.replace(reflected_insertions)
-          ..is_first = is_first
-          ..is_last = is_last);
+        mirrored_substrands[i] = domain.rebuild(
+          (b) =>
+              b
+                ..start = reflected_end
+                ..end = reflected_start
+                ..forward = reverse_polarity ? domain.forward : !domain.forward
+                ..deletions.replace(reflected_deletions)
+                ..insertions.replace(reflected_insertions)
+                ..is_first = is_first
+                ..is_last = is_last,
+        );
       }
     }
     if (reverse_polarity) {
@@ -135,11 +146,14 @@ List<Insertion> reflect_insertions(Domain domain, int min_offset, int max_offset
 int reflect_between_min_and_max(int number, int min_num, int max_num) => max_num - number + min_num;
 
 List<Strand> vertical_reflection_of_strands(
-    HelixGroup group, List<Strand> strands_to_reflect, bool reverse_polarity) {
+  HelixGroup group,
+  List<Strand> strands_to_reflect,
+  bool reverse_polarity,
+) {
   // helix idxs occupied by strands
   var helix_idxs_involved = {
     for (var strand in strands_to_reflect)
-      for (var domain in strand.domains) domain.helix
+      for (var domain in strand.domains) domain.helix,
   };
   // vertical display order of those helices, sorted
   var helix_orders_involved = [for (int idx in helix_idxs_involved) group.helices_view_order_inverse[idx]!];
@@ -165,11 +179,14 @@ List<Strand> vertical_reflection_of_strands(
         bool is_last =
             (i == 0 && !reverse_polarity) || (i == mirrored_substrands.length - 1 && reverse_polarity);
 
-        mirrored_substrands[i] = domain.rebuild((b) => b
-          ..helix = reflected_helix_idx
-          ..forward = reverse_polarity ? domain.forward : !domain.forward
-          ..is_first = is_first
-          ..is_last = is_last);
+        mirrored_substrands[i] = domain.rebuild(
+          (b) =>
+              b
+                ..helix = reflected_helix_idx
+                ..forward = reverse_polarity ? domain.forward : !domain.forward
+                ..is_first = is_first
+                ..is_last = is_last,
+        );
       }
     }
     if (!reverse_polarity) {

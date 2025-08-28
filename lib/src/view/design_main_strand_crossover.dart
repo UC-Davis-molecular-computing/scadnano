@@ -86,17 +86,24 @@ class DesignMainStrandCrossoverComponent
 
     String path;
     if (within_group) {
-      path = crossover_path_description_within_group(props.prev_domain, props.next_domain, props.helices,
-          props.geometry, props.prev_domain_helix_svg_position_y, props.next_domain_helix_svg_position_y);
+      path = crossover_path_description_within_group(
+        props.prev_domain,
+        props.next_domain,
+        props.helices,
+        props.geometry,
+        props.prev_domain_helix_svg_position_y,
+        props.next_domain_helix_svg_position_y,
+      );
     } else {
       path = crossover_path_description_between_groups(
-          props.prev_domain,
-          props.next_domain,
-          props.helices,
-          props.geometry,
-          props.groups,
-          props.prev_domain_helix_svg_position_y,
-          props.next_domain_helix_svg_position_y);
+        props.prev_domain,
+        props.next_domain,
+        props.helices,
+        props.geometry,
+        props.groups,
+        props.prev_domain_helix_svg_position_y,
+        props.next_domain_helix_svg_position_y,
+      );
     }
 
     var color = strand.color.toHexColor().toCssString();
@@ -108,41 +115,42 @@ class DesignMainStrandCrossoverComponent
     // mouseEnter or mouseLeave event. This is probably cleaner to handle in middleware in response
     // to the HelixRollSet action, because we don't
     // want the render() method to have side effects, nor to access global variables.
-//    if (state.mouse_hover) {
-//      update_mouseover_crossover();
-//    }
+    //    if (state.mouse_hover) {
+    //      update_mouseover_crossover();
+    //    }
 
     // String tooltip = 'PUT TOOLTIP TEXT HERE (if we think of something)';
 
-    var path_props = Dom.path()
-      ..d = path
-      ..stroke = color
-      ..className = classname
-      ..onMouseEnter = (ev) {
-        setState(newState()..mouse_hover = true);
-      }
-      ..onMouseLeave = (_) {
-        setState(newState()..mouse_hover = false);
-      }
-      ..onPointerDown = ((ev) {
-        if (crossover_selectable(props.crossover)) {
-          props.crossover.handle_selection_mouse_down(ev.nativeEvent);
-        }
-      })
-      ..onPointerUp = ((ev) {
-        if (crossover_selectable(props.crossover)) {
-          props.crossover.handle_selection_mouse_up(ev.nativeEvent);
-        }
-      })
-      ..id = id
-      ..key = id;
+    var path_props =
+        Dom.path()
+          ..d = path
+          ..stroke = color
+          ..className = classname
+          ..onMouseEnter = (ev) {
+            setState(newState()..mouse_hover = true);
+          }
+          ..onMouseLeave = (_) {
+            setState(newState()..mouse_hover = false);
+          }
+          ..onPointerDown = ((ev) {
+            if (crossover_selectable(props.crossover)) {
+              props.crossover.handle_selection_mouse_down(ev.nativeEvent);
+            }
+          })
+          ..onPointerUp = ((ev) {
+            if (crossover_selectable(props.crossover)) {
+              props.crossover.handle_selection_mouse_up(ev.nativeEvent);
+            }
+          })
+          ..id = id
+          ..key = id;
 
     if (within_group) {
       path_props.transform = transform_of_helix2(props, props.prev_domain.helix);
     }
 
     return path_props();
-//    (Dom.svgTitle()(tooltip));
+    //    (Dom.svgTitle()(tooltip));
   }
 
   @override
@@ -164,23 +172,21 @@ class DesignMainStrandCrossoverComponent
     if (!event.shiftKey) {
       event.preventDefault();
       event.stopPropagation(); // needed to prevent strand context menu from popping up
-      app.dispatch(actions.ContextMenuShow(
+      app.dispatch(
+        actions.ContextMenuShow(
           context_menu: ContextMenu(
-              items: context_menu_crossover(props.strand).build(),
-              position: util.from_point_num(event.page))));
+            items: context_menu_crossover(props.strand).build(),
+            position: util.from_point_num(event.page),
+          ),
+        ),
+      );
     }
   }
 
   List<ContextMenuItem> context_menu_crossover(Strand strand) => [
-        ContextMenuItem(
-          title: 'convert to loopout',
-          on_click: convert_crossover_to_loopout,
-        ),
-        ContextMenuItem(
-          title: 'unstrain backbone here',
-          on_click: unstrain_backbone_at_crossover,
-        ),
-      ];
+    ContextMenuItem(title: 'convert to loopout', on_click: convert_crossover_to_loopout),
+    ContextMenuItem(title: 'unstrain backbone here', on_click: unstrain_backbone_at_crossover),
+  ];
 
   unstrain_backbone_at_crossover() {
     Domain prev_domain = props.prev_domain;

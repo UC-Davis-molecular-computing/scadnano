@@ -44,14 +44,19 @@ dna_extensions_move_start_middleware(Store<AppState> store, action, NextDispatch
       extension_start_point += group.translation(geometry);
 
       var extension_end_point = util.compute_extension_free_end_svg(
-          extension_start_point, extension, extension.adjacent_domain, geometry);
+        extension_start_point,
+        extension,
+        extension.adjacent_domain,
+        geometry,
+      );
       var color = design.extension_end_to_strand(end).color;
       var move = DNAExtensionMove(
-          dna_end: end,
-          color: color,
-          original_position: extension_end_point,
-          attached_end_position: extension_start_point,
-          extension: extension);
+        dna_end: end,
+        color: color,
+        original_position: extension_end_point,
+        attached_end_position: extension_start_point,
+        extension: extension,
+      );
       moves.add(move);
     }
 
@@ -64,11 +69,14 @@ dna_extensions_move_start_middleware(Store<AppState> store, action, NextDispatch
 
     // important that we dispatch to app, not to store, because the app dispatch will know to route this
     // to the appropriate optimized store for moving DNAEnds
-    app.dispatch(actions.DNAExtensionsMoveSetSelectedExtensionEnds(
+    app.dispatch(
+      actions.DNAExtensionsMoveSetSelectedExtensionEnds(
         original_point: action.start_point,
         moves: moves.toBuiltList(),
         strands_affected: strands_affected.toBuiltSet(),
-        helix: action.helix));
+        helix: action.helix,
+      ),
+    );
   } else {
     next(action);
   }

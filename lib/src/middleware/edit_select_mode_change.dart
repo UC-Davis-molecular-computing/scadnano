@@ -46,14 +46,18 @@ edit_select_mode_change_middleware(Store<AppState> store, action, NextDispatcher
 }
 
 set_selectables_css_style_rules(
-    Design design, BuiltSet<EditModeChoice> edit_modes, BuiltSet<SelectModeChoice> select_modes) {
+  Design design,
+  BuiltSet<EditModeChoice> edit_modes,
+  BuiltSet<SelectModeChoice> select_modes,
+) {
   bool edit_mode_is_select_or_rope =
       edit_modes.contains(EditModeChoice.select) || edit_modes.contains(EditModeChoice.rope_select);
   bool scaffold_parts_selectable =
       edit_mode_is_select_or_rope && (design.is_origami && select_modes.contains(SelectModeChoice.scaffold));
   bool staple_parts_selectable =
       edit_mode_is_select_or_rope && (design.is_origami && select_modes.contains(SelectModeChoice.staple));
-  bool all_parts_selectable = edit_mode_is_select_or_rope &&
+  bool all_parts_selectable =
+      edit_mode_is_select_or_rope &&
       (!design.is_origami || (scaffold_parts_selectable && staple_parts_selectable));
 
   for (var select_mode_choice in [SelectModeChoice.strand] + SelectModeChoice.strand_parts.toList()) {

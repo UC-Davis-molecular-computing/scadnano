@@ -44,7 +44,8 @@ class EditAndSelectModesComponent extends UiComponent2<EditAndSelectModesProps>
     with RedrawCounterMixin<EditAndSelectModesProps> {
   @override
   render() {
-    bool select_mode = props.edit_modes.contains(EditModeChoice.select) ||
+    bool select_mode =
+        props.edit_modes.contains(EditModeChoice.select) ||
         props.edit_modes.contains(EditModeChoice.rope_select);
     return [
       if (select_mode && props.edit_mode_menu_visible)
@@ -54,7 +55,8 @@ class EditAndSelectModesComponent extends UiComponent2<EditAndSelectModesProps>
           ..key = 'select-modes')(),
       if (select_mode && props.edit_mode_menu_visible)
         (Dom.div()
-          ..className = FIXED_VERTICAL_SEPARATOR //FIXED_HORIZONTAL_SEPARATOR
+          ..className =
+              FIXED_VERTICAL_SEPARATOR //FIXED_HORIZONTAL_SEPARATOR
           ..key = 'modes-separator')(),
       if (props.edit_mode_menu_visible)
         (EditMode()
@@ -64,9 +66,11 @@ class EditAndSelectModesComponent extends UiComponent2<EditAndSelectModesProps>
         ..key = 'edit-mode-toggle-button'
         ..className = 'edit-mode-toggle-button'
         ..title = props.edit_mode_menu_visible ? 'Hide edit mode menu' : 'Open edit mode menu'
-        ..onClick = (_) => (app.dispatch(actions.ShowEditMenuToggle())))((Dom.img()
-        ..className = props.edit_mode_menu_visible ? '' : 'appear'
-        ..src = 'images/show_menu.png')())
+        ..onClick = (_) => (app.dispatch(actions.ShowEditMenuToggle())))(
+        (Dom.img()
+          ..className = props.edit_mode_menu_visible ? '' : 'appear'
+          ..src = 'images/show_menu.png')(),
+      ),
     ];
   }
 }

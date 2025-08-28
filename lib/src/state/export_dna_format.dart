@@ -6,7 +6,6 @@ import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/view/menu_form_file.dart';
 import 'package:spreadsheet_decoder/spreadsheet_decoder.dart';
-import 'package:tuple/tuple.dart';
 
 import '../util.dart' as util;
 import 'strand.dart';
@@ -16,7 +15,7 @@ part 'export_dna_format.g.dart';
 
 typedef StrandComparison = int Function(Strand s1, Strand s2);
 
-Tuple2<int, int> strand_helix_offset_key(Strand strand, StrandOrder strand_order, bool column_major) {
+(int, int) strand_helix_offset_key(Strand strand, StrandOrder strand_order, bool column_major) {
   int helix_idx;
   int offset;
   if (strand_order == StrandOrder.five_prime) {
@@ -59,33 +58,29 @@ Tuple2<int, int> strand_helix_offset_key(Strand strand, StrandOrder strand_order
   } else {
     throw ArgumentError('${strand_order} is not a valid StrandOrder');
   }
-  return Tuple2<int, int>(helix_idx, offset);
+  return (helix_idx, offset);
 }
 
 /// Returns comparison function that can be used to sort Strands
 StrandComparison strands_comparison_function(StrandOrder strand_order, bool column_major) {
   int compare(Strand strand1, Strand strand2) {
-    var helix_offset1 = strand_helix_offset_key(strand1, strand_order, column_major);
-    var helix_offset2 = strand_helix_offset_key(strand2, strand_order, column_major);
-    int helix_idx1 = helix_offset1.item1;
-    int offset1 = helix_offset1.item2;
-    int helix_idx2 = helix_offset2.item1;
-    int offset2 = helix_offset2.item2;
+    var (helix_idx1, offset1) = strand_helix_offset_key(strand1, strand_order, column_major); // (int, int)
+    var (helix_idx2, offset2) = strand_helix_offset_key(strand2, strand_order, column_major); // (int, int)
 
-    var tuple1;
-    var tuple2;
+    (int, int) tuple1;
+    (int, int) tuple2;
     if (column_major) {
-      tuple1 = Tuple2<int, int>(offset1, helix_idx1);
-      tuple2 = Tuple2<int, int>(offset2, helix_idx2);
+      tuple1 = (offset1, helix_idx1);
+      tuple2 = (offset2, helix_idx2);
     } else {
-      tuple1 = Tuple2<int, int>(helix_idx1, offset1);
-      tuple2 = Tuple2<int, int>(helix_idx2, offset2);
+      tuple1 = (helix_idx1, offset1);
+      tuple2 = (helix_idx2, offset2);
     }
 
-    if (tuple1.item1 != tuple2.item1) {
-      return tuple1.item1 - tuple2.item1;
+    if (tuple1.$1 != tuple2.$1) {
+      return tuple1.$1 - tuple2.$1;
     } else {
-      return tuple1.item2 - tuple2.item2;
+      return tuple1.$2 - tuple2.$2;
     }
   }
 
@@ -208,11 +203,19 @@ Simple CSV (comma-separated value) format. Not a format used by any biotech comp
         case idt_bulk:
           return idt_bulk_export(strands_sorted, delimiter: delimiter, domain_delimiter: domain_delimiter);
         case idt_plates96:
-          return idt_plates_export(strands_sorted, PlateType.wells96, column_major_plate,
-              domain_delimiter: domain_delimiter);
+          return idt_plates_export(
+            strands_sorted,
+            PlateType.wells96,
+            column_major_plate,
+            domain_delimiter: domain_delimiter,
+          );
         case idt_plates384:
-          return idt_plates_export(strands_sorted, PlateType.wells384, column_major_plate,
-              domain_delimiter: domain_delimiter);
+          return idt_plates_export(
+            strands_sorted,
+            PlateType.wells384,
+            column_major_plate,
+            domain_delimiter: domain_delimiter,
+          );
       }
     } on ExportDNAException catch (e) {
       throw e;
@@ -235,30 +238,40 @@ class ExportDNAException implements Exception {
 
 String csv_export(Iterable<Strand> strands, String domain_delimiter) {
   var lines = strands.map(
-      (strand) => '${strand.vendor_export_name()},${vendor_sequence_null_aware(strand, domain_delimiter)}');
+    (strand) => '${strand.vendor_export_name()},${vendor_sequence_null_aware(strand, domain_delimiter)}',
+  );
   return lines.join('\n');
 }
 
 String vendor_sequence_null_aware(Strand strand, String domain_delimiter) =>
     strand.vendor_dna_sequence(domain_delimiter: domain_delimiter) ?? '*****NONE*****';
 
-String idt_bulk_export(Iterable<Strand> strands,
-    {String delimiter = ',',
-    String domain_delimiter = '',
-    String scale = '25nm',
-    String purification = 'STD'}) {
-  var lines = strands.map((strand) => '${strand.vendor_export_name()}'
-      '${delimiter}'
-      '${vendor_sequence_null_aware(strand, domain_delimiter)}'
-      '${delimiter}'
-      '${scale}'
-      '${delimiter}'
-      '${purification}');
+String idt_bulk_export(
+  Iterable<Strand> strands, {
+  String delimiter = ',',
+  String domain_delimiter = '',
+  String scale = '25nm',
+  String purification = 'STD',
+}) {
+  var lines = strands.map(
+    (strand) =>
+        '${strand.vendor_export_name()}'
+        '${delimiter}'
+        '${vendor_sequence_null_aware(strand, domain_delimiter)}'
+        '${delimiter}'
+        '${scale}'
+        '${delimiter}'
+        '${purification}',
+  );
   return lines.join('\n');
 }
 
-Future<List<int>> idt_plates_export(Iterable<Strand> strands, PlateType plate_type, bool column_major_plate,
-    {required String domain_delimiter}) async {
+Future<List<int>> idt_plates_export(
+  Iterable<Strand> strands,
+  PlateType plate_type,
+  bool column_major_plate, {
+  required String domain_delimiter,
+}) async {
   var plate_coord = _PlateCoordinate(plate_type);
   int plate = 1;
   int excel_row = 1;
@@ -277,11 +290,12 @@ Future<List<int>> idt_plates_export(Iterable<Strand> strands, PlateType plate_ty
 
   if (num_plates_needed > 10) {
     throw ExportDNAException(
-        'To put ${strands.length} strands into ${plate_type == PlateType.wells96 ? 96 : 384}-well plates '
-        'requires ${num_plates_needed} plates.\n'
-        'It is currently unsupported to create more than 10 plates in a single design.\n'
-        'Please file an issue requesting this feature here: '
-        'https://github.com/UC-Davis-molecular-computing/scadnano/issues');
+      'To put ${strands.length} strands into ${plate_type == PlateType.wells96 ? 96 : 384}-well plates '
+      'requires ${num_plates_needed} plates.\n'
+      'It is currently unsupported to create more than 10 plates in a single design.\n'
+      'Please file an issue requesting this feature here: '
+      'https://github.com/UC-Davis-molecular-computing/scadnano/issues',
+    );
   }
 
   String filename = 'excel-spreadsheets/idt-plates-empty-${num_plates_needed}plate.xlsx';
@@ -318,7 +332,7 @@ Future<List<int>> idt_plates_export(Iterable<Strand> strands, PlateType plate_ty
       on_final_plate = true;
       //TODO: add a new table with name plate_name; for now we hardcode the number of plates in advance
       // https://github.com/sestegra/spreadsheet_decoder/issues/20
-//      worksheet = self._add_new_excel_plate_sheet(plate_name, workbook);
+      //      worksheet = self._add_new_excel_plate_sheet(plate_name, workbook);
     } else {
       excel_row++;
     }

@@ -33,11 +33,12 @@ class DesignMainLoopoutExtensionLengthComponent extends UiComponent2<DesignMainL
     Map<String, dynamic> style_map = {'fontSize': '${9}px'};
     String length = props.substrand.dna_length().toString();
 
-    SvgProps text_path_props = (Dom.textPath()
-      ..className = constants.css_selector_loopout_extension_length
-      ..xlinkHref = '#${props.substrand.id}'
-      ..startOffset = start_offset
-      ..style = style_map);
+    SvgProps text_path_props =
+        (Dom.textPath()
+          ..className = constants.css_selector_loopout_extension_length
+          ..xlinkHref = '#${props.substrand.id}'
+          ..startOffset = start_offset
+          ..style = style_map);
     return (Dom.text()
       ..key = props.substrand.id
       ..dy = dy)(text_path_props(length));

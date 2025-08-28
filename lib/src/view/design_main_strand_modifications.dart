@@ -49,24 +49,27 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
         Helix helix_5p = props.helices[domain.helix]!;
         var group = props.groups[helix_5p.group]!;
         var geometry = group.geometry ?? props.geometry;
-        bool selected =
-            props.selected_modifications_in_strand.contains(props.strand.selectable_modification_5p);
+        bool selected = props.selected_modifications_in_strand.contains(
+          props.strand.selectable_modification_5p,
+        );
         Extension? ext = null;
         if (props.strand.has_5p_extension) {
           ext = props.strand.substrands.first as Extension;
         }
-        modifications.add((DesignMainStrandModification()
-          ..selectable_modification = props.strand.selectable_modification_5p!
-          ..helix = helix_5p
-          ..ext = ext
-          ..transform = transform_of_helix2(props, domain.helix)
-          ..font_size = props.font_size
-          ..display_connector = props.display_connector
-          ..selected = selected
-          ..geometry = geometry
-          ..helix_svg_position_y = props.helix_idx_to_svg_position_y_map[helix_5p.idx]!
-          ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
-          ..key = "5'")());
+        modifications.add(
+          (DesignMainStrandModification()
+            ..selectable_modification = props.strand.selectable_modification_5p!
+            ..helix = helix_5p
+            ..ext = ext
+            ..transform = transform_of_helix2(props, domain.helix)
+            ..font_size = props.font_size
+            ..display_connector = props.display_connector
+            ..selected = selected
+            ..geometry = geometry
+            ..helix_svg_position_y = props.helix_idx_to_svg_position_y_map[helix_5p.idx]!
+            ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
+            ..key = "5'")(),
+        );
       }
     }
 
@@ -80,19 +83,22 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
         if (props.strand.has_3p_extension) {
           ext = props.strand.substrands.last as Extension;
         }
-        modifications.add((DesignMainStrandModification()
-          ..selectable_modification = props.strand.selectable_modification_3p!
-          ..helix = helix_3p
-          ..ext = ext
-          ..transform = transform_of_helix2(props, domain.helix)
-          ..font_size = props.font_size
-          ..display_connector = props.display_connector
-          ..selected =
-              props.selected_modifications_in_strand.contains(props.strand.selectable_modification_3p)
-          ..geometry = geometry
-          ..helix_svg_position_y = props.helix_idx_to_svg_position_y_map[helix_3p.idx]!
-          ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
-          ..key = "3'")());
+        modifications.add(
+          (DesignMainStrandModification()
+            ..selectable_modification = props.strand.selectable_modification_3p!
+            ..helix = helix_3p
+            ..ext = ext
+            ..transform = transform_of_helix2(props, domain.helix)
+            ..font_size = props.font_size
+            ..display_connector = props.display_connector
+            ..selected = props.selected_modifications_in_strand.contains(
+              props.strand.selectable_modification_3p,
+            )
+            ..geometry = geometry
+            ..helix_svg_position_y = props.helix_idx_to_svg_position_y_map[helix_3p.idx]!
+            ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
+            ..key = "3'")(),
+        );
       }
     }
 
@@ -119,18 +125,20 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
           var group = props.groups[helix.group]!;
           var geometry = group.geometry ?? props.geometry;
           var selectable_mod_int = props.strand.selectable_modifications_int_by_dna_idx[dna_idx_mod]!;
-          modifications.add((DesignMainStrandModification()
-            ..selectable_modification = selectable_mod_int
-            ..helix = helix
-            ..transform = transform_of_helix2(props, ss_with_mod.helix)
-            ..font_size = props.font_size
-            ..display_connector = props.display_connector
-            ..selected = props.selected_modifications_in_strand.contains(selectable_mod_int)
-            ..geometry = geometry
-            ..helix_svg_position_y = props.helix_idx_to_svg_position_y_map[helix.idx]!
-            ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
-            ..dna_idx_mod = dna_idx_mod
-            ..key = "internal-${dna_idx_mod}")());
+          modifications.add(
+            (DesignMainStrandModification()
+              ..selectable_modification = selectable_mod_int
+              ..helix = helix
+              ..transform = transform_of_helix2(props, ss_with_mod.helix)
+              ..font_size = props.font_size
+              ..display_connector = props.display_connector
+              ..selected = props.selected_modifications_in_strand.contains(selectable_mod_int)
+              ..geometry = geometry
+              ..helix_svg_position_y = props.helix_idx_to_svg_position_y_map[helix.idx]!
+              ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
+              ..dna_idx_mod = dna_idx_mod
+              ..key = "internal-${dna_idx_mod}")(),
+          );
         }
       } else if (ss_with_mod is Loopout) {
         throw IllegalDesignError('currently unsupported to draw internal modification on Loopout');

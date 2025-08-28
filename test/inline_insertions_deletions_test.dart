@@ -19,8 +19,13 @@ import 'package:scadnano/src/actions/actions.dart' as actions;
 
 import 'utils.dart';
 
-void helix0_strand0_inlined_test(Design design,
-    {required int max_offset, required List<int> major_ticks, required int start, required int end}) {
+void helix0_strand0_inlined_test(
+  Design design, {
+  required int max_offset,
+  required List<int> major_ticks,
+  required int start,
+  required int end,
+}) {
   expect(design.helices.length, 1);
   expect(design.strands.length, 1);
   var helix = design.helices[0]!;
@@ -39,9 +44,18 @@ main() {
     actions.InlineInsertionsDeletions action = actions.InlineInsertionsDeletions();
 
     setUp(() async {
-      design = Design(helices: [
-        Helix(max_offset: 24, grid_position: GridPosition(0, 0), major_tick_periodic_distances: [8], idx: 0)
-      ], strands: [], grid: Grid.square);
+      design = Design(
+        helices: [
+          Helix(
+            max_offset: 24,
+            grid_position: GridPosition(0, 0),
+            major_tick_periodic_distances: [8],
+            idx: 0,
+          ),
+        ],
+        strands: [],
+        grid: Grid.square,
+      );
     });
 
     test('no_deletion_after_loopout', () {
@@ -50,7 +64,9 @@ main() {
 
     test('no_insertion_after_loopout', () {
       expect(
-          () => design.draw_strand(0, 0).move(8).loopout(0, 10, 5).with_insertion(4, 2), throwsArgumentError);
+        () => design.draw_strand(0, 0).move(8).loopout(0, 10, 5).with_insertion(4, 2),
+        throwsArgumentError,
+      );
     });
 
     test('deletion_below_range', () {
@@ -269,11 +285,11 @@ main() {
         |         |       |       |
     0   [------------------------->
         */
-      design = design
-          .draw_strand(0, 0)
-          .move(24)
-          .with_deletion(19)
-          .with_insertions([Insertion(5, 2), Insertion(11, 1)]).commit();
+      design =
+          design.draw_strand(0, 0).move(24).with_deletion(19).with_insertions([
+            Insertion(5, 2),
+            Insertion(11, 1),
+          ]).commit();
       design = inline_insertions_deletions_reducer(design, action)!;
       helix0_strand0_inlined_test(design, max_offset: 26, major_ticks: [0, 10, 19, 26], start: 0, end: 26);
     });
@@ -291,11 +307,11 @@ main() {
         | . . . . . . . . | . . . . . . . . | . . . . . . |
          [ - - - - - - - - - - - - - - > [ - - - - - - - >
         */
-      design = design
-          .draw_strand(0, 0)
-          .move(14)
-          .with_deletion(2)
-          .with_insertions([Insertion(5, 2), Insertion(10, 1)]).commit();
+      design =
+          design.draw_strand(0, 0).move(14).with_deletion(2).with_insertions([
+            Insertion(5, 2),
+            Insertion(10, 1),
+          ]).commit();
       design = design.draw_strand(0, 14).to(24).with_deletion(19).commit();
       design = inline_insertions_deletions_reducer(design, action)!;
       expect(design.helices.length, 1);

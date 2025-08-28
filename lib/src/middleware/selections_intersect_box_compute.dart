@@ -5,7 +5,6 @@ import 'dart:svg' as svg;
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/selection_rope.dart';
-import 'package:tuple/tuple.dart';
 
 import '../state/select_mode.dart';
 import '../state/selection_box.dart';
@@ -45,9 +44,14 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
       // basically had to implement it myself based on bounding boxes.
 
       bool selection_box_intersection = store.state.ui_state.selection_box_intersection;
-      elts_overlapping = elements_intersecting_box(
-              MAIN_VIEW_SVG_ID, select_box_bbox, select_modes, is_origami, selection_box_intersection)
-          .toSet();
+      elts_overlapping =
+          elements_intersecting_box(
+            MAIN_VIEW_SVG_ID,
+            select_box_bbox,
+            select_modes,
+            is_origami,
+            selection_box_intersection,
+          ).toSet();
     } else {
       // use selection rope
       svg.PolygonElement? rope_elt = querySelector('#selection-rope-main') as svg.PolygonElement?;
@@ -58,15 +62,20 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
 
       List<Point<double>> points = points_of_polygon_elt(rope_elt);
       bool selection_box_intersection = store.state.ui_state.selection_box_intersection;
-      elts_overlapping = elements_intersecting_polygon(
-              MAIN_VIEW_SVG_ID, points, select_modes, is_origami, selection_box_intersection)
-          .toSet();
+      elts_overlapping =
+          elements_intersecting_polygon(
+            MAIN_VIEW_SVG_ID,
+            points,
+            select_modes,
+            is_origami,
+            selection_box_intersection,
+          ).toSet();
     }
 
     var selectable_by_id = state.design.selectable_by_id;
     List<Selectable> overlapping_now = [
       for (var elt in elts_overlapping)
-        if (selectable_by_id.containsKey(elt.id)) selectable_by_id[elt.id]!
+        if (selectable_by_id.containsKey(elt.id)) selectable_by_id[elt.id]!,
     ];
 
     List<Selectable> overlapping_now_select_mode_enabled = [];
@@ -76,8 +85,9 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
       }
     }
 
-    store.dispatch(actions.SelectOrToggleItems(
-        items: overlapping_now_select_mode_enabled.build(), toggle: action.toggle));
+    store.dispatch(
+      actions.SelectOrToggleItems(items: overlapping_now_select_mode_enabled.build(), toggle: action.toggle),
+    );
   } else {
     next(action);
   }
@@ -89,33 +99,44 @@ List<Point<double>> points_of_polygon_elt(svg.PolygonElement rope_elt) {
   svg.PointList point_list = rope_elt.points; // SVG representation
   List<svg.Point> points_svg = [for (int i = 0; i < point_list.length!; i++) point_list.getItem(i)];
   List<Point<double>> points = [
-    for (var point_svg in points_svg) Point<double>(point_svg.x! as double, point_svg.y! as double)
+    for (var point_svg in points_svg) Point<double>(point_svg.x! as double, point_svg.y! as double),
   ];
   return points;
 }
 
 /// gets list of elements associated to Selectables that intersect selection rope [rope]
 /// (described as list of points in non-self-intersecting polygon) in elements with classname
-List<svg.SvgElement> elements_intersecting_polygon(String classname, List<Point<double>> polygon,
-    Iterable<SelectModeChoice> select_modes, bool is_origami, bool selection_box_intersection) {
+List<svg.SvgElement> elements_intersecting_polygon(
+  String classname,
+  List<Point<double>> polygon,
+  Iterable<SelectModeChoice> select_modes,
+  bool is_origami,
+  bool selection_box_intersection,
+) {
   var overlap = selection_box_intersection ? polygon_intersects_rect : polygon_contains_rect;
   return generalized_intersection_list_polygon(classname, polygon, select_modes, is_origami, overlap);
 }
 
 // gets list of elements associated to Selectables that intersect select_box_bbox in elements with classname
-List<svg.SvgElement> elements_intersecting_box(String classname, Rectangle<num> select_box_bbox,
-    Iterable<SelectModeChoice> select_modes, bool is_origami, bool selection_box_intersection) {
+List<svg.SvgElement> elements_intersecting_box(
+  String classname,
+  Rectangle<num> select_box_bbox,
+  Iterable<SelectModeChoice> select_modes,
+  bool is_origami,
+  bool selection_box_intersection,
+) {
   var overlap = selection_box_intersection ? interval_intersect : interval_contained;
   return generalized_intersection_list_box(classname, select_box_bbox, select_modes, is_origami, overlap);
 }
 
 /// Like generalized_intersection_list_box, but where selection is described by a polygon instead of rect.
 generalized_intersection_list_polygon(
-    String classname,
-    List<Point<double>> polygon,
-    Iterable<SelectModeChoice> select_modes,
-    bool is_origami,
-    bool overlap(List<Point<double>> polygon, Rectangle<num> rect)) {
+  String classname,
+  List<Point<double>> polygon,
+  Iterable<SelectModeChoice> select_modes,
+  bool is_origami,
+  bool overlap(List<Point<double>> polygon, Rectangle<num> rect),
+) {
   List<svg.SvgElement> elts_intersecting = [];
   List<svg.GraphicsElement> selectable_elts = find_selectable_elements(select_modes, is_origami);
 
@@ -138,8 +159,13 @@ generalized_intersection_list_polygon(
 /// and [l2], [h2] (describing the selection box), whether those rectangles overlap
 /// (so can specify either just intersection,
 /// or the default interval contained, that the second completely contains the first)
-generalized_intersection_list_box(String classname, Rectangle<num> select_box_bbox,
-    Iterable<SelectModeChoice> select_modes, bool is_origami, bool overlap(num l1, num h1, num l2, num h2)) {
+generalized_intersection_list_box(
+  String classname,
+  Rectangle<num> select_box_bbox,
+  Iterable<SelectModeChoice> select_modes,
+  bool is_origami,
+  bool overlap(num l1, num h1, num l2, num h2),
+) {
   List<svg.SvgElement> elts_intersecting = [];
   List<svg.GraphicsElement> selectable_elts = find_selectable_elements(select_modes, is_origami);
 
@@ -153,7 +179,10 @@ generalized_intersection_list_box(String classname, Rectangle<num> select_box_bb
 }
 
 bool bboxes_intersect_generalized(
-    Rectangle<num> elt_bbox, Rectangle<num> select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
+  Rectangle<num> elt_bbox,
+  Rectangle<num> select_box_bbox,
+  bool overlap(num l1, num h1, num l2, num h2),
+) {
   num elt_x2 = elt_bbox.left + elt_bbox.width;
   num elt_y2 = elt_bbox.top + elt_bbox.height;
   num select_box_x2 = select_box_bbox.left + select_box_bbox.width;
@@ -291,7 +320,7 @@ List<Line> lines_of_rect(Rectangle<num> rect) {
 List<svg.GraphicsElement> find_selectable_elements(Iterable<SelectModeChoice> select_modes, bool is_origami) {
   List<SelectModeChoice> select_modes_not_scaffold_or_staple = [
     for (var mode in select_modes)
-      if (mode != SelectModeChoice.scaffold && mode != SelectModeChoice.staple) mode
+      if (mode != SelectModeChoice.scaffold && mode != SelectModeChoice.staple) mode,
   ];
   if (select_modes_not_scaffold_or_staple.isEmpty) {
     return [];
@@ -387,13 +416,18 @@ bool intervals_overlap(num l1, num h1, num l2, num h2) {
 }
 
 List<E> generalized_intersection_list<E>(
-    Iterable<E> elts, List<Box> bboxes, Box select_box, bool overlap(num l1, num h1, num l2, num h2)) {
+  Iterable<E> elts,
+  List<Box> bboxes,
+  Box select_box,
+  bool overlap(num l1, num h1, num l2, num h2),
+) {
   if (elts.length != bboxes.length) {
     throw ArgumentError(
-        'elts (length ${elts.length}) and bboxes (length ${bboxes.length}) must have same length');
+      'elts (length ${elts.length}) and bboxes (length ${bboxes.length}) must have same length',
+    );
   }
   List<E> elts_intersecting = [];
-//  for (int i = 0; i < elts.length; i++) {
+  //  for (int i = 0; i < elts.length; i++) {
   int i = 0;
   for (E elt in elts) {
     Box elt_bbox = bboxes[i++];

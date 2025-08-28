@@ -93,27 +93,28 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
   int get hashCode;
 
   /// See comments on fields below for explanation of their meaning.
-  factory Dialog(
-      {required String title,
-      required DialogType type,
-      required Iterable<DialogItem> items,
-      ProcessCallback process_saved_response = identity_function,
-      bool use_saved_response = true,
-      Iterable<Iterable<int>> mutually_exclusive_checkbox_groups = const [],
-      Iterable<int> disable = const {},
-      Map<int, Iterable<int>> disable_when_any_checkboxes_on = const {},
-      Map<int, Map<int, Iterable<String>>> disable_when_any_radio_button_selected = const {},
-      Map<int, Iterable<int>> disable_when_any_checkboxes_off = const {}}) {
+  factory Dialog({
+    required String title,
+    required DialogType type,
+    required Iterable<DialogItem> items,
+    ProcessCallback process_saved_response = identity_function,
+    bool use_saved_response = true,
+    Iterable<Iterable<int>> mutually_exclusive_checkbox_groups = const [],
+    Iterable<int> disable = const {},
+    Map<int, Iterable<int>> disable_when_any_checkboxes_on = const {},
+    Map<int, Map<int, Iterable<String>>> disable_when_any_radio_button_selected = const {},
+    Map<int, Iterable<int>> disable_when_any_checkboxes_off = const {},
+  }) {
     List<BuiltList<int>> mutually_exclusive_checkbox_groups_half_built = [
-      for (var group in mutually_exclusive_checkbox_groups) BuiltList<int>(group)
+      for (var group in mutually_exclusive_checkbox_groups) BuiltList<int>(group),
     ];
     Map<int, BuiltList<int>> disable_when_any_checkboxes_on_half_built = {
       for (var idx in disable_when_any_checkboxes_on.keys)
-        idx: BuiltList<int>(disable_when_any_checkboxes_on[idx]!)
+        idx: BuiltList<int>(disable_when_any_checkboxes_on[idx]!),
     };
     Map<int, BuiltList<int>> disable_when_any_checkboxes_off_half_built = {
       for (var idx in disable_when_any_checkboxes_off.keys)
-        idx: BuiltList<int>(disable_when_any_checkboxes_off[idx]!)
+        idx: BuiltList<int>(disable_when_any_checkboxes_off[idx]!),
     };
 
     Map<int, Map<int, BuiltList<String>>> disable_when_any_radio_button_selected_quarter_built = {};
@@ -127,20 +128,25 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
 
     Map<int, BuiltMap<int, BuiltList<String>>> disable_when_any_radio_button_selected_half_built = {
       for (int idx in disable_when_any_radio_button_selected_quarter_built.keys)
-        idx: disable_when_any_radio_button_selected_quarter_built[idx]!.build()
+        idx: disable_when_any_radio_button_selected_quarter_built[idx]!.build(),
     };
 
-    return Dialog.from((b) => b
-      ..title = title
-      ..type = type
-      ..process_saved_response = process_saved_response
-      ..use_saved_response = use_saved_response
-      ..items.replace(items)
-      ..disable.replace(disable)
-      ..mutually_exclusive_checkbox_groups.replace(mutually_exclusive_checkbox_groups_half_built)
-      ..disable_when_any_radio_button_selected.replace(disable_when_any_radio_button_selected_half_built)
-      ..disable_when_any_checkboxes_on.replace(disable_when_any_checkboxes_on_half_built)
-      ..disable_when_any_checkboxes_off.replace(disable_when_any_checkboxes_off_half_built));
+    return Dialog.from(
+      (b) =>
+          b
+            ..title = title
+            ..type = type
+            ..process_saved_response = process_saved_response
+            ..use_saved_response = use_saved_response
+            ..items.replace(items)
+            ..disable.replace(disable)
+            ..mutually_exclusive_checkbox_groups.replace(mutually_exclusive_checkbox_groups_half_built)
+            ..disable_when_any_radio_button_selected.replace(
+              disable_when_any_radio_button_selected_half_built,
+            )
+            ..disable_when_any_checkboxes_on.replace(disable_when_any_checkboxes_on_half_built)
+            ..disable_when_any_checkboxes_off.replace(disable_when_any_checkboxes_off_half_built),
+    );
   }
 
   /************************ end BuiltValue boilerplate ************************/
@@ -211,10 +217,13 @@ abstract class DialogInteger
   static Serializer<DialogInteger> get serializer => _$dialogIntegerSerializer;
 
   factory DialogInteger({required String label, required int value, String tooltip = ''}) {
-    return DialogInteger.from((b) => b
-      ..label = label
-      ..value = value
-      ..tooltip = tooltip);
+    return DialogInteger.from(
+      (b) =>
+          b
+            ..label = label
+            ..value = value
+            ..tooltip = tooltip,
+    );
   }
 
   @memoized
@@ -237,10 +246,13 @@ abstract class DialogFloat
   static Serializer<DialogFloat> get serializer => _$dialogFloatSerializer;
 
   factory DialogFloat({required String label, required double value, String tooltip = ''}) {
-    return DialogFloat.from((b) => b
-      ..label = label
-      ..value = value
-      ..tooltip = tooltip);
+    return DialogFloat.from(
+      (b) =>
+          b
+            ..label = label
+            ..value = value
+            ..tooltip = tooltip,
+    );
   }
 
   /************************ end BuiltValue boilerplate ************************/
@@ -263,11 +275,14 @@ abstract class DialogText
     if (size == null) {
       size = size_from_text(value);
     }
-    return DialogText.from((b) => b
-      ..label = label
-      ..size = size
-      ..value = value
-      ..tooltip = tooltip);
+    return DialogText.from(
+      (b) =>
+          b
+            ..label = label
+            ..size = size
+            ..value = value
+            ..tooltip = tooltip,
+    );
   }
 
   @memoized
@@ -294,14 +309,22 @@ abstract class DialogTextArea
 
   static Serializer<DialogTextArea> get serializer => _$dialogTextAreaSerializer;
 
-  factory DialogTextArea(
-      {required String label, required int cols, required int rows, String value = '', String tooltip = ''}) {
-    return DialogTextArea.from((b) => b
-      ..label = label
-      ..cols = cols
-      ..rows = rows
-      ..value = value
-      ..tooltip = tooltip);
+  factory DialogTextArea({
+    required String label,
+    required int cols,
+    required int rows,
+    String value = '',
+    String tooltip = '',
+  }) {
+    return DialogTextArea.from(
+      (b) =>
+          b
+            ..label = label
+            ..cols = cols
+            ..rows = rows
+            ..value = value
+            ..tooltip = tooltip,
+    );
   }
 
   @memoized
@@ -328,10 +351,13 @@ abstract class DialogCheckbox
   static Serializer<DialogCheckbox> get serializer => _$dialogCheckboxSerializer;
 
   factory DialogCheckbox({required String label, bool value = false, String tooltip = ''}) {
-    return DialogCheckbox.from((b) => b
-      ..label = label
-      ..value = value
-      ..tooltip = tooltip);
+    return DialogCheckbox.from(
+      (b) =>
+          b
+            ..label = label
+            ..value = value
+            ..tooltip = tooltip,
+    );
   }
 
   @memoized
@@ -358,13 +384,14 @@ abstract class DialogRadio
 
   /************************ end BuiltValue boilerplate ************************/
 
-  factory DialogRadio(
-      {required String label,
-      required Iterable<String> options,
-      int selected_idx = 0,
-      bool radio = true,
-      String tooltip = '',
-      Iterable<String>? option_tooltips}) {
+  factory DialogRadio({
+    required String label,
+    required Iterable<String> options,
+    int selected_idx = 0,
+    bool radio = true,
+    String tooltip = '',
+    Iterable<String>? option_tooltips,
+  }) {
     // if option_tooltips is specified, ensure it's same length as options
     // also replace null so that the call to .replace() below doesn't crash
     var options_list = List<String>.from(options);
@@ -373,19 +400,24 @@ abstract class DialogRadio
     }
     var option_tooltips_list = List<String>.from(option_tooltips);
     if (options_list.length != option_tooltips_list.length) {
-      throw ArgumentError("options and item_tooltips must be same length, but their lengths are "
-          "${options_list.length} and ${option_tooltips_list.length} respectively:\n"
-          "options = ${options_list}\n"
-          "item_tooltips = ${option_tooltips_list}");
+      throw ArgumentError(
+        "options and item_tooltips must be same length, but their lengths are "
+        "${options_list.length} and ${option_tooltips_list.length} respectively:\n"
+        "options = ${options_list}\n"
+        "item_tooltips = ${option_tooltips_list}",
+      );
     }
 
-    return DialogRadio.from((b) => b
-      ..options.replace(options_list)
-      ..selected_idx = selected_idx
-      ..radio = radio
-      ..label = label
-      ..tooltip = tooltip
-      ..option_tooltips.replace(option_tooltips_list));
+    return DialogRadio.from(
+      (b) =>
+          b
+            ..options.replace(options_list)
+            ..selected_idx = selected_idx
+            ..radio = radio
+            ..label = label
+            ..tooltip = tooltip
+            ..option_tooltips.replace(option_tooltips_list),
+    );
   }
 
   BuiltList<String> get options;
@@ -416,11 +448,14 @@ abstract class DialogLink
   int get hashCode;
 
   factory DialogLink({required String label, required String link, String tooltip = ''}) {
-    return DialogLink.from((b) => b
-      ..label = label
-      ..link = link
-      ..value = ""
-      ..tooltip = tooltip);
+    return DialogLink.from(
+      (b) =>
+          b
+            ..label = label
+            ..link = link
+            ..value = ""
+            ..tooltip = tooltip,
+    );
   }
 
   /************************ end BuiltValue boilerplate ************************/
@@ -445,10 +480,13 @@ abstract class DialogLabel
   int get hashCode;
 
   factory DialogLabel({required String label, String tooltip = ''}) {
-    return DialogLabel.from((b) => b
-      ..label = label
-      ..value = ""
-      ..tooltip = tooltip);
+    return DialogLabel.from(
+      (b) =>
+          b
+            ..label = label
+            ..value = ""
+            ..tooltip = tooltip,
+    );
   }
 
   /************************ end BuiltValue boilerplate ************************/

@@ -17,7 +17,6 @@ import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/position3d.dart';
 import 'package:scadnano/src/state/strand.dart';
-import 'package:tuple/tuple.dart';
 import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
 import '../state/helix.dart';
@@ -53,8 +52,9 @@ void update_oxview_view(Design design, [IFrameElement? frame = null]) {
   }
 
   // reset oxview in case it has nucleotides already
-  Blob blob_js_reset_commands =
-      new Blob(['resetScene(resetCamera = false);'], blob_type_to_string(BlobType.text));
+  Blob blob_js_reset_commands = new Blob([
+    'resetScene(resetCamera = false);',
+  ], blob_type_to_string(BlobType.text));
   Map<String, dynamic> message = {
     'message': 'iframe_drop',
     'files': [blob_js_reset_commands],
@@ -65,19 +65,35 @@ void update_oxview_view(Design design, [IFrameElement? frame = null]) {
   // send current exported design
   List<Strand> strands_to_export = design.strands.toList();
 
-  // String content = to_oxview_format(design, strands_to_export);
-  Tuple2<String, String> dat_top = to_oxdna_format(design, strands_to_export);
-  String dat = dat_top.item1;
-  String top = dat_top.item2;
+  //////////////////////////////////////////
+  // oxDNA
 
-  Blob blob_dat = new Blob([dat], blob_type_to_string(BlobType.text));
-  Blob blob_top = new Blob([top], blob_type_to_string(BlobType.text));
+  // // String content = to_oxview_format(design, strands_to_export);
+  // var (dat, top) = to_oxdna_format(design, strands_to_export); // (String, String)
+  //
+  // Blob blob_dat = new Blob([dat], blob_type_to_string(BlobType.text));
+  // Blob blob_top = new Blob([top], blob_type_to_string(BlobType.text));
+  //
+  // message = {
+  //   'message': 'iframe_drop',
+  //   'files': [blob_top, blob_dat],
+  //   'ext': ['top', 'dat'],
+  //   'inbox_settings': ["Monomer", "Origin"],
+  // };
+
+  /////////////////////////////////////////
+  // oxView
+
+  String oxview_content = to_oxview_format(design, strands_to_export);
+
+  Blob blob_oxview_content = new Blob([oxview_content], blob_type_to_string(BlobType.text));
 
   message = {
     'message': 'iframe_drop',
-    'files': [blob_top, blob_dat],
-    'ext': ['top', 'dat'],
+    'files': [blob_oxview_content],
+    'ext': ['oxview'],
     'inbox_settings': ["Monomer", "Origin"],
   };
+
   frame.contentWindow?.postMessage(message, constants.OXVIEW_URL);
 }

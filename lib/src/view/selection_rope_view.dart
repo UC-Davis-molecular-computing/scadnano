@@ -8,15 +8,15 @@ part 'selection_rope_view.over_react.g.dart';
 
 UiFactory<SelectionRopeViewProps> ConnectedSelectionRopeView =
     connect<SelectionRope?, SelectionRopeViewProps>(
-  mapStateToPropsWithOwnProps: (SelectionRope? rope, SelectionRopeViewProps props) {
-    return SelectionRopeView()
-      ..selection_rope = rope
-      ..stroke_width_getter = props.stroke_width_getter
-      ..id_ = props.id_
-      ..is_main = props.is_main;
-  },
-  context: app.context_selection_rope,
-)(SelectionRopeView);
+      mapStateToPropsWithOwnProps: (SelectionRope? rope, SelectionRopeViewProps props) {
+        return SelectionRopeView()
+          ..selection_rope = rope
+          ..stroke_width_getter = props.stroke_width_getter
+          ..id_ = props.id_
+          ..is_main = props.is_main;
+      },
+      context: app.context_selection_rope,
+    )(SelectionRopeView);
 
 UiFactory<SelectionRopeViewProps> SelectionRopeView = _$SelectionRopeView;
 
