@@ -1,0 +1,84 @@
+{
+  "name": "scadnano",
+  "version": "0.1.0",
+  "description": "[scadnano](https://scadnano.org)\r (\"scriptable-cadnano\", [source code repository here](https://github.com/UC-Davis-molecular-computing/scadnano))\r is a program for designing synthetic DNA structures such as DNA origami.\r The scadnano project is developed and maintained by the UC Davis Molecular Computing group.\r Note that [cadnano](https://cadnano.org) is a separate project, developed and maintained by\r the [Douglas lab](https://bionano.ucsf.edu/) at UCSF.",
+  "main": "main.js",
+  "build": {
+    "appId": "org.scadnano.app",
+    "productName": "scadnano",
+    "files": [
+      "**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "../build",
+        "to": "build"
+      }
+    ],
+    "asar": true,
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "icon.ico"
+    },
+    "linux": {
+      "target": ["AppImage"],
+      "icon": "icon.png"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "icon.icns"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "scripts": {
+    "init": "cd .. && dart pub get && dart pub global activate webdev && webdev build -- --delete-conflicting-outputs",
+    "dev": "npm run init && electron-forge start",
+    "package": "electron-builder --dir",
+    "build:win": "npm run init && electron-builder --win --x64 --publish never",
+    "build:mac": "npm run init && electron-builder --mac --x64 --publish never",
+    "build:lin": "npm run init && electron-builder --linux --x64 --publish never"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UC-Davis-molecular-computing/scadnano.git"
+  },
+  "keywords": [],
+  "author": "David Doty",
+  "license": "MIT",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/UC-Davis-molecular-computing/scadnano/issues"
+  },
+  "homepage": "https://github.com/UC-Davis-molecular-computing/scadnano#readme",
+  "devDependencies": {
+    "@electron-forge/cli": "^7.7.0",
+    "@electron-forge/maker-deb": "^7.7.0",
+    "@electron-forge/maker-rpm": "^7.7.0",
+    "@electron-forge/maker-squirrel": "^7.7.0",
+    "@electron-forge/maker-zip": "^7.7.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.7.0",
+    "@electron-forge/plugin-fuses": "^7.7.0",
+    "@electron/fuses": "^1.8.0",
+    "electron": "^35.0.0",
+    "electron-builder": "^26.0.12"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.1"
+  }
+}

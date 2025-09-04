@@ -44,6 +44,7 @@ import 'middleware/local_storage.dart';
 import 'util.dart' as util;
 import 'actions/actions.dart' as actions;
 import 'constants.dart' as constants;
+import 'dart:js' as js;
 
 // global variable for whole program
 late App app;
@@ -230,7 +231,13 @@ class App {
 
   setup_warning_before_unload() {
     window.onBeforeUnload.listen((event) {
-      if (state.ui_state.warn_on_exit_if_unsaved && state.undo_redo.undo_stack.isNotEmpty) {
+      bool warnOnExit = state.ui_state.warn_on_exit_if_unsaved && state.undo_redo.undo_stack.isNotEmpty;
+
+      // Expose this to the JavaScript context so Electron can read it
+      // TODO: This is deprecated.
+      js.context['warnOnExit'] = warnOnExit;
+
+      if (warnOnExit) {
         BeforeUnloadEvent e = event as BeforeUnloadEvent;
         e.returnValue = 'You have unsaved work. Are you sure you want to leave?';
       }

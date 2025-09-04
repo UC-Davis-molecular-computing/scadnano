@@ -1,0 +1,152 @@
+name: Build and Attach scadnano Release
+
+on:
+  release:
+    types: [published, created, edited]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "The release tag to attach artifacts to"
+        required: true
+        default: ""
+
+# Cancel the in-progress run if the same release is updated/edited.
+# Saves on computation.
+concurrency:
+  group: release-${{ github.event.release.tag_name || github.event.inputs.tag }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Compile Standalone App
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            npm_command: npm run build:lin
+            ext: AppImage
+          - os: windows-latest
+            npm_command: npm run build:win
+            ext: exe
+          - os: macos-latest
+            npm_command: npm run build:mac
+            ext: dmg
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 3.8
+
+      - name: Install dependencies
+        working-directory: ./standalone
+        run: npm install
+
+      - name: Install ImageMagick
+        shell: bash
+        run: |
+          if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
+            sudo apt-get update && sudo apt-get install -y imagemagick libfuse2
+          elif [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            brew install imagemagick
+          elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            choco install imagemagick -y
+          fi
+
+      - name: Generate icons
+        working-directory: ./standalone
+        shell: bash
+        run: |
+          chmod +x ./generate-icons.sh
+          ./generate-icons.sh ../web/images/origami-icon-thin-seam.png
+
+      - name: Determine release tag
+        id: get_tag
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            TAG=${{ github.event.release.tag_name }}
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG=${{ github.event.inputs.tag }}
+            if [ -z "$TAG" ]; then
+              echo "No tag provided for workflow_dispatch"
+              exit 1
+            fi
+          else
+            echo "Unsupported event"
+            exit 1
+          fi
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Build scadnano
+        working-directory: ./standalone
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ${{ matrix.npm_command }}
+
+      - name: Rename and flatten output
+        shell: bash
+        run: |
+          VERSION=${{ steps.get_tag.outputs.tag }}
+          mkdir -p ./standalone/dist_flat
+          
+          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            # Find the main exe in Windows dist folder
+            OUTPUT=$(find ./standalone/dist -type f -name "*.exe" | grep -i "scadnano" | head -n 1)
+          else
+            OUTPUT=$(find ./standalone/dist -type f -name "*.${{ matrix.ext }}" | head -n 1)
+          fi
+          
+          # Remove any existing spaces in the filename and rename it properly
+          BASENAME="scadnano-${VERSION}.${{ matrix.ext }}"
+          mv "$OUTPUT" "./standalone/dist_flat/$BASENAME"
+          
+          echo "Moved $OUTPUT -> ./standalone/dist_flat/$BASENAME"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: scadnano-${{ steps.get_tag.outputs.tag }}-${{ matrix.os }}
+          path: ./standalone/dist_flat/*
+
+  release:
+    name: Attach Artifacts to Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determine release tag
+        id: get_tag
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            TAG=${{ github.event.release.tag_name }}
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG=${{ github.event.inputs.tag }}
+            if [ -z "$TAG" ]; then
+              echo "No tag provided for workflow_dispatch"
+              exit 1
+            fi
+          else
+            echo "Unsupported event"
+            exit 1
+          fi
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.get_tag.outputs.tag }}
+          files: dist/*/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

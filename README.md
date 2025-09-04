@@ -1044,7 +1044,15 @@ settings" [here](https://github.com/UC-Davis-molecular-computing/scadnano/releas
 
 ## Running offline
 
-It is possible to run scadnano offline, so that no internet connection is needed.
+There are two ways to run scadnano offline, so that no internet connection is needed.
+
+### Standalone Executable
+
+One version is with the standalone executable, for which you can download the latest version [here](https://github.com/UC-Davis-molecular-computing/scadnano/releases/latest).
+
+### Offline Development
+
+Another way is to run the development version offline.
 To do this, you can follow the [instructions](CONTRIBUTING.md#making-contributions) for running a local server
 in the CONTRIBUTING document, which involves three steps:
 
