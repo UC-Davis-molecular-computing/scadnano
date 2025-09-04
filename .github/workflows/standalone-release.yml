@@ -64,7 +64,7 @@ jobs:
         shell: bash
         run: |
           chmod +x ./generate-icons.sh
-          ./generate-icons.sh ../web/images/origami-icon-thin-seam-open-bottom.svg
+          ./generate-icons.sh ../web/images/origami-icon-thin-seam.png
 
       - name: Determine release tag
         id: get_tag
