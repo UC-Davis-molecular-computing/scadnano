@@ -1,29 +1,13 @@
-name: Build and Attach scadnano Release
+name: Test scadnano Standalone Build
 
 on:
-  release:
-    types: [published]
-  workflow_dispatch: # Option to trigger manually.
+  pull_request:
+    types: [ opened, synchronize, reopened, ready_for_review ]
 
 jobs:
   build:
     name: Compile Standalone App
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        include:
-          - os: ubuntu-latest
-            npm_command: npm run build:lin
-            ext: AppImage
-          - os: windows-latest
-            npm_command: npm run build:win
-            ext: exe
-          - os: macos-latest
-            npm_command: npm run build:mac
-            ext: dmg
-
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Branch
         uses: actions/checkout@v4
@@ -40,64 +24,6 @@ jobs:
         working-directory: ./standalone
         run: npm install
 
-      - name: Determine release tag
-        id: get_tag
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            RAW=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
-          else
-            RAW=${{ github.event.release.tag_name }}
-          fi
-          # Strip leading "v" if present
-          TAG=${RAW#v}
-          echo "tag=$TAG" >> $GITHUB_OUTPUT
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build scadnano for ${{ matrix.os }}
+      - name: Build scadnano
         working-directory: ./standalone
-        run: ${{ matrix.npm_command }}
-
-      - name: Rename executable with version
-        run: |
-          VERSION=${{ steps.get_tag.outputs.tag }}
-          FILE=$(ls ./standalone/dist/*.${{ matrix.ext }})
-          BASENAME="scadnano-${VERSION}.${{ matrix.ext }}"
-          mv "$FILE" "./standalone/dist/$BASENAME"
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: scadnano-${{ steps.get_tag.outputs.tag }}-${{ matrix.os }}
-          path: ./standalone/dist/*
-
-  release:
-    name: Attach Artifacts to Release
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Determine release tag
-        id: get_tag
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            RAW=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
-          else
-            RAW=${{ github.event.release.tag_name }}
-          fi
-          TAG=${RAW#v}
-          echo "tag=$TAG" >> $GITHUB_OUTPUT
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: dist
-
-      - name: Upload Release Assets
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.get_tag.outputs.tag }}
-          files: dist/**/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run build:lin
