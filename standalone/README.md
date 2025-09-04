@@ -28,6 +28,10 @@ Building an executable for scadnano should be easy. Run the following commands f
 
 > Note: If you are running into a symlink error on Windows when trying to build, you need to enable windows developer mode. You can do this by going to **Settings -> Privacy & Security -> For Developers** and turning on **Developer Mode**.
 
+## Uninstalling
+
+To uninstall, simply delete the executable file and the **cache** directory in the above table based on the operating system you are using.
+
 ## Creating a Release
 
 ### Automatic Releases
