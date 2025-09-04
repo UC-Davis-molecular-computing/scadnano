@@ -1,5 +1,9 @@
 const { app, BrowserWindow, dialog } = require('electron');
 const path = require('path');
+const os = require('os');
+
+app.setPath('userData', path.join(os.homedir(), '.scadnano/data'));
+app.setPath('cache', path.join(os.homedir(), '.scadnano/cache'));
 
 let win;
 

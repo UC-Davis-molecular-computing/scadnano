@@ -1,7 +1,7 @@
 {
   "name": "scadnano",
   "version": "0.1.0",
-  "description": "[scadnano](http://scadnano.org)\r (\"scriptable-cadnano\", [source code repository here](https://github.com/UC-Davis-molecular-computing/scadnano))\r is a program for designing synthetic DNA structures such as DNA origami.\r The scadnano project is developed and maintained by the UC Davis Molecular Computing group.\r Note that [cadnano](https://cadnano.org) is a separate project, developed and maintained by\r the [Douglas lab](https://bionano.ucsf.edu/) at UCSF.",
+  "description": "[scadnano](https://scadnano.org)\r (\"scriptable-cadnano\", [source code repository here](https://github.com/UC-Davis-molecular-computing/scadnano))\r is a program for designing synthetic DNA structures such as DNA origami.\r The scadnano project is developed and maintained by the UC Davis Molecular Computing group.\r Note that [cadnano](https://cadnano.org) is a separate project, developed and maintained by\r the [Douglas lab](https://bionano.ucsf.edu/) at UCSF.",
   "main": "main.js",
   "build": {
     "appId": "org.scadnano.app",
@@ -37,9 +37,9 @@
     "init": "cd .. && dart pub get && dart pub global activate webdev && webdev build -- --delete-conflicting-outputs",
     "dev": "npm run init && electron-forge start",
     "package": "electron-builder --dir",
-    "buildWin": "npm run init && electron-builder --win --x64",
-    "buildMac": "npm run init && electron-builder --mac --x64",
-    "buildLin": "npm run init && electron-builder --linux --x64"
+    "build:win": "npm run init && electron-builder --win --x64",
+    "build:mac": "npm run init && electron-builder --mac --x64",
+    "build:lin": "npm run init && electron-builder --linux --x64"
   },
   "repository": {
     "type": "git",
