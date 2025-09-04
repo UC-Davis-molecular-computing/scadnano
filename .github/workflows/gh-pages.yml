@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout main branch
@@ -19,8 +19,10 @@ jobs:
           ref: gh-pages
           path: gh-pages-repo
 
-      - name: Setup Dart SDK  # This will use the latest version of dart unless specified otherwise.
+      - name: Setup Dart SDK  # Using Dart 3.8 to match pubspec.yaml constraint
         uses: dart-lang/setup-dart@v1  # https://github.com/dart-lang/setup-dart
+        with:
+          sdk: 3.8
 
       - name: Install dependencies
         run: dart pub get
