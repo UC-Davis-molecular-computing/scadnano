@@ -14,6 +14,26 @@ npm install
 npm run dev
 ```
 
+### Generating Icons (Not Required)
+
+To generate icons for the Development build, run the following commands on your specific platform.
+
+**Windows**
+
+```shell
+sh .\generate-icons.sh ../web/images/origami-icon-thin-seam-open-bottom.svg
+```
+
+**Linux/MacOS**
+```shell
+chmod +x ./generate-icons.sh
+./generate-icons.sh ../web/images/origami-icon-thin-seam-open-bottom.svg
+```
+
+> You must have imagemagick installed for all platforms.
+
+> For MacOS, you must also have iconutil installed.
+
 ## Building
 
 Building an executable for scadnano should be easy. Run the following commands for your respective platform.
@@ -62,7 +82,7 @@ Copy the settings above based on the tag you chose.
 
 6) Click on **Run workflow**.
 
-At t his point, it should successfully attach the executables for **Windows**, **Linux**, and **MacOS** to the release tag you specified.
+At this point, it should successfully attach the executables for **Windows**, **Linux**, and **MacOS** to the release tag you specified.
 
 ## Important Notes
 

@@ -7,7 +7,7 @@ environment:
   sdk: '>=3.7.0 <3.9.0'
 
 dependencies:
-  analyzer: ^6.4.1
+  analyzer: ^6.8.0
   built_value: ^8.5.0
   built_collection: ^5.1.1
   collection: ^1.15.0-nullsafety.4
