@@ -30,13 +30,7 @@ jobs:
       - name: Install ImageMagick
         shell: bash
         run: |
-          if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
-            sudo apt-get update && sudo apt-get install -y imagemagick libfuse2
-          elif [[ "${{ matrix.os }}" == "macos-latest" ]]; then
-            brew install imagemagick
-          elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-            choco install imagemagick -y
-          fi
+          sudo apt-get update -y && sudo apt-get install -y imagemagick libfuse2
 
       - name: Generate icons
         working-directory: ./standalone
