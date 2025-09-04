@@ -28,18 +28,40 @@ Building an executable for scadnano should be easy. Run the following commands f
 
 > Note: If you are running into a symlink error on Windows when trying to build, you need to enable windows developer mode. You can do this by going to **Settings -> Privacy & Security -> For Developers** and turning on **Developer Mode**.
 
+## Creating a Release
+
+### Automatic Releases
+
+A release should automatically be created once you rename the `tag` from "latest" to the desired release number on the release located [here](https://github.com/UC-Davis-molecular-computing/scadnano/releases).
+
+### Manual Releases
+
+If it is not done automatically, do the following.
+
+1) Head to the [actions](https://github.com/UC-Davis-molecular-computing/scadnano/actions) tab
+
+2) Click on **Build and Attach scadnano Release** located on the left.
+
+3) Where it says "This workflow has a `workflow_dispatch` event trigger.", click on **run workflow**.
+
+![workflow_dispatch.png](assets/workflow_dispatch.png)
+
+4) You should now see something similar to the following image.
+
+![use_workflow_from_original.png](assets/use_workflow_from_original.png)
+
+5) Click on **Branch: main**, select the correct tag you want to create a standalone executable for. In this example, I will be using **v0.20.12**.
+
+![use_workflow_from_edited.png](assets/use_workflow_from_edited.png)
+
+Copy the settings above based on the tag you chose.
+
+6) Click on **Run workflow**.
+
+At t his point, it should successfully attach the executables for **Windows**, **Linux**, and **MacOS** to the release tag you specified.
+
 ## Important Notes
 
 ### Exiting the App
 
 You may need to `CTRL/CMD + C` from the command-line to exit the electron app.
-
-### Creating a New Icon
-
-To generate a new `icon.ico`, run something similar to the following command.
-
-```shell
-magick "../web/images/origami-icon-thin-seam-open-bottom.svg" -define icon:auto-resize=256,128,64,48,32 icon.ico
-```
-
-> You will need `magick` installed on your machine to do this.

@@ -4,26 +4,49 @@ on:
   pull_request:
     types: [ opened, synchronize, reopened, ready_for_review ]
 
+# Cancel the in-progress run if the PR is updated.
+# Saves on computation.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: Compile Standalone App
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Branch
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
 
-      - name: Setup Dart SDK
-        uses: dart-lang/setup-dart@v1
+      - uses: dart-lang/setup-dart@v1
         with:
           sdk: 3.8
 
-      - name: Install Node.js dependencies
+      - name: Install dependencies
         working-directory: ./standalone
         run: npm install
 
+      - name: Install ImageMagick
+        shell: bash
+        run: |
+          if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
+            sudo apt-get update && sudo apt-get install -y imagemagick libfuse2
+          elif [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            brew install imagemagick
+          elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            choco install imagemagick -y
+          fi
+
+      - name: Generate icons
+        working-directory: ./standalone
+        shell: bash
+        run: |
+          chmod +x ./generate-icons.sh
+          ./generate-icons.sh ../web/images/origami-icon-thin-seam-open-bottom.svg
+
       - name: Build scadnano
         working-directory: ./standalone
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run build:lin
