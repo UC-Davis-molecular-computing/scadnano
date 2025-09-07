@@ -299,6 +299,12 @@ bool export_svg_text_separately_reducer(bool _, actions.ExportSvgTextSeparatelyS
 bool ox_export_only_selected_strands_reducer(bool _, actions.OxExportOnlySelectedStrandsSet action) =>
     action.only_selected;
 
+bool warn_about_unassigned_dna_and_oxview_open_reducer(bool _, actions.WarnAboutUnassignedDnaAndOxviewOpenSet action) =>
+    action.warn;
+
+bool warn_about_unassigned_dna_on_oxview_or_oxdna_export_reducer(bool _, actions.WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet action) =>
+    action.warn;
+
 bool display_major_tick_widths_reducer(bool _, actions.SetDisplayMajorTickWidths action) => action.show;
 
 bool strand_paste_keep_color_reducer(bool _, actions.StrandPasteKeepColorSet action) => action.keep;
@@ -651,6 +657,12 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
           ..ox_export_only_selected_strands = TypedReducer<bool, actions.OxExportOnlySelectedStrandsSet>(
             ox_export_only_selected_strands_reducer,
           )(storables.ox_export_only_selected_strands, action)
+          ..warn_about_unassigned_dna_and_oxview_open = TypedReducer<bool, actions.WarnAboutUnassignedDnaAndOxviewOpenSet>(
+            warn_about_unassigned_dna_and_oxview_open_reducer,
+          )(storables.warn_about_unassigned_dna_and_oxview_open, action)
+          ..warn_about_unassigned_dna_on_export = TypedReducer<bool, actions.WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet>(
+            warn_about_unassigned_dna_on_oxview_or_oxdna_export_reducer,
+          )(storables.warn_about_unassigned_dna_on_export, action)
           ..only_display_selected_helices = TypedReducer<bool, actions.SetOnlyDisplaySelectedHelices>(
             only_display_selected_helices_reducer,
           )(storables.only_display_selected_helices, action)
