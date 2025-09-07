@@ -52,7 +52,7 @@ First select some strands, or choose Export🡒oxDNA to export all strands in th
             }
           }
         }
-        
+
         if (strand_names_without_dna.isNotEmpty) {
           var msg =
               'The following strands do not have complete DNA sequences assigned: '
@@ -65,7 +65,7 @@ First select some strands, or choose Export🡒oxDNA to export all strands in th
           window.alert(msg);
         }
       }
-      
+
       var (dat, top) = to_oxdna_format(state.design, strands_to_export); // (String, String)
 
       String default_filename = state.ui_state.loaded_filename;
@@ -87,7 +87,7 @@ First select some strands, or choose Export🡒oxDNA to export all strands in th
             }
           }
         }
-        
+
         if (strand_names_without_dna.isNotEmpty) {
           var msg =
               'The following strands do not have complete DNA sequences assigned: '
@@ -100,7 +100,7 @@ First select some strands, or choose Export🡒oxDNA to export all strands in th
           window.alert(msg);
         }
       }
-      
+
       // var start = DateTime.now();
       String content = to_oxview_format(state.design, strands_to_export);
       // print('to_oxview_format: ${DateTime.now().inMilliseconds} ms');

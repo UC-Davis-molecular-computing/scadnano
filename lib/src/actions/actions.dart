@@ -4799,11 +4799,14 @@ abstract class OxExportOnlySelectedStrandsSet
 
 abstract class WarnAboutUnassignedDnaAndOxviewOpenSet
     with BuiltJsonSerializable
-    implements Action, Built<WarnAboutUnassignedDnaAndOxviewOpenSet, WarnAboutUnassignedDnaAndOxviewOpenSetBuilder> {
+    implements
+        Action,
+        Built<WarnAboutUnassignedDnaAndOxviewOpenSet, WarnAboutUnassignedDnaAndOxviewOpenSetBuilder> {
   bool get warn;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory WarnAboutUnassignedDnaAndOxviewOpenSet({required bool warn}) = _$WarnAboutUnassignedDnaAndOxviewOpenSet._;
+  factory WarnAboutUnassignedDnaAndOxviewOpenSet({required bool warn}) =
+      _$WarnAboutUnassignedDnaAndOxviewOpenSet._;
 
   WarnAboutUnassignedDnaAndOxviewOpenSet._();
 
@@ -4816,11 +4819,17 @@ abstract class WarnAboutUnassignedDnaAndOxviewOpenSet
 
 abstract class WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet
     with BuiltJsonSerializable
-    implements Action, Built<WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet, WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSetBuilder> {
+    implements
+        Action,
+        Built<
+          WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet,
+          WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSetBuilder
+        > {
   bool get warn;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet({required bool warn}) = _$WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet._;
+  factory WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet({required bool warn}) =
+      _$WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet._;
 
   WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet._();
 

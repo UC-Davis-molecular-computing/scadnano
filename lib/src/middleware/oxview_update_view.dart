@@ -39,7 +39,7 @@ void _check_and_show_unassigned_dna_warning(List<Strand> strands_to_export) {
       }
     }
   }
-  
+
   if (strand_names_without_dna.isNotEmpty) {
     var msg =
         'The following strands do not have complete DNA sequences assigned: '
@@ -61,7 +61,7 @@ oxview_update_view_middleware(Store<AppState> store, dynamic action, NextDispatc
 
   if (action is actions.OxviewShowSet) {
     app.view.update_showing_oxview();
-    
+
     // Show warning when user opens oxView (not when closing it)
     if (action.show && store.state.ui_state.warn_about_unassigned_dna_and_oxview_open) {
       if (store.state.maybe_design != null) {
@@ -71,7 +71,11 @@ oxview_update_view_middleware(Store<AppState> store, dynamic action, NextDispatc
   }
 
   if (store.state.ui_state.show_oxview && action is actions.DesignChangingAction) {
-    update_oxview_view(store.state.design, null, store.state.ui_state.warn_about_unassigned_dna_and_oxview_open);
+    update_oxview_view(
+      store.state.design,
+      null,
+      store.state.ui_state.warn_about_unassigned_dna_and_oxview_open,
+    );
   }
 }
 
