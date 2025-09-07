@@ -4,7 +4,10 @@
       "Bash(grep:*)",
       "Bash(dart pub:*)",
       "Bash(dart analyze:*)",
-      "Bash(dart format:*)"
+      "Bash(dart format:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(dart run build_runner build:*)",
+      "Bash(python:*)"
     ],
     "deny": [],
     "ask": [],

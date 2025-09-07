@@ -243,6 +243,10 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get ox_export_only_selected_strands => storables.ox_export_only_selected_strands;
 
+  bool get warn_about_unassigned_dna_and_oxview_open => storables.warn_about_unassigned_dna_and_oxview_open;
+
+  bool get warn_about_unassigned_dna_on_export => storables.warn_about_unassigned_dna_on_export;
+
   static void _initializeBuilder(AppUIStateBuilder b) {
     b.copy_info = null;
     b.last_mod_5p = null;
