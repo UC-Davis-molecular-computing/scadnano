@@ -4804,17 +4804,17 @@ abstract class ConvertExtensionsToBoundDomains
     with BuiltJsonSerializable, UndoableAction
     implements Action, Built<ConvertExtensionsToBoundDomains, ConvertExtensionsToBoundDomainsBuilder> {
   Extension get extension1;
-  
+
   Extension? get extension2;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ConvertExtensionsToBoundDomains({
-    required Extension extension1,
-    Extension? extension2,
-  }) {
-    return ConvertExtensionsToBoundDomains.from((b) => b
-      ..extension1.replace(extension1)
-      ..extension2 = extension2?.toBuilder());
+  factory ConvertExtensionsToBoundDomains({required Extension extension1, Extension? extension2}) {
+    return ConvertExtensionsToBoundDomains.from(
+      (b) =>
+          b
+            ..extension1.replace(extension1)
+            ..extension2 = extension2?.toBuilder(),
+    );
   }
 
   ConvertExtensionsToBoundDomains._();

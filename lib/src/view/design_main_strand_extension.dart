@@ -335,11 +335,11 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     bool is_convert_enabled = _is_convert_extension_enabled(props.ext, selected_extensions);
 
     return [
-      if (is_convert_enabled)
-        ContextMenuItem(
-          title: _get_convert_extension_title(props.ext, selected_extensions),
-          on_click: convert_extensions_to_bound_domains,
-        ),
+      ContextMenuItem(
+        title: _get_convert_extension_title(props.ext, selected_extensions),
+        on_click: is_convert_enabled ? convert_extensions_to_bound_domains : null,
+        disabled: !is_convert_enabled,
+      ),
       ContextMenuItem(
         title: 'change extension display length/angle',
         on_click: extension_display_length_and_angle_change,
