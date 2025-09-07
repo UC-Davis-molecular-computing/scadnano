@@ -186,66 +186,62 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     }
   }
 
-  List<ContextMenuItem> context_menu_extension() => [
-    ContextMenuItem(
-      title: 'change extension display length/angle',
-      on_click: extension_display_length_and_angle_change,
-    ),
-    ContextMenuItem(title: 'change extension number of bases', on_click: extension_num_bases_change),
-    ContextMenuItem(title: 'set extension name', on_click: set_extension_name),
-    if (props.ext.name != null)
-      ContextMenuItem(
-        title: 'remove extension name',
-        on_click: () {
-          var exts = util.add_if_not_null(
-            app.state.ui_state.selectables_store.selected_extensions,
-            props.ext,
-          );
-          var action =
-              exts.length > 1
-                  ? actions.BatchAction(
-                    exts.map((l) => actions.SubstrandNameSet(name: null, substrand: l)),
-                    "remove extension names",
-                  )
-                  : actions.SubstrandNameSet(name: null, substrand: props.ext);
-          app.dispatch(action);
-        },
-      ),
-    ContextMenuItem(title: 'set extension label', on_click: set_extension_label),
-    if (props.ext.label != null)
-      ContextMenuItem(
-        title: 'remove extension label',
-        on_click: () {
-          var exts = util.add_if_not_null(
-            app.state.ui_state.selectables_store.selected_extensions,
-            props.ext,
-          );
-          var action =
-              exts.length > 1
-                  ? actions.BatchAction(
-                    exts.map((l) => actions.SubstrandLabelSet(label: null, substrand: l)),
-                    "remove extension labels",
-                  )
-                  : actions.SubstrandLabelSet(label: null, substrand: props.ext);
-          app.dispatch(action);
-        },
-      ),
-    ContextMenuItem(
-      title: 'set extension color',
-      on_click:
-          () => app.dispatch(
-            actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: props.ext),
-          ),
-    ),
-    if (props.ext.color != null)
-      ContextMenuItem(
-        title: 'remove extension color',
-        on_click:
-            () => app.dispatch(
-              actions.StrandOrSubstrandColorSet(strand: props.strand, substrand: props.ext, color: null),
-            ),
-      ),
-  ];
+  bool _is_convert_extension_enabled(Extension clicked_ext, BuiltSet<Extension> selected_extensions) {
+    // Enable if 0, 1, or 2 extensions are selected
+    if (selected_extensions.length > 2) {
+      return false;
+    }
+
+    // Enable if no extensions are selected, 1 is selected, or 2 are selected
+    if (selected_extensions.isEmpty) {
+      return true; // Just the clicked extension
+    }
+
+    // If extensions are selected, the clicked extension must be one of them
+    if (!selected_extensions.contains(clicked_ext)) {
+      return false;
+    }
+
+    return selected_extensions.length <= 2;
+  }
+
+  String _get_convert_extension_title(Extension clicked_ext, BuiltSet<Extension> selected_extensions) {
+    int num_extensions = selected_extensions.isEmpty ? 1 : selected_extensions.length;
+
+    if (num_extensions == 1) {
+      return "convert extension to domain on new helix";
+    } else {
+      return "convert extensions to bound domains on new helix";
+    }
+  }
+
+  void convert_extensions_to_bound_domains() {
+    var selected_extensions = app.state.ui_state.selectables_store.selected_extensions;
+
+    Extension extension1;
+    Extension? extension2;
+
+    if (selected_extensions.isEmpty) {
+      // Just the clicked extension
+      extension1 = props.ext;
+      extension2 = null;
+    } else if (selected_extensions.length == 1) {
+      extension1 = selected_extensions.first;
+      extension2 = null;
+    } else if (selected_extensions.length == 2) {
+      // Ensure the clicked extension is extension1
+      extension1 = props.ext;
+      extension2 = selected_extensions.firstWhere((ext) => ext != props.ext);
+    } else {
+      // This shouldn't happen if is_convert_enabled works correctly
+      throw AssertionError(
+        'convert_extensions_to_bound_domains called with ${selected_extensions.length} selected extensions, but should only be called with 0, 1, or 2',
+      );
+    }
+
+    var action = actions.ConvertExtensionsToBoundDomains(extension1: extension1, extension2: extension2);
+    app.dispatch(action);
+  }
 
   extension_num_bases_change() async {
     int new_num_bases = await app.disable_keyboard_shortcuts_while(
@@ -332,6 +328,77 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
       );
       app.dispatch(action);
     }
+  }
+
+  List<ContextMenuItem> context_menu_extension() {
+    var selected_extensions = app.state.ui_state.selectables_store.selected_extensions;
+    bool is_convert_enabled = _is_convert_extension_enabled(props.ext, selected_extensions);
+
+    return [
+      ContextMenuItem(
+        title: _get_convert_extension_title(props.ext, selected_extensions),
+        on_click: is_convert_enabled ? convert_extensions_to_bound_domains : null,
+        disabled: !is_convert_enabled,
+      ),
+      ContextMenuItem(
+        title: 'change extension display length/angle',
+        on_click: extension_display_length_and_angle_change,
+      ),
+      ContextMenuItem(title: 'change extension number of bases', on_click: extension_num_bases_change),
+      ContextMenuItem(title: 'set extension name', on_click: set_extension_name),
+      if (props.ext.name != null)
+        ContextMenuItem(
+          title: 'remove extension name',
+          on_click: () {
+            var exts = util.add_if_not_null(
+              app.state.ui_state.selectables_store.selected_extensions,
+              props.ext,
+            );
+            var action =
+                exts.length > 1
+                    ? actions.BatchAction(
+                      exts.map((l) => actions.SubstrandNameSet(name: null, substrand: l)),
+                      "remove extension names",
+                    )
+                    : actions.SubstrandNameSet(name: null, substrand: props.ext);
+            app.dispatch(action);
+          },
+        ),
+      ContextMenuItem(title: 'set extension label', on_click: set_extension_label),
+      if (props.ext.label != null)
+        ContextMenuItem(
+          title: 'remove extension label',
+          on_click: () {
+            var exts = util.add_if_not_null(
+              app.state.ui_state.selectables_store.selected_extensions,
+              props.ext,
+            );
+            var action =
+                exts.length > 1
+                    ? actions.BatchAction(
+                      exts.map((l) => actions.SubstrandLabelSet(label: null, substrand: l)),
+                      "remove extension labels",
+                    )
+                    : actions.SubstrandLabelSet(label: null, substrand: props.ext);
+            app.dispatch(action);
+          },
+        ),
+      ContextMenuItem(
+        title: 'set extension color',
+        on_click:
+            () => app.dispatch(
+              actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: props.ext),
+            ),
+      ),
+      if (props.ext.color != null)
+        ContextMenuItem(
+          title: 'remove extension color',
+          on_click:
+              () => app.dispatch(
+                actions.StrandOrSubstrandColorSet(strand: props.strand, substrand: props.ext, color: null),
+              ),
+        ),
+    ];
   }
 }
 
