@@ -367,6 +367,7 @@ part 'serializers.g.dart';
   OxdnaExport,
   OxviewExport,
   OxExportOnlySelectedStrandsSet,
+  ConvertExtensionsToBoundDomains,
   Design,
   AssignDomainNameComplementFromBoundStrands,
   AssignDomainNameComplementFromBoundDomains,
