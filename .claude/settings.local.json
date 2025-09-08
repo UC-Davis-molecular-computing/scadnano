@@ -14,7 +14,8 @@
       "Bash(Stop-Process -Name \"dartaotruntime\" -Force)",
       "WebFetch(domain:github.com)",
       "Bash(dart run build_runner build:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ],
     "deny": [],
     "ask": [],
