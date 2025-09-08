@@ -4,7 +4,14 @@
       "Bash(grep:*)",
       "Bash(dart pub:*)",
       "Bash(dart analyze:*)",
-      "Bash(dart format:*)"
+      "Bash(dart format:*)",
+      "Bash(dart:*)",
+      "Bash(scoop update:*)",
+      "Bash(scoop info:*)",
+      "Bash(taskkill:*)",
+      "Bash(TASKKILL:*)",
+      "Bash(Stop-Process -Name \"dart\" -Force)",
+      "Bash(Stop-Process -Name \"dartaotruntime\" -Force)"
     ],
     "deny": [],
     "ask": [],
