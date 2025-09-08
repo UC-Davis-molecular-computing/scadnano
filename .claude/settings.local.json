@@ -15,7 +15,9 @@
       "WebFetch(domain:github.com)",
       "Bash(dart run build_runner build:*)",
       "Bash(python:*)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:pub.dev)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": [],

@@ -25,15 +25,11 @@ dependencies:
   xml: ^6.3.0
 
 dev_dependencies:
-  analyzer: ^7.4.0  # Stay within OverReact's <8.0.0 constraint
+  analyzer: ^6.4.1  # Version that works with test_html_builder without macros issues
   build_runner: ^2.0.0
   build_test: ^2.2.3
   build_web_compilers: ^4.0.11
   built_value_generator: ^8.9.0
   over_react_test: ^3.0.0
-  test_html_builder: ^3.0.12
   redux_dev_tools: ^0.7.0
-
-# Override test_html_builder's overly restrictive constraints to match OverReact's approach
-dependency_overrides:
-  dart_style: '>=2.0.0 <4.0.0'  # Use OverReact's permissive constraint - will resolve to 3.1.1 due to analyzer <8.0.0
+  test_html_builder: ^3.0.12
