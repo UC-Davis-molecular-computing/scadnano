@@ -4797,6 +4797,49 @@ abstract class OxExportOnlySelectedStrandsSet
   int get hashCode;
 }
 
+abstract class WarnAboutUnassignedDnaAndOxviewOpenSet
+    with BuiltJsonSerializable
+    implements
+        Action,
+        Built<WarnAboutUnassignedDnaAndOxviewOpenSet, WarnAboutUnassignedDnaAndOxviewOpenSetBuilder> {
+  bool get warn;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory WarnAboutUnassignedDnaAndOxviewOpenSet({required bool warn}) =
+      _$WarnAboutUnassignedDnaAndOxviewOpenSet._;
+
+  WarnAboutUnassignedDnaAndOxviewOpenSet._();
+
+  static Serializer<WarnAboutUnassignedDnaAndOxviewOpenSet> get serializer =>
+      _$warnAboutUnassignedDnaAndOxviewOpenSetSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet
+    with BuiltJsonSerializable
+    implements
+        Action,
+        Built<
+          WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet,
+          WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSetBuilder
+        > {
+  bool get warn;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet({required bool warn}) =
+      _$WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet._;
+
+  WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet._();
+
+  static Serializer<WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet> get serializer =>
+      _$warnAboutUnassignedDnaOnOxViewOrOxDNAExportSetSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // convert extensions to bound domains on new helix
 

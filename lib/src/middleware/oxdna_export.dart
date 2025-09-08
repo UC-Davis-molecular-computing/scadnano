@@ -40,6 +40,32 @@ First select some strands, or choose Export🡒oxDNA to export all strands in th
     }
 
     if (action is actions.OxdnaExport) {
+      // Check for unassigned DNA and show warning if enabled
+      if (state.ui_state.warn_about_unassigned_dna_on_export) {
+        List<String> strand_names_without_dna = [];
+        for (var strand in strands_to_export) {
+          if (strand.dna_sequence == null || strand.dna_sequence!.contains(constants.DNA_BASE_WILDCARD)) {
+            if (strand.name != null) {
+              strand_names_without_dna.add(strand.name!);
+            } else {
+              strand_names_without_dna.add(strand.id);
+            }
+          }
+        }
+
+        if (strand_names_without_dna.isNotEmpty) {
+          var msg =
+              'The following strands do not have complete DNA sequences assigned: '
+              '${strand_names_without_dna.join(", ")}. '
+              'These strands will be exported with a default sequence of "T" '
+              'for each nucleotide whose base is not specified. '
+              'This can lead to unexpected behavior in oxDNA simulations. For best results, '
+              'assign a DNA sequence to each strand before exporting.'
+              '\n\nTo silence this warning, uncheck View→Warnings→Warn about unassigned DNA on oxView/oxDNA export.';
+          window.alert(msg);
+        }
+      }
+
       var (dat, top) = to_oxdna_format(state.design, strands_to_export); // (String, String)
 
       String default_filename = state.ui_state.loaded_filename;
@@ -49,6 +75,32 @@ First select some strands, or choose Export🡒oxDNA to export all strands in th
       util.save_file(default_filename_dat, dat);
       util.save_file(default_filename_top, top);
     } else if (action is actions.OxviewExport) {
+      // Check for unassigned DNA and show warning if enabled
+      if (state.ui_state.warn_about_unassigned_dna_on_export) {
+        List<String> strand_names_without_dna = [];
+        for (var strand in strands_to_export) {
+          if (strand.dna_sequence == null || strand.dna_sequence!.contains(constants.DNA_BASE_WILDCARD)) {
+            if (strand.name != null) {
+              strand_names_without_dna.add(strand.name!);
+            } else {
+              strand_names_without_dna.add(strand.id);
+            }
+          }
+        }
+
+        if (strand_names_without_dna.isNotEmpty) {
+          var msg =
+              'The following strands do not have complete DNA sequences assigned: '
+              '${strand_names_without_dna.join(", ")}. '
+              'These strands will be exported with a default sequence of "T" '
+              'for each nucleotide whose base is not specified. '
+              'This can lead to unexpected behavior in oxView. For best results, '
+              'assign a DNA sequence to each strand before exporting.'
+              '\n\nTo silence this warning, uncheck View→Warnings→Warn about unassigned DNA on oxView/oxDNA export.';
+          window.alert(msg);
+        }
+      }
+
       // var start = DateTime.now();
       String content = to_oxview_format(state.design, strands_to_export);
       // print('to_oxview_format: ${DateTime.now().inMilliseconds} ms');
@@ -129,16 +181,7 @@ String to_oxview_format(Design design, List<Strand> strands_to_export) {
     oxview_strands.add(oxv_strand);
   }
 
-  if (strand_names_without_dna.isNotEmpty) {
-    var msg =
-        'The following strands do not have complete DNA sequences assigned: '
-        '${strand_names_without_dna.join(", ")}. '
-        'These strands will be exported with a default sequence of "T" '
-        'for each nucleotide whose base is not specified. '
-        'This can lead to unexpected behavior in oxView. For best results, '
-        'assign a DNA sequence to each strand before exporting.';
-    window.alert(msg);
-  }
+  // Warning logic moved to oxdna_export middleware
 
   //TODO: this hasn't been tested well
   var base_pairs_map = design.base_pairs_with_domain_strand(

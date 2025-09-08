@@ -11,7 +11,10 @@
       "Bash(taskkill:*)",
       "Bash(TASKKILL:*)",
       "Bash(Stop-Process -Name \"dart\" -Force)",
-      "Bash(Stop-Process -Name \"dartaotruntime\" -Force)"
+      "Bash(Stop-Process -Name \"dartaotruntime\" -Force)",
+      "WebFetch(domain:github.com)",
+      "Bash(dart run build_runner build:*)",
+      "Bash(python:*)"
     ],
     "deny": [],
     "ask": [],
