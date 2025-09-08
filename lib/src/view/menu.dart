@@ -730,7 +730,7 @@ strand at the same (helix,offset).'''
         ..key = 'show-unpaired-insertion-deletions')(),
       (MenuBoolean()
         ..value = props.state.ui_state.warn_about_unassigned_dna_and_oxview_open
-        ..display = 'Warn about unassigned DNA if oxView open'
+        ..display = 'Unassigned DNA if oxView open'
         ..tooltip = '''\
 If checked, when oxView view is open and unassigned DNA sequences are detected, 
 a warning popup will appear. This warning only appears when oxView is open.
@@ -744,7 +744,7 @@ If unchecked, the warning will not appear.'''
         ..key = 'warn-about-unassigned-dna')(),
       (MenuBoolean()
         ..value = props.state.ui_state.warn_about_unassigned_dna_on_export
-        ..display = 'Warn about unassigned DNA on oxView/oxDNA export'
+        ..display = 'Unassigned DNA on oxView/oxDNA export'
         ..tooltip = '''\
 If checked, when exporting to oxView or oxDNA and unassigned DNA sequences are detected, 
 a warning popup will appear.

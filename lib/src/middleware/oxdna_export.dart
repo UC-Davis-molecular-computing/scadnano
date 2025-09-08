@@ -61,7 +61,7 @@ First select some strands, or choose Export🡒oxDNA to export all strands in th
               'for each nucleotide whose base is not specified. '
               'This can lead to unexpected behavior in oxDNA simulations. For best results, '
               'assign a DNA sequence to each strand before exporting.'
-              '\n\nTo silence this warning, uncheck View→Warnings→Warn about unassigned DNA on oxView/oxDNA export.';
+              '\n\nTo silence this warning, uncheck View→Warnings→Unassigned DNA on oxView/oxDNA export.';
           window.alert(msg);
         }
       }
@@ -96,7 +96,7 @@ First select some strands, or choose Export🡒oxDNA to export all strands in th
               'for each nucleotide whose base is not specified. '
               'This can lead to unexpected behavior in oxView. For best results, '
               'assign a DNA sequence to each strand before exporting.'
-              '\n\nTo silence this warning, uncheck View→Warnings→Warn about unassigned DNA on oxView/oxDNA export.';
+              '\n\nTo silence this warning, uncheck View→Warnings→Unassigned DNA on oxView/oxDNA export.';
           window.alert(msg);
         }
       }

@@ -48,7 +48,7 @@ void _check_and_show_unassigned_dna_warning(List<Strand> strands_to_export) {
         'for each nucleotide whose base is not specified. '
         'This can lead to unexpected behavior in oxView. For best results, '
         'assign a DNA sequence to each strand before exporting.'
-        '\n\nTo silence this warning, uncheck View→Warnings→Warn about unassigned DNA if oxView open.';
+        '\n\nTo silence this warning, uncheck View→Warnings→Unassigned DNA if oxView open.';
     window.alert(msg);
   }
 }
