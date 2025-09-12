@@ -141,8 +141,14 @@ CopyInfo? autopaste_initiate_reducer(CopyInfo? copy_info, AppState state, action
       }
     }
 
-    Modification5Prime? mod5p = strand_json[constants.modification_5p_key] == null ? null : mods[strand_json[constants.modification_5p_key]] as Modification5Prime?;
-    Modification3Prime? mod3p = strand_json[constants.modification_3p_key] == null ? null : mods[strand_json[constants.modification_3p_key]] as Modification3Prime?;
+    Modification5Prime? mod5p =
+        strand_json[constants.modification_5p_key] == null
+            ? null
+            : mods[strand_json[constants.modification_5p_key]] as Modification5Prime?;
+    Modification3Prime? mod3p =
+        strand_json[constants.modification_3p_key] == null
+            ? null
+            : mods[strand_json[constants.modification_3p_key]] as Modification3Prime?;
 
     strand = strand.rebuild(
       (m) =>
