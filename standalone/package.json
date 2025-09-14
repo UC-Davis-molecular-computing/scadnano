@@ -18,25 +18,22 @@
     "asar": true,
     "win": {
       "target": [
-        {
-          "target": "portable",
-          "arch": [
-            "x64"
-          ]
-        }
+        { "target": "portable", "arch": ["x64", "arm64"] }
       ],
       "icon": "icon.ico"
     },
     "linux": {
-      "target": ["AppImage"],
-      "icon": "icon.png"
+      "target": [
+        { "target": "AppImage", "arch": ["x64", "arm64"] },
+        { "target": "deb", "arch": ["x64", "arm64"] },
+        { "target": "rpm", "arch": ["x64", "arm64"] }
+      ],
+      "icon": "icon.png",
+      "category": "Utility"
     },
     "mac": {
       "target": [
-        {
-          "target": "dmg",
-          "arch": ["x64"]
-        }
+        { "target": "dmg", "arch": ["universal"] }
       ],
       "icon": "icon.icns"
     },
@@ -50,9 +47,9 @@
     "init": "cd .. && dart pub get && dart pub global activate webdev && webdev build -- --delete-conflicting-outputs",
     "dev": "npm run init && electron-forge start",
     "package": "electron-builder --dir",
-    "build:win": "npm run init && electron-builder --win --x64 --publish never",
-    "build:mac": "npm run init && electron-builder --mac --x64 --publish never",
-    "build:lin": "npm run init && electron-builder --linux --x64 --publish never"
+    "build:win": "npm run init && electron-builder --win --publish never",
+    "build:mac": "npm run init && electron-builder --mac --publish never",
+    "build:lin": "npm run init && electron-builder --linux --publish never"
   },
   "repository": {
     "type": "git",
