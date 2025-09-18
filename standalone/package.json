@@ -6,6 +6,7 @@
   "build": {
     "appId": "org.scadnano.app",
     "productName": "scadnano",
+    "artifactName": "${productName}-${arch}.${ext}",
     "files": [
       "**/*"
     ],
@@ -56,7 +57,7 @@
     "url": "git+https://github.com/UC-Davis-molecular-computing/scadnano.git"
   },
   "keywords": [],
-  "author": "David Doty",
+  "author": "David Doty <doty@ucdavis.edu> (https://scadnano.org)",
   "license": "MIT",
   "type": "commonjs",
   "bugs": {

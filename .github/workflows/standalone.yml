@@ -1,5 +1,7 @@
 name: Test scadnano Standalone Build
 
+# Test and build the standalone app on any open PR.
+
 on:
   pull_request:
     types: [ opened, synchronize, reopened, ready_for_review ]

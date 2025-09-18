@@ -40,11 +40,11 @@ Building an executable for scadnano should be easy. Run the following commands f
 
 > The executable will be located in `scadnano/standalone/dist`.
 
-| **Platform** |     **Command**     |    **Executable Name**    |          **Cache**          |
-|:------------:|:-------------------:|:-------------------------:|:---------------------------:|
-|  *Windows*   | `npm run build:win` |   `scadnano X.X.X.exe`    | `C:/Users/<user>/.scadnano` |
-|   *MacOS*    | `npm run build:mac` |   `scadnano-X.X.X.dmg`    |  `/Users/<user>/.scadnano`  |
-|   *Ubuntu*   | `npm run build:lin` | `scadnano-X.X.X.AppImage` |  `/home/<user>/.scadnano`   |
+| **Platform** |     **Command**     |   **Executable Name**   |          **Cache**          |
+|:------------:|:-------------------:|:-----------------------:|:---------------------------:|
+|  *Windows*   | `npm run build:win` |  `scadnano-<ARCH>.exe`  | `C:/Users/<user>/.scadnano` |
+|   *MacOS*    | `npm run build:mac` |  `scadnano-<ARCH>.dmg`  |  `/Users/<user>/.scadnano`  |
+|   *Linux*    | `npm run build:lin` | `scadnano-<ARCH>.<EXT>` |  `/home/<user>/.scadnano`   |
 
 > Note: If you are running into a symlink error on Windows when trying to build, you need to enable windows developer mode. You can do this by going to **Settings -> Privacy & Security -> For Developers** and turning on **Developer Mode**.
 
@@ -63,38 +63,6 @@ From here, you should be able to run the application normally.
 ## Uninstalling
 
 To uninstall, simply delete the executable file and the **cache** directory in the above table based on the operating system you are using.
-
-## Creating a Release
-
-### Automatic Releases
-
-A release should automatically be created once you rename the `tag` from "latest" to the desired release number on the release located [here](https://github.com/UC-Davis-molecular-computing/scadnano/releases).
-
-### Manual Releases
-
-If it is not done automatically, do the following.
-
-1) Head to the [actions](https://github.com/UC-Davis-molecular-computing/scadnano/actions) tab
-
-2) Click on **Build and Attach scadnano Release** located on the left.
-
-3) Where it says "This workflow has a `workflow_dispatch` event trigger.", click on **run workflow**.
-
-![workflow_dispatch.png](assets/workflow_dispatch.png)
-
-4) You should now see something similar to the following image.
-
-![use_workflow_from_original.png](assets/use_workflow_from_original.png)
-
-5) Click on **Branch: main**, select the correct tag you want to create a standalone executable for. In this example, I will be using **v0.20.12**.
-
-![use_workflow_from_edited.png](assets/use_workflow_from_edited.png)
-
-Copy the settings above based on the tag you chose.
-
-6) Click on **Run workflow**.
-
-At this point, it should successfully attach the executables for **Windows**, **Linux**, and **MacOS** to the release tag you specified.
 
 ## Important Notes
 
