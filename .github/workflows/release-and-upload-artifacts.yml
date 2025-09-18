@@ -73,6 +73,7 @@ jobs:
           ./generate-icons.sh ../web/images/origami-icon-thin-seam.png
 
       - name: Run build
+        working-directory: ./standalone
         run: ${{ matrix.npm_command }}
 
       # Upload the generated artifacts (pattern: scadnano*.<ext>)
@@ -80,7 +81,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-${{ matrix.os }}
-          path: "standalone/dist/scadnano*.*"
+          path: |
+            standalone/dist/scadnano*.*
+            !standalone/dist/*.blockmap
 
   attach-to-release:
     name: Attach artifacts to release
@@ -97,6 +100,8 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: latest
-          files: ./release-files/**/scadnano*.*
+          files: |
+            ./release-files/**/scadnano*.*
+            !./release-files/**/*.blockmap
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

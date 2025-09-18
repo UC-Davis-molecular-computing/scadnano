@@ -6,7 +6,7 @@
   "build": {
     "appId": "org.scadnano.app",
     "productName": "scadnano",
-    "artifactName": "${productName}-${arch}.${ext}",
+    "artifactName": "${productName}-${os}-${arch}.${ext}",
     "files": [
       "**/*"
     ],
