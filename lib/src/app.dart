@@ -274,7 +274,10 @@ class App {
       };
       this.view.oxview_view.frame.contentWindow?.postMessage(message, constants.OXVIEW_URL);
       if (app.state.maybe_design != null) {
-        update_oxview_view(app.state.design, this.view.oxview_view.frame);
+        // Only show warnings if oxView is actually visible to the user
+        bool should_warn =
+            app.state.ui_state.warn_about_unassigned_dna_and_oxview_open && app.state.ui_state.show_oxview;
+        update_oxview_view(app.state.design, this.view.oxview_view.frame, should_warn);
       }
     });
   }

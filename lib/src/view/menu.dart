@@ -728,6 +728,34 @@ strand at the same (helix,offset).'''
           );
         }
         ..key = 'show-unpaired-insertion-deletions')(),
+      (MenuBoolean()
+        ..value = props.state.ui_state.warn_about_unassigned_dna_and_oxview_open
+        ..display = 'Unassigned DNA if oxView open'
+        ..tooltip = '''\
+If checked, when oxView view is open and unassigned DNA sequences are detected, 
+a warning popup will appear. This warning only appears when oxView is open.
+If unchecked, the warning will not appear.'''
+        ..on_change =
+            ((_) => app.dispatch(
+              actions.WarnAboutUnassignedDnaAndOxviewOpenSet(
+                warn: !props.state.ui_state.warn_about_unassigned_dna_and_oxview_open,
+              ),
+            ))
+        ..key = 'warn-about-unassigned-dna')(),
+      (MenuBoolean()
+        ..value = props.state.ui_state.warn_about_unassigned_dna_on_export
+        ..display = 'Unassigned DNA on oxView/oxDNA export'
+        ..tooltip = '''\
+If checked, when exporting to oxView or oxDNA and unassigned DNA sequences are detected, 
+a warning popup will appear.
+If unchecked, the warning will not appear.'''
+        ..on_change =
+            ((_) => app.dispatch(
+              actions.WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet(
+                warn: !props.state.ui_state.warn_about_unassigned_dna_on_export,
+              ),
+            ))
+        ..key = 'warn-about-unassigned-dna-on-export')(),
     ]);
   }
 

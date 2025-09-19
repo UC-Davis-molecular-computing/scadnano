@@ -4796,3 +4796,88 @@ abstract class OxExportOnlySelectedStrandsSet
   @memoized
   int get hashCode;
 }
+
+abstract class WarnAboutUnassignedDnaAndOxviewOpenSet
+    with BuiltJsonSerializable
+    implements
+        Action,
+        Built<WarnAboutUnassignedDnaAndOxviewOpenSet, WarnAboutUnassignedDnaAndOxviewOpenSetBuilder> {
+  bool get warn;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory WarnAboutUnassignedDnaAndOxviewOpenSet({required bool warn}) =
+      _$WarnAboutUnassignedDnaAndOxviewOpenSet._;
+
+  WarnAboutUnassignedDnaAndOxviewOpenSet._();
+
+  static Serializer<WarnAboutUnassignedDnaAndOxviewOpenSet> get serializer =>
+      _$warnAboutUnassignedDnaAndOxviewOpenSetSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet
+    with BuiltJsonSerializable
+    implements
+        Action,
+        Built<
+          WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet,
+          WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSetBuilder
+        > {
+  bool get warn;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet({required bool warn}) =
+      _$WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet._;
+
+  WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet._();
+
+  static Serializer<WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet> get serializer =>
+      _$warnAboutUnassignedDnaOnOxViewOrOxDNAExportSetSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// convert extensions to bound domains on new helix
+
+abstract class ConvertExtensionsToBoundDomains
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<ConvertExtensionsToBoundDomains, ConvertExtensionsToBoundDomainsBuilder> {
+  Extension get extension1;
+
+  Extension? get extension2;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ConvertExtensionsToBoundDomains({required Extension extension1, Extension? extension2}) {
+    return ConvertExtensionsToBoundDomains.from(
+      (b) =>
+          b
+            ..extension1.replace(extension1)
+            ..extension2 = extension2?.toBuilder(),
+    );
+  }
+
+  ConvertExtensionsToBoundDomains._();
+
+  factory ConvertExtensionsToBoundDomains.from([
+    void Function(ConvertExtensionsToBoundDomainsBuilder) updates,
+  ]) = _$ConvertExtensionsToBoundDomains;
+
+  static Serializer<ConvertExtensionsToBoundDomains> get serializer =>
+      _$convertExtensionsToBoundDomainsSerializer;
+
+  @override
+  String short_description() {
+    if (extension2 == null) {
+      return "convert extension to domain on new helix";
+    } else {
+      return "convert extensions to bound domains on new helix";
+    }
+  }
+
+  @memoized
+  int get hashCode;
+}

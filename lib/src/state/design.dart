@@ -2150,7 +2150,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return helix.min_offset != min_domain_offset;
   }
 
-  bool helix_has_substrands(Helix helix) => this.helix_idx_to_domains[helix.idx]!.isNotEmpty;
+  bool helix_has_substrands(Helix helix) => this.helix_idx_to_domains[helix.idx]?.isNotEmpty ?? false;
 
   //  /// Returns a map mapping view_order to helix_idx.
   //  @memoized
@@ -2168,7 +2168,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   @memoized
   int max_offset_of_strands_at(int helix_idx) {
-    var domains = helix_idx_to_domains[helix_idx]!;
+    var domains = helix_idx_to_domains[helix_idx];
+    if (domains == null) return 0;
     int max_offset = domains.isEmpty ? 0 : domains.first.end; // in case of no substrands, max offset is 0
     for (var domain in domains) {
       max_offset = max(max_offset, domain.end);
@@ -2178,7 +2179,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   @memoized
   int min_offset_of_strands_at(int helix_idx) {
-    var domains = helix_idx_to_domains[helix_idx]!;
+    var domains = helix_idx_to_domains[helix_idx];
+    if (domains == null) return 0;
     int min_offset = domains.isEmpty ? 0 : domains.first.start; // in case of no substrands, min offset is 0
     for (var domain in domains) {
       min_offset = min(min_offset, domain.start);
