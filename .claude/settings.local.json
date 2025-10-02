@@ -17,7 +17,10 @@
       "Bash(python:*)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:pub.dev)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(scoop install:*)",
+      "Bash(scoop uninstall:*)",
+      "Bash(powershell:*)"
     ],
     "deny": [],
     "ask": [],
