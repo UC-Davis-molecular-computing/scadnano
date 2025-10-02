@@ -68,4 +68,4 @@ To uninstall, simply delete the executable file and the **cache** directory in t
 
 ### Exiting the App
 
-You may need to `CTRL/CMD + C` from the command-line to exit the electron app.
+You may need to `CTRL/CMD + C` from the command-line to exit the electron app when running in development mode.
