@@ -28,7 +28,7 @@ dev_dependencies:
   analyzer: ^6.4.1  # Version that works with test_html_builder without macros issues
   build_runner: ^2.0.0
   build_test: ^2.2.3
-  build_web_compilers: ^4.0.11
+  build_web_compilers: ^4.4.1
   built_value_generator: ^8.9.0
   over_react_test: ^3.0.0
   redux_dev_tools: ^0.7.0
