@@ -397,10 +397,10 @@ packages:
     dependency: "direct main"
     description:
       name: over_react
-      sha256: "65ab0a434b3dcd5cad61f7945e2855a81ce0ea26c3a67b3a741fa1321602ed29"
+      sha256: "79c707d7458e70829ec4d1bb2987a441e2ca363e31eb7fb0f87187690e983af7"
       url: "https://pub.dev"
     source: hosted
-    version: "5.4.6"
+    version: "5.5.0"
   over_react_test:
     dependency: "direct dev"
     description:
