@@ -112,9 +112,9 @@ List<Element> get_svg_elements_of_strands(BuiltSet<Strand> strands) {
   if (strands.length != 0) {
     for (var strand in strands) {
       var strand_elt = document.getElementById(strand.id)!;
-      var dna_seq_elt = document.getElementById('dna-sequence-${strand.id}');
       var mismatch_elts = document.querySelectorAll('.mismatch-${strand.id}');
-      elts.addAll([strand_elt, if (dna_seq_elt != null) dna_seq_elt, ...mismatch_elts]);
+      var dna_seq_elt = document.getElementById('dna-sequence-${strand.id}');
+      elts.addAll([strand_elt, ...mismatch_elts, if (dna_seq_elt != null) dna_seq_elt]);
     }
   }
   return elts;
