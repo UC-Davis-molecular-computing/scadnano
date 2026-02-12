@@ -2638,13 +2638,17 @@ abstract class JoinStrandsByMultipleCrossovers
 }
 
 abstract class StrandsReflect
-    with BuiltJsonSerializable
+    with BuiltJsonSerializable, UndoableAction
     implements Action, Built<StrandsReflect, StrandsReflectBuilder> {
   BuiltList<Strand> get strands;
 
   bool get horizontal;
 
   bool get reverse_polarity;
+
+  @override
+  String short_description() =>
+      "reflect strands ${horizontal ? 'horizontally' : 'vertically'}${reverse_polarity ? ' with reverse polarity' : ''}";
 
   /************************ begin BuiltValue boilerplate ************************/
   factory StrandsReflect({
