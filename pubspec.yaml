@@ -25,7 +25,7 @@ dependencies:
   xml: ^6.3.0
 
 dev_dependencies:
-  analyzer: ^6.4.1  # Version that works with test_html_builder without macros issues
+  analyzer: '>=5.13.0 <11.0.0'  # Version that works with test_html_builder without macros issues
   build_runner: ^2.0.0
   build_test: ^2.2.3
   build_web_compilers: ^4.0.11
