@@ -423,7 +423,7 @@ It may help to run `brew tap dart-lang/dart` first.
 Then, install Dart:
 
 <pre>
-brew install dart
+brew install dart-sdk
 </pre>
 
 If running `dart` in a terminal now does not work, you may need to
