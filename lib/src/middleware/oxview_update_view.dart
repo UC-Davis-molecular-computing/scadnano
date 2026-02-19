@@ -27,32 +27,6 @@ import '../constants.dart' as constants;
 import 'oxdna_export.dart';
 import '../app.dart';
 
-// Helper function to check for unassigned DNA and show warning
-void _check_and_show_unassigned_dna_warning(List<Strand> strands_to_export) {
-  List<String> strand_names_without_dna = [];
-  for (var strand in strands_to_export) {
-    if (strand.dna_sequence == null || strand.dna_sequence!.contains(constants.DNA_BASE_WILDCARD)) {
-      if (strand.name != null) {
-        strand_names_without_dna.add(strand.name!);
-      } else {
-        strand_names_without_dna.add(strand.id);
-      }
-    }
-  }
-
-  if (strand_names_without_dna.isNotEmpty) {
-    var msg =
-        'The following strands do not have complete DNA sequences assigned: '
-        '${strand_names_without_dna.join(", ")}. '
-        'These strands will be exported with a default sequence of "T" '
-        'for each nucleotide whose base is not specified. '
-        'This can lead to unexpected behavior in oxView. For best results, '
-        'assign a DNA sequence to each strand before exporting.'
-        '\n\nTo silence this warning, uncheck View→Warnings→Unassigned DNA if oxView open.';
-    window.alert(msg);
-  }
-}
-
 // This middleware handles sending the new design to the oxview viewer,
 // as well as updating whether it is shown, since it is wired to the
 // view outside of React.
@@ -135,4 +109,30 @@ void update_oxview_view(Design design, IFrameElement? frame, bool warn_enabled) 
   };
 
   frame.contentWindow?.postMessage(message, constants.OXVIEW_URL);
+}
+
+// Helper function to check for unassigned DNA and show warning
+void _check_and_show_unassigned_dna_warning(List<Strand> strands_to_export) {
+  List<String> strand_names_without_dna = [];
+  for (var strand in strands_to_export) {
+    if (strand.dna_sequence == null || strand.dna_sequence!.contains(constants.DNA_BASE_WILDCARD)) {
+      if (strand.name != null) {
+        strand_names_without_dna.add(strand.name!);
+      } else {
+        strand_names_without_dna.add(strand.id);
+      }
+    }
+  }
+
+  if (strand_names_without_dna.isNotEmpty) {
+    var msg =
+        'The following strands do not have complete DNA sequences assigned: '
+        '${strand_names_without_dna.join(", ")}. '
+        'These strands will be exported with a default sequence of "T" '
+        'for each nucleotide whose base is not specified. '
+        'This can lead to unexpected behavior in oxView. For best results, '
+        'assign a DNA sequence to each strand before exporting.'
+        '\n\nTo silence this warning, uncheck View→Warnings→Unassigned DNA if oxView open.';
+    window.alert(msg);
+  }
 }

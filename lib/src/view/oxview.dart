@@ -19,7 +19,7 @@ class OxviewViewComponent {
           ..attributes = {
             'height': '100%',
             'width': '100%',
-            'src': 'https://sulcgroup.github.io/oxdna-viewer/',
+            'src': constants.OXVIEW_URL,
             'id': 'oxview-frame',
           };
     this.div.children.add(this.frame);
