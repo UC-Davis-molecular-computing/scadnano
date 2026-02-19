@@ -14,6 +14,21 @@ import '../state/substrand.dart';
 
 import '../actions/actions.dart' as actions;
 
+BuiltList<Strand> delete_strands_by_index_reducer(
+  BuiltList<Strand> strands,
+  AppState state,
+  actions.StrandsDeleteByIndex action,
+) {
+  var sorted_indices = action.strand_indices.toList()..sort((a, b) => b.compareTo(a));
+  var new_strands = strands.toList();
+  for (var idx in sorted_indices) {
+    if (idx >= 0 && idx < new_strands.length) {
+      new_strands.removeAt(idx);
+    }
+  }
+  return new_strands.build();
+}
+
 BuiltList<Strand> delete_all_reducer(
   BuiltList<Strand> strands,
   AppState state,

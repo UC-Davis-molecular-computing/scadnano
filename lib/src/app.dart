@@ -22,6 +22,7 @@ import 'package:scadnano/src/util.dart';
 
 import 'middleware/all_middleware.dart';
 import 'middleware/oxview_update_view.dart';
+import 'oxview_handle_messages.dart';
 import 'middleware/throttle.dart';
 import 'state/dna_ends_move.dart';
 import 'state/grid_position.dart';
@@ -103,6 +104,7 @@ class App {
       // print("6");
       restore_all_local_storage(app.store);
       // print("7");
+      setup_oxview_message_listener();
       setup_warning_before_unload();
       // print("8");
       setup_save_design_to_localStorage_before_unload();

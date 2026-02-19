@@ -1659,6 +1659,22 @@ abstract class SelectAllStrandsWithSameAsSelected
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Delete selected non-helix items
 
+abstract class StrandsDeleteByIndex
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<StrandsDeleteByIndex, StrandsDeleteByIndexBuilder> {
+  BuiltList<int> get strand_indices;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandsDeleteByIndex({required BuiltList<int> strand_indices}) = _$StrandsDeleteByIndex._;
+
+  StrandsDeleteByIndex._();
+
+  static Serializer<StrandsDeleteByIndex> get serializer => _$strandsDeleteByIndexSerializer;
+
+  @override
+  String short_description() => "delete strands by index";
+}
+
 abstract class DeleteAllSelected
     with BuiltJsonSerializable, UndoableAction
     implements Built<DeleteAllSelected, DeleteAllSelectedBuilder> {

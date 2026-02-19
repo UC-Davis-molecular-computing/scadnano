@@ -183,6 +183,7 @@ part 'serializers.g.dart';
   SelectionsAdjustMainView,
   SelectionsClear,
   SelectOrToggleItems,
+  StrandsDeleteByIndex,
   DeleteAllSelected,
   SelectionBoxIntersectionRuleSet,
   SelectAll,
