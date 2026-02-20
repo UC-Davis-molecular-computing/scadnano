@@ -11,7 +11,7 @@ const String _OXVIEW_ORIGIN = 'https://sulcgroup.github.io';
 /// Call once at startup to begin listening for messages posted from the oxView iframe
 /// via window.parent.postMessage(...).
 setup_oxview_message_listener() {
-  print("window.location.origin = '${window.location.origin}'");
+  // print("window.location.origin = '${window.location.origin}'");
   window.onMessage.listen((MessageEvent event) {
     if (event.origin != _OXVIEW_ORIGIN) return;
     try {

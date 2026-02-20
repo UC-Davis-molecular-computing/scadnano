@@ -274,7 +274,11 @@ class App {
       //   'files': [blob_js_camera_commands],
       //   'ext': ['js'],
       // };
-      var init_message = {'message': 'scadnano_drop', 'action': 'initialize'};
+      var init_message = {
+        'message': 'scadnano_drop',
+        'action': 'initialize',
+        'scadnano_origin': window.location.origin,
+      };
       this.view.oxview_view.frame.contentWindow?.postMessage(init_message, constants.OXVIEW_URL);
       if (app.state.maybe_design != null) {
         // Only show warnings if oxView is actually visible to the user
