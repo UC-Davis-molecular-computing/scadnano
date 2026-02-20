@@ -266,15 +266,16 @@ class App {
     // Each time the oxView frame loads, tell it to adjust the camera to be the same angle as the
     // main view in scadnano: y down, z right, x out of the screen.
     this.view.oxview_view.frame.onLoad.listen((event) {
-      Blob blob_js_camera_commands = new Blob([
-        'camera.up.multiplyScalar(-1)',
-      ], blob_type_to_string(BlobType.text));
-      Map<String, dynamic> message = {
-        'message': 'iframe_drop',
-        'files': [blob_js_camera_commands],
-        'ext': ['js'],
-      };
-      this.view.oxview_view.frame.contentWindow?.postMessage(message, constants.OXVIEW_URL);
+      // Blob blob_js_camera_commands = new Blob([
+      //   'camera.up.multiplyScalar(-1)',
+      // ], blob_type_to_string(BlobType.text));
+      // Map<String, dynamic> init_message = {
+      //   'message': 'iframe_drop',
+      //   'files': [blob_js_camera_commands],
+      //   'ext': ['js'],
+      // };
+      var init_message = {'message': 'scadnano_drop', 'action': 'initialize'};
+      this.view.oxview_view.frame.contentWindow?.postMessage(init_message, constants.OXVIEW_URL);
       if (app.state.maybe_design != null) {
         // Only show warnings if oxView is actually visible to the user
         bool should_warn =
