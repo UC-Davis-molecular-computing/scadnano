@@ -393,8 +393,8 @@ abstract class Domain
 
   int get visual_length => (this.end - this.start);
 
-  //  String toString() =>
-  //      'Domain(helix=${this.helix}, forward=${this.forward}, start=${this.start}, end=${this.end})';
+  String toString() =>
+      '${this.name ?? "Domain"}(helix=${this.helix}, forward=${this.forward}, start=${this.start}, end=${this.end})';
 
   /// Indicates if `offset` is the offset of a base on this substrand. (The end index should be false.)
   /// Note that offsets refer to visual portions of the displayed grid for the Helix.

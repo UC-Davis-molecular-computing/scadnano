@@ -65,6 +65,7 @@ class DesignMainDomainNameMismatchesComponent extends UiComponent2<DesignMainDom
                 ..geometry = geometry
                 ..forward = domain.forward
                 ..color = 'blue'
+                ..domain_name_mismatch = domain_name_mismatch
                 ..key = key)();
           mismatch_components.add(mismatch_component);
         }

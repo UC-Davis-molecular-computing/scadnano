@@ -705,7 +705,11 @@ helix with the opposite orientation.'''
         ..display = 'Show domain name mismatches'
         ..tooltip = '''\
 Show mismatches between domain names assigned to one strand and the strand on the same
-helix with the opposite orientation.'''
+helix with the opposite orientation.
+
+Domain names are considered mismatched if they are not the same string, with one ending in *,
+or if the domains overlap partially but not totally (do not have identical start and end 
+positions on the helix they share).'''
         ..on_change = (_) {
           app.dispatch(
             actions.ShowDomainNameMismatchesSet(!props.state.ui_state.show_domain_name_mismatches),
