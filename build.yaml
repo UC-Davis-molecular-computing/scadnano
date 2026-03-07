@@ -35,10 +35,4 @@ targets:
 #          - test/web/**_test.dart
 #          - web/**.dart
 #          - test/**
-      test_html_builder:
-        options:
-          templates:
-            "test/_templates/react_components_test_template.html":
-              - "test/components/*_test.dart"
-              - "test/middleware_test.dart"
 

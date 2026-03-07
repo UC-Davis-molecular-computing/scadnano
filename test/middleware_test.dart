@@ -1,3 +1,4 @@
+@TestOn('browser')
 import 'package:test/test.dart';
 import 'package:redux/redux.dart';
 
