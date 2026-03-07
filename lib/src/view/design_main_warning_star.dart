@@ -50,7 +50,6 @@ Domain names are considered mismatched if they are not the same string, with one
 or if the domains overlap partially but not totally (do not have identical start and end
 positions on the helix they share).''';
 
-    print('transform: rotate(${rotate_degrees} ${props.base_svg_pos.x} ${props.base_svg_pos.y})');
     // for SVG need nested title element, rather than title attribute
     return (Dom.polygon()
       ..className = 'warning-star'
