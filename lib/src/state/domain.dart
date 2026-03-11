@@ -703,5 +703,4 @@ abstract class Domain
   }
 
   bool get is_5_to_3 => (helix % 2 == 0) == is_scaffold;
-
 }

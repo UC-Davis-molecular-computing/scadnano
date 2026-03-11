@@ -2861,13 +2861,21 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   (List<Domain>, List<Domain>) get_strand_sets() {
-    final stapSS = this.all_domains.where((domain) =>
-    (domain.helix % 2 == 0 && !domain.forward) || (domain.helix % 2 == 1 && domain.forward)
-    ).toList();
+    final stapSS =
+        this.all_domains
+            .where(
+              (domain) =>
+                  (domain.helix % 2 == 0 && !domain.forward) || (domain.helix % 2 == 1 && domain.forward),
+            )
+            .toList();
 
-    final scafSS = this.all_domains.where((domain) =>
-    (domain.helix % 2 == 0 && domain.forward) || (domain.helix % 2 == 1 && !domain.forward)
-    ).toList();
+    final scafSS =
+        this.all_domains
+            .where(
+              (domain) =>
+                  (domain.helix % 2 == 0 && domain.forward) || (domain.helix % 2 == 1 && !domain.forward),
+            )
+            .toList();
 
     return (stapSS, scafSS);
   }
@@ -2921,12 +2929,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   bool _has_no_strand_at_or_no_xover(List<Domain> domains, int idx) {
-    final qStrand = Domain(
-      helix: domains[0].helix,
-      forward: true,
-      start: idx,
-      end: idx + 1,
-    );
+    final qStrand = Domain(helix: domains[0].helix, forward: true, start: idx, end: idx + 1);
 
     final domainList = qStrand.find_overlapping_ranges(domains).toList();
 
@@ -2941,15 +2944,51 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     List<List<int>> scafL, scafH, stapL, stapH;
 
     if (grid == Grid.square) {
-      scafL = [[4, 26, 15], [18, 28, 7], [10, 20, 31], [2, 12, 23]];
-      scafH = [[5, 27, 16], [19, 29, 8], [11, 21, 0], [3, 13, 24]];
-      stapL = [[31], [23], [15], [7]];
-      stapH = [[0], [24], [16], [8]];
+      scafL = [
+        [4, 26, 15],
+        [18, 28, 7],
+        [10, 20, 31],
+        [2, 12, 23],
+      ];
+      scafH = [
+        [5, 27, 16],
+        [19, 29, 8],
+        [11, 21, 0],
+        [3, 13, 24],
+      ];
+      stapL = [
+        [31],
+        [23],
+        [15],
+        [7],
+      ];
+      stapH = [
+        [0],
+        [24],
+        [16],
+        [8],
+      ];
     } else if (grid == Grid.honeycomb) {
-      scafL = [[1, 11], [8, 18], [4, 15]];
-      scafH = [[2, 12], [9, 19], [5, 16]];
-      stapL = [[6], [13], [20]];
-      stapH = [[7], [14], [0]];
+      scafL = [
+        [1, 11],
+        [8, 18],
+        [4, 15],
+      ];
+      scafH = [
+        [2, 12],
+        [9, 19],
+        [5, 16],
+      ];
+      stapL = [
+        [6],
+        [13],
+        [20],
+      ];
+      stapH = [
+        [7],
+        [14],
+        [0],
+      ];
     } else {
       throw ArgumentError('Unsupported grid type: ${grid}');
     }
@@ -2959,12 +2998,14 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   (List<Domain>, List<Domain>) _get_strand_sets_for_helix(Helix helix) {
     final domains = domains_on_helix(helix.idx);
-    final stapSS = domains.where((d) =>
-    (helix.idx % 2 == 0 && !d.forward) || (helix.idx % 2 == 1 && d.forward)
-    ).toList();
-    final scafSS = domains.where((d) =>
-    (helix.idx % 2 == 0 && d.forward) || (helix.idx % 2 == 1 && !d.forward)
-    ).toList();
+    final stapSS =
+        domains
+            .where((d) => (helix.idx % 2 == 0 && !d.forward) || (helix.idx % 2 == 1 && d.forward))
+            .toList();
+    final scafSS =
+        domains
+            .where((d) => (helix.idx % 2 == 0 && d.forward) || (helix.idx % 2 == 1 && !d.forward))
+            .toList();
     return (stapSS, scafSS);
   }
 
@@ -2976,22 +3017,15 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     final numBases = helix.max_offset - 1;
 
     final step = grid == Grid.square ? 32 : 21;
-    List<int> baseRange = List.generate(
-      (numBases / step).ceil(),
-          (i) => i * step,
-    ).where((x) => x < numBases).toList();
+    List<int> baseRange =
+        List.generate((numBases / step).ceil(), (i) => i * step).where((x) => x < numBases).toList();
 
     if (idx != null) {
-      baseRange = baseRange
-          .where((x) => x >= idx - 3 * step && x <= idx + 2 * step)
-          .toList();
+      baseRange = baseRange.where((x) => x >= idx - 3 * step && x <= idx + 2 * step).toList();
     }
 
     // zip(scafL, scafH, stapL, stapH) per neighbor
-    final lutsNeighbor = List.generate(
-      scafL.length,
-          (i) => (scafL[i], scafH[i], stapL[i], stapH[i]),
-    );
+    final lutsNeighbor = List.generate(scafL.length, (i) => (scafL[i], scafH[i], stapL[i], stapH[i]));
 
     final (fromStapSS, fromScafSS) = _get_strand_sets_for_helix(helix);
     final fromStrandSets = [fromScafSS, fromStapSS];
@@ -3093,13 +3127,13 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         if (substrand is Loopout) {
           throw ArgumentError(
             'Cannot check for crossover: strand contains a Loopout. '
-                'The autostaple method does not support strands with loopouts.',
+            'The autostaple method does not support strands with loopouts.',
           );
         }
         if (substrand is Extension) {
           throw ArgumentError(
             'Cannot check for crossover: strand contains an Extension. '
-                'The autostaple method does not support strands with extensions.',
+            'The autostaple method does not support strands with extensions.',
           );
         }
       }
@@ -3191,24 +3225,39 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         // disable edge crossovers (check all domains on helix, scaffold + temp staple)
         final vhAllDomains = design.domains_on_helix(vhidx);
         final scafStrandL1 = design._get_domain_at(scafSS, idx - 1);
-        final scafStrandM  = design._get_domain_at(scafSS, idx);
+        final scafStrandM = design._get_domain_at(scafSS, idx);
         final scafStrandH1 = design._get_domain_at(scafSS, idx + 1);
 
         bool shouldSkip = false;
         if (scafStrandL1 != null) {
           final s = design.substrand_to_strand[scafStrandL1]!;
-          if (scafStrandL1.has_crossover_at(idx - 1, s) && design._get_domain_at(vhAllDomains, idx - 2) == null) shouldSkip = true;
-          if (!shouldSkip && scafStrandL1.has_crossover_at(idx - 2, s) && design._get_domain_at(vhAllDomains, idx - 3) == null) shouldSkip = true;
+          if (scafStrandL1.has_crossover_at(idx - 1, s) &&
+              design._get_domain_at(vhAllDomains, idx - 2) == null)
+            shouldSkip = true;
+          if (!shouldSkip &&
+              scafStrandL1.has_crossover_at(idx - 2, s) &&
+              design._get_domain_at(vhAllDomains, idx - 3) == null)
+            shouldSkip = true;
         }
         if (!shouldSkip && scafStrandM != null) {
           final s = design.substrand_to_strand[scafStrandM]!;
-          if (scafStrandM.has_crossover_at(idx - 1, s) && design._get_domain_at(vhAllDomains, idx - 2) == null) shouldSkip = true;
-          if (!shouldSkip && scafStrandM.has_crossover_at(idx + 1, s) && design._get_domain_at(vhAllDomains, idx + 2) == null) shouldSkip = true;
+          if (scafStrandM.has_crossover_at(idx - 1, s) &&
+              design._get_domain_at(vhAllDomains, idx - 2) == null)
+            shouldSkip = true;
+          if (!shouldSkip &&
+              scafStrandM.has_crossover_at(idx + 1, s) &&
+              design._get_domain_at(vhAllDomains, idx + 2) == null)
+            shouldSkip = true;
         }
         if (!shouldSkip && scafStrandH1 != null) {
           final s = design.substrand_to_strand[scafStrandH1]!;
-          if (scafStrandH1.has_crossover_at(idx + 1, s) && design._get_domain_at(vhAllDomains, idx + 2) == null) shouldSkip = true;
-          if (!shouldSkip && scafStrandH1.has_crossover_at(idx + 2, s) && design._get_domain_at(vhAllDomains, idx + 3) == null) shouldSkip = true;
+          if (scafStrandH1.has_crossover_at(idx + 1, s) &&
+              design._get_domain_at(vhAllDomains, idx + 2) == null)
+            shouldSkip = true;
+          if (!shouldSkip &&
+              scafStrandH1.has_crossover_at(idx + 2, s) &&
+              design._get_domain_at(vhAllDomains, idx + 3) == null)
+            shouldSkip = true;
         }
         if (shouldSkip) continue;
 
@@ -3262,18 +3311,20 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         if (domain == null || nDomain == null) continue;
 
         // only install crossovers on pre-split strand endpoints
-        final domainEnds  = {domain.start, domain.end - 1};
+        final domainEnds = {domain.start, domain.end - 1};
         final nDomainEnds = {nDomain.start, nDomain.end - 1};
         if (domainEnds.contains(idx) && nDomainEnds.contains(idx)) {
           design = design.add_half_crossover(
-            vhidx, neighborVh.idx,
+            vhidx,
+            neighborVh.idx,
             offset: idx,
             forward: !helix_is_even_parity(vhidx),
             offset2: idx,
             forward2: helix_is_even_parity(vhidx),
           );
           design = design.add_half_crossover(
-            vhidx, neighborVh.idx,
+            vhidx,
+            neighborVh.idx,
             offset: idx + 1,
             forward: !helix_is_even_parity(vhidx),
             offset2: idx + 1,
@@ -3295,13 +3346,13 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   Design add_half_crossover(
-      int helix,
-      int helix2, {
-        required int offset,
-        required bool forward,
-        int? offset2,
-        bool? forward2,
-      }) {
+    int helix,
+    int helix2, {
+    required int offset,
+    required bool forward,
+    int? offset2,
+    bool? forward2,
+  }) {
     offset2 ??= offset;
     forward2 ??= !forward;
 
@@ -3310,13 +3361,15 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
     if (domain1 == null) {
       throw IllegalDesignError(
-          'Cannot add half crossover at (helix=$helix, offset=$offset). '
-              'There is no Domain there.');
+        'Cannot add half crossover at (helix=$helix, offset=$offset). '
+        'There is no Domain there.',
+      );
     }
     if (domain2 == null) {
       throw IllegalDesignError(
-          'Cannot add half crossover at (helix=$helix2, offset=$offset2). '
-              'There is no Domain there.');
+        'Cannot add half crossover at (helix=$helix2, offset=$offset2). '
+        'There is no Domain there.',
+      );
     }
 
     var strand1 = substrand_to_strand[domain1]!;
@@ -3334,24 +3387,31 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     Strand strand_first, strand_last;
 
     if (domain1.offset_3p == offset && domain2.offset_5p == offset2) {
-      strand_first = strand1; strand_last = strand2;
-      domain_first = domain1; domain_last = domain2;
+      strand_first = strand1;
+      strand_last = strand2;
+      domain_first = domain1;
+      domain_last = domain2;
     } else if (domain1.offset_5p == offset && domain2.offset_3p == offset2) {
-      strand_first = strand2; strand_last = strand1;
-      domain_first = domain2; domain_last = domain1;
+      strand_first = strand2;
+      strand_last = strand1;
+      domain_first = domain2;
+      domain_last = domain1;
     } else {
       throw IllegalDesignError(
-          'Cannot add half crossover. Must have one domain with its 5\' end at the given offset '
-              'and the other with its 3\' end at the given offset, but this is not the case.');
+        'Cannot add half crossover. Must have one domain with its 5\' end at the given offset '
+        'and the other with its 3\' end at the given offset, but this is not the case.',
+      );
     }
 
     if (strand_first.domains.last != domain_first) {
       throw IllegalDesignError(
-          'Domain $domain_first is expected to be on the 3\' end of the strand, but is not.');
+        'Domain $domain_first is expected to be on the 3\' end of the strand, but is not.',
+      );
     }
     if (strand_last.domains.first != domain_last) {
       throw IllegalDesignError(
-          'Domain $domain_last is expected to be on the 5\' end of the strand, but is not.');
+        'Domain $domain_last is expected to be on the 5\' end of the strand, but is not.',
+      );
     }
 
     // Merge DNA sequences
@@ -3360,7 +3420,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       new_dna = strand_first.dna_sequence! + strand_last.dna_sequence!;
     } else if (strand_first.dna_sequence != null || strand_last.dna_sequence != null) {
       throw IllegalDesignError(
-          'cannot add crossover between two strands if one has a DNA sequence and the other does not');
+        'cannot add crossover between two strands if one has a DNA sequence and the other does not',
+      );
     }
 
     var new_strand = Strand(
@@ -3459,8 +3520,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   Design add_deletion(int helix_idx, int offset) {
     var domains_to_update = [
       for (var domain in domains_on_helix(helix_idx))
-        if (domain.contains_offset(offset) && !domain.deletions.contains(offset))
-          domain,
+        if (domain.contains_offset(offset) && !domain.deletions.contains(offset)) domain,
     ];
 
     if (domains_to_update.isEmpty) return this;
@@ -3472,10 +3532,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       var new_deletions = domain.deletions.toList()..add(offset);
       var new_domain = domain.rebuild((b) => b..deletions.replace(new_deletions));
 
-      var new_substrands = [
-        for (var ss in strand.substrands)
-          ss == domain ? new_domain : ss,
-      ];
+      var new_substrands = [for (var ss in strand.substrands) ss == domain ? new_domain : ss];
       var new_strand = Strand(
         new_substrands,
         color: strand.color,
