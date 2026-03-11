@@ -3345,6 +3345,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return design;
   }
 
+  // Copied from the add_half_crossover method in the python package.
   Design add_half_crossover(
     int helix,
     int helix2, {
@@ -3439,84 +3440,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     });
   }
 
-  // Design add_deletion(int helix_idx, int offset) {
-  //   var domains = domains_on_helix_at(helix_idx, offset);
-  //
-  //   if (domains.isEmpty) {
-  //     throw IllegalDesignError('no domains are at helix $helix_idx offset $offset');
-  //   }
-  //
-  //   Design design = this;
-  //   for (var domain in domains) {
-  //     if (!domain.contains_offset(offset)) continue;
-  //
-  //     var strand = design.substrand_to_strand[domain]!;
-  //     var new_domain = domain.rebuild((b) => b..deletions.add(offset));
-  //     var new_substrands = [
-  //       for (var ss in strand.substrands) ss == domain ? new_domain : ss,
-  //     ];
-  //     var new_strand = Strand(
-  //       new_substrands,
-  //       color: strand.color,
-  //       dna_sequence: strand.dna_sequence,
-  //       is_scaffold: strand.is_scaffold,
-  //       circular: strand.circular,
-  //       name: strand.name,
-  //       modification_5p: strand.modification_5p,
-  //       modification_3p: strand.modification_3p,
-  //       modifications_int: strand.modifications_int.toMap(),
-  //     );
-  //     design = design.remove_strand(strand).add_strand(new_strand);
-  //   }
-  //
-  //   return design;
-  // }
-
-  // Design add_half_crossover(
-  //     int helix1,
-  //     int helix2, {
-  //       required int offset,
-  //       required bool forward,
-  //       required int offset2,
-  //       required bool forward2,
-  //     }) {
-  //   var address1 = Address(helix_idx: helix1, offset: offset, forward: forward);
-  //   var address2 = Address(helix_idx: helix2, offset: offset2, forward: forward2);
-  //
-  //   var end1 = address_to_end[address1];
-  //   var end2 = address_to_end[address2];
-  //
-  //   if (end1 == null || end2 == null) return this;
-  //
-  //   var strand1 = end_to_strand(end1);
-  //   var strand2 = end_to_strand(end2);
-  //
-  //   // One end must be 3' and the other 5', figure out which
-  //   Strand strand_3p, strand_5p;
-  //   if (end1 == strand1.dnaend_3p && end2 == strand2.dnaend_5p) {
-  //     strand_3p = strand1;
-  //     strand_5p = strand2;
-  //   } else if (end2 == strand2.dnaend_3p && end1 == strand1.dnaend_5p) {
-  //     strand_3p = strand2;
-  //     strand_5p = strand1;
-  //   } else {
-  //     return this; // ends are not joinable (both 3' or both 5')
-  //   }
-  //
-  //   // Merge: crossover is implicit between consecutive domains in substrands list
-  //   var new_substrands = [...strand_3p.substrands, ...strand_5p.substrands];
-  //   var new_strand = Strand(
-  //     new_substrands,
-  //     color: strand_3p.color,
-  //     is_scaffold: strand_3p.is_scaffold,
-  //   );
-  //
-  //   var design = remove_strand(strand_3p);
-  //   design = design.remove_strand(strand_5p);
-  //   design = design.add_strand(new_strand);
-  //   return design;
-  // }
-  //
+  // Copied from the add_deletion method in the python packaged.
   Design add_deletion(int helix_idx, int offset) {
     var domains_to_update = [
       for (var domain in domains_on_helix(helix_idx))
