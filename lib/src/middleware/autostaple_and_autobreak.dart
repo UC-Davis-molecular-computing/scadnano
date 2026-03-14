@@ -22,7 +22,8 @@ autostaple_and_autobreak_middleware(Store<AppState> store, dynamic action, NextD
 }
 
 _autostaple(Store<AppState> store) async {
-  print("autostaple, sending design to server ${constants.autostaple_url}");
+  // ! - Commented out code was prior implementation of autostaple on a remote server
+  // print("autostaple, sending design to server ${constants.autostaple_url}");
   // var response = await http.post(
   //   Uri.parse(constants.autostaple_url),
   //   body: json_encode(store.state.design),
