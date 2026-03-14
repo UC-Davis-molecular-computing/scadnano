@@ -22,15 +22,22 @@ autostaple_and_autobreak_middleware(Store<AppState> store, dynamic action, NextD
 }
 
 _autostaple(Store<AppState> store) async {
-  print("autostaple, sending design to server ${constants.autostaple_url}");
-  var response = await http.post(
-    Uri.parse(constants.autostaple_url),
-    body: json_encode(store.state.design),
-    headers: {"Content-Type": "application/json"},
-  );
-  print("response: ${response.body}");
-
-  _handle_response(store, response, "autostaple");
+  // ! - Commented out code was prior implementation of autostaple on a remote server
+  // print("autostaple, sending design to server ${constants.autostaple_url}");
+  // var response = await http.post(
+  //   Uri.parse(constants.autostaple_url),
+  //   body: json_encode(store.state.design),
+  //   headers: {"Content-Type": "application/json"},
+  // );
+  // print("response: ${response.body}");
+  //
+  // _handle_response(store, response, "autostaple");
+  try {
+    Design design_new = store.state.design.autostaple();
+    store.dispatch(actions.NewDesignSet(design_new, "autostaple"));
+  } catch (e) {
+    window.alert('Error during autostaple: ${e}');
+  }
 }
 
 _autobreak(Store<AppState> store, actions.Autobreak action) async {

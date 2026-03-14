@@ -2859,6 +2859,620 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
     return this.rebuild((b) => b..helices.replace(helices_relaxed));
   }
+
+  (List<Domain>, List<Domain>) get_strand_sets() {
+    final stapSS =
+        this.all_domains
+            .where(
+              (domain) =>
+                  (domain.helix % 2 == 0 && !domain.forward) || (domain.helix % 2 == 1 && domain.forward),
+            )
+            .toList();
+
+    final scafSS =
+        this.all_domains
+            .where(
+              (domain) =>
+                  (domain.helix % 2 == 0 && domain.forward) || (domain.helix % 2 == 1 && !domain.forward),
+            )
+            .toList();
+
+    return (stapSS, scafSS);
+  }
+
+  bool _is_even_parity(int row, int col) => (row % 2) == (col % 2);
+
+  bool _is_odd_parity(int row, int col) => (row % 2) ^ (col % 2) == 1;
+
+  List<Helix?> get_helix_neighbors(Helix helix) {
+    final gp = helix.grid_position!;
+    final c = gp.h;
+    final r = gp.v;
+
+    final helices_by_coords = <(int, int), Helix>{};
+    for (var h in helices.values) {
+      final gp = h.grid_position!;
+      helices_by_coords[(gp.v, gp.h)] = h;
+    }
+
+    final neighbors = <Helix?>[];
+
+    if (_is_even_parity(r, c)) {
+      if (grid == Grid.square) {
+        neighbors.add(helices_by_coords[(r, c + 1)]);
+        neighbors.add(helices_by_coords[(r + 1, c)]);
+        neighbors.add(helices_by_coords[(r, c - 1)]);
+        neighbors.add(helices_by_coords[(r - 1, c)]);
+      } else if (grid == Grid.honeycomb) {
+        neighbors.add(helices_by_coords[(r, c + 1)]);
+        neighbors.add(helices_by_coords[(r - 1, c)]);
+        neighbors.add(helices_by_coords[(r, c - 1)]);
+      } else {
+        throw ArgumentError('Invalid grid type: ${grid}');
+      }
+    } else {
+      if (grid == Grid.square) {
+        neighbors.add(helices_by_coords[(r, c - 1)]);
+        neighbors.add(helices_by_coords[(r - 1, c)]);
+        neighbors.add(helices_by_coords[(r, c + 1)]);
+        neighbors.add(helices_by_coords[(r + 1, c)]);
+      } else if (grid == Grid.honeycomb) {
+        neighbors.add(helices_by_coords[(r, c - 1)]);
+        neighbors.add(helices_by_coords[(r + 1, c)]);
+        neighbors.add(helices_by_coords[(r, c + 1)]);
+      } else {
+        throw ArgumentError('Invalid grid type: ${grid}');
+      }
+    }
+
+    return neighbors;
+  }
+
+  bool _has_no_strand_at_or_no_xover(List<Domain> domains, int idx) {
+    final qStrand = Domain(helix: domains[0].helix, forward: true, start: idx, end: idx + 1);
+
+    final domainList = qStrand.find_overlapping_ranges(domains).toList();
+
+    if (domainList.isNotEmpty) {
+      final strand = substrand_to_strand[domainList[0]]!;
+      return domainList[0].has_crossover_at(idx, strand) ? false : true;
+    }
+    return true;
+  }
+
+  (List<List<int>>, List<List<int>>, List<List<int>>, List<List<int>>) get_crossover_points() {
+    List<List<int>> scafL, scafH, stapL, stapH;
+
+    if (grid == Grid.square) {
+      scafL = [
+        [4, 26, 15],
+        [18, 28, 7],
+        [10, 20, 31],
+        [2, 12, 23],
+      ];
+      scafH = [
+        [5, 27, 16],
+        [19, 29, 8],
+        [11, 21, 0],
+        [3, 13, 24],
+      ];
+      stapL = [
+        [31],
+        [23],
+        [15],
+        [7],
+      ];
+      stapH = [
+        [0],
+        [24],
+        [16],
+        [8],
+      ];
+    } else if (grid == Grid.honeycomb) {
+      scafL = [
+        [1, 11],
+        [8, 18],
+        [4, 15],
+      ];
+      scafH = [
+        [2, 12],
+        [9, 19],
+        [5, 16],
+      ];
+      stapL = [
+        [6],
+        [13],
+        [20],
+      ];
+      stapH = [
+        [7],
+        [14],
+        [0],
+      ];
+    } else {
+      throw ArgumentError('Unsupported grid type: ${grid}');
+    }
+
+    return (scafL, scafH, stapL, stapH);
+  }
+
+  (List<Domain>, List<Domain>) _get_strand_sets_for_helix(Helix helix) {
+    final domains = domains_on_helix(helix.idx);
+    final stapSS =
+        domains
+            .where((d) => (helix.idx % 2 == 0 && !d.forward) || (helix.idx % 2 == 1 && d.forward))
+            .toList();
+    final scafSS =
+        domains
+            .where((d) => (helix.idx % 2 == 0 && d.forward) || (helix.idx % 2 == 1 && !d.forward))
+            .toList();
+    return (stapSS, scafSS);
+  }
+
+  List<(Helix, int, String, bool)>? potential_crossover_list(Helix helix, {int? idx}) {
+    final (scafL, scafH, stapL, stapH) = get_crossover_points();
+
+    final List<(Helix, int, String, bool)> ret = [];
+    final sTs = ['scaffold', 'staple'];
+    final numBases = helix.max_offset - 1;
+
+    final step = grid == Grid.square ? 32 : 21;
+    List<int> baseRange =
+        List.generate((numBases / step).ceil(), (i) => i * step).where((x) => x < numBases).toList();
+
+    if (idx != null) {
+      baseRange = baseRange.where((x) => x >= idx - 3 * step && x <= idx + 2 * step).toList();
+    }
+
+    // zip(scafL, scafH, stapL, stapH) per neighbor
+    final lutsNeighbor = List.generate(scafL.length, (i) => (scafL[i], scafH[i], stapL[i], stapH[i]));
+
+    final (fromStapSS, fromScafSS) = _get_strand_sets_for_helix(helix);
+    final fromStrandSets = [fromScafSS, fromStapSS];
+    final neighbors = get_helix_neighbors(helix);
+
+    for (int ni = 0; ni < neighbors.length && ni < lutsNeighbor.length; ni++) {
+      final neighbor = neighbors[ni];
+      if (neighbor == null) continue;
+
+      final lut = lutsNeighbor[ni];
+      // lutScaf = (scafL[i], scafH[i]), lutStap = (stapL[i], stapH[i])
+      final luts = [
+        [lut.$1, lut.$2], // scaffold: [L points, H points]
+        [lut.$3, lut.$4], // staple:   [L points, H points]
+      ];
+
+      final (toStapSS, toScafSS) = _get_strand_sets_for_helix(neighbor);
+      final toStrandSets = [toScafSS, toStapSS];
+
+      for (int si = 0; si < 2; si++) {
+        final fromSS = fromStrandSets[si];
+        final toSS = toStrandSets[si];
+        final pts = luts[si]; // [L-points, H-points]
+        final st = sTs[si];
+
+        // zip(pts, (True, False)) -> (L-points, true), (H-points, false)
+        for (int pi = 0; pi < pts.length; pi++) {
+          final pt = pts[pi];
+          final isLowIdx = pi == 0;
+
+          // itertools.product(baseRange, pt)
+          for (int i in baseRange) {
+            for (int j in pt) {
+              final index = i + j;
+              if (index < numBases) {
+                if (_has_no_strand_at_or_no_xover(fromSS, index) &&
+                    _has_no_strand_at_or_no_xover(toSS, index)) {
+                  ret.add((neighbor, index, st, isLowIdx));
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return ret;
+  }
+
+  Domain? _get_domain_at(List<Domain> domains, int idx) {
+    for (var domain in domains) {
+      if (domain.start <= idx && idx < domain.end) {
+        return domain;
+      }
+    }
+    return null;
+  }
+
+  Design assign_dna_sequence_to_design(Strand strand, bool forward, int helix_idx) {
+    final helix = helices[helix_idx]!;
+    final helix_domains = domains_on_helix(helix.idx);
+
+    String sequence = '';
+    for (var domain in helix_domains) {
+      if (forward && domain.forward) continue;
+      if (!forward && !domain.forward) continue;
+      sequence += domain.dna_sequence ?? '';
+    }
+
+    // Find the strand in the design's strand list and replace it with the sequence assigned
+    final updatedStrand = strand.set_dna_sequence(sequence);
+    final strandIndex = strands.indexOf(strand);
+    if (strandIndex == -1) return this;
+
+    return rebuild((d) => d..strands[strandIndex] = updatedStrand);
+  }
+
+  bool helix_is_even_parity(dynamic helix_or_idx) {
+    final Helix helix;
+    if (helix_or_idx is int) {
+      helix = helices[helix_or_idx]!;
+    } else {
+      helix = helix_or_idx as Helix;
+    }
+
+    if (helix.grid_position == null) {
+      return helix.idx % 2 == 0;
+    }
+
+    final c = helix.grid_position!.h;
+    final r = helix.grid_position!.v;
+    return _is_even_parity(r, c);
+  }
+
+  Design autostaple() {
+    // Check for loopouts or extensions on any strand
+    for (var strand in strands) {
+      for (var substrand in strand.substrands) {
+        if (substrand is Loopout) {
+          throw ArgumentError(
+            'Cannot check for crossover: strand contains a Loopout. '
+            'The autostaple method does not support strands with loopouts.',
+          );
+        }
+        if (substrand is Extension) {
+          throw ArgumentError(
+            'Cannot check for crossover: strand contains an Extension. '
+            'The autostaple method does not support strands with extensions.',
+          );
+        }
+      }
+    }
+
+    // Track original deletions keyed by helix idx (before any modification)
+    Map<int, List<int>> deletions = {};
+    for (var vh in helices.values) {
+      for (var domain in domains_on_helix(vh.idx)) {
+        deletions.putIfAbsent(domain.helix, () => []).addAll(domain.deletions);
+      }
+    }
+
+    Map<int, List<int>> epDict = {};
+
+    // 1) Remove existing staple strands
+    Design design = remove_strands(strands.where((s) => !s.is_scaffold));
+
+    // 2) Create temporary strands that span regions where scaffold is present
+    for (var entry in design.helices.entries) {
+      final vhidx = entry.key;
+      final vh = entry.value;
+      final scafSS = design.domains_on_helix(vh.idx);
+
+      List<List<int>> segments = [];
+      for (var domain in scafSS) {
+        final lo = domain.start;
+        final hi = domain.end - 1; // inclusive
+        if (segments.isEmpty) {
+          segments.add([lo, hi]);
+        } else if (segments.last[1] == lo - 1) {
+          segments.last[1] = hi; // extend existing segment
+        } else {
+          segments.add([lo, hi]); // new segment
+        }
+      }
+
+      epDict[vhidx] = [];
+      final isForward = vhidx % 2 == 1;
+      for (var seg in segments) {
+        final lo = seg[0];
+        final hi = seg[1];
+        epDict[vhidx]!.addAll([lo, hi]);
+
+        final newDomain = Domain(helix: vhidx, forward: isForward, start: lo, end: hi + 1);
+        final newStrand = Strand([newDomain], is_scaffold: false);
+        design = design.add_strand(newStrand);
+      }
+    }
+
+    // 3) Determine where crossovers should be installed
+    for (var entry in design.helices.entries) {
+      final vhidx = entry.key;
+      final vh = entry.value;
+
+      final (stapSS, scafSS) = design._get_strand_sets_for_helix(vh);
+      if (stapSS.isEmpty) continue;
+      final is5to3 = stapSS[0].is_5_to_3;
+
+      final potentialXovers = design.potential_crossover_list(vh);
+      if (potentialXovers == null) continue;
+
+      for (var (neighborVh, idx, strandType, isLowIdx) in potentialXovers) {
+        if (strandType != 'staple') continue;
+        if (!(isLowIdx && is5to3)) continue;
+
+        final domain = design._get_domain_at(stapSS, idx);
+        final (neighborSS, _) = design._get_strand_sets_for_helix(neighborVh);
+        final nDomain = design._get_domain_at(neighborSS, idx);
+
+        if (domain == null || nDomain == null) continue;
+
+        // check for bases on both strands at [idx-1:idx+3]
+        if (!(domain.start < idx && domain.end - 1 > idx + 1)) continue;
+        if (!(nDomain.start < idx && nDomain.end - 1 > idx + 1)) continue;
+
+        // check for nearby scaffold crossovers
+        final scafStrandL = design._get_domain_at(scafSS, idx - 4);
+        final scafStrandH = design._get_domain_at(scafSS, idx + 5);
+        if (scafStrandL != null) {
+          final s = design.substrand_to_strand[scafStrandL]!;
+          if (scafStrandL.has_crossover_at(idx - 4, s)) continue;
+        }
+        if (scafStrandH != null) {
+          final s = design.substrand_to_strand[scafStrandH]!;
+          if (scafStrandH.has_crossover_at(idx + 5, s)) continue;
+        }
+
+        // disable edge crossovers (check all domains on helix, scaffold + temp staple)
+        final vhAllDomains = design.domains_on_helix(vhidx);
+        final scafStrandL1 = design._get_domain_at(scafSS, idx - 1);
+        final scafStrandM = design._get_domain_at(scafSS, idx);
+        final scafStrandH1 = design._get_domain_at(scafSS, idx + 1);
+
+        bool shouldSkip = false;
+        if (scafStrandL1 != null) {
+          final s = design.substrand_to_strand[scafStrandL1]!;
+          if (scafStrandL1.has_crossover_at(idx - 1, s) &&
+              design._get_domain_at(vhAllDomains, idx - 2) == null)
+            shouldSkip = true;
+          if (!shouldSkip &&
+              scafStrandL1.has_crossover_at(idx - 2, s) &&
+              design._get_domain_at(vhAllDomains, idx - 3) == null)
+            shouldSkip = true;
+        }
+        if (!shouldSkip && scafStrandM != null) {
+          final s = design.substrand_to_strand[scafStrandM]!;
+          if (scafStrandM.has_crossover_at(idx - 1, s) &&
+              design._get_domain_at(vhAllDomains, idx - 2) == null)
+            shouldSkip = true;
+          if (!shouldSkip &&
+              scafStrandM.has_crossover_at(idx + 1, s) &&
+              design._get_domain_at(vhAllDomains, idx + 2) == null)
+            shouldSkip = true;
+        }
+        if (!shouldSkip && scafStrandH1 != null) {
+          final s = design.substrand_to_strand[scafStrandH1]!;
+          if (scafStrandH1.has_crossover_at(idx + 1, s) &&
+              design._get_domain_at(vhAllDomains, idx + 2) == null)
+            shouldSkip = true;
+          if (!shouldSkip &&
+              scafStrandH1.has_crossover_at(idx + 2, s) &&
+              design._get_domain_at(vhAllDomains, idx + 3) == null)
+            shouldSkip = true;
+        }
+        if (shouldSkip) continue;
+
+        epDict[vhidx]!.addAll([idx, idx + 1]);
+        epDict[neighborVh.idx]!.addAll([idx, idx + 1]);
+      }
+    }
+
+    // 4) Clear temporary staple strands
+    design = design.remove_strands(design.strands.where((s) => !s.is_scaffold));
+
+    // 5) AutoStaple pt.1 — break strands at crossover endpoints
+    for (var entry in epDict.entries) {
+      final vhidx = entry.key;
+      final epList = List<int>.from(entry.value)..sort();
+      assert(epList.length % 2 == 0);
+
+      final isForward = vhidx % 2 == 1;
+      for (int i = 0; i < epList.length; i += 2) {
+        final lo = epList[i];
+        final hi = epList[i + 1];
+
+        final domain = Domain(helix: vhidx, forward: isForward, start: lo, end: hi + 1);
+        final strand = Strand([domain], is_scaffold: false);
+        design = design.add_strand(strand);
+        design = design.assign_dna_sequence_to_design(strand, isForward, vhidx);
+      }
+    }
+
+    // 6) Create crossovers wherever possible
+    for (var entry in design.helices.entries) {
+      final vhidx = entry.key;
+      final vh = entry.value;
+
+      final (stapSS, _) = design._get_strand_sets_for_helix(vh);
+      if (stapSS.isEmpty) continue;
+      final is5to3 = stapSS[0].is_5_to_3;
+
+      final potentialXovers = design.potential_crossover_list(vh);
+      if (potentialXovers == null) continue;
+
+      for (var (neighborVh, idx, strandType, isLowIdx) in potentialXovers) {
+        if (strandType != 'staple') continue;
+        // Python: if (isLowIdx and is5to3) or (not isLowIdx and not is5to3)
+        if (!((isLowIdx && is5to3) || (!isLowIdx && !is5to3))) continue;
+
+        final domain = design._get_domain_at(stapSS, idx);
+        final (neighborSS, _) = design._get_strand_sets_for_helix(neighborVh);
+        final nDomain = design._get_domain_at(neighborSS, idx);
+
+        if (domain == null || nDomain == null) continue;
+
+        // only install crossovers on pre-split strand endpoints
+        final domainEnds = {domain.start, domain.end - 1};
+        final nDomainEnds = {nDomain.start, nDomain.end - 1};
+        if (domainEnds.contains(idx) && nDomainEnds.contains(idx)) {
+          design = design.add_half_crossover(
+            vhidx,
+            neighborVh.idx,
+            offset: idx,
+            forward: !helix_is_even_parity(vhidx),
+            offset2: idx,
+            forward2: helix_is_even_parity(vhidx),
+          );
+          design = design.add_half_crossover(
+            vhidx,
+            neighborVh.idx,
+            offset: idx + 1,
+            forward: !helix_is_even_parity(vhidx),
+            offset2: idx + 1,
+            forward2: helix_is_even_parity(vhidx),
+          );
+        }
+      }
+    }
+
+    // Re-add original deletions
+    for (var entry in deletions.entries) {
+      final vhidx = entry.key;
+      for (var deletionIdx in entry.value) {
+        design = design.add_deletion(vhidx, deletionIdx);
+      }
+    }
+
+    return design;
+  }
+
+  // Copied from the add_half_crossover method in the python package.
+  Design add_half_crossover(
+    int helix,
+    int helix2, {
+    required int offset,
+    required bool forward,
+    int? offset2,
+    bool? forward2,
+  }) {
+    offset2 ??= offset;
+    forward2 ??= !forward;
+
+    var domain1 = domain_on_helix_at(Address(helix_idx: helix, offset: offset, forward: forward));
+    var domain2 = domain_on_helix_at(Address(helix_idx: helix2, offset: offset2, forward: forward2));
+
+    if (domain1 == null) {
+      throw IllegalDesignError(
+        'Cannot add half crossover at (helix=$helix, offset=$offset). '
+        'There is no Domain there.',
+      );
+    }
+    if (domain2 == null) {
+      throw IllegalDesignError(
+        'Cannot add half crossover at (helix=$helix2, offset=$offset2). '
+        'There is no Domain there.',
+      );
+    }
+
+    var strand1 = substrand_to_strand[domain1]!;
+    var strand2 = substrand_to_strand[domain2]!;
+
+    // Same strand → just make it circular
+    if (strand1 == strand2) {
+      var new_strand = strand1.rebuild((b) => b..circular = true);
+      int idx = strand_to_index[strand1]!;
+      return rebuild((d) => d..strands[idx] = new_strand);
+    }
+
+    // Determine which strand is "first" (3' end at offset) and "last" (5' end at offset)
+    Domain domain_first, domain_last;
+    Strand strand_first, strand_last;
+
+    if (domain1.offset_3p == offset && domain2.offset_5p == offset2) {
+      strand_first = strand1;
+      strand_last = strand2;
+      domain_first = domain1;
+      domain_last = domain2;
+    } else if (domain1.offset_5p == offset && domain2.offset_3p == offset2) {
+      strand_first = strand2;
+      strand_last = strand1;
+      domain_first = domain2;
+      domain_last = domain1;
+    } else {
+      throw IllegalDesignError(
+        'Cannot add half crossover. Must have one domain with its 5\' end at the given offset '
+        'and the other with its 3\' end at the given offset, but this is not the case.',
+      );
+    }
+
+    if (strand_first.domains.last != domain_first) {
+      throw IllegalDesignError(
+        'Domain $domain_first is expected to be on the 3\' end of the strand, but is not.',
+      );
+    }
+    if (strand_last.domains.first != domain_last) {
+      throw IllegalDesignError(
+        'Domain $domain_last is expected to be on the 5\' end of the strand, but is not.',
+      );
+    }
+
+    // Merge DNA sequences
+    String? new_dna;
+    if (strand_first.dna_sequence != null && strand_last.dna_sequence != null) {
+      new_dna = strand_first.dna_sequence! + strand_last.dna_sequence!;
+    } else if (strand_first.dna_sequence != null || strand_last.dna_sequence != null) {
+      throw IllegalDesignError(
+        'cannot add crossover between two strands if one has a DNA sequence and the other does not',
+      );
+    }
+
+    var new_strand = Strand(
+      [...strand_first.substrands, ...strand_last.substrands],
+      color: strand_first.color,
+      dna_sequence: new_dna,
+      is_scaffold: strand1.is_scaffold || strand2.is_scaffold,
+    );
+
+    // Put new strand where strand_first was, and remove strand_last
+    int idx_first = strand_to_index[strand_first]!;
+    return rebuild((d) {
+      d.strands[idx_first] = new_strand;
+      d.strands.remove(strand_last);
+    });
+  }
+
+  // Copied from the add_deletion method in the python packaged.
+  Design add_deletion(int helix_idx, int offset) {
+    var domains_to_update = [
+      for (var domain in domains_on_helix(helix_idx))
+        if (domain.contains_offset(offset) && !domain.deletions.contains(offset)) domain,
+    ];
+
+    if (domains_to_update.isEmpty) return this;
+
+    Design design = this;
+    for (var domain in domains_to_update) {
+      var strand = substrand_to_strand[domain]!;
+
+      var new_deletions = domain.deletions.toList()..add(offset);
+      var new_domain = domain.rebuild((b) => b..deletions.replace(new_deletions));
+
+      var new_substrands = [for (var ss in strand.substrands) ss == domain ? new_domain : ss];
+      var new_strand = Strand(
+        new_substrands,
+        color: strand.color,
+        is_scaffold: strand.is_scaffold,
+        dna_sequence: strand.dna_sequence,
+        circular: strand.circular,
+        name: strand.name,
+        modification_5p: strand.modification_5p,
+        modification_3p: strand.modification_3p,
+        modifications_int: strand.modifications_int.toMap(),
+      );
+      design = design.remove_strand(strand).add_strand(new_strand);
+    }
+
+    return design;
+  }
 }
 
 Map<String, HelixGroup> _calculate_groups_from_helix_builders(
