@@ -469,10 +469,10 @@ packages:
     dependency: "direct main"
     description:
       name: react
-      sha256: "05be179c35189f805798e81aa9bf6e4a7ab6c3a0c0b1e4545979d95c04311dff"
+      sha256: bdd1c7dd8ad2ca8ef9846e36c59feb6f2c5189ab0856dfa5a991e9b6cdf570c2
       url: "https://pub.dev"
     source: hosted
-    version: "7.3.1"
+    version: "7.3.2"
   redux:
     dependency: "direct main"
     description:
