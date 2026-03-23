@@ -13,7 +13,7 @@ dependencies:
   color: ^3.0.0
   dnd: ^2.0.1
   http: ^1.2.2
-  meta: ^1.15.0
+  meta: ^1.18.2
   quiver: ^3.2.2
   path: ^1.8.3
   platform_detect: ^2.1.0
