@@ -928,6 +928,23 @@ abstract class WarnOnExitIfUnsavedSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// confirm before replacing design on drag and drop
+
+abstract class ConfirmBeforeReplacingDesignSet
+    with BuiltJsonSerializable
+    implements Action, Built<ConfirmBeforeReplacingDesignSet, ConfirmBeforeReplacingDesignSetBuilder> {
+  bool get confirm;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ConfirmBeforeReplacingDesignSet({required bool confirm}) = _$ConfirmBeforeReplacingDesignSet._;
+
+  ConfirmBeforeReplacingDesignSet._();
+
+  static Serializer<ConfirmBeforeReplacingDesignSet> get serializer =>
+      _$confirmBeforeReplacingDesignSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // loading DNA files
 
 abstract class LoadingDialogShow

@@ -136,6 +136,20 @@ really want to exit without saving.'''
                 actions.WarnOnExitIfUnsavedSet(warn: !props.state.ui_state.warn_on_exit_if_unsaved),
               ))
           ..key = 'warn-on-exit-if-unsaved')(),
+        (MenuBoolean()
+          ..value = props.state.ui_state.confirm_before_replacing_design
+          ..display = 'Confirm before replacing current design on drag-and-drop'
+          ..tooltip = '''\
+If checked, when dragging a file to the scadnano browser tab, if a design is
+currently loaded, then a confirmation window will display to ask before 
+replacing the current design. Uncheck to suppress this popup window confirmation.'''
+          ..on_change =
+              ((_) => app.dispatch(
+                actions.ConfirmBeforeReplacingDesignSet(
+                  confirm: !props.state.ui_state.confirm_before_replacing_design,
+                ),
+              ))
+          ..key = 'confirm-before-replacing-design')(),
         DropdownDivider({'key': 'divider-save'}),
         (MenuFormFile()
           ..id_ = 'import-cadnano-form-file'

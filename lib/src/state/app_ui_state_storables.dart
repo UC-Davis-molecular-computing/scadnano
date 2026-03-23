@@ -25,6 +25,8 @@ abstract class AppUIStateStorables
 
   bool get autofit;
 
+  bool get confirm_before_replacing_design;
+
   bool get show_dna;
 
   bool get show_strand_names;
@@ -146,6 +148,7 @@ abstract class AppUIStateStorables
     b.select_mode_state = DEFAULT_SelectModeStateBuilder;
     b.side_selected_helix_idxs = SetBuilder<int>();
     b.autofit = true;
+    b.confirm_before_replacing_design = true;
     b.show_dna = false;
     b.show_strand_names = false;
     b.show_strand_labels = false;

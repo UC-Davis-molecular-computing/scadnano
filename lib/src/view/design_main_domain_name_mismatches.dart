@@ -63,7 +63,7 @@ class DesignMainDomainNameMismatchesComponent extends UiComponent2<DesignMainDom
                 ..base_svg_pos = base_svg_pos
                 ..geometry = geometry
                 ..forward = domain.forward
-                ..color = 'blue'
+                ..color = 'magenta'
                 ..domain_name_mismatch = domain_name_mismatch
                 ..key = key)();
           untransformed_mismatch_components.add(mismatch_component);

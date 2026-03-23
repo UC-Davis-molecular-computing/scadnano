@@ -170,10 +170,19 @@ setup_file_drag_and_drop_listener(Element drop_zone) {
     var ext = path.extension(filename);
     var ext_lower = ext.toLowerCase();
     if (dot_exts.contains(ext_lower)) {
-      var confirm =
-          app.state.has_error || window.confirm('Are you sure you want to replace the current design?');
+      bool proceed = true;
+      if (!app.state.has_error) {
+        if (app.state.ui_state.confirm_before_replacing_design) {
+          var confirm = window.confirm('Are you sure you want to replace the current design?');
+          if (!confirm) {
+            proceed = false;
+          }
+        } else {
+          proceed = true;
+        }
+      }
 
-      if (confirm) {
+      if (proceed) {
         FileReader file_reader = new FileReader();
         //XXX: Technically to be clean Redux (or Elm architecture), this should be an Action,
         // and what is done in file_loaded should be another Action.

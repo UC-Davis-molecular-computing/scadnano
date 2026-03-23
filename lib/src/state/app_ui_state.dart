@@ -141,6 +141,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   String get loaded_script_filename => storables.loaded_script_filename;
 
+  bool get confirm_before_replacing_design => storables.confirm_before_replacing_design;
+
   bool get show_dna => storables.show_dna;
 
   bool get show_strand_names => storables.show_strand_names;

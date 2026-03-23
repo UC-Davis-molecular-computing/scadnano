@@ -239,6 +239,7 @@ part 'serializers.g.dart';
   DNAExtensionMove,
   DNAExtensionsMove,
   WarnOnExitIfUnsavedSet,
+  ConfirmBeforeReplacingDesignSet,
   AssignDNA,
   AssignDNAComplementFromBoundStrands,
   RemoveDNA,

@@ -181,6 +181,9 @@ bool helix_group_move_start_app_ui_state_reducer(bool _, actions.HelixGroupMoveS
 
 bool helix_group_move_stop_app_ui_state_reducer(bool _, actions.HelixGroupMoveStop action) => false;
 
+bool confirm_before_replacing_design_reducer(bool _, actions.ConfirmBeforeReplacingDesignSet action) =>
+    action.confirm;
+
 bool show_dna_reducer(bool _, actions.ShowDNASet action) => action.show;
 
 bool load_dialog_show_app_ui_state_reducer(bool _, actions.LoadingDialogShow action) => true;
@@ -506,6 +509,9 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
           ..displayed_group_name = displayed_group_name_reducer(storables.displayed_group_name, action)
           ..select_mode_state.replace(select_mode_state_reducer(storables.select_mode_state, action))
           ..edit_modes.replace(edit_modes_reducer(storables.edit_modes, action))
+          ..confirm_before_replacing_design = TypedReducer<bool, actions.ConfirmBeforeReplacingDesignSet>(
+            confirm_before_replacing_design_reducer,
+          )(storables.confirm_before_replacing_design, action)
           ..show_dna = TypedReducer<bool, actions.ShowDNASet>(show_dna_reducer)(storables.show_dna, action)
           ..show_strand_names = TypedReducer<bool, actions.ShowStrandNamesSet>(show_strand_names_reducer)(
             storables.show_strand_names,
