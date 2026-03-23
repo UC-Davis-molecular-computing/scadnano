@@ -14,7 +14,7 @@ mixin DesignMainWarningStarProps on UiProps {
   late bool forward;
   late Geometry geometry;
   late String color;
-  late DomainNameMismatch domain_name_mismatch;
+  DomainNameMismatch? domain_name_mismatch;
 }
 
 class DesignMainWarningStarComponent extends UiComponent2<DesignMainWarningStarProps> {
@@ -41,14 +41,20 @@ class DesignMainWarningStarComponent extends UiComponent2<DesignMainWarningStarP
       points.add('${xs[i].toStringAsFixed(2)},${ys[i].toStringAsFixed(2)}');
     }
 
-    var tooltip_text = '''\
+    String tooltip_text;
+    DomainNameMismatch? domain_name_mismatch = props.domain_name_mismatch;
+    if (domain_name_mismatch != null) {
+      tooltip_text = '''\
 Domain name mismatch:
-${props.domain_name_mismatch.forward_domain.toString()} vs.
-${props.domain_name_mismatch.reverse_domain.toString()}
+${domain_name_mismatch.forward_domain.toString()} vs.
+${domain_name_mismatch.reverse_domain.toString()}
 
 Domain names are considered mismatched if they are not the same string, with one ending in *,
 or if the domains overlap partially but not totally (do not have identical start and end
 positions on the helix they share).''';
+    } else {
+      tooltip_text = '';
+    }
 
     // for SVG need nested title element, rather than title attribute
     return (Dom.polygon()
