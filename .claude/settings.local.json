@@ -20,7 +20,8 @@
       "WebSearch",
       "Bash(scoop install:*)",
       "Bash(scoop uninstall:*)",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "Bash(conda init:*)"
     ],
     "deny": [],
     "ask": [],

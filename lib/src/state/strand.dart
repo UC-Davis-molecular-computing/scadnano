@@ -956,7 +956,16 @@ abstract class Strand
 
     String? name = util.optional_field_with_null_default(json_map, constants.name_key);
 
-    String? label = util.optional_field_with_null_default(json_map, constants.label_key);
+    Object? label_obj = util.optional_field_with_null_default(json_map, constants.label_key);
+
+    String? label = null;
+    if (label_obj != null && label_obj is! String) {
+      print(
+        "Warning: label field on strand should be a string, "
+        "but got ${label_obj} of type ${label_obj.runtimeType}. Converting it to a string.",
+      );
+      label = label_obj.toString();
+    }
 
     var unused_fields = util.unused_fields_map(json_map, constants.strand_keys);
 
