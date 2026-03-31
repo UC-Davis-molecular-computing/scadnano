@@ -850,7 +850,7 @@ label+select {
 }
 
 .insertion-curve {
-    stroke-width: 2.5px;
+    stroke-width: 4;
     fill: none;
 }
 
