@@ -46,7 +46,7 @@ class End5PrimeComponent extends UiComponent2<End5PrimeProps> {
   render() {
     //XXX: width, height, rx, ry should be do-able in CSS. However, Firefox won't display properly
     // if they are specified in CSS, but it will if they are specified here.
-    num width = 7;
+    num width = 9.5;
     var rect_props =
         Dom.rect()
           ..className = props.classname

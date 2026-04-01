@@ -646,6 +646,7 @@ Ignored if design is not an origami (i.e., does not have at least one scaffold).
       view_menu_warnings(),
       view_menu_autofit(),
       view_menu_show_labels(),
+      view_menu_strands(),
       view_menu_mods(),
       view_menu_helices(),
       view_menu_display_major_ticks_options(),
@@ -843,6 +844,40 @@ If unchecked, the warning will not appear.'''
         ..on_new_value =
             ((num font_size) => app.dispatch(actions.DomainLabelFontSizeSet(font_size: font_size.toDouble())))
         ..key = 'domain-label-font-size')(),
+    ]);
+  }
+
+  ReactElement view_menu_strands() {
+    return (MenuDropdownRight()
+      ..title_ = 'Strands'
+      ..id_ = 'view_menu_strands-dropdown'
+      ..key = 'view_menu_strands-dropdown'
+      ..className = 'submenu_item')([
+      (MenuNumber()
+        ..display = 'Stroke width'
+        ..default_value = props.state.ui_state.stroke_width
+        ..tooltip =
+            'Adjust the width of lines representing stands (e.g., domains, crossovers, loopouts, etc.)'
+        ..on_new_value =
+            ((num stroke_width) =>
+                app.dispatch(actions.StrokeWidthSet(stroke_width: stroke_width.toDouble())))
+        ..key = 'stroke-width')(),
+      (MenuNumber()
+        ..display = 'Crossover opacity'
+        ..default_value = props.state.ui_state.crossover_opacity
+        ..tooltip = 'Adjust the opacity of crossover curves between different helices.'
+        ..on_new_value =
+            ((num opacity) => app.dispatch(actions.CrossoverOpacitySet(opacity: opacity.toDouble())))
+        ..key = 'crossover-opacity')(),
+      (MenuNumber()
+        ..display = 'Crossover opacity (same helix)'
+        ..default_value = props.state.ui_state.crossover_opacity_same_helix
+        ..tooltip =
+            'Adjust the opacity of crossover curves between domains on the same helix and same direction.'
+        ..on_new_value =
+            ((num opacity) =>
+                app.dispatch(actions.CrossoverOpacitySameHelixSet(opacity: opacity.toDouble())))
+        ..key = 'crossover-opacity-same-helix')(),
     ]);
   }
 
@@ -1300,6 +1335,24 @@ is less expressive than SVG and can render the text strangely.'''
           app.dispatch(actions.ExportSvgTextSeparatelySet(!props.state.ui_state.export_svg_text_separately));
         }
         ..key = 'export-svg-text-separately')(),
+      (MenuBoolean()
+        ..value = props.state.ui_state.export_svg_5p_ends
+        ..display = "export 5' end squares"
+        ..tooltip = "When unchecked, 5' end squares will be excluded from exported SVGs."
+        ..name = 'export-svg-5p-ends'
+        ..on_change = (_) {
+          app.dispatch(actions.ExportSvg5pEndsSet(!props.state.ui_state.export_svg_5p_ends));
+        }
+        ..key = 'export-svg-5p-ends')(),
+      (MenuBoolean()
+        ..value = props.state.ui_state.export_svg_3p_ends
+        ..display = "export 3' end triangles"
+        ..tooltip = "When unchecked, 3' end triangles will be excluded from exported SVGs."
+        ..name = 'export-svg-3p-ends'
+        ..on_change = (_) {
+          app.dispatch(actions.ExportSvg3pEndsSet(!props.state.ui_state.export_svg_3p_ends));
+        }
+        ..key = 'export-svg-3p-ends')(),
       DropdownDivider({'key': 'divider-export-svg'}),
       (MenuDropdownItem()
         ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna_sequences.export_dna))

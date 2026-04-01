@@ -22,6 +22,7 @@ import 'package:scadnano/src/util.dart';
 
 import 'middleware/all_middleware.dart';
 import 'middleware/oxview_update_view.dart';
+import 'middleware/stroke_width.dart';
 import 'middleware/throttle.dart';
 import 'state/dna_ends_move.dart';
 import 'state/grid_position.dart';
@@ -113,6 +114,9 @@ class App {
       // print("11");
       // do next after view renders so that JS SVG pan zoom containers are defined
       util.set_zoom_speed(store.state.ui_state.zoom_speed);
+      set_strand_stroke_width(store.state.ui_state.stroke_width);
+      set_crossover_opacity(store.state.ui_state.crossover_opacity);
+      set_crossover_opacity_same_helix(store.state.ui_state.crossover_opacity_same_helix);
       // print("12");
     }
   }

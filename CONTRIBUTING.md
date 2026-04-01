@@ -847,6 +847,13 @@ changes to the GitHub repository, which are explained in more detail in the next
    last time it was saved), but it is still UI state, then it is stored in `app.state.ui_state`. Of course,
    `app.state.design` is persisted in localStorage, but that is handled separately.
 
+   **Default values for `AppUIStateStorables` and `AppUIState`:** When adding a new field to
+   `AppUIStateStorables` or `AppUIState`, you must provide a default value in the respective
+   `_initializeBuilder` method. This ensures that even if the key is not present in localStorage (e.g., due
+   to upgrading from an older version of scadnano), the field will be populated with a sensible default value
+   instead of raising an exception. For example, a new `double` field `stroke_width` should have a line like
+   `b.stroke_width = constants.default_stroke_width;` in `AppUIStateStorables._initializeBuilder`.
+
    **Special instructions for modifying Design:** If the new states show up in the `Design`, some care must be
    taken. `to_json_serializable` and `from_json` must be modified to handle the new data, since as a part of
    the `Design`, it needs to be stored in the JSON `.sc` file. The goal of `to_json_serializable` is to create

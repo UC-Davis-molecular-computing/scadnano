@@ -139,6 +139,9 @@ const default_domain_name_font_size = 10.0;
 const default_domain_label_font_size = 10.0;
 const default_major_tick_offset_font_size = 12.0;
 const default_major_tick_width_font_size = 8.0;
+const default_stroke_width = 5.0;
+const default_crossover_opacity = 0.5;
+const default_crossover_opacity_same_helix = 0.5;
 
 const default_modification_connector_length = 4;
 

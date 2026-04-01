@@ -679,16 +679,16 @@ label+select {
 /*******************************************************************************/
 /* begin formatting of Strand elements when selected/selectable/not selectable */
 
-.five-prime-end-first-substrand,
+/* .five-prime-end-first-substrand,
 .three-prime-end-last-substrand {
     stroke: black;
     stroke-width: 0.5px;
-}
+} */
 
 .five-prime-end-moving,
 .three-prime-end-moving {
-    stroke: black;
-    stroke-width: 0.5px;
+    /* stroke: black;
+    stroke-width: 0.5px; */
     fill-opacity: 0.5;
     pointer-events: none;
     /* XXX: need this so we can detect mouse up on non-moving end underneath */
@@ -696,8 +696,8 @@ label+select {
 
 .five-prime-end,
 .three-prime-end {
-    stroke: black;
-    stroke-width: 0.5px;
+    /* stroke: black;
+    stroke-width: 0.5px; */
     visibility: hidden;
     pointer-events: all;
 }
@@ -706,13 +706,14 @@ label+select {
 .loopout-curve,
 .domain-line-moving,
 .extension-line {
-    stroke-width: 4;
+    stroke-width: var(--strand-stroke-width, 4);
     stroke-linecap: round;
     fill: none;
 }
 
 .base-pair-line {
-    stroke-width: 2;
+    stroke: #333;
+    stroke-width: 3;
     stroke-linecap: square;
     fill: none;
 }
@@ -758,7 +759,7 @@ label+select {
 .selected .modification,
 .selected .domain-line,
 .selected .extension-line {
-    stroke-width: 5pt;
+    stroke-width: calc(var(--strand-stroke-width, 4) + 1);
 }
 
 .selected-pink.crossover-curve,
@@ -776,7 +777,7 @@ label+select {
 .selected-pink .domain-line,
 .selected-pink .extension-line {
     stroke: hotpink;
-    stroke-width: 5pt;
+    stroke-width: calc(var(--strand-stroke-width, 4) + 1);
 }
 
 .selected.five-prime-end,
@@ -818,24 +819,24 @@ label+select {
 
 
 .crossover-curve {
-    stroke-width: 4;
-    stroke-opacity: 0.3;
+    stroke-width: var(--strand-stroke-width, 4);
+    stroke-opacity: var(--crossover-opacity, 0.5);
     fill: none;
 }
 
 .crossover-curve-same-helix {
-    stroke-opacity: 0.55;
+    stroke-opacity: var(--crossover-opacity-same-helix, 0.5);
 }
 
 .potential-vertical-crossover-curve {
-    stroke-width: 4;
+    stroke-width: var(--strand-stroke-width, 4);
     fill: none;
     visibility: hidden;
     pointer-events: all;
 }
 
 .potential-vertical-crossover-curve:hover {
-    stroke-width: 4;
+    stroke-width: var(--strand-stroke-width, 4);
     stroke-opacity: 0.3;
     fill: none;
     visibility: visible;
@@ -843,14 +844,14 @@ label+select {
 
 /* potential-segment captures both potential crossovers and potential extensions */
 .potential-segment {
-    stroke-width: 4;
+    stroke-width: var(--strand-stroke-width, 4);
     stroke-opacity: 0.3;
     fill: none;
     pointer-events: none;
 }
 
 .insertion-curve {
-    stroke-width: 4;
+    stroke-width: var(--strand-stroke-width, 4);
     fill: none;
 }
 

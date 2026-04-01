@@ -40,6 +40,7 @@ import 'helices_positions_set_based_on_crossovers.dart';
 import 'invalidate_png.dart';
 import 'autostaple_and_autobreak.dart';
 import 'zoom_speed.dart';
+import 'stroke_width.dart';
 
 final all_middleware = List<Middleware<AppState>>.unmodifiable([
   reset_local_storage_middleware,
@@ -80,4 +81,5 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   zoom_speed_middleware,
   oxdna_export_middleware,
   oxview_update_view_middleware,
+  stroke_width_middleware,
 ]);

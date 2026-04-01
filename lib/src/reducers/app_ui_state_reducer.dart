@@ -221,6 +221,13 @@ double major_tick_offset_font_size_reducer(double _, actions.MajorTickOffsetFont
 double major_tick_width_font_size_reducer(double _, actions.MajorTickWidthFontSizeSet action) =>
     action.font_size;
 
+double stroke_width_reducer(double _, actions.StrokeWidthSet action) => action.stroke_width;
+
+double crossover_opacity_reducer(double _, actions.CrossoverOpacitySet action) => action.opacity;
+
+double crossover_opacity_same_helix_reducer(double _, actions.CrossoverOpacitySameHelixSet action) =>
+    action.opacity;
+
 bool show_mismatches_reducer(bool _, actions.ShowMismatchesSet action) => action.show;
 
 bool show_domain_name_mismatches_reducer(bool _, actions.ShowDomainNameMismatchesSet action) =>
@@ -298,6 +305,10 @@ bool show_base_pair_lines_with_mismatches_reducer(
 
 bool export_svg_text_separately_reducer(bool _, actions.ExportSvgTextSeparatelySet action) =>
     action.export_svg_text_separately;
+
+bool export_svg_5p_ends_reducer(bool _, actions.ExportSvg5pEndsSet action) => action.export_svg_5p_ends;
+
+bool export_svg_3p_ends_reducer(bool _, actions.ExportSvg3pEndsSet action) => action.export_svg_3p_ends;
 
 bool ox_export_only_selected_strands_reducer(bool _, actions.OxExportOnlySelectedStrandsSet action) =>
     action.only_selected;
@@ -561,6 +572,15 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
           ..major_tick_width_font_size = TypedReducer<double, actions.MajorTickWidthFontSizeSet>(
             major_tick_width_font_size_reducer,
           )(storables.major_tick_width_font_size, action)
+          ..stroke_width = TypedReducer<double, actions.StrokeWidthSet>(
+            stroke_width_reducer,
+          )(storables.stroke_width, action)
+          ..crossover_opacity = TypedReducer<double, actions.CrossoverOpacitySet>(
+            crossover_opacity_reducer,
+          )(storables.crossover_opacity, action)
+          ..crossover_opacity_same_helix = TypedReducer<double, actions.CrossoverOpacitySameHelixSet>(
+            crossover_opacity_same_helix_reducer,
+          )(storables.crossover_opacity_same_helix, action)
           ..show_mismatches = TypedReducer<bool, actions.ShowMismatchesSet>(show_mismatches_reducer)(
             storables.show_mismatches,
             action,
@@ -664,6 +684,12 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
           ..export_svg_text_separately = TypedReducer<bool, actions.ExportSvgTextSeparatelySet>(
             export_svg_text_separately_reducer,
           )(storables.export_svg_text_separately, action)
+          ..export_svg_5p_ends = TypedReducer<bool, actions.ExportSvg5pEndsSet>(
+            export_svg_5p_ends_reducer,
+          )(storables.export_svg_5p_ends, action)
+          ..export_svg_3p_ends = TypedReducer<bool, actions.ExportSvg3pEndsSet>(
+            export_svg_3p_ends_reducer,
+          )(storables.export_svg_3p_ends, action)
           ..ox_export_only_selected_strands = TypedReducer<bool, actions.OxExportOnlySelectedStrandsSet>(
             ox_export_only_selected_strands_reducer,
           )(storables.ox_export_only_selected_strands, action)

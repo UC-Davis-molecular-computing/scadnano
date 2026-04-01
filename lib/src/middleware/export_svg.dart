@@ -16,6 +16,7 @@ import 'package:scadnano/src/view/design_main_dna_sequence.dart';
 import '../app.dart';
 import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
+import '../constants.dart' as constants;
 import '../util.dart' as util;
 
 export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
@@ -300,6 +301,15 @@ SvgSvgElement make_portable(SvgSvgElement src) {
 SvgSvgElement get_cloned_svg_element_with_style(List<Element> selected_elts, bool separate_text) {
   var cloned_svg_element_with_style =
       SvgSvgElement()..children = selected_elts.map(clone_and_apply_style).toList();
+
+  // Remove 5'/3' ends BEFORE make_portable, because make_portable replaces <rect> elements
+  // with new ones that don't preserve CSS classes (so querySelectorAll can't find them after).
+  _remove_end_elements_if_needed(
+    cloned_svg_element_with_style,
+    export_5p: app.state.ui_state.export_svg_5p_ends,
+    export_3p: app.state.ui_state.export_svg_3p_ends,
+  );
+
   if (separate_text) {
     cloned_svg_element_with_style = make_portable(cloned_svg_element_with_style);
   }
@@ -316,6 +326,22 @@ SvgSvgElement get_cloned_svg_element_with_style(List<Element> selected_elts, boo
   );
 
   return cloned_svg_element_with_style;
+}
+
+/// Remove 5' and/or 3' end elements from a cloned SVG element based on user settings.
+void _remove_end_elements_if_needed(Element svg_element, {required bool export_5p, required bool export_3p}) {
+  if (!export_5p) {
+    // 5' ends are <rect> elements with class five-prime-end or five-prime-end-first-substrand
+    svg_element
+        .querySelectorAll('.${constants.css_selector_end_5p_domain}, .${constants.css_selector_end_5p_strand}')
+        .forEach((e) => e.remove());
+  }
+  if (!export_3p) {
+    // 3' ends are <polygon> elements with class three-prime-end or three-prime-end-last-substrand
+    svg_element
+        .querySelectorAll('.${constants.css_selector_end_3p_domain}, .${constants.css_selector_end_3p_strand}')
+        .forEach((e) => e.remove());
+  }
 }
 
 _export_svg(svg.SvgSvgElement svg_element, String filename_append) {
@@ -343,6 +369,12 @@ _export_from_element(Element svg_element, String filename_append) {
   // if element is not an svg element (it can be a child element of svg e.g. groups, lines, text, etc), wrap in svg tag
   if (!(svg_element is svg.SvgSvgElement))
     cloned_svg_element_with_style = SvgSvgElement()..children = [cloned_svg_element_with_style];
+
+  _remove_end_elements_if_needed(
+    cloned_svg_element_with_style,
+    export_5p: app.state.ui_state.export_svg_5p_ends,
+    export_3p: app.state.ui_state.export_svg_3p_ends,
+  );
 
   _export_svg(cloned_svg_element_with_style, filename_append);
 }

@@ -141,6 +141,16 @@ abstract class AppUIStateStorables
 
   bool get warn_about_unassigned_dna_on_export;
 
+  double get stroke_width;
+
+  double get crossover_opacity;
+
+  double get crossover_opacity_same_helix;
+
+  bool get export_svg_5p_ends;
+
+  bool get export_svg_3p_ends;
+
   static void _initializeBuilder(AppUIStateStorablesBuilder b) {
     // This ensures that even if these keys are not in localStorage (e.g., due to upgrading),
     // then they will be populated with a default value instead of raising an exception.
@@ -205,6 +215,11 @@ abstract class AppUIStateStorables
     b.ox_export_only_selected_strands = false;
     b.warn_about_unassigned_dna_and_oxview_open = true;
     b.warn_about_unassigned_dna_on_export = true;
+    b.stroke_width = constants.default_stroke_width;
+    b.crossover_opacity = constants.default_crossover_opacity;
+    b.crossover_opacity_same_helix = constants.default_crossover_opacity_same_helix;
+    b.export_svg_5p_ends = true;
+    b.export_svg_3p_ends = true;
   }
 
   /************************ begin BuiltValue boilerplate ************************/

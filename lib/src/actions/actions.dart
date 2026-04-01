@@ -689,6 +689,46 @@ abstract class MajorTickWidthFontSizeSet
   static Serializer<MajorTickWidthFontSizeSet> get serializer => _$majorTickWidthFontSizeSetSerializer;
 }
 
+abstract class StrokeWidthSet
+    with BuiltJsonSerializable
+    implements Action, Built<StrokeWidthSet, StrokeWidthSetBuilder> {
+  double get stroke_width;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrokeWidthSet({required double stroke_width}) = _$StrokeWidthSet._;
+
+  StrokeWidthSet._();
+
+  static Serializer<StrokeWidthSet> get serializer => _$strokeWidthSetSerializer;
+}
+
+abstract class CrossoverOpacitySet
+    with BuiltJsonSerializable
+    implements Action, Built<CrossoverOpacitySet, CrossoverOpacitySetBuilder> {
+  double get opacity;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory CrossoverOpacitySet({required double opacity}) = _$CrossoverOpacitySet._;
+
+  CrossoverOpacitySet._();
+
+  static Serializer<CrossoverOpacitySet> get serializer => _$crossoverOpacitySetSerializer;
+}
+
+abstract class CrossoverOpacitySameHelixSet
+    with BuiltJsonSerializable
+    implements Action, Built<CrossoverOpacitySameHelixSet, CrossoverOpacitySameHelixSetBuilder> {
+  double get opacity;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory CrossoverOpacitySameHelixSet({required double opacity}) = _$CrossoverOpacitySameHelixSet._;
+
+  CrossoverOpacitySameHelixSet._();
+
+  static Serializer<CrossoverOpacitySameHelixSet> get serializer =>
+      _$crossoverOpacitySameHelixSetSerializer;
+}
+
 abstract class SetModificationDisplayConnector
     with BuiltJsonSerializable
     implements Action, Built<SetModificationDisplayConnector, SetModificationDisplayConnectorBuilder> {
@@ -2281,6 +2321,38 @@ abstract class ExportSvgTextSeparatelySet
   ExportSvgTextSeparatelySet._();
 
   static Serializer<ExportSvgTextSeparatelySet> get serializer => _$exportSvgTextSeparatelySetSerializer;
+}
+
+abstract class ExportSvg5pEndsSet
+    with BuiltJsonSerializable
+    implements Action, Built<ExportSvg5pEndsSet, ExportSvg5pEndsSetBuilder> {
+  bool get export_svg_5p_ends;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExportSvg5pEndsSet(bool export_svg_5p_ends) =>
+      ExportSvg5pEndsSet.from((b) => b..export_svg_5p_ends = export_svg_5p_ends);
+
+  factory ExportSvg5pEndsSet.from([void Function(ExportSvg5pEndsSetBuilder) updates]) = _$ExportSvg5pEndsSet;
+
+  ExportSvg5pEndsSet._();
+
+  static Serializer<ExportSvg5pEndsSet> get serializer => _$exportSvg5pEndsSetSerializer;
+}
+
+abstract class ExportSvg3pEndsSet
+    with BuiltJsonSerializable
+    implements Action, Built<ExportSvg3pEndsSet, ExportSvg3pEndsSetBuilder> {
+  bool get export_svg_3p_ends;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExportSvg3pEndsSet(bool export_svg_3p_ends) =>
+      ExportSvg3pEndsSet.from((b) => b..export_svg_3p_ends = export_svg_3p_ends);
+
+  factory ExportSvg3pEndsSet.from([void Function(ExportSvg3pEndsSetBuilder) updates]) = _$ExportSvg3pEndsSet;
+
+  ExportSvg3pEndsSet._();
+
+  static Serializer<ExportSvg3pEndsSet> get serializer => _$exportSvg3pEndsSetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

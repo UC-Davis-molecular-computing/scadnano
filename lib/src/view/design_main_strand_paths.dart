@@ -111,11 +111,13 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
           props.side_selected_helix_idxs,
           props.only_display_selected_helices,
         );
+        bool is_last_substrand = i == strand.substrands.length - 1;
         if (draw_domain) {
           paths.add(
             (DesignMainDomain()
               ..domain = domain
               ..strand = props.strand
+              ..is_last_substrand = is_last_substrand
               ..transform = transform_of_helix2(props, domain.helix)
               ..context_menu_strand = props.context_menu_strand
               ..strand_color = strand.color
