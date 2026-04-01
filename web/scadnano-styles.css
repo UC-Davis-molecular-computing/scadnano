@@ -712,7 +712,7 @@ label+select {
 }
 
 .base-pair-line {
-    stroke: #333;
+    stroke: #444;
     stroke-width: 3;
     stroke-linecap: square;
     fill: none;
