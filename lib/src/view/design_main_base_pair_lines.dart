@@ -66,11 +66,11 @@ class DesignMainBasePairLinesComponent extends UiComponent2<DesignMainBasePairLi
                 ..y2 = base_svg_reverse_pos.y
                 ..className = constants.css_selector_base_pair_line
                 ..stroke = 'black'
+                ..transform = transform_str
                 ..key = 'base-pair-line-H${helix_idx}-${offset}')();
           helix_components.add(base_pair_line);
         }
         var helix_dom_group = (Dom.g()
-          ..transform = transform_str
           ..className = 'base-pair-lines-components-in-helix'
           ..key = 'base-pair-lines-components-in-helix-H${helix_idx}')(helix_components);
         base_pair_lines_components.add(helix_dom_group);

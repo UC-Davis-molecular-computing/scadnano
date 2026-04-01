@@ -73,6 +73,7 @@ class DesignMainBasePairRectangleComponent extends UiComponent2<DesignMainBasePa
                   ..height = base_svg_reverse_pos.y - base_svg_forward_pos.y
                   ..className = constants.css_selector_base_pair_rect
                   ..fill = 'grey'
+                  ..transform = transform_str
                   ..key = 'base-pair-rect-H${helix_idx}-${offset}')();
           } else {
             base_pair_ele =
@@ -84,6 +85,7 @@ class DesignMainBasePairRectangleComponent extends UiComponent2<DesignMainBasePa
                   ..y2 = base_svg_reverse_pos.y
                   ..className = constants.css_selector_base_pair_line
                   ..stroke = 'grey'
+                  ..transform = transform_str
                   ..key = 'base-pair-line-H${helix_idx}-${offset}')();
           }
 
@@ -92,7 +94,6 @@ class DesignMainBasePairRectangleComponent extends UiComponent2<DesignMainBasePa
           last_svg_forward_pos = base_svg_forward_pos;
         }
         var helix_dom_group = (Dom.g()
-          ..transform = transform_str
           ..className = 'base-pair-lines-components-in-helix'
           ..key = 'base-pair-lines-components-in-helix-H${helix_idx}')(helix_components);
         base_pair_lines_components.add(helix_dom_group);
