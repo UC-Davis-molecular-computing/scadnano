@@ -1072,6 +1072,13 @@ changes to the GitHub repository, which are explained in more detail in the next
     See [Pushing to the repository dev branch and documenting changes (done on all updates)](#pushing-to-the-repository-dev-branch-and-documenting-changes-done-on-all-updates)
     for more details.
 
+12. **Add release notes**: (For new features only)
+    When we add a feature and want to give users instructions on how to use it, add a comment to the issue 
+    associated to the feature, with the heading `# Release notes` followed by the subheading 
+    `## <short description of feature>`. Include screenshots if possible. See here for examples:
+    - https://github.com/UC-Davis-molecular-computing/scadnano/issues/1032#issuecomment-3264079100
+    - https://github.com/UC-Davis-molecular-computing/scadnano/issues/843#issuecomment-1683118908
+
 TODO: add link to a more detailed tutorial walking through the steps above showing actual code that gets added
 at each step.
 
