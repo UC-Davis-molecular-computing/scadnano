@@ -130,14 +130,14 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
   @override
   componentDidMount() {
     var element = querySelector('#${props.selectable_modification.id}')!;
-    element.addEventListener('contextmenu', on_context_menu);
+    element.addEventListener(constants.context_menu_event_name, on_context_menu);
   }
 
   @override
   componentWillUnmount() {
     super.componentWillUnmount();
     var element = querySelector('#${props.selectable_modification.id}')!;
-    element.removeEventListener('contextmenu', on_context_menu);
+    element.removeEventListener(constants.context_menu_event_name, on_context_menu);
   }
 
   on_context_menu(Event ev) {

@@ -217,14 +217,14 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
   @override
   componentDidMount() {
     var element = querySelector('#${props.selectable_insertion.id_group}')!;
-    element.addEventListener('contextmenu', on_context_menu);
+    element.addEventListener(constants.context_menu_event_name, on_context_menu);
     super.componentDidMount();
   }
 
   @override
   componentWillUnmount() {
     var element = querySelector('#${props.selectable_insertion.id_group}')!;
-    element.removeEventListener('contextmenu', on_context_menu);
+    element.removeEventListener(constants.context_menu_event_name, on_context_menu);
     super.componentWillUnmount();
   }
 

@@ -88,13 +88,13 @@ class DesignMainStrandDomainTextComponent extends UiComponent2<DesignMainStrandD
   @override
   componentDidMount() {
     var element = querySelector('#${id()}')!;
-    element.addEventListener('contextmenu', on_context_menu);
+    element.addEventListener(constants.context_menu_event_name, on_context_menu);
   }
 
   @override
   componentWillUnmount() {
     var element = querySelector('#${id()}')!;
-    element.removeEventListener('contextmenu', on_context_menu);
+    element.removeEventListener(constants.context_menu_event_name, on_context_menu);
     super.componentWillUnmount();
   }
 
