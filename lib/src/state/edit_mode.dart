@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
@@ -29,25 +31,15 @@ class EditModeChoice extends EnumClass {
 
   static EditModeChoice valueOf(String name) => _$valueOf(name);
 
-  // Key codes for keyboard shortcuts (matching dart:html KeyCode values)
-  static const int _KEY_S = 83;
-  static const int _KEY_R = 82;
-  static const int _KEY_P = 80;
-  static const int _KEY_N = 78;
-  static const int _KEY_L = 76;
-  static const int _KEY_I = 73;
-  static const int _KEY_D = 68;
-  static const int _KEY_M = 77;
-
   static const Map<int, EditModeChoice> key_code_to_mode = {
-    _KEY_S: select,
-    _KEY_R: rope_select,
-    _KEY_P: pencil,
-    _KEY_N: nick,
-    _KEY_L: ligate,
-    _KEY_I: insertion,
-    _KEY_D: deletion,
-    _KEY_M: move_group,
+    KeyCode.S: select,
+    KeyCode.R: rope_select,
+    KeyCode.P: pencil,
+    KeyCode.N: nick,
+    KeyCode.L: ligate,
+    KeyCode.I: insertion,
+    KeyCode.D: deletion,
+    KeyCode.M: move_group,
   };
 
   int key_code() {

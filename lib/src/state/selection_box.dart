@@ -1,4 +1,3 @@
-import 'dart:svg' hide Point;
 import 'dart:math';
 
 import 'package:built_value/serializer.dart';
@@ -49,13 +48,6 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
   num get height => (start.y - current.y).abs();
 
   static const DECIMAL_PLACES = 1;
-
-  static rect_to_string(Rect bbox) =>
-      ''
-      '${bbox.x!.toStringAsFixed(DECIMAL_PLACES)} '
-      '${bbox.y!.toStringAsFixed(DECIMAL_PLACES)} '
-      '${bbox.width!.toStringAsFixed(DECIMAL_PLACES)} '
-      '${bbox.height!.toStringAsFixed(DECIMAL_PLACES)}';
 
   String toString() =>
       'start=('
