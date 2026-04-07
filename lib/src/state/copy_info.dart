@@ -8,7 +8,6 @@ import 'design.dart';
 import 'strand.dart';
 import 'address.dart';
 import 'strands_move.dart';
-import '../reducers/strands_move_reducer.dart' as strands_move_reducer;
 
 part 'copy_info.g.dart';
 
@@ -90,28 +89,7 @@ abstract class CopyInfo with BuiltJsonSerializable implements Built<CopyInfo, Co
     );
   }
 
-  CopyInfo move_to_next(AppState state) {
-    assert(has_translation());
-
-    if (next_translation_in_bounds_and_legal(state)) {
-      return rebuild((b) => b..prev_paste_address = this.next_paste_address?.toBuilder());
-    } else {
-      return this;
-    }
-  }
-
   bool has_translation() => translation != null;
-
-  bool next_translation_in_bounds_and_legal(AppState state) {
-    if (translation == null) {
-      return false;
-    }
-    var strands_move = create_strands_move(state);
-    bool in_bounds_and_legal =
-        strands_move_reducer.in_bounds(state.design, strands_move) &&
-        strands_move_reducer.is_allowable(state.design, strands_move);
-    return in_bounds_and_legal;
-  }
 
   /// if [start_at_copied] is true, then current_address will be set to original_address
   /// (useful when pasting into a new Design where copied strands don't exist anymore,
