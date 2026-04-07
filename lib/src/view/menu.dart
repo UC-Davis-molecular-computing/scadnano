@@ -1345,8 +1345,8 @@ is less expressive than SVG and can render the text strangely.'''
         ..key = 'export-svg-5p-ends')(),
       (MenuBoolean()
         ..value = props.state.ui_state.export_svg_3p_ends
-        ..display = "export 3' end triangles"
-        ..tooltip = "When unchecked, 3' end triangles will be excluded from exported SVGs."
+        ..display = "export 3' end arrowhead"
+        ..tooltip = "When unchecked, 3' end arrowhead will be excluded from exported SVGs."
         ..name = 'export-svg-3p-ends'
         ..on_change = (_) {
           app.dispatch(actions.ExportSvg3pEndsSet(!props.state.ui_state.export_svg_3p_ends));
