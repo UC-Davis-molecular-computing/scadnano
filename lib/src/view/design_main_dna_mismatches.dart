@@ -44,12 +44,7 @@ class DesignMainDNAMismatchesComponent extends UiComponent2<DesignMainDNAMismatc
             var group = props.design.groups[helix.group]!;
             var geometry = group.geometry ?? props.design.geometry;
             var svg_position_y = props.helix_idx_to_svg_position_y_map[helix.idx]!;
-            var base_svg_pos = helix.svg_base_pos(
-              mismatch.offset,
-              domain.forward,
-              svg_position_y,
-              geometry,
-            );
+            var base_svg_pos = helix.svg_base_pos(mismatch.offset, domain.forward, svg_position_y, geometry);
             // For now, if there is a mismatch in an insertion we simply display it for the whole insertion,
             // not for a specific base. We maintain React keys to agree on any mismatches in the same
             // insertion, and we only render one of them.

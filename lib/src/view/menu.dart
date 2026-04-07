@@ -875,8 +875,7 @@ If unchecked, the warning will not appear.'''
         ..tooltip =
             'Adjust the opacity of crossover curves between domains on the same helix and same direction.'
         ..on_new_value =
-            ((num opacity) =>
-                app.dispatch(actions.CrossoverOpacitySameHelixSet(opacity: opacity.toDouble())))
+            ((num opacity) => app.dispatch(actions.CrossoverOpacitySameHelixSet(opacity: opacity.toDouble())))
         ..key = 'crossover-opacity-same-helix')(),
     ]);
   }

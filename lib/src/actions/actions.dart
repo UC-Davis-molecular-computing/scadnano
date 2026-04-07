@@ -725,8 +725,7 @@ abstract class CrossoverOpacitySameHelixSet
 
   CrossoverOpacitySameHelixSet._();
 
-  static Serializer<CrossoverOpacitySameHelixSet> get serializer =>
-      _$crossoverOpacitySameHelixSetSerializer;
+  static Serializer<CrossoverOpacitySameHelixSet> get serializer => _$crossoverOpacitySameHelixSetSerializer;
 }
 
 abstract class SetModificationDisplayConnector

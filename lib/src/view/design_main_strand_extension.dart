@@ -157,17 +157,38 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     }
   }
 
+  // React may replace the underlying DOM element on re-render (e.g., after moving a strand),
+  // so we track the element we attached to and re-attach in componentDidUpdate if it changed.
+  Element? _attachedElement;
+
+  void _attachContextMenuListener() {
+    var element = querySelector('#${props.ext.id}');
+    if (element != null && !identical(element, _attachedElement)) {
+      _detachContextMenuListener();
+      element.addEventListener(constants.context_menu_event_name, on_context_menu);
+      _attachedElement = element;
+    }
+  }
+
+  void _detachContextMenuListener() {
+    _attachedElement?.removeEventListener(constants.context_menu_event_name, on_context_menu);
+    _attachedElement = null;
+  }
+
   @override
   componentDidMount() {
-    var element = querySelector('#${props.ext.id}')!;
-    element.addEventListener('contextmenu', on_context_menu);
+    _attachContextMenuListener();
+  }
+
+  @override
+  componentDidUpdate(Map prevProps, Map prevState, [dynamic snapshot]) {
+    _attachContextMenuListener();
   }
 
   @override
   componentWillUnmount() {
+    _detachContextMenuListener();
     super.componentWillUnmount();
-    var element = querySelector('#${props.ext.id}')!;
-    element.removeEventListener('contextmenu', on_context_menu);
   }
 
   on_context_menu(Event ev) {
