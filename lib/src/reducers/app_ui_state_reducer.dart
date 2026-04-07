@@ -572,12 +572,14 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
           ..major_tick_width_font_size = TypedReducer<double, actions.MajorTickWidthFontSizeSet>(
             major_tick_width_font_size_reducer,
           )(storables.major_tick_width_font_size, action)
-          ..stroke_width = TypedReducer<double, actions.StrokeWidthSet>(
-            stroke_width_reducer,
-          )(storables.stroke_width, action)
-          ..crossover_opacity = TypedReducer<double, actions.CrossoverOpacitySet>(
-            crossover_opacity_reducer,
-          )(storables.crossover_opacity, action)
+          ..stroke_width = TypedReducer<double, actions.StrokeWidthSet>(stroke_width_reducer)(
+            storables.stroke_width,
+            action,
+          )
+          ..crossover_opacity = TypedReducer<double, actions.CrossoverOpacitySet>(crossover_opacity_reducer)(
+            storables.crossover_opacity,
+            action,
+          )
           ..crossover_opacity_same_helix = TypedReducer<double, actions.CrossoverOpacitySameHelixSet>(
             crossover_opacity_same_helix_reducer,
           )(storables.crossover_opacity_same_helix, action)
@@ -684,12 +686,14 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
           ..export_svg_text_separately = TypedReducer<bool, actions.ExportSvgTextSeparatelySet>(
             export_svg_text_separately_reducer,
           )(storables.export_svg_text_separately, action)
-          ..export_svg_5p_ends = TypedReducer<bool, actions.ExportSvg5pEndsSet>(
-            export_svg_5p_ends_reducer,
-          )(storables.export_svg_5p_ends, action)
-          ..export_svg_3p_ends = TypedReducer<bool, actions.ExportSvg3pEndsSet>(
-            export_svg_3p_ends_reducer,
-          )(storables.export_svg_3p_ends, action)
+          ..export_svg_5p_ends = TypedReducer<bool, actions.ExportSvg5pEndsSet>(export_svg_5p_ends_reducer)(
+            storables.export_svg_5p_ends,
+            action,
+          )
+          ..export_svg_3p_ends = TypedReducer<bool, actions.ExportSvg3pEndsSet>(export_svg_3p_ends_reducer)(
+            storables.export_svg_3p_ends,
+            action,
+          )
           ..ox_export_only_selected_strands = TypedReducer<bool, actions.OxExportOnlySelectedStrandsSet>(
             ox_export_only_selected_strands_reducer,
           )(storables.ox_export_only_selected_strands, action)

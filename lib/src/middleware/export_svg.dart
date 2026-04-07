@@ -333,13 +333,17 @@ void _remove_end_elements_if_needed(Element svg_element, {required bool export_5
   if (!export_5p) {
     // 5' ends are <rect> elements with class five-prime-end or five-prime-end-first-substrand
     svg_element
-        .querySelectorAll('.${constants.css_selector_end_5p_domain}, .${constants.css_selector_end_5p_strand}')
+        .querySelectorAll(
+          '.${constants.css_selector_end_5p_domain}, .${constants.css_selector_end_5p_strand}',
+        )
         .forEach((e) => e.remove());
   }
   if (!export_3p) {
     // 3' ends are <polygon> elements with class three-prime-end or three-prime-end-last-substrand
     svg_element
-        .querySelectorAll('.${constants.css_selector_end_3p_domain}, .${constants.css_selector_end_3p_strand}')
+        .querySelectorAll(
+          '.${constants.css_selector_end_3p_domain}, .${constants.css_selector_end_3p_strand}',
+        )
         .forEach((e) => e.remove());
   }
 }
