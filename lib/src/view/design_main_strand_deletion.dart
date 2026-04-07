@@ -10,6 +10,7 @@ import 'pure_component.dart';
 import '../constants.dart' as constants;
 import '../actions/actions.dart' as actions;
 import '../state/selectable.dart';
+import 'selection_handler.dart';
 
 part 'design_main_strand_deletion.over_react.g.dart';
 
@@ -80,12 +81,12 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
       ..className = classname
       ..onPointerDown = ((ev) {
         if (deletion_selectable(props.selectable_deletion)) {
-          props.selectable_deletion.handle_selection_mouse_down(ev.nativeEvent);
+          handle_selection_mouse_down(props.selectable_deletion, ev.nativeEvent);
         }
       })
       ..onPointerUp = ((ev) {
         if (deletion_selectable(props.selectable_deletion)) {
-          props.selectable_deletion.handle_selection_mouse_up(ev.nativeEvent);
+          handle_selection_mouse_up(props.selectable_deletion, ev.nativeEvent);
         }
       })
       ..transform = props.transform)(

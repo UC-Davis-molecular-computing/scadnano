@@ -24,6 +24,7 @@ import '../state/dialog.dart';
 import '../state/dna_end.dart';
 import '../state/helix.dart';
 import '../state/selectable.dart';
+import 'selection_handler.dart';
 import '../dna_sequence_constants.dart';
 import '../state/context_menu.dart';
 import '../state/crossover.dart';
@@ -207,7 +208,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
     if (event.button == constants.LEFT_CLICK_BUTTON) {
       if (strand_selectable(props.strand)) {
         // select/deselect
-        props.strand.handle_selection_mouse_down(event);
+        handle_selection_mouse_down(props.strand, event);
         // set up drag detection for moving DNA ends
         var address = util.find_closest_address(
           event,
@@ -244,7 +245,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
           app.state.ui_state.domains_move != null ||
           app.state.ui_state.dna_ends_are_moving;
       if (strand_selectable(props.strand) && !currently_moving) {
-        props.strand.handle_selection_mouse_up(event_syn.nativeEvent);
+        handle_selection_mouse_up(props.strand, event_syn.nativeEvent);
       }
     }
   }

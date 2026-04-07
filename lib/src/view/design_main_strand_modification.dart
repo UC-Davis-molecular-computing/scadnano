@@ -12,6 +12,7 @@ import '../state/context_menu.dart';
 import '../state/dialog.dart';
 import '../state/geometry.dart';
 import '../state/selectable.dart';
+import 'selection_handler.dart';
 import '../state/address.dart';
 import '../state/modification.dart';
 import '../app.dart';
@@ -114,12 +115,12 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
     return (Dom.g()
       ..onPointerDown = ((ev) {
         if (modification_selectable(props.selectable_modification)) {
-          props.selectable_modification.handle_selection_mouse_down(ev.nativeEvent);
+          handle_selection_mouse_down(props.selectable_modification, ev.nativeEvent);
         }
       })
       ..onPointerUp = ((ev) {
         if (modification_selectable(props.selectable_modification)) {
-          props.selectable_modification.handle_selection_mouse_up(ev.nativeEvent);
+          handle_selection_mouse_up(props.selectable_modification, ev.nativeEvent);
         }
       })
       ..className = classname

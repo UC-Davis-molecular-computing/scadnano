@@ -19,6 +19,7 @@ import '../state/domain.dart';
 import '../state/extension.dart';
 import '../util.dart' as util;
 import '../state/selectable.dart';
+import 'selection_handler.dart';
 import 'design_main_strand_dna_end.dart';
 import 'design_main_strand.dart' as design_main_strand;
 import 'pure_component.dart';
@@ -136,7 +137,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     if (event.button == constants.LEFT_CLICK_BUTTON) {
       if (extension_selectable(props.ext)) {
         // select/deselect
-        props.ext.handle_selection_mouse_down(event);
+        handle_selection_mouse_down(props.ext, event);
       }
     }
   }
@@ -152,7 +153,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
           app.state.ui_state.domains_move != null ||
           app.state.ui_state.dna_ends_are_moving;
       if (extension_selectable(props.ext) && !currently_moving) {
-        props.ext.handle_selection_mouse_up(event_syn.nativeEvent);
+        handle_selection_mouse_up(props.ext, event_syn.nativeEvent);
       }
     }
   }

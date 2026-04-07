@@ -17,6 +17,7 @@ import '../state/helix.dart';
 import '../state/domain.dart';
 import '../util.dart' as util;
 import '../state/selectable.dart';
+import 'selection_handler.dart';
 import 'design_main_strand.dart';
 import 'design_main_strand_dna_end.dart';
 import 'pure_component.dart';
@@ -150,7 +151,7 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with
     if (event.button == constants.LEFT_CLICK_BUTTON) {
       if (domain_selectable(props.domain)) {
         // select/deselect
-        props.domain.handle_selection_mouse_down(event);
+        handle_selection_mouse_down(props.domain, event);
         // set up drag detection for moving domains
         var address = util.find_closest_address(
           event,
@@ -182,7 +183,7 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with
           app.state.ui_state.domains_move != null ||
           app.state.ui_state.dna_ends_are_moving;
       if (domain_selectable(props.domain) && !currently_moving) {
-        props.domain.handle_selection_mouse_up(event_syn.nativeEvent);
+        handle_selection_mouse_up(props.domain, event_syn.nativeEvent);
       }
     }
   }

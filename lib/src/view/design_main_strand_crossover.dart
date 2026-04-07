@@ -18,6 +18,7 @@ import 'design_main_strand_paths.dart';
 import '../app.dart';
 import 'pure_component.dart';
 import '../state/selectable.dart';
+import 'selection_handler.dart';
 import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
 import '../util.dart' as util;
@@ -134,12 +135,12 @@ class DesignMainStrandCrossoverComponent
           }
           ..onPointerDown = ((ev) {
             if (crossover_selectable(props.crossover)) {
-              props.crossover.handle_selection_mouse_down(ev.nativeEvent);
+              handle_selection_mouse_down(props.crossover, ev.nativeEvent);
             }
           })
           ..onPointerUp = ((ev) {
             if (crossover_selectable(props.crossover)) {
-              props.crossover.handle_selection_mouse_up(ev.nativeEvent);
+              handle_selection_mouse_up(props.crossover, ev.nativeEvent);
             }
           })
           ..id = id

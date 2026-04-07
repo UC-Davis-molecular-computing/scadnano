@@ -9,6 +9,7 @@ import 'package:scadnano/src/state/dialog.dart';
 import 'package:scadnano/src/state/geometry.dart';
 
 import '../state/selectable.dart';
+import 'selection_handler.dart';
 import '../state/helix.dart';
 import '../app.dart';
 import '../state/domain.dart';
@@ -71,12 +72,12 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       ..className = classname
       ..onPointerDown = ((ev) {
         if (insertion_selectable(props.selectable_insertion)) {
-          props.selectable_insertion.handle_selection_mouse_down(ev.nativeEvent);
+          handle_selection_mouse_down(props.selectable_insertion, ev.nativeEvent);
         }
       })
       ..onPointerUp = ((ev) {
         if (insertion_selectable(props.selectable_insertion)) {
-          props.selectable_insertion.handle_selection_mouse_up(ev.nativeEvent);
+          handle_selection_mouse_up(props.selectable_insertion, ev.nativeEvent);
         }
       })
       ..transform = props.transform)(insertion_path, insertion_background, text_num_insertions);

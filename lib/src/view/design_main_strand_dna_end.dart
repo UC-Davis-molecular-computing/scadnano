@@ -18,6 +18,7 @@ import '../state/geometry.dart';
 import '../state/group.dart';
 import '../state/strand.dart';
 import '../state/selectable.dart';
+import 'selection_handler.dart';
 import '../state/dna_end.dart';
 import '../state/helix.dart';
 import '../state/potential_crossover.dart';
@@ -273,7 +274,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         if (event.button == constants.RIGHT_CLICK_BUTTON || event.button == constants.MIDDLE_CLICK_BUTTON) {
           return;
         }
-        dna_end.handle_selection_mouse_down(event);
+        handle_selection_mouse_down(dna_end, event);
         // set up drag detection for moving DNA ends
         app.dispatch(actions.DNAEndsMoveStart(offset: dna_end.offset_inclusive, helix: props.helix));
       } else {
@@ -286,7 +287,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         if (event.button == constants.RIGHT_CLICK_BUTTON || event.button == constants.MIDDLE_CLICK_BUTTON) {
           return;
         }
-        dna_end.handle_selection_mouse_down(event);
+        handle_selection_mouse_down(dna_end, event);
         // set up drag detection for moving DNA ends
         Point<double> extension_attached_end_svg = util.compute_extension_attached_end_svg(
           ext,
@@ -318,7 +319,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       if (event.button == constants.RIGHT_CLICK_BUTTON || event.button == constants.MIDDLE_CLICK_BUTTON) {
         return;
       }
-      dna_end.handle_selection_mouse_up(event);
+      handle_selection_mouse_up(dna_end, event);
     }
   }
 

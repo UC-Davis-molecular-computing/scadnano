@@ -10,6 +10,7 @@ import 'transform_by_helix_group.dart';
 import '../state/geometry.dart';
 import '../state/group.dart';
 import '../state/selectable.dart';
+import 'selection_handler.dart';
 import '../state/context_menu.dart';
 import '../state/edit_mode.dart';
 import '../state/helix.dart';
@@ -121,12 +122,12 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
           })
           ..onPointerDown = ((ev) {
             if (loopout_selectable(props.loopout)) {
-              props.loopout.handle_selection_mouse_down(ev.nativeEvent);
+              handle_selection_mouse_down(props.loopout, ev.nativeEvent);
             }
           })
           ..onPointerUp = ((ev) {
             if (loopout_selectable(props.loopout)) {
-              props.loopout.handle_selection_mouse_up(ev.nativeEvent);
+              handle_selection_mouse_up(props.loopout, ev.nativeEvent);
             }
           })
           ..key = props.loopout.id

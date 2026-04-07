@@ -13,6 +13,7 @@ import '../json_serializable.dart';
 import '../middleware/local_storage.dart';
 import '../middleware/system_clipboard.dart';
 import '../state/selectable.dart';
+import 'selection_handler.dart';
 import '../state/design.dart';
 import '../state/dna_end.dart';
 import '../state/export_dna_format_strand_order.dart';

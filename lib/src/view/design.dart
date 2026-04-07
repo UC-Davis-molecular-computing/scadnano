@@ -17,6 +17,7 @@ import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
 import 'package:scadnano/src/state/dna_extensions_move.dart';
 import 'package:scadnano/src/state/selectable.dart';
+import 'selection_handler.dart';
 import 'package:scadnano/src/state/selection_rope.dart';
 import 'package:scadnano/src/view/axis_arrows_main.dart';
 import 'package:scadnano/src/view/strand_color_picker.dart';
