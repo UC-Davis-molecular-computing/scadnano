@@ -2882,7 +2882,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   bool _is_even_parity(int row, int col) => (row % 2) == (col % 2);
 
-  bool _is_odd_parity(int row, int col) => (row % 2) ^ (col % 2) == 1;
+  // bool _is_odd_parity(int row, int col) => (row % 2) ^ (col % 2) == 1;
 
   List<Helix?> get_helix_neighbors(Helix helix) {
     final gp = helix.grid_position!;

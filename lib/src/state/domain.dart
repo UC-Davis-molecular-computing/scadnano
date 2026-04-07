@@ -658,7 +658,7 @@ abstract class Domain
       final mid = (low + high) ~/ 2;
       final midDomain = domainList[mid];
 
-      final mLow = midDomain.start;
+      // final mLow = midDomain.start;
       final mHigh = midDomain.end - 1;
 
       if (mHigh == qLow) {
