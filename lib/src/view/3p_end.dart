@@ -30,18 +30,18 @@ class End3PrimeComponent extends UiComponent2<End3PrimeProps> {
     //XXX: width, height, rx, ry should be do-able in CSS. However, Firefox won't display properly
     // if they are specified in CSS, but it will if they are specified here.
     var points;
-    double scale = 3.7;
+    double scale = 5.2;
     Point<double> pos = props.pos;
     if (!props.forward) {
       points =
           '${pos.x - scale},${pos.y} '
-          '${pos.x + 0.9 * scale},${pos.y + scale} '
-          '${pos.x + 0.9 * scale},${pos.y - scale}';
+          '${pos.x + 0.95 * scale},${pos.y + scale} '
+          '${pos.x + 0.95 * scale},${pos.y - scale}';
     } else {
       points =
           '${pos.x + scale},${pos.y} '
-          '${pos.x - 0.9 * scale},${pos.y + scale} '
-          '${pos.x - 0.9 * scale},${pos.y - scale}';
+          '${pos.x - 0.95 * scale},${pos.y + scale} '
+          '${pos.x - 0.95 * scale},${pos.y - scale}';
     }
 
     var poly_props =

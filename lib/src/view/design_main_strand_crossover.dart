@@ -153,17 +153,38 @@ class DesignMainStrandCrossoverComponent
     //    (Dom.svgTitle()(tooltip));
   }
 
+  // React may replace the underlying DOM element on re-render (e.g., after moving a strand),
+  // so we track the element we attached to and re-attach in componentDidUpdate if it changed.
+  Element? _attachedElement;
+
+  void _attachContextMenuListener() {
+    var element = querySelector('#${props.crossover.id}');
+    if (element != null && !identical(element, _attachedElement)) {
+      _detachContextMenuListener();
+      element.addEventListener(constants.context_menu_event_name, on_context_menu);
+      _attachedElement = element;
+    }
+  }
+
+  void _detachContextMenuListener() {
+    _attachedElement?.removeEventListener(constants.context_menu_event_name, on_context_menu);
+    _attachedElement = null;
+  }
+
   @override
   componentDidMount() {
-    var element = querySelector('#${props.crossover.id}')!;
-    element.addEventListener('contextmenu', on_context_menu);
+    _attachContextMenuListener();
     super.componentDidMount();
   }
 
   @override
+  componentDidUpdate(Map prevProps, Map prevState, [dynamic snapshot]) {
+    _attachContextMenuListener();
+  }
+
+  @override
   componentWillUnmount() {
-    var element = querySelector('#${props.crossover.id}')!;
-    element.removeEventListener('contextmenu', on_context_menu);
+    _detachContextMenuListener();
     super.componentWillUnmount();
   }
 

@@ -9,7 +9,7 @@ import 'state/grid.dart';
 
 // WARNING: Do not modify line below, except for the version string
 //          (and also add new version string to scadnano_versions_to_link).
-const String CURRENT_VERSION = "0.20.1";
+const String CURRENT_VERSION = "0.20.2";
 const String INITIAL_VERSION = "0.1.0";
 
 // scadnano versions that we deploy so that older versions can be used.
@@ -85,6 +85,8 @@ const LEFT_CLICK_BUTTON = 0;
 const MIDDLE_CLICK_BUTTON = 1;
 const RIGHT_CLICK_BUTTON = 2;
 
+const context_menu_event_name = 'contextmenu';
+
 const KEY_CODE_SHOW_POTENTIAL_HELIX = KeyCode.H;
 const KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO = KeyCode.W;
 final KEY_CODE_COMMAND_MAC =
@@ -139,6 +141,9 @@ const default_domain_name_font_size = 10.0;
 const default_domain_label_font_size = 10.0;
 const default_major_tick_offset_font_size = 12.0;
 const default_major_tick_width_font_size = 8.0;
+const default_stroke_width = 5.0;
+const default_crossover_opacity = 0.5;
+const default_crossover_opacity_same_helix = 0.5;
 
 const default_modification_connector_length = 4;
 

@@ -181,6 +181,9 @@ bool helix_group_move_start_app_ui_state_reducer(bool _, actions.HelixGroupMoveS
 
 bool helix_group_move_stop_app_ui_state_reducer(bool _, actions.HelixGroupMoveStop action) => false;
 
+bool confirm_before_replacing_design_reducer(bool _, actions.ConfirmBeforeReplacingDesignSet action) =>
+    action.confirm;
+
 bool show_dna_reducer(bool _, actions.ShowDNASet action) => action.show;
 
 bool load_dialog_show_app_ui_state_reducer(bool _, actions.LoadingDialogShow action) => true;
@@ -217,6 +220,13 @@ double major_tick_offset_font_size_reducer(double _, actions.MajorTickOffsetFont
 
 double major_tick_width_font_size_reducer(double _, actions.MajorTickWidthFontSizeSet action) =>
     action.font_size;
+
+double stroke_width_reducer(double _, actions.StrokeWidthSet action) => action.stroke_width;
+
+double crossover_opacity_reducer(double _, actions.CrossoverOpacitySet action) => action.opacity;
+
+double crossover_opacity_same_helix_reducer(double _, actions.CrossoverOpacitySameHelixSet action) =>
+    action.opacity;
 
 bool show_mismatches_reducer(bool _, actions.ShowMismatchesSet action) => action.show;
 
@@ -296,8 +306,22 @@ bool show_base_pair_lines_with_mismatches_reducer(
 bool export_svg_text_separately_reducer(bool _, actions.ExportSvgTextSeparatelySet action) =>
     action.export_svg_text_separately;
 
+bool export_svg_5p_ends_reducer(bool _, actions.ExportSvg5pEndsSet action) => action.export_svg_5p_ends;
+
+bool export_svg_3p_ends_reducer(bool _, actions.ExportSvg3pEndsSet action) => action.export_svg_3p_ends;
+
 bool ox_export_only_selected_strands_reducer(bool _, actions.OxExportOnlySelectedStrandsSet action) =>
     action.only_selected;
+
+bool warn_about_unassigned_dna_and_oxview_open_reducer(
+  bool _,
+  actions.WarnAboutUnassignedDnaAndOxviewOpenSet action,
+) => action.warn;
+
+bool warn_about_unassigned_dna_on_oxview_or_oxdna_export_reducer(
+  bool _,
+  actions.WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet action,
+) => action.warn;
 
 bool display_major_tick_widths_reducer(bool _, actions.SetDisplayMajorTickWidths action) => action.show;
 
@@ -496,6 +520,9 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
           ..displayed_group_name = displayed_group_name_reducer(storables.displayed_group_name, action)
           ..select_mode_state.replace(select_mode_state_reducer(storables.select_mode_state, action))
           ..edit_modes.replace(edit_modes_reducer(storables.edit_modes, action))
+          ..confirm_before_replacing_design = TypedReducer<bool, actions.ConfirmBeforeReplacingDesignSet>(
+            confirm_before_replacing_design_reducer,
+          )(storables.confirm_before_replacing_design, action)
           ..show_dna = TypedReducer<bool, actions.ShowDNASet>(show_dna_reducer)(storables.show_dna, action)
           ..show_strand_names = TypedReducer<bool, actions.ShowStrandNamesSet>(show_strand_names_reducer)(
             storables.show_strand_names,
@@ -545,6 +572,17 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
           ..major_tick_width_font_size = TypedReducer<double, actions.MajorTickWidthFontSizeSet>(
             major_tick_width_font_size_reducer,
           )(storables.major_tick_width_font_size, action)
+          ..stroke_width = TypedReducer<double, actions.StrokeWidthSet>(stroke_width_reducer)(
+            storables.stroke_width,
+            action,
+          )
+          ..crossover_opacity = TypedReducer<double, actions.CrossoverOpacitySet>(crossover_opacity_reducer)(
+            storables.crossover_opacity,
+            action,
+          )
+          ..crossover_opacity_same_helix = TypedReducer<double, actions.CrossoverOpacitySameHelixSet>(
+            crossover_opacity_same_helix_reducer,
+          )(storables.crossover_opacity_same_helix, action)
           ..show_mismatches = TypedReducer<bool, actions.ShowMismatchesSet>(show_mismatches_reducer)(
             storables.show_mismatches,
             action,
@@ -648,9 +686,25 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
           ..export_svg_text_separately = TypedReducer<bool, actions.ExportSvgTextSeparatelySet>(
             export_svg_text_separately_reducer,
           )(storables.export_svg_text_separately, action)
+          ..export_svg_5p_ends = TypedReducer<bool, actions.ExportSvg5pEndsSet>(export_svg_5p_ends_reducer)(
+            storables.export_svg_5p_ends,
+            action,
+          )
+          ..export_svg_3p_ends = TypedReducer<bool, actions.ExportSvg3pEndsSet>(export_svg_3p_ends_reducer)(
+            storables.export_svg_3p_ends,
+            action,
+          )
           ..ox_export_only_selected_strands = TypedReducer<bool, actions.OxExportOnlySelectedStrandsSet>(
             ox_export_only_selected_strands_reducer,
           )(storables.ox_export_only_selected_strands, action)
+          ..warn_about_unassigned_dna_and_oxview_open =
+              TypedReducer<bool, actions.WarnAboutUnassignedDnaAndOxviewOpenSet>(
+                warn_about_unassigned_dna_and_oxview_open_reducer,
+              )(storables.warn_about_unassigned_dna_and_oxview_open, action)
+          ..warn_about_unassigned_dna_on_export =
+              TypedReducer<bool, actions.WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet>(
+                warn_about_unassigned_dna_on_oxview_or_oxdna_export_reducer,
+              )(storables.warn_about_unassigned_dna_on_export, action)
           ..only_display_selected_helices = TypedReducer<bool, actions.SetOnlyDisplaySelectedHelices>(
             only_display_selected_helices_reducer,
           )(storables.only_display_selected_helices, action)

@@ -5,3 +5,9 @@ updates:
     target-branch: "dev"
     schedule:
       interval: "weekly" # daily, weekly, monthly
+
+  - package-ecosystem: "npm"
+    directory: "/standalone" # Directory of package.json
+    target-branch: "dev"
+    schedule:
+      interval: "weekly"

@@ -142,7 +142,7 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
   componentDidMount() {
     var elt = querySelector('#${group_id()}');
     if (elt != null) {
-      elt.addEventListener('contextmenu', on_context_menu);
+      elt.addEventListener(constants.context_menu_event_name, on_context_menu);
     } else {
       print('WARNING: no element found on page with group ID = ${group_id()}');
     }
@@ -152,7 +152,7 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
   componentWillUnmount() {
     var elt = querySelector('#${group_id()}');
     if (elt != null) {
-      elt.removeEventListener('contextmenu', on_context_menu);
+      elt.removeEventListener(constants.context_menu_event_name, on_context_menu);
     } else {
       print('WARNING: no element found on page with group ID = ${group_id()}');
     }

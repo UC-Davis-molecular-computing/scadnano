@@ -19,7 +19,7 @@ input[type=checkbox] {
     margin-right: 4px;
 }
 
-label + select {
+label+select {
     margin-left: 4px;
 }
 
@@ -47,7 +47,8 @@ label + select {
     overflow: hidden;
 }
 
-#top-container, #oxview-frame {
+#top-container,
+#oxview-frame {
     display: flex;
     height: 100%;
     overflow: hidden;
@@ -97,7 +98,8 @@ label + select {
     min-width: 0;
 }
 
-#design, #nonmenu-panes-container {
+#design,
+#nonmenu-panes-container {
     display: flex;
     height: 100%;
     flex-grow: 1;
@@ -222,14 +224,16 @@ label + select {
 .dialog-form-item div:has(> .radio-left) {
     display: flex;
     gap: 10px;
-    align-items: center; /* Align items vertically */
+    align-items: center;
+    /* Align items vertically */
 }
 
 /* Only affect specific inputs/classes that are part of the dialog form item. */
 .dialog-form-item input[type="number"],
 .dialog-form-item input[type="text"],
 .dialog-form-item .radio-left {
-    margin-left: auto; /* Force label input toward the right. */
+    margin-left: auto;
+    /* Force label input toward the right. */
 }
 
 .dialog-button {
@@ -317,7 +321,7 @@ label + select {
     top: 0;
 }
 
-.has-submenu:hover > .context-menu {
+.has-submenu:hover>.context-menu {
     visibility: visible;
 }
 
@@ -333,7 +337,7 @@ label + select {
     pointer-events: none;
 }
 
-.has-submenu > .context-menu-item::after {
+.has-submenu>.context-menu-item::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -346,7 +350,7 @@ label + select {
 }
 
 .context-menu-item:hover,
-.has-submenu:hover > .context-menu-item {
+.has-submenu:hover>.context-menu-item {
     color: white;
     background: #284570;
     border-radius: 2px;
@@ -505,7 +509,7 @@ label + select {
     border-top: 1px solid black;
 }
 
-.mode-button > img {
+.mode-button>img {
     width: 25px;
     pointer-events: none;
 }
@@ -565,7 +569,7 @@ label + select {
 
 /* show open hand when cursor is over SVG background itself */
 .panzoomable {
-    cursor: move;
+    cursor: grab;
     /* fallback: no `url()` support or images disabled */
     cursor: url(images/grab.png), auto;
     /* fallback: Internet Explorer */
@@ -608,10 +612,15 @@ label + select {
     text-anchor: middle;
     pointer-events: none;
     dominant-baseline: ideographic;
-    text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
-    0.7px -0.7px 0 #fff,
-    -0.7px 0.7px 0 #fff,
-    0.7px 0.7px 0 #fff;
+    text-shadow:
+        /*-1px -1px 0 #fff,*/
+        /*1px -1px 0 #fff,*/
+        /*-1px 1px 0 #fff,*/
+        /*1px 1px 0 #fff;*/
+        -0.7px -0.7px 0 #fff,
+        0.7px -0.7px 0 #fff,
+        -0.7px 0.7px 0 #fff,
+        0.7px 0.7px 0 #fff;
     text-rendering: optimizeSpeed;
     /* doesn't seem to do much to improve rendering speed */
     white-space: pre;
@@ -670,16 +679,16 @@ label + select {
 /*******************************************************************************/
 /* begin formatting of Strand elements when selected/selectable/not selectable */
 
-.five-prime-end-first-substrand,
+/* .five-prime-end-first-substrand,
 .three-prime-end-last-substrand {
     stroke: black;
     stroke-width: 0.5px;
-}
+} */
 
 .five-prime-end-moving,
 .three-prime-end-moving {
-    stroke: black;
-    stroke-width: 0.5px;
+    /* stroke: black;
+    stroke-width: 0.5px; */
     fill-opacity: 0.5;
     pointer-events: none;
     /* XXX: need this so we can detect mouse up on non-moving end underneath */
@@ -687,8 +696,8 @@ label + select {
 
 .five-prime-end,
 .three-prime-end {
-    stroke: black;
-    stroke-width: 0.5px;
+    /* stroke: black;
+    stroke-width: 0.5px; */
     visibility: hidden;
     pointer-events: all;
 }
@@ -697,13 +706,14 @@ label + select {
 .loopout-curve,
 .domain-line-moving,
 .extension-line {
-    stroke-width: 4;
+    stroke-width: var(--strand-stroke-width, 4);
     stroke-linecap: round;
     fill: none;
 }
 
 .base-pair-line {
-    stroke-width: 2;
+    stroke: #444;
+    stroke-width: 3;
     stroke-linecap: square;
     fill: none;
 }
@@ -749,7 +759,7 @@ label + select {
 .selected .modification,
 .selected .domain-line,
 .selected .extension-line {
-    stroke-width: 5pt;
+    stroke-width: calc(var(--strand-stroke-width, 4) + 1);
 }
 
 .selected-pink.crossover-curve,
@@ -767,7 +777,7 @@ label + select {
 .selected-pink .domain-line,
 .selected-pink .extension-line {
     stroke: hotpink;
-    stroke-width: 5pt;
+    stroke-width: calc(var(--strand-stroke-width, 4) + 1);
 }
 
 .selected.five-prime-end,
@@ -809,24 +819,24 @@ label + select {
 
 
 .crossover-curve {
-    stroke-width: 4;
-    stroke-opacity: 0.3;
+    stroke-width: var(--strand-stroke-width, 4);
+    stroke-opacity: var(--crossover-opacity, 0.5);
     fill: none;
 }
 
 .crossover-curve-same-helix {
-    stroke-opacity: 0.55;
+    stroke-opacity: var(--crossover-opacity-same-helix, 0.5);
 }
 
 .potential-vertical-crossover-curve {
-    stroke-width: 4;
+    stroke-width: var(--strand-stroke-width, 4);
     fill: none;
     visibility: hidden;
     pointer-events: all;
 }
 
 .potential-vertical-crossover-curve:hover {
-    stroke-width: 4;
+    stroke-width: var(--strand-stroke-width, 4);
     stroke-opacity: 0.3;
     fill: none;
     visibility: visible;
@@ -834,14 +844,14 @@ label + select {
 
 /* potential-segment captures both potential crossovers and potential extensions */
 .potential-segment {
-    stroke-width: 4;
+    stroke-width: var(--strand-stroke-width, 4);
     stroke-opacity: 0.3;
     fill: none;
     pointer-events: none;
 }
 
 .insertion-curve {
-    stroke-width: 2.5px;
+    stroke-width: var(--strand-stroke-width, 4);
     fill: none;
 }
 
@@ -878,10 +888,15 @@ label + select {
 .modification-text {
     text-anchor: middle;
     font-weight: bold;
-    text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
-    0.7px -0.7px 0 #fff,
-    -0.7px 0.7px 0 #fff,
-    0.7px 0.7px 0 #fff;
+    text-shadow:
+        /*-1px -1px 0 #fff,*/
+        /*1px -1px 0 #fff,*/
+        /*-1px 1px 0 #fff,*/
+        /*1px 1px 0 #fff;*/
+        -0.7px -0.7px 0 #fff,
+        0.7px -0.7px 0 #fff,
+        -0.7px 0.7px 0 #fff,
+        0.7px 0.7px 0 #fff;
 }
 
 .dna-seq {
@@ -891,10 +906,15 @@ label + select {
     text-anchor: start;
     pointer-events: none;
     dominant-baseline: ideographic;
-    text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
-    0.7px -0.7px 0 #fff,
-    -0.7px 0.7px 0 #fff,
-    0.7px 0.7px 0 #fff;
+    text-shadow:
+        /*-1px -1px 0 #fff,*/
+        /*1px -1px 0 #fff,*/
+        /*-1px 1px 0 #fff,*/
+        /*1px 1px 0 #fff;*/
+        -0.7px -0.7px 0 #fff,
+        0.7px -0.7px 0 #fff,
+        -0.7px 0.7px 0 #fff,
+        0.7px 0.7px 0 #fff;
     text-rendering: optimizeSpeed;
     /* doesn't seem to do much to improve rendering speed */
     white-space: pre;
@@ -910,9 +930,9 @@ label + select {
     text-anchor: middle;
     pointer-events: none;
     text-shadow: -0.7px -0.7px 0 #fff,
-    0.7px -0.7px 0 #fff,
-    -0.7px 0.7px 0 #fff,
-    0.7px 0.7px 0 #fff;
+        0.7px -0.7px 0 #fff,
+        -0.7px 0.7px 0 #fff,
+        0.7px 0.7px 0 #fff;
     text-rendering: optimizeSpeed;
     /* doesn't seem to do much to improve rendering speed */
     white-space: pre;
@@ -1025,12 +1045,12 @@ https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-cen
 }
 
 /* File checkmarks appear on one line */
-#file-nav-dropdown + .dropdown-menu label {
+#file-nav-dropdown+.dropdown-menu label {
     white-space: nowrap;
 }
 
 /* View checkmarks appear on one line */
-#view-nav-dropdown + .dropdown-menu label {
+#view-nav-dropdown+.dropdown-menu label {
     white-space: nowrap;
 }
 
@@ -1092,7 +1112,7 @@ https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-cen
 ************************************************/
 
 /* Style dropdown item of selected grid as well as newly clicked on grid */
-#grid-nav-dropdown + .dropdown-menu .dropdown-item.disabled,
+#grid-nav-dropdown+.dropdown-menu .dropdown-item.disabled,
 .dropdown-item:active {
     color: #fff;
     text-decoration: none;
@@ -1105,7 +1125,7 @@ https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-cen
 }
 
 /* Styles the label like a DropdownItem */
-.form-file-dropdown .custom-file-input + .custom-file-label {
+.form-file-dropdown .custom-file-input+.custom-file-label {
     display: block;
     width: 100%;
     padding: 0;
@@ -1121,14 +1141,14 @@ https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-cen
 }
 
 /* Styles the label like a DropdownItem (on hover) */
-.form-file-dropdown .custom-file-input + .custom-file-label:hover {
+.form-file-dropdown .custom-file-input+.custom-file-label:hover {
     color: #16181b;
     text-decoration: none;
     background-color: #f8f9fa;
 }
 
 /* Hides the data-browse psuedo-element. */
-.form-file-dropdown .custom-file-input + .custom-file-label::after {
+.form-file-dropdown .custom-file-input+.custom-file-label::after {
     content: none;
 }
 

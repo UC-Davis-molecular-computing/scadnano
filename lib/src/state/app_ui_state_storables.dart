@@ -25,6 +25,8 @@ abstract class AppUIStateStorables
 
   bool get autofit;
 
+  bool get confirm_before_replacing_design;
+
   bool get show_dna;
 
   bool get show_strand_names;
@@ -135,6 +137,20 @@ abstract class AppUIStateStorables
 
   bool get ox_export_only_selected_strands;
 
+  bool get warn_about_unassigned_dna_and_oxview_open;
+
+  bool get warn_about_unassigned_dna_on_export;
+
+  double get stroke_width;
+
+  double get crossover_opacity;
+
+  double get crossover_opacity_same_helix;
+
+  bool get export_svg_5p_ends;
+
+  bool get export_svg_3p_ends;
+
   static void _initializeBuilder(AppUIStateStorablesBuilder b) {
     // This ensures that even if these keys are not in localStorage (e.g., due to upgrading),
     // then they will be populated with a default value instead of raising an exception.
@@ -142,6 +158,7 @@ abstract class AppUIStateStorables
     b.select_mode_state = DEFAULT_SelectModeStateBuilder;
     b.side_selected_helix_idxs = SetBuilder<int>();
     b.autofit = true;
+    b.confirm_before_replacing_design = true;
     b.show_dna = false;
     b.show_strand_names = false;
     b.show_strand_labels = false;
@@ -196,6 +213,13 @@ abstract class AppUIStateStorables
     b.selection_box_intersection = false;
     b.export_svg_text_separately = false;
     b.ox_export_only_selected_strands = false;
+    b.warn_about_unassigned_dna_and_oxview_open = true;
+    b.warn_about_unassigned_dna_on_export = true;
+    b.stroke_width = constants.default_stroke_width;
+    b.crossover_opacity = constants.default_crossover_opacity;
+    b.crossover_opacity_same_helix = constants.default_crossover_opacity_same_helix;
+    b.export_svg_5p_ends = true;
+    b.export_svg_3p_ends = true;
   }
 
   /************************ begin BuiltValue boilerplate ************************/

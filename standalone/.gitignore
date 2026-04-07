@@ -1,0 +1,14 @@
+# IDE
+.idea/
+
+# Node
+/node_modules/
+
+# Build Files
+out/
+dist/
+
+# Generated Icons (Windows, MacOS, Linux)
+icon.ico
+icon.icns
+icon.png

@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(dart pub:*)",
+      "Bash(dart analyze:*)",
+      "Bash(dart format:*)",
+      "Bash(dart:*)",
+      "Bash(scoop update:*)",
+      "Bash(scoop info:*)",
+      "Bash(taskkill:*)",
+      "Bash(TASKKILL:*)",
+      "Bash(Stop-Process -Name \"dart\" -Force)",
+      "Bash(Stop-Process -Name \"dartaotruntime\" -Force)",
+      "WebFetch(domain:github.com)",
+      "Bash(dart run build_runner build:*)",
+      "Bash(python:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:pub.dev)",
+      "WebSearch",
+      "Bash(scoop install:*)",
+      "Bash(scoop uninstall:*)",
+      "Bash(powershell:*)",
+      "Bash(conda init:*)"
+    ],
+    "deny": [],
+    "ask": [],
+    "defaultMode": "acceptEdits"
+  }
+}

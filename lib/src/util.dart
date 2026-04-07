@@ -1387,6 +1387,8 @@ pprint(Map map) {
   print('}');
 }
 
+String id_helix(Helix helix) => 'helix-H${helix.idx}';
+
 String id_domain(Domain domain) =>
     'domain-H${domain.helix}-S${domain.start}-E${domain.end}-${domain.forward ? 'forward' : 'reverse'}';
 

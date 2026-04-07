@@ -31,6 +31,7 @@ UiFactory<DesignMainDomainProps> DesignMainDomain = _$DesignMainDomain;
 mixin DesignMainDomainProps on UiProps {
   late Domain domain;
   late Color strand_color;
+  late bool is_last_substrand;
 
   late Helix helix;
   late String strand_tooltip;
@@ -66,6 +67,16 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with
       props.helix_svg_position.y,
       props.geometry,
     );
+
+    if (props.is_last_substrand) {
+      // pull 3' end back a bit so it doesn't show up beyond the boundaries of the 3' end triangle
+      double shrink_amount = props.geometry.base_width_svg / 2;
+      if (!domain.forward) {
+        shrink_amount = -shrink_amount;
+      }
+      double new_x = end_svg.x - shrink_amount;
+      end_svg = Point<double>(new_x, end_svg.y);
+    }
 
     var classname = constants.css_selector_domain;
     if (props.selected) {
@@ -178,16 +189,38 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with
 
   // needed for capturing right-click events with React:
   // https://medium.com/@ericclemmons/react-event-preventdefault-78c28c950e46
+  //
+  // React may replace the underlying DOM element on re-render (e.g., after moving a strand),
+  // so we track the element we attached to and re-attach in componentDidUpdate if it changed.
+  Element? _attachedElement;
+
+  void _attachContextMenuListener() {
+    var element = querySelector('#${props.domain.id}');
+    if (element != null && !identical(element, _attachedElement)) {
+      _detachContextMenuListener();
+      element.addEventListener(constants.context_menu_event_name, on_context_menu);
+      _attachedElement = element;
+    }
+  }
+
+  void _detachContextMenuListener() {
+    _attachedElement?.removeEventListener(constants.context_menu_event_name, on_context_menu);
+    _attachedElement = null;
+  }
+
   @override
   componentDidMount() {
-    var element = querySelector('#${props.domain.id}')!;
-    element.addEventListener('contextmenu', on_context_menu);
+    _attachContextMenuListener();
+  }
+
+  @override
+  componentDidUpdate(Map prevProps, Map prevState, [dynamic snapshot]) {
+    _attachContextMenuListener();
   }
 
   @override
   componentWillUnmount() {
-    var element = querySelector('#${props.domain.id}')!;
-    element.removeEventListener('contextmenu', on_context_menu);
+    _detachContextMenuListener();
     super.componentWillUnmount();
   }
 

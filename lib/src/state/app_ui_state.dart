@@ -141,6 +141,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   String get loaded_script_filename => storables.loaded_script_filename;
 
+  bool get confirm_before_replacing_design => storables.confirm_before_replacing_design;
+
   bool get show_dna => storables.show_dna;
 
   bool get show_strand_names => storables.show_strand_names;
@@ -188,6 +190,12 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   double get major_tick_width_font_size => storables.major_tick_width_font_size;
 
+  double get stroke_width => storables.stroke_width;
+
+  double get crossover_opacity => storables.crossover_opacity;
+
+  double get crossover_opacity_same_helix => storables.crossover_opacity_same_helix;
+
   SelectModeState get select_mode_state => storables.select_mode_state;
 
   BuiltSet<EditModeChoice> get edit_modes => storables.edit_modes;
@@ -211,6 +219,10 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get show_loopout_extension_length => storables.show_loopout_extension_length;
 
   bool get export_svg_text_separately => storables.export_svg_text_separately;
+
+  bool get export_svg_5p_ends => storables.export_svg_5p_ends;
+
+  bool get export_svg_3p_ends => storables.export_svg_3p_ends;
 
   bool get default_crossover_type_scaffold_for_setting_helix_rolls =>
       storables.default_crossover_type_scaffold_for_setting_helix_rolls;
@@ -242,6 +254,10 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   BuiltMap<int, BuiltList<int>> get original_helix_offsets;
 
   bool get ox_export_only_selected_strands => storables.ox_export_only_selected_strands;
+
+  bool get warn_about_unassigned_dna_and_oxview_open => storables.warn_about_unassigned_dna_and_oxview_open;
+
+  bool get warn_about_unassigned_dna_on_export => storables.warn_about_unassigned_dna_on_export;
 
   static void _initializeBuilder(AppUIStateBuilder b) {
     b.copy_info = null;

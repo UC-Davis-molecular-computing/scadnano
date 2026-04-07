@@ -4,6 +4,7 @@ import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/strand.dart';
 
 import 'select_mode.dart';
 import 'selectable.dart';
@@ -393,8 +394,8 @@ abstract class Domain
 
   int get visual_length => (this.end - this.start);
 
-  //  String toString() =>
-  //      'Domain(helix=${this.helix}, forward=${this.forward}, start=${this.start}, end=${this.end})';
+  String toString() =>
+      '${this.name ?? "Domain"}(helix=${this.helix}, forward=${this.forward}, start=${this.start}, end=${this.end})';
 
   /// Indicates if `offset` is the offset of a base on this substrand. (The end index should be false.)
   /// Note that offsets refer to visual portions of the displayed grid for the Helix.
@@ -639,4 +640,67 @@ abstract class Domain
     }
     return offset;
   }
+
+  Iterable<Domain> find_overlapping_ranges(List<Domain> domains) sync* {
+    final domainList = domains;
+    final lenDomains = domainList.length;
+    if (lenDomains == 0) return;
+
+    int low = 0;
+    int high = lenDomains;
+
+    final qLow = start;
+    int qHigh = end - 1; // inclusive on cadnano2, exclusive scadnano
+
+    // Step 1: get sSetIndexLow with a binary search
+    int sSetIndexLow = -1;
+    while (low < high) {
+      final mid = (low + high) ~/ 2;
+      final midDomain = domainList[mid];
+
+      final mLow = midDomain.start;
+      final mHigh = midDomain.end - 1;
+
+      if (mHigh == qLow) {
+        sSetIndexLow = mid;
+        break;
+      } else if (mHigh > qLow) {
+        sSetIndexLow = mid;
+        high = mid;
+      } else {
+        // mHigh < qLow
+        low = mid + 1;
+      }
+    }
+
+    // Step 2: yield matches
+    if (sSetIndexLow > -1) {
+      qHigh += 1; // bump up for more efficient comparison
+      int i = 0;
+
+      for (final tempDomain in domainList.skip(sSetIndexLow)) {
+        if (tempDomain.start < qHigh) {
+          yield tempDomain;
+          i++;
+        } else {
+          break;
+        }
+      }
+
+      // Cache the last index (not implemented for scadnano)
+      i = sSetIndexLow + i;
+    }
+  }
+
+  bool has_crossover_at(int idx, Strand strand) {
+    // Base case: crossovers are necessarily at an endpoint of a strand
+    if (start == idx || end == idx) return true;
+
+    if (this.is_first) {
+      return this.offset_3p == idx && strand.domains.length > 1;
+    }
+    return this.offset_5p == idx && strand.domains.length > 1;
+  }
+
+  bool get is_5_to_3 => (helix % 2 == 0) == is_scaffold;
 }

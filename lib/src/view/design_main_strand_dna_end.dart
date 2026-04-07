@@ -216,7 +216,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       id = props.domain != null ? props.domain!.dnaend_3p.id : props.ext!.dnaend_free.id;
     }
     var element = querySelector('#${id}')!;
-    element.addEventListener('contextmenu', on_context_menu);
+    element.addEventListener(constants.context_menu_event_name, on_context_menu);
   }
 
   @override
@@ -228,7 +228,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       id = props.domain != null ? props.domain!.dnaend_3p.id : props.ext!.dnaend_free.id;
     }
     var element = querySelector('#${id}')!;
-    element.removeEventListener('contextmenu', on_context_menu);
+    element.removeEventListener(constants.context_menu_event_name, on_context_menu);
     super.componentWillUnmount();
   }
 

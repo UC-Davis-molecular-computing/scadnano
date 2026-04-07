@@ -136,6 +136,20 @@ really want to exit without saving.'''
                 actions.WarnOnExitIfUnsavedSet(warn: !props.state.ui_state.warn_on_exit_if_unsaved),
               ))
           ..key = 'warn-on-exit-if-unsaved')(),
+        (MenuBoolean()
+          ..value = props.state.ui_state.confirm_before_replacing_design
+          ..display = 'Confirm before replacing current design on drag-and-drop'
+          ..tooltip = '''\
+If checked, when dragging a file to the scadnano browser tab, if a design is
+currently loaded, then a confirmation window will display to ask before 
+replacing the current design. Uncheck to suppress this popup window confirmation.'''
+          ..on_change =
+              ((_) => app.dispatch(
+                actions.ConfirmBeforeReplacingDesignSet(
+                  confirm: !props.state.ui_state.confirm_before_replacing_design,
+                ),
+              ))
+          ..key = 'confirm-before-replacing-design')(),
         DropdownDivider({'key': 'divider-save'}),
         (MenuFormFile()
           ..id_ = 'import-cadnano-form-file'
@@ -632,6 +646,7 @@ Ignored if design is not an origami (i.e., does not have at least one scaffold).
       view_menu_warnings(),
       view_menu_autofit(),
       view_menu_show_labels(),
+      view_menu_strands(),
       view_menu_mods(),
       view_menu_helices(),
       view_menu_display_major_ticks_options(),
@@ -705,7 +720,11 @@ helix with the opposite orientation.'''
         ..display = 'Show domain name mismatches'
         ..tooltip = '''\
 Show mismatches between domain names assigned to one strand and the strand on the same
-helix with the opposite orientation.'''
+helix with the opposite orientation.
+
+Domain names are considered mismatched if they are not the same string, with one ending in *,
+or if the domains overlap partially but not totally (do not have identical start and end 
+positions on the helix they share).'''
         ..on_change = (_) {
           app.dispatch(
             actions.ShowDomainNameMismatchesSet(!props.state.ui_state.show_domain_name_mismatches),
@@ -728,6 +747,34 @@ strand at the same (helix,offset).'''
           );
         }
         ..key = 'show-unpaired-insertion-deletions')(),
+      (MenuBoolean()
+        ..value = props.state.ui_state.warn_about_unassigned_dna_and_oxview_open
+        ..display = 'Unassigned DNA if oxView open'
+        ..tooltip = '''\
+If checked, when oxView view is open and unassigned DNA sequences are detected, 
+a warning popup will appear. This warning only appears when oxView is open.
+If unchecked, the warning will not appear.'''
+        ..on_change =
+            ((_) => app.dispatch(
+              actions.WarnAboutUnassignedDnaAndOxviewOpenSet(
+                warn: !props.state.ui_state.warn_about_unassigned_dna_and_oxview_open,
+              ),
+            ))
+        ..key = 'warn-about-unassigned-dna')(),
+      (MenuBoolean()
+        ..value = props.state.ui_state.warn_about_unassigned_dna_on_export
+        ..display = 'Unassigned DNA on oxView/oxDNA export'
+        ..tooltip = '''\
+If checked, when exporting to oxView or oxDNA and unassigned DNA sequences are detected, 
+a warning popup will appear.
+If unchecked, the warning will not appear.'''
+        ..on_change =
+            ((_) => app.dispatch(
+              actions.WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet(
+                warn: !props.state.ui_state.warn_about_unassigned_dna_on_export,
+              ),
+            ))
+        ..key = 'warn-about-unassigned-dna-on-export')(),
     ]);
   }
 
@@ -797,6 +844,39 @@ strand at the same (helix,offset).'''
         ..on_new_value =
             ((num font_size) => app.dispatch(actions.DomainLabelFontSizeSet(font_size: font_size.toDouble())))
         ..key = 'domain-label-font-size')(),
+    ]);
+  }
+
+  ReactElement view_menu_strands() {
+    return (MenuDropdownRight()
+      ..title_ = 'Strands'
+      ..id_ = 'view_menu_strands-dropdown'
+      ..key = 'view_menu_strands-dropdown'
+      ..className = 'submenu_item')([
+      (MenuNumber()
+        ..display = 'Stroke width'
+        ..default_value = props.state.ui_state.stroke_width
+        ..tooltip =
+            'Adjust the width of lines representing stands (e.g., domains, crossovers, loopouts, etc.)'
+        ..on_new_value =
+            ((num stroke_width) =>
+                app.dispatch(actions.StrokeWidthSet(stroke_width: stroke_width.toDouble())))
+        ..key = 'stroke-width')(),
+      (MenuNumber()
+        ..display = 'Crossover opacity'
+        ..default_value = props.state.ui_state.crossover_opacity
+        ..tooltip = 'Adjust the opacity of crossover curves between different helices.'
+        ..on_new_value =
+            ((num opacity) => app.dispatch(actions.CrossoverOpacitySet(opacity: opacity.toDouble())))
+        ..key = 'crossover-opacity')(),
+      (MenuNumber()
+        ..display = 'Crossover opacity (same helix)'
+        ..default_value = props.state.ui_state.crossover_opacity_same_helix
+        ..tooltip =
+            'Adjust the opacity of crossover curves between domains on the same helix and same direction.'
+        ..on_new_value =
+            ((num opacity) => app.dispatch(actions.CrossoverOpacitySameHelixSet(opacity: opacity.toDouble())))
+        ..key = 'crossover-opacity-same-helix')(),
     ]);
   }
 
@@ -1254,6 +1334,24 @@ is less expressive than SVG and can render the text strangely.'''
           app.dispatch(actions.ExportSvgTextSeparatelySet(!props.state.ui_state.export_svg_text_separately));
         }
         ..key = 'export-svg-text-separately')(),
+      (MenuBoolean()
+        ..value = props.state.ui_state.export_svg_5p_ends
+        ..display = "export 5' end squares"
+        ..tooltip = "When unchecked, 5' end squares will be excluded from exported SVGs."
+        ..name = 'export-svg-5p-ends'
+        ..on_change = (_) {
+          app.dispatch(actions.ExportSvg5pEndsSet(!props.state.ui_state.export_svg_5p_ends));
+        }
+        ..key = 'export-svg-5p-ends')(),
+      (MenuBoolean()
+        ..value = props.state.ui_state.export_svg_3p_ends
+        ..display = "export 3' end arrowhead"
+        ..tooltip = "When unchecked, 3' end arrowhead will be excluded from exported SVGs."
+        ..name = 'export-svg-3p-ends'
+        ..on_change = (_) {
+          app.dispatch(actions.ExportSvg3pEndsSet(!props.state.ui_state.export_svg_3p_ends));
+        }
+        ..key = 'export-svg-3p-ends')(),
       DropdownDivider({'key': 'divider-export-svg'}),
       (MenuDropdownItem()
         ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna_sequences.export_dna))

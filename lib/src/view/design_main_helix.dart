@@ -139,7 +139,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   componentDidMount() {
     if (props.show_helix_circles) {
       var elt = querySelector('#${group_id()}')!;
-      elt.addEventListener('contextmenu', on_context_menu);
+      elt.addEventListener(constants.context_menu_event_name, on_context_menu);
     }
   }
 
@@ -147,7 +147,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   componentWillUnmount() {
     if (props.show_helix_circles) {
       var elt = querySelector('#${group_id()}')!;
-      elt.removeEventListener('contextmenu', on_context_menu);
+      elt.removeEventListener(constants.context_menu_event_name, on_context_menu);
     }
     super.componentWillUnmount();
   }

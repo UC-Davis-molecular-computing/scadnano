@@ -37,18 +37,14 @@ class DesignMainDNAMismatchesComponent extends UiComponent2<DesignMainDNAMismatc
       for (Domain domain in strand.domains) {
         BuiltList<Mismatch> mismatches = props.design.dna_mismatches_on_domain(domain);
 
-        List<ReactElement> domain_components = [];
+        List<ReactElement> untransformed_mismatch_components = [];
         for (Mismatch mismatch in mismatches) {
           var helix = props.design.helices[domain.helix]!;
           if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(helix.idx)) {
             var group = props.design.groups[helix.group]!;
             var geometry = group.geometry ?? props.design.geometry;
-            var base_svg_pos = helix.svg_base_pos(
-              mismatch.offset,
-              domain.forward,
-              props.helix_idx_to_svg_position_y_map[helix.idx]!,
-              geometry,
-            );
+            var svg_position_y = props.helix_idx_to_svg_position_y_map[helix.idx]!;
+            var base_svg_pos = helix.svg_base_pos(mismatch.offset, domain.forward, svg_position_y, geometry);
             // For now, if there is a mismatch in an insertion we simply display it for the whole insertion,
             // not for a specific base. We maintain React keys to agree on any mismatches in the same
             // insertion, and we only render one of them.
@@ -63,7 +59,7 @@ class DesignMainDNAMismatchesComponent extends UiComponent2<DesignMainDNAMismatc
                     ..forward = domain.forward
                     ..color = 'red'
                     ..key = key)();
-              domain_components.add(mismatch_component);
+              untransformed_mismatch_components.add(mismatch_component);
             }
           }
         }
@@ -72,12 +68,12 @@ class DesignMainDNAMismatchesComponent extends UiComponent2<DesignMainDNAMismatc
         HelixGroup group = props.design.groups[helix.group]!;
         String transform_str = group.transform_str(props.design.geometry);
 
-        if (domain_components.isNotEmpty) {
+        if (untransformed_mismatch_components.isNotEmpty) {
           mismatch_components.add(
             (Dom.g()
               ..transform = transform_str
               ..className = 'mismatch-components-in-domain mismatch-${strand.id}'
-              ..key = util.id_domain(domain))(domain_components),
+              ..key = util.id_domain(domain))(untransformed_mismatch_components),
           );
         }
       }

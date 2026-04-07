@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/state/geometry.dart';
 
+import '../state/domain_name_mismatch.dart';
+
 part 'design_main_warning_star.over_react.g.dart';
 
 UiFactory<DesignMainWarningStarProps> DesignMainWarningStar = _$DesignMainWarningStar;
@@ -12,6 +14,7 @@ mixin DesignMainWarningStarProps on UiProps {
   late bool forward;
   late Geometry geometry;
   late String color;
+  DomainNameMismatch? domain_name_mismatch;
 }
 
 class DesignMainWarningStarComponent extends UiComponent2<DesignMainWarningStarProps> {
@@ -38,11 +41,29 @@ class DesignMainWarningStarComponent extends UiComponent2<DesignMainWarningStarP
       points.add('${xs[i].toStringAsFixed(2)},${ys[i].toStringAsFixed(2)}');
     }
 
+    String tooltip_text;
+    DomainNameMismatch? domain_name_mismatch = props.domain_name_mismatch;
+    if (domain_name_mismatch != null) {
+      tooltip_text = '''\
+Domain name mismatch:
+${domain_name_mismatch.forward_domain.toString()} vs.
+${domain_name_mismatch.reverse_domain.toString()}
+
+Domain names are considered mismatched if they are not the same string, with one ending in *,
+or if the domains overlap partially but not totally (do not have identical start and end
+positions on the helix they share).''';
+    } else {
+      tooltip_text = '';
+    }
+
+    // for SVG need nested title element, rather than title attribute
     return (Dom.polygon()
       ..className = 'warning-star'
       ..points = points.join(' ')
       ..style = {"stroke": "${props.color}", "fill": "${props.color}"}
-      ..transform = 'rotate(${rotate_degrees} ${props.base_svg_pos.x} ${props.base_svg_pos.y})')();
+      ..transform = 'rotate(${rotate_degrees} ${props.base_svg_pos.x} ${props.base_svg_pos.y})')(
+      (Dom.title()..key = 'title')(tooltip_text),
+    );
   }
 
   (List<double>, List<double>) _star_at_origin() {

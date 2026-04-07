@@ -689,6 +689,45 @@ abstract class MajorTickWidthFontSizeSet
   static Serializer<MajorTickWidthFontSizeSet> get serializer => _$majorTickWidthFontSizeSetSerializer;
 }
 
+abstract class StrokeWidthSet
+    with BuiltJsonSerializable
+    implements Action, Built<StrokeWidthSet, StrokeWidthSetBuilder> {
+  double get stroke_width;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrokeWidthSet({required double stroke_width}) = _$StrokeWidthSet._;
+
+  StrokeWidthSet._();
+
+  static Serializer<StrokeWidthSet> get serializer => _$strokeWidthSetSerializer;
+}
+
+abstract class CrossoverOpacitySet
+    with BuiltJsonSerializable
+    implements Action, Built<CrossoverOpacitySet, CrossoverOpacitySetBuilder> {
+  double get opacity;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory CrossoverOpacitySet({required double opacity}) = _$CrossoverOpacitySet._;
+
+  CrossoverOpacitySet._();
+
+  static Serializer<CrossoverOpacitySet> get serializer => _$crossoverOpacitySetSerializer;
+}
+
+abstract class CrossoverOpacitySameHelixSet
+    with BuiltJsonSerializable
+    implements Action, Built<CrossoverOpacitySameHelixSet, CrossoverOpacitySameHelixSetBuilder> {
+  double get opacity;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory CrossoverOpacitySameHelixSet({required double opacity}) = _$CrossoverOpacitySameHelixSet._;
+
+  CrossoverOpacitySameHelixSet._();
+
+  static Serializer<CrossoverOpacitySameHelixSet> get serializer => _$crossoverOpacitySameHelixSetSerializer;
+}
+
 abstract class SetModificationDisplayConnector
     with BuiltJsonSerializable
     implements Action, Built<SetModificationDisplayConnector, SetModificationDisplayConnectorBuilder> {
@@ -925,6 +964,23 @@ abstract class WarnOnExitIfUnsavedSet
   WarnOnExitIfUnsavedSet._();
 
   static Serializer<WarnOnExitIfUnsavedSet> get serializer => _$warnOnExitIfUnsavedSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// confirm before replacing design on drag and drop
+
+abstract class ConfirmBeforeReplacingDesignSet
+    with BuiltJsonSerializable
+    implements Action, Built<ConfirmBeforeReplacingDesignSet, ConfirmBeforeReplacingDesignSetBuilder> {
+  bool get confirm;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ConfirmBeforeReplacingDesignSet({required bool confirm}) = _$ConfirmBeforeReplacingDesignSet._;
+
+  ConfirmBeforeReplacingDesignSet._();
+
+  static Serializer<ConfirmBeforeReplacingDesignSet> get serializer =>
+      _$confirmBeforeReplacingDesignSetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2266,6 +2322,38 @@ abstract class ExportSvgTextSeparatelySet
   static Serializer<ExportSvgTextSeparatelySet> get serializer => _$exportSvgTextSeparatelySetSerializer;
 }
 
+abstract class ExportSvg5pEndsSet
+    with BuiltJsonSerializable
+    implements Action, Built<ExportSvg5pEndsSet, ExportSvg5pEndsSetBuilder> {
+  bool get export_svg_5p_ends;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExportSvg5pEndsSet(bool export_svg_5p_ends) =>
+      ExportSvg5pEndsSet.from((b) => b..export_svg_5p_ends = export_svg_5p_ends);
+
+  factory ExportSvg5pEndsSet.from([void Function(ExportSvg5pEndsSetBuilder) updates]) = _$ExportSvg5pEndsSet;
+
+  ExportSvg5pEndsSet._();
+
+  static Serializer<ExportSvg5pEndsSet> get serializer => _$exportSvg5pEndsSetSerializer;
+}
+
+abstract class ExportSvg3pEndsSet
+    with BuiltJsonSerializable
+    implements Action, Built<ExportSvg3pEndsSet, ExportSvg3pEndsSetBuilder> {
+  bool get export_svg_3p_ends;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExportSvg3pEndsSet(bool export_svg_3p_ends) =>
+      ExportSvg3pEndsSet.from((b) => b..export_svg_3p_ends = export_svg_3p_ends);
+
+  factory ExportSvg3pEndsSet.from([void Function(ExportSvg3pEndsSetBuilder) updates]) = _$ExportSvg3pEndsSet;
+
+  ExportSvg3pEndsSet._();
+
+  static Serializer<ExportSvg3pEndsSet> get serializer => _$exportSvg3pEndsSetSerializer;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Strand part action
 
@@ -2638,13 +2726,17 @@ abstract class JoinStrandsByMultipleCrossovers
 }
 
 abstract class StrandsReflect
-    with BuiltJsonSerializable
+    with BuiltJsonSerializable, UndoableAction
     implements Action, Built<StrandsReflect, StrandsReflectBuilder> {
   BuiltList<Strand> get strands;
 
   bool get horizontal;
 
   bool get reverse_polarity;
+
+  @override
+  String short_description() =>
+      "reflect strands ${horizontal ? 'horizontally' : 'vertically'}${reverse_polarity ? ' with reverse polarity' : ''}";
 
   /************************ begin BuiltValue boilerplate ************************/
   factory StrandsReflect({
@@ -4792,6 +4884,91 @@ abstract class OxExportOnlySelectedStrandsSet
 
   static Serializer<OxExportOnlySelectedStrandsSet> get serializer =>
       _$oxExportOnlySelectedStrandsSetSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class WarnAboutUnassignedDnaAndOxviewOpenSet
+    with BuiltJsonSerializable
+    implements
+        Action,
+        Built<WarnAboutUnassignedDnaAndOxviewOpenSet, WarnAboutUnassignedDnaAndOxviewOpenSetBuilder> {
+  bool get warn;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory WarnAboutUnassignedDnaAndOxviewOpenSet({required bool warn}) =
+      _$WarnAboutUnassignedDnaAndOxviewOpenSet._;
+
+  WarnAboutUnassignedDnaAndOxviewOpenSet._();
+
+  static Serializer<WarnAboutUnassignedDnaAndOxviewOpenSet> get serializer =>
+      _$warnAboutUnassignedDnaAndOxviewOpenSetSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet
+    with BuiltJsonSerializable
+    implements
+        Action,
+        Built<
+          WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet,
+          WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSetBuilder
+        > {
+  bool get warn;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet({required bool warn}) =
+      _$WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet._;
+
+  WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet._();
+
+  static Serializer<WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet> get serializer =>
+      _$warnAboutUnassignedDnaOnOxViewOrOxDNAExportSetSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// convert extensions to bound domains on new helix
+
+abstract class ConvertExtensionsToBoundDomains
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<ConvertExtensionsToBoundDomains, ConvertExtensionsToBoundDomainsBuilder> {
+  Extension get extension1;
+
+  Extension? get extension2;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ConvertExtensionsToBoundDomains({required Extension extension1, Extension? extension2}) {
+    return ConvertExtensionsToBoundDomains.from(
+      (b) =>
+          b
+            ..extension1.replace(extension1)
+            ..extension2 = extension2?.toBuilder(),
+    );
+  }
+
+  ConvertExtensionsToBoundDomains._();
+
+  factory ConvertExtensionsToBoundDomains.from([
+    void Function(ConvertExtensionsToBoundDomainsBuilder) updates,
+  ]) = _$ConvertExtensionsToBoundDomains;
+
+  static Serializer<ConvertExtensionsToBoundDomains> get serializer =>
+      _$convertExtensionsToBoundDomainsSerializer;
+
+  @override
+  String short_description() {
+    if (extension2 == null) {
+      return "convert extension to domain on new helix";
+    } else {
+      return "convert extensions to bound domains on new helix";
+    }
+  }
 
   @memoized
   int get hashCode;

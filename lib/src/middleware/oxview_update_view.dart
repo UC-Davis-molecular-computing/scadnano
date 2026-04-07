@@ -35,10 +35,21 @@ oxview_update_view_middleware(Store<AppState> store, dynamic action, NextDispatc
 
   if (action is actions.OxviewShowSet) {
     app.view.update_showing_oxview();
+
+    // Show warning when user opens oxView (not when closing it)
+    if (action.show && store.state.ui_state.warn_about_unassigned_dna_and_oxview_open) {
+      if (store.state.maybe_design != null) {
+        _check_and_show_unassigned_dna_warning(store.state.design.strands.toList());
+      }
+    }
   }
 
   if (store.state.ui_state.show_oxview && action is actions.DesignChangingAction) {
-    update_oxview_view(store.state.design);
+    update_oxview_view(
+      store.state.design,
+      null,
+      store.state.ui_state.warn_about_unassigned_dna_and_oxview_open,
+    );
   }
 }
 
@@ -46,7 +57,7 @@ oxview_update_view_middleware(Store<AppState> store, dynamic action, NextDispatc
 // but on startup, `app.view` is not yet initialized (we're in the View constructor
 // the first time we call `update_oxview_view`), so from that constructor, we send the frame explicitly
 // to this function just after creating it, but before it can be accessed via `app.view.oxview_view?.frame`.
-void update_oxview_view(Design design, [IFrameElement? frame = null]) {
+void update_oxview_view(Design design, IFrameElement? frame, bool warn_enabled) {
   if (frame == null) {
     frame = app.view.oxview_view.frame;
   }
@@ -64,6 +75,8 @@ void update_oxview_view(Design design, [IFrameElement? frame = null]) {
 
   // send current exported design
   List<Strand> strands_to_export = design.strands.toList();
+
+  // Warning handled in middleware, not here
 
   //////////////////////////////////////////
   // oxDNA
@@ -96,4 +109,30 @@ void update_oxview_view(Design design, [IFrameElement? frame = null]) {
   };
 
   frame.contentWindow?.postMessage(message, constants.OXVIEW_URL);
+}
+
+// Helper function to check for unassigned DNA and show warning
+void _check_and_show_unassigned_dna_warning(List<Strand> strands_to_export) {
+  List<String> strand_names_without_dna = [];
+  for (var strand in strands_to_export) {
+    if (strand.dna_sequence == null || strand.dna_sequence!.contains(constants.DNA_BASE_WILDCARD)) {
+      if (strand.name != null) {
+        strand_names_without_dna.add(strand.name!);
+      } else {
+        strand_names_without_dna.add(strand.id);
+      }
+    }
+  }
+
+  if (strand_names_without_dna.isNotEmpty) {
+    var msg =
+        'The following strands do not have complete DNA sequences assigned: '
+        '${strand_names_without_dna.join(", ")}. '
+        'These strands will be exported with a default sequence of "T" '
+        'for each nucleotide whose base is not specified. '
+        'This can lead to unexpected behavior in oxView. For best results, '
+        'assign a DNA sequence to each strand before exporting.'
+        '\n\nTo silence this warning, uncheck View→Warnings→Unassigned DNA if oxView open.';
+    window.alert(msg);
+  }
 }

@@ -1130,8 +1130,9 @@ PAGEHPLC : Dual PAGE & HPLC
   Future<void> ask_for_domain_names(BuiltSet<Domain> domains) async {
     int name_idx = 0;
     var items = util.FixedList<DialogItem>(1);
-    items[name_idx] = DialogText(label: 'name', value: "");
     var first_domain = domains.first;
+    var first_domain_name = first_domain.name ?? '';
+    items[name_idx] = DialogText(label: 'name', value: first_domain_name);
     var dialog = Dialog(
       title: 'set ${first_domain.type_description()} name',
       items: items,

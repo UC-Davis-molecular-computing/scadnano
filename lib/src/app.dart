@@ -22,6 +22,7 @@ import 'package:scadnano/src/util.dart';
 
 import 'middleware/all_middleware.dart';
 import 'middleware/oxview_update_view.dart';
+import 'middleware/stroke_width.dart';
 import 'middleware/throttle.dart';
 import 'state/dna_ends_move.dart';
 import 'state/grid_position.dart';
@@ -44,6 +45,7 @@ import 'middleware/local_storage.dart';
 import 'util.dart' as util;
 import 'actions/actions.dart' as actions;
 import 'constants.dart' as constants;
+import 'dart:js' as js;
 
 // global variable for whole program
 late App app;
@@ -112,6 +114,9 @@ class App {
       // print("11");
       // do next after view renders so that JS SVG pan zoom containers are defined
       util.set_zoom_speed(store.state.ui_state.zoom_speed);
+      set_strand_stroke_width(store.state.ui_state.stroke_width);
+      set_crossover_opacity(store.state.ui_state.crossover_opacity);
+      set_crossover_opacity_same_helix(store.state.ui_state.crossover_opacity_same_helix);
       // print("12");
     }
   }
@@ -230,7 +235,13 @@ class App {
 
   setup_warning_before_unload() {
     window.onBeforeUnload.listen((event) {
-      if (state.ui_state.warn_on_exit_if_unsaved && state.undo_redo.undo_stack.isNotEmpty) {
+      bool warnOnExit = state.ui_state.warn_on_exit_if_unsaved && state.undo_redo.undo_stack.isNotEmpty;
+
+      // Expose this to the JavaScript context so Electron can read it
+      // TODO: This is deprecated.
+      js.context['warnOnExit'] = warnOnExit;
+
+      if (warnOnExit) {
         BeforeUnloadEvent e = event as BeforeUnloadEvent;
         e.returnValue = 'You have unsaved work. Are you sure you want to leave?';
       }
@@ -267,7 +278,10 @@ class App {
       };
       this.view.oxview_view.frame.contentWindow?.postMessage(message, constants.OXVIEW_URL);
       if (app.state.maybe_design != null) {
-        update_oxview_view(app.state.design, this.view.oxview_view.frame);
+        // Only show warnings if oxView is actually visible to the user
+        bool should_warn =
+            app.state.ui_state.warn_about_unassigned_dna_and_oxview_open && app.state.ui_state.show_oxview;
+        update_oxview_view(app.state.design, this.view.oxview_view.frame, should_warn);
       }
     });
   }

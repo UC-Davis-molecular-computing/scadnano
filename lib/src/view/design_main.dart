@@ -105,7 +105,9 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..design = design
           ..only_display_selected_helices = ui_state.only_display_selected_helices
           ..side_selected_helix_idxs = ui_state.side_selected_helix_idxs
-          ..helix_idx_to_svg_position_map = state.helix_idx_to_svg_position_map
+          ..helix_idx_to_svg_position_y_map = state.helix_idx_to_svg_position_map.map(
+            (helix_idx, svg_position) => MapEntry(helix_idx, svg_position.y),
+          )
           ..key = 'domain-name-mismatches')(),
 
       if (ui_state.show_unpaired_insertion_deletions)
