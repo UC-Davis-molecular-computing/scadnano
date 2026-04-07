@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
-import 'package:built_value/built_value.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/design.dart';
 import '../state/app_ui_state_storables.dart';
@@ -11,28 +10,12 @@ import '../state/local_storage_design_choice.dart';
 
 import '../json_serializable.dart';
 import '../state/app_state.dart';
+import '../state/storable.dart';
 import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
 import '../util.dart' as util;
 
-part 'local_storage.g.dart';
-
-/// Aspects of state that can be stored in localStorage. (More like a StorableType; the thing stored is
-/// somewhere in the Model, and this is an "ID" associated with it.
-class Storable extends EnumClass {
-  const Storable._(String name) : super(name);
-
-  static const Storable design = _$design;
-  static const Storable app_ui_state_storables = _$app_ui_state_storables;
-
-  static BuiltSet<Storable> get values => _$values;
-
-  static Storable valueOf(String name) => _$valueOf(name);
-
-  String get key_name => _LOCAL_STORAGE_PREFIX + name;
-}
-
-const String _LOCAL_STORAGE_PREFIX = "scadnano:";
+const String _LOCAL_STORAGE_PREFIX = LOCAL_STORAGE_PREFIX;
 
 save(AppState state, Storable storable) {
   String storable_key = storable.key_name;

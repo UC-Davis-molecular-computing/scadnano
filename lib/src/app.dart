@@ -42,6 +42,7 @@ import 'view/design.dart';
 import 'view/view.dart';
 import 'reducers/app_state_reducer.dart';
 import 'middleware/local_storage.dart';
+import 'state/storable.dart';
 import 'util.dart' as util;
 import 'actions/actions.dart' as actions;
 import 'constants.dart' as constants;

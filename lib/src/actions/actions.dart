@@ -49,7 +49,7 @@ import '../serializers.dart';
 import '../state/select_mode.dart';
 import '../state/grid_position.dart';
 import '../state/mouseover_data.dart';
-import '../middleware/local_storage.dart';
+import '../state/storable.dart';
 
 part 'actions.g.dart';
 

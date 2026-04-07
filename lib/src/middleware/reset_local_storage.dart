@@ -12,6 +12,7 @@ import '../state/local_storage_design_choice.dart';
 import '../json_serializable.dart';
 import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
+import '../state/storable.dart';
 import '../util.dart' as util;
 import 'local_storage.dart';
 
