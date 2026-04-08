@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano_state/src/state/modification.dart';
@@ -16,7 +15,7 @@ import 'package:scadnano_state/src/actions/actions.dart' as actions;
 import 'strands_move_reducer.dart' as strands_move_reducer;
 import 'util_reducer.dart';
 import 'package:scadnano_state/src/constants.dart' as constants;
-import '../util.dart' as util;
+import 'package:scadnano_state/src/util_state.dart' as util;
 
 GlobalReducer<CopyInfo?, AppState> copy_info_global_reducer = combineGlobalReducers([
   // TypedGlobalReducer<StrandsCopyInfo, AppState, actions.CopySelectedStrands>(copy_selected_strands_reducer),

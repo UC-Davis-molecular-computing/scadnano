@@ -1,7 +1,7 @@
 import 'package:color/color.dart';
-import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
-import 'package:scadnano/src/reducers/delete_reducer.dart';
-import 'package:scadnano/src/reducers/nick_ligate_join_by_crossover_reducers.dart';
+import 'package:scadnano_state/src/reducers/change_loopout_ext_properties.dart';
+import 'package:scadnano_state/src/reducers/delete_reducer.dart';
+import 'package:scadnano_state/src/reducers/nick_ligate_join_by_crossover_reducers.dart';
 import 'package:scadnano_state/src/state/domain.dart';
 import 'package:scadnano_state/src/state/helix.dart';
 import 'package:scadnano_state/src/state/grid.dart';

@@ -3,8 +3,8 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano_state/src/json_serializable.dart';
-import 'package:scadnano/src/reducers/app_state_reducer.dart';
-import 'package:scadnano/src/reducers/helices_reducer.dart';
+import 'package:scadnano_state/src/reducers/app_state_reducer.dart';
+import 'package:scadnano_state/src/reducers/helices_reducer.dart';
 import 'package:scadnano_state/src/state/domain.dart';
 import 'package:scadnano_state/src/state/extension.dart';
 import 'package:scadnano_state/src/state/group.dart';
@@ -13,7 +13,7 @@ import 'package:scadnano_state/src/state/position3d.dart';
 import 'package:test/test.dart';
 
 import 'package:scadnano_state/src/actions/actions.dart';
-import 'package:scadnano/src/reducers/design_reducer.dart';
+import 'package:scadnano_state/src/reducers/design_reducer.dart';
 import 'package:scadnano_state/src/state/grid.dart';
 import 'package:scadnano_state/src/state/grid_position.dart';
 import 'package:scadnano_state/src/extension_methods.dart';

@@ -1,5 +1,5 @@
 import 'package:scadnano_state/src/actions/actions.dart';
-import 'package:scadnano/src/reducers/app_state_reducer.dart';
+import 'package:scadnano_state/src/reducers/app_state_reducer.dart';
 import 'package:scadnano_state/src/state/app_state.dart';
 import 'package:scadnano_state/src/state/design.dart';
 import 'package:scadnano_state/src/state/grid.dart';

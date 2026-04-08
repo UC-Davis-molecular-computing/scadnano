@@ -1,7 +1,7 @@
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../reducers/domains_move_reducer.dart' as domains_move_reducer;
+import 'package:scadnano_state/src/reducers/domains_move_reducer.dart' as domains_move_reducer;
 import 'package:scadnano_state/src/state/domains_move.dart';
 import 'package:scadnano_state/src/state/design.dart';
 import 'package:scadnano_state/src/state/address.dart';

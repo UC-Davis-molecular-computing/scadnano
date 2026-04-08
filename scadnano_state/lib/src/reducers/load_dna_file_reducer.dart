@@ -10,7 +10,7 @@ import 'package:scadnano_state/src/state/mouseover_data.dart';
 import 'package:scadnano_state/src/state/app_state.dart';
 import 'package:scadnano_state/src/state/undo_redo.dart';
 import 'package:scadnano_state/src/constants.dart' as constants;
-import '../util.dart' as util;
+import 'package:scadnano_state/src/util_state.dart' as util;
 
 var hline = '*' * 100;
 

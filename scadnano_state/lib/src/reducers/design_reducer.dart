@@ -1,7 +1,7 @@
 import 'package:redux/redux.dart';
 
 import 'package:scadnano_state/src/state/app_state.dart';
-import '../reducers/util_reducer.dart';
+import 'util_reducer.dart';
 import 'package:scadnano_state/src/state/design.dart';
 import 'package:scadnano_state/src/actions/actions.dart' as actions;
 import 'groups_reducer.dart';
@@ -9,7 +9,7 @@ import 'helices_reducer.dart';
 import 'helix_group_move_reducer.dart';
 import 'inline_insertions_deletions_reducer.dart';
 import 'strands_reducer.dart';
-import '../util.dart' as util;
+import 'package:scadnano_state/src/util_state.dart' as util;
 import 'package:scadnano_state/src/state/extension.dart';
 import 'package:scadnano_state/src/state/helix.dart';
 import 'package:scadnano_state/src/state/group.dart';

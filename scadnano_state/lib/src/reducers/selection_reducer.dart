@@ -12,8 +12,7 @@ import 'package:scadnano_state/src/state/helix.dart';
 import 'package:scadnano_state/src/state/app_state.dart';
 import 'package:scadnano_state/src/state/selection_box.dart';
 import 'package:scadnano_state/src/actions/actions.dart' as actions;
-import '../util.dart' as util;
-import '../middleware/selections_intersect_box_compute.dart' as select;
+import 'package:scadnano_state/src/util_state.dart' as util;
 import 'package:scadnano_state/src/constants.dart' as constants;
 import 'util_reducer.dart';
 
@@ -218,12 +217,12 @@ BuiltSet<int> helix_selections_adjust_reducer(
   var all_helices_in_displayed_group = state.design.helices_in_group(group_name);
   var group = state.design.groups[group_name]!;
   var geometry = group.geometry ?? state.design.geometry;
-  List<select.Box> all_bboxes =
+  List<util.Box> all_bboxes =
       all_helices_in_displayed_group.values
           .map((helix) => helix_to_box(helix, geometry, state.ui_state.invert_y))
           .toList();
-  var selection_box_as_box = select.Box.from_selection_box(selection_box);
-  List<Helix> helices_overlapping = select.enclosure_list(
+  var selection_box_as_box = util.Box.from_selection_box(selection_box);
+  List<Helix> helices_overlapping = util.enclosure_list(
     all_helices_in_displayed_group.values,
     all_bboxes,
     selection_box_as_box,
@@ -249,14 +248,14 @@ BuiltSet<int> helix_selections_adjust_reducer(
   return helices_idxs_selected_new.build();
 }
 
-select.Box helix_to_box(Helix helix, Geometry geometry, bool invert_y) {
+util.Box helix_to_box(Helix helix, Geometry geometry, bool invert_y) {
   //FIXME: this is making boxes that are not far enough apart
   num x, y, width, height;
   var svg_pos = util.position3d_to_side_view_svg(helix.position3d(geometry), invert_y, geometry);
   x = svg_pos.x - geometry.helix_radius_svg;
   y = svg_pos.y - geometry.helix_radius_svg;
   height = width = geometry.helix_radius_svg * 2.0;
-  return select.Box(x, y, width: width, height: height);
+  return util.Box(x, y, width: width, height: height);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

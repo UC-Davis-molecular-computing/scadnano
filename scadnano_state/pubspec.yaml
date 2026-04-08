@@ -12,6 +12,7 @@ dependencies:
   js: any
   platform_detect: ^2.1.0
   quiver: ^3.2.2
+  redux: ^5.0.0
   spreadsheet_decoder: ^2.2.0
 
 dev_dependencies:

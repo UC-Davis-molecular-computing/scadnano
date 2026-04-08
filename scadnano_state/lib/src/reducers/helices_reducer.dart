@@ -1,16 +1,15 @@
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:react/react.dart';
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/reducers/groups_reducer.dart';
-import 'package:scadnano/src/reducers/strands_move_reducer.dart';
+import 'groups_reducer.dart';
+import 'strands_move_reducer.dart';
 import 'package:scadnano_state/src/state/group.dart';
 import 'package:scadnano_state/src/state/strand_creation.dart';
 import 'package:scadnano_state/src/state/strands_move.dart';
 import 'package:scadnano_state/src/state/substrand.dart';
-import '../reducers/util_reducer.dart';
+import 'util_reducer.dart';
 import 'package:scadnano_state/src/state/app_state.dart';
 
 import 'package:scadnano_state/src/state/domain.dart';
@@ -21,7 +20,7 @@ import 'package:scadnano_state/src/state/strand.dart';
 import 'delete_reducer.dart' as delete_reducer;
 import 'package:scadnano_state/src/state/helix.dart';
 import 'package:scadnano_state/src/actions/actions.dart' as actions;
-import '../util.dart' as util;
+import 'package:scadnano_state/src/util_state.dart' as util;
 import 'package:scadnano_state/src/constants.dart' as constants;
 import 'selection_reducer.dart';
 import 'package:scadnano_state/src/extension_methods.dart';

@@ -20,6 +20,7 @@ import 'json_serializable.dart';
 import 'state/address.dart';
 import 'state/crossover.dart';
 import 'state/design.dart';
+import 'state/selection_box.dart';
 import 'state/design_side_rotation_data.dart';
 import 'state/domain.dart';
 import 'state/dna_end.dart';
@@ -1448,3 +1449,97 @@ Point<double> transform_mouse_coord_to_svg(Point<double> point, Point<double> pa
 }
 
 const DEBUG_PRINT_MOUSEOVER = false;
+
+/////////////////////////////////////////////////////////////////////////////
+// intersection geometry (used by selection_reducer and middleware)
+
+class Box {
+  num height = -1;
+  num width = -1;
+  num x;
+  num y;
+
+  factory Box.from_selection_box(SelectionBox box) => Box(box.x, box.y, width: box.width, height: box.height);
+
+  Box(this.x, this.y, {num? height = null, num? width = null, num? x2 = null, num? y2 = null}) {
+    if (width == null && x2 == null) {
+      throw ArgumentError('at least one of width or x2 must be non-null');
+    } else if (x2 == null) {
+      this.width = width!;
+    } else if (width == null) {
+      this.width = x2 - x;
+    } else {
+      throw AssertionError("unreachable");
+    }
+
+    if (height == null && y2 == null) {
+      throw ArgumentError('at least one of height or y2 must be non-null');
+    } else if (y2 == null) {
+      this.height = height!;
+    } else if (height == null) {
+      this.height = y2 - y;
+    } else {
+      throw AssertionError("unreachable");
+    }
+  }
+
+  num get x2 => x + width;
+  num get y2 => y + height;
+  set x2(num x2new) { width = x2new - x; }
+  set y2(num y2new) { height = y2new - y; }
+}
+
+List<E> intersection_list<E>(List<E> elts, List<Box> bboxes, Box select_box) =>
+    generalized_intersection_list(elts, bboxes, select_box, intervals_overlap);
+
+List<E> enclosure_list<E>(Iterable<E> elts, List<Box> bboxes, Box select_box) =>
+    generalized_intersection_list(elts, bboxes, select_box, interval_contained);
+
+bool intervals_overlap(num l1, num h1, num l2, num h2) => h1 >= l2 && h2 >= l1;
+
+bool interval_contained(num l1, num h1, num l2, num h2) => l1 >= l2 && h1 <= h2;
+
+List<E> generalized_intersection_list<E>(
+  Iterable<E> elts,
+  List<Box> bboxes,
+  Box select_box,
+  bool overlap(num l1, num h1, num l2, num h2),
+) {
+  if (elts.length != bboxes.length) {
+    throw ArgumentError(
+      'elts (length ${elts.length}) and bboxes (length ${bboxes.length}) must have same length',
+    );
+  }
+  List<E> elts_intersecting = [];
+  int i = 0;
+  for (E elt in elts) {
+    Box elt_bbox = bboxes[i++];
+    if (boxes_intersect_generalized(elt_bbox, select_box, overlap)) {
+      elts_intersecting.add(elt);
+    }
+  }
+  return elts_intersecting;
+}
+
+bool boxes_intersect_generalized(Box elt_bbox, Box select_box, bool overlap(num l1, num h1, num l2, num h2)) {
+  num elt_x2 = elt_bbox.x + elt_bbox.width;
+  num select_box_x2 = select_box.x + select_box.width;
+  num elt_y2 = elt_bbox.y + elt_bbox.height;
+  num select_box_y2 = select_box.y + select_box.height;
+  return overlap(elt_bbox.x, elt_x2, select_box.x, select_box_x2) &&
+      overlap(elt_bbox.y, elt_y2, select_box.y, select_box_y2);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// domain pairing
+
+Domain? find_paired_domain(Design design, Domain domain, int offset) {
+  var other_domains = design.domains_on_helix_at_offset_internal(domain.helix, offset);
+  for (var other_domain in other_domains) {
+    if (other_domain != domain) {
+      assert(other_domain.forward != domain.forward);
+      return other_domain;
+    }
+  }
+  return null;
+}

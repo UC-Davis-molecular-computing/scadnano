@@ -8,7 +8,7 @@ import 'package:scadnano_state/src/state/substrand.dart';
 import 'package:scadnano_state/src/state/strand.dart';
 import 'package:scadnano_state/src/state/app_state.dart';
 import 'package:scadnano_state/src/actions/actions.dart' as actions;
-import '../util.dart' as util;
+import 'package:scadnano_state/src/util_state.dart' as util;
 import 'package:scadnano_state/src/constants.dart' as constants;
 
 BuiltList<Strand> remove_dna_reducer(BuiltList<Strand> strands, actions.RemoveDNA action) {

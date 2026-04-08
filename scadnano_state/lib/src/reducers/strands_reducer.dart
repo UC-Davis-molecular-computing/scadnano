@@ -13,7 +13,7 @@ import 'assign_domain_names_reducer.dart';
 import 'strands_move_reducer.dart' as strands_move_reducer;
 import 'domains_move_reducer.dart' as domains_move_reducer;
 import 'package:scadnano_state/src/state/group.dart';
-import '../middleware/insertion_deletion_batching.dart';
+
 import 'package:scadnano_state/src/state/app_state.dart';
 import 'package:scadnano_state/src/state/domain.dart';
 import 'package:scadnano_state/src/state/design.dart';
@@ -29,7 +29,7 @@ import 'delete_reducer.dart';
 import 'insertion_deletion_reducer.dart';
 import 'nick_ligate_join_by_crossover_reducers.dart';
 import 'util_reducer.dart';
-import '../util.dart' as util;
+import 'package:scadnano_state/src/util_state.dart' as util;
 
 Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([
   TypedReducer<BuiltList<Strand>, actions.RemoveDNA>(remove_dna_reducer),
@@ -519,7 +519,7 @@ class InsertionDeletionRecord {
                   .map((i) => i.offset)
                   .toList();
           for (var offset in deletions_removed + insertion_offsets_removed) {
-            var other_dom = find_paired_domain(design, bound_ss, offset);
+            var other_dom = util.find_paired_domain(design, bound_ss, offset);
             if (other_dom != null) {
               Strand other_strand = design.substrand_to_strand[other_dom]!;
               int other_ss_idx = other_strand.substrands.indexOf(other_dom);

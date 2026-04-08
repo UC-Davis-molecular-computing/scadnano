@@ -8,7 +8,7 @@ import 'package:scadnano_state/src/state/strand.dart';
 import 'package:scadnano_state/src/state/domains_move.dart';
 import 'package:scadnano_state/src/state/group.dart';
 import 'package:scadnano_state/src/state/design.dart';
-import '../reducers/util_reducer.dart';
+import 'util_reducer.dart';
 import 'package:scadnano_state/src/state/app_state.dart';
 import 'package:scadnano_state/src/state/helix.dart';
 import 'package:scadnano_state/src/actions/actions.dart' as actions;

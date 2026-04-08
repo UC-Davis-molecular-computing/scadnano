@@ -2,6 +2,7 @@ import 'package:redux/redux.dart';
 import 'package:scadnano_state/src/state/group.dart';
 import 'package:scadnano_state/src/state/domain.dart';
 import 'package:scadnano_state/src/state/design.dart';
+import 'package:scadnano_state/src/util_state.dart' show find_paired_domain;
 
 import 'package:scadnano_state/src/actions/actions.dart' as actions;
 import 'package:scadnano_state/src/state/app_state.dart';
@@ -60,13 +61,3 @@ List<Domain> find_other_domains(Design design, Domain domain, int offset) {
   return other_domains;
 }
 
-Domain? find_paired_domain(Design design, Domain domain, int offset) {
-  var other_domains = design.domains_on_helix_at_offset_internal(domain.helix, offset);
-  for (var other_domain in other_domains) {
-    if (other_domain != domain) {
-      assert(other_domain.forward != domain.forward);
-      return other_domain;
-    }
-  }
-  return null;
-}

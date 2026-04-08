@@ -1,5 +1,5 @@
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
+import 'change_loopout_ext_properties.dart';
 import 'package:scadnano_state/src/state/linker.dart';
 import 'package:scadnano_state/src/state/potential_crossover.dart';
 

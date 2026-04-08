@@ -8,7 +8,7 @@ import 'design_main_strand_loopout.dart';
 import 'transform_by_helix_group.dart';
 import 'package:scadnano_state/src/state/loopout.dart';
 import 'package:scadnano_state/src/state/group.dart';
-import '../reducers/strands_reducer.dart';
+import 'package:scadnano_state/src/reducers/strands_reducer.dart';
 import 'package:scadnano_state/src/state/domain.dart';
 import 'package:scadnano_state/src/state/dna_end.dart';
 import 'package:scadnano_state/src/state/geometry.dart';

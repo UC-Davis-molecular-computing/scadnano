@@ -6,7 +6,7 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
-import 'package:scadnano/src/reducers/app_ui_state_reducer.dart';
+import 'package:scadnano_state/src/reducers/app_ui_state_reducer.dart';
 
 import '../util.dart';
 import 'design_main_strand_and_domain_texts.dart';

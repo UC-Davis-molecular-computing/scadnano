@@ -10,9 +10,9 @@ import 'package:color/color.dart';
 
 import 'package:scadnano_state/src/state/geometry.dart';
 import 'package:scadnano_state/src/actions/actions.dart';
-import 'package:scadnano/src/reducers/app_state_reducer.dart';
-import 'package:scadnano/src/reducers/potential_crossover_reducer.dart';
-import 'package:scadnano/src/reducers/selection_reducer.dart';
+import 'package:scadnano_state/src/reducers/app_state_reducer.dart';
+import 'package:scadnano_state/src/reducers/potential_crossover_reducer.dart';
+import 'package:scadnano_state/src/reducers/selection_reducer.dart';
 import 'package:scadnano_state/src/state/address.dart';
 import 'package:scadnano_state/src/state/crossover.dart';
 import 'package:scadnano_state/src/state/design.dart';
