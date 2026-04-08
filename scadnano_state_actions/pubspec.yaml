@@ -4,6 +4,8 @@ description: State types, actions, and serializers for scadnano - extracted to a
 environment:
   sdk: '>=3.7.0 <4.0.0'
 
+resolution: workspace
+
 dependencies:
   built_value: ^8.9.0
   built_collection: ^5.1.1

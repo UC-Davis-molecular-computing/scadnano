@@ -4,6 +4,8 @@ description: Reducers for scadnano - extracted to a separate package to optimize
 environment:
   sdk: '>=3.7.0 <4.0.0'
 
+resolution: workspace
+
 dependencies:
   scadnano_state_actions:
     path: ../scadnano_state_actions

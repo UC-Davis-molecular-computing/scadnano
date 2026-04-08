@@ -58,14 +58,20 @@ The scadnano codebase is split into multiple Dart packages to minimize increment
    Contains all [reducer](scadnano_reducers/lib/src/reducers) functions.
    Depends on `scadnano_state_actions` (to know about state types and actions) but not on the main package.
 
-3. **[`scadnano_view_middleware`](./)** (this directory, the top-level package) — View and middleware.
+3. **`scadnano_view_middleware`** (the **repository root directory**) — View and middleware.
+   Unlike the other two packages, this one does **not** live in a subdirectory named after it.
+   It lives at the repo root because `webdev serve` requires `web/` and `pubspec.yaml` to be in the
+   current working directory. Its package name (set by the `name:` field in the root
+   [pubspec.yaml](pubspec.yaml)) is `scadnano_view_middleware`, so imports use
+   `package:scadnano_view_middleware/...`.
    Contains the [view](lib/src/view) components and [middleware](lib/src/middleware).
    Depends on both `scadnano_state_actions` and `scadnano_reducers`.
 
 The dependency chain is: `scadnano_state_actions` → `scadnano_reducers` → `scadnano_view_middleware`.
 
-Each package has its own `pubspec.yaml`. After cloning, you need to run `dart pub get` in each package
-directory (or at least in the top-level directory, which will resolve the path dependencies).
+The three packages form a [Dart workspace](https://dart.dev/tools/pub/workspaces), configured in the root
+`pubspec.yaml`. After cloning, a single `dart pub get` in the repo root resolves dependencies for all three
+packages at once.
 
 #### Key libraries
 
@@ -497,14 +503,14 @@ sudo apt-get install dart
 
 After installing the Dart SDK, you should see a help menu when you run `dart`.
 
-Once you have installed Dart, install all the Dart dependencies. You need to run `dart pub get` in each of the
-multiple package directories:
+Once you have installed Dart, install all the Dart dependencies (from the repo root directory):
 
 ```
-cd scadnano_state_actions && dart pub get && cd ..
-cd scadnano_reducers && dart pub get && cd ..
 dart pub get
 ```
+
+This resolves dependencies for all three packages at once, thanks to the
+[Dart workspace](https://dart.dev/tools/pub/workspaces) configuration.
 
 Try running the unit tests like this:
 
