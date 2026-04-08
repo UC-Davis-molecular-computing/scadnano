@@ -19,7 +19,7 @@ import '../app.dart';
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import '../util.dart' as util;
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
-import 'package:scadnano_state_actions/src/util_state.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_strand_domain_text.over_react.g.dart';
 
@@ -115,7 +115,7 @@ class DesignMainStrandDomainTextComponent extends UiComponent2<DesignMainStrandD
         actions.ContextMenuShow(
           context_menu: ContextMenu(
             items: props.context_menu_strand(props.strand, domain: props.domain, address: address).build(),
-            position: from_point_num(event.page),
+            position: util_state.from_point_num(event.page),
           ),
         ),
       );

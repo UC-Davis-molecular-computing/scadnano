@@ -8,7 +8,7 @@ import 'package:scadnano_state_actions/src/state/grid_position.dart';
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import '../util.dart' as util;
 import 'package:scadnano_state_actions/src/state/app_state.dart';
-import 'package:scadnano_state_actions/src/util_state.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 // check to ensure when switching from Grid.none to a real grid, that each grid_position will get
 // at most one helix (i.e., function mapping real-coordinates to grid-coordinates is 1-1)
@@ -20,7 +20,7 @@ helix_grid_offsets_middleware(Store<AppState> store, dynamic action, NextDispatc
     Geometry geometry = group.geometry ?? store.state.design.geometry;
     Map<int, GridPosition> new_grid_positions_map = {
       for (var helix in store.state.design.helices_in_group(action.group_name).values)
-        helix.idx: position3d_to_grid_position(helix.position(geometry), action.grid, geometry),
+        helix.idx: util_state.position3d_to_grid_position(helix.position(geometry), action.grid, geometry),
     };
     Set<GridPosition> new_grid_positions_set = Set<GridPosition>.from(new_grid_positions_map.values);
     // if lengths don't match, there's a duplicate grid position

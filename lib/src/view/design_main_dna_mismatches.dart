@@ -11,7 +11,7 @@ import 'package:scadnano_state_actions/src/state/domain.dart';
 import 'pure_component.dart';
 import 'design_main_warning_star.dart';
 import '../util.dart' as util;
-import 'package:scadnano_state_actions/src/util_state.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_dna_mismatches.over_react.g.dart';
 
@@ -74,7 +74,7 @@ class DesignMainDNAMismatchesComponent extends UiComponent2<DesignMainDNAMismatc
             (Dom.g()
               ..transform = transform_str
               ..className = 'mismatch-components-in-domain mismatch-${strand.id}'
-              ..key = id_domain(domain))(untransformed_mismatch_components),
+              ..key = util_state.id_domain(domain))(untransformed_mismatch_components),
           );
         }
       }

@@ -10,7 +10,7 @@ import 'package:scadnano_state_actions/src/state/grid_position.dart';
 import '../util.dart' as util;
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
-import 'package:scadnano_state_actions/src/util_state.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_side_potential_helix.over_react.g.dart';
 
@@ -39,7 +39,7 @@ class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotential
     if (grid.is_none) {
       svg_ideal_pos = props.mouse_svg_pos!;
     } else {
-      svg_ideal_pos = side_view_grid_to_svg(
+      svg_ideal_pos = util_state.side_view_grid_to_svg(
         props.grid_position!,
         props.grid,
         props.invert_y,
@@ -49,7 +49,7 @@ class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotential
 
     String tooltip = '';
     if (props.grid.is_none) {
-      Position3D pos = svg_side_view_to_position3d(props.mouse_svg_pos!, props.invert_y, props.geometry);
+      Position3D pos = util_state.svg_side_view_to_position3d(props.mouse_svg_pos!, props.invert_y, props.geometry);
       tooltip = '(x, y) = ${pos.x.toStringAsFixed(2)}, ${pos.y.toStringAsFixed(2)}';
     } else {
       var pos = props.grid_position!;
@@ -68,7 +68,7 @@ class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotential
     // unlike DesignSideHelix, no need to check edit_mode here since PotentialHelix only displayed when
     // edit mode has helix on
     if (props.grid.is_none) {
-      Position3D position = svg_side_view_to_position3d(
+      Position3D position = util_state.svg_side_view_to_position3d(
         props.mouse_svg_pos!,
         props.invert_y,
         props.geometry,

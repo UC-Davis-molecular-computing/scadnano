@@ -48,7 +48,7 @@ import 'error_message.dart';
 import '../middleware/local_storage.dart' as local_storage;
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
-import 'package:scadnano_state_actions/src/util_state.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 const DEBUG_PRINT_SIDE_VIEW_MOUSE_POSITION = false;
 //const DEBUG_PRINT_SIDE_VIEW_MOUSE_POSITION = true;
@@ -207,7 +207,7 @@ class DesignViewComponent {
 
     side_view_svg.onMouseLeave.listen((_) => side_view_mouse_leave_update_mouseover());
     side_view_svg.onMouseMove.listen((event) {
-      side_view_mouse_position = from_point_num(event.client);
+      side_view_mouse_position = util_state.from_point_num(event.client);
       side_view_update_position(event: event);
     });
 
@@ -231,10 +231,10 @@ class DesignViewComponent {
 
     main_view_svg.onMouseMove.listen((MouseEvent event) {
       // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/buttons
-      bool left_mouse_button_is_down = left_mouse_button_pressed_during_mouse_event(event);
+      bool left_mouse_button_is_down = util_state.left_mouse_button_pressed_during_mouse_event(event);
 
       // move potential crossover
-      main_view_mouse_position = from_point_num(event.client);
+      main_view_mouse_position = util_state.from_point_num(event.client);
       main_view_move_potential_crossover(event);
 
       // redraw potential next point for selection rope
@@ -515,7 +515,7 @@ class DesignViewComponent {
       bool is_main_view = (svg_elt == main_view_svg);
       svg_elt.onMouseDown.listen((MouseEvent event) {
         // listen for clicks in rope select view to add points
-        bool left_click = left_mouse_button_caused_mouse_event(event);
+        bool left_click = util_state.left_mouse_button_caused_mouse_event(event);
         bool selection_rope_exists = app.state.ui_state.selection_rope != null;
         if (selection_rope_exists && left_click && edit_mode_is_rope_select()) {
           Point<double> point = util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
@@ -534,7 +534,7 @@ class DesignViewComponent {
 
       // open grabbing hand if mouse key is going up
       svg_elt.onMouseUp.listen((MouseEvent event) {
-        if (left_mouse_button_caused_mouse_event(event)) {
+        if (util_state.left_mouse_button_caused_mouse_event(event)) {
           svg_elt.classes.remove(DRAGGING_CLASS);
         }
       });

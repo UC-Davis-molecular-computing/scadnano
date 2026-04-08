@@ -17,7 +17,7 @@ import 'design_side_potential_helix.dart';
 import 'selection_box_view.dart';
 import 'pure_component.dart';
 import '../util.dart' as util;
-import 'package:scadnano_state_actions/src/util_state.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_side.over_react.g.dart';
 
@@ -36,7 +36,7 @@ DesignSideProps set_design_side_props(DesignSideProps elt, AppState state) {
     ..helix_idxs_selected = state.ui_state.side_selected_helix_idxs
     ..rotation_datas =
         state.ui_state.show_slice_bar
-            ? rotation_datas_at_offset_in_group(
+            ? util_state.rotation_datas_at_offset_in_group(
               state.ui_state.slice_bar_offset,
               state.design,
               state.ui_state.displayed_group_name,
@@ -93,7 +93,7 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> with PureCompone
         mouse_is_over = true;
       } else if (helix.grid.is_none && props.mouse_svg_pos != null) {
         // or if non-grid position overlaps the helix circle
-        Position3D mouse_pos_nm_3d = svg_side_view_to_position3d(
+        Position3D mouse_pos_nm_3d = util_state.svg_side_view_to_position3d(
           props.mouse_svg_pos!,
           props.invert_y,
           props.geometry,

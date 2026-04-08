@@ -21,7 +21,7 @@ import 'package:scadnano_state_actions/src/state/helix.dart';
 import '../util.dart' as util;
 import 'export_cadnano_file.dart' as export_cadnano;
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
-import 'package:scadnano_state_actions/src/util_state.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 oxdna_export_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   if (action is actions.OxdnaExport || action is actions.OxviewExport) {
@@ -452,7 +452,7 @@ const NM_TO_OX_UNITS = 1.0 / 0.8518;
     // the Python package equivalent
     position_in_helix_group = helix.position(geometry);
   } else {
-    position_in_helix_group = grid_position_to_position3d(helix.grid_position!, grid, geometry);
+    position_in_helix_group = util_state.grid_position_to_position3d(helix.grid_position!, grid, geometry);
   }
 
   var position_in_helix_group_rotated =

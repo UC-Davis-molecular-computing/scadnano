@@ -20,25 +20,25 @@ import 'package:scadnano_state_actions/src/state/design.dart';
 import 'package:scadnano_view_middleware/src/util.dart' as util;
 
 import 'utils.dart';
-import 'package:scadnano_state_actions/src/util_state.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 main() {
-  test('position3d_to_grid_position', () {
+  test('util_state.position3d_to_grid_position', () {
     var grid = Grid.square;
     var geometry = Geometry(helix_radius: 2.0, inter_helix_gap: 1.0);
 
     var position11 = Position3D(x: 0.0, y: 3.0, z: 3.0);
-    var grid_position11_actual = position3d_to_grid_position(position11, grid, geometry);
+    var grid_position11_actual = util_state.position3d_to_grid_position(position11, grid, geometry);
     var grid_position11_expected = GridPosition(1, 1);
     expect(grid_position11_expected, grid_position11_actual);
 
     var position00 = Position3D(x: 0.0, y: 0.0, z: 0.0);
-    var grid_position00_actual = position3d_to_grid_position(position00, grid, geometry);
+    var grid_position00_actual = util_state.position3d_to_grid_position(position00, grid, geometry);
     var grid_position00_expected = GridPosition(0, 0);
     expect(grid_position00_expected, grid_position00_actual);
 
     var position21 = Position3D(x: 0.0, y: 2.5, z: 5.0);
-    var grid_position21_actual = position3d_to_grid_position(position21, grid, geometry);
+    var grid_position21_actual = util_state.position3d_to_grid_position(position21, grid, geometry);
     var grid_position21_expected = GridPosition(1, 1);
     expect(grid_position21_expected, grid_position21_actual);
   });
@@ -169,21 +169,21 @@ main() {
   test('util_deltas_starting_0', () {
     List<int> nums = [0, 2, 3, 5, 7, 11, 13];
     List<int> expected_deltas = [0, 2, 1, 2, 2, 4, 2];
-    List<int> actual_deltas = deltas(nums);
+    List<int> actual_deltas = util_state.deltas(nums);
     expect(actual_deltas, expected_deltas);
   });
 
   test('util_deltas_starting_positive', () {
     List<int> nums = [2, 3, 5, 7, 11, 13];
     List<int> expected_deltas = [2, 1, 2, 2, 4, 2];
-    List<int> actual_deltas = deltas(nums);
+    List<int> actual_deltas = util_state.deltas(nums);
     expect(actual_deltas, expected_deltas);
   });
 
   test('util_deltas_starting_negative', () {
     List<int> nums = [-5, 2, 3, 5, 7, 11, 13];
     List<int> expected_deltas = [-5, 7, 1, 2, 2, 4, 2];
-    List<int> actual_deltas = deltas(nums);
+    List<int> actual_deltas = util_state.deltas(nums);
     expect(actual_deltas, expected_deltas);
   });
 

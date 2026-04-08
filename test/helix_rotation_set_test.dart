@@ -22,7 +22,7 @@ import 'package:scadnano_view_middleware/src/util.dart' as util;
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
 import 'utils.dart';
-import 'package:scadnano_state_actions/src/util_state.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 main() {
   num eps = 0.0001;
@@ -61,8 +61,8 @@ main() {
       expect(helix1.grid_position, GridPosition(0, 1));
       expect(helix2.grid_position, GridPosition(0, 2));
 
-      expect(rotation_between_helices(helix0, helix1, true, design_vert.geometry), 180);
-      expect(rotation_between_helices(helix1, helix2, true, design_vert.geometry), 180);
+      expect(util_state.rotation_between_helices(helix0, helix1, true, design_vert.geometry), 180);
+      expect(util_state.rotation_between_helices(helix1, helix2, true, design_vert.geometry), 180);
 
       for (int i in Iterable<int>.generate(5)) {
         expect(design_vert.helix_rotation_forward(0, i), closeTo(i * 360 / 10.5, eps));
@@ -160,8 +160,8 @@ main() {
       expect(helix1.grid_position, GridPosition(1, 0));
       expect(helix2.grid_position, GridPosition(2, 0));
 
-      expect(rotation_between_helices(helix0, helix1, true, design_horz.geometry), 90);
-      expect(rotation_between_helices(helix1, helix2, true, design_horz.geometry), 90);
+      expect(util_state.rotation_between_helices(helix0, helix1, true, design_horz.geometry), 90);
+      expect(util_state.rotation_between_helices(helix1, helix2, true, design_horz.geometry), 90);
 
       for (int i in Iterable<int>.generate(5)) {
         expect(design_horz.helix_rotation_forward(0, i), closeTo(i * 360 / 10.5, eps));
@@ -268,8 +268,8 @@ main() {
       expect(helix1.position(design.geometry), Position3D(x: helix_dist, z: 0, y: helix_dist));
       expect(helix2.position(design.geometry), Position3D(x: 2 * helix_dist, z: 0, y: 2 * helix_dist));
 
-      expect(rotation_between_helices(helix0, helix1, true, design.geometry), 90 + 45);
-      expect(rotation_between_helices(helix1, helix2, true, design.geometry), 90 + 45);
+      expect(util_state.rotation_between_helices(helix0, helix1, true, design.geometry), 90 + 45);
+      expect(util_state.rotation_between_helices(helix1, helix2, true, design.geometry), 90 + 45);
 
       expect(design.groups.length, 1);
       expect(design.groups.keys, contains(constants.default_group_name));
@@ -307,7 +307,7 @@ main() {
       expect(helix1.position(geometry).y, closeTo(y1, eps));
       expect(helix1.position(geometry).z, closeTo(0, eps));
 
-      num radians_60_deg = to_radians(60);
+      num radians_60_deg = util_state.to_radians(60);
       num x2 = cos(radians_60_deg) * design.geometry.distance_between_helices_nm;
       num y2 = -sin(radians_60_deg) * design.geometry.distance_between_helices_nm;
       expect(helix2.position(geometry).x, closeTo(x1 + x2, eps));

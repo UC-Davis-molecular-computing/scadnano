@@ -14,7 +14,7 @@ import 'package:scadnano_state_actions/src/state/loopout.dart';
 import 'package:scadnano_state_actions/src/state/extension.dart';
 import 'pure_component.dart';
 import '../util.dart' as util;
-import 'package:scadnano_state_actions/src/util_state.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_dna_sequence.over_react.g.dart';
 
@@ -60,7 +60,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
             (Dom.g()
               ..transform = transform_of_helix2(props, domain.helix)
               ..className = 'dna-seq-on-domain-group'
-              ..key = id_domain(domain))(domain_elts),
+              ..key = util_state.id_domain(domain))(domain_elts),
           );
         }
       } else if (substrand is Loopout) {
@@ -143,7 +143,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       }
     }
 
-    var id = 'dna-${id_domain(domain)}';
+    var id = 'dna-${util_state.id_domain(domain)}';
 
     // textLength is the more robust way to space out the letter than letterSpacing
     // (e.g., in Firefox it displays poorly with letterSpacing),
@@ -159,7 +159,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       ..y = '$y'
       ..textLength = '$text_length'
       // ..letterSpacing = '${(text_length - charWidth * seq_to_draw.length) / (seq_to_draw.length - 1)}'
-      ..transform = 'rotate(${rotate_degrees} ${rotate_x} ${rotate_y})'
+      ..transform = 'util_state.rotate(${rotate_degrees} ${rotate_x} ${rotate_y})'
       ..dy = '$dy')(seq_to_draw);
   }
 
@@ -197,12 +197,12 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
           ..className = classname_dna_sequence + '-insertion'
           //XXX: xlink:href is deprecated, but this is needed for exporting SVG, due to a bug in Inkscape
           // https://gitlab.com/inkscape/inbox/issues/1763
-          ..xlinkHref = '#${id_insertion(domain, offset)}'
+          ..xlinkHref = '#${util_state.id_insertion(domain, offset)}'
           ..startOffset = start_offset
           ..style = style_map);
 
     return (Dom.text()
-      ..key = 'textelt-${id_insertion(domain, offset)}'
+      ..key = 'textelt-${util_state.id_insertion(domain, offset)}'
       ..dy = dy)(text_path_props(subseq));
   }
 
@@ -217,7 +217,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     var dy = '${0.1 * geometry.base_height_svg}';
 
     (double?, int) ls_fs;
-    if (is_hairpin(prev_domain, next_domain)) {
+    if (util_state.is_hairpin(prev_domain, next_domain)) {
       ls_fs = _calculate_letter_spacing_and_font_size_hairpin(length);
     } else {
       ls_fs = _calculate_letter_spacing_and_font_size_loopout(length);
@@ -378,7 +378,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
 //        'class': 'dna-base',
 //        'x': '${pos.x}',
 //        'y': '${pos.y}',
-//        'transform': 'rotate(${rotate_degrees} ${rotate_x} ${rotate_y})',
+//        'transform': 'util_state.rotate(${rotate_degrees} ${rotate_x} ${rotate_y})',
 //        'dy': dy,
 //      };
 //      seq_group.children.add(base_elt);

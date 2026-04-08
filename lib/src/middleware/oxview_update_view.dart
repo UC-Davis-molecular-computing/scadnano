@@ -26,7 +26,7 @@ import 'export_cadnano_file.dart' as export_cadnano;
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import 'oxdna_export.dart';
 import '../app.dart';
-import 'package:scadnano_state_actions/src/util_state.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 // This middleware handles sending the new design to the oxview viewer,
 // as well as updating whether it is shown, since it is wired to the
@@ -66,7 +66,7 @@ void update_oxview_view(Design design, IFrameElement? frame, bool warn_enabled) 
   // reset oxview in case it has nucleotides already
   Blob blob_js_reset_commands = new Blob([
     'resetScene(resetCamera = false);',
-  ], blob_type_to_string(BlobType.text));
+  ], util_state.blob_type_to_string(util_state.BlobType.text));
   Map<String, dynamic> message = {
     'message': 'iframe_drop',
     'files': [blob_js_reset_commands],
@@ -85,8 +85,8 @@ void update_oxview_view(Design design, IFrameElement? frame, bool warn_enabled) 
   // // String content = to_oxview_format(design, strands_to_export);
   // var (dat, top) = to_oxdna_format(design, strands_to_export); // (String, String)
   //
-  // Blob blob_dat = new Blob([dat], blob_type_to_string(BlobType.text));
-  // Blob blob_top = new Blob([top], blob_type_to_string(BlobType.text));
+  // Blob blob_dat = new Blob([dat], util_state.blob_type_to_string(util_state.BlobType.text));
+  // Blob blob_top = new Blob([top], util_state.blob_type_to_string(util_state.BlobType.text));
   //
   // message = {
   //   'message': 'iframe_drop',
@@ -100,7 +100,7 @@ void update_oxview_view(Design design, IFrameElement? frame, bool warn_enabled) 
 
   String oxview_content = to_oxview_format(design, strands_to_export);
 
-  Blob blob_oxview_content = new Blob([oxview_content], blob_type_to_string(BlobType.text));
+  Blob blob_oxview_content = new Blob([oxview_content], util_state.blob_type_to_string(util_state.BlobType.text));
 
   message = {
     'message': 'iframe_drop',

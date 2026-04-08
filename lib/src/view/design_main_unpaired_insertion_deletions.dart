@@ -12,7 +12,7 @@ import 'package:scadnano_state_actions/src/state/domain.dart';
 import 'pure_component.dart';
 import 'design_main_warning_star.dart';
 import '../util.dart' as util;
-import 'package:scadnano_state_actions/src/util_state.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_unpaired_insertion_deletions.over_react.g.dart';
 
@@ -79,7 +79,7 @@ class DesignMainUnpairedInsertionDeletionsComponent
             (Dom.g()
               ..transform = transform_str
               ..className = 'mismatch-components-in-domain'
-              ..key = id_domain(domain))(domain_components),
+              ..key = util_state.id_domain(domain))(domain_components),
           );
         }
       }

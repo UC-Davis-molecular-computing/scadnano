@@ -19,7 +19,7 @@ import '../app.dart';
 import '../util.dart' as util;
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import 'package:scadnano_state_actions/src/state/app_state.dart';
-import 'package:scadnano_state_actions/src/util_state.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 /// Set positions of helices based on crossovers, assuming all helices are parallel.
 /// Dispatches a normal HelixPositionSet action (many of them batched).
@@ -323,7 +323,7 @@ List<RollXY> _calculate_rolls_and_positions(
 
     var degrees_top = design.helix_rotation_at(address_top, roll);
     // 0 is straight up, not right as in Cartesian rotation, so we have to convert
-    var radians_top_cartesian = to_radians(degrees_top - 90);
+    var radians_top_cartesian = util_state.to_radians(degrees_top - 90);
     var next_x = x + cos(radians_top_cartesian) * geometry.distance_between_helices_nm;
     var next_y = y + sin(radians_top_cartesian) * geometry.distance_between_helices_nm;
 

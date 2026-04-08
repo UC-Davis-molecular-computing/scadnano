@@ -14,7 +14,7 @@ import 'package:scadnano_view_middleware/src/util.dart';
 import 'package:test/test.dart';
 
 import 'utils.dart';
-import 'package:scadnano_state_actions/src/util_state.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 main() {
   group('ExportCadnanoV2', () {
@@ -248,7 +248,7 @@ main() {
       String filename = 'test_6_helix_origami_rectangle.sc';
       Design design =
           Design.from_json_str(
-            await get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
+            await util_state.get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
           )!;
 
       String output_json = to_cadnano_v2_json(design);
@@ -260,7 +260,7 @@ main() {
       String filename = 'test_6_helix_bundle_honeycomb.sc';
       Design design =
           Design.from_json_str(
-            await get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
+            await util_state.get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
           )!;
 
       String output_json = to_cadnano_v2_json(design);
@@ -272,7 +272,7 @@ main() {
       String filename = 'test_16_helix_origami_rectangle_no_twist.sc';
       Design design =
           Design.from_json_str(
-            await get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
+            await util_state.get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
           )!;
 
       String output_json = to_cadnano_v2_json(design);
@@ -297,7 +297,7 @@ main() {
       String filename = 'test_big_circular_staples_hex.sc';
       Design design =
           Design.from_json_str(
-            await get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
+            await util_state.get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
           )!;
 
       String output_json = to_cadnano_v2_json(design);
@@ -309,7 +309,7 @@ main() {
       String filename = 'test_big_circular_staples.sc';
       Design design =
           Design.from_json_str(
-            await get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
+            await util_state.get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
           )!;
 
       String output_json = to_cadnano_v2_json(design);
@@ -321,7 +321,7 @@ main() {
       String filename = 'test_paranemic_crossover.sc';
       Design design =
           Design.from_json_str(
-            await get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
+            await util_state.get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
           )!;
 
       String output_json = to_cadnano_v2_json(design);

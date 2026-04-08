@@ -46,7 +46,7 @@ import 'package:scadnano_state_actions/src/state/storable.dart';
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import 'dart:js' as js;
-import 'package:scadnano_state_actions/src/util_state.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 // global variable for whole program
 late App app;
@@ -271,7 +271,7 @@ class App {
     this.view.oxview_view.frame.onLoad.listen((event) {
       Blob blob_js_camera_commands = new Blob([
         'camera.up.multiplyScalar(-1)',
-      ], blob_type_to_string(BlobType.text));
+      ], util_state.blob_type_to_string(util_state.BlobType.text));
       Map<String, dynamic> message = {
         'message': 'iframe_drop',
         'files': [blob_js_camera_commands],

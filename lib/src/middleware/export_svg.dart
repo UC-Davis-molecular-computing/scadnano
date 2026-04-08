@@ -18,7 +18,7 @@ import 'package:scadnano_state_actions/src/state/app_state.dart';
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import '../util.dart' as util;
-import 'package:scadnano_state_actions/src/util_state.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   if (action is actions.ExportSvg || action is actions.CopySelectedStandsToClipboardImage) {
@@ -231,7 +231,7 @@ TextElement create_portable_text(TextContentElement text_ele, int j) {
   }
   char_ele.setAttribute("x", pos.x.toString());
   char_ele.setAttribute("y", pos.y.toString());
-  char_ele.setAttribute("transform", "rotate(${rot} ${pos.x} ${pos.y})");
+  char_ele.setAttribute("transform", "util_state.rotate(${rot} ${pos.x} ${pos.y})");
   return char_ele;
 }
 
@@ -257,7 +257,7 @@ RectElement create_portable_rect(RectElement ele) {
     if (item.angle != 0) {
       portableEle.setAttribute(
         "transform",
-        "rotate(${item.angle} ${pos.x! + pos.width! / 2} ${pos.y! + pos.height! / 2})",
+        "util_state.rotate(${item.angle} ${pos.x! + pos.width! / 2} ${pos.y! + pos.height! / 2})",
       );
     }
   }
@@ -356,7 +356,7 @@ _export_svg(svg.SvgSvgElement svg_element, String filename_append) {
   filename = filename.substring(0, filename.lastIndexOf('.'));
   filename += '_${filename_append}.svg';
 
-  util.save_file(filename, source, blob_type: BlobType.image);
+  util.save_file(filename, source, blob_type: util_state.BlobType.image);
 }
 
 _copy_from_elements(List<Element> svg_elements) {
