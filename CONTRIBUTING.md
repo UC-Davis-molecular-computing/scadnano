@@ -453,7 +453,9 @@ for your operating system.
 <!--TODO: Find a way to use code blocks with syntax highlighting inside <details>-->
 
 <details><summary><strong>Windows</strong></summary>
-First, install <a href="https://chocolatey.org/install">Chocolatey</a> if you haven't already. If <code>choco help</code> shows a help menu for using Chocolatey, then you've set it up correctly.
+First, install <a href="https://chocolatey.org/install">Chocolatey</a> if you haven't already. If `choco help`
+shows a help menu for using Chocolatey, then you've set it up correctly. It is also possible to install Dart with Scoop 
+(`scoop install dart-sdk`), which can be faster than Chocolatey.
 
 Then, open a shell (cmd/Powershell) with Administrative privileges (go to Start type `cmd`, right-click on "
 Command Prompt", or type Powershell and right-click on "Powershell"; in both cases pick "Run as
@@ -570,13 +572,15 @@ with the [Dart dev compiler](https://dart.dev/tools/dartdevc)
 (dartdevc) and start up a [local
 server](https://dart.dev/tools/webdev#serve).
 
-**Build times:** The first compilation will take 20–30+ seconds because all `.g.dart` files must be generated
-from scratch. After that, incremental builds should take only ~2–3 seconds thanks to the
+**Build times:** The first compilation will take 30+ seconds, as long as several minutes on older machines, 
+because all `.g.dart` files must be generated from scratch. 
+After that, incremental builds should take only a few seconds (~2-3s on faster machines) thanks to the
 [multiple-package structure](#why-multiple-packages). If incremental builds are unexpectedly slow, try running
 `./clean.sh` to clear stale caches.
 
 Sometimes it may be necessary to clean out the generated files and cache if this has an error. See the file
-`clean.sh`, which has this line: `dart run build_runner clean`. Also see `remove_g.sh`, which removes all
+`clean.sh`, which has this line: `dart run build_runner clean` that must be run in each package (top-level,
+`scadnano_state_actions`, and `scadnano_reducers`). Also see `remove_g.sh`, which removes all
 `.g.dart` files from the project, which can also help to fix compilation errors.
 
 If that does not work, try `dart run build_runner build --delete-conflicting-outputs`, and then run
