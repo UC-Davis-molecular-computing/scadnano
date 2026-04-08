@@ -1,12 +1,12 @@
-import 'package:scadnano/src/actions/actions.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/loopout.dart';
-import 'package:scadnano/src/state/extension.dart';
-import 'package:scadnano/src/state/modification.dart';
-import 'package:scadnano/src/state/strand.dart';
+import '../actions/actions.dart';
+import 'design.dart';
+import 'domain.dart';
+import 'loopout.dart';
+import 'extension.dart';
+import 'modification.dart';
+import 'strand.dart';
 import 'package:color/color.dart';
-import 'package:scadnano/src/state/substrand.dart';
+import 'substrand.dart';
 
 import '../constants.dart' as constants;
 import 'helix.dart';

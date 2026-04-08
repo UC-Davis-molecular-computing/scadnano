@@ -1,15 +1,15 @@
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/state/geometry.dart';
-import '../state/position3d.dart';
+import 'package:scadnano_state/src/state/geometry.dart';
+import 'package:scadnano_state/src/state/position3d.dart';
 
 import '../app.dart';
-import '../state/grid.dart';
-import '../state/grid_position.dart';
+import 'package:scadnano_state/src/state/grid.dart';
+import 'package:scadnano_state/src/state/grid_position.dart';
 import '../util.dart' as util;
-import '../constants.dart' as constants;
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state/src/constants.dart' as constants;
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
 
 part 'design_side_potential_helix.over_react.g.dart';
 

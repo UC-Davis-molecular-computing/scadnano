@@ -3,13 +3,13 @@ import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/actions/actions.dart' as actions;
-import 'package:scadnano/src/state/substrand.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/substrand.dart';
 import 'package:scadnano/src/view/react_color.dart';
 
 import '../app.dart';
-import '../state/app_state.dart';
-import '../state/strand.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/state/strand.dart';
 
 part 'strand_color_picker.over_react.g.dart';
 

@@ -6,7 +6,7 @@ import 'package:built_value/serializer.dart';
 //import '../built_intern.dart';
 import '../serializers.dart';
 import '../constants.dart' as constants;
-import '../util.dart' as util;
+import '../util_state.dart' as util;
 
 part 'position3d.g.dart';
 

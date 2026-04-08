@@ -1,12 +1,12 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import '../state/app_state.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
 import '../view/redraw_counter_component_mixin.dart';
 
 import '../app.dart';
-import '../state/edit_mode.dart';
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/edit_mode.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
 
 part 'edit_mode.over_react.g.dart';
 

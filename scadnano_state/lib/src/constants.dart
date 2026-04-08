@@ -1,7 +1,6 @@
 import 'dart:html';
 
 import 'package:color/color.dart';
-import 'package:over_react/components.dart';
 import 'package:platform_detect/platform_detect.dart';
 
 import 'state/geometry.dart';

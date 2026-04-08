@@ -2,10 +2,10 @@
 import 'package:test/test.dart';
 import 'package:redux/redux.dart';
 
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/actions/actions.dart' as actions;
-import 'package:scadnano/src/constants.dart' as constants;
+import 'package:scadnano_state/src/state/design.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/constants.dart' as constants;
 
 import 'utils.dart';
 

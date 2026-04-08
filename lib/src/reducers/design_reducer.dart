@@ -1,25 +1,25 @@
 import 'package:redux/redux.dart';
 
-import '../state/app_state.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
 import '../reducers/util_reducer.dart';
-import '../state/design.dart';
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/design.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
 import 'groups_reducer.dart';
 import 'helices_reducer.dart';
 import 'helix_group_move_reducer.dart';
 import 'inline_insertions_deletions_reducer.dart';
 import 'strands_reducer.dart';
 import '../util.dart' as util;
-import '../state/extension.dart';
-import '../state/helix.dart';
-import '../state/group.dart';
-import '../state/domain.dart';
-import '../state/strand.dart';
-import '../state/grid_position.dart';
-import '../state/grid.dart';
-import '../constants.dart' as constants;
-import '../state/position3d.dart';
-import '../state/geometry.dart';
+import 'package:scadnano_state/src/state/extension.dart';
+import 'package:scadnano_state/src/state/helix.dart';
+import 'package:scadnano_state/src/state/group.dart';
+import 'package:scadnano_state/src/state/domain.dart';
+import 'package:scadnano_state/src/state/strand.dart';
+import 'package:scadnano_state/src/state/grid_position.dart';
+import 'package:scadnano_state/src/state/grid.dart';
+import 'package:scadnano_state/src/constants.dart' as constants;
+import 'package:scadnano_state/src/state/position3d.dart';
+import 'package:scadnano_state/src/state/geometry.dart';
 import 'dart:math';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////

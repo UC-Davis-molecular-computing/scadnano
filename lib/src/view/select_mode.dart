@@ -3,10 +3,10 @@ import 'package:over_react/over_react_redux.dart';
 import '../view/redraw_counter_component_mixin.dart';
 
 import '../app.dart';
-import '../state/app_state.dart';
-import '../actions/actions.dart' as actions;
-import '../state/select_mode.dart';
-import '../state/select_mode_state.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/select_mode.dart';
+import 'package:scadnano_state/src/state/select_mode_state.dart';
 
 part 'select_mode.over_react.g.dart';
 

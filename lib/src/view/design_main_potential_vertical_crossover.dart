@@ -1,17 +1,17 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 
-import '../state/group.dart';
+import 'package:scadnano_state/src/state/group.dart';
 import 'pure_component.dart';
 import 'transform_by_helix_group.dart';
-import '../state/geometry.dart';
-import '../state/helix.dart';
+import 'package:scadnano_state/src/state/geometry.dart';
+import 'package:scadnano_state/src/state/helix.dart';
 import 'design_main_strand_paths.dart';
-import '../state/potential_vertical_crossover.dart';
-import '../state/domain.dart';
+import 'package:scadnano_state/src/state/potential_vertical_crossover.dart';
+import 'package:scadnano_state/src/state/domain.dart';
 import '../app.dart';
-import '../actions/actions.dart' as actions;
-import '../constants.dart' as constants;
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/constants.dart' as constants;
 
 part 'design_main_potential_vertical_crossover.over_react.g.dart';
 

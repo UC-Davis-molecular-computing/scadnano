@@ -1,13 +1,13 @@
 import 'package:built_collection/built_collection.dart';
 import 'dart:math';
-import 'package:scadnano/src/state/edit_mode.dart';
-import 'package:scadnano/src/state/selectable.dart';
+import 'package:scadnano_state/src/state/edit_mode.dart';
+import 'package:scadnano_state/src/state/selectable.dart';
 
-import '../state/helix.dart';
-import '../state/design.dart';
-import '../state/app_state.dart';
-import '../state/mouseover_data.dart';
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/helix.dart';
+import 'package:scadnano_state/src/state/design.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/state/mouseover_data.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
 import '../util.dart' as util;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

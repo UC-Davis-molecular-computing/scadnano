@@ -2,17 +2,17 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/strand.dart';
+import 'package:scadnano_state/src/state/domain.dart';
+import 'package:scadnano_state/src/state/strand.dart';
 
-import '../state/domains_move.dart';
-import '../state/group.dart';
-import '../state/design.dart';
+import 'package:scadnano_state/src/state/domains_move.dart';
+import 'package:scadnano_state/src/state/group.dart';
+import 'package:scadnano_state/src/state/design.dart';
 import '../reducers/util_reducer.dart';
-import '../state/app_state.dart';
-import '../state/helix.dart';
-import '../actions/actions.dart' as actions;
-import '../extension_methods.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/state/helix.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/extension_methods.dart';
 import 'strands_move_reducer.dart';
 
 GlobalReducer<DomainsMove?, AppState> domains_move_global_reducer = combineGlobalReducers([

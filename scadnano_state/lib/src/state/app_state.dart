@@ -8,7 +8,7 @@ import 'design.dart';
 import 'app_ui_state.dart';
 import 'undo_redo.dart';
 import '../constants.dart' as constants;
-import '../util.dart' as util;
+import '../util_state.dart' as util;
 
 part 'app_state.g.dart';
 

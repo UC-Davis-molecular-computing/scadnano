@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:scadnano/src/state/geometry.dart';
+import 'geometry.dart';
 
 import '../serializers.dart';
 import 'dna_end.dart';

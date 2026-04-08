@@ -2,7 +2,7 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/over_react.dart';
 
 import '../app.dart';
-import '../state/selection_rope.dart';
+import 'package:scadnano_state/src/state/selection_rope.dart';
 
 part 'selection_rope_view.over_react.g.dart';
 

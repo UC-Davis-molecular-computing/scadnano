@@ -1,20 +1,20 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/state/extension.dart';
-import 'package:scadnano/src/state/selectable.dart';
+import 'package:scadnano_state/src/state/extension.dart';
+import 'package:scadnano_state/src/state/selectable.dart';
 
 import 'transform_by_helix_group.dart';
-import '../state/geometry.dart';
-import '../state/group.dart';
-import '../state/domain.dart';
-import '../state/design.dart';
-import '../state/loopout.dart';
-import '../state/substrand.dart';
+import 'package:scadnano_state/src/state/geometry.dart';
+import 'package:scadnano_state/src/state/group.dart';
+import 'package:scadnano_state/src/state/domain.dart';
+import 'package:scadnano_state/src/state/design.dart';
+import 'package:scadnano_state/src/state/loopout.dart';
+import 'package:scadnano_state/src/state/substrand.dart';
 import 'design_main_strand_modification.dart';
 import 'pure_component.dart';
 
-import '../state/strand.dart';
-import '../state/helix.dart';
+import 'package:scadnano_state/src/state/strand.dart';
+import 'package:scadnano_state/src/state/helix.dart';
 
 part 'design_main_strand_modifications.over_react.g.dart';
 

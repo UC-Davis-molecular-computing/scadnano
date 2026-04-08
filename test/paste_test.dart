@@ -1,22 +1,22 @@
 @Timeout(Duration(seconds: 5))
-import 'package:scadnano/src/state/clipboard.dart';
+import 'package:scadnano_state/src/state/clipboard.dart';
 import 'package:test/test.dart';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 
 import 'package:scadnano/src/reducers/app_state_reducer.dart';
-import 'package:scadnano/src/state/address.dart';
-import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/state/group.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/strand.dart';
-import 'package:scadnano/src/state/domain.dart';
+import 'package:scadnano_state/src/state/address.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/state/group.dart';
+import 'package:scadnano_state/src/state/helix.dart';
+import 'package:scadnano_state/src/state/grid.dart';
+import 'package:scadnano_state/src/state/strand.dart';
+import 'package:scadnano_state/src/state/domain.dart';
 import 'package:scadnano/src/middleware/system_clipboard.dart' as system_clipboard;
 
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/design.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
 
 import 'utils.dart';
 

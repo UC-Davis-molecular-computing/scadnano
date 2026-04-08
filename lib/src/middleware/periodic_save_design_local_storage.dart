@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:redux/redux.dart';
 
-import '../state/local_storage_design_choice.dart';
-import '../state/app_state.dart';
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/local_storage_design_choice.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
 import '../app.dart';
-import '../state/storable.dart';
+import 'package:scadnano_state/src/state/storable.dart';
 import 'local_storage.dart';
 
 Timer? timer = null;

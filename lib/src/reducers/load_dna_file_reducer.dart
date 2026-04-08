@@ -2,15 +2,15 @@ import 'dart:convert';
 import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/dna_file_type.dart';
-import '../state/selectable.dart';
+import 'package:scadnano_state/src/dna_file_type.dart';
+import 'package:scadnano_state/src/state/selectable.dart';
 
-import '../state/design.dart';
-import '../actions/actions.dart' as actions;
-import '../state/mouseover_data.dart';
-import '../state/app_state.dart';
-import '../state/undo_redo.dart';
-import '../constants.dart' as constants;
+import 'package:scadnano_state/src/state/design.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/mouseover_data.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/state/undo_redo.dart';
+import 'package:scadnano_state/src/constants.dart' as constants;
 import '../util.dart' as util;
 
 var hline = '*' * 100;

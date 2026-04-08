@@ -3,12 +3,12 @@ import 'dart:html';
 import 'package:built_collection/src/set.dart';
 import 'package:redux/redux.dart';
 
-import '../state/app_state.dart';
-import '../state/design.dart';
-import '../state/edit_mode.dart';
-import '../state/select_mode.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/state/design.dart';
+import 'package:scadnano_state/src/state/edit_mode.dart';
+import 'package:scadnano_state/src/state/select_mode.dart';
 
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
 import '../util.dart' as util;
 
 const selectable_css_style_non_domain_or_end = {

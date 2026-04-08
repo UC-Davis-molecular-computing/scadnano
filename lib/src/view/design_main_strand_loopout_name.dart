@@ -1,11 +1,11 @@
 import 'package:over_react/over_react.dart';
 
-import '../state/geometry.dart';
-import '../state/domain.dart';
-import '../state/loopout.dart';
+import 'package:scadnano_state/src/state/geometry.dart';
+import 'package:scadnano_state/src/state/domain.dart';
+import 'package:scadnano_state/src/state/loopout.dart';
 import 'pure_component.dart';
 import '../util.dart' as util;
-import '../constants.dart' as constants;
+import 'package:scadnano_state/src/constants.dart' as constants;
 
 part 'design_main_strand_loopout_name.over_react.g.dart';
 

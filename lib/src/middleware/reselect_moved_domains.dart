@@ -2,15 +2,15 @@ import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
 
 import '../reducers/domains_move_reducer.dart' as domains_move_reducer;
-import '../state/domains_move.dart';
-import '../state/design.dart';
-import '../state/address.dart';
-import '../state/domain.dart';
-import '../state/dna_end.dart';
-import '../state/strand.dart';
-import '../state/strands_move.dart';
-import '../actions/actions.dart' as actions;
-import '../state/app_state.dart';
+import 'package:scadnano_state/src/state/domains_move.dart';
+import 'package:scadnano_state/src/state/design.dart';
+import 'package:scadnano_state/src/state/address.dart';
+import 'package:scadnano_state/src/state/domain.dart';
+import 'package:scadnano_state/src/state/dna_end.dart';
+import 'package:scadnano_state/src/state/strand.dart';
+import 'package:scadnano_state/src/state/strands_move.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/app_state.dart';
 
 reselect_moved_domains_middleware(Store<AppState> store, action, NextDispatcher next) {
   // only reselect if there is more than 1 selected

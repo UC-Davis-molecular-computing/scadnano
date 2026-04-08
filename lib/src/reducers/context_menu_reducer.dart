@@ -1,6 +1,6 @@
 import 'package:redux/redux.dart';
-import '../state/context_menu.dart';
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/context_menu.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
 
 Reducer<ContextMenu?> context_menu_reducer = combineReducers([
   TypedReducer<ContextMenu?, actions.ContextMenuShow>(context_menu_show_reducer),

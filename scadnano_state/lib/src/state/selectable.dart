@@ -12,7 +12,7 @@ import 'dna_end.dart';
 import 'modification.dart';
 import 'select_mode.dart';
 import 'strand.dart';
-import '../util.dart' as util;
+import '../util_state.dart' as util;
 import 'substrand.dart';
 
 part 'selectable.g.dart';

@@ -1,10 +1,10 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/app_state.dart';
-import '../actions/actions.dart' as actions;
-import '../state/domain.dart';
-import '../state/strand.dart';
-import '../state/substrand.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/domain.dart';
+import 'package:scadnano_state/src/state/strand.dart';
+import 'package:scadnano_state/src/state/substrand.dart';
 
 Strand insertion_deletion_reducer(Strand strand, actions.InsertionOrDeletionAction action) {
   Domain domain = action.domain;

@@ -7,7 +7,7 @@ import 'design.dart';
 import '../json_serializable.dart';
 import '../serializers.dart';
 import '../constants.dart' as constants;
-import '../util.dart' as util;
+import '../util_state.dart' as util;
 import 'unused_fields.dart';
 
 part 'modification.g.dart';

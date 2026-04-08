@@ -4,17 +4,17 @@ import 'dart:svg' as svg;
 
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/selection_rope.dart';
+import 'package:scadnano_state/src/state/selection_rope.dart';
 
-import '../state/select_mode.dart';
-import '../state/selection_box.dart';
+import 'package:scadnano_state/src/state/select_mode.dart';
+import 'package:scadnano_state/src/state/selection_box.dart';
 import '../app.dart';
-import '../state/selectable.dart';
+import 'package:scadnano_state/src/state/selectable.dart';
 import '../view/design.dart';
-import '../state/app_state.dart';
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
 import '../util.dart' as util;
-import '../extension_methods.dart';
+import 'package:scadnano_state/src/extension_methods.dart';
 
 //XXX: This seems to require middleware to handle cleanly.
 // It seems difficult to put enough state into AppState to reliably detect when one SVG element

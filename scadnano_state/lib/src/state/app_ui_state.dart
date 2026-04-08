@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/built_value.dart';
-import 'package:scadnano/src/state/design_side_rotation_data.dart';
-import 'package:scadnano/src/state/modification.dart';
-import 'package:scadnano/src/state/copy_info.dart';
+import 'design_side_rotation_data.dart';
+import 'modification.dart';
+import 'copy_info.dart';
 import '../actions/actions.dart' as actions;
 import '../state/local_storage_design_choice.dart';
 

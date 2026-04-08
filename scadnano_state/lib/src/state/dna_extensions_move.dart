@@ -4,9 +4,8 @@ import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
-import 'package:react/react.dart';
-import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/extension.dart';
+import 'dna_end.dart';
+import 'extension.dart';
 
 import '../serializers.dart';
 

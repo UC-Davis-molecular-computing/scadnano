@@ -2,7 +2,6 @@ import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:react/react.dart';
 
 import 'address.dart';
 import 'helix.dart';
@@ -16,7 +15,7 @@ import 'selectable.dart';
 import 'crossover.dart';
 import '../json_serializable.dart';
 import '../constants.dart' as constants;
-import '../util.dart' as util;
+import '../util_state.dart' as util;
 import 'design.dart';
 import 'domain.dart';
 import 'loopout.dart';
@@ -449,7 +448,7 @@ abstract class Strand
     List<SelectableModificationInternal> mods = [];
     for (var domain in this.domains) {
       // TODO: support displaying mods on loopouts and extensions eventually
-      BuiltMap<int, ModificationInternal> mods_on_ss = internal_modifications_on_substrand[i]!;
+      BuiltMap<int, ModificationInternal> mods_on_ss = internal_modifications_on_substrand[domain]!;
       for (int dna_idx_ss in mods_on_ss.keys) {
         var mod = mods_on_ss[dna_idx_ss]!;
         int dna_idx = get_seq_start_idx(domain) + dna_idx_ss;

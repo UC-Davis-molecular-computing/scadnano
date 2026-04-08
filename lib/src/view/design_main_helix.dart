@@ -4,15 +4,15 @@ import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
 
-import '../state/context_menu.dart';
-import '../state/geometry.dart';
-import '../state/edit_mode.dart';
-import '../state/mouseover_data.dart';
-import '../state/helix.dart';
+import 'package:scadnano_state/src/state/context_menu.dart';
+import 'package:scadnano_state/src/state/geometry.dart';
+import 'package:scadnano_state/src/state/edit_mode.dart';
+import 'package:scadnano_state/src/state/mouseover_data.dart';
+import 'package:scadnano_state/src/state/helix.dart';
 import '../app.dart';
 import 'pure_component.dart';
-import '../actions/actions.dart' as actions;
-import '../constants.dart' as constants;
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/constants.dart' as constants;
 import '../util.dart' as util;
 import 'helix_context_menu.dart';
 

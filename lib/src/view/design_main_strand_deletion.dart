@@ -1,15 +1,15 @@
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/state/geometry.dart';
+import 'package:scadnano_state/src/state/geometry.dart';
 
-import '../state/domain.dart';
-import '../state/helix.dart';
+import 'package:scadnano_state/src/state/domain.dart';
+import 'package:scadnano_state/src/state/helix.dart';
 import '../app.dart';
 import 'pure_component.dart';
-import '../constants.dart' as constants;
-import '../actions/actions.dart' as actions;
-import '../state/selectable.dart';
+import 'package:scadnano_state/src/constants.dart' as constants;
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/selectable.dart';
 import 'selection_handler.dart';
 
 part 'design_main_strand_deletion.over_react.g.dart';

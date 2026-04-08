@@ -4,22 +4,22 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:quiver/iterables.dart';
 import 'package:scadnano/src/reducers/app_state_reducer.dart';
-import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/state/geometry.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/position3d.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/state/geometry.dart';
+import 'package:scadnano_state/src/state/helix.dart';
+import 'package:scadnano_state/src/state/position3d.dart';
 import 'package:test/test.dart';
 
-import 'package:scadnano/src/actions/actions.dart';
+import 'package:scadnano_state/src/actions/actions.dart';
 import 'package:scadnano/src/reducers/design_reducer.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/grid_position.dart';
+import 'package:scadnano_state/src/state/grid.dart';
+import 'package:scadnano_state/src/state/grid_position.dart';
 
 import 'package:scadnano/src/middleware/helices_positions_set_based_on_crossovers.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/constants.dart' as constants;
+import 'package:scadnano_state/src/state/design.dart';
+import 'package:scadnano_state/src/constants.dart' as constants;
 import 'package:scadnano/src/util.dart' as util;
-import 'package:scadnano/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
 
 import 'utils.dart';
 

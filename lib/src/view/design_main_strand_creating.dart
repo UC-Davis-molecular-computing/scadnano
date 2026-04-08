@@ -6,12 +6,12 @@ import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/view/pure_component.dart';
 import 'package:scadnano/src/view/transform_by_helix_group.dart';
 
-import '../state/geometry.dart';
-import '../state/group.dart';
-import '../state/helix.dart';
+import 'package:scadnano_state/src/state/geometry.dart';
+import 'package:scadnano_state/src/state/group.dart';
+import 'package:scadnano_state/src/state/helix.dart';
 import '3p_end.dart';
 import '5p_end.dart';
-import '../constants.dart' as constants;
+import 'package:scadnano_state/src/constants.dart' as constants;
 
 part 'design_main_strand_creating.over_react.g.dart';
 

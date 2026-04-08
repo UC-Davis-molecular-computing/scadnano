@@ -3,21 +3,21 @@ import 'dart:html';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart';
 import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
-import 'package:scadnano/src/state/linker.dart';
-import 'package:scadnano/src/state/potential_crossover.dart';
+import 'package:scadnano_state/src/state/linker.dart';
+import 'package:scadnano_state/src/state/potential_crossover.dart';
 
-import '../state/crossover.dart';
-import '../state/design.dart';
-import '../state/address.dart';
-import '../state/app_state.dart';
-import '../state/domain.dart';
-import '../state/dna_end.dart';
-import '../state/modification.dart';
-import '../state/strand.dart';
-import '../state/substrand.dart';
-import '../state/loopout.dart';
-import '../actions/actions.dart' as actions;
-import '../constants.dart' as constants;
+import 'package:scadnano_state/src/state/crossover.dart';
+import 'package:scadnano_state/src/state/design.dart';
+import 'package:scadnano_state/src/state/address.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/state/domain.dart';
+import 'package:scadnano_state/src/state/dna_end.dart';
+import 'package:scadnano_state/src/state/modification.dart';
+import 'package:scadnano_state/src/state/strand.dart';
+import 'package:scadnano_state/src/state/substrand.dart';
+import 'package:scadnano_state/src/state/loopout.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/constants.dart' as constants;
 import 'delete_reducer.dart' as delete_reducer;
 
 // moves a linker (crossover or loopout, stored as action.potential_crossover.linker)

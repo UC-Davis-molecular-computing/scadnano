@@ -4,10 +4,9 @@ import 'dart:math';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/view/menu_form_file.dart';
 import 'package:spreadsheet_decoder/spreadsheet_decoder.dart';
 
-import '../util.dart' as util;
+import '../util_state.dart' as util;
 import 'strand.dart';
 import 'export_dna_format_strand_order.dart';
 

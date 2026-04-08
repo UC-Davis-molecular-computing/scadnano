@@ -14,7 +14,7 @@ import 'strand.dart';
 import 'grid_position.dart';
 import 'address.dart';
 import '../constants.dart' as constants;
-import '../util.dart' as util;
+import '../util_state.dart' as util;
 
 import 'package:built_value/built_value.dart';
 

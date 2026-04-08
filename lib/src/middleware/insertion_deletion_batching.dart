@@ -1,10 +1,10 @@
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/group.dart';
-import '../state/domain.dart';
-import '../state/design.dart';
+import 'package:scadnano_state/src/state/group.dart';
+import 'package:scadnano_state/src/state/domain.dart';
+import 'package:scadnano_state/src/state/design.dart';
 
-import '../actions/actions.dart' as actions;
-import '../state/app_state.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/app_state.dart';
 
 /// Ensures that actions on insertions and deletions happen in pairs on adjacent domains.
 /// Alternately, if Ctrl is pressed when the deletion/insertion is added, then it is added to every

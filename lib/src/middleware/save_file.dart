@@ -2,9 +2,9 @@ import 'dart:html';
 
 import 'package:redux/redux.dart';
 
-import '../json_serializable.dart';
-import '../actions/actions.dart' as actions;
-import '../state/app_state.dart';
+import 'package:scadnano_state/src/json_serializable.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/app_state.dart';
 import '../util.dart' as util;
 
 save_file_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {

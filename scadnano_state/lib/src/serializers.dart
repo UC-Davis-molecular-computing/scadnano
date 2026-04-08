@@ -5,10 +5,10 @@ import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/standard_json_plugin.dart';
 import 'package:color/color.dart';
-import 'package:scadnano/src/dna_file_type.dart';
-import 'package:scadnano/src/state/base_pair_display_type.dart';
-import 'package:scadnano/src/state/dna_extensions_move.dart';
-import 'package:scadnano/src/state/undo_redo.dart';
+import 'dna_file_type.dart';
+import 'state/base_pair_display_type.dart';
+import 'state/dna_extensions_move.dart';
+import 'state/undo_redo.dart';
 
 import 'state/dna_assign_options.dart';
 import 'state/domains_move.dart';

@@ -3,15 +3,15 @@ import 'dart:html';
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../state/group.dart';
-import '../state/substrand.dart';
+import 'package:scadnano_state/src/state/group.dart';
+import 'package:scadnano_state/src/state/substrand.dart';
 import '../app.dart';
-import '../state/domain.dart';
-import '../state/design.dart';
-import '../state/strand.dart';
-import '../actions/actions.dart' as actions;
-import '../state/app_state.dart';
-import '../extension_methods.dart';
+import 'package:scadnano_state/src/state/domain.dart';
+import 'package:scadnano_state/src/state/design.dart';
+import 'package:scadnano_state/src/state/strand.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/extension_methods.dart';
 
 check_reflect_strands_legal_middleware(Store<AppState> store, action, NextDispatcher next) {
   if (action is actions.StrandsReflect && action.strands.isNotEmpty) {

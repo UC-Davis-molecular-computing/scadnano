@@ -4,7 +4,7 @@ import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/strand.dart';
+import 'strand.dart';
 
 import 'select_mode.dart';
 import 'selectable.dart';
@@ -13,7 +13,7 @@ import 'strand_part.dart';
 import 'dna_end.dart';
 import '../json_serializable.dart';
 import '../constants.dart' as constants;
-import '../util.dart' as util;
+import '../util_state.dart' as util;
 import 'substrand.dart';
 import 'unused_fields.dart';
 import 'design.dart';

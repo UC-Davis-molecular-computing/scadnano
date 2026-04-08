@@ -1,14 +1,14 @@
 import 'package:react/react.dart';
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/extension.dart';
+import 'package:scadnano_state/src/state/extension.dart';
 
-import '../state/domain.dart';
-import '../state/dna_end.dart';
-import '../state/dna_extensions_move.dart';
-import '../state/address.dart';
-import '../actions/actions.dart' as actions;
-import '../state/app_state.dart';
+import 'package:scadnano_state/src/state/domain.dart';
+import 'package:scadnano_state/src/state/dna_end.dart';
+import 'package:scadnano_state/src/state/dna_extensions_move.dart';
+import 'package:scadnano_state/src/state/address.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/app_state.dart';
 
 reselect_moved_dna_extension_ends_middleware(Store<AppState> store, action, NextDispatcher next) {
   if (action is actions.DNAExtensionsMoveCommit && action.dna_extensions_move.moves.length > 1) {

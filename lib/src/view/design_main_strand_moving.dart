@@ -6,16 +6,16 @@ import 'package:over_react/over_react.dart';
 import 'pure_component.dart';
 import 'design_main_strand_loopout.dart';
 import 'transform_by_helix_group.dart';
-import '../state/loopout.dart';
-import '../state/group.dart';
+import 'package:scadnano_state/src/state/loopout.dart';
+import 'package:scadnano_state/src/state/group.dart';
 import '../reducers/strands_reducer.dart';
-import '../state/domain.dart';
-import '../state/dna_end.dart';
-import '../state/geometry.dart';
-import '../state/helix.dart';
-import '../state/strand.dart';
+import 'package:scadnano_state/src/state/domain.dart';
+import 'package:scadnano_state/src/state/dna_end.dart';
+import 'package:scadnano_state/src/state/geometry.dart';
+import 'package:scadnano_state/src/state/helix.dart';
+import 'package:scadnano_state/src/state/strand.dart';
 import '../view/design_main_strand_dna_end_moving.dart';
-import '../constants.dart' as constants;
+import 'package:scadnano_state/src/constants.dart' as constants;
 
 import 'design_main_strand_paths.dart';
 

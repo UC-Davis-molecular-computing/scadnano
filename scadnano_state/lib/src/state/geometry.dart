@@ -4,7 +4,7 @@ import 'package:built_value/serializer.dart';
 
 import 'unused_fields.dart';
 import '../serializers.dart';
-import '../util.dart' as util;
+import '../util_state.dart' as util;
 import '../constants.dart' as constants;
 
 part 'geometry.g.dart';

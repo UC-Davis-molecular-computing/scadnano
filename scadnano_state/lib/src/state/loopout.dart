@@ -9,7 +9,7 @@ import '../json_serializable.dart';
 import 'linker.dart';
 import 'selectable.dart';
 import '../constants.dart' as constants;
-import '../util.dart' as util;
+import '../util_state.dart' as util;
 import 'strand_part.dart';
 import 'substrand.dart';
 import 'unused_fields.dart';

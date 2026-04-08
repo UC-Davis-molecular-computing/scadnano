@@ -5,7 +5,7 @@ import 'package:built_value/serializer.dart';
 import 'package:built_value/built_value.dart';
 import '../serializers.dart';
 import 'grid.dart';
-import '../util.dart' as util;
+import '../util_state.dart' as util;
 
 part 'grid_position.g.dart';
 

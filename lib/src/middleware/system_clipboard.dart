@@ -3,17 +3,17 @@ import 'dart:html';
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 
-import 'package:scadnano/src/json_serializable.dart';
-import 'package:scadnano/src/state/clipboard.dart';
-import 'package:scadnano/src/state/group.dart';
-import 'package:scadnano/src/state/modification.dart';
-import 'package:scadnano/src/state/strand.dart';
+import 'package:scadnano_state/src/json_serializable.dart';
+import 'package:scadnano_state/src/state/clipboard.dart';
+import 'package:scadnano_state/src/state/group.dart';
+import 'package:scadnano_state/src/state/modification.dart';
+import 'package:scadnano_state/src/state/strand.dart';
 import 'package:scadnano/src/reducers/strands_move_reducer.dart';
 
 import '../reducers/strands_move_reducer.dart' as strands_move_reducer;
-import '../actions/actions.dart' as actions;
-import '../constants.dart' as constants;
-import '../state/app_state.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/constants.dart' as constants;
+import 'package:scadnano_state/src/state/app_state.dart';
 import '../reducers/strands_copy_info_reducer.dart';
 
 // unit testing points this global variable at an instance of CLIClipboard,

@@ -1,11 +1,11 @@
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/state/helix.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/state/helix.dart';
 
-import '../state/group.dart';
-import '../actions/actions.dart' as actions;
-import '../extension_methods.dart';
+import 'package:scadnano_state/src/state/group.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/extension_methods.dart';
 import 'util_reducer.dart';
 
 Reducer<BuiltMap<String, HelixGroup>> groups_local_reducer = combineReducers([

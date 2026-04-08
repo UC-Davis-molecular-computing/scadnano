@@ -1,15 +1,15 @@
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/actions/actions.dart';
-import 'package:scadnano/src/json_serializable.dart';
+import 'package:scadnano_state/src/actions/actions.dart';
+import 'package:scadnano_state/src/json_serializable.dart';
 import 'package:scadnano/src/middleware/export_cadnano_file.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/grid_position.dart';
-import 'package:scadnano/src/state/group.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/position3d.dart';
-import 'package:scadnano/src/state/strand.dart';
+import 'package:scadnano_state/src/state/design.dart';
+import 'package:scadnano_state/src/state/domain.dart';
+import 'package:scadnano_state/src/state/grid.dart';
+import 'package:scadnano_state/src/state/grid_position.dart';
+import 'package:scadnano_state/src/state/group.dart';
+import 'package:scadnano_state/src/state/helix.dart';
+import 'package:scadnano_state/src/state/position3d.dart';
+import 'package:scadnano_state/src/state/strand.dart';
 import 'package:scadnano/src/util.dart';
 import 'package:test/test.dart';
 

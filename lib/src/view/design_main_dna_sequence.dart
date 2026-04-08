@@ -3,15 +3,15 @@ import 'dart:math';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:platform_detect/platform_detect.dart';
-import 'package:scadnano/src/state/group.dart';
+import 'package:scadnano_state/src/state/group.dart';
 import 'package:scadnano/src/view/transform_by_helix_group.dart';
 
-import '../state/helix.dart';
-import 'package:scadnano/src/state/geometry.dart';
-import '../state/strand.dart';
-import '../state/domain.dart';
-import '../state/loopout.dart';
-import '../state/extension.dart';
+import 'package:scadnano_state/src/state/helix.dart';
+import 'package:scadnano_state/src/state/geometry.dart';
+import 'package:scadnano_state/src/state/strand.dart';
+import 'package:scadnano_state/src/state/domain.dart';
+import 'package:scadnano_state/src/state/loopout.dart';
+import 'package:scadnano_state/src/state/extension.dart';
 import 'pure_component.dart';
 import '../util.dart' as util;
 

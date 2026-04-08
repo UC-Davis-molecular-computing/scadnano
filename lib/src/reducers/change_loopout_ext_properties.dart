@@ -1,13 +1,13 @@
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/state/crossover.dart';
-import 'package:scadnano/src/state/domain.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/state/crossover.dart';
+import 'package:scadnano_state/src/state/domain.dart';
 
-import '../state/loopout.dart';
-import '../state/extension.dart';
-import '../state/strand.dart';
+import 'package:scadnano_state/src/state/loopout.dart';
+import 'package:scadnano_state/src/state/extension.dart';
+import 'package:scadnano_state/src/state/strand.dart';
 
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
 
 Strand convert_crossover_to_loopout_reducer(Strand strand, actions.ConvertCrossoverToLoopout action) {
   Loopout loopout_new = Loopout(

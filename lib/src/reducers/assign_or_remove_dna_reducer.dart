@@ -1,15 +1,15 @@
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/extension.dart';
-import '../state/domain.dart';
-import '../state/design.dart';
-import '../state/loopout.dart';
-import '../state/substrand.dart';
+import 'package:scadnano_state/src/state/extension.dart';
+import 'package:scadnano_state/src/state/domain.dart';
+import 'package:scadnano_state/src/state/design.dart';
+import 'package:scadnano_state/src/state/loopout.dart';
+import 'package:scadnano_state/src/state/substrand.dart';
 
-import '../state/strand.dart';
-import '../state/app_state.dart';
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/strand.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
 import '../util.dart' as util;
-import '../constants.dart' as constants;
+import 'package:scadnano_state/src/constants.dart' as constants;
 
 BuiltList<Strand> remove_dna_reducer(BuiltList<Strand> strands, actions.RemoveDNA action) {
   List<int> idxs = [];

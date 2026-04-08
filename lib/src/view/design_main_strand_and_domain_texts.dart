@@ -2,26 +2,26 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/state/address.dart';
-import 'package:scadnano/src/state/context_menu.dart';
-import 'package:scadnano/src/state/extension.dart';
-import 'package:scadnano/src/state/modification_type.dart';
-import 'package:scadnano/src/state/substrand.dart';
+import 'package:scadnano_state/src/state/address.dart';
+import 'package:scadnano_state/src/state/context_menu.dart';
+import 'package:scadnano_state/src/state/extension.dart';
+import 'package:scadnano_state/src/state/modification_type.dart';
+import 'package:scadnano_state/src/state/substrand.dart';
 
 import 'design_main_strand.dart';
 import 'transform_by_helix_group.dart';
-import '../state/geometry.dart';
-import '../state/group.dart';
-import '../state/domain.dart';
-import '../state/loopout.dart';
+import 'package:scadnano_state/src/state/geometry.dart';
+import 'package:scadnano_state/src/state/group.dart';
+import 'package:scadnano_state/src/state/domain.dart';
+import 'package:scadnano_state/src/state/loopout.dart';
 import 'design_main_strand_paths.dart';
 import 'design_main_strand_domain_text.dart';
 import 'design_main_strand_loopout_name.dart';
 import 'design_main_strand_extension_text.dart';
 import 'pure_component.dart';
-import '../state/strand.dart';
-import '../state/helix.dart';
-import '../constants.dart' as constants;
+import 'package:scadnano_state/src/state/strand.dart';
+import 'package:scadnano_state/src/state/helix.dart';
+import 'package:scadnano_state/src/constants.dart' as constants;
 
 part 'design_main_strand_and_domain_texts.over_react.g.dart';
 

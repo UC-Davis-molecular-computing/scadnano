@@ -2,16 +2,16 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
-import '../state/domain.dart';
-import '../state/design.dart';
-import '../state/dna_end.dart';
-import '../state/dna_ends_move.dart';
-import '../state/helix.dart';
-import '../state/strand.dart';
+import 'package:scadnano_state/src/state/domain.dart';
+import 'package:scadnano_state/src/state/design.dart';
+import 'package:scadnano_state/src/state/dna_end.dart';
+import 'package:scadnano_state/src/state/dna_ends_move.dart';
+import 'package:scadnano_state/src/state/helix.dart';
+import 'package:scadnano_state/src/state/strand.dart';
 
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
 import '../app.dart';
-import '../state/app_state.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
 
 // This is needed to gather the list of selected ends and package them into an action to start the moving
 // of selected ends. It is needed because the click on the DNAEnd that triggers the DNAEndsMoveStart action

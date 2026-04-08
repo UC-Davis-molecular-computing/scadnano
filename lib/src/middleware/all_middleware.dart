@@ -1,7 +1,7 @@
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/middleware/system_clipboard.dart';
 
-import '../state/app_state.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
 import 'dna_extensions_move_start.dart';
 import 'forbid_create_circular_strand_no_crossovers_middleware.dart';
 import 'helix_group_move_start.dart';

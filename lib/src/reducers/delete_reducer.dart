@@ -1,18 +1,18 @@
 import 'package:built_collection/built_collection.dart';
 
-import '../state/app_state.dart';
-import '../state/domain.dart';
-import '../state/crossover.dart';
-import '../state/dna_end.dart';
-import '../state/linker.dart';
-import '../state/loopout.dart';
-import '../state/extension.dart';
-import '../state/modification.dart';
-import '../state/selectable.dart';
-import '../state/strand.dart';
-import '../state/substrand.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/state/domain.dart';
+import 'package:scadnano_state/src/state/crossover.dart';
+import 'package:scadnano_state/src/state/dna_end.dart';
+import 'package:scadnano_state/src/state/linker.dart';
+import 'package:scadnano_state/src/state/loopout.dart';
+import 'package:scadnano_state/src/state/extension.dart';
+import 'package:scadnano_state/src/state/modification.dart';
+import 'package:scadnano_state/src/state/selectable.dart';
+import 'package:scadnano_state/src/state/strand.dart';
+import 'package:scadnano_state/src/state/substrand.dart';
 
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
 
 BuiltList<Strand> delete_all_reducer(
   BuiltList<Strand> strands,

@@ -1,7 +1,7 @@
 import 'package:redux/redux.dart';
-import '../state/dna_extensions_move.dart';
+import 'package:scadnano_state/src/state/dna_extensions_move.dart';
 
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
 
 Reducer<DNAExtensionsMove?> optimized_dna_extensions_move_reducer = combineReducers([
   dna_extensions_move_reducer,

@@ -1,8 +1,8 @@
-import 'package:scadnano/src/state/address.dart';
+import 'package:scadnano_state/src/state/address.dart';
 import '../reducers/util_reducer.dart';
-import '../state/app_state.dart';
-import '../state/strand_creation.dart';
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/state/strand_creation.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
 
 GlobalReducer<StrandCreation?, AppState> strand_creation_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<StrandCreation?, AppState, actions.StrandCreateStart>(strand_create_start_reducer),

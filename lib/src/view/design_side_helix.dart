@@ -2,20 +2,20 @@ import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/state/design_side_rotation_data.dart';
-import '../state/context_menu.dart';
-import '../state/edit_mode.dart';
-import '../state/geometry.dart';
-import '../state/grid.dart';
-import '../state/position3d.dart';
+import 'package:scadnano_state/src/state/design_side_rotation_data.dart';
+import 'package:scadnano_state/src/state/context_menu.dart';
+import 'package:scadnano_state/src/state/edit_mode.dart';
+import 'package:scadnano_state/src/state/geometry.dart';
+import 'package:scadnano_state/src/state/grid.dart';
+import 'package:scadnano_state/src/state/position3d.dart';
 
-import '../state/mouseover_data.dart';
+import 'package:scadnano_state/src/state/mouseover_data.dart';
 import '../app.dart';
-import '../state/helix.dart';
+import 'package:scadnano_state/src/state/helix.dart';
 import 'design_side_rotation.dart';
 import 'pure_component.dart';
-import '../actions/actions.dart' as actions;
-import '../constants.dart' as constants;
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/constants.dart' as constants;
 import '../util.dart' as util;
 import 'helix_context_menu.dart';
 

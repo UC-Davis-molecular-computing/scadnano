@@ -3,12 +3,12 @@ import 'dart:html';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 
-import '../state/app_state.dart';
-import '../state/context_menu.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/state/context_menu.dart';
 import '../app.dart';
 import 'pure_component.dart';
-import '../actions/actions.dart' as actions;
-import '../constants.dart' as constants;
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/constants.dart' as constants;
 
 part 'design_context_menu.over_react.g.dart';
 

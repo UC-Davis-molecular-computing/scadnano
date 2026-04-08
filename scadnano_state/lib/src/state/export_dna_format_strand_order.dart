@@ -6,7 +6,7 @@ import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
 
 import 'export_dna_format.dart';
-import '../util.dart' as util;
+import '../util_state.dart' as util;
 
 part 'export_dna_format_strand_order.g.dart';
 

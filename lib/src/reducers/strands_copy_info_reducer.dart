@@ -2,20 +2,20 @@ import 'dart:convert';
 import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/modification.dart';
+import 'package:scadnano_state/src/state/modification.dart';
 
-import '../state/copy_info.dart';
-import '../state/strands_move.dart';
-import '../state/app_state.dart';
-import '../state/domain.dart';
-import '../state/helix.dart';
-import '../state/address.dart';
-import '../state/design.dart';
-import '../state/strand.dart';
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/copy_info.dart';
+import 'package:scadnano_state/src/state/strands_move.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/state/domain.dart';
+import 'package:scadnano_state/src/state/helix.dart';
+import 'package:scadnano_state/src/state/address.dart';
+import 'package:scadnano_state/src/state/design.dart';
+import 'package:scadnano_state/src/state/strand.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
 import 'strands_move_reducer.dart' as strands_move_reducer;
 import 'util_reducer.dart';
-import '../constants.dart' as constants;
+import 'package:scadnano_state/src/constants.dart' as constants;
 import '../util.dart' as util;
 
 GlobalReducer<CopyInfo?, AppState> copy_info_global_reducer = combineGlobalReducers([

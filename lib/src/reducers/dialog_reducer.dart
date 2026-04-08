@@ -1,7 +1,7 @@
 import 'package:redux/redux.dart';
 
-import '../state/dialog.dart';
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/dialog.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
 
 Reducer<Dialog?> dialog_reducer = combineReducers([
   TypedReducer<Dialog?, actions.DialogShow>(dialog_show_reducer),

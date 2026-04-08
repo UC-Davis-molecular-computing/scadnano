@@ -14,32 +14,32 @@ import 'package:over_react/over_react.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
-import 'package:scadnano/src/state/strand_creation.dart';
+import 'package:scadnano_state/src/state/strand_creation.dart';
 
 import 'middleware/export_svg.dart';
-import 'state/address.dart';
-import 'state/app_state.dart';
-import 'state/app_ui_state.dart';
-import 'state/group.dart';
+import 'package:scadnano_state/src/state/address.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/state/app_ui_state.dart';
+import 'package:scadnano_state/src/state/group.dart';
 import 'view/design.dart';
 
 import 'app.dart';
-import 'state/dialog.dart';
-import 'state/geometry.dart';
-import 'state/grid.dart';
-import 'state/grid_position.dart';
-import 'state/helix.dart';
-import 'state/design.dart';
-import 'state/mouseover_data.dart';
-import 'constants.dart' as constants;
-import 'state/select_mode.dart';
-import 'state/selection_box.dart';
-import 'actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/dialog.dart';
+import 'package:scadnano_state/src/state/geometry.dart';
+import 'package:scadnano_state/src/state/grid.dart';
+import 'package:scadnano_state/src/state/grid_position.dart';
+import 'package:scadnano_state/src/state/helix.dart';
+import 'package:scadnano_state/src/state/design.dart';
+import 'package:scadnano_state/src/state/mouseover_data.dart';
+import 'package:scadnano_state/src/constants.dart' as constants;
+import 'package:scadnano_state/src/state/select_mode.dart';
+import 'package:scadnano_state/src/state/selection_box.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
 
 // Re-export all pure utility functions so that existing `import 'util.dart' as util;` continues to work.
-export 'util_state.dart';
+export 'package:scadnano_state/src/util_state.dart';
 // Also import for use within this file.
-import 'util_state.dart';
+import 'package:scadnano_state/src/util_state.dart';
 
 /////////////////////////////////////////////////////////////////////////////
 // interop between Dart and JS

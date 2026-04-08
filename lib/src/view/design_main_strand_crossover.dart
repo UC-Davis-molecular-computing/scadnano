@@ -2,25 +2,25 @@ import 'dart:html';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/dialog.dart';
-import '../state/geometry.dart';
+import 'package:scadnano_state/src/state/dialog.dart';
+import 'package:scadnano_state/src/state/geometry.dart';
 
 import 'transform_by_helix_group.dart';
-import '../state/group.dart';
-import '../state/context_menu.dart';
-import '../state/helix.dart';
-import '../state/crossover.dart';
-import '../state/mouseover_data.dart';
-import '../state/strand.dart';
-import '../state/domain.dart';
+import 'package:scadnano_state/src/state/group.dart';
+import 'package:scadnano_state/src/state/context_menu.dart';
+import 'package:scadnano_state/src/state/helix.dart';
+import 'package:scadnano_state/src/state/crossover.dart';
+import 'package:scadnano_state/src/state/mouseover_data.dart';
+import 'package:scadnano_state/src/state/strand.dart';
+import 'package:scadnano_state/src/state/domain.dart';
 import 'design_main_strand_loopout.dart';
 import 'design_main_strand_paths.dart';
 import '../app.dart';
 import 'pure_component.dart';
-import '../state/selectable.dart';
+import 'package:scadnano_state/src/state/selectable.dart';
 import 'selection_handler.dart';
-import '../actions/actions.dart' as actions;
-import '../constants.dart' as constants;
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/constants.dart' as constants;
 import '../util.dart' as util;
 
 part 'design_main_strand_crossover.over_react.g.dart';

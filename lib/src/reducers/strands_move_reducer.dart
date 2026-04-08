@@ -4,16 +4,16 @@ import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart';
 import 'package:redux/redux.dart';
 
-import '../state/group.dart';
-import '../state/design.dart';
+import 'package:scadnano_state/src/state/group.dart';
+import 'package:scadnano_state/src/state/design.dart';
 import '../reducers/util_reducer.dart';
-import '../state/app_state.dart';
-import '../state/helix.dart';
-import '../state/strand.dart';
-import '../state/strands_move.dart';
-import '../actions/actions.dart' as actions;
-import '../extension_methods.dart';
-import '../constants.dart' as constants;
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/state/helix.dart';
+import 'package:scadnano_state/src/state/strand.dart';
+import 'package:scadnano_state/src/state/strands_move.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/extension_methods.dart';
+import 'package:scadnano_state/src/constants.dart' as constants;
 
 GlobalReducer<StrandsMove?, AppState> strands_move_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<StrandsMove?, AppState, actions.StrandsMoveStart>(strands_move_start_reducer),

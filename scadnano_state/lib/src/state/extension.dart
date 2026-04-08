@@ -12,7 +12,7 @@ import 'strand_part.dart';
 import 'dna_end.dart';
 import '../json_serializable.dart';
 import '../constants.dart' as constants;
-import '../util.dart' as util;
+import '../util_state.dart' as util;
 import 'substrand.dart';
 import 'domain.dart';
 import 'unused_fields.dart';

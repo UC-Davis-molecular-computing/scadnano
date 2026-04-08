@@ -11,7 +11,7 @@ import 'design.dart';
 import 'geometry.dart';
 import 'grid.dart';
 import 'position3d.dart';
-import '../util.dart' as util;
+import '../util_state.dart' as util;
 import '../constants.dart' as constants;
 
 part 'group.g.dart';

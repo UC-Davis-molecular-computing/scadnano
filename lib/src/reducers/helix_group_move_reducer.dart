@@ -1,9 +1,9 @@
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/state/design.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/state/design.dart';
 
-import '../state/helix_group_move.dart';
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/helix_group_move.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
 
 // These interact with optimized store away from full state
 Reducer<HelixGroupMove?> optimized_helix_group_move_reducer = combineReducers([

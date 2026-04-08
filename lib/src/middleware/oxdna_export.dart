@@ -7,20 +7,20 @@ import 'package:react/react.dart';
 import 'package:built_collection/built_collection.dart';
 
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/extension.dart';
-import 'package:scadnano/src/state/geometry.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/loopout.dart';
-import 'package:scadnano/src/state/position3d.dart';
-import 'package:scadnano/src/state/strand.dart';
-import '../state/app_state.dart';
-import '../actions/actions.dart' as actions;
-import '../state/helix.dart';
+import 'package:scadnano_state/src/state/design.dart';
+import 'package:scadnano_state/src/state/domain.dart';
+import 'package:scadnano_state/src/state/extension.dart';
+import 'package:scadnano_state/src/state/geometry.dart';
+import 'package:scadnano_state/src/state/grid.dart';
+import 'package:scadnano_state/src/state/loopout.dart';
+import 'package:scadnano_state/src/state/position3d.dart';
+import 'package:scadnano_state/src/state/strand.dart';
+import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state/src/state/helix.dart';
 import '../util.dart' as util;
 import 'export_cadnano_file.dart' as export_cadnano;
-import '../constants.dart' as constants;
+import 'package:scadnano_state/src/constants.dart' as constants;
 
 oxdna_export_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   if (action is actions.OxdnaExport || action is actions.OxviewExport) {

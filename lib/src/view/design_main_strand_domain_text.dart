@@ -3,22 +3,22 @@ import 'dart:html';
 import 'package:meta/meta.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/substrand.dart';
+import 'package:scadnano_state/src/state/substrand.dart';
 
-import '../state/group.dart';
-import '../state/geometry.dart';
-import '../state/domain.dart';
+import 'package:scadnano_state/src/state/group.dart';
+import 'package:scadnano_state/src/state/geometry.dart';
+import 'package:scadnano_state/src/state/domain.dart';
 import 'design_main_strand.dart';
 import 'pure_component.dart';
-import '../state/helix.dart';
-import '../state/context_menu.dart';
-import '../state/strand.dart';
-import '../state/address.dart';
-import '../state/modification_type.dart';
+import 'package:scadnano_state/src/state/helix.dart';
+import 'package:scadnano_state/src/state/context_menu.dart';
+import 'package:scadnano_state/src/state/strand.dart';
+import 'package:scadnano_state/src/state/address.dart';
+import 'package:scadnano_state/src/state/modification_type.dart';
 import '../app.dart';
-import '../constants.dart' as constants;
+import 'package:scadnano_state/src/constants.dart' as constants;
 import '../util.dart' as util;
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state/src/actions/actions.dart' as actions;
 
 part 'design_main_strand_domain_text.over_react.g.dart';
 
