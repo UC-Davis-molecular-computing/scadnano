@@ -1,4 +1,4 @@
-name: scadnano_state
+name: scadnano_state_actions
 description: State types, actions, and serializers for scadnano - extracted to a separate package to optimize built_value code generation caching.
 
 environment:

@@ -5,8 +5,8 @@ import 'package:over_react/src/component/error_boundary_api.dart';
 import 'package:over_react/src/component/error_boundary_recoverable.dart';
 
 import '../app.dart';
-import 'package:scadnano_state/src/constants.dart' as constants;
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import '../util.dart' as util;
 
 part 'design_main_error_boundary.over_react.g.dart';

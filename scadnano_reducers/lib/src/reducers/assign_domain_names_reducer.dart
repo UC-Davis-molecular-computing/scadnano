@@ -1,10 +1,10 @@
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano_state/src/state/domain.dart';
-import 'package:scadnano_state/src/state/substrand.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/substrand.dart';
 
-import 'package:scadnano_state/src/state/strand.dart';
-import 'package:scadnano_state/src/state/app_state.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
 BuiltList<Strand> assign_domain_name_complement_from_bound_strands_reducer(
   BuiltList<Strand> strands,

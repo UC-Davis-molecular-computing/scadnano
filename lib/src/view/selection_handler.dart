@@ -2,19 +2,19 @@ import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
 
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import '../app.dart';
-import 'package:scadnano_state/src/constants.dart' as constants;
-import 'package:scadnano_state/src/state/crossover.dart';
-import 'package:scadnano_state/src/state/dialog.dart';
-import 'package:scadnano_state/src/state/dna_end.dart';
-import 'package:scadnano_state/src/state/domain.dart';
-import 'package:scadnano_state/src/state/edit_mode.dart';
-import 'package:scadnano_state/src/state/extension.dart';
-import 'package:scadnano_state/src/state/loopout.dart';
-import 'package:scadnano_state/src/state/select_mode.dart';
-import 'package:scadnano_state/src/state/selectable.dart';
-import 'package:scadnano_state/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/state/crossover.dart';
+import 'package:scadnano_state_actions/src/state/dialog.dart';
+import 'package:scadnano_state_actions/src/state/dna_end.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/edit_mode.dart';
+import 'package:scadnano_state_actions/src/state/extension.dart';
+import 'package:scadnano_state_actions/src/state/loopout.dart';
+import 'package:scadnano_state_actions/src/state/select_mode.dart';
+import 'package:scadnano_state_actions/src/state/selectable.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
 import '../util.dart' as util;
 
 /// Handles mouse down for selection on any [Selectable].

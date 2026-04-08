@@ -2,8 +2,8 @@ import 'package:redux/redux.dart';
 import 'app_ui_state_reducer.dart';
 import 'design_reducer.dart';
 import 'undo_redo_reducer.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
-import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 import 'load_dna_file_reducer.dart';
 
 AppState app_state_reducer(AppState state, action) {

@@ -4,21 +4,21 @@ import 'dart:math';
 import 'package:meta/meta.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
-import 'package:scadnano_state/src/state/grid.dart';
-import 'package:scadnano_state/src/state/group.dart';
-import 'package:scadnano_state/src/state/crossover.dart';
-import 'package:scadnano_state/src/state/design.dart';
-import 'package:scadnano_state/src/state/domain.dart';
-import 'package:scadnano_state/src/state/geometry.dart';
-import 'package:scadnano_state/src/state/helix.dart';
-import 'package:scadnano_state/src/state/position3d.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/crossover.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/position3d.dart';
 
-import 'package:scadnano_state/src/state/address.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/address.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import '../app.dart';
 import '../util.dart' as util;
-import 'package:scadnano_state/src/constants.dart' as constants;
-import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 
 /// Set positions of helices based on crossovers, assuming all helices are parallel.
 /// Dispatches a normal HelixPositionSet action (many of them batched).

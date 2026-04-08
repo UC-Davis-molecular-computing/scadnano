@@ -10,7 +10,7 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/components.dart' as over_react_components;
 import '../view/edit_and_select_modes.dart';
 
-import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 import 'design.dart';
 import 'menu.dart';
 import 'oxview.dart';
@@ -18,7 +18,7 @@ import '../app.dart';
 import '../util.dart' as util;
 import '../middleware/local_storage.dart' as local_storage;
 
-import 'package:scadnano_state/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 
 @JS(constants.js_function_name_setup_svg_panzoom)
 external setup_svg_panzoom_js(

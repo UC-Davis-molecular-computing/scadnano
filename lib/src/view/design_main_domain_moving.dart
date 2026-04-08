@@ -7,11 +7,11 @@ import 'package:scadnano_reducers/src/reducers/domains_move_reducer.dart';
 
 import 'pure_component.dart';
 import 'transform_by_helix_group.dart';
-import 'package:scadnano_state/src/state/group.dart';
-import 'package:scadnano_state/src/state/domain.dart';
-import 'package:scadnano_state/src/state/geometry.dart';
-import 'package:scadnano_state/src/state/helix.dart';
-import 'package:scadnano_state/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 
 part 'design_main_domain_moving.over_react.g.dart';
 

@@ -1,16 +1,16 @@
 import 'dart:convert';
 
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano_state/src/dna_file_type.dart';
-import 'package:scadnano_state/src/state/selectable.dart';
+import 'package:scadnano_state_actions/src/dna_file_type.dart';
+import 'package:scadnano_state_actions/src/state/selectable.dart';
 
-import 'package:scadnano_state/src/state/design.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
-import 'package:scadnano_state/src/state/mouseover_data.dart';
-import 'package:scadnano_state/src/state/app_state.dart';
-import 'package:scadnano_state/src/state/undo_redo.dart';
-import 'package:scadnano_state/src/constants.dart' as constants;
-import 'package:scadnano_state/src/util_state.dart' as util;
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/mouseover_data.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/undo_redo.dart';
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/util_state.dart' as util;
 
 var hline = '*' * 100;
 

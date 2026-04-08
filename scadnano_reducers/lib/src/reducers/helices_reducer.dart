@@ -5,25 +5,25 @@ import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
 import 'groups_reducer.dart';
 import 'strands_move_reducer.dart';
-import 'package:scadnano_state/src/state/group.dart';
-import 'package:scadnano_state/src/state/strand_creation.dart';
-import 'package:scadnano_state/src/state/strands_move.dart';
-import 'package:scadnano_state/src/state/substrand.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/strand_creation.dart';
+import 'package:scadnano_state_actions/src/state/strands_move.dart';
+import 'package:scadnano_state_actions/src/state/substrand.dart';
 import 'util_reducer.dart';
-import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 
-import 'package:scadnano_state/src/state/domain.dart';
-import 'package:scadnano_state/src/state/design.dart';
-import 'package:scadnano_state/src/state/extension.dart';
-import 'package:scadnano_state/src/state/geometry.dart';
-import 'package:scadnano_state/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/extension.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
 import 'delete_reducer.dart' as delete_reducer;
-import 'package:scadnano_state/src/state/helix.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
-import 'package:scadnano_state/src/util_state.dart' as util;
-import 'package:scadnano_state/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/util_state.dart' as util;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import 'selection_reducer.dart';
-import 'package:scadnano_state/src/extension_methods.dart';
+import 'package:scadnano_state_actions/src/extension_methods.dart';
 
 Reducer<BuiltMap<int, Helix>> helices_local_reducer = combineReducers([
   TypedReducer<BuiltMap<int, Helix>, actions.MoveHelicesToGroup>(move_helices_to_group_helices_reducer),

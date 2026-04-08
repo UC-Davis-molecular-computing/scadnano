@@ -1,8 +1,8 @@
 import 'package:over_react/over_react.dart';
-import 'package:scadnano_state/src/state/design_side_rotation_data.dart';
+import 'package:scadnano_state_actions/src/state/design_side_rotation_data.dart';
 
-import 'package:scadnano_state/src/state/mouseover_data.dart';
-import 'package:scadnano_state/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/mouseover_data.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
 import 'design_side_rotation_arrow.dart';
 import 'pure_component.dart';
 

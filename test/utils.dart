@@ -7,17 +7,17 @@ import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 
-import 'package:scadnano_state/src/state/clipboard.dart';
-import 'package:scadnano/src/app.dart';
+import 'package:scadnano_state_actions/src/state/clipboard.dart';
+import 'package:scadnano_view_middleware/src/app.dart';
 import 'package:scadnano_reducers/src/reducers/app_state_reducer.dart';
-import 'package:scadnano_state/src/state/app_state.dart';
-import 'package:scadnano_state/src/state/app_ui_state.dart';
-import 'package:scadnano_state/src/state/design.dart';
-import 'package:scadnano_state/src/state/helix.dart';
-import 'package:scadnano_state/src/state/strand.dart';
-import 'package:scadnano_state/src/state/undo_redo.dart';
-import 'package:scadnano/src/middleware/all_middleware.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/app_ui_state.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/undo_redo.dart';
+import 'package:scadnano_view_middleware/src/middleware/all_middleware.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
 void initializeComponentTests() {
   enableTestMode();

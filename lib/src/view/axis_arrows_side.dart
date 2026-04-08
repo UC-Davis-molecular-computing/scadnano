@@ -3,11 +3,11 @@ import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
 import '../app.dart';
-import 'package:scadnano_state/src/state/app_state.dart';
-import 'package:scadnano_state/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
 
 part 'axis_arrows_side.over_react.g.dart';
 

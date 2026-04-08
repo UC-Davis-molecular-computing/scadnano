@@ -2,15 +2,15 @@ import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
 
 import 'package:scadnano_reducers/src/reducers/domains_move_reducer.dart' as domains_move_reducer;
-import 'package:scadnano_state/src/state/domains_move.dart';
-import 'package:scadnano_state/src/state/design.dart';
-import 'package:scadnano_state/src/state/address.dart';
-import 'package:scadnano_state/src/state/domain.dart';
-import 'package:scadnano_state/src/state/dna_end.dart';
-import 'package:scadnano_state/src/state/strand.dart';
-import 'package:scadnano_state/src/state/strands_move.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
-import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/domains_move.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/address.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/dna_end.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/strands_move.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 
 reselect_moved_domains_middleware(Store<AppState> store, action, NextDispatcher next) {
   // only reselect if there is more than 1 selected

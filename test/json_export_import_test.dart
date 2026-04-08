@@ -1,26 +1,26 @@
 import 'dart:convert';
 
 import 'package:color/color.dart';
-import 'package:scadnano_state/src/actions/actions.dart';
-import 'package:scadnano_state/src/json_serializable.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart';
+import 'package:scadnano_state_actions/src/json_serializable.dart';
 import 'package:scadnano_reducers/src/reducers/app_state_reducer.dart';
 import 'package:scadnano_reducers/src/reducers/assign_or_remove_dna_reducer.dart';
 import 'package:scadnano_reducers/src/reducers/change_loopout_ext_properties.dart';
 import 'package:scadnano_reducers/src/reducers/delete_reducer.dart';
 import 'package:scadnano_reducers/src/reducers/nick_ligate_join_by_crossover_reducers.dart';
 import 'package:scadnano_reducers/src/reducers/assign_domain_names_reducer.dart';
-import 'package:scadnano_state/src/state/app_state.dart';
-import 'package:scadnano_state/src/state/domain.dart';
-import 'package:scadnano_state/src/state/helix.dart';
-import 'package:scadnano_state/src/state/grid.dart';
-import 'package:scadnano_state/src/state/loopout.dart';
-import 'package:scadnano_state/src/state/select_mode.dart';
-import 'package:scadnano_state/src/state/strand.dart';
-import 'package:scadnano_state/src/state/dna_assign_options.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/loopout.dart';
+import 'package:scadnano_state_actions/src/state/select_mode.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/dna_assign_options.dart';
 import 'package:test/test.dart';
 
-import 'package:scadnano_state/src/state/design.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
 import 'utils.dart';
 

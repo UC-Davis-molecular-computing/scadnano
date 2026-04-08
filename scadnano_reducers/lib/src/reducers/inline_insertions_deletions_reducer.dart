@@ -1,8 +1,8 @@
-import 'package:scadnano_state/src/state/domain.dart';
-import 'package:scadnano_state/src/state/helix.dart';
-import 'package:scadnano_state/src/state/strand.dart';
-import 'package:scadnano_state/src/state/design.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
 /// Converts deletions and insertions by "inlining" them. Insertions and deletions are removed,
 /// and their substrands have their lengths altered. Also, major tick marks on the helices will be

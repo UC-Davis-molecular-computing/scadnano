@@ -1,12 +1,12 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/view/pure_component.dart';
-import 'package:scadnano_state/src/state/dialog.dart';
+import 'package:scadnano_view_middleware/src/view/pure_component.dart';
+import 'package:scadnano_state_actions/src/state/dialog.dart';
 
 import '../app.dart';
-import 'package:scadnano_state/src/state/app_state.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
 part 'design_dialog_form.over_react.g.dart';
 

@@ -1,8 +1,8 @@
 import 'dart:html';
 
 import 'package:redux/redux.dart';
-import 'package:scadnano_state/src/state/app_state.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
 /// Prevents MoveLinker action when it would create a circular strand by moving
 /// a crossover/loopout to the same strand, or when the source strand is already circular

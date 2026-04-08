@@ -2,24 +2,24 @@ import 'package:color/color.dart';
 import 'package:scadnano_reducers/src/reducers/change_loopout_ext_properties.dart';
 import 'package:scadnano_reducers/src/reducers/delete_reducer.dart';
 import 'package:scadnano_reducers/src/reducers/nick_ligate_join_by_crossover_reducers.dart';
-import 'package:scadnano_state/src/state/address.dart';
-import 'package:scadnano_state/src/state/domain.dart';
-import 'package:scadnano_state/src/state/grid_position.dart';
-import 'package:scadnano_state/src/state/group.dart';
-import 'package:scadnano_state/src/state/helix.dart';
-import 'package:scadnano_state/src/state/grid.dart';
-import 'package:scadnano_state/src/state/loopout.dart';
-import 'package:scadnano_state/src/state/extension.dart';
-import 'package:scadnano_state/src/state/position3d.dart';
-import 'package:scadnano_state/src/state/select_mode.dart';
-import 'package:scadnano_state/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/address.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/grid_position.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/loopout.dart';
+import 'package:scadnano_state_actions/src/state/extension.dart';
+import 'package:scadnano_state_actions/src/state/position3d.dart';
+import 'package:scadnano_state_actions/src/state/select_mode.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
 import 'package:test/test.dart';
 
-import 'package:scadnano_state/src/state/design.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
-import 'package:scadnano/src/util.dart' as util;
-import 'package:scadnano_state/src/constants.dart' as constants;
+import 'package:scadnano_view_middleware/src/util.dart' as util;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 
 main() {
   group('HelixRollRelax', () {

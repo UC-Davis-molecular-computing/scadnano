@@ -3,16 +3,16 @@ import 'dart:math';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano_state/src/state/helix_group_move.dart';
-import 'package:scadnano_state/src/state/position3d.dart';
+import 'package:scadnano_state_actions/src/state/helix_group_move.dart';
+import 'package:scadnano_state_actions/src/state/position3d.dart';
 
 import '../app.dart';
-import 'package:scadnano_state/src/state/group.dart';
-import 'package:scadnano_state/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
 import 'design_main_helix.dart';
-import 'package:scadnano_state/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
 import 'pure_component.dart';
-import 'package:scadnano_state/src/extension_methods.dart';
+import 'package:scadnano_state_actions/src/extension_methods.dart';
 
 part 'helix_group_moving.over_react.g.dart';
 

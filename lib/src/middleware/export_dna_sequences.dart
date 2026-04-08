@@ -1,12 +1,12 @@
 import 'package:redux/redux.dart';
-import 'package:scadnano_state/src/state/dialog.dart';
-import 'package:scadnano_state/src/state/export_dna_format.dart';
-import 'package:scadnano_state/src/state/export_dna_format_strand_order.dart';
+import 'package:scadnano_state_actions/src/state/dialog.dart';
+import 'package:scadnano_state_actions/src/state/export_dna_format.dart';
+import 'package:scadnano_state_actions/src/state/export_dna_format_strand_order.dart';
 
 import '../app.dart';
-import 'package:scadnano_state/src/state/strand.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
-import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 import '../util.dart' as util;
 import '../util.dart';
 

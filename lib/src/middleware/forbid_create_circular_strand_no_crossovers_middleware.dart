@@ -1,13 +1,13 @@
 import 'dart:html';
 
 import 'package:redux/redux.dart';
-import 'package:scadnano_state/src/state/crossover.dart';
-import 'package:scadnano_state/src/state/design.dart';
-import 'package:scadnano_state/src/state/strand.dart';
-import 'package:scadnano_state/src/state/app_state.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
-import 'package:scadnano_state/src/state/grid_position.dart';
-import 'package:scadnano_state/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/crossover.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/grid_position.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
 
 /// Disallows converting all crossovers on a circular strand to loopouts, since then the first
 /// substrand would necessarily be a loopout, currently disallowed.

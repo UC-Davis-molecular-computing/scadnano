@@ -1,8 +1,8 @@
 import 'package:redux/redux.dart';
 
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import '../app.dart';
-import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 import '../util.dart' as util;
 
 example_design_selected_middleware(Store<AppState> store, action, NextDispatcher next) {

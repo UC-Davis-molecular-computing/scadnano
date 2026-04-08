@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/over_react.dart';
-import 'package:scadnano_state/src/state/dna_extensions_move.dart';
+import 'package:scadnano_state_actions/src/state/dna_extensions_move.dart';
 
 import '../app.dart';
 

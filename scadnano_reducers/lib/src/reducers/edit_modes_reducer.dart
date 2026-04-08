@@ -1,8 +1,8 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
-import 'package:scadnano_state/src/state/edit_mode.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/edit_mode.dart';
 
 Reducer<BuiltSet<EditModeChoice>> edit_modes_reducer = combineReducers<BuiltSet<EditModeChoice>>([
   TypedReducer<BuiltSet<EditModeChoice>, actions.EditModeToggle>(toggle_edit_mode_reducer),

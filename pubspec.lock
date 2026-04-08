@@ -496,10 +496,10 @@ packages:
       relative: true
     source: path
     version: "0.0.0"
-  scadnano_state:
+  scadnano_state_actions:
     dependency: "direct main"
     description:
-      path: scadnano_state
+      path: scadnano_state_actions
       relative: true
     source: path
     version: "0.0.0"

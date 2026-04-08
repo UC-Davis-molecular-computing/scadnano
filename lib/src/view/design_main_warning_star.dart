@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
-import 'package:scadnano_state/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
 
-import 'package:scadnano_state/src/state/domain_name_mismatch.dart';
+import 'package:scadnano_state_actions/src/state/domain_name_mismatch.dart';
 
 part 'design_main_warning_star.over_react.g.dart';
 

@@ -1,12 +1,12 @@
 import 'dart:html';
 
 import 'package:redux/redux.dart';
-import 'package:scadnano_state/src/actions/actions.dart';
-import 'package:scadnano/src/middleware/edit_select_mode_change.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart';
+import 'package:scadnano_view_middleware/src/middleware/edit_select_mode_change.dart';
 
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import '../app.dart';
-import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 import '../util.dart' as util;
 
 load_file_middleware(Store<AppState> store, action, NextDispatcher next) {

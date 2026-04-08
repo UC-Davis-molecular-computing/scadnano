@@ -2,18 +2,18 @@ import 'dart:math';
 
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano_state/src/state/selection_rope.dart';
-import 'package:scadnano_state/src/state/edit_mode.dart';
-import 'package:scadnano_state/src/state/geometry.dart';
-import 'package:scadnano_state/src/state/select_mode.dart';
+import 'package:scadnano_state_actions/src/state/selection_rope.dart';
+import 'package:scadnano_state_actions/src/state/edit_mode.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/select_mode.dart';
 
-import 'package:scadnano_state/src/state/selectable.dart';
-import 'package:scadnano_state/src/state/helix.dart';
-import 'package:scadnano_state/src/state/app_state.dart';
-import 'package:scadnano_state/src/state/selection_box.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
-import 'package:scadnano_state/src/util_state.dart' as util;
-import 'package:scadnano_state/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/state/selectable.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/selection_box.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/util_state.dart' as util;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import 'util_reducer.dart';
 
 SelectablesStore selectables_store_reducer(SelectablesStore selectables_store, AppState state, action) {

@@ -3,12 +3,12 @@ import 'dart:math';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 
-import 'package:scadnano_state/src/state/group.dart';
-import 'package:scadnano_state/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
 import 'design_main_helix.dart';
-import 'package:scadnano_state/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
 import 'pure_component.dart';
-import 'package:scadnano_state/src/extension_methods.dart';
+import 'package:scadnano_state_actions/src/extension_methods.dart';
 
 part 'design_main_helices.over_react.g.dart';
 

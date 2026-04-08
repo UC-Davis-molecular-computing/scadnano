@@ -2,14 +2,14 @@ import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
 
-import 'package:scadnano_state/src/state/context_menu.dart';
-import 'package:scadnano_state/src/state/dialog.dart';
-import 'package:scadnano_state/src/state/grid.dart';
-import 'package:scadnano_state/src/state/grid_position.dart';
-import 'package:scadnano_state/src/state/position3d.dart';
-import 'package:scadnano_state/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/context_menu.dart';
+import 'package:scadnano_state_actions/src/state/dialog.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/grid_position.dart';
+import 'package:scadnano_state_actions/src/state/position3d.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
 import '../app.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import '../util.dart' as util;
 
 const SET_HELIX_TICK_MARKS_SHORT_DESCRIPTION = "set helix tick marks";

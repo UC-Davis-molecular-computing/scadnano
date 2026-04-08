@@ -1,9 +1,9 @@
-import 'package:scadnano_state/src/state/design.dart';
-import 'package:scadnano_state/src/state/domain.dart';
-import 'package:scadnano_state/src/state/grid.dart';
-import 'package:scadnano_state/src/state/grid_position.dart';
-import 'package:scadnano_state/src/state/strand.dart';
-import 'package:scadnano/src/util.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/grid_position.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_view_middleware/src/util.dart';
 import 'package:test/test.dart';
 
 import 'utils.dart';

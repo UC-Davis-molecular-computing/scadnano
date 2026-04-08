@@ -3,33 +3,33 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:redux/redux.dart';
-import 'package:scadnano_state/src/state/domains_move.dart';
-import 'package:scadnano_state/src/state/extension.dart';
-import 'package:scadnano_state/src/state/loopout.dart';
-import 'package:scadnano_state/src/state/modification.dart';
-import 'package:scadnano_state/src/state/selectable.dart';
+import 'package:scadnano_state_actions/src/state/domains_move.dart';
+import 'package:scadnano_state_actions/src/state/extension.dart';
+import 'package:scadnano_state_actions/src/state/loopout.dart';
+import 'package:scadnano_state_actions/src/state/modification.dart';
+import 'package:scadnano_state_actions/src/state/selectable.dart';
 
 import 'assign_domain_names_reducer.dart';
 import 'strands_move_reducer.dart' as strands_move_reducer;
 import 'domains_move_reducer.dart' as domains_move_reducer;
-import 'package:scadnano_state/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
 
-import 'package:scadnano_state/src/state/app_state.dart';
-import 'package:scadnano_state/src/state/domain.dart';
-import 'package:scadnano_state/src/state/design.dart';
-import 'package:scadnano_state/src/state/dna_end.dart';
-import 'package:scadnano_state/src/state/dna_ends_move.dart';
-import 'package:scadnano_state/src/state/strands_move.dart';
-import 'package:scadnano_state/src/state/substrand.dart';
-import 'package:scadnano_state/src/state/strand.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/dna_end.dart';
+import 'package:scadnano_state_actions/src/state/dna_ends_move.dart';
+import 'package:scadnano_state_actions/src/state/strands_move.dart';
+import 'package:scadnano_state_actions/src/state/substrand.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import 'assign_or_remove_dna_reducer.dart';
 import 'change_loopout_ext_properties.dart';
 import 'delete_reducer.dart';
 import 'insertion_deletion_reducer.dart';
 import 'nick_ligate_join_by_crossover_reducers.dart';
 import 'util_reducer.dart';
-import 'package:scadnano_state/src/util_state.dart' as util;
+import 'package:scadnano_state_actions/src/util_state.dart' as util;
 
 Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([
   TypedReducer<BuiltList<Strand>, actions.RemoveDNA>(remove_dna_reducer),

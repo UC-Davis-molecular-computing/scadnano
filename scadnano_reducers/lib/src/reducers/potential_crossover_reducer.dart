@@ -1,7 +1,7 @@
 import 'package:redux/redux.dart';
-import 'package:scadnano_state/src/state/potential_crossover.dart';
+import 'package:scadnano_state_actions/src/state/potential_crossover.dart';
 
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
 Reducer<PotentialCrossover?> optimized_potential_crossover_reducer = //combineReducers([
     potential_crossover_reducer;

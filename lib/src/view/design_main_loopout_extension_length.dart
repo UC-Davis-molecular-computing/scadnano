@@ -1,10 +1,10 @@
 import 'package:over_react/over_react.dart';
 
-import 'package:scadnano_state/src/constants.dart' as constants;
-import 'package:scadnano_state/src/state/geometry.dart';
-import 'package:scadnano_state/src/state/substrand.dart';
-import 'package:scadnano_state/src/state/loopout.dart';
-import 'package:scadnano_state/src/state/extension.dart';
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/substrand.dart';
+import 'package:scadnano_state_actions/src/state/loopout.dart';
+import 'package:scadnano_state_actions/src/state/extension.dart';
 import 'pure_component.dart';
 
 part 'design_main_loopout_extension_length.over_react.g.dart';

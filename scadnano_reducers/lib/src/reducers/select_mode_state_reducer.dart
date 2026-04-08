@@ -1,8 +1,8 @@
 import 'package:redux/redux.dart';
 
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
-import 'package:scadnano_state/src/state/select_mode.dart';
-import 'package:scadnano_state/src/state/select_mode_state.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/select_mode.dart';
+import 'package:scadnano_state_actions/src/state/select_mode_state.dart';
 
 //SelectModeState select_mode_state_reducer([SelectModeState state, action])
 Reducer<SelectModeState> select_mode_state_reducer = combineReducers<SelectModeState>([

@@ -6,26 +6,26 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
 
-import 'package:scadnano_state/src/state/modification_type.dart';
+import 'package:scadnano_state_actions/src/state/modification_type.dart';
 
-import 'package:scadnano_state/src/state/strand.dart';
-import 'package:scadnano_state/src/state/dialog.dart';
-import 'package:scadnano_state/src/state/address.dart';
-import 'package:scadnano_state/src/state/geometry.dart';
-import 'package:scadnano_state/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/dialog.dart';
+import 'package:scadnano_state_actions/src/state/address.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
 import '../app.dart';
-import 'package:scadnano_state/src/state/helix.dart';
-import 'package:scadnano_state/src/state/domain.dart';
-import 'package:scadnano_state/src/state/extension.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/extension.dart';
 import '../util.dart' as util;
-import 'package:scadnano_state/src/state/selectable.dart';
+import 'package:scadnano_state_actions/src/state/selectable.dart';
 import 'selection_handler.dart';
 import 'design_main_strand_dna_end.dart';
 import 'design_main_strand.dart' as design_main_strand;
 import 'pure_component.dart';
-import 'package:scadnano_state/src/state/context_menu.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
-import 'package:scadnano_state/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/state/context_menu.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 
 part 'design_main_strand_extension.over_react.g.dart';
 

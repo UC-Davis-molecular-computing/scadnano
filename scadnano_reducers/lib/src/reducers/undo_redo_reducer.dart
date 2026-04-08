@@ -1,10 +1,10 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 
-import 'package:scadnano_state/src/state/design.dart';
-import 'package:scadnano_state/src/state/undo_redo.dart';
-import 'package:scadnano_state/src/state/app_state.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/undo_redo.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
 // These involve direct manipulation of the undo/redo stacks.
 Reducer<AppState> undo_redo_reducer = combineReducers([

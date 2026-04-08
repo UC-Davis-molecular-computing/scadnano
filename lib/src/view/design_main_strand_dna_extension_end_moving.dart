@@ -4,14 +4,14 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
-import 'package:scadnano_state/src/state/dna_extensions_move.dart';
-import 'package:scadnano_state/src/state/extension.dart';
-import 'package:scadnano_state/src/state/geometry.dart';
-import 'package:scadnano_state/src/state/group.dart';
-import 'package:scadnano_state/src/state/dna_end.dart';
+import 'package:scadnano_state_actions/src/state/dna_extensions_move.dart';
+import 'package:scadnano_state_actions/src/state/extension.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/dna_end.dart';
 
-import 'package:scadnano_state/src/state/dna_ends_move.dart';
-import 'package:scadnano_state/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/dna_ends_move.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
 
 import '../app.dart';
 import '3p_end.dart';

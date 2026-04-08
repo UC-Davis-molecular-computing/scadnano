@@ -1,8 +1,8 @@
 import 'package:redux/redux.dart';
-import 'package:scadnano_state/src/state/app_state.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
-import 'package:scadnano_state/src/state/grid_position.dart';
-import 'package:scadnano_state/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/grid_position.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
 
 /// Disallows setting grid_position of Helix to overlap with existing helix.
 adjust_grid_position_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {

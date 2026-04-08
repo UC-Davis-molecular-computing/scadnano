@@ -6,19 +6,19 @@ import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:quiver/collection.dart';
 
-import 'package:scadnano_state/src/state/geometry.dart';
-import 'package:scadnano_state/src/state/position3d.dart';
-import 'package:scadnano_state/src/state/grid.dart';
-import 'package:scadnano_state/src/state/dialog.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/position3d.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/dialog.dart';
 import '../view/redraw_counter_component_mixin.dart';
 import '../view/react_bootstrap.dart';
-import 'package:scadnano_state/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
 
 import '../app.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
-import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 import '../util.dart' as util;
-import 'package:scadnano_state/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import 'menu_dropdown_item.dart';
 
 part 'menu_side.over_react.g.dart';

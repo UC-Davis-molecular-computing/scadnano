@@ -1,15 +1,15 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano_state/src/state/selectable.dart';
-import 'package:scadnano_state/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/selectable.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 import '../view/redraw_counter_component_mixin.dart';
 
 import '../app.dart';
-import 'package:scadnano_state/src/state/edit_mode.dart';
-import 'package:scadnano_state/src/state/select_mode.dart';
-import 'package:scadnano_state/src/state/select_mode_state.dart';
-import 'package:scadnano_state/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/edit_mode.dart';
+import 'package:scadnano_state_actions/src/state/select_mode.dart';
+import 'package:scadnano_state_actions/src/state/select_mode_state.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import 'edit_mode.dart';
 import 'select_mode.dart';
 import 'view.dart';

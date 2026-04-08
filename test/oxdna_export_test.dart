@@ -1,14 +1,14 @@
 import 'dart:math';
 
-import 'package:scadnano_state/src/state/grid_position.dart';
-import 'package:scadnano_state/src/state/group.dart';
-import 'package:scadnano_state/src/state/position3d.dart';
+import 'package:scadnano_state_actions/src/state/grid_position.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/position3d.dart';
 import 'package:test/test.dart';
 
-import 'package:scadnano/src/middleware/oxdna_export.dart';
-import 'package:scadnano_state/src/state/helix.dart';
-import 'package:scadnano_state/src/state/grid.dart';
-import 'package:scadnano_state/src/state/design.dart';
+import 'package:scadnano_view_middleware/src/middleware/oxdna_export.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
 
 /// Split a string by whitespace
 List<String> split_ws(String str) => str.trim().split(RegExp('\\s+'));
