@@ -18,7 +18,7 @@ import 'package:scadnano_state_actions/src/state/dna_end.dart';
 import 'package:scadnano_state_actions/src/state/dna_extensions_move.dart';
 import 'package:scadnano_state_actions/src/state/grid.dart';
 import 'package:scadnano_state_actions/src/state/helix.dart';
-import 'package:scadnano_view_middleware/src/util.dart';
+import 'package:scadnano_view_middleware/src/util.dart' as util;
 
 import 'middleware/all_middleware.dart';
 import 'middleware/oxview_update_view.dart';
@@ -43,7 +43,6 @@ import 'view/view.dart';
 import 'package:scadnano_reducers/src/reducers/app_state_reducer.dart';
 import 'middleware/local_storage.dart';
 import 'package:scadnano_state_actions/src/state/storable.dart';
-import 'util.dart' as util;
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import 'dart:js' as js;
