@@ -546,4 +546,3 @@ class SelectableTrait extends EnumClass {
     }
   }
 }
-

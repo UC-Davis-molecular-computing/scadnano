@@ -60,4 +60,3 @@ List<Domain> find_other_domains(Design design, Domain domain, int offset) {
   }
   return other_domains;
 }
-

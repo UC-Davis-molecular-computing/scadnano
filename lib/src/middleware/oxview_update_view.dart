@@ -99,7 +99,9 @@ void update_oxview_view(Design design, IFrameElement? frame, bool warn_enabled) 
 
   String oxview_content = to_oxview_format(design, strands_to_export);
 
-  Blob blob_oxview_content = new Blob([oxview_content], util_state.blob_type_to_string(util_state.BlobType.text));
+  Blob blob_oxview_content = new Blob([
+    oxview_content,
+  ], util_state.blob_type_to_string(util_state.BlobType.text));
 
   message = {
     'message': 'iframe_drop',

@@ -81,7 +81,12 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
         adj_helix_svg_y,
         props.geometry,
       );
-      pos = util_state.compute_extension_free_end_svg(extension_attached_end_svg, ext, adj_dom, props.geometry);
+      pos = util_state.compute_extension_free_end_svg(
+        extension_attached_end_svg,
+        ext,
+        adj_dom,
+        props.geometry,
+      );
     }
     bool display_connector = props.display_connector;
 

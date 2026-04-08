@@ -297,7 +297,9 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
 let base = systems[0].strands[${strand_idx}].getMonomers()[${nt_idx_in_strand}];
 api.findElement(base);
 api.selectElements([base]);''';
-    Blob blob_js_highlight_base = new Blob([js_highlight_base], util_state.blob_type_to_string(util_state.BlobType.text));
+    Blob blob_js_highlight_base = new Blob([
+      js_highlight_base,
+    ], util_state.blob_type_to_string(util_state.BlobType.text));
     Map<String, dynamic> message_js_commands = {
       'message': 'iframe_drop',
       'files': [blob_js_highlight_base],
@@ -584,7 +586,10 @@ assigned, assign the complementary DNA sequence to this strand.
                 title: 'set domain name',
                 on_click:
                     () => set_domain_names(
-                      util_state.add_if_not_null(app.state.ui_state.selectables_store.selected_domains, domain),
+                      util_state.add_if_not_null(
+                        app.state.ui_state.selectables_store.selected_domains,
+                        domain,
+                      ),
                     ),
               ),
               ContextMenuItem(

@@ -49,7 +49,11 @@ class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotential
 
     String tooltip = '';
     if (props.grid.is_none) {
-      Position3D pos = util_state.svg_side_view_to_position3d(props.mouse_svg_pos!, props.invert_y, props.geometry);
+      Position3D pos = util_state.svg_side_view_to_position3d(
+        props.mouse_svg_pos!,
+        props.invert_y,
+        props.geometry,
+      );
       tooltip = '(x, y) = ${pos.x.toStringAsFixed(2)}, ${pos.y.toStringAsFixed(2)}';
     } else {
       var pos = props.grid_position!;

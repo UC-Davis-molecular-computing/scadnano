@@ -38,7 +38,10 @@ DesignMainDomainsMovingProps set_design_main_domains_moving_props(
     state.design,
     state.ui_state.domains_move!,
   );
-  HelixGroup current_group = util_state.current_group_from_domains_move(state.design, state.ui_state.domains_move!);
+  HelixGroup current_group = util_state.current_group_from_domains_move(
+    state.design,
+    state.ui_state.domains_move!,
+  );
 
   // Need to check this here, because we need to allow the middleware to let through the domains_move
   // object so that view/design.dart can issue a warning to the user on a mousemove event when the

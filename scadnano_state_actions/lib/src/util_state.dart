@@ -1485,8 +1485,13 @@ class Box {
 
   num get x2 => x + width;
   num get y2 => y + height;
-  set x2(num x2new) { width = x2new - x; }
-  set y2(num y2new) { height = y2new - y; }
+  set x2(num x2new) {
+    width = x2new - x;
+  }
+
+  set y2(num y2new) {
+    height = y2new - y;
+  }
 }
 
 List<E> intersection_list<E>(List<E> elts, List<Box> bboxes, Box select_box) =>
