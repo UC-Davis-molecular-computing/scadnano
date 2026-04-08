@@ -21,6 +21,11 @@ jobs:
       - name: Install dependencies
         run: dart pub get
 
+      - name: Build generated files for sub-packages
+        run: |
+          cd scadnano_state_actions && dart run build_runner build --delete-conflicting-outputs && cd ..
+          cd scadnano_reducers && dart run build_runner build --delete-conflicting-outputs && cd ..
+
       - name: Run Tests
         run: dart run build_runner test
 
