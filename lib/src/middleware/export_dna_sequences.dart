@@ -8,7 +8,6 @@ import 'package:scadnano_state_actions/src/state/strand.dart';
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import 'package:scadnano_state_actions/src/state/app_state.dart';
 import '../util.dart' as util;
-import '../util.dart';
 import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 String get_cause(Object e) {

@@ -10,7 +10,6 @@ import 'package:scadnano_state_actions/src/state/group.dart';
 import 'package:scadnano_state_actions/src/state/helix.dart';
 import 'package:scadnano_state_actions/src/state/position3d.dart';
 import 'package:scadnano_state_actions/src/state/strand.dart';
-import 'package:scadnano_view_middleware/src/util.dart';
 import 'package:test/test.dart';
 
 import 'utils.dart';

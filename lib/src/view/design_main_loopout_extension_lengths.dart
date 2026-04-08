@@ -8,7 +8,6 @@ import 'package:scadnano_state_actions/src/state/extension.dart';
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import '../app.dart';
 import 'package:scadnano_state_actions/src/state/helix.dart';
-import '../util.dart';
 
 import 'package:scadnano_state_actions/src/state/strand.dart';
 import 'design_main_loopout_extension_length.dart';

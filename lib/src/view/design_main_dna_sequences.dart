@@ -7,7 +7,6 @@ import 'package:scadnano_state_actions/src/state/group.dart';
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import '../app.dart';
 import 'package:scadnano_state_actions/src/state/helix.dart';
-import '../util.dart';
 
 import 'package:scadnano_state_actions/src/state/strand.dart';
 import 'pure_component.dart';
@@ -55,7 +54,7 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
 
   @override
   render() {
-    bool should_use_png_dna_sequence = use_png(
+    bool should_use_png_dna_sequence = util.use_png(
       props.dna_sequence_png_uri,
       props.is_zoom_above_threshold,
       props.export_svg_action_delayed_for_png_cache,

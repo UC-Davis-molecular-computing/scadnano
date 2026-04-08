@@ -21,7 +21,6 @@ import 'package:scadnano_state_actions/src/state/app_state.dart';
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import 'package:scadnano_state_actions/src/state/helix.dart';
 import '../util.dart' as util;
-import '../util.dart';
 import 'export_cadnano_file.dart' as export_cadnano;
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import 'oxdna_export.dart';

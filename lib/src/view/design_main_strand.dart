@@ -8,7 +8,6 @@ import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
 import 'package:scadnano_reducers/src/reducers/app_ui_state_reducer.dart';
 
-import '../util.dart';
 import 'design_main_strand_and_domain_texts.dart';
 import 'design_main_strand_dna_end.dart';
 import 'design_main_strand_modification.dart';

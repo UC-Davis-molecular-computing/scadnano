@@ -3,7 +3,6 @@ import 'package:scadnano_state_actions/src/state/domain.dart';
 import 'package:scadnano_state_actions/src/state/grid.dart';
 import 'package:scadnano_state_actions/src/state/grid_position.dart';
 import 'package:scadnano_state_actions/src/state/strand.dart';
-import 'package:scadnano_view_middleware/src/util.dart';
 import 'package:test/test.dart';
 
 import 'utils.dart';
