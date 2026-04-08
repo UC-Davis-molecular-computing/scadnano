@@ -4,6 +4,7 @@ import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import '../app.dart';
 import 'package:scadnano_state_actions/src/state/app_state.dart';
 import '../util.dart' as util;
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 example_design_selected_middleware(Store<AppState> store, action, NextDispatcher next) {
   next(action);
@@ -16,6 +17,6 @@ example_design_selected_middleware(Store<AppState> store, action, NextDispatcher
 }
 
 _get_file_content_and_dispatch_load(Store<AppState> store, String url, String filename) async {
-  String content = await util.get_text_file_content(url);
+  String content = await get_text_file_content(url);
   store.dispatch(actions.PrepareToLoadDNAFile(content: content, filename: filename));
 }

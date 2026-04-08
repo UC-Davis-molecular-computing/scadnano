@@ -18,6 +18,7 @@ import 'package:scadnano_state_actions/src/state/app_state.dart';
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import '../util.dart' as util;
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   if (action is actions.ExportSvg || action is actions.CopySelectedStandsToClipboardImage) {
@@ -355,7 +356,7 @@ _export_svg(svg.SvgSvgElement svg_element, String filename_append) {
   filename = filename.substring(0, filename.lastIndexOf('.'));
   filename += '_${filename_append}.svg';
 
-  util.save_file(filename, source, blob_type: util.BlobType.image);
+  util.save_file(filename, source, blob_type: BlobType.image);
 }
 
 _copy_from_elements(List<Element> svg_elements) {

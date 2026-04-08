@@ -27,6 +27,7 @@ import 'design_main_strand_loopout.dart';
 import 'design_main_strand_extension.dart';
 import 'design_main_strand_crossover.dart';
 import 'pure_component.dart';
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 part 'design_main_strand_paths.over_react.g.dart';
 
@@ -335,7 +336,7 @@ String crossover_path_description_between_groups(
   end_svg = next_group.transform_point_main_view(end_svg, geometry);
 
   var vector_start_to_end = end_svg - start_svg;
-  var normal_vector = util.rotate(vector_start_to_end, 90);
+  var normal_vector = rotate(vector_start_to_end, 90);
   var unit_normal_vector = normal_vector * (1.0 / normal_vector.magnitude);
   var scaled_normal_vector = unit_normal_vector * vector_start_to_end.magnitude * (1.0 / 10);
   var control = start_svg + (vector_start_to_end * 0.5) + scaled_normal_vector;

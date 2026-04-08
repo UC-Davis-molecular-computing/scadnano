@@ -20,6 +20,7 @@ import 'package:scadnano_state_actions/src/state/app_state.dart';
 import '../util.dart' as util;
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import 'menu_dropdown_item.dart';
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 part 'menu_side.over_react.g.dart';
 
@@ -171,7 +172,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
     int roll_idx = 5;
     int yaw_idx = 6;
     int helices_view_order_idx = 7;
-    var items = util.FixedList<DialogItem>(8);
+    var items = FixedList<DialogItem>(8);
     items[name_idx] = DialogText(label: 'name', value: props.displayed_group_name);
     items[position_x_idx] = DialogFloat(label: 'x', value: group.position.x);
     items[position_y_idx] = DialogFloat(label: 'y', value: group.position.y);
@@ -325,7 +326,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
     int bases_per_turn_idx = 3;
     int minor_groove_angle_idx = 4;
 
-    var items = util.FixedList<DialogItem>(5);
+    var items = FixedList<DialogItem>(5);
     items[rise_per_base_pair_idx] = DialogFloat(
       label: 'rise per base pair (nm)',
       value: geometry.rise_per_base_pair,

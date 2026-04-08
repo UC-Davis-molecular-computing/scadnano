@@ -18,6 +18,7 @@ import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import '../util.dart' as util;
 import 'helix_context_menu.dart';
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 part 'design_side_helix.over_react.g.dart';
 
@@ -123,7 +124,7 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
     }
 
     Position3D pos3d = props.helix.position3d(props.geometry);
-    Point<double> center = util.position3d_to_side_view_svg(pos3d, props.invert_y, props.geometry);
+    Point<double> center = position3d_to_side_view_svg(pos3d, props.invert_y, props.geometry);
 
     return (Dom.g()
       ..transform = 'translate(${center.x} ${center.y})'
@@ -167,7 +168,7 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
         actions.ContextMenuShow(
           context_menu: ContextMenu(
             items: context_menu_helix(props.helix, props.helix_change_apply_to_all),
-            position: util.from_point_num(event.page),
+            position: from_point_num(event.page),
           ),
         ),
       );

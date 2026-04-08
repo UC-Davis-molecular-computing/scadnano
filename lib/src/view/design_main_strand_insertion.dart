@@ -18,6 +18,7 @@ import '../util.dart' as util;
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import 'design_main_strand_loopout.dart';
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 part 'design_main_strand_insertion.over_react.g.dart';
 
@@ -167,7 +168,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
     SvgProps text_path_props =
         Dom.textPath()
           ..startOffset = '50%'
-          //      ..href = '#${util.id_insertion(substrand, offset)}'
+          //      ..href = '#${id_insertion(substrand, offset)}'
           ..xlinkHref = '#${props.selectable_insertion.id}'
           ..className = 'insertion-length';
 
@@ -238,7 +239,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
         actions.ContextMenuShow(
           context_menu: ContextMenu(
             items: context_menu_insertion().build(),
-            position: util.from_point_num(event.page),
+            position: from_point_num(event.page),
           ),
         ),
       );

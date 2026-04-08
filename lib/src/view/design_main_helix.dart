@@ -15,6 +15,7 @@ import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import '../util.dart' as util;
 import 'helix_context_menu.dart';
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 part 'design_main_helix.over_react.g.dart';
 
@@ -105,7 +106,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
               props.geometry,
               helix_svg_position,
             );
-            app.dispatch(actions.StrandCreateStart(address: address, color: util.color_cycler.next()));
+            app.dispatch(actions.StrandCreateStart(address: address, color: color_cycler.next()));
           }
         }
         ..onMouseLeave = ((_) => util.mouse_leave_update_mouseover())
@@ -160,7 +161,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         actions.ContextMenuShow(
           context_menu: ContextMenu(
             items: context_menu_helix(props.helix, props.helix_change_apply_to_all),
-            position: util.from_point_num(event.page),
+            position: from_point_num(event.page),
           ),
         ),
       );

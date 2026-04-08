@@ -38,6 +38,7 @@ import '../app.dart';
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import 'package:scadnano_state_actions/src/state/app_state.dart';
 import '../util.dart' as util;
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 part 'menu.over_react.g.dart';
 
@@ -1585,7 +1586,7 @@ Future<void> ask_for_autobreak_parameters() async {
   int min_length_idx = 1;
   int max_length_idx = 2;
   int min_distance_to_xover_idx = 3;
-  var items = util.FixedList<DialogItem>(4);
+  var items = FixedList<DialogItem>(4);
   items[target_length_idx] = DialogInteger(label: 'target length', value: 49);
   items[min_length_idx] = DialogInteger(label: 'min length', value: 15);
   items[max_length_idx] = DialogInteger(label: 'max length', value: 60);
@@ -1625,7 +1626,7 @@ Future<void> ask_for_geometry(Geometry? geometry) async {
   int bases_per_turn_idx = 3;
   int minor_groove_angle_idx = 4;
 
-  var items = util.FixedList<DialogItem>(5);
+  var items = FixedList<DialogItem>(5);
   items[rise_per_base_pair_idx] = DialogFloat(
     label: 'rise per base pair (nm)',
     value: geometry.rise_per_base_pair,

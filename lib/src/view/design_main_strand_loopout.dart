@@ -24,6 +24,7 @@ import '../util.dart' as util;
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import 'pure_component.dart';
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 part 'design_main_strand_loopout.over_react.g.dart';
 
@@ -183,7 +184,7 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
         actions.ContextMenuShow(
           context_menu: ContextMenu(
             items: context_menu_loopout().build(),
-            position: util.from_point_num(event.page),
+            position: from_point_num(event.page),
           ),
         ),
       );
@@ -197,7 +198,7 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
       ContextMenuItem(
         title: 'remove loopout name',
         on_click: () {
-          var loopouts = util.add_if_not_null(
+          var loopouts = add_if_not_null(
             app.state.ui_state.selectables_store.selected_loopouts,
             props.loopout,
           );
@@ -216,7 +217,7 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
       ContextMenuItem(
         title: 'remove loopout label',
         on_click: () {
-          var loopouts = util.add_if_not_null(
+          var loopouts = add_if_not_null(
             app.state.ui_state.selectables_store.selected_loopouts,
             props.loopout,
           );
@@ -295,7 +296,7 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
 
   Future<void> ask_for_loopout_name() async {
     int name_idx = 0;
-    var items = util.FixedList<DialogItem>(1);
+    var items = FixedList<DialogItem>(1);
     items[name_idx] = DialogText(label: 'name', value: props.loopout.name ?? '');
     var dialog = Dialog(title: 'set loopout name', type: DialogType.set_loopout_name, items: items);
 
@@ -339,8 +340,8 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     var prev_svg = prev_group.transform_point_main_view(prev_svg_untransformed, props.geometry);
     var next_svg = next_group.transform_point_main_view(next_svg_untransformed, props.geometry);
 
-    var w = 2 * util.sigmoid(props.loopout.loopout_num_bases) * props.geometry.base_width_svg;
-    var h = 10 * util.sigmoid(props.loopout.loopout_num_bases - 3) * props.geometry.base_height_svg;
+    var w = 2 * sigmoid(props.loopout.loopout_num_bases) * props.geometry.base_width_svg;
+    var h = 10 * sigmoid(props.loopout.loopout_num_bases - 3) * props.geometry.base_height_svg;
 
     // un-rotated
     var prev_y_offset = prev_svg.y + h;
@@ -351,8 +352,8 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     var next_c_unrotated = Point<double>(next_x_offset, next_y_offset);
 
     // rotated
-    var prev_c = util.rotate(prev_c_unrotated, prev_group.pitch, origin: prev_svg);
-    var next_c = util.rotate(next_c_unrotated, next_group.pitch, origin: next_svg);
+    var prev_c = rotate(prev_c_unrotated, prev_group.pitch, origin: prev_svg);
+    var next_c = rotate(next_c_unrotated, next_group.pitch, origin: next_svg);
 
     var path =
         'M ${prev_svg.x} ${prev_svg.y} '
@@ -429,15 +430,15 @@ String loopout_path_description_within_group(
   var w, h;
 
   if (top_helix.idx == bot_helix.idx) {
-    w = 1.5 * util.sigmoid(loopout.loopout_num_bases - 1) * prev_geometry.base_width_svg;
+    w = 1.5 * sigmoid(loopout.loopout_num_bases - 1) * prev_geometry.base_width_svg;
     if (show_loopout_labels) {
-      h = 10 * util.sigmoid(loopout.loopout_num_bases) * prev_geometry.base_height_svg;
+      h = 10 * sigmoid(loopout.loopout_num_bases) * prev_geometry.base_height_svg;
     } else {
-      h = 10 * util.sigmoid(loopout.loopout_num_bases - 5) * prev_geometry.base_height_svg;
+      h = 10 * sigmoid(loopout.loopout_num_bases - 5) * prev_geometry.base_height_svg;
     }
   } else {
-    w = 2 * util.sigmoid(loopout.loopout_num_bases) * prev_geometry.base_width_svg;
-    h = 10 * util.sigmoid(loopout.loopout_num_bases - 3) * prev_geometry.base_height_svg;
+    w = 2 * sigmoid(loopout.loopout_num_bases) * prev_geometry.base_width_svg;
+    h = 10 * sigmoid(loopout.loopout_num_bases - 3) * prev_geometry.base_height_svg;
   }
 
   var x_offset1, x_offset2, y_offset1, y_offset2;
@@ -499,7 +500,7 @@ String loopout_path_description_same_helix_same_direction(
   }
 
   double x_distance = right_svg.x - left_svg.x;
-  double h = 3 * util.sigmoid(loopout.loopout_num_bases - 1) * geometry.base_height_svg;
+  double h = 3 * sigmoid(loopout.loopout_num_bases - 1) * geometry.base_height_svg;
   int length = loopout.loopout_num_bases;
   if (!show_loopout_labels) {
     length -= 5;
@@ -507,7 +508,7 @@ String loopout_path_description_same_helix_same_direction(
 
   // taking cubed root of x distance for intermediate bezier points seems to place curve at
   // about a constant offset from x coordinates of ends the loopout is connecting
-  double w = 2 * pow(x_distance, 1.0 / 3.0) * util.sigmoid(length) * geometry.base_width_svg;
+  double w = 2 * pow(x_distance, 1.0 / 3.0) * sigmoid(length) * geometry.base_width_svg;
 
   double left_x = left_svg.x - w;
   double right_x = right_svg.x + w;
@@ -543,7 +544,7 @@ Future<int> ask_for_length(
   String tooltip = "",
 }) async {
   int length_idx = 0;
-  var items = util.FixedList<DialogItem>(1);
+  var items = FixedList<DialogItem>(1);
   items[length_idx] = DialogInteger(label: 'new length:', value: current_length, tooltip: tooltip);
   var dialog = Dialog(title: title, type: dialog_type, items: items, use_saved_response: false);
 

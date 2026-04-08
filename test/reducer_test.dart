@@ -40,6 +40,7 @@ import 'package:scadnano_view_middleware/src/util.dart' as util;
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
 
 import 'utils.dart';
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 main() {
   test('read in color specified as decimal', () {
@@ -1792,7 +1793,7 @@ main() {
   Design two_helices_join_inner_strands = Design.from_json(jsonDecode(two_helices_join_inner_strands_json));
   test('pencil should connect a 3p end to a 5p end', () {
     AppState state = app_state_from_design(two_helices_design);
-    Map<int, Point<double>> svg_position_map = util.helices_assign_svg(
+    Map<int, Point<double>> svg_position_map = helices_assign_svg(
       two_helices_design,
       state.ui_state.invert_y,
       two_helices_design.helices,
@@ -1829,7 +1830,7 @@ main() {
   });
   test('pencil should connect a 5p end to a 3p end', () {
     AppState state = app_state_from_design(two_helices_design);
-    Map<int, Point<double>> svg_position_map = util.helices_assign_svg(
+    Map<int, Point<double>> svg_position_map = helices_assign_svg(
       two_helices_design,
       state.ui_state.invert_y,
       two_helices_design.helices,
@@ -4702,7 +4703,7 @@ main() {
     //
     // 1 [------------------->
     //   <-------------------]
-    Map<int, Point<double>> svg_position_map = util.helices_assign_svg(
+    Map<int, Point<double>> svg_position_map = helices_assign_svg(
       two_helices_design,
       false,
       two_helices_design.helices,
@@ -5747,12 +5748,12 @@ main() {
       Grid grid = Grid.none;
       state = app_state_reducer(state, GridChange(grid: grid, group_name: constants.default_group_name));
 
-      var expected_position_h0 = util.grid_position_to_position3d(
+      var expected_position_h0 = grid_position_to_position3d(
         two_helices_design.helices[0]!.grid_position!,
         Grid.square,
         two_helices_design.geometry,
       );
-      var expected_position_h1 = util.grid_position_to_position3d(
+      var expected_position_h1 = grid_position_to_position3d(
         two_helices_design.helices[1]!.grid_position!,
         Grid.square,
         two_helices_design.geometry,
@@ -5806,12 +5807,12 @@ main() {
         (b) => b.x = original_helix1.min_offset * geometry.base_width_svg,
       );
 
-      GridPosition expected_grid_position0 = util.position3d_to_grid_position(
+      GridPosition expected_grid_position0 = position3d_to_grid_position(
         expected_position0,
         grid,
         no_grid_two_helices_design.geometry,
       );
-      GridPosition expected_grid_position1 = util.position3d_to_grid_position(
+      GridPosition expected_grid_position1 = position3d_to_grid_position(
         expected_position1,
         grid,
         no_grid_two_helices_design.geometry,

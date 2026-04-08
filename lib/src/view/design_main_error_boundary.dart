@@ -8,6 +8,7 @@ import '../app.dart';
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import '../util.dart' as util;
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 part 'design_main_error_boundary.over_react.g.dart';
 
@@ -70,7 +71,7 @@ class DesignMainErrorBoundaryComponent<
       var error = state.error;
       //      var escaper = HtmlEscape();
       var escaped_error_message =
-          util.ASSERTION_ERROR_MESSAGE +
+          ASSERTION_ERROR_MESSAGE +
           '\n\n' +
           '${error.toString()}\n\nstack trace:\n${error.stackTrace}' //escaper.convert(
       //  )

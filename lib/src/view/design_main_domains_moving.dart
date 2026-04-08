@@ -13,6 +13,7 @@ import 'package:scadnano_state_actions/src/state/helix.dart';
 import 'package:scadnano_state_actions/src/state/app_state.dart';
 import '../util.dart' as util;
 import 'design_main_domain_moving.dart';
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 part 'design_main_domains_moving.over_react.g.dart';
 
@@ -33,11 +34,11 @@ DesignMainDomainsMovingProps set_design_main_domains_moving_props(
       ..geometry = Geometry();
   }
 
-  HelixGroup original_group = util.original_group_from_domains_move(
+  HelixGroup original_group = original_group_from_domains_move(
     state.design,
     state.ui_state.domains_move!,
   );
-  HelixGroup current_group = util.current_group_from_domains_move(state.design, state.ui_state.domains_move!);
+  HelixGroup current_group = current_group_from_domains_move(state.design, state.ui_state.domains_move!);
 
   // Need to check this here, because we need to allow the middleware to let through the domains_move
   // object so that view/design.dart can issue a warning to the user on a mousemove event when the

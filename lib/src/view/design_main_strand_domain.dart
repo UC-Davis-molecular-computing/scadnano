@@ -24,6 +24,7 @@ import 'pure_component.dart';
 import 'package:scadnano_state_actions/src/state/context_menu.dart';
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 part 'design_main_strand_domain.over_react.g.dart';
 
@@ -240,7 +241,7 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with
       var items = props.context_menu_strand(props.strand, domain: props.domain, address: address).build();
       app.dispatch(
         actions.ContextMenuShow(
-          context_menu: ContextMenu(items: items, position: util.from_point_num(event.page)),
+          context_menu: ContextMenu(items: items, position: from_point_num(event.page)),
         ),
       );
     }

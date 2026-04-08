@@ -15,6 +15,7 @@ import '../app.dart';
 import 'package:scadnano_state_actions/src/state/app_state.dart';
 
 import '../util.dart' as util;
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 // This is needed to gather the list of selected ends and package them into an action to start the moving
 // of selected ends. It is needed because the click on the DNAEnd that triggers the DNAEndsMoveStart action
@@ -31,7 +32,7 @@ dna_extensions_move_start_middleware(Store<AppState> store, action, NextDispatch
       var group = design.groups[helix.group]!;
       var geometry = group.geometry ?? design.geometry;
 
-      var extension_start_point = util.compute_extension_attached_end_svg(
+      var extension_start_point = compute_extension_attached_end_svg(
         extension,
         extension.adjacent_domain,
         helix,
@@ -43,7 +44,7 @@ dna_extensions_move_start_middleware(Store<AppState> store, action, NextDispatch
       // to get canvas coordinate space
       extension_start_point += group.translation(geometry);
 
-      var extension_end_point = util.compute_extension_free_end_svg(
+      var extension_end_point = compute_extension_free_end_svg(
         extension_start_point,
         extension,
         extension.adjacent_domain,

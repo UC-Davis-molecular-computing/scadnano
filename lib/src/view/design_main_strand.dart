@@ -42,6 +42,7 @@ import '../util.dart' as util;
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import 'pure_component.dart';
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 part 'design_main_strand.over_react.g.dart';
 
@@ -351,7 +352,7 @@ api.selectElements([base]);''';
               ..svg_position_y = props.helix_idx_to_svg_position_map[helix.idx]!.y
               ..display_reverse_DNA_right_side_up = props.display_reverse_DNA_right_side_up
               ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
-              ..key = util.id_insertion(domain, selectable_insertion.insertion.offset))(),
+              ..key = id_insertion(domain, selectable_insertion.insertion.offset))(),
           );
         }
       }
@@ -385,7 +386,7 @@ api.selectElements([base]);''';
         var group = props.groups[helix.group]!;
         var geometry = group.geometry ?? props.geometry;
         for (var selectable_deletion in domain.selectable_deletions) {
-          String id = util.id_deletion(domain, selectable_deletion.offset);
+          String id = id_deletion(domain, selectable_deletion.offset);
           paths.add(
             (DesignMainStrandDeletion()
               ..selectable_deletion = selectable_deletion
@@ -584,7 +585,7 @@ assigned, assign the complementary DNA sequence to this strand.
                 title: 'set domain name',
                 on_click:
                     () => set_domain_names(
-                      util.add_if_not_null(app.state.ui_state.selectables_store.selected_domains, domain),
+                      add_if_not_null(app.state.ui_state.selectables_store.selected_domains, domain),
                     ),
               ),
               ContextMenuItem(
@@ -601,7 +602,7 @@ set select mode to domain. Then only clicked and selected domains will be affect
                 ContextMenuItem(
                   title: 'remove domain name',
                   on_click: () {
-                    var domains = util.add_if_not_null(
+                    var domains = add_if_not_null(
                       app.state.ui_state.selectables_store.selected_domains,
                       domain,
                     );
@@ -643,7 +644,7 @@ set select mode to domain. Then only clicked and selected domains will be affect
                 ContextMenuItem(
                   title: 'remove domain label',
                   on_click: () {
-                    var domains = util.add_if_not_null(
+                    var domains = add_if_not_null(
                       app.state.ui_state.selectables_store.selected_domains,
                       domain,
                     );
@@ -763,7 +764,7 @@ after:
     }
     int extension_end_idx = 0;
     int num_bases_idx = 1;
-    var items = util.FixedList<DialogItem>(2);
+    var items = FixedList<DialogItem>(2);
     items[extension_end_idx] = DialogRadio(
       label: 'end of strand',
       options: options,
@@ -883,7 +884,7 @@ after:
     int purification_custom_idx = 5;
     var all_strands = app.state.ui_state.selectables_store.selected_strands.toList();
     if (all_strands.length == 0) all_strands.add(props.strand);
-    var items = util.FixedList<DialogItem>(6);
+    var items = FixedList<DialogItem>(6);
     var options_purification = {"", "STD", "PAGE", "HPLC", "IEHPLC", "RNASE", "DUALHPLC", "PAGEHPLC"};
     var options_scale = {
       "",
@@ -1023,7 +1024,7 @@ PAGEHPLC : Dual PAGE & HPLC
     int well_idx = 1;
     var all_strands = app.state.ui_state.selectables_store.selected_strands.toList();
     if (all_strands.length == 0) all_strands.add(props.strand);
-    var items = util.FixedList<DialogItem>(2);
+    var items = FixedList<DialogItem>(2);
 
     items[plate_idx] = DialogText(label: "plate", value: select_plate_number(all_strands) ?? "");
     items[well_idx] = DialogText(
@@ -1106,7 +1107,7 @@ PAGEHPLC : Dual PAGE & HPLC
 
   Future<void> ask_for_strand_name(Strand strand, BuiltSet<Strand> selected_strands) async {
     int name_idx = 0;
-    var items = util.FixedList<DialogItem>(1);
+    var items = FixedList<DialogItem>(1);
     items[name_idx] = DialogText(label: 'name', value: props.strand.name ?? '');
     var dialog = Dialog(
       title: 'set strand name',
@@ -1130,7 +1131,7 @@ PAGEHPLC : Dual PAGE & HPLC
 
   Future<void> ask_for_domain_names(BuiltSet<Domain> domains) async {
     int name_idx = 0;
-    var items = util.FixedList<DialogItem>(1);
+    var items = FixedList<DialogItem>(1);
     var first_domain = domains.first;
     var first_domain_name = first_domain.name ?? '';
     items[name_idx] = DialogText(label: 'name', value: first_domain_name);
@@ -1166,7 +1167,7 @@ Future<void> ask_for_label<T extends SelectableMixin>(
   }
 
   int label_idx = 0;
-  var items = util.FixedList<DialogItem>(1);
+  var items = FixedList<DialogItem>(1);
 
   String existing_label = '';
   if (substrand == null && strand.label != null) {
@@ -1326,7 +1327,7 @@ Future<void> ask_for_assign_dna_sequence(Strand strand, DNAAssignOptions options
   int idx_assign_complements = 5;
   int idx_disable_change_sequence_bound_strand = 6;
 
-  var items = util.FixedList<DialogItem>(idx_disable_change_sequence_bound_strand + 1);
+  var items = FixedList<DialogItem>(idx_disable_change_sequence_bound_strand + 1);
 
   items[idx_sequence] = DialogTextArea(
     label: 'sequence',
@@ -1422,7 +1423,7 @@ don't accidentally change an existing sequence.''',
       (results[idx_disable_change_sequence_bound_strand] as DialogCheckbox).value;
 
   try {
-    util.check_dna_sequence(dna_sequence);
+    check_dna_sequence(dna_sequence);
   } on FormatException catch (e) {
     window.alert(e.message);
     return;

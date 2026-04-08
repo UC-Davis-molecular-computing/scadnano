@@ -36,9 +36,6 @@ import 'package:scadnano_state_actions/src/state/select_mode.dart';
 import 'package:scadnano_state_actions/src/state/selection_box.dart';
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
-// Re-export all pure utility functions so that existing `import 'util.dart' as util;` continues to work.
-export 'package:scadnano_state_actions/src/util_state.dart';
-// Also import for use within this file.
 import 'package:scadnano_state_actions/src/util_state.dart';
 
 /////////////////////////////////////////////////////////////////////////////

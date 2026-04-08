@@ -16,6 +16,7 @@ import 'package:scadnano_state_actions/src/state/select_mode.dart';
 import 'package:scadnano_state_actions/src/state/selectable.dart';
 import 'package:scadnano_state_actions/src/state/strand.dart';
 import '../util.dart' as util;
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 /// Handles mouse down for selection on any [Selectable].
 /// Call this from view components instead of selectable.handle_selection_mouse_down.
@@ -135,7 +136,7 @@ Future<void> ask_for_select_all_with_same_as_selected() async {
   }
 
   var all_traits = List<SelectableTrait>.from(SelectableTrait.values);
-  util.FixedList<DialogItem> items = util.FixedList<DialogItem>(all_traits.length + 1);
+  FixedList<DialogItem> items = FixedList<DialogItem>(all_traits.length + 1);
 
   for (int idx = 0; idx < all_traits.length; idx++) {
     var trait = all_traits[idx];

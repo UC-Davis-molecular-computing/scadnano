@@ -11,6 +11,7 @@ import 'package:scadnano_state_actions/src/state/group.dart';
 import 'pure_component.dart';
 import 'design_main_warning_star.dart';
 import '../util.dart' as util;
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 part 'design_main_domain_name_mismatches.over_react.g.dart';
 
@@ -78,7 +79,7 @@ class DesignMainDomainNameMismatchesComponent extends UiComponent2<DesignMainDom
           (Dom.g()
             ..transform = transform_str
             ..className = 'mismatch-domain-names-group'
-            ..key = util.id_helix(helix))(untransformed_mismatch_components),
+            ..key = id_helix(helix))(untransformed_mismatch_components),
         );
       }
     }

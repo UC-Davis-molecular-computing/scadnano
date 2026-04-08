@@ -7,6 +7,7 @@ import 'package:scadnano_view_middleware/src/util.dart';
 import 'package:test/test.dart';
 
 import 'utils.dart';
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 main() {
   group('ImportCadnanoV2', () {

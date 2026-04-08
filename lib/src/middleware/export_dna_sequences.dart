@@ -9,6 +9,7 @@ import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import 'package:scadnano_state_actions/src/state/app_state.dart';
 import '../util.dart' as util;
 import '../util.dart';
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 String get_cause(Object e) {
   if (e is Exception) {
@@ -32,7 +33,7 @@ export_dna_sequences_middleware(Store<AppState> store, action, NextDispatcher ne
     strands.removeWhere((strand) => strand.is_scaffold);
 
     String filename = 'cando_sequences.csv';
-    util.BlobType blob_type = util.BlobType.text;
+    BlobType blob_type = BlobType.text;
 
     try {
       String result = cando_compatible_csv_export(strands);
@@ -65,7 +66,7 @@ export_dna_sequences_middleware(Store<AppState> store, action, NextDispatcher ne
     }
 
     String filename = 'sequences.' + action.export_dna_format.extension();
-    util.BlobType blob_type = action.export_dna_format.blob_type();
+    BlobType blob_type = action.export_dna_format.blob_type();
 
     try {
       var result = action.export_dna_format.export(

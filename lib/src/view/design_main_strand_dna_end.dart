@@ -34,6 +34,7 @@ import 'pure_component.dart';
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import '../util.dart' as util;
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 part 'design_main_strand_dna_end.over_react.g.dart';
 
@@ -140,14 +141,14 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       forward = ext.adjacent_domain.forward;
       dna_end = ext.dnaend_free;
 
-      extension_attached_end_svg = util.compute_extension_attached_end_svg(
+      extension_attached_end_svg = compute_extension_attached_end_svg(
         ext,
         ext.adjacent_domain,
         props.helix,
         props.helix_svg_position.y,
         props.geometry,
       );
-      pos = util.compute_extension_free_end_svg(
+      pos = compute_extension_free_end_svg(
         extension_attached_end_svg,
         ext,
         ext.adjacent_domain,
@@ -256,7 +257,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
                           (props.is_5p ? ModificationType.five_prime : ModificationType.three_prime),
                     )
                     .build(),
-            position: util.from_point_num(event.page),
+            position: from_point_num(event.page),
           ),
         ),
       );
@@ -289,7 +290,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         }
         handle_selection_mouse_down(dna_end, event);
         // set up drag detection for moving DNA ends
-        Point<double> extension_attached_end_svg = util.compute_extension_attached_end_svg(
+        Point<double> extension_attached_end_svg = compute_extension_attached_end_svg(
           ext,
           ext.adjacent_domain,
           props.helix,
@@ -301,7 +302,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         // to get canvas coordinate space
         extension_attached_end_svg += props.group.translation(props.geometry);
 
-        Point<double> pos = util.compute_extension_free_end_svg(
+        Point<double> pos = compute_extension_free_end_svg(
           extension_attached_end_svg,
           ext,
           ext.adjacent_domain,

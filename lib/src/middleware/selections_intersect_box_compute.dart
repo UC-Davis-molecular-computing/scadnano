@@ -145,7 +145,7 @@ generalized_intersection_list_polygon(
     // getBBox uses SVG coordinates, same as those in the polygon, whereas get getBoundingClientRect()
     // uses coordinates within the "viewport"
     svg.Rect elt_bbox_svg_rect = elt.getBBox();
-    Rectangle<num> elt_bbox = util.svg_rect_to_rectangle(elt_bbox_svg_rect);
+    Rectangle<num> elt_bbox = util_state.svg_rect_to_rectangle(elt_bbox_svg_rect);
     if (overlap(polygon, elt_bbox)) {
       elts_intersecting.add(elt);
     }

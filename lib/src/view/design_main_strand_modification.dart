@@ -22,6 +22,7 @@ import 'package:scadnano_state_actions/src/state/strand.dart';
 import 'package:scadnano_state_actions/src/state/helix.dart';
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import 'design_main_strand.dart';
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 part 'design_main_strand_modification.over_react.g.dart';
 
@@ -73,14 +74,14 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
       var adj_dom = ext.adjacent_domain;
       var adj_helix = props.helix;
       var adj_helix_svg_y = props.helix_svg_position_y;
-      Point<double> extension_attached_end_svg = util.compute_extension_attached_end_svg(
+      Point<double> extension_attached_end_svg = compute_extension_attached_end_svg(
         ext,
         adj_dom,
         adj_helix,
         adj_helix_svg_y,
         props.geometry,
       );
-      pos = util.compute_extension_free_end_svg(extension_attached_end_svg, ext, adj_dom, props.geometry);
+      pos = compute_extension_free_end_svg(extension_attached_end_svg, ext, adj_dom, props.geometry);
     }
     bool display_connector = props.display_connector;
 
@@ -150,7 +151,7 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
         actions.ContextMenuShow(
           context_menu: ContextMenu(
             items: context_menu_modification(this.strand).build(),
-            position: util.from_point_num(event.page),
+            position: from_point_num(event.page),
           ),
         ),
       );
@@ -274,7 +275,7 @@ Future<void> ask_for_add_modification(
   int index_of_dna_base_idx = 4;
   int attached_to_base_idx = 5;
   int allowed_bases_idx = 6;
-  var items = util.FixedList<DialogItem>(7);
+  var items = FixedList<DialogItem>(7);
   items[modification_type_idx] = DialogRadio(
     label: 'modification type',
     options: {"3'", "5'", "internal"},
@@ -453,7 +454,7 @@ edit_modification(
 
   bool is_internal = modification is ModificationInternal;
   int num_items = is_internal ? 5 : 3;
-  var items = util.FixedList<DialogItem>(num_items);
+  var items = FixedList<DialogItem>(num_items);
   items[display_text_idx] = DialogText(
     label: 'display text',
     value: modification.display_text,

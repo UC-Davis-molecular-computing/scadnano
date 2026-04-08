@@ -26,6 +26,7 @@ import 'export_cadnano_file.dart' as export_cadnano;
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import 'oxdna_export.dart';
 import '../app.dart';
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 // This middleware handles sending the new design to the oxview viewer,
 // as well as updating whether it is shown, since it is wired to the

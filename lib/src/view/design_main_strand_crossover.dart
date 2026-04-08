@@ -22,6 +22,7 @@ import 'selection_handler.dart';
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import '../util.dart' as util;
+import 'package:scadnano_state_actions/src/util_state.dart';
 
 part 'design_main_strand_crossover.over_react.g.dart';
 
@@ -198,7 +199,7 @@ class DesignMainStrandCrossoverComponent
         actions.ContextMenuShow(
           context_menu: ContextMenu(
             items: context_menu_crossover(props.strand).build(),
-            position: util.from_point_num(event.page),
+            position: from_point_num(event.page),
           ),
         ),
       );
