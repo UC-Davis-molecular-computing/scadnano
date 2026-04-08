@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano_state/src/dna_file_type.dart';
@@ -39,9 +38,6 @@ The design has the following problem:
 ${error.cause}
 ${util.stack_trace_message_bug_report(stack_trace)}''';
   } catch (error, stack_trace) {
-    window.alert(
-      'I was unable to process that file. Only scadnano .sc files are supported for opening via the menu File-->Open or dragging onto the browser. If you are trying to import a cadnano file (ending. in .json), use the menu option File-->Import cadnano v2. Here is the full error message: ',
-    );
     error_message =
         "I encountered an error while reading the file ${action.filename}:"
         '\n\n$hline'

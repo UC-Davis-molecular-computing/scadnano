@@ -1,7 +1,4 @@
-import 'dart:html';
-
 import 'package:built_collection/built_collection.dart';
-import 'package:react/react.dart';
 import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
 import 'package:scadnano_state/src/state/linker.dart';
 import 'package:scadnano_state/src/state/potential_crossover.dart';
@@ -82,9 +79,8 @@ BuiltList<Strand> move_linker_reducer(BuiltList<Strand> strands, AppState state,
   Strand strand_from = design.linker_to_strand[linker]!;
   Strand strand_to = design.end_to_strand(end_to);
 
-  //TODO: support moving crossover from a strand to itself to make it circular
+  // middleware forbid_move_linker_circular_strand prevents this case, but guard just in case
   if (strand_from == strand_to) {
-    window.alert('creating circular strand by moving existing crossover/loopout not supported yet');
     return strands;
   }
 
@@ -171,8 +167,7 @@ BuiltList<Strand> move_linker_reducer(BuiltList<Strand> strands, AppState state,
     new_all_strands[strand_to_orig_idx] = new_strand_disconnected;
   } else if (new_strands.length == 1) {
     // strand_from was circular
-    //TODO: implement this
-    window.alert('moving crossover/loopout from a circular strand not yet supported');
+    // middleware forbid_move_linker_circular_strand prevents this case, but guard just in case
     return strands;
   } else {
     throw AssertionError('should be unreachable');
