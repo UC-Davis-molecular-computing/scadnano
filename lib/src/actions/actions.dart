@@ -18,7 +18,6 @@ import 'package:scadnano/src/state/helix_group_move.dart';
 import 'package:scadnano/src/state/vendor_fields.dart';
 import 'package:scadnano/src/state/linker.dart';
 import 'package:scadnano/src/state/substrand.dart';
-import 'package:scadnano/src/util.dart';
 
 import '../state/address.dart';
 import '../state/app_ui_state_storables.dart';
