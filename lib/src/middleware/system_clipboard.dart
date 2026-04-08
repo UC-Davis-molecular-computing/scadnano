@@ -8,13 +8,13 @@ import 'package:scadnano_state/src/state/clipboard.dart';
 import 'package:scadnano_state/src/state/group.dart';
 import 'package:scadnano_state/src/state/modification.dart';
 import 'package:scadnano_state/src/state/strand.dart';
-import 'package:scadnano_state/src/reducers/strands_move_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/strands_move_reducer.dart';
 
-import 'package:scadnano_state/src/reducers/strands_move_reducer.dart' as strands_move_reducer;
+import 'package:scadnano_reducers/src/reducers/strands_move_reducer.dart' as strands_move_reducer;
 import 'package:scadnano_state/src/actions/actions.dart' as actions;
 import 'package:scadnano_state/src/constants.dart' as constants;
 import 'package:scadnano_state/src/state/app_state.dart';
-import 'package:scadnano_state/src/reducers/strands_copy_info_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/strands_copy_info_reducer.dart';
 
 // unit testing points this global variable at an instance of CLIClipboard,
 // since BrowserClipboard doesn't work when running from command line

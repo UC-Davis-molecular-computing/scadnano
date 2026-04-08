@@ -9,6 +9,8 @@ environment:
 dependencies:
   scadnano_state:
     path: scadnano_state
+  scadnano_reducers:
+    path: scadnano_reducers
   built_value: ^8.9.0
   built_collection: ^5.1.1
   collection: ^1.15.0-nullsafety.4

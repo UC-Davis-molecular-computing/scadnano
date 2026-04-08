@@ -1,7 +1,7 @@
 import 'dart:html';
 
 import 'package:redux/redux.dart';
-import 'package:scadnano_state/src/reducers/assign_or_remove_dna_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/assign_or_remove_dna_reducer.dart';
 
 import 'package:scadnano_state/src/actions/actions.dart' as actions;
 import 'package:scadnano_state/src/state/app_state.dart';

@@ -2,7 +2,7 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano_state/src/reducers/domains_move_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/domains_move_reducer.dart';
 import 'package:scadnano_state/src/state/domain.dart';
 import 'package:scadnano_state/src/state/domains_move.dart';
 import 'package:scadnano/src/view/pure_component.dart';

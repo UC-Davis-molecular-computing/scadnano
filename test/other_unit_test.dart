@@ -3,7 +3,7 @@ import 'dart:html';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:scadnano_state/src/json_serializable.dart';
-import 'package:scadnano_state/src/reducers/insertion_deletion_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/insertion_deletion_reducer.dart';
 import 'package:scadnano_state/src/state/domain.dart';
 import 'package:scadnano_state/src/state/geometry.dart';
 import 'package:scadnano_state/src/state/grid_position.dart';

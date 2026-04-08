@@ -3,7 +3,7 @@ import 'dart:html';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
-import 'package:scadnano_state/src/reducers/domains_move_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/domains_move_reducer.dart';
 
 import 'pure_component.dart';
 import 'transform_by_helix_group.dart';

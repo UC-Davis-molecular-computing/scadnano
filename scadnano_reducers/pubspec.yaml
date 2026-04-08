@@ -1,0 +1,13 @@
+name: scadnano_reducers
+description: Reducers for scadnano - extracted to a separate package to optimize built_value code generation caching.
+
+environment:
+  sdk: '>=3.7.0 <4.0.0'
+
+dependencies:
+  scadnano_state:
+    path: ../scadnano_state
+  built_collection: ^5.1.1
+  color: ^3.0.0
+  collection: ^1.15.0-nullsafety.4
+  redux: ^5.0.0

@@ -489,6 +489,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.0"
+  scadnano_reducers:
+    dependency: "direct main"
+    description:
+      path: scadnano_reducers
+      relative: true
+    source: path
+    version: "0.0.0"
   scadnano_state:
     dependency: "direct main"
     description:
