@@ -13,7 +13,7 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v4
 
-      - name: Setup Dart SDK  # Using Dart 3.8 to match pubspec.yaml constraint
+      - name: Setup Dart SDK
         uses: dart-lang/setup-dart@v1  # https://github.com/dart-lang/setup-dart
         with:
           sdk: 3.11
