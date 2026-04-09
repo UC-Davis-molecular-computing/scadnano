@@ -8,9 +8,7 @@ import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 // These interact with optimized store away from full state
 Reducer<HelixGroupMove?> optimized_helix_group_move_reducer = combineReducers([
   TypedReducer<HelixGroupMove?, actions.HelixGroupMoveCreate>(helix_group_move_create_translation_reducer),
-  TypedReducer<HelixGroupMove?, actions.HelixGroupMoveAdjustTranslation>(
-    helix_group_move_adjust_translation_reducer,
-  ),
+  TypedReducer<HelixGroupMove?, actions.HelixGroupMoveAdjustTranslation>(helix_group_move_adjust_translation_reducer),
   TypedReducer<HelixGroupMove?, actions.HelixGroupMoveStop>(helix_group_move_stop_translation_reducer),
 ]);
 
@@ -24,17 +22,10 @@ HelixGroupMove? helix_group_move_adjust_translation_reducer(
   actions.HelixGroupMoveAdjustTranslation action,
 ) => move?.rebuild((b) => b..current_mouse_point = action.mouse_point);
 
-HelixGroupMove? helix_group_move_stop_translation_reducer(
-  HelixGroupMove? _,
-  actions.HelixGroupMoveStop action,
-) => null;
+HelixGroupMove? helix_group_move_stop_translation_reducer(HelixGroupMove? _, actions.HelixGroupMoveStop action) => null;
 
 // This interacts with normal state
-Design? helix_group_move_commit_global_reducer(
-  Design? design,
-  AppState state,
-  actions.HelixGroupMoveCommit action,
-) {
+Design? helix_group_move_commit_global_reducer(Design? design, AppState state, actions.HelixGroupMoveCommit action) {
   if (design == null) {
     return null;
   }

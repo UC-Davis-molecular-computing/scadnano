@@ -37,11 +37,7 @@ BuiltList<MouseoverData> mouseover_data_clear_reducer(_, actions.MouseoverDataCl
 //   return util.rotation_datas_at_offset_in_group(offset, state.design, state.ui_state.displayed_group_name);
 // }
 
-BuiltList<MouseoverData> mouseover_data_update_reducer(
-  _,
-  AppState state,
-  actions.MouseoverDataUpdate action,
-) {
+BuiltList<MouseoverData> mouseover_data_update_reducer(_, AppState state, actions.MouseoverDataUpdate action) {
   var mouseover_datas = MouseoverData.from_params(state.design, action.mouseover_params);
   return mouseover_datas.toBuiltList();
 }
@@ -73,10 +69,7 @@ BuiltList<MouseoverData> _update_mouseover_datas_with_helix_rotation({
   required BuiltList<MouseoverData> mouseover_datas,
 }) {
   Helix old_helix = model.design.helices[helix_idx]!;
-  double old_rotation_at_rotation_anchor = model.design.helix_rotation_forward(
-    old_helix.idx,
-    rotation_anchor,
-  );
+  double old_rotation_at_rotation_anchor = model.design.helix_rotation_forward(old_helix.idx, rotation_anchor);
   double delta_roll = rotation - old_rotation_at_rotation_anchor;
 
   double new_roll = (old_helix.roll + delta_roll) % 360.0;

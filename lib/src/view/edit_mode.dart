@@ -41,8 +41,7 @@ class EditModeComponent extends UiComponent2<EditModeProps> with RedrawCounterMi
         app.dispatch(actions.SelectionsClear());
       }
       ..className =
-          'mode-button ' +
-          (props.modes.contains(mode) ? 'edit-mode-button-selected' : 'edit-mode-button-unselected')
+          'mode-button ' + (props.modes.contains(mode) ? 'edit-mode-button-selected' : 'edit-mode-button-unselected')
       // TODO(benlee12): Find out how to only added this id for testing and not production if inefficient.
       ..addTestId('scadnano.EditModeComponent.button.${mode.name}')
       ..title = mode.tooltip

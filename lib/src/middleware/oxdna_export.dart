@@ -185,12 +185,7 @@ String to_oxview_format(Design design, List<Strand> strands_to_export) {
   // Warning logic moved to oxdna_export middleware
 
   //TODO: this hasn't been tested well
-  var base_pairs_map = design.base_pairs_with_domain_strand(
-    false,
-    true,
-    strands_to_export.toSet().build(),
-    true,
-  );
+  var base_pairs_map = design.base_pairs_with_domain_strand(false, true, strands_to_export.toSet().build(), true);
   for (int helix in base_pairs_map.keys) {
     for (var offset_dom_strands in base_pairs_map[helix]!) {
       // (int, Domain, Domain, Strand, Strand)
@@ -505,8 +500,7 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand>? strands
 
   // for efficiency just calculate each helix's vector once
   var helix_vectors = {
-    for (var idx_helix in design.helices.entries)
-      idx_helix.key: oxdna_get_helix_vectors(design, idx_helix.value),
+    for (var idx_helix in design.helices.entries) idx_helix.key: oxdna_get_helix_vectors(design, idx_helix.value),
   };
 
   for (var strand in strands_to_export) {
@@ -556,9 +550,7 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand>? strands
             if (insertions.containsKey(offset)) {
               int num = insertions[offset]!;
               for (int i = 0; i < num; i++) {
-                var cen =
-                    origin +
-                    forward * (offset + mod - num + i) * geometry.rise_per_base_pair * NM_TO_OX_UNITS;
+                var cen = origin + forward * (offset + mod - num + i) * geometry.rise_per_base_pair * NM_TO_OX_UNITS;
                 var norm = normal.rotate(step_rot * (offset + mod - num + i), forward);
                 var forw = domain.forward ? -forward : forward;
                 var nuc = OxdnaNucleotide(cen, norm, forw, seq[index]);

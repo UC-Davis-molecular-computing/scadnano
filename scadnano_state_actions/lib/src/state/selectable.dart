@@ -19,9 +19,7 @@ part 'selectable.g.dart';
 
 final DEFAULT_SelectablesStoreBuilder = SelectablesStoreBuilder();
 
-abstract class SelectablesStore
-    with BuiltJsonSerializable
-    implements Built<SelectablesStore, SelectablesStoreBuilder> {
+abstract class SelectablesStore with BuiltJsonSerializable implements Built<SelectablesStore, SelectablesStoreBuilder> {
   BuiltSet<Selectable> get selected_items;
 
   static void _initializeBuilder(SelectablesStoreBuilder b) {
@@ -32,20 +30,16 @@ abstract class SelectablesStore
   BuiltSet<Strand> get selected_strands => BuiltSet<Strand>.from(selected_items.where((s) => s is Strand));
 
   @memoized
-  BuiltSet<Strand> get selected_substrands =>
-      BuiltSet<Strand>.from(selected_items.where((s) => s is Substrand));
+  BuiltSet<Strand> get selected_substrands => BuiltSet<Strand>.from(selected_items.where((s) => s is Substrand));
 
   @memoized
-  BuiltSet<Crossover> get selected_crossovers =>
-      BuiltSet<Crossover>.from(selected_items.where((s) => s is Crossover));
+  BuiltSet<Crossover> get selected_crossovers => BuiltSet<Crossover>.from(selected_items.where((s) => s is Crossover));
 
   @memoized
-  BuiltSet<Loopout> get selected_loopouts =>
-      BuiltSet<Loopout>.from(selected_items.where((s) => s is Loopout));
+  BuiltSet<Loopout> get selected_loopouts => BuiltSet<Loopout>.from(selected_items.where((s) => s is Loopout));
 
   @memoized
-  BuiltSet<Extension> get selected_extensions =>
-      BuiltSet<Extension>.from(selected_items.where((s) => s is Extension));
+  BuiltSet<Extension> get selected_extensions => BuiltSet<Extension>.from(selected_items.where((s) => s is Extension));
 
   @memoized
   BuiltSet<Domain> get selected_domains => BuiltSet<Domain>.from(selected_items.where((s) => s is Domain));
@@ -276,14 +270,10 @@ abstract class SelectableInsertion
 
   /************************ begin BuiltValue boilerplate ************************/
 
-  factory SelectableInsertion({
-    required Insertion insertion,
-    required Domain domain,
-    required bool is_scaffold,
-  }) = _$SelectableInsertion._;
+  factory SelectableInsertion({required Insertion insertion, required Domain domain, required bool is_scaffold}) =
+      _$SelectableInsertion._;
 
-  factory SelectableInsertion.from([void Function(SelectableInsertionBuilder) updates]) =
-      _$SelectableInsertion;
+  factory SelectableInsertion.from([void Function(SelectableInsertionBuilder) updates]) = _$SelectableInsertion;
 
   SelectableInsertion._();
 
@@ -404,14 +394,12 @@ abstract class SelectableModificationInternal
     required int dna_idx,
   }) = _$SelectableModificationInternal._;
 
-  factory SelectableModificationInternal.from([
-    void Function(SelectableModificationInternalBuilder) updates,
-  ]) = _$SelectableModificationInternal;
+  factory SelectableModificationInternal.from([void Function(SelectableModificationInternalBuilder) updates]) =
+      _$SelectableModificationInternal;
 
   SelectableModificationInternal._();
 
-  static Serializer<SelectableModificationInternal> get serializer =>
-      _$selectableModificationInternalSerializer;
+  static Serializer<SelectableModificationInternal> get serializer => _$selectableModificationInternalSerializer;
 
   @memoized
   int get hashCode;

@@ -57,8 +57,7 @@ set_selectables_css_style_rules(
   bool staple_parts_selectable =
       edit_mode_is_select_or_rope && (design.is_origami && select_modes.contains(SelectModeChoice.staple));
   bool all_parts_selectable =
-      edit_mode_is_select_or_rope &&
-      (!design.is_origami || (scaffold_parts_selectable && staple_parts_selectable));
+      edit_mode_is_select_or_rope && (!design.is_origami || (scaffold_parts_selectable && staple_parts_selectable));
 
   for (var select_mode_choice in [SelectModeChoice.strand] + SelectModeChoice.strand_parts.toList()) {
     set_strand_part_selectable_css_style_rules(
@@ -96,8 +95,7 @@ set_strand_part_selectable_css_style_rules(
   var all_strand_selector = '.${select_mode_choice.css_selector()}:hover';
   var staple_only_selector =
       ':not(.${SelectModeChoice.scaffold.css_selector()}).${select_mode_choice.css_selector()}:hover';
-  var scaffold_selector =
-      '.${SelectModeChoice.scaffold.css_selector()}.${select_mode_choice.css_selector()}:hover';
+  var scaffold_selector = '.${SelectModeChoice.scaffold.css_selector()}.${select_mode_choice.css_selector()}:hover';
 
   if (!edit_mode_is_select_or_rope_select || !select_mode_contains_part) {
     css_class_remove_style(all_strand_selector);

@@ -15,8 +15,7 @@ import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_domain_name_mismatches.over_react.g.dart';
 
-UiFactory<DesignMainDomainNameMismatchesProps> DesignMainDomainNameMismatches =
-    _$DesignMainDomainNameMismatches;
+UiFactory<DesignMainDomainNameMismatchesProps> DesignMainDomainNameMismatches = _$DesignMainDomainNameMismatches;
 
 mixin DesignMainDomainNameMismatchesProps on UiProps {
   late Design design;

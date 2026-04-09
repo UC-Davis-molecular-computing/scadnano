@@ -234,9 +234,7 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     ContextMenuItem(
       title: 'set loopout color',
       on_click:
-          () => app.dispatch(
-            actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: props.loopout),
-          ),
+          () => app.dispatch(actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: props.loopout)),
     ),
     if (props.loopout.color != null)
       ContextMenuItem(
@@ -414,18 +412,8 @@ String loopout_path_description_within_group(
   int prev_offset = top_dom_is_prev ? top_offset : bot_offset;
   int next_offset = top_dom_is_prev ? bot_offset : top_offset;
 
-  var prev_svg = prev_helix.svg_base_pos(
-    prev_offset,
-    prev_domain.forward,
-    prev_helix_svg_position_y,
-    prev_geometry,
-  );
-  var next_svg = next_helix.svg_base_pos(
-    next_offset,
-    next_domain.forward,
-    next_helix_svg_position_y,
-    next_geometry,
-  );
+  var prev_svg = prev_helix.svg_base_pos(prev_offset, prev_domain.forward, prev_helix_svg_position_y, prev_geometry);
+  var next_svg = next_helix.svg_base_pos(next_offset, next_domain.forward, next_helix_svg_position_y, next_geometry);
 
   var w, h;
 

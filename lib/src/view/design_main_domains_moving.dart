@@ -17,10 +17,7 @@ import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_domains_moving.over_react.g.dart';
 
-DesignMainDomainsMovingProps set_design_main_domains_moving_props(
-  DesignMainDomainsMovingProps elt,
-  AppState state,
-) {
+DesignMainDomainsMovingProps set_design_main_domains_moving_props(DesignMainDomainsMovingProps elt, AppState state) {
   if (state.ui_state.domains_move == null) {
     return elt
       ..domains_move = null
@@ -34,14 +31,8 @@ DesignMainDomainsMovingProps set_design_main_domains_moving_props(
       ..geometry = Geometry();
   }
 
-  HelixGroup original_group = util_state.original_group_from_domains_move(
-    state.design,
-    state.ui_state.domains_move!,
-  );
-  HelixGroup current_group = util_state.current_group_from_domains_move(
-    state.design,
-    state.ui_state.domains_move!,
-  );
+  HelixGroup original_group = util_state.original_group_from_domains_move(state.design, state.ui_state.domains_move!);
+  HelixGroup current_group = util_state.current_group_from_domains_move(state.design, state.ui_state.domains_move!);
 
   // Need to check this here, because we need to allow the middleware to let through the domains_move
   // object so that view/design.dart can issue a warning to the user on a mousemove event when the
@@ -132,8 +123,7 @@ class DesignMainDomainsMovingComponent extends UiComponent2<DesignMainDomainsMov
       );
     }
 
-    return (Dom.g()..className = 'domains-moving-main-view' + (domains_move.allowable ? '' : ' disallowed'))(
-      domains_moving,
-    );
+    return (Dom.g()
+      ..className = 'domains-moving-main-view' + (domains_move.allowable ? '' : ' disallowed'))(domains_moving);
   }
 }

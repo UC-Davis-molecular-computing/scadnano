@@ -46,12 +46,7 @@ main() {
     setUp(() async {
       design = Design(
         helices: [
-          Helix(
-            max_offset: 24,
-            grid_position: GridPosition(0, 0),
-            major_tick_periodic_distances: [8],
-            idx: 0,
-          ),
+          Helix(max_offset: 24, grid_position: GridPosition(0, 0), major_tick_periodic_distances: [8], idx: 0),
         ],
         strands: [],
         grid: Grid.square,
@@ -63,10 +58,7 @@ main() {
     });
 
     test('no_insertion_after_loopout', () {
-      expect(
-        () => design.draw_strand(0, 0).move(8).loopout(0, 10, 5).with_insertion(4, 2),
-        throwsArgumentError,
-      );
+      expect(() => design.draw_strand(0, 0).move(8).loopout(0, 10, 5).with_insertion(4, 2), throwsArgumentError);
     });
 
     test('deletion_below_range', () {

@@ -47,14 +47,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design =
-          design
-              .draw_strand(0, 0)
-              .move(8)
-              .with_domain_name("ABC")
-              .cross(1)
-              .move(-8)
-              .with_domain_name("XYZ")
-              .commit();
+          design.draw_strand(0, 0).move(8).with_domain_name("ABC").cross(1).move(-8).with_domain_name("XYZ").commit();
 
       AppState state = app_state_from_design(design);
       //Select Strands
@@ -346,14 +339,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design =
-          design
-              .draw_strand(0, 0)
-              .move(8)
-              .with_domain_name("ABC")
-              .cross(1)
-              .move(-8)
-              .with_domain_name("XYZ")
-              .commit();
+          design.draw_strand(0, 0).move(8).with_domain_name("ABC").cross(1).move(-8).with_domain_name("XYZ").commit();
 
       AppState state = app_state_from_design(design);
       //Select Strands

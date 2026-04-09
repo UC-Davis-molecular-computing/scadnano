@@ -81,12 +81,7 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
         adj_helix_svg_y,
         props.geometry,
       );
-      pos = util_state.compute_extension_free_end_svg(
-        extension_attached_end_svg,
-        ext,
-        adj_dom,
-        props.geometry,
-      );
+      pos = util_state.compute_extension_free_end_svg(extension_attached_end_svg, ext, adj_dom, props.geometry);
     }
     bool display_connector = props.display_connector;
 
@@ -168,18 +163,12 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
     ContextMenuItem(
       title: 'edit modification',
       on_click:
-          () => edit_modification(
-            this.modification,
-            props.selectable_modification,
-            this.strand,
-            props.dna_idx_mod,
-          ),
+          () => edit_modification(this.modification, props.selectable_modification, this.strand, props.dna_idx_mod),
     ),
   ];
 
   remove_modification() {
-    List<SelectableModification> selectable_mods =
-        app.state.ui_state.selectables_store.selected_modifications.toList();
+    List<SelectableModification> selectable_mods = app.state.ui_state.selectables_store.selected_modifications.toList();
     if (!selectable_mods.contains(props.selectable_modification)) {
       selectable_mods.add(props.selectable_modification);
     }
@@ -221,12 +210,7 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
       ..key = 'connector')();
   }
 
-  ReactElement _modification_svg(
-    Point<double> pos,
-    bool forward,
-    bool display_connector,
-    int connector_length,
-  ) {
+  ReactElement _modification_svg(Point<double> pos, bool forward, bool display_connector, int connector_length) {
     num y_delta = y_delta_mod();
     double y_del_small = (forward ? -y_delta : y_delta).toDouble();
     double font_size = props.font_size;
@@ -382,23 +366,14 @@ Future<void> ask_for_add_modification(
 
   Modification mod;
   if (modification_type == "3'") {
-    mod = Modification3Prime(
-      display_text: display_text,
-      vendor_code: vendor_code,
-      connector_length: connector_length,
-    );
+    mod = Modification3Prime(display_text: display_text, vendor_code: vendor_code, connector_length: connector_length);
   } else if (modification_type == "5'") {
-    mod = Modification5Prime(
-      display_text: display_text,
-      vendor_code: vendor_code,
-      connector_length: connector_length,
-    );
+    mod = Modification5Prime(display_text: display_text, vendor_code: vendor_code, connector_length: connector_length);
   } else {
     var allowed_bases = null;
     if (attached_to_base) {
       allowed_bases_str = allowed_bases_str.replaceAll(RegExp(r'[^(ACGTacgt)]'), '');
-      allowed_bases =
-          {for (int i = 0; i < allowed_bases_str.length; i++) allowed_bases_str[i].toUpperCase()}.build();
+      allowed_bases = {for (int i = 0; i < allowed_bases_str.length; i++) allowed_bases_str[i].toUpperCase()}.build();
     }
     mod = ModificationInternal(
       display_text: display_text,
@@ -484,8 +459,7 @@ edit_modification(
       tooltip: tooltip_attached_to_base_checkbox,
     );
 
-    var allowed_bases_old =
-        modification.allowed_bases != null ? modification.allowed_bases!.join('') : 'ACGT';
+    var allowed_bases_old = modification.allowed_bases != null ? modification.allowed_bases!.join('') : 'ACGT';
     items[allowed_bases_idx] = DialogText(
       label: 'allowed bases',
       value: allowed_bases_old,
@@ -532,8 +506,7 @@ edit_modification(
     if (attached_to_base) {
       // remove all symbols other than ACGTacgt
       allowed_bases_str = allowed_bases_str.replaceAll(RegExp(r'[^(ACGTacgt)]'), '');
-      allowed_bases =
-          {for (int i = 0; i < allowed_bases_str.length; i++) allowed_bases_str[i].toUpperCase()}.build();
+      allowed_bases = {for (int i = 0; i < allowed_bases_str.length; i++) allowed_bases_str[i].toUpperCase()}.build();
     }
     new_mod = ModificationInternal(
       display_text: display_text,
@@ -566,10 +539,7 @@ edit_modification(
       var selectable_mods_int = List<SelectableModificationInternal>.from(
         selectable_mods.where((mod) => mod is SelectableModificationInternal),
       );
-      action = actions.ModificationsInternalEdit(
-        modifications: selectable_mods_int,
-        new_modification: new_mod,
-      );
+      action = actions.ModificationsInternalEdit(modifications: selectable_mods_int, new_modification: new_mod);
     } else {
       throw AssertionError('should be unreachable');
     }

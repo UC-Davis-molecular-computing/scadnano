@@ -233,8 +233,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   LocalStorageDesignChoice get local_storage_design_choice => storables.local_storage_design_choice;
 
-  bool get clear_helix_selection_when_loading_new_design =>
-      storables.clear_helix_selection_when_loading_new_design;
+  bool get clear_helix_selection_when_loading_new_design => storables.clear_helix_selection_when_loading_new_design;
 
   bool get show_slice_bar => storables.show_slice_bar;
 
@@ -303,8 +302,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
     return DEFAULT_AppUIState.rebuild((s) => s..selectables_store.replace(selectables_store));
   }
 
-  factory AppUIState(void Function(AppUIStateBuilder) updates) =>
-      _$AppUIState((u) => u..replace(DEFAULT_AppUIState));
+  factory AppUIState(void Function(AppUIStateBuilder) updates) => _$AppUIState((u) => u..replace(DEFAULT_AppUIState));
 
   static Serializer<AppUIState> get serializer => _$appUIStateSerializer;
 }

@@ -19,9 +19,7 @@ GlobalReducer<DomainsMove?, AppState> domains_move_global_reducer = combineGloba
   TypedGlobalReducer<DomainsMove?, AppState, actions.DomainsMoveStartSelectedDomains>(
     domains_move_start_selected_domains_reducer,
   ),
-  TypedGlobalReducer<DomainsMove?, AppState, actions.DomainsMoveAdjustAddress>(
-    domains_adjust_address_reducer,
-  ),
+  TypedGlobalReducer<DomainsMove?, AppState, actions.DomainsMoveAdjustAddress>(domains_adjust_address_reducer),
 ]);
 
 Reducer<DomainsMove?> domains_move_local_reducer = combineReducers([
@@ -194,9 +192,7 @@ Domain move_domain({
           ..start = domain.start + delta_offset
           ..end = domain.end + delta_offset
           ..deletions.replace(domain.deletions.map((d) => d + delta_offset))
-          ..insertions.replace(
-            domain.insertions.map((i) => i.rebuild((ib) => ib..offset = i.offset + delta_offset)),
-          ),
+          ..insertions.replace(domain.insertions.map((i) => i.rebuild((ib) => ib..offset = i.offset + delta_offset))),
   );
   return domain_moved;
 }

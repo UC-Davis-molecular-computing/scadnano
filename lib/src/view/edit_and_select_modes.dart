@@ -45,8 +45,7 @@ class EditAndSelectModesComponent extends UiComponent2<EditAndSelectModesProps>
   @override
   render() {
     bool select_mode =
-        props.edit_modes.contains(EditModeChoice.select) ||
-        props.edit_modes.contains(EditModeChoice.rope_select);
+        props.edit_modes.contains(EditModeChoice.select) || props.edit_modes.contains(EditModeChoice.rope_select);
     return [
       if (select_mode && props.edit_mode_menu_visible)
         (SelectMode()

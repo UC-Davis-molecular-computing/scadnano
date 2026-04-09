@@ -158,12 +158,7 @@ int _get_multiple_of_x_sup_closest_to_y(int x, int y) {
 }
 
 /// Creates blank cadnanov2 helices in and initialized all their fields.
-Map<int, int> _cadnano_v2_fill_blank(
-  Design design,
-  Map<String, dynamic> dct,
-  int num_bases,
-  Grid design_grid,
-) {
+Map<int, int> _cadnano_v2_fill_blank(Design design, Map<String, dynamic> dct, int num_bases, Grid design_grid) {
   Map<int, int> helices_ids_reverse = new HashMap();
   int i = 0;
   for (Helix helix in design.helices.values) {
@@ -207,9 +202,7 @@ void _cadnano_v2_place_strand(Strand strand, Map<String, dynamic> dct, Map<int, 
   for (int i = 0; i < strand.domains.length; i++) {
     Domain domain = strand.domains[i];
     if (domain is Loopout) {
-      throw new IllegalCadnanoDesignError(
-        'cannot convert Strand ${strand} to cadnanov2 format, since it has Loopouts',
-      );
+      throw new IllegalCadnanoDesignError('cannot convert Strand ${strand} to cadnanov2 format, since it has Loopouts');
     }
 
     int which_helix_id = helices_ids_reverse[domain.helix]!;

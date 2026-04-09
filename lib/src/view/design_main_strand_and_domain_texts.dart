@@ -25,8 +25,7 @@ import 'package:scadnano_state_actions/src/constants.dart' as constants;
 
 part 'design_main_strand_and_domain_texts.over_react.g.dart';
 
-UiFactory<DesignMainStrandAndDomainTextsProps> DesignMainStrandAndDomainTexts =
-    _$DesignMainStrandAndDomainTexts;
+UiFactory<DesignMainStrandAndDomainTextsProps> DesignMainStrandAndDomainTexts = _$DesignMainStrandAndDomainTexts;
 
 // shows both domain and strand names
 mixin DesignMainStrandAndDomainTextsProps on UiProps implements TransformByHelixGroupPropsMixin {
@@ -58,10 +57,7 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
     with PureComponent {
   @override
   render() {
-    if (!(props.show_domain_names ||
-        props.show_strand_names ||
-        props.show_strand_labels ||
-        props.show_domain_labels)) {
+    if (!(props.show_domain_names || props.show_strand_names || props.show_strand_labels || props.show_domain_labels)) {
       return null;
     }
 

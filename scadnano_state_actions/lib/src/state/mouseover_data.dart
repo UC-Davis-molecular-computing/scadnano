@@ -13,9 +13,7 @@ import '../constants.dart' as constants;
 
 part 'mouseover_data.g.dart';
 
-abstract class MouseoverParams
-    with BuiltJsonSerializable
-    implements Built<MouseoverParams, MouseoverParamsBuilder> {
+abstract class MouseoverParams with BuiltJsonSerializable implements Built<MouseoverParams, MouseoverParamsBuilder> {
   int get helix_idx;
 
   int get offset;
@@ -41,9 +39,7 @@ abstract class MouseoverParams
   static Serializer<MouseoverParams> get serializer => _$mouseoverParamsSerializer;
 }
 
-abstract class MouseoverData
-    with BuiltJsonSerializable
-    implements Built<MouseoverData, MouseoverDataBuilder> {
+abstract class MouseoverData with BuiltJsonSerializable implements Built<MouseoverData, MouseoverDataBuilder> {
   Helix get helix;
 
   int get offset;
@@ -81,9 +77,7 @@ abstract class MouseoverData
         if (domain.contains_offset(offset)) {
           if (domain.forward == forward) {
             domain_in_direction = domain;
-            strand_idx = design.idx_on_strand(
-              Address(helix_idx: helix_idx, offset: offset, forward: forward),
-            );
+            strand_idx = design.idx_on_strand(Address(helix_idx: helix_idx, offset: offset, forward: forward));
           }
           num_domains_found++;
           Strand strand = design.substrand_to_strand[domain]!;

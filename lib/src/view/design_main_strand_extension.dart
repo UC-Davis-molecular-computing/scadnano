@@ -268,11 +268,8 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
 
   extension_num_bases_change() async {
     int new_num_bases = await app.disable_keyboard_shortcuts_while(
-      () => ask_for_num_bases(
-        'change extension number of bases',
-        current_num_bases: props.ext.num_bases,
-        lower_bound: 1,
-      ),
+      () =>
+          ask_for_num_bases('change extension number of bases', current_num_bases: props.ext.num_bases, lower_bound: 1),
     );
     if (new_num_bases == props.ext.num_bases) {
       return;
@@ -373,10 +370,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
         ContextMenuItem(
           title: 'remove extension name',
           on_click: () {
-            var exts = util_state.add_if_not_null(
-              app.state.ui_state.selectables_store.selected_extensions,
-              props.ext,
-            );
+            var exts = util_state.add_if_not_null(app.state.ui_state.selectables_store.selected_extensions, props.ext);
             var action =
                 exts.length > 1
                     ? actions.BatchAction(
@@ -392,10 +386,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
         ContextMenuItem(
           title: 'remove extension label',
           on_click: () {
-            var exts = util_state.add_if_not_null(
-              app.state.ui_state.selectables_store.selected_extensions,
-              props.ext,
-            );
+            var exts = util_state.add_if_not_null(app.state.ui_state.selectables_store.selected_extensions, props.ext);
             var action =
                 exts.length > 1
                     ? actions.BatchAction(
@@ -409,9 +400,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
       ContextMenuItem(
         title: 'set extension color',
         on_click:
-            () => app.dispatch(
-              actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: props.ext),
-            ),
+            () => app.dispatch(actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: props.ext)),
       ),
       if (props.ext.color != null)
         ContextMenuItem(
@@ -432,20 +421,11 @@ tooltip_text(Extension ext) =>
     (ext.name == null ? "" : "\n    name=${ext.name}") +
     (ext.label == null ? "" : "\n    label=${ext.label.toString()}");
 
-Future<int> ask_for_num_bases(
-  String title, {
-  required int current_num_bases,
-  required int lower_bound,
-}) async {
+Future<int> ask_for_num_bases(String title, {required int current_num_bases, required int lower_bound}) async {
   int num_bases_idx = 0;
   var items = util_state.FixedList<DialogItem>(1);
   items[num_bases_idx] = DialogInteger(label: 'number of bases:', value: current_num_bases);
-  var dialog = Dialog(
-    title: title,
-    type: DialogType.set_extension_num_bases,
-    items: items,
-    use_saved_response: false,
-  );
+  var dialog = Dialog(title: title, type: DialogType.set_extension_num_bases, items: items, use_saved_response: false);
 
   List<DialogItem>? results = await util.dialog(dialog);
   if (results == null) return current_num_bases;

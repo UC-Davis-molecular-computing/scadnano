@@ -30,8 +30,7 @@ mixin DesignMainStrandCreatingProps on UiProps implements TransformByHelixGroupP
   late num svg_position_y;
 }
 
-class DesignMainStrandCreatingComponent extends UiComponent2<DesignMainStrandCreatingProps>
-    with PureComponent {
+class DesignMainStrandCreatingComponent extends UiComponent2<DesignMainStrandCreatingProps> with PureComponent {
   @override
   render() {
     Point<double> start_svg = props.helix.svg_base_pos(

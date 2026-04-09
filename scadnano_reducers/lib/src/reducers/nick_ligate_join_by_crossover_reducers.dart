@@ -123,9 +123,7 @@ BuiltList<Strand> move_linker_reducer(BuiltList<Strand> strands, AppState state,
     // _join_strands_with_crossover to a Loopout
     if (linker is Loopout) {
       int crossover_idx =
-          end_fixed.is_5p
-              ? strand_to.domains.length - 1
-              : new_strand_connected_intermediate.domains.length - 1;
+          end_fixed.is_5p ? strand_to.domains.length - 1 : new_strand_connected_intermediate.domains.length - 1;
       var crossover = new_strand_connected.linkers[crossover_idx] as Crossover;
       var convert_crossover_to_loopout_action = actions.ConvertCrossoverToLoopout(
         crossover,
@@ -145,8 +143,7 @@ BuiltList<Strand> move_linker_reducer(BuiltList<Strand> strands, AppState state,
       linker_seq = linker.dna_sequence ?? constants.DNA_BASE_WILDCARD * linker.dna_length();
     }
     // add wildcards to strands with no DNA sequences
-    String strand_to_dna_sequence =
-        strand_to.dna_sequence ?? constants.DNA_BASE_WILDCARD * strand_to.dna_length;
+    String strand_to_dna_sequence = strand_to.dna_sequence ?? constants.DNA_BASE_WILDCARD * strand_to.dna_length;
     String new_strand_connected_dna_sequence =
         new_strand_connected_intermediate.dna_sequence ??
         constants.DNA_BASE_WILDCARD * new_strand_connected_intermediate.dna_length;
@@ -442,12 +439,7 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
 
     //TODO: figure out if strand_3p was the one clicked
     bool first_clicked_is_3p = dna_end_clicked.is_3p;
-    Strand new_strand = join_two_strands_with_substrands(
-      strand_3p,
-      strand_5p,
-      substrands_new,
-      first_clicked_is_3p,
-    );
+    Strand new_strand = join_two_strands_with_substrands(strand_3p, strand_5p, substrands_new, first_clicked_is_3p);
 
     return swap_old_strands_for_new(strands, [strand_left, strand_right], [new_strand]);
   }
@@ -526,9 +518,7 @@ List<(DNAEnd, DNAEnd)> find_end_pairs_to_connect(Design design, List<DNAEnd> sel
     // BuiltList<int> helices_view_order = design.groups[group_name].helices_view_order;
     BuiltMap<int, int> helices_view_order_inverse = design.groups[group_name]!.helices_view_order_inverse;
     var ends_in_group = ends_by_group[group_name]!;
-    Map<DNAEnd, Domain> domains_by_end_in_group = {
-      for (var end in ends_in_group) end: design.end_to_domain[end]!,
-    };
+    Map<DNAEnd, Domain> domains_by_end_in_group = {for (var end in ends_in_group) end: design.end_to_domain[end]!};
     var end_pairs_to_connect_in_group = find_end_pairs_to_connect_in_group(
       ends_in_group,
       domains_by_end_in_group,
@@ -686,12 +676,7 @@ BuiltList<Strand> _join_strands_with_crossover(
   List<Substrand> substrands_new = substrands_3p + substrands_5p;
 
   // create new Strand
-  Strand new_strand = join_two_strands_with_substrands(
-    strand_3p,
-    strand_5p,
-    substrands_new,
-    first_clicked_is_3p,
-  );
+  Strand new_strand = join_two_strands_with_substrands(strand_3p, strand_5p, substrands_new, first_clicked_is_3p);
 
   return swap_old_strands_for_new(strands, [strand_3p, strand_5p], [new_strand]);
 }

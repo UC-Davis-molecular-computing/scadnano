@@ -26,8 +26,7 @@ mixin DesignMainBasePairRectangleProps on UiProps {
   late BuiltMap<int, num> helix_idx_to_svg_position_y_map;
 }
 
-class DesignMainBasePairRectangleComponent extends UiComponent2<DesignMainBasePairRectangleProps>
-    with PureComponent {
+class DesignMainBasePairRectangleComponent extends UiComponent2<DesignMainBasePairRectangleProps> with PureComponent {
   @override
   render() {
     List<ReactElement> base_pair_lines_components = this.create_base_pair_lines_components(

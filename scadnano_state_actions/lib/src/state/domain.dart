@@ -185,8 +185,7 @@ abstract class Domain
   @memoized
   BuiltList<SelectableDeletion> get selectable_deletions =>
       [
-        for (int deletion in deletions)
-          SelectableDeletion(offset: deletion, domain: this, is_scaffold: is_scaffold),
+        for (int deletion in deletions) SelectableDeletion(offset: deletion, domain: this, is_scaffold: is_scaffold),
       ].build();
 
   @memoized
@@ -273,9 +272,7 @@ abstract class Domain
     var insertions = parse_json_insertions(util.optional_field(json_map, constants.insertions_key, []));
 
     Color? color =
-        json_map.containsKey(constants.color_key)
-            ? util.parse_json_color(json_map[constants.color_key]!)
-            : null;
+        json_map.containsKey(constants.color_key) ? util.parse_json_color(json_map[constants.color_key]!) : null;
 
     String? name = util.optional_field_with_null_default(json_map, constants.name_key);
     String? label = util.optional_field_with_null_default(json_map, constants.label_key);
@@ -574,9 +571,7 @@ abstract class Domain
   }
 
   bool overlaps(Domain other) {
-    return (this.helix == other.helix &&
-        this.forward == (!other.forward) &&
-        this.compute_overlap(other) != null);
+    return (this.helix == other.helix && this.forward == (!other.forward) && this.compute_overlap(other) != null);
   }
 
   (int, int)? compute_overlap(Domain other) {

@@ -9,8 +9,7 @@ import 'pure_component.dart';
 
 part 'design_main_loopout_extension_length.over_react.g.dart';
 
-UiFactory<DesignMainLoopoutExtensionLengthProps> DesignMainLoopoutExtensionLength =
-    _$DesignMainLoopoutExtensionLength;
+UiFactory<DesignMainLoopoutExtensionLengthProps> DesignMainLoopoutExtensionLength = _$DesignMainLoopoutExtensionLength;
 
 mixin DesignMainLoopoutExtensionLengthProps on UiProps {
   late Geometry geometry;

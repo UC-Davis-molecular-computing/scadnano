@@ -8,9 +8,7 @@ import '../serializers.dart';
 
 part 'selection_rope.g.dart';
 
-abstract class SelectionRope
-    with BuiltJsonSerializable
-    implements Built<SelectionRope, SelectionRopeBuilder> {
+abstract class SelectionRope with BuiltJsonSerializable implements Built<SelectionRope, SelectionRopeBuilder> {
   SelectionRope._();
 
   factory SelectionRope(bool toggle) => SelectionRope.from(

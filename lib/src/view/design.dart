@@ -84,8 +84,7 @@ class DesignViewComponent {
   DivElement context_menu_container = DivElement()..attributes = {'id': 'context-menu-container'};
   DivElement dialog_form_container = DivElement()..attributes = {'class': 'dialog-form-container'};
   DivElement dialog_loading_container = DivElement()..attributes = {'class': 'dialog-loading-container'};
-  DivElement strand_color_picker_container =
-      DivElement()..attributes = {'id': 'strand-color-picker-container'};
+  DivElement strand_color_picker_container = DivElement()..attributes = {'id': 'strand-color-picker-container'};
 
   late svg.SvgSvgElement side_view_svg;
   late svg.SvgSvgElement main_view_svg;
@@ -102,27 +101,16 @@ class DesignViewComponent {
 
   DesignViewComponent(this.root_element) {
     this.side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
-    var side_main_separator =
-        DivElement()..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
+    var side_main_separator = DivElement()..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
     this.main_pane = DivElement()..attributes = {'id': 'main-pane', 'class': 'split'};
 
     side_view_svg =
         svg.SvgSvgElement()
-          ..attributes = {
-            'id': SIDE_VIEW_SVG_ID,
-            'class': PANZOOMABLE_CLASS,
-            'width': '100%',
-            'height': '100%',
-          };
+          ..attributes = {'id': SIDE_VIEW_SVG_ID, 'class': PANZOOMABLE_CLASS, 'width': '100%', 'height': '100%'};
 
     main_view_svg =
         svg.SvgSvgElement()
-          ..attributes = {
-            'id': MAIN_VIEW_SVG_ID,
-            'class': PANZOOMABLE_CLASS,
-            'width': '100%',
-            'height': '100%',
-          };
+          ..attributes = {'id': MAIN_VIEW_SVG_ID, 'class': PANZOOMABLE_CLASS, 'width': '100%', 'height': '100%'};
     add_shadow_filter(main_view_svg);
 
     var main_arrows =
@@ -181,10 +169,7 @@ class DesignViewComponent {
     main_pane.setAttribute('style', 'width: $main_pane_width');
   }
 
-  Map<DraggableComponent, Draggable?> draggables = {
-    DraggableComponent.main: null,
-    DraggableComponent.side: null,
-  };
+  Map<DraggableComponent, Draggable?> draggables = {DraggableComponent.main: null, DraggableComponent.side: null};
 
   handle_keyboard_mouse_events() {
     document.onClick.listen((MouseEvent event) {
@@ -427,9 +412,7 @@ class DesignViewComponent {
           strand_creation_helix,
           {strand_creation.helix.group: group}.build(),
           geometry,
-          {
-            strand_creation.helix.idx: app.state.helix_idx_to_svg_position_map[strand_creation.helix.idx]!,
-          }.build(),
+          {strand_creation.helix.idx: app.state.helix_idx_to_svg_position_map[strand_creation.helix.idx]!}.build(),
           strand_creation,
         );
         app.dispatch(actions.StrandCreateAdjustOffset(offset: updated_function_offset.offset));
@@ -662,10 +645,7 @@ class DesignViewComponent {
     }
 
     // Ctrl+A for select all
-    if ((ev.ctrlKey || ev.metaKey) &&
-        !(ev.altKey) &&
-        key == KeyCode.A &&
-        edit_mode_is_select_or_rope_select()) {
+    if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey) && key == KeyCode.A && edit_mode_is_select_or_rope_select()) {
       ev.preventDefault();
       // Ctrl+Shift+A for current helix group only
       app.dispatch(actions.SelectAllSelectable(current_helix_group_only: ev.shiftKey));
@@ -797,8 +777,7 @@ class DesignViewComponent {
   render_loading_dialog(AppState state) {
     react_dom.render(
       over_react_components.ErrorBoundary()(
-        (ReduxProvider()
-          ..store = app.store)(set_design_loading_dialog_props(ConnectedLoadingDialog(), state)()),
+        (ReduxProvider()..store = app.store)(set_design_loading_dialog_props(ConnectedLoadingDialog(), state)()),
       ),
       this.dialog_loading_container,
     );
@@ -875,9 +854,7 @@ class DesignViewComponent {
                 ..context = app.context_selection_rope)(
                 (ReduxProvider()
                   ..store = app.store_selection_box
-                  ..context = app.context_selection_box)(
-                  set_design_side_props(ConnectedDesignSide(), state)(),
-                ),
+                  ..context = app.context_selection_box)(set_design_side_props(ConnectedDesignSide(), state)()),
               ),
             ),
           ),
@@ -971,18 +948,14 @@ class DesignViewComponent {
 
   void render_context_menu() {
     react_dom.render(
-      over_react_components.ErrorBoundary()(
-        (ReduxProvider()..store = app.store)(ConnectedDesignContextMenu()()),
-      ),
+      over_react_components.ErrorBoundary()((ReduxProvider()..store = app.store)(ConnectedDesignContextMenu()())),
       this.context_menu_container,
     );
   }
 
   void render_dialog_form() {
     react_dom.render(
-      over_react_components.ErrorBoundary()(
-        (ReduxProvider()..store = app.store)(ConnectedDesignDialogForm()()),
-      ),
+      over_react_components.ErrorBoundary()((ReduxProvider()..store = app.store)(ConnectedDesignDialogForm()())),
       this.dialog_form_container,
     );
   }

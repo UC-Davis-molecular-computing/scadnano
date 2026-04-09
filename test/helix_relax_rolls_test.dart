@@ -41,9 +41,7 @@ main() {
                              (26-21)/10.5 = 5/10.5
       */
       design2h = Design(
-        helices: [
-          for (int i = 0; i < 2; i++) Helix(max_offset: 50, idx: i, grid_position: GridPosition(0, i)),
-        ],
+        helices: [for (int i = 0; i < 2; i++) Helix(max_offset: 50, idx: i, grid_position: GridPosition(0, i))],
         grid: Grid.square,
       );
       // helix 0 forward
@@ -60,9 +58,7 @@ main() {
       2      <--------+
       */
       design3helix3strand = Design(
-        helices: [
-          for (int i = 0; i < 3; i++) Helix(max_offset: 50, idx: i, grid_position: GridPosition(0, i)),
-        ],
+        helices: [for (int i = 0; i < 3; i++) Helix(max_offset: 50, idx: i, grid_position: GridPosition(0, i))],
         grid: Grid.square,
       );
       // helix 0 forward
@@ -589,9 +585,7 @@ main() {
        */
       var group2name = 'group 2';
 
-      var helices = [
-        for (int i = 0; i < 3; i++) Helix(max_offset: 50, idx: i, grid_position: GridPosition(0, i)),
-      ];
+      var helices = [for (int i = 0; i < 3; i++) Helix(max_offset: 50, idx: i, grid_position: GridPosition(0, i))];
       helices[2] = helices[2].rebuild((b) => b..group = group2name);
       var design = Design(helices: helices, grid: Grid.square);
       design = design.draw_strand(0, 0).move(5).cross(1).move(-5).commit();

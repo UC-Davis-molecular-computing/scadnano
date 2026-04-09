@@ -53,9 +53,7 @@ GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGloba
   // TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandsAutoPaste>(strands_autopaste_strands_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandsMoveCommit>(strands_move_commit_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.DomainsMoveCommit>(domains_move_commit_reducer),
-  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.DNAEndsMoveCommit>(
-    strands_dna_ends_move_commit_reducer,
-  ),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.DNAEndsMoveCommit>(strands_dna_ends_move_commit_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.DNAExtensionsMoveCommit>(
     strands_dna_extensions_move_commit_reducer,
   ),
@@ -65,33 +63,21 @@ GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGloba
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.MoveLinker>(move_linker_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.Nick>(nick_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.Ligate>(ligate_reducer),
-  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.JoinStrandsByCrossover>(
-    join_strands_by_crossover_reducer,
-  ),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.JoinStrandsByCrossover>(join_strands_by_crossover_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.JoinStrandsByMultipleCrossovers>(
     join_strands_by_multiple_crossovers_reducer,
   ),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.ConvertCrossoversToLoopouts>(
     convert_crossovers_to_loopouts_reducer,
   ),
-  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.LoopoutsLengthChange>(
-    loopouts_length_change_reducer,
-  ),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.LoopoutsLengthChange>(loopouts_length_change_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.ExtensionsNumBasesChange>(
     extensions_num_bases_change_reducer,
   ),
-  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.InsertionsLengthChange>(
-    insertions_length_change_reducer,
-  ),
-  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.Modifications5PrimeEdit>(
-    modifications_5p_edit_reducer,
-  ),
-  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.Modifications3PrimeEdit>(
-    modifications_3p_edit_reducer,
-  ),
-  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.ModificationsInternalEdit>(
-    modifications_int_edit_reducer,
-  ),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.InsertionsLengthChange>(insertions_length_change_reducer),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.Modifications5PrimeEdit>(modifications_5p_edit_reducer),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.Modifications3PrimeEdit>(modifications_3p_edit_reducer),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.ModificationsInternalEdit>(modifications_int_edit_reducer),
 ]);
 
 BuiltList<Strand> replace_strands_reducer(BuiltList<Strand> strands, actions.ReplaceStrands action) {
@@ -105,11 +91,7 @@ BuiltList<Strand> replace_strands_reducer(BuiltList<Strand> strands, actions.Rep
 
 // takes a part of a strand and looks up the strand it's in by strand_id, then applies reducer to strand
 // action may not have the strand itself
-BuiltList<Strand> strands_part_reducer(
-  BuiltList<Strand> strands,
-  AppState state,
-  actions.StrandPartAction action,
-) {
+BuiltList<Strand> strands_part_reducer(BuiltList<Strand> strands, AppState state, actions.StrandPartAction action) {
   Strand strand = state.design.strands_by_id[action.strand_part.strand_id]!;
   int strand_idx = strands.indexOf(strand);
 
@@ -213,11 +195,7 @@ BuiltList<Strand> strands_move_commit_reducer(
     // and wants to paste them back in same position
     var strands_list = strands.toList();
     for (var strand in action.strands_move.strands_moving) {
-      Strand new_strand = one_strand_strands_move_copy_commit_reducer(
-        state.design,
-        strand,
-        action.strands_move,
-      );
+      Strand new_strand = one_strand_strands_move_copy_commit_reducer(state.design, strand, action.strands_move);
       new_strand = new_strand.initialize();
       if (action.strands_move.copy) {
         strands_list.add(new_strand);
@@ -340,12 +318,7 @@ BuiltList<Strand> domains_move_commit_reducer(
     for (var strand in action.domains_move.domains_moving_from_strand.keys) {
       var domains = action.domains_move.domains_moving_from_strand[strand]!.toSet();
       int strand_idx = strands.indexOf(strand);
-      Strand new_strand = one_strand_domains_move_commit_reducer(
-        state.design,
-        strand,
-        domains,
-        action.domains_move,
-      );
+      Strand new_strand = one_strand_domains_move_commit_reducer(state.design, strand, domains, action.domains_move);
       new_strand = new_strand.initialize();
       strands_builder[strand_idx] = new_strand;
     }
@@ -511,13 +484,9 @@ class InsertionDeletionRecord {
           List<Insertion> remaining_insertions = get_remaining_insertions(substrand, new_offset, dnaend);
 
           //XXX: make sure to record deletions and insertions before bound_ss changes
-          List<int> deletions_removed =
-              bound_ss.deletions.where((d) => !remaining_deletions.contains(d)).toList();
+          List<int> deletions_removed = bound_ss.deletions.where((d) => !remaining_deletions.contains(d)).toList();
           List<int> insertion_offsets_removed =
-              bound_ss.insertions
-                  .where((i) => !remaining_insertions.contains(i))
-                  .map((i) => i.offset)
-                  .toList();
+              bound_ss.insertions.where((i) => !remaining_insertions.contains(i)).map((i) => i.offset).toList();
           for (var offset in deletions_removed + insertion_offsets_removed) {
             var other_dom = util.find_paired_domain(design, bound_ss, offset);
             if (other_dom != null) {
@@ -525,11 +494,7 @@ class InsertionDeletionRecord {
               int other_ss_idx = other_strand.substrands.indexOf(other_dom);
               int other_strand_idx = design.strands.indexOf(other_strand);
               records.add(
-                InsertionDeletionRecord(
-                  offset: offset,
-                  strand_idx: other_strand_idx,
-                  substrand_idx: other_ss_idx,
-                ),
+                InsertionDeletionRecord(offset: offset, strand_idx: other_strand_idx, substrand_idx: other_ss_idx),
               );
             }
           }
@@ -554,9 +519,7 @@ class InsertionDeletionRecord {
 }
 
 List<int> get_remaining_deletions(Domain substrand, int new_offset, DNAEnd dnaend) =>
-    substrand.deletions
-        .where((d) => (substrand.dnaend_start == dnaend ? new_offset < d : new_offset > d))
-        .toList();
+    substrand.deletions.where((d) => (substrand.dnaend_start == dnaend ? new_offset < d : new_offset > d)).toList();
 
 List<Insertion> get_remaining_insertions(Domain substrand, int new_offset, DNAEnd dnaend) =>
     substrand.insertions
@@ -587,11 +550,7 @@ DNAEndMove? find_move(BuiltList<DNAEndMove> moves, DNAEnd end) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // create Strand
 
-BuiltList<Strand> strand_create(
-  BuiltList<Strand> strands,
-  AppState state,
-  actions.StrandCreateCommit action,
-) {
+BuiltList<Strand> strand_create(BuiltList<Strand> strands, AppState state, actions.StrandCreateCommit action) {
   int helix_idx = action.helix_idx;
   int start = action.start;
   int end = action.end;
@@ -626,10 +585,7 @@ BuiltList<Strand> strand_create(
 // single strand properties
 
 // Unlike a strand part reducer, this sort of action actually stores the strand itself.
-BuiltList<Strand> strands_single_strand_reducer(
-  BuiltList<Strand> strands,
-  actions.SingleStrandAction action,
-) {
+BuiltList<Strand> strands_single_strand_reducer(BuiltList<Strand> strands, actions.SingleStrandAction action) {
   Strand strand = action.strand;
   int strand_idx = strands.indexOf(strand);
 
@@ -654,9 +610,7 @@ Reducer<Strand> single_strand_reducer = combineReducers([
   TypedReducer<Strand, actions.ModificationEdit>(modification_edit_reducer),
   TypedReducer<Strand, actions.StrandNameSet>(strand_name_set_reducer),
   TypedReducer<Strand, actions.StrandLabelSet>(strand_label_set_reducer),
-  TypedReducer<Strand, actions.ScalePurificationVendorFieldsAssign>(
-    scale_purification_vendor_fields_assign_reducer,
-  ),
+  TypedReducer<Strand, actions.ScalePurificationVendorFieldsAssign>(scale_purification_vendor_fields_assign_reducer),
   TypedReducer<Strand, actions.PlateWellVendorFieldsAssign>(plate_well_vendor_fields_assign_reducer),
   TypedReducer<Strand, actions.PlateWellVendorFieldsRemove>(plate_well_vendor_fields_remove_reducer),
   TypedReducer<Strand, actions.VendorFieldsRemove>(vendor_fields_remove_reducer),
@@ -738,9 +692,7 @@ Strand modification_add_reducer(Strand strand, actions.ModificationAdd action) {
   } else if (mod is Modification5Prime) {
     strand_with_new_modification = strand.rebuild((m) => m.modification_5p.replace(mod));
   } else {
-    throw AssertionError(
-      'modification must be ModificationInternal, Modification3Prime, or Modification5Prime',
-    );
+    throw AssertionError('modification must be ModificationInternal, Modification3Prime, or Modification5Prime');
   }
   return strand_with_new_modification;
 }
@@ -756,9 +708,7 @@ Strand modification_remove_reducer(Strand strand, actions.ModificationRemove act
   } else if (mod is Modification5Prime) {
     strand_with_new_modification = strand.rebuild((m) => m.modification_5p = null);
   } else {
-    throw AssertionError(
-      'modification must be ModificationInternal, Modification3Prime, or Modification5Prime',
-    );
+    throw AssertionError('modification must be ModificationInternal, Modification3Prime, or Modification5Prime');
   }
   return strand_with_new_modification;
 }
@@ -768,17 +718,13 @@ Strand modification_edit_reducer(Strand strand, actions.ModificationEdit action)
   // first overwrite this strand in the builder list
   var mod = action.modification;
   if (mod is ModificationInternal) {
-    strand_with_edited_modification = strand.rebuild(
-      (m) => m.modifications_int[action.strand_dna_idx!] = mod,
-    );
+    strand_with_edited_modification = strand.rebuild((m) => m.modifications_int[action.strand_dna_idx!] = mod);
   } else if (mod is Modification3Prime) {
     strand_with_edited_modification = strand.rebuild((m) => m.modification_3p.replace(mod));
   } else if (mod is Modification5Prime) {
     strand_with_edited_modification = strand.rebuild((m) => m.modification_5p.replace(mod));
   } else {
-    throw AssertionError(
-      'modification must be ModificationInternal, Modification3Prime, or Modification5Prime',
-    );
+    throw AssertionError('modification must be ModificationInternal, Modification3Prime, or Modification5Prime');
   }
   return strand_with_edited_modification;
 }

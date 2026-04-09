@@ -24,8 +24,7 @@ mixin DesignMainPotentialVerticalCrossoversProps on UiProps {
   late BuiltMap<int, double> helix_idx_to_svg_position_y_map;
 }
 
-class DesignMainPotentialVerticalCrossoversComponent
-    extends UiComponent2<DesignMainPotentialVerticalCrossoversProps> {
+class DesignMainPotentialVerticalCrossoversComponent extends UiComponent2<DesignMainPotentialVerticalCrossoversProps> {
   @override
   render() {
     List<ReactElement> crossover_components = [];
@@ -35,8 +34,7 @@ class DesignMainPotentialVerticalCrossoversComponent
       int idx_bot = potential_vertical_crossover.helix_idx_bot;
 
       // skip if either helix is not being displayed
-      if (props.only_display_selected_helices &&
-          !props.side_selected_helix_idxs.containsAll([idx_bot, idx_top])) {
+      if (props.only_display_selected_helices && !props.side_selected_helix_idxs.containsAll([idx_bot, idx_top])) {
         continue;
       }
       BuiltMap<int, Helix> helices_of_crossover =
@@ -48,8 +46,7 @@ class DesignMainPotentialVerticalCrossoversComponent
       if (group_top_name == group_bot_name) {
         var group_top = props.groups[group_top_name]!;
         var geometry = group_top.geometry ?? props.geometry;
-        BuiltMap<String, HelixGroup> groups_of_crossover =
-            {group_bot_name: props.groups[group_bot_name]!}.build();
+        BuiltMap<String, HelixGroup> groups_of_crossover = {group_bot_name: props.groups[group_bot_name]!}.build();
         crossover_components.add(
           (DesignMainPotentialVerticalCrossover()
             ..potential_vertical_crossover = potential_vertical_crossover

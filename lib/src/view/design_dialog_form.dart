@@ -106,8 +106,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
 
       // disable if radio button in disable_when_any_radio_button_selected to which this has forbidden value
       if (dialog.disable_when_any_radio_button_selected.containsKey(component_idx)) {
-        BuiltMap<int, BuiltList<String>> radio_idx_maps =
-            dialog.disable_when_any_radio_button_selected[component_idx]!;
+        BuiltMap<int, BuiltList<String>> radio_idx_maps = dialog.disable_when_any_radio_button_selected[component_idx]!;
         for (int radio_idx in radio_idx_maps.keys) {
           BuiltList<String> forbidden_values = radio_idx_maps[radio_idx]!;
           DialogRadio radio = current_responses[radio_idx] as DialogRadio;
@@ -332,8 +331,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         radio_idx++;
       }
       // return (Dom.div()..className = 'radio-left')('${item.label}: ', components);
-      return (Dom.div()
-        ..className = 'radio-left')(((Dom.label()..title = item.tooltip)('${item.label}:')), components);
+      return (Dom.div()..className = 'radio-left')(((Dom.label()..title = item.tooltip)('${item.label}:')), components);
     } else if (item is DialogRadio && !item.radio) {
       var current_responses = state.current_responses!;
       int radio_idx = 0;

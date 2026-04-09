@@ -26,10 +26,7 @@ mixin DesignMainErrorBoundaryStateMixin on UiState {
 class DesignMainErrorBoundaryState = UiState with ErrorBoundaryState, DesignMainErrorBoundaryStateMixin;
 
 @Component2(isWrapper: true, isErrorBoundary: true)
-class DesignMainErrorBoundaryComponent<
-  T extends DesignMainErrorBoundaryProps,
-  S extends DesignMainErrorBoundaryState
->
+class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps, S extends DesignMainErrorBoundaryState>
     extends UiStatefulComponent2<T, S>
     with ErrorBoundaryApi<T, S> {
   @override

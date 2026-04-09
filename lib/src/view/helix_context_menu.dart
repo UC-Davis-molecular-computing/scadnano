@@ -183,10 +183,7 @@ BuiltList<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_app
       label: 'regular spacing',
       value: helix.has_major_tick_distance,
     );
-    items[regular_spacing_distance_idx] = DialogInteger(
-      label: 'regular distance',
-      value: default_regular_distance,
-    );
+    items[regular_spacing_distance_idx] = DialogInteger(label: 'regular distance', value: default_regular_distance);
     items[major_tick_start_idx] = DialogInteger(label: 'starting major tick', value: default_start);
     items[periodic_spacing_checkbox_idx] = DialogCheckbox(
       label: 'periodic spacing',
@@ -304,10 +301,7 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
       for (int this_helix_idx in helix_idxs) {
         if (use_major_tick_distance) {
           all_actions.addAll([
-            actions.HelixMajorTickDistanceChange(
-              helix_idx: this_helix_idx,
-              major_tick_distance: major_tick_distance!,
-            ),
+            actions.HelixMajorTickDistanceChange(helix_idx: this_helix_idx, major_tick_distance: major_tick_distance!),
             actions.HelixMajorTickStartChange(helix_idx: this_helix_idx, major_tick_start: major_tick_start),
           ]);
         } else if (use_major_tick_periodic_distances) {
@@ -319,9 +313,7 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
             actions.HelixMajorTickStartChange(helix_idx: this_helix_idx, major_tick_start: major_tick_start),
           ]);
         } else if (use_major_ticks) {
-          all_actions.add(
-            actions.HelixMajorTicksChange(helix_idx: this_helix_idx, major_ticks: major_ticks!.build()),
-          );
+          all_actions.add(actions.HelixMajorTicksChange(helix_idx: this_helix_idx, major_ticks: major_ticks!.build()));
         } else {
           throw AssertionError('should not be reachable');
         }
@@ -330,10 +322,7 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
     } else {
       if (use_major_tick_distance) {
         action = actions.BatchAction([
-          actions.HelixMajorTickDistanceChange(
-            helix_idx: helix_idx,
-            major_tick_distance: major_tick_distance!,
-          ),
+          actions.HelixMajorTickDistanceChange(helix_idx: helix_idx, major_tick_distance: major_tick_distance!),
           actions.HelixMajorTickStartChange(helix_idx: helix_idx, major_tick_start: major_tick_start),
         ], SET_HELIX_TICK_MARKS_SHORT_DESCRIPTION);
       } else if (use_major_tick_periodic_distances) {
@@ -360,10 +349,7 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
       title: 'set helix grid position',
       use_saved_response: false,
       type: DialogType.set_helix_grid_position,
-      items: [
-        DialogInteger(label: 'h', value: grid_position.h),
-        DialogInteger(label: 'v', value: grid_position.v),
-      ],
+      items: [DialogInteger(label: 'h', value: grid_position.h), DialogInteger(label: 'v', value: grid_position.v)],
     );
 
     List<DialogItem>? results = await util.dialog(dialog);
@@ -475,17 +461,12 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
     ContextMenuItem(title: 'set tick marks', on_click: helix_set_major_tick_marks),
     ContextMenuItem(title: 'set roll', on_click: helix_set_roll),
     context_menu_item_set_position,
-    ContextMenuItem(
-      title: 'set group',
-      on_click: helix_set_group,
-      disabled: app.state.design.groups.length <= 1,
-    ),
+    ContextMenuItem(title: 'set group', on_click: helix_set_group, disabled: app.state.design.groups.length <= 1),
   ].build();
 }
 
 List<int>? parse_major_ticks_and_check_validity(String major_ticks_str, Helix helix, bool apply_to_all) {
-  List<String> major_ticks_strs =
-      major_ticks_str.trim().split(' ').where((token) => token.isNotEmpty).toList();
+  List<String> major_ticks_strs = major_ticks_str.trim().split(' ').where((token) => token.isNotEmpty).toList();
   List<int> major_ticks = [];
   for (var major_tick_str in major_ticks_strs) {
     int? major_tick = int.tryParse(major_tick_str);

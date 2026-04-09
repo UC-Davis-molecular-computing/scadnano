@@ -7,9 +7,7 @@ import '../serializers.dart';
 
 part 'strand_creation.g.dart';
 
-abstract class StrandCreation
-    with BuiltJsonSerializable
-    implements Built<StrandCreation, StrandCreationBuilder> {
+abstract class StrandCreation with BuiltJsonSerializable implements Built<StrandCreation, StrandCreationBuilder> {
   factory StrandCreation({
     required Helix helix,
     required bool forward,

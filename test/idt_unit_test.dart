@@ -164,11 +164,7 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
     var strand_name = 's1';
     var mod_5 = Modification5Prime(display_text: 'B', vendor_code: '/5Biosg/');
     var mod_3 = Modification3Prime(display_text: 'Cy3', vendor_code: '/3Cy3Sp/');
-    var mod_i = ModificationInternal(
-      display_text: 'B',
-      vendor_code: '/iBiodT/',
-      allowed_bases: {'T'}.build(),
-    );
+    var mod_i = ModificationInternal(display_text: 'B', vendor_code: '/iBiodT/', allowed_bases: {'T'}.build());
 
     var helices = [for (int i = 0; i < 6; i++) Helix(idx: i, max_offset: 100, grid: Grid.square)];
     var design = Design(helices: helices, grid: Grid.square);

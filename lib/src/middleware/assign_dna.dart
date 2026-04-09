@@ -7,9 +7,7 @@ import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import 'package:scadnano_state_actions/src/state/app_state.dart';
 
 assign_dna_middleware(Store<AppState> store, action, NextDispatcher next) {
-  if (action is actions.AssignDNA &&
-      action.assign_complements &&
-      action.disable_change_sequence_bound_strand) {
+  if (action is actions.AssignDNA && action.assign_complements && action.disable_change_sequence_bound_strand) {
     // This pops up the error to the user if they try to change the DNA sequence of a bound strand
     // through assigning DNA to a strand it is bound to,
     // or other errors such as unpaired deletions/insertions.

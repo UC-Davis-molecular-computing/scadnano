@@ -129,9 +129,7 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> with PureCompone
     bool should_display_potential_helix;
 
     if (!props.displayed_group.grid.is_none) {
-      Set<GridPosition> existing_helix_grid_positions = {
-        for (var helix in props.helices.values) helix.grid_position!,
-      };
+      Set<GridPosition> existing_helix_grid_positions = {for (var helix in props.helices.values) helix.grid_position!};
       should_display_potential_helix =
           props.mouse_svg_pos != null ||
           (props.grid_position_mouse_cursor != null &&

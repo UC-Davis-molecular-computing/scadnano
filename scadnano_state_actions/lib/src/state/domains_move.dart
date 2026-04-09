@@ -86,8 +86,7 @@ abstract class DomainsMove with BuiltJsonSerializable implements Built<DomainsMo
 
   Helix get current_helix => helices[current_address.helix_idx]!;
 
-  int get original_view_order =>
-      groups[original_helix.group]!.helices_view_order_inverse[original_helix.idx]!;
+  int get original_view_order => groups[original_helix.group]!.helices_view_order_inverse[original_helix.idx]!;
 
   int get current_view_order => groups[current_helix.group]!.helices_view_order_inverse[current_helix.idx]!;
 

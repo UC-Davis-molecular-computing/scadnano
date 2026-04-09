@@ -109,12 +109,10 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
       for (var group in mutually_exclusive_checkbox_groups) BuiltList<int>(group),
     ];
     Map<int, BuiltList<int>> disable_when_any_checkboxes_on_half_built = {
-      for (var idx in disable_when_any_checkboxes_on.keys)
-        idx: BuiltList<int>(disable_when_any_checkboxes_on[idx]!),
+      for (var idx in disable_when_any_checkboxes_on.keys) idx: BuiltList<int>(disable_when_any_checkboxes_on[idx]!),
     };
     Map<int, BuiltList<int>> disable_when_any_checkboxes_off_half_built = {
-      for (var idx in disable_when_any_checkboxes_off.keys)
-        idx: BuiltList<int>(disable_when_any_checkboxes_off[idx]!),
+      for (var idx in disable_when_any_checkboxes_off.keys) idx: BuiltList<int>(disable_when_any_checkboxes_off[idx]!),
     };
 
     Map<int, Map<int, BuiltList<String>>> disable_when_any_radio_button_selected_quarter_built = {};
@@ -141,9 +139,7 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
             ..items.replace(items)
             ..disable.replace(disable)
             ..mutually_exclusive_checkbox_groups.replace(mutually_exclusive_checkbox_groups_half_built)
-            ..disable_when_any_radio_button_selected.replace(
-              disable_when_any_radio_button_selected_half_built,
-            )
+            ..disable_when_any_radio_button_selected.replace(disable_when_any_radio_button_selected_half_built)
             ..disable_when_any_checkboxes_on.replace(disable_when_any_checkboxes_on_half_built)
             ..disable_when_any_checkboxes_off.replace(disable_when_any_checkboxes_off_half_built),
     );
@@ -236,9 +232,7 @@ abstract class DialogInteger
   int get value;
 }
 
-abstract class DialogFloat
-    with BuiltJsonSerializable
-    implements DialogItem, Built<DialogFloat, DialogFloatBuilder> {
+abstract class DialogFloat with BuiltJsonSerializable implements DialogItem, Built<DialogFloat, DialogFloatBuilder> {
   factory DialogFloat.from([void Function(DialogFloatBuilder) updates]) = _$DialogFloat;
 
   DialogFloat._();
@@ -262,9 +256,7 @@ abstract class DialogFloat
   double get value;
 }
 
-abstract class DialogText
-    with BuiltJsonSerializable
-    implements DialogItem, Built<DialogText, DialogTextBuilder> {
+abstract class DialogText with BuiltJsonSerializable implements DialogItem, Built<DialogText, DialogTextBuilder> {
   factory DialogText.from([void Function(DialogTextBuilder) updates]) = _$DialogText;
 
   DialogText._();
@@ -370,9 +362,7 @@ abstract class DialogCheckbox
   bool get value;
 }
 
-abstract class DialogRadio
-    with BuiltJsonSerializable
-    implements DialogItem, Built<DialogRadio, DialogRadioBuilder> {
+abstract class DialogRadio with BuiltJsonSerializable implements DialogItem, Built<DialogRadio, DialogRadioBuilder> {
   factory DialogRadio.from([void Function(DialogRadioBuilder) updates]) = _$DialogRadio;
 
   DialogRadio._();
@@ -435,9 +425,7 @@ abstract class DialogRadio
   String get value => options[selected_idx];
 }
 
-abstract class DialogLink
-    with BuiltJsonSerializable
-    implements DialogItem, Built<DialogLink, DialogLinkBuilder> {
+abstract class DialogLink with BuiltJsonSerializable implements DialogItem, Built<DialogLink, DialogLinkBuilder> {
   DialogLink._();
 
   factory DialogLink.from([void Function(DialogLinkBuilder) updates]) = _$DialogLink;
@@ -467,9 +455,7 @@ abstract class DialogLink
   String get value;
 }
 
-abstract class DialogLabel
-    with BuiltJsonSerializable
-    implements DialogItem, Built<DialogLabel, DialogLabelBuilder> {
+abstract class DialogLabel with BuiltJsonSerializable implements DialogItem, Built<DialogLabel, DialogLabelBuilder> {
   DialogLabel._();
 
   factory DialogLabel.from([void Function(DialogLabelBuilder) updates]) = _$DialogLabel;

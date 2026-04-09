@@ -314,9 +314,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     if (json_map.containsKey(constants.grid_position_key)) {
       List<dynamic> gp_list = json_map[constants.grid_position_key]!;
       if (!(gp_list.length == 2)) {
-        throw ArgumentError(
-          "list of grid_position coordinates must be length 2 but this is the list: ${gp_list}",
-        );
+        throw ArgumentError("list of grid_position coordinates must be length 2 but this is the list: ${gp_list}");
       }
       helix_builder.grid_position = GridPosition.from_list(gp_list).toBuilder();
     }
@@ -336,10 +334,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     // knowledge of the whole design (e.g., min and max offset are based on offsets of Domains on
     // the helix).
     helix_builder.min_offset = util.optional_field_with_null_default(json_map, constants.min_offset_key);
-    helix_builder.major_tick_start = util.optional_field_with_null_default(
-      json_map,
-      constants.major_tick_start_key,
-    );
+    helix_builder.major_tick_start = util.optional_field_with_null_default(json_map, constants.major_tick_start_key);
     helix_builder.idx = util.optional_field_with_null_default(json_map, constants.idx_on_helix_key);
     helix_builder.roll = util.optional_field(json_map, constants.roll_key, constants.default_roll);
 

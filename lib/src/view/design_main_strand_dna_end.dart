@@ -69,9 +69,7 @@ class DesignMainDNAEndProps = UiProps with DesignMainDNAEndPropsMixin;
 @Component2()
 class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with PureComponent {
   DNAEnd get dna_end =>
-      props.domain != null
-          ? (props.is_5p ? props.domain!.dnaend_5p : props.domain!.dnaend_3p)
-          : props.ext!.dnaend_free;
+      props.domain != null ? (props.is_5p ? props.domain!.dnaend_5p : props.domain!.dnaend_3p) : props.ext!.dnaend_free;
 
   bool get is_first => props.domain != null ? props.domain!.is_first && props.is_5p : props.is_5p;
 
@@ -253,8 +251,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
                       props.strand,
                       domain: domain,
                       address: address,
-                      modification_type:
-                          (props.is_5p ? ModificationType.five_prime : ModificationType.three_prime),
+                      modification_type: (props.is_5p ? ModificationType.five_prime : ModificationType.three_prime),
                     )
                     .build(),
             position: util_state.from_point_num(event.page),
@@ -438,9 +435,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
           ),
         );
       } else if (potential_crossover.linker != null) {
-        app.dispatch(
-          actions.MoveLinker(potential_crossover: potential_crossover, dna_end_second_click: dna_end),
-        );
+        app.dispatch(actions.MoveLinker(potential_crossover: potential_crossover, dna_end_second_click: dna_end));
       }
     } else if (edit_mode_is_ligate() && (is_first || is_last)) {
       app.dispatch(actions.Ligate(dna_end: dna_end));

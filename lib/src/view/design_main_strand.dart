@@ -161,10 +161,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
         ..retain_strand_color_on_selection = props.retain_strand_color_on_selection)(),
       _insertions(),
       _deletions(),
-      if (props.show_domain_names ||
-          props.show_strand_names ||
-          props.show_strand_labels ||
-          props.show_domain_labels)
+      if (props.show_domain_names || props.show_strand_names || props.show_strand_labels || props.show_domain_labels)
         (DesignMainStrandAndDomainTexts() // shows both domain and strand names
           ..strand = props.strand
           ..helices = props.helices
@@ -195,9 +192,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
           ..selected_modifications_in_strand = props.selected_modifications_in_strand
           ..font_size = props.modification_font_size
           ..display_connector = props.modification_display_connector
-          ..helix_idx_to_svg_position_y_map = props.helix_idx_to_svg_position_map.map(
-            (i, p) => MapEntry(i, p.y),
-          )
+          ..helix_idx_to_svg_position_y_map = props.helix_idx_to_svg_position_map.map((i, p) => MapEntry(i, p.y))
           ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
           ..key = 'modifications')(),
     ]);
@@ -250,9 +245,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
     }
   }
 
-  assign_dna() => app.disable_keyboard_shortcuts_while(
-    () => ask_for_assign_dna_sequence(props.strand, props.dna_assign_options),
-  );
+  assign_dna() =>
+      app.disable_keyboard_shortcuts_while(() => ask_for_assign_dna_sequence(props.strand, props.dna_assign_options));
 
   assign_dna_complement_from_bound_strands() {
     List<Strand> strands_selected = app.state.ui_state.selectables_store.selected_strands.toList();
@@ -286,9 +280,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
   }
 
   add_modification(Substrand substrand, Address address, ModificationType type) =>
-      app.disable_keyboard_shortcuts_while(
-        () => ask_for_add_modification(props.strand, substrand, address, type),
-      );
+      app.disable_keyboard_shortcuts_while(() => ask_for_add_modification(props.strand, substrand, address, type));
 
   focus_base_oxview(Strand strand, Domain domain, Address address, ModificationType type) {
     int strand_idx = app.state.design.strands.indexOf(strand);
@@ -308,8 +300,7 @@ api.selectElements([base]);''';
     app.view.oxview_view.frame.contentWindow?.postMessage(message_js_commands, constants.OXVIEW_URL);
   }
 
-  assign_scale_purification_fields() =>
-      app.disable_keyboard_shortcuts_while(ask_for_assign_scale_purification_fields);
+  assign_scale_purification_fields() => app.disable_keyboard_shortcuts_while(ask_for_assign_scale_purification_fields);
 
   assign_plate_well_fields() => app.disable_keyboard_shortcuts_while(ask_for_assign_plate_well_fields);
 
@@ -325,9 +316,7 @@ api.selectElements([base]);''';
       app.disable_keyboard_shortcuts_while(() => ask_for_domain_names(domains));
 
   set_domain_labels(Substrand substrand, BuiltSet<Domain> domains) {
-    return app.disable_keyboard_shortcuts_while(
-      () => ask_for_label(props.strand, substrand, get_selected_domains()),
-    );
+    return app.disable_keyboard_shortcuts_while(() => ask_for_label(props.strand, substrand, get_selected_domains()));
   }
 
   ReactElement? _insertions() {
@@ -336,11 +325,7 @@ api.selectElements([base]);''';
       Helix helix = props.helices[domain.helix]!;
       var group = props.groups[helix.group]!;
       var geometry = group.geometry ?? props.geometry;
-      if (should_draw_domain_on_strand(
-        domain,
-        props.side_selected_helix_idxs,
-        props.only_display_selected_helices,
-      )) {
+      if (should_draw_domain_on_strand(domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
         for (var selectable_insertion in domain.selectable_insertions) {
           paths.add(
             (DesignMainStrandInsertion()
@@ -379,11 +364,7 @@ api.selectElements([base]);''';
     List<ReactElement> paths = [];
     for (Domain domain in props.strand.domains) {
       Helix helix = props.helices[domain.helix]!;
-      if (should_draw_domain_on_strand(
-        domain,
-        props.side_selected_helix_idxs,
-        props.only_display_selected_helices,
-      )) {
+      if (should_draw_domain_on_strand(domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
         var group = props.groups[helix.group]!;
         var geometry = group.geometry ?? props.geometry;
         for (var selectable_deletion in domain.selectable_deletions) {
@@ -436,11 +417,7 @@ api.selectElements([base]);''';
       }
     }
     app.dispatch(
-      actions.StrandsReflect(
-        strands: strands.build(),
-        horizontal: horizontal,
-        reverse_polarity: reverse_polarity,
-      ),
+      actions.StrandsReflect(strands: strands.build(), horizontal: horizontal, reverse_polarity: reverse_polarity),
     );
   }
 
@@ -486,10 +463,7 @@ assigned, assign the complementary DNA sequence to this strand.
               if (strand.dna_sequence != null) ContextMenuItem(title: 'remove DNA', on_click: remove_dna),
             ].build(),
       ),
-      ContextMenuItem(
-        title: 'add modification',
-        on_click: () => add_modification(domain, address, modification_type),
-      ),
+      ContextMenuItem(title: 'add modification', on_click: () => add_modification(domain, address, modification_type)),
       if (app.state.ui_state.show_oxview)
         ContextMenuItem(
           title: 'focus in oxView',
@@ -499,10 +473,7 @@ assigned, assign the complementary DNA sequence to this strand.
         title: 'edit vendor fields',
         nested:
             [
-              ContextMenuItem(
-                title: 'assign scale/purification fields',
-                on_click: assign_scale_purification_fields,
-              ),
+              ContextMenuItem(title: 'assign scale/purification fields', on_click: assign_scale_purification_fields),
               ContextMenuItem(
                 title: 'assign plate/well fields',
                 on_click: assign_plate_well_fields,
@@ -520,18 +491,11 @@ assigned, assign the complementary DNA sequence to this strand.
               if (app.state.ui_state.selectables_store.selected_strands.toList().any(
                     (element) => element.vendor_fields?.plate != null && element.vendor_fields?.well != null,
                   ) ||
-                  props.strand.vendor_fields?.well != null &&
-                      props.strand.vendor_fields?.purification != null)
-                ContextMenuItem(
-                  title: 'remove plate/well vendor fields',
-                  on_click: () => remove_plate_well_fields(),
-                ),
+                  props.strand.vendor_fields?.well != null && props.strand.vendor_fields?.purification != null)
+                ContextMenuItem(title: 'remove plate/well vendor fields', on_click: () => remove_plate_well_fields()),
             ].build(),
       ),
-      ContextMenuItem(
-        title: strand.is_scaffold ? 'set as non-scaffold' : 'set as scaffold',
-        on_click: set_scaffold,
-      ),
+      ContextMenuItem(title: strand.is_scaffold ? 'set as non-scaffold' : 'set as scaffold', on_click: set_scaffold),
       ContextMenuItem(
         title: 'color',
         nested:
@@ -539,27 +503,20 @@ assigned, assign the complementary DNA sequence to this strand.
               ContextMenuItem(
                 title: 'set strand color',
                 on_click:
-                    () => app.dispatch(
-                      actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: null),
-                    ),
+                    () => app.dispatch(actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: null)),
               ),
               ContextMenuItem(
                 title: 'set domain color',
                 on_click:
-                    () => app.dispatch(
-                      actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: domain),
-                    ),
+                    () =>
+                        app.dispatch(actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: domain)),
               ),
               if (domain.color != null)
                 ContextMenuItem(
                   title: 'remove domain color',
                   on_click:
                       () => app.dispatch(
-                        actions.StrandOrSubstrandColorSet(
-                          strand: props.strand,
-                          substrand: domain,
-                          color: null,
-                        ),
+                        actions.StrandOrSubstrandColorSet(strand: props.strand, substrand: domain, color: null),
                       ),
                 ),
             ].build(),
@@ -586,10 +543,7 @@ assigned, assign the complementary DNA sequence to this strand.
                 title: 'set domain name',
                 on_click:
                     () => set_domain_names(
-                      util_state.add_if_not_null(
-                        app.state.ui_state.selectables_store.selected_domains,
-                        domain,
-                      ),
+                      util_state.add_if_not_null(app.state.ui_state.selectables_store.selected_domains, domain),
                     ),
               ),
               ContextMenuItem(
@@ -655,9 +609,7 @@ set select mode to domain. Then only clicked and selected domains will be affect
                     var action =
                         domains.length > 1
                             ? actions.BatchAction(
-                              domains
-                                  .map((d) => actions.SubstrandLabelSet(label: null, substrand: d))
-                                  .toList(),
+                              domains.map((d) => actions.SubstrandLabelSet(label: null, substrand: d)).toList(),
                               'remove domain labels',
                             )
                             : actions.SubstrandLabelSet(label: null, substrand: domain);
@@ -803,11 +755,7 @@ after:
     }
     int num_bases = (results[num_bases_idx] as DialogInteger).value;
 
-    actions.UndoableAction action = actions.ExtensionAdd(
-      strand: props.strand,
-      is_5p: is_5p,
-      num_bases: num_bases,
-    );
+    actions.UndoableAction action = actions.ExtensionAdd(strand: props.strand, is_5p: is_5p, num_bases: num_bases);
     app.dispatch(action);
   }
 
@@ -890,20 +838,7 @@ after:
     if (all_strands.length == 0) all_strands.add(props.strand);
     var items = util_state.FixedList<DialogItem>(6);
     var options_purification = {"", "STD", "PAGE", "HPLC", "IEHPLC", "RNASE", "DUALHPLC", "PAGEHPLC"};
-    var options_scale = {
-      "",
-      "25nm",
-      "100nm",
-      "250nm",
-      "1um",
-      "2um",
-      "5um",
-      "10um",
-      "4nmU",
-      "20nmU",
-      "PU",
-      "25nmS",
-    };
+    var options_scale = {"", "25nm", "100nm", "250nm", "1um", "2um", "5um", "10um", "4nmU", "20nmU", "PU", "25nmS"};
 
     items[custom_scale_check_idx] = DialogCheckbox(label: "use custom scale");
     items[scale_options_idx] = DialogRadio(
@@ -1001,24 +936,16 @@ PAGEHPLC : Dual PAGE & HPLC
         var vendor_fields = VendorFields(
           scale: (scale == "" && strand.vendor_fields != null) ? strand.vendor_fields!.scale : scale,
           purification:
-              (purification == "" && strand.vendor_fields != null)
-                  ? strand.vendor_fields!.purification
-                  : purification,
+              (purification == "" && strand.vendor_fields != null) ? strand.vendor_fields!.purification : purification,
           plate: strand.vendor_fields?.plate,
           well: strand.vendor_fields?.well,
         );
-        var action = actions.ScalePurificationVendorFieldsAssign(
-          vendor_fields: vendor_fields,
-          strand: strand,
-        );
+        var action = actions.ScalePurificationVendorFieldsAssign(vendor_fields: vendor_fields, strand: strand);
         app.dispatch(action);
       }
     } else {
       var vendor_fields = VendorFields(scale: scale, purification: purification);
-      var action = actions.ScalePurificationVendorFieldsAssign(
-        vendor_fields: vendor_fields,
-        strand: props.strand,
-      );
+      var action = actions.ScalePurificationVendorFieldsAssign(vendor_fields: vendor_fields, strand: props.strand);
       app.dispatch(action);
     }
   }
@@ -1151,20 +1078,13 @@ PAGEHPLC : Dual PAGE & HPLC
 
     String name = (results[name_idx] as DialogText).value;
     return app.dispatch(
-      actions.BatchAction(
-        domains.map((d) => actions.SubstrandNameSet(name: name, substrand: d)),
-        "set domain names",
-      ),
+      actions.BatchAction(domains.map((d) => actions.SubstrandNameSet(name: name, substrand: d)), "set domain names"),
     );
   }
 }
 
 //TODO: make substrand nullable
-Future<void> ask_for_label<T extends SelectableMixin>(
-  Strand strand,
-  Substrand? substrand,
-  BuiltSet<T> selected,
-) async {
+Future<void> ask_for_label<T extends SelectableMixin>(Strand strand, Substrand? substrand, BuiltSet<T> selected) async {
   String part_name = 'strand';
   if (substrand != null) {
     part_name = substrand.type_description();
@@ -1244,9 +1164,7 @@ actions.UndoableAction batch_if_multiple_selected(
     if (!selected_strands.contains(strand)) {
       selected_strands = selected_strands.rebuild((b) => b.add(strand));
     }
-    action = actions.BatchAction([
-      for (var strand in selected_strands) action_creator(strand),
-    ], short_description);
+    action = actions.BatchAction([for (var strand in selected_strands) action_creator(strand)], short_description);
   }
   return action;
 }
@@ -1333,12 +1251,7 @@ Future<void> ask_for_assign_dna_sequence(Strand strand, DNAAssignOptions options
 
   var items = util_state.FixedList<DialogItem>(idx_disable_change_sequence_bound_strand + 1);
 
-  items[idx_sequence] = DialogTextArea(
-    label: 'sequence',
-    value: strand.dna_sequence ?? '',
-    rows: 4,
-    cols: 80,
-  );
+  items[idx_sequence] = DialogTextArea(label: 'sequence', value: strand.dna_sequence ?? '', rows: 4, cols: 80);
   items[idx_use_predefined_dna_sequence] = DialogCheckbox(
     label: 'use predefined DNA sequence',
     value: options.use_predefined_dna_sequence,
@@ -1413,11 +1326,7 @@ don't accidentally change an existing sequence.''',
   if (use_predefined_dna_sequence) {
     String predefined_sequence_display_name = (results[idx_predefined_sequence_name] as DialogRadio).value;
     m13_rotation = (results[idx_rotation] as DialogInteger).value;
-    dna_sequence = DNASequencePredefined.dna_sequence_by_name(
-      predefined_sequence_display_name,
-      true,
-      m13_rotation,
-    );
+    dna_sequence = DNASequencePredefined.dna_sequence_by_name(predefined_sequence_display_name, true, m13_rotation);
   } else {
     dna_sequence = (results[idx_sequence] as DialogTextArea).value;
   }

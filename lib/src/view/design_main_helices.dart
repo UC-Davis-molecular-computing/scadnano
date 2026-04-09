@@ -78,8 +78,7 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
               ..show_helix_circles = props.show_helix_circles
               ..display_base_offsets_of_major_ticks =
                   props.display_base_offsets_of_major_ticks &&
-                  (!props.display_base_offsets_of_major_ticks_only_first_helix ||
-                      view_order == first_helix_view_order)
+                  (!props.display_base_offsets_of_major_ticks_only_first_helix || view_order == first_helix_view_order)
               ..display_major_tick_widths =
                   props.display_major_tick_widths &&
                   (props.display_major_tick_widths_all_helices || view_order == first_helix_view_order)

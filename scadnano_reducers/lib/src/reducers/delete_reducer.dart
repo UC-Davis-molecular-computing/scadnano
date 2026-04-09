@@ -14,11 +14,7 @@ import 'package:scadnano_state_actions/src/state/substrand.dart';
 
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
-BuiltList<Strand> delete_all_reducer(
-  BuiltList<Strand> strands,
-  AppState state,
-  actions.DeleteAllSelected action,
-) {
+BuiltList<Strand> delete_all_reducer(BuiltList<Strand> strands, AppState state, actions.DeleteAllSelected action) {
   BuiltSet<Selectable> items = state.ui_state.selectables_store.selected_items;
   if (items.isEmpty) {
     return strands;
@@ -56,9 +52,7 @@ BuiltList<Strand> delete_all_reducer(
     strands = remove_deletions_and_insertions(strands, state, deletions, insertions);
   } else if (select_mode_state.modifications_selectable) {
     // modifications
-    var modifications = List<SelectableModification>.from(
-      items.where((item) => item is SelectableModification),
-    );
+    var modifications = List<SelectableModification>.from(items.where((item) => item is SelectableModification));
     strands = remove_modifications(strands, state, modifications);
   } else if (select_mode_state.extensions_selectable) {
     // extensions
@@ -250,11 +244,7 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
   return new_strands;
 }
 
-BuiltList<Strand> remove_extensions(
-  BuiltList<Strand> strands,
-  AppState state,
-  Iterable<Extension> extensions,
-) {
+BuiltList<Strand> remove_extensions(BuiltList<Strand> strands, AppState state, Iterable<Extension> extensions) {
   // collect all Extensions for one strand
   Map<Strand, Set<Extension>> strand_to_exts = {};
   for (var ext in extensions) {
@@ -421,9 +411,7 @@ BuiltList<Strand> remove_deletions_and_insertions(
           var deletions_existing = domain.deletions.toList();
           var insertions_existing = domain.insertions.toList();
           deletions_existing.removeWhere((offset) => deletions_offsets_to_remove.contains(offset));
-          insertions_existing.removeWhere(
-            (insertion) => insertions_offsets_to_remove.contains(insertion.offset),
-          );
+          insertions_existing.removeWhere((insertion) => insertions_offsets_to_remove.contains(insertion.offset));
           domain = domain.rebuild(
             (b) =>
                 b

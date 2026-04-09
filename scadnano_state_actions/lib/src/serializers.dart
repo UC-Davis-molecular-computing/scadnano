@@ -441,11 +441,7 @@ class PointSerializer<T extends num> implements PrimitiveSerializer<Point<T>> {
   }
 
   @override
-  Point<T> deserialize(
-    Serializers serializers,
-    Object serialized, {
-    FullType specifiedType = FullType.unspecified,
-  }) {
+  Point<T> deserialize(Serializers serializers, Object serialized, {FullType specifiedType = FullType.unspecified}) {
     Map map = serialized as Map;
     return Point<T>(num.parse(map['x']) as T, num.parse(map['y']) as T);
   }
@@ -465,11 +461,7 @@ class ColorSerializer implements PrimitiveSerializer<Color> {
   }
 
   @override
-  Color deserialize(
-    Serializers serializers,
-    Object serialized, {
-    FullType specifiedType = FullType.unspecified,
-  }) {
+  Color deserialize(Serializers serializers, Object serialized, {FullType specifiedType = FullType.unspecified}) {
     String color_hex = serialized as String;
     return Color.hex(color_hex);
   }

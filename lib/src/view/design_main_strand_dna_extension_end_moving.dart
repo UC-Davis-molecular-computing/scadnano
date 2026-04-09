@@ -25,30 +25,29 @@ part 'design_main_strand_dna_extension_end_moving.over_react.g.dart';
 typedef PointerDownHandler = void Function(react.SyntheticPointerEvent);
 typedef MouseUpHandler = void Function(react.SyntheticMouseEvent);
 
-UiFactory<ExtensionEndMovingProps> ConnectedExtensionEndMoving =
-    connect<DNAExtensionsMove?, ExtensionEndMovingProps>(
-      mapStateToPropsWithOwnProps: (dna_extensions_move, props) {
-        if (dna_extensions_move == null || props.dna_end == null) {
-          return ExtensionEndMoving()..render = false;
-        }
-        Point<double>? current_point = dna_extensions_move.current_point_of(props.dna_end!);
-        if (current_point == null) {
-          return ExtensionEndMoving()..render = false;
-        }
-        return ExtensionEndMoving()
-          ..current_point = current_point
-          ..dna_end = dna_extensions_move.ends_moving.first
-          ..ext = dna_extensions_move.moves.first.extension
-          ..geometry = props.geometry
-          ..helix = props.helix
-          ..group = props.group
-          ..color = props.color
-          ..forward = props.dna_end!.forward
-          ..is_5p = props.dna_end!.is_5p
-          ..attached_end_svg = props.attached_end_svg;
-      },
-      context: app.context_extensions_move,
-    )(ExtensionEndMoving);
+UiFactory<ExtensionEndMovingProps> ConnectedExtensionEndMoving = connect<DNAExtensionsMove?, ExtensionEndMovingProps>(
+  mapStateToPropsWithOwnProps: (dna_extensions_move, props) {
+    if (dna_extensions_move == null || props.dna_end == null) {
+      return ExtensionEndMoving()..render = false;
+    }
+    Point<double>? current_point = dna_extensions_move.current_point_of(props.dna_end!);
+    if (current_point == null) {
+      return ExtensionEndMoving()..render = false;
+    }
+    return ExtensionEndMoving()
+      ..current_point = current_point
+      ..dna_end = dna_extensions_move.ends_moving.first
+      ..ext = dna_extensions_move.moves.first.extension
+      ..geometry = props.geometry
+      ..helix = props.helix
+      ..group = props.group
+      ..color = props.color
+      ..forward = props.dna_end!.forward
+      ..is_5p = props.dna_end!.is_5p
+      ..attached_end_svg = props.attached_end_svg;
+  },
+  context: app.context_extensions_move,
+)(ExtensionEndMoving);
 
 UiFactory<ExtensionEndMovingProps> ExtensionEndMoving = _$ExtensionEndMoving;
 

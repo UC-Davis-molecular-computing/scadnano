@@ -40,11 +40,7 @@ system_clipboard_middleware(Store<AppState> store, action, NextDispatcher next) 
   }
 }
 
-void handle_manual_paste_initiate(
-  Store<AppState> store,
-  actions.ManualPasteInitiate action,
-  NextDispatcher next,
-) {
+void handle_manual_paste_initiate(Store<AppState> store, actions.ManualPasteInitiate action, NextDispatcher next) {
   // This re-does some of the work of manual_paste_initiate_reducer in the call to next(action) below,
   // but it keeps the side effect of printing an error message out of the reducer.
   if (paste_is_impossible_from_clipboard(action.clipboard_content, action.in_browser)) return;
@@ -105,16 +101,11 @@ void handle_autopaste_initiate(Store<AppState> store, actions.AutoPasteInitiate 
     }
   }
   if (new_strand_moving_details['status'] == constants.strand_bounds_status.in_bounds ||
-      new_strand_moving_details['status'] ==
-          constants.strand_bounds_status.in_bounds_with_min_offset_changes ||
-      new_strand_moving_details['status'] ==
-          constants.strand_bounds_status.in_bounds_with_max_offset_changes) {
+      new_strand_moving_details['status'] == constants.strand_bounds_status.in_bounds_with_min_offset_changes ||
+      new_strand_moving_details['status'] == constants.strand_bounds_status.in_bounds_with_max_offset_changes) {
     var paste_commit_action = actions.StrandsMoveCommit(strands_move: strands_move, autopaste: true);
     batch_actions_list.add(paste_commit_action);
-    var batch_action = actions.BatchAction(
-      batch_actions_list,
-      'Changing helix offsets and then executing autopaste',
-    );
+    var batch_action = actions.BatchAction(batch_actions_list, 'Changing helix offsets and then executing autopaste');
     store.dispatch(batch_action);
   }
 }

@@ -131,12 +131,7 @@ int compare_overlap(((int, int), Domain) o1, ((int, int), Domain) o2) {
 /// with an assigned DNA sequence where they overlap. In this case no error checking
 /// about sequence complementarity is done. This can be used to intentionally assign *mismatching*
 /// DNA sequences to :any:`Strand`'s that are bound on a :any:`Helix`.
-String compute_dna_complement_from(
-  Design design,
-  Strand strand_to,
-  Strand strand_from,
-  bool error_on_change,
-) {
+String compute_dna_complement_from(Design design, Strand strand_to, Strand strand_from, bool error_on_change) {
   assert(strand_from.dna_sequence != null);
 
   bool already_assigned = strand_to.dna_sequence != null;
@@ -241,11 +236,7 @@ String compute_dna_complement_from(
       );
     } else {
       try {
-        new_dna_sequence = util.merge_wildcards(
-          strand_to.dna_sequence!,
-          new_dna_sequence,
-          constants.DNA_BASE_WILDCARD,
-        );
+        new_dna_sequence = util.merge_wildcards(strand_to.dna_sequence!, new_dna_sequence, constants.DNA_BASE_WILDCARD);
       } on ArgumentError {
         Domain dom_to = strand_to.first_domain;
         Domain dom_from = strand_from.first_domain;

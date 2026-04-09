@@ -202,8 +202,7 @@ bool are_all_close(Iterable<double> x1s, Iterable<double> x2s, [double epsilon =
 ].every((pair) => are_close(pair[0], pair[1], epsilon));
 
 /// If [val] is close to an int, return that int, otherwise return the value.
-num to_int_if_close(double val, [double epsilon = EPSILON]) =>
-    are_close(val, val.roundToDouble()) ? val.round() : val;
+num to_int_if_close(double val, [double epsilon = EPSILON]) => are_close(val, val.roundToDouble()) ? val.round() : val;
 
 double sigmoid(num x) {
   return 1.0 / (1.0 + exp(-x));
@@ -285,8 +284,7 @@ BuiltSet<T> add_if_not_null<T>(BuiltSet<T> set, T? elt) => elt == null ? set : s
 /////////////////////////////////////////////////////////////////////////////
 // HTTP file content
 
-Future<String> get_text_file_content(String url) async =>
-    await HttpRequest.getString(url).then((content) => content);
+Future<String> get_text_file_content(String url) async => await HttpRequest.getString(url).then((content) => content);
 
 Future<ByteBuffer> get_binary_file_content(String url) async {
   return await HttpRequest.request(url, responseType: 'arraybuffer').then((request) {
@@ -372,8 +370,7 @@ Map<int, Point<double>> helices_assign_svg(
             var prev_grid_position = prev_helix.grid_position!;
             var grid_position = helix.grid_position!;
             delta_y =
-                prev_grid_position.distance_lattice(grid_position, helix.grid) *
-                geometry.distance_between_helices_svg;
+                prev_grid_position.distance_lattice(grid_position, helix.grid) * geometry.distance_between_helices_svg;
           }
           y = prev_y! + delta_y;
         }
@@ -474,17 +471,11 @@ double rotation_between_helices(Helix helix, Helix helix_other, bool forward, Ge
 }
 
 /// Rotate [point] about [origin] by [angle_degrees] degrees.
-Point<double> rotate(
-  Point<double> point,
-  double angle_degrees, {
-  Point<double> origin = const Point<double>(0, 0),
-}) {
+Point<double> rotate(Point<double> point, double angle_degrees, {Point<double> origin = const Point<double>(0, 0)}) {
   double angle_radians = to_radians(angle_degrees);
   var point_relative_to_origin = point - origin;
-  double x =
-      point_relative_to_origin.x * cos(angle_radians) - point_relative_to_origin.y * sin(angle_radians);
-  double y =
-      point_relative_to_origin.x * sin(angle_radians) + point_relative_to_origin.y * cos(angle_radians);
+  double x = point_relative_to_origin.x * cos(angle_radians) - point_relative_to_origin.y * sin(angle_radians);
+  double y = point_relative_to_origin.x * sin(angle_radians) + point_relative_to_origin.y * cos(angle_radians);
   var point_rotated_relative_to_origin = Point<double>(x, y);
   var point_rotated = point_rotated_relative_to_origin + origin;
   return point_rotated;
@@ -699,9 +690,7 @@ Point<double> side_view_grid_to_svg(GridPosition gp, Grid grid, bool invert_y, G
   } else if (grid == Grid.honeycomb) {
     point = honeycomb_grid_position_to_position2d_diameter_1_circles(gp);
   } else {
-    throw ArgumentError(
-      'cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb',
-    );
+    throw ArgumentError('cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
   }
   if (invert_y) {
     double x = point.x;
@@ -807,18 +796,15 @@ Position3D grid_position_to_position3d(GridPosition grid_position, Grid grid, Ge
     x = point.x * geometry.distance_between_helices_nm;
     y = point.y * geometry.distance_between_helices_nm;
   } else {
-    throw ArgumentError(
-      'cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb',
-    );
+    throw ArgumentError('cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
   }
   return Position3D(x: x, y: y, z: 0);
 }
 
-Point<double> position3d_to_side_view_svg(Position3D position, bool invert_y, Geometry geometry) =>
-    Point<double>(
-      position.x * geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
-      position.y * geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
-    );
+Point<double> position3d_to_side_view_svg(Position3D position, bool invert_y, Geometry geometry) => Point<double>(
+  position.x * geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
+  position.y * geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
+);
 
 Position3D svg_side_view_to_position3d(Point<double> svg_pos, bool invert_y, Geometry geometry) => Position3D(
   x: svg_pos.x / geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
@@ -843,11 +829,7 @@ bool needs_update(MouseoverParams mouseover_params, BuiltList<MouseoverData> mou
 }
 
 /// Return list of mouseover data about helix group `group_name` at `offset`.
-BuiltList<DesignSideRotationData> rotation_datas_at_offset_in_group(
-  int? offset,
-  Design design,
-  String group_name,
-) {
+BuiltList<DesignSideRotationData> rotation_datas_at_offset_in_group(int? offset, Design design, String group_name) {
   List<DesignSideRotationParams> rotation_params_list = [];
   if (offset != null) {
     for (var helix_idx in design.helix_idxs_in_group[group_name]!) {
@@ -869,12 +851,7 @@ BuiltList<DesignSideRotationData> rotation_datas_at_offset_in_group(
 /// [legacy_keys] is a list of older key names for this same value that work in addition to [key].
 /// [name] is the name of the class in which we expect to find this key (e.g., we expect to find
 /// "domains" in Strand
-dynamic mandatory_field(
-  Map<String, dynamic> map,
-  String key,
-  String name, {
-  List<String> legacy_keys = const [],
-}) {
+dynamic mandatory_field(Map<String, dynamic> map, String key, String name, {List<String> legacy_keys = const []}) {
   if (!map.containsKey(key)) {
     for (var legacy_key in legacy_keys) {
       if (map.containsKey(legacy_key)) {
@@ -1223,12 +1200,7 @@ bool bases_complementary(String base1, String base2, {bool allow_wildcard = fals
 
 /// Indicates if `seq1` and `seq2` are reverse complementary DNA sequences.
 /// Either is allowed to be null if `allow_null` is true.
-bool reverse_complementary(
-  String? seq1,
-  String? seq2, {
-  bool allow_wildcard = false,
-  bool allow_null = false,
-}) {
+bool reverse_complementary(String? seq1, String? seq2, {bool allow_wildcard = false, bool allow_null = false}) {
   if (seq1 == null || seq2 == null) {
     return allow_null;
   }
@@ -1373,9 +1345,7 @@ class FixedList<T> extends Iterable<T> {
   final List<T?> _items;
   final List<bool> _initialized;
 
-  FixedList(int length)
-    : _items = List<T?>.filled(length, null),
-      _initialized = List<bool>.filled(length, false);
+  FixedList(int length) : _items = List<T?>.filled(length, null), _initialized = List<bool>.filled(length, false);
 
   void _set(int index, T value) {
     _items[index] = value;
@@ -1511,9 +1481,7 @@ List<E> generalized_intersection_list<E>(
   bool overlap(num l1, num h1, num l2, num h2),
 ) {
   if (elts.length != bboxes.length) {
-    throw ArgumentError(
-      'elts (length ${elts.length}) and bboxes (length ${bboxes.length}) must have same length',
-    );
+    throw ArgumentError('elts (length ${elts.length}) and bboxes (length ${bboxes.length}) must have same length');
   }
   List<E> elts_intersecting = [];
   int i = 0;

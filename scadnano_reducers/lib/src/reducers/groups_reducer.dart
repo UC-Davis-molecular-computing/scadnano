@@ -22,15 +22,13 @@ GlobalReducer<BuiltMap<String, HelixGroup>, AppState> groups_global_reducer = co
   ),
 ]);
 
-BuiltMap<String, HelixGroup> grid_change_reducer(
-  BuiltMap<String, HelixGroup> groups,
-  actions.GridChange action,
-) => groups.map_values((name, group) {
-  if (name == action.group_name) {
-    group = group.rebuild((b) => b..grid = action.grid);
-  }
-  return group;
-});
+BuiltMap<String, HelixGroup> grid_change_reducer(BuiltMap<String, HelixGroup> groups, actions.GridChange action) =>
+    groups.map_values((name, group) {
+      if (name == action.group_name) {
+        group = group.rebuild((b) => b..grid = action.grid);
+      }
+      return group;
+    });
 
 BuiltMap<String, HelixGroup> geometry_helix_group_set_reducer(
   BuiltMap<String, HelixGroup> groups,
@@ -42,29 +40,23 @@ BuiltMap<String, HelixGroup> geometry_helix_group_set_reducer(
   return group;
 });
 
-BuiltMap<String, HelixGroup> group_add_reducer(
-  BuiltMap<String, HelixGroup> groups,
-  actions.GroupAdd action,
-) => groups.rebuild((b) {
-  b[action.name] = action.group;
-});
+BuiltMap<String, HelixGroup> group_add_reducer(BuiltMap<String, HelixGroup> groups, actions.GroupAdd action) =>
+    groups.rebuild((b) {
+      b[action.name] = action.group;
+    });
 
-BuiltMap<String, HelixGroup> group_remove_reducer(
-  BuiltMap<String, HelixGroup> groups,
-  actions.GroupRemove action,
-) => groups.rebuild((b) {
-  b.remove(action.name);
-});
+BuiltMap<String, HelixGroup> group_remove_reducer(BuiltMap<String, HelixGroup> groups, actions.GroupRemove action) =>
+    groups.rebuild((b) {
+      b.remove(action.name);
+    });
 
-BuiltMap<String, HelixGroup> group_change_reducer(
-  BuiltMap<String, HelixGroup> groups,
-  actions.GroupChange action,
-) => groups.rebuild((b) {
-  if (action.old_name != action.new_name) {
-    b.remove(action.old_name);
-  }
-  b[action.new_name] = action.new_group;
-});
+BuiltMap<String, HelixGroup> group_change_reducer(BuiltMap<String, HelixGroup> groups, actions.GroupChange action) =>
+    groups.rebuild((b) {
+      if (action.old_name != action.new_name) {
+        b.remove(action.old_name);
+      }
+      b[action.new_name] = action.new_group;
+    });
 
 // The suffix "_groups_reducer" helps distinguish from the "_helices_reducer" in the
 // helices_reducer.dart file, which processes this same Action on the helices map.

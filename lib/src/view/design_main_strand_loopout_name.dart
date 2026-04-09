@@ -22,8 +22,7 @@ mixin DesignMainStrandLoopoutTextProps on UiProps {
   late double font_size;
 }
 
-class DesignMainStrandLoopoutTextComponent extends UiComponent2<DesignMainStrandLoopoutTextProps>
-    with PureComponent {
+class DesignMainStrandLoopoutTextComponent extends UiComponent2<DesignMainStrandLoopoutTextProps> with PureComponent {
   @override
   render() {
     var start_offset = '50%';

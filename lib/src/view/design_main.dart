@@ -167,9 +167,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..color = ui_state.strand_creation!.color
           ..helices = {ui_state.strand_creation!.helix.idx: ui_state.strand_creation!.helix}.build()
           ..groups =
-              {
-                ui_state.strand_creation!.helix.group: design.groups[ui_state.strand_creation!.helix.group]!,
-              }.build()
+              {ui_state.strand_creation!.helix.group: design.groups[ui_state.strand_creation!.helix.group]!}.build()
           ..geometry = design.geometry
           ..svg_position_y = state.helix_idx_to_svg_position_map[ui_state.strand_creation!.helix.idx]!.y
           ..key = 'strand-creating')(),
@@ -244,16 +242,10 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..show_domain_labels = ui_state.show_domain_labels
           ..key = 'helix-group-moving')(),
 
-      (set_design_main_strands_moving_props(
-        ConnectedDesignMainStrandsMoving()..key = 'strands-moving',
-        state,
-      ))(),
+      (set_design_main_strands_moving_props(ConnectedDesignMainStrandsMoving()..key = 'strands-moving', state))(),
 
       // (ConnectedDesignMainDomainsMoving()..key = 'domains-moving')(),
-      (set_design_main_domains_moving_props(
-        ConnectedDesignMainDomainsMoving()..key = 'domains-moving',
-        state,
-      ))(),
+      (set_design_main_domains_moving_props(ConnectedDesignMainDomainsMoving()..key = 'domains-moving', state))(),
     ]);
 
     // if (USING_REACT_DND) {

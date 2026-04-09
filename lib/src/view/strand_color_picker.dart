@@ -33,8 +33,7 @@ StrandOrSubstrandColorPickerProps set_strand_or_substrand_color_picker_props(
 
 UiFactory<StrandOrSubstrandColorPickerProps> ConnectedStrandOrSubstrandColorPicker =
     connect<AppState, StrandOrSubstrandColorPickerProps>(
-      mapStateToProps:
-          (state) => set_strand_or_substrand_color_picker_props(StrandOrSubstrandColorPicker(), state),
+      mapStateToProps: (state) => set_strand_or_substrand_color_picker_props(StrandOrSubstrandColorPicker(), state),
     )(StrandOrSubstrandColorPicker);
 
 UiFactory<StrandOrSubstrandColorPickerProps> StrandOrSubstrandColorPicker = _$StrandOrSubstrandColorPicker;
@@ -155,9 +154,7 @@ class StrandOrSubstrandColorPickerComponent
       if (!selected_strands.contains(strand)) {
         selected_strands = selected_strands.rebuild((b) => b.add(strand));
       }
-      action = actions.BatchAction([
-        for (var strand in selected_strands) action_creator(strand),
-      ], "set strands color");
+      action = actions.BatchAction([for (var strand in selected_strands) action_creator(strand)], "set strands color");
     }
     return action;
   }
@@ -169,8 +166,7 @@ class StrandOrSubstrandColorPickerComponent
     List<Substrand> selected_substrands,
   ) {
     actions.UndoableAction action;
-    if (selected_substrands.isEmpty ||
-        selected_substrands.length == 1 && selected_substrands.first == substrand) {
+    if (selected_substrands.isEmpty || selected_substrands.length == 1 && selected_substrands.first == substrand) {
       // set for single substrand if nothing is selected, or exactly this strand is selected
       action = action_creator(strand, substrand);
     } else {

@@ -38,8 +38,7 @@ reselect_moved_copied_strands_middleware(Store<AppState> store, action, NextDisp
     // var old_group = design.groups[old_helix.group];
 
     BuiltList<int> new_helices_view_order = new_group.helices_view_order;
-    BuiltMap<int, int> old_helices_view_order_inverse =
-        action.strands_move.original_helices_view_order_inverse;
+    BuiltMap<int, int> old_helices_view_order_inverse = action.strands_move.original_helices_view_order_inverse;
 
     // first collect old addresses while design.end_to_substrand is still valid, convert them to
     // their new addresses so we can look them up

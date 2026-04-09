@@ -123,8 +123,7 @@ Design? convert_extensions_to_bound_domains_reducer(
 Design _convert_extensions_to_bound_domains(Design design, Extension extension1, Extension? extension2) {
   // Step 1: Find the strands containing these extensions
   var strand1 = design.strands.firstWhere((s) => s.extensions.contains(extension1));
-  Strand? strand2 =
-      extension2 != null ? design.strands.firstWhere((s) => s.extensions.contains(extension2)) : null;
+  Strand? strand2 = extension2 != null ? design.strands.firstWhere((s) => s.extensions.contains(extension2)) : null;
 
   // Step 2: Calculate the new helix group position and pitch angle
   var new_helix_idx = _get_next_helix_idx(design);

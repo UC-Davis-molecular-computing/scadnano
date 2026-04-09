@@ -66,11 +66,7 @@ check_reflect_strands_legal_middleware(Store<AppState> store, action, NextDispat
 
 //XXX: it's critical that these functions return strands in the same order they were received because
 // the ReplaceStrands action replaces them "in place" where the index of the original strand was.
-List<Strand> horizontal_reflection_of_strands(
-  Design design,
-  List<Strand> strands_to_mirror,
-  bool reverse_polarity,
-) {
+List<Strand> horizontal_reflection_of_strands(Design design, List<Strand> strands_to_mirror, bool reverse_polarity) {
   int min_offset =
       [
         for (var strand in strands_to_mirror)
@@ -93,11 +89,9 @@ List<Strand> horizontal_reflection_of_strands(
         List<int> reflected_deletions = reflect_deletions(domain, min_offset, max_offset);
         List<Insertion> reflected_insertions = reflect_insertions(domain, min_offset, max_offset);
 
-        bool is_first =
-            (i == 0 && !reverse_polarity) || (i == mirrored_substrands.length - 1 && reverse_polarity);
+        bool is_first = (i == 0 && !reverse_polarity) || (i == mirrored_substrands.length - 1 && reverse_polarity);
 
-        bool is_last =
-            (i == 0 && reverse_polarity) || (i == mirrored_substrands.length - 1 && !reverse_polarity);
+        bool is_last = (i == 0 && reverse_polarity) || (i == mirrored_substrands.length - 1 && !reverse_polarity);
 
         mirrored_substrands[i] = domain.rebuild(
           (b) =>
@@ -145,11 +139,7 @@ List<Insertion> reflect_insertions(Domain domain, int min_offset, int max_offset
 
 int reflect_between_min_and_max(int number, int min_num, int max_num) => max_num - number + min_num;
 
-List<Strand> vertical_reflection_of_strands(
-  HelixGroup group,
-  List<Strand> strands_to_reflect,
-  bool reverse_polarity,
-) {
+List<Strand> vertical_reflection_of_strands(HelixGroup group, List<Strand> strands_to_reflect, bool reverse_polarity) {
   // helix idxs occupied by strands
   var helix_idxs_involved = {
     for (var strand in strands_to_reflect)
@@ -173,11 +163,9 @@ List<Strand> vertical_reflection_of_strands(
         int reflected_order = reflect_between_min_and_max(order, min_order, max_order);
         int reflected_helix_idx = group.helices_view_order[reflected_order];
 
-        bool is_first =
-            (i == 0 && reverse_polarity) || (i == mirrored_substrands.length - 1 && !reverse_polarity);
+        bool is_first = (i == 0 && reverse_polarity) || (i == mirrored_substrands.length - 1 && !reverse_polarity);
 
-        bool is_last =
-            (i == 0 && !reverse_polarity) || (i == mirrored_substrands.length - 1 && reverse_polarity);
+        bool is_last = (i == 0 && !reverse_polarity) || (i == mirrored_substrands.length - 1 && reverse_polarity);
 
         mirrored_substrands[i] = domain.rebuild(
           (b) =>

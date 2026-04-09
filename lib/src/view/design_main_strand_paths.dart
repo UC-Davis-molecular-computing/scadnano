@@ -59,11 +59,8 @@ mixin DesignMainStrandPathsProps on UiProps implements TransformByHelixGroupProp
 }
 
 /// [side_selected_helix_idxs] is null if [only_display_selected_helices] is false
-bool should_draw_domain(
-  int helix_idx,
-  BuiltSet<int>? side_selected_helix_idxs,
-  bool only_display_selected_helices,
-) => !only_display_selected_helices || side_selected_helix_idxs!.contains(helix_idx);
+bool should_draw_domain(int helix_idx, BuiltSet<int>? side_selected_helix_idxs, bool only_display_selected_helices) =>
+    !only_display_selected_helices || side_selected_helix_idxs!.contains(helix_idx);
 
 /// [side_selected_helix_idxs] is null if [only_display_selected_helices] is false
 bool should_draw_loopout(
@@ -409,12 +406,7 @@ Point<double> control_point_for_crossover_bezier_curve(
     from_helix_svg_position_y,
     geometry,
   );
-  var end_pos = to_helix.svg_base_pos(
-    to_ss.offset_5p + delta,
-    to_ss.forward,
-    to_helix_svg_position_y,
-    geometry,
-  );
+  var end_pos = to_helix.svg_base_pos(to_ss.offset_5p + delta, to_ss.forward, to_helix_svg_position_y, geometry);
   bool from_strand_below = from_helix_svg_position_y > to_helix_svg_position_y;
   double midX = (start_pos.x + end_pos.x) / 2;
   double midY = (start_pos.y + end_pos.y) / 2;

@@ -12,10 +12,7 @@ part 'potential_extensions_view.over_react.g.dart';
 
 UiFactory<PotentialExtensionsViewProps> ConnectedPotentialExtensionsView =
     connect<DNAExtensionsMove?, PotentialExtensionsViewProps>(
-      mapStateToPropsWithOwnProps: (
-        DNAExtensionsMove? potential_extensions,
-        PotentialExtensionsViewProps props,
-      ) {
+      mapStateToPropsWithOwnProps: (DNAExtensionsMove? potential_extensions, PotentialExtensionsViewProps props) {
         return PotentialExtensionsView()
           ..potential_extensions = potential_extensions
           ..id_ = props.id_;

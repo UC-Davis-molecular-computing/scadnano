@@ -76,8 +76,7 @@ main() {
       design = design.draw_strand(0, 15).move(5).cross(1).move(-10).cross(0).move(5).commit();
       design = design.draw_strand(0, 20).move(10).commit();
       design = design.draw_strand(1, 30).move(-10).commit();
-      design =
-          design.draw_strand(0, 30).move(10).loopout(1, 5).move(-10).cross(2).move(10).as_circular().commit();
+      design = design.draw_strand(0, 30).move(10).loopout(1, 5).move(-10).cross(2).move(10).as_circular().commit();
       design = design.draw_strand(0, 40).move(10).cross(1).move(-10).as_circular().commit();
       num_strands = design.strands.length;
     });
@@ -110,10 +109,7 @@ main() {
 
       var dna_end1 = design.strands[0].dnaend_5p;
       var dna_end2 = design.strands[0].dnaend_3p;
-      var action = actions.JoinStrandsByCrossover(
-        dna_end_first_click: dna_end1,
-        dna_end_second_click: dna_end2,
-      );
+      var action = actions.JoinStrandsByCrossover(dna_end_first_click: dna_end1, dna_end_second_click: dna_end2);
       var state = app_state_from_design(design);
       var strands = join_strands_by_crossover_reducer(design.strands, state, action);
 

@@ -13,11 +13,7 @@ import 'package:scadnano_view_middleware/src/util.dart' as util;
 import '../utils.dart' as utils;
 
 AppState initializeTestState() {
-  List<SelectModeChoice> modes = [
-    SelectModeChoice.crossover,
-    SelectModeChoice.loopout,
-    SelectModeChoice.scaffold,
-  ];
+  List<SelectModeChoice> modes = [SelectModeChoice.crossover, SelectModeChoice.loopout, SelectModeChoice.scaffold];
   return util.default_state().rebuild(
     (b) => b.ui_state.storables.select_mode_state.replace(SelectModeState().set_modes(modes)),
   );

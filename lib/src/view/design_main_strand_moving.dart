@@ -135,12 +135,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
         Domain domain = substrand;
         // substrand line
         helix_svg_position_y = props.helix_idx_to_svg_position_map[helix.idx]!.y;
-        var end_svg = helix.svg_base_pos(
-          domain.offset_3p,
-          domain.forward,
-          helix_svg_position_y,
-          props.geometry,
-        );
+        var end_svg = helix.svg_base_pos(domain.offset_3p, domain.forward, helix_svg_position_y, props.geometry);
         path_cmds.add('L ${end_svg.x} ${end_svg.y}');
 
         // crossover/loopout line/arc
@@ -153,12 +148,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
           }
           helix = props.helices[domain.helix]!;
           helix_svg_position_y = props.helix_idx_to_svg_position_map[helix.idx]!.y;
-          start_svg = helix.svg_base_pos(
-            domain.offset_5p,
-            domain.forward,
-            helix_svg_position_y,
-            props.geometry,
-          );
+          start_svg = helix.svg_base_pos(domain.offset_5p, domain.forward, helix_svg_position_y, props.geometry);
           var control = control_point_for_crossover_bezier_curve(
             old_domain,
             domain,

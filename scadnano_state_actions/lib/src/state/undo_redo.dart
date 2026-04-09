@@ -22,8 +22,7 @@ abstract class UndoRedo with BuiltJsonSerializable implements Built<UndoRedo, Un
 
   /************************ begin BuiltValue boilerplate ************************/
 
-  factory UndoRedo([void Function(UndoRedoBuilder)? updates]) =>
-      _$UndoRedo((u) => u..replace(DEFAULT_UndoRedo));
+  factory UndoRedo([void Function(UndoRedoBuilder)? updates]) => _$UndoRedo((u) => u..replace(DEFAULT_UndoRedo));
 
   UndoRedo._();
 

@@ -226,8 +226,7 @@ abstract class AppUIStateStorables
   factory AppUIStateStorables(bool modification_display_connector) =>
       AppUIStateStorables.from((b) => b..modification_display_connector = modification_display_connector);
 
-  factory AppUIStateStorables.from([void Function(AppUIStateStorablesBuilder) updates]) =
-      _$AppUIStateStorables;
+  factory AppUIStateStorables.from([void Function(AppUIStateStorablesBuilder) updates]) = _$AppUIStateStorables;
 
   AppUIStateStorables._();
 

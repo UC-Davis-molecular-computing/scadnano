@@ -52,9 +52,7 @@ abstract class DNAExtensionsMove
   }
 }
 
-abstract class DNAExtensionMove
-    with BuiltJsonSerializable
-    implements Built<DNAExtensionMove, DNAExtensionMoveBuilder> {
+abstract class DNAExtensionMove with BuiltJsonSerializable implements Built<DNAExtensionMove, DNAExtensionMoveBuilder> {
   factory DNAExtensionMove({
     required DNAEnd dna_end,
     required Color color,

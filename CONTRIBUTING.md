@@ -679,11 +679,11 @@ this step is not done, the formatting check for the Pull Request will fail.
 4. Append or modify the following lines inside the JSON in the settings.json file and save the file:
 
 ```
-"dart.lineLength": 110,
+"dart.lineLength": 120,
 "[dart]": {
   "editor.defaultFormatter": "Dart-Code.dart-code",
   "editor.formatOnSave": true,
-  "editor.rulers": [110],
+  "editor.rulers": [120],
 }
 ```
 
@@ -698,7 +698,7 @@ Save (Ctrl/Cmd + S).
 3. Shortcut for Preferences: (Windows) Ctrl + Alt + S or  (MacOS) Cmd + ,
 4. Navigate to Preferences -> Plugins. Search and install the Dart Plugin. (You might have to point the plugin
    to the already installed Dart SDK v2.13)
-5. Navigate to Preferences -> Editor -> Code Style -> Dart and change the line length to 110.
+5. Navigate to Preferences -> Editor -> Code Style -> Dart and change the line length to 120.
 6. Navigate to Preferences -> Tools -> Actions on Save and check the Reformat code option.
 
 At this point, your IntelliJ IDEA editor should have been set up to automatically format Dart code when you
@@ -715,7 +715,7 @@ To test that either of the two options above are working:
    ‘dart’ command.
 
 ```
-dart format -l 110 path_to_your_dart_file/filename.dart
+dart format -l 120 path_to_your_dart_file/filename.dart
 ```
 
 You should see something like that printed on the terminal:
@@ -733,7 +733,7 @@ files are in the correct format as expected for the Pull Request.
 1. Run the command from the root directory of the repository:
 
 ```
-dart format -l 110 .
+dart format -l 120 .
 ```
 
 Warning: The dot in the end is part of the command
@@ -1313,7 +1313,7 @@ and extensions.
 One exception we make is that variable, function, and method names use `snake_case` instead of `camelCase`.
 Visual Studio Code offers an [extension](https://dartcode.org/)
 and WebStorm offers a [plugin](https://plugins.jetbrains.com/plugin/6351-dart).
-The line length should be configured to 110, as the style guide limit of 80
+The line length should be configured to 120, as the style guide limit of 80
 is a bit too restrictive.
 
 We also follow the [OverReact style guide](https://github.com/Workiva/over_react#component-formatting), in

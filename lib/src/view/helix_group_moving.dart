@@ -16,17 +16,13 @@ import 'package:scadnano_state_actions/src/extension_methods.dart';
 
 part 'helix_group_moving.over_react.g.dart';
 
-HelixGroupMovingProps set_helix_group_moving_props(
-  HelixGroupMovingProps elt,
-  HelixGroupMove? helix_group_move,
-) {
+HelixGroupMovingProps set_helix_group_moving_props(HelixGroupMovingProps elt, HelixGroupMove? helix_group_move) {
   return elt..helix_group_move = helix_group_move;
 }
 
 UiFactory<HelixGroupMovingProps> ConnectedHelixGroupMoving = connect<HelixGroupMove?, HelixGroupMovingProps>(
   mapStateToProps:
-      (HelixGroupMove? helix_group_move) =>
-          set_helix_group_moving_props(HelixGroupMoving(), helix_group_move),
+      (HelixGroupMove? helix_group_move) => set_helix_group_moving_props(HelixGroupMoving(), helix_group_move),
   context: app.context_helix_group_move,
 )(HelixGroupMoving);
 

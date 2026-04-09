@@ -209,9 +209,7 @@ abstract class Strand
 
   Substrand _rebuild_substrand_with_dna_sequence_to_match_its_length(Substrand substrand) {
     String old_sequence = substrand.dna_sequence == null ? '' : substrand.dna_sequence!;
-    return substrand.set_dna_sequence(
-      _trim_or_pad_sequence_to_desired_length(old_sequence, substrand.dna_length()),
-    );
+    return substrand.set_dna_sequence(_trim_or_pad_sequence_to_desired_length(old_sequence, substrand.dna_length()));
   }
 
   _ensure_extensions_legal() {
@@ -433,15 +431,11 @@ abstract class Strand
 
   @memoized
   SelectableModification5Prime? get selectable_modification_5p =>
-      modification_5p == null
-          ? null
-          : SelectableModification5Prime(modification: modification_5p!, strand: this);
+      modification_5p == null ? null : SelectableModification5Prime(modification: modification_5p!, strand: this);
 
   @memoized
   SelectableModification3Prime? get selectable_modification_3p =>
-      modification_3p == null
-          ? null
-          : SelectableModification3Prime(modification: modification_3p!, strand: this);
+      modification_3p == null ? null : SelectableModification3Prime(modification: modification_3p!, strand: this);
 
   @memoized
   BuiltList<SelectableModificationInternal> get selectable_modifications_int {
@@ -566,9 +560,7 @@ abstract class Strand
       mods[ss]![idx_within_ss] = mod;
     }
 
-    Map<Substrand, BuiltMap<int, ModificationInternal>> mods_built = {
-      for (var ss in mods.keys) ss: mods[ss]!.build(),
-    };
+    Map<Substrand, BuiltMap<int, ModificationInternal>> mods_built = {for (var ss in mods.keys) ss: mods[ss]!.build()};
 
     return mods_built.build();
   }
@@ -708,8 +700,7 @@ abstract class Strand
 
     if (this.vendor_fields != null) {
       var vendor_fields_json = this.vendor_fields!.to_json_serializable(suppress_indent: suppress_indent);
-      json_map[constants.vendor_fields_key] =
-          suppress_indent ? NoIndent(vendor_fields_json) : vendor_fields_json;
+      json_map[constants.vendor_fields_key] = suppress_indent ? NoIndent(vendor_fields_json) : vendor_fields_json;
     }
 
     if (this.is_scaffold) {
@@ -979,14 +970,11 @@ abstract class Strand
       constants.vendor_fields_key,
       legacy_keys: constants.legacy_vendor_fields_keys,
     );
-    VendorFields? vendor_fields =
-        vendor_fields_dict == null ? null : VendorFields.from_json(vendor_fields_dict);
+    VendorFields? vendor_fields = vendor_fields_dict == null ? null : VendorFields.from_json(vendor_fields_dict);
 
     // legacy:
     // if no name is specified, but there's a name field in vendor fields, then use that as the Strand's name
-    if (name == null &&
-        vendor_fields_dict != null &&
-        vendor_fields_dict.containsKey(constants.vendor_name_key)) {
+    if (name == null && vendor_fields_dict != null && vendor_fields_dict.containsKey(constants.vendor_name_key)) {
       name = vendor_fields_dict[constants.vendor_name_key];
     }
 
@@ -1120,8 +1108,7 @@ abstract class Strand
 
   /// Name to export if Strand.name and Strand.idt.name are both not set.
   String default_export_name() {
-    String id =
-        '${first_domain.helix}[${first_domain.offset_5p}]${last_domain.helix}[${last_domain.offset_3p}]';
+    String id = '${first_domain.helix}[${first_domain.offset_5p}]${last_domain.helix}[${last_domain.offset_3p}]';
     return is_scaffold ? 'SCAF$id}' : 'ST$id';
   }
 }

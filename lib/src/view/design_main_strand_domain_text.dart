@@ -43,8 +43,7 @@ mixin DesignMainStrandDomainTextProps on UiProps {
   late ContextMenuStrand context_menu_strand;
 }
 
-class DesignMainStrandDomainTextComponent extends UiComponent2<DesignMainStrandDomainTextProps>
-    with PureComponent {
+class DesignMainStrandDomainTextComponent extends UiComponent2<DesignMainStrandDomainTextProps> with PureComponent {
   @override
   render() {
     Point<double> start_svg = props.helix.svg_base_pos(

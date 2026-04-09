@@ -47,9 +47,7 @@ AppState create_new_state_with_new_design_and_undo_redo(
   AppState new_model = old_state.rebuild(
     (m) =>
         m
-          ..ui_state.replace(
-            old_state.ui_state.rebuild((u) => u..changed_since_last_save = changed_since_last_save),
-          )
+          ..ui_state.replace(old_state.ui_state.rebuild((u) => u..changed_since_last_save = changed_since_last_save))
           ..maybe_design.replace(new_design)
           ..undo_redo.replace(
             old_state.undo_redo.rebuild(
@@ -81,9 +79,7 @@ AppState redo_reducer(AppState state, actions.Redo action) {
     AppState new_model = state.rebuild(
       (m) =>
           m
-            ..ui_state.replace(
-              state.ui_state.rebuild((u) => u..changed_since_last_save = changed_since_last_save),
-            )
+            ..ui_state.replace(state.ui_state.rebuild((u) => u..changed_since_last_save = changed_since_last_save))
             ..maybe_design.replace(new_design)
             ..undo_redo.replace(
               undo_redo.rebuild(

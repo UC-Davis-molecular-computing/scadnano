@@ -34,8 +34,7 @@ abstract class SelectModeState implements Built<SelectModeState, SelectModeState
   bool get strands_selectable => modes.contains(SelectModeChoice.strand);
 
   @memoized
-  bool get linkers_selectable =>
-      modes.contains(SelectModeChoice.crossover) || modes.contains(SelectModeChoice.loopout);
+  bool get linkers_selectable => modes.contains(SelectModeChoice.crossover) || modes.contains(SelectModeChoice.loopout);
 
   @memoized
   bool get ends_selectable =>

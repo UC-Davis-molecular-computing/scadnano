@@ -316,9 +316,7 @@ Future<List<int>> idt_plates_export(
     // or < 96 strands for 384-well plate.
     // So if we would have fewer than that many on the last plate,
     // shift some from the penultimate plate.
-    if (!on_final_plate &&
-        final_plate_less_than_min_required &&
-        num_strands_remaining == min_strands_per_plate) {
+    if (!on_final_plate && final_plate_less_than_min_required && num_strands_remaining == min_strands_per_plate) {
       plate_coord.advance_to_next_plate();
     } else {
       plate_coord.increment(column_major_plate);

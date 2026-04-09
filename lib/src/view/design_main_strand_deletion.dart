@@ -31,8 +31,7 @@ mixin DesignMainStrandDeletionPropsMixin on UiProps {
 class DesignMainStrandDeletionProps = UiProps with DesignMainStrandDeletionPropsMixin;
 
 @Component2()
-class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDeletionProps>
-    with PureComponent {
+class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDeletionProps> with PureComponent {
   Domain get domain => props.selectable_deletion.domain;
 
   int get deletion => props.selectable_deletion.offset;
@@ -43,12 +42,7 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
     Domain domain = this.domain;
     int deletion_offset = this.deletion;
 
-    Point<double> pos = props.helix.svg_base_pos(
-      deletion_offset,
-      domain.forward,
-      props.svg_position_y,
-      props.geometry,
-    );
+    Point<double> pos = props.helix.svg_base_pos(deletion_offset, domain.forward, props.svg_position_y, props.geometry);
 
     // deletion
     var width = 0.8 * geometry.base_width_svg;

@@ -43,9 +43,7 @@ class DNASequencePredefined extends EnumClass {
   static Serializer<DNASequencePredefined> get serializer => _$dNASequencePredefinedSerializer;
 
   static BuiltList<String> get names =>
-      [
-        for (var dna_sequence_predefined in DNASequencePredefined.values) dna_sequence_predefined.name,
-      ].toBuiltList();
+      [for (var dna_sequence_predefined in DNASequencePredefined.values) dna_sequence_predefined.name].toBuiltList();
 
   int get default_rotation => this == M13p7249 ? 5587 : 0;
 

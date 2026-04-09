@@ -39,8 +39,7 @@ mixin DesignMainStrandInsertionProps on UiProps {
   late Geometry geometry;
 }
 
-class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandInsertionProps>
-    with PureComponent {
+class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandInsertionProps> with PureComponent {
   Insertion get insertion => props.selectable_insertion.insertion;
 
   Domain get domain => props.selectable_insertion.domain;
@@ -89,12 +88,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
     int offset = this.insertion.offset;
     Color color = props.color;
 
-    Point<double> pos = props.helix.svg_base_pos(
-      offset,
-      this.domain.forward,
-      props.svg_position_y,
-      props.geometry,
-    );
+    Point<double> pos = props.helix.svg_base_pos(offset, this.domain.forward, props.svg_position_y, props.geometry);
 
     num dx1 = geometry.base_width_svg;
     num dx2 = 0.5 * geometry.base_width_svg;
@@ -275,11 +269,7 @@ So for example an insertion length of 1 would represent at that offset
       var domains = [for (var selected_insertion in selected_insertions) selected_insertion.domain];
       action = actions.InsertionsLengthChange(insertions: insertions, domains: domains, length: new_length);
     } else {
-      action = actions.InsertionLengthChange(
-        domain: this.domain,
-        insertion: this.insertion,
-        length: new_length,
-      );
+      action = actions.InsertionLengthChange(domain: this.domain, insertion: this.insertion, length: new_length);
     }
 
     app.dispatch(action);

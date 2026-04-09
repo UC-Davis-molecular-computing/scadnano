@@ -19,9 +19,7 @@ GlobalReducer<StrandsMove?, AppState> strands_move_global_reducer = combineGloba
   TypedGlobalReducer<StrandsMove?, AppState, actions.StrandsMoveStartSelectedStrands>(
     strands_move_start_selected_strands_reducer,
   ),
-  TypedGlobalReducer<StrandsMove?, AppState, actions.StrandsMoveAdjustAddress>(
-    strands_adjust_address_reducer,
-  ),
+  TypedGlobalReducer<StrandsMove?, AppState, actions.StrandsMoveAdjustAddress>(strands_adjust_address_reducer),
 ]);
 
 Reducer<StrandsMove?> strands_move_local_reducer = //combineReducers([
@@ -93,11 +91,7 @@ bool in_bounds_and_allowable(Design design, StrandsMove strands_move) {
 
 bool in_bounds(Design design, StrandsMove strands_move, {Set<int>? original_helix_idxs_set = null}) {
   constants.strand_bounds_status status =
-      get_strand_bounds_details(
-        design,
-        strands_move,
-        original_helix_idxs_set: original_helix_idxs_set,
-      )['status'];
+      get_strand_bounds_details(design, strands_move, original_helix_idxs_set: original_helix_idxs_set)['status'];
   if (status == constants.strand_bounds_status.in_bounds ||
       status == constants.strand_bounds_status.in_bounds_with_min_offset_changes ||
       status == constants.strand_bounds_status.in_bounds_with_max_offset_changes)
@@ -105,11 +99,7 @@ bool in_bounds(Design design, StrandsMove strands_move, {Set<int>? original_heli
   return false;
 }
 
-Map get_strand_bounds_details(
-  Design design,
-  StrandsMove strands_move, {
-  Set<int>? original_helix_idxs_set = null,
-}) {
+Map get_strand_bounds_details(Design design, StrandsMove strands_move, {Set<int>? original_helix_idxs_set = null}) {
   // collect helix idxs on moving strands (if new design, may be different from design.helices.keys
   if (original_helix_idxs_set == null) {
     original_helix_idxs_set = populate_original_helices_idxs_set(strands_move);
@@ -132,8 +122,7 @@ Map get_strand_bounds_details(
   Set<int> view_orders_of_helices_of_moving_strands = view_order_moving(strands_move);
   int min_view_order = view_orders_of_helices_of_moving_strands.min;
   int max_view_order = view_orders_of_helices_of_moving_strands.max;
-  if (min_view_order + delta_view_order < 0)
-    return {'status': constants.strand_bounds_status.helix_out_of_bounds};
+  if (min_view_order + delta_view_order < 0) return {'status': constants.strand_bounds_status.helix_out_of_bounds};
   if (max_view_order + delta_view_order >= num_helices_in_group)
     return {'status': constants.strand_bounds_status.helix_out_of_bounds};
 
@@ -189,10 +178,8 @@ Map get_strand_bounds_details(
       out_of_bounds_min_offset_changes[helix.idx] = outOfBoundsNewMinOffset;
     if (outOfBoundsNewMaxOffset > helix.max_offset)
       out_of_bounds_max_offset_changes[helix.idx] = outOfBoundsNewMaxOffset;
-    if (inBoundsNewMinOffset > helix.min_offset)
-      in_bounds_min_offset_changes[helix.idx] = inBoundsNewMinOffset;
-    if (inBoundsNewMaxOffset < helix.max_offset)
-      in_bounds_max_offset_changes[helix.idx] = inBoundsNewMaxOffset;
+    if (inBoundsNewMinOffset > helix.min_offset) in_bounds_min_offset_changes[helix.idx] = inBoundsNewMinOffset;
+    if (inBoundsNewMaxOffset < helix.max_offset) in_bounds_max_offset_changes[helix.idx] = inBoundsNewMaxOffset;
   }
   if (out_of_bounds_min_offset_changes.isNotEmpty)
     return {

@@ -329,8 +329,7 @@ List<svg.GraphicsElement> find_selectable_elements(Iterable<SelectModeChoice> se
 
   List<String> selectors = [];
   if (is_origami &&
-      (!select_modes.contains(SelectModeChoice.scaffold) ||
-          !select_modes.contains(SelectModeChoice.staple))) {
+      (!select_modes.contains(SelectModeChoice.scaffold) || !select_modes.contains(SelectModeChoice.staple))) {
     if (select_modes.contains(SelectModeChoice.scaffold)) {
       for (var mode in select_modes_not_scaffold_or_staple) {
         selectors.add('.${SelectModeChoice.scaffold.css_selector()}.${mode.css_selector()}');

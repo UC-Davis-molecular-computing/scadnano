@@ -96,9 +96,7 @@ class View {
     var store = app.store;
 
     react_dom.render(
-      over_react_components.ErrorBoundary()(
-        (ReduxProvider()..store = store)(set_menu_props(ConnectedMenu(), state)()),
-      ),
+      over_react_components.ErrorBoundary()((ReduxProvider()..store = store)(set_menu_props(ConnectedMenu(), state)())),
       this.menu_element,
     );
 
@@ -106,8 +104,7 @@ class View {
 
     react_dom.render(
       over_react_components.ErrorBoundary()(
-        (ReduxProvider()
-          ..store = store)(set_edit_and_select_mode_props(ConnectedEditAndSelectModes(), state)()),
+        (ReduxProvider()..store = store)(set_edit_and_select_mode_props(ConnectedEditAndSelectModes(), state)()),
       ),
       this.edit_and_select_modes_element,
     );

@@ -125,20 +125,14 @@ abstract class Extension
       constants.display_length_key,
       constants.default_display_length,
     );
-    double display_angle = util.optional_field(
-      json_map,
-      constants.display_angle_key,
-      constants.default_display_angle,
-    );
+    double display_angle = util.optional_field(json_map, constants.display_angle_key, constants.default_display_angle);
     String? name = util.optional_field_with_null_default(json_map, constants.name_key);
     String? label = util.optional_field_with_null_default(json_map, constants.label_key);
 
     String? dna_sequence = util.optional_field_with_null_default(json_map, constants.dna_sequence_key);
 
     Color? color =
-        json_map.containsKey(constants.color_key)
-            ? util.parse_json_color(json_map[constants.color_key]!)
-            : null;
+        json_map.containsKey(constants.color_key) ? util.parse_json_color(json_map[constants.color_key]!) : null;
 
     var unused_fields = util.unused_fields_map(json_map, constants.extension_keys);
 

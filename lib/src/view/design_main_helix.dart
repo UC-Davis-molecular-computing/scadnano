@@ -99,13 +99,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
             if (event.button != constants.LEFT_CLICK_BUTTON) return;
             var group = app.state.design.groups[props.helix.group]!;
             var helix_svg_position = app.state.helix_idx_to_svg_position_map[props.helix.idx]!;
-            var address = util.get_address_on_helix(
-              event,
-              props.helix,
-              group,
-              props.geometry,
-              helix_svg_position,
-            );
+            var address = util.get_address_on_helix(event, props.helix, group, props.geometry, helix_svg_position);
             app.dispatch(actions.StrandCreateStart(address: address, color: util_state.color_cycler.next()));
           }
         }
@@ -114,17 +108,11 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         // this ensures that when subsequent mouse events happen, the most recent mouseover_datas is examined,
         // otherwise the callback is not updated until render executes again
         ..onMouseEnter =
-            ((event) => util.update_mouseover(
-              event,
-              props.helix,
-              app.state.helix_idx_to_svg_position_map[props.helix.idx]!,
-            ))
+            ((event) =>
+                util.update_mouseover(event, props.helix, app.state.helix_idx_to_svg_position_map[props.helix.idx]!))
         ..onMouseMove =
-            ((event) => util.update_mouseover(
-              event,
-              props.helix,
-              app.state.helix_idx_to_svg_position_map[props.helix.idx]!,
-            ))
+            ((event) =>
+                util.update_mouseover(event, props.helix, app.state.helix_idx_to_svg_position_map[props.helix.idx]!))
         ..x = props.helix_svg_position.x
         ..y = props.helix_svg_position.y
         ..width = '$width'

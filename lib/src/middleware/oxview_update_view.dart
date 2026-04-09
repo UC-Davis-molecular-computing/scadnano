@@ -45,11 +45,7 @@ oxview_update_view_middleware(Store<AppState> store, dynamic action, NextDispatc
   }
 
   if (store.state.ui_state.show_oxview && action is actions.DesignChangingAction) {
-    update_oxview_view(
-      store.state.design,
-      null,
-      store.state.ui_state.warn_about_unassigned_dna_and_oxview_open,
-    );
+    update_oxview_view(store.state.design, null, store.state.ui_state.warn_about_unassigned_dna_and_oxview_open);
   }
 }
 
@@ -99,9 +95,7 @@ void update_oxview_view(Design design, IFrameElement? frame, bool warn_enabled) 
 
   String oxview_content = to_oxview_format(design, strands_to_export);
 
-  Blob blob_oxview_content = new Blob([
-    oxview_content,
-  ], util_state.blob_type_to_string(util_state.BlobType.text));
+  Blob blob_oxview_content = new Blob([oxview_content], util_state.blob_type_to_string(util_state.BlobType.text));
 
   message = {
     'message': 'iframe_drop',

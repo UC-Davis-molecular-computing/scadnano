@@ -96,9 +96,7 @@ abstract class Loopout
     String? name = util.optional_field_with_null_default(json_map, constants.name_key);
     String? label = util.optional_field_with_null_default(json_map, constants.label_key);
     Color? color =
-        json_map.containsKey(constants.color_key)
-            ? util.parse_json_color(json_map[constants.color_key]!)
-            : null;
+        json_map.containsKey(constants.color_key) ? util.parse_json_color(json_map[constants.color_key]!) : null;
     return LoopoutBuilder()
       ..loopout_num_bases = loopout_num_bases
       ..name = name

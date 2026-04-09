@@ -24,11 +24,7 @@ import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 /// Set positions of helices based on crossovers, assuming all helices are parallel.
 /// Dispatches a normal HelixPositionSet action (many of them batched).
 /// Also changes the roll of each Helix to point those crossovers at each other in the new positions.
-helix_positions_set_based_on_crossovers_middleware(
-  Store<AppState> store,
-  dynamic action,
-  NextDispatcher next,
-) {
+helix_positions_set_based_on_crossovers_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   next(action);
   if (action is actions.HelicesPositionsSetBasedOnCrossovers) {
     var all_actions = get_helix_position_and_roll_actions(store.state);
@@ -89,9 +85,7 @@ List<Helix> _get_helices_to_process(AppState state, HelixGroup group) {
   } else {
     helices = [for (var helix_idx in selected_helix_idxs) design.helices[helix_idx]!];
   }
-  helices.sort(
-    (h1, h2) => group.helices_view_order_inverse[h1.idx]! - group.helices_view_order_inverse[h2.idx]!,
-  );
+  helices.sort((h1, h2) => group.helices_view_order_inverse[h1.idx]! - group.helices_view_order_inverse[h2.idx]!);
   return helices;
 }
 
@@ -103,16 +97,18 @@ List<Helix> _get_helices_to_process(AppState state, HelixGroup group) {
 List<(Address, Address)>? _get_addresses_to_process(AppState state, List<Helix> helices) {
   var design = state.design;
   var selected_crossovers = state.ui_state.selectables_store.selected_crossovers;
-  var addresses_of_selected_crossovers_by_prev_helix_idx =
-      _get_addresses_of_selected_crossovers_by_prev_helix_idx(selected_crossovers, helices, design);
+  var addresses_of_selected_crossovers_by_prev_helix_idx = _get_addresses_of_selected_crossovers_by_prev_helix_idx(
+    selected_crossovers,
+    helices,
+    design,
+  );
 
   List<(Address, Address)> addresses = [];
   for (int i = 0; i < helices.length - 1; i++) {
     var helix_top = helices[i];
     var helix_bot = helices[i + 1];
     (int, int) helix_idx_top_bot = (helix_top.idx, helix_bot.idx);
-    var addresses_crossovers_this_helices_pair =
-        addresses_of_selected_crossovers_by_prev_helix_idx[helix_idx_top_bot]!;
+    var addresses_crossovers_this_helices_pair = addresses_of_selected_crossovers_by_prev_helix_idx[helix_idx_top_bot]!;
 
     Address address_top, address_bot;
 
@@ -173,15 +169,11 @@ Please select only one, or select none to default to the first crossover between
   // if not using scaffold or crossovers when finding leftmost, filter those out
   if (!use_scaffold) {
     address_crossovers_on_bot =
-        address_crossovers_on_bot
-            .where((address_crossover) => !address_crossover.$2.is_scaffold)
-            .toBuiltList();
+        address_crossovers_on_bot.where((address_crossover) => !address_crossover.$2.is_scaffold).toBuiltList();
   }
   if (!use_staple) {
     address_crossovers_on_bot =
-        address_crossovers_on_bot
-            .where((address_crossover) => address_crossover.$2.is_scaffold)
-            .toBuiltList();
+        address_crossovers_on_bot.where((address_crossover) => address_crossover.$2.is_scaffold).toBuiltList();
   }
 
   // find first crossover on h1 that also goes to h2

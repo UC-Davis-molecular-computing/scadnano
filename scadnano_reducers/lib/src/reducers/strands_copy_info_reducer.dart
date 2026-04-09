@@ -196,8 +196,7 @@ CopyInfo? strands_copy_info_from_strand_list(
         extreme_helix_idx = domain.helix;
         min_offset = domain.start; // reset this absolutely since helix got smaller
         min_forward = domain.forward; //
-      } else if (min_offset == null ||
-          (extreme_helix_view_order == helix_view_order && min_offset > domain.start)) {
+      } else if (min_offset == null || (extreme_helix_view_order == helix_view_order && min_offset > domain.start)) {
         min_offset = domain.start;
         min_forward = domain.forward;
       }
@@ -215,10 +214,7 @@ CopyInfo? strands_copy_info_from_strand_list(
     helices_view_order,
     helices_view_order_inverse,
   );
-  AddressDifference? translation = next_address?.difference(
-    original_address,
-    helices_view_order_inverse.build(),
-  );
+  AddressDifference? translation = next_address?.difference(original_address, helices_view_order_inverse.build());
 
   var copy_info = CopyInfo(
     strands: selected_strands.toBuiltList(),
@@ -319,11 +315,7 @@ Address? compute_default_next_address(
   return null;
 }
 
-CopyInfo? manual_paste_copy_info_reducer(
-  CopyInfo? copy_info,
-  AppState state,
-  actions.StrandsMoveCommit action,
-) {
+CopyInfo? manual_paste_copy_info_reducer(CopyInfo? copy_info, AppState state, actions.StrandsMoveCommit action) {
   if (action.strands_move.copy) {
     // if user is pasting, copy_info should have something in it
     // (populated from clipboard by system_clipboard middleware
@@ -338,14 +330,9 @@ CopyInfo? manual_paste_copy_info_reducer(
     // only calculate translation vector if paste is in same HelixGroup (generalized somewhat for
     // pasting between different designs; see definition of _same_helix_group)
     bool calculate_new_autopaste_translation =
-        _same_helix_group(copy_info, action) &&
-        !action.autopaste &&
-        current_address != copy_info.copied_address;
+        _same_helix_group(copy_info, action) && !action.autopaste && current_address != copy_info.copied_address;
     if (calculate_new_autopaste_translation) {
-      var translation = current_address.difference(
-        copy_info.copied_address,
-        copy_info.helices_view_order_inverse,
-      );
+      var translation = current_address.difference(copy_info.copied_address, copy_info.helices_view_order_inverse);
       copy_info = copy_info.rebuild((b) => b..translation = translation.toBuilder());
     }
 

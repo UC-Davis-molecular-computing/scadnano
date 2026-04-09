@@ -146,10 +146,7 @@ if it had three domains each of length 5.''',
   );
 
   items[idx_include_scaffold] = DialogCheckbox(label: 'include scaffold', value: false);
-  items[idx_include_only_selected_strands] = DialogCheckbox(
-    label: 'include only selected strands',
-    value: false,
-  );
+  items[idx_include_only_selected_strands] = DialogCheckbox(label: 'include only selected strands', value: false);
   items[idx_exclude_selected_strands] = DialogCheckbox(label: 'exclude selected strands', value: false);
   items[idx_format_str] = DialogRadio(
     label: 'export format',
@@ -278,8 +275,7 @@ String cando_compatible_csv_export(Iterable<Strand> strands) {
     var cando_strand = strand.vendor_export_name().replaceAll(RegExp(r'^ST'), '');
     // Split the export name into the start and end positions.
     RegExp cando_split_regex = RegExp(r'\d+\[\d+\]');
-    List<String?> cando_split_name =
-        cando_split_regex.allMatches(cando_strand).map((match) => match.group(0)).toList();
+    List<String?> cando_split_name = cando_split_regex.allMatches(cando_strand).map((match) => match.group(0)).toList();
     if (cando_split_name.length != 2) {
       throw ExportDNAException('Invalid strand name: ${strand.vendor_export_name()}');
     }

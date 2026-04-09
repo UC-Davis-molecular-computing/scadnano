@@ -115,8 +115,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
             ..display = grid.toString()
             ..active = grid == groups[props.displayed_group_name]!.grid
             ..disabled = grid == groups[props.displayed_group_name]!.grid
-            ..on_click =
-                ((ev) => app.dispatch(actions.GridChange(grid: grid, group_name: props.displayed_group_name)))
+            ..on_click = ((ev) => app.dispatch(actions.GridChange(grid: grid, group_name: props.displayed_group_name)))
             ..key = grid.toString())(),
       ],
     );
@@ -273,9 +272,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
       yaw: yaw,
     );
 
-    app.dispatch(
-      actions.GroupChange(old_name: props.displayed_group_name, new_name: new_name, new_group: new_group),
-    );
+    app.dispatch(actions.GroupChange(old_name: props.displayed_group_name, new_name: new_name, new_group: new_group));
   }
 
   Future<void> ask_new_helix_indices_for_current_group(BuiltMap<String, HelixGroup> groups) async {
@@ -327,10 +324,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
     int minor_groove_angle_idx = 4;
 
     var items = util_state.FixedList<DialogItem>(5);
-    items[rise_per_base_pair_idx] = DialogFloat(
-      label: 'rise per base pair (nm)',
-      value: geometry.rise_per_base_pair,
-    );
+    items[rise_per_base_pair_idx] = DialogFloat(label: 'rise per base pair (nm)', value: geometry.rise_per_base_pair);
     items[helix_radius_idx] = DialogFloat(label: 'helix radius (nm)', value: geometry.helix_radius);
     items[inter_helix_gap_idx] = DialogFloat(label: 'inter helix gap (nm)', value: geometry.inter_helix_gap);
     items[bases_per_turn_idx] = DialogFloat(label: 'bases per turn', value: geometry.bases_per_turn);
@@ -361,8 +355,6 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
       bases_per_turn: bases_per_turn,
       minor_groove_angle: minor_groove_angle,
     );
-    app.dispatch(
-      actions.GeometryHelixGroupSet(group_name: props.displayed_group_name, geometry: new_geometry),
-    );
+    app.dispatch(actions.GeometryHelixGroupSet(group_name: props.displayed_group_name, geometry: new_geometry));
   }
 }

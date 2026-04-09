@@ -26,8 +26,7 @@ mixin DesignMainUnpairedInsertionDeletionsProps on UiProps {
   late BuiltMap<int, num> helix_idx_to_svg_position_y_map;
 }
 
-class DesignMainUnpairedInsertionDeletionsComponent
-    extends UiComponent2<DesignMainUnpairedInsertionDeletionsProps>
+class DesignMainUnpairedInsertionDeletionsComponent extends UiComponent2<DesignMainUnpairedInsertionDeletionsProps>
     with PureComponent {
   @override
   render() {
@@ -57,10 +56,7 @@ class DesignMainUnpairedInsertionDeletionsComponent
                   (DesignMainWarningStar()
                     ..base_svg_pos =
                         base_svg_pos +
-                        Point(
-                          0,
-                          is_insertion ? geometry.base_height_svg * 2 * (unpaired.forward ? 1 : -1) : 0,
-                        )
+                        Point(0, is_insertion ? geometry.base_height_svg * 2 * (unpaired.forward ? 1 : -1) : 0)
                     ..geometry = geometry
                     ..forward = domain.forward
                     ..color = 'green'

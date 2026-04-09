@@ -105,10 +105,7 @@ Helix find_closest_helix(
   Helix? closest_helix = null;
   for (var helix in helices) {
     var group = groups[helix.group]!;
-    var helix_upper_left_corner = group.transform_point_main_view(
-      helix_idx_to_svg_position_map[helix.idx]!,
-      geometry,
-    );
+    var helix_upper_left_corner = group.transform_point_main_view(helix_idx_to_svg_position_map[helix.idx]!, geometry);
     var dist = distance_to_rectangle(
       svg_clicked_point,
       helix_upper_left_corner,
@@ -133,11 +130,7 @@ int find_closest_offset(
   num helices_in_group_first_svg_position_x,
 ) {
   var svg_clicked_point = svg_position_of_mouse_click(event);
-  var svg_clicked_point_untransformed = group.transform_point_main_view(
-    svg_clicked_point,
-    geometry,
-    inverse: true,
-  );
+  var svg_clicked_point_untransformed = group.transform_point_main_view(svg_clicked_point, geometry, inverse: true);
 
   var range = find_helix_group_min_max(helices_in_group)!;
   var min_offset = range.x;
@@ -167,10 +160,7 @@ Address find_closest_address(
   var helix_svg_position = helix_idx_to_svg_position_map[helix.idx]!;
 
   var group = groups[helix.group]!;
-  var helix_upper_left_corner = group.transform_point_main_view(
-    helix_idx_to_svg_position_map[helix.idx]!,
-    geometry,
-  );
+  var helix_upper_left_corner = group.transform_point_main_view(helix_idx_to_svg_position_map[helix.idx]!, geometry);
   var closest_point_in_helix = closest_point_in_rectangle(
     svg_clicked_point,
     helix_upper_left_corner,
@@ -186,11 +176,7 @@ Address find_closest_address(
   );
 
   int offset = helix.svg_x_to_offset(closest_point_in_helix_untransformed.x, helix_svg_position.x, geometry);
-  bool forward = helix.svg_y_is_forward(
-    closest_point_in_helix_untransformed.y,
-    helix_svg_position.y,
-    geometry,
-  );
+  bool forward = helix.svg_y_is_forward(closest_point_in_helix_untransformed.y, helix_svg_position.y, geometry);
 
   //  print('* get_closest_address *');
   //  print('  forward = ${forward}');
@@ -226,11 +212,7 @@ Address find_closest_address_with_infinite_helix_boundaries(
   );
 
   int offset = helix.svg_x_to_offset(closest_point_in_helix_untransformed.x, helix_svg_position.x, geometry);
-  bool forward = helix.svg_y_is_forward(
-    closest_point_in_helix_untransformed.y,
-    helix_svg_position.y,
-    geometry,
-  );
+  bool forward = helix.svg_y_is_forward(closest_point_in_helix_untransformed.y, helix_svg_position.y, geometry);
 
   //  print('  forward = ${forward}');
   return Address(helix_idx: helix.idx, offset: offset, forward: forward);
@@ -691,11 +673,7 @@ void svg_to_png_data() {
     Url.revokeObjectUrl(url);
     String img_uri = canvas.toDataUrl('image/png');
     app.dispatch(
-      actions.LoadDnaSequenceImageUri(
-        img_uri,
-        -dna_sequence_png_horizontal_offset,
-        -dna_sequence_png_vertical_offset,
-      ),
+      actions.LoadDnaSequenceImageUri(img_uri, -dna_sequence_png_horizontal_offset, -dna_sequence_png_vertical_offset),
     );
   });
 }
@@ -770,9 +748,7 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix, Point<double> helix
 
     if (needs_update(mouseover_params, mouseover_datas)) {
       //    print('dispatching MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
-      app.dispatch(
-        actions.MouseoverDataUpdate(mouseover_params: BuiltList<MouseoverParams>([mouseover_params])),
-      );
+      app.dispatch(actions.MouseoverDataUpdate(mouseover_params: BuiltList<MouseoverParams>([mouseover_params])));
     } else {
       //    print('skipping MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
     }

@@ -11,8 +11,7 @@ abstract class GlobalReducerClass<LocalState, GlobalState> {
   LocalState call(LocalState local_state, GlobalState state, dynamic action);
 }
 
-class TypedGlobalReducer<LocalState, GlobalState, Action>
-    implements GlobalReducerClass<LocalState, GlobalState> {
+class TypedGlobalReducer<LocalState, GlobalState, Action> implements GlobalReducerClass<LocalState, GlobalState> {
   final LocalState Function(LocalState local_state, GlobalState global_state, Action action) reducer;
 
   TypedGlobalReducer(this.reducer);

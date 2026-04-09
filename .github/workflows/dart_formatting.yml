@@ -22,7 +22,7 @@ jobs:
         run: dart pub get
 
       - name: Verify formatting
-        run: dart format -l 110 --output=none --set-exit-if-changed .
+        run: dart format -l 120 --output=none --set-exit-if-changed .
 
   fail_if_pull_request_is_draft:
     if: github.event.pull_request.draft == true

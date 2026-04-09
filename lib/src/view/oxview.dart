@@ -16,12 +16,7 @@ class OxviewViewComponent {
     this.div = DivElement()..attributes = {'id': OXVIEW_ID, 'class': 'split'};
     this.frame =
         IFrameElement()
-          ..attributes = {
-            'height': '100%',
-            'width': '100%',
-            'src': constants.OXVIEW_URL,
-            'id': 'oxview-frame',
-          };
+          ..attributes = {'height': '100%', 'width': '100%', 'src': constants.OXVIEW_URL, 'id': 'oxview-frame'};
     this.div.children.add(this.frame);
   }
 }

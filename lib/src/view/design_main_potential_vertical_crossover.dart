@@ -27,8 +27,7 @@ mixin DesignMainPotentialVerticalCrossoverProps on UiProps implements TransformB
   late BuiltMap<int, double> helix_idx_to_svg_position_y_map;
 }
 
-class DesignMainPotentialVerticalCrossoverComponent
-    extends UiComponent2<DesignMainPotentialVerticalCrossoverProps>
+class DesignMainPotentialVerticalCrossoverComponent extends UiComponent2<DesignMainPotentialVerticalCrossoverProps>
     with PureComponent {
   @override
   render() {

@@ -222,8 +222,7 @@ abstract class ModificationInternal
     );
   }
 
-  factory ModificationInternal.from([void Function(ModificationInternalBuilder) updates]) =
-      _$ModificationInternal;
+  factory ModificationInternal.from([void Function(ModificationInternalBuilder) updates]) = _$ModificationInternal;
 
   ModificationInternal._();
 

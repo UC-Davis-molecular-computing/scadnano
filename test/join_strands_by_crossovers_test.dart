@@ -44,12 +44,7 @@ main() {
           design = design.draw_strand(0, 0).to(right_end).as_scaffold().commit();
         } else {
           design = design.draw_strand(helix, scaffold_5p).move(scaffold_move).as_scaffold().commit();
-          design =
-              design
-                  .draw_strand(helix, scaffold_5p + scaffold_move)
-                  .move(scaffold_move)
-                  .as_scaffold()
-                  .commit();
+          design = design.draw_strand(helix, scaffold_5p + scaffold_move).move(scaffold_move).as_scaffold().commit();
         }
       }
 

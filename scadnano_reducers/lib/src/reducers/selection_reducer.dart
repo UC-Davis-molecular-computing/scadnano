@@ -281,8 +281,7 @@ BuiltSet<int> helix_select_reducer(BuiltSet<int> side_selected_helix_idxs, actio
   return side_selected_helix_idxs;
 }
 
-BuiltSet<int> helices_selected_clear_reducer(BuiltSet<int> _, actions.HelixSelectionsClear action) =>
-    BuiltSet<int>();
+BuiltSet<int> helices_selected_clear_reducer(BuiltSet<int> _, actions.HelixSelectionsClear action) => BuiltSet<int>();
 
 BuiltSet<int> helices_remove_all_selected_reducer(BuiltSet<int> _, actions.HelixRemoveAllSelected action) =>
     BuiltSet<int>();
@@ -306,10 +305,8 @@ Reducer<SelectionBox?> selection_box_reducer = combineReducers([
 SelectionBox? selection_box_create_reducer(SelectionBox? _, actions.SelectionBoxCreate action) =>
     SelectionBox(action.point, action.toggle, action.is_main);
 
-SelectionBox? selection_box_size_changed_reducer(
-  SelectionBox? selection_box,
-  actions.SelectionBoxSizeChange action,
-) => selection_box!.rebuild((s) => s..current = action.point);
+SelectionBox? selection_box_size_changed_reducer(SelectionBox? selection_box, actions.SelectionBoxSizeChange action) =>
+    selection_box!.rebuild((s) => s..current = action.point);
 
 SelectionBox? selection_box_remove_reducer(SelectionBox? _, actions.SelectionBoxRemove __) => null;
 

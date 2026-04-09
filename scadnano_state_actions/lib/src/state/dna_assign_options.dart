@@ -11,9 +11,7 @@ part 'dna_assign_options.g.dart';
 final DEFAULT_dna_assign_options_builder = DNAAssignOptionsBuilder();
 final DEFAULT_dna_assign_options = DEFAULT_dna_assign_options_builder.build();
 
-abstract class DNAAssignOptions
-    with BuiltJsonSerializable
-    implements Built<DNAAssignOptions, DNAAssignOptionsBuilder> {
+abstract class DNAAssignOptions with BuiltJsonSerializable implements Built<DNAAssignOptions, DNAAssignOptionsBuilder> {
   factory DNAAssignOptions.from([void Function(DNAAssignOptionsBuilder) updates]) = _$DNAAssignOptions;
 
   DNAAssignOptions._();

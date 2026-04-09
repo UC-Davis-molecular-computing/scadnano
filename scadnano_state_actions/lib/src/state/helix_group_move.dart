@@ -13,9 +13,7 @@ import 'position3d.dart';
 
 part 'helix_group_move.g.dart';
 
-abstract class HelixGroupMove
-    with BuiltJsonSerializable
-    implements Built<HelixGroupMove, HelixGroupMoveBuilder> {
+abstract class HelixGroupMove with BuiltJsonSerializable implements Built<HelixGroupMove, HelixGroupMoveBuilder> {
   factory HelixGroupMove({
     required String group_name,
     required HelixGroup group,

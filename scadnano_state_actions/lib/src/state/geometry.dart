@@ -90,15 +90,13 @@ abstract class Geometry with BuiltJsonSerializable, UnusedFields implements Buil
   @memoized
   double get svg_pixels_to_nm => 1.0 / nm_to_svg_pixels;
 
-  bool rise_per_base_pair_is_default() =>
-      util.are_close(rise_per_base_pair, constants.default_rise_per_base_pair);
+  bool rise_per_base_pair_is_default() => util.are_close(rise_per_base_pair, constants.default_rise_per_base_pair);
 
   bool helix_radius_is_default() => util.are_close(helix_radius, constants.default_helix_radius);
 
   bool bases_per_turn_is_default() => util.are_close(bases_per_turn, constants.default_bases_per_turn);
 
-  bool minor_groove_angle_is_default() =>
-      util.are_close(minor_groove_angle, constants.default_minor_groove_angle);
+  bool minor_groove_angle_is_default() => util.are_close(minor_groove_angle, constants.default_minor_groove_angle);
 
   bool inter_helix_gap_is_default() => util.are_close(inter_helix_gap, constants.default_inter_helix_gap);
 
@@ -109,11 +107,7 @@ abstract class Geometry with BuiltJsonSerializable, UnusedFields implements Buil
       constants.default_rise_per_base_pair,
       legacy_keys: constants.legacy_rise_per_base_pair_keys,
     );
-    double helix_radius = util.optional_field(
-      json_map,
-      constants.helix_radius_key,
-      constants.default_helix_radius,
-    );
+    double helix_radius = util.optional_field(json_map, constants.helix_radius_key, constants.default_helix_radius);
     double inter_helix_gap = util.optional_field(
       json_map,
       constants.inter_helix_gap_key,

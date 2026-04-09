@@ -10,9 +10,7 @@ part 'example_designs.g.dart';
 final DEFAULT_example_designs_builder = ExampleDesignsBuilder();
 final DEFAULT_example_designs = DEFAULT_example_designs_builder.build();
 
-abstract class ExampleDesigns
-    with BuiltJsonSerializable
-    implements Built<ExampleDesigns, ExampleDesignsBuilder> {
+abstract class ExampleDesigns with BuiltJsonSerializable implements Built<ExampleDesigns, ExampleDesignsBuilder> {
   String get directory;
 
   BuiltList<String> get filenames;
@@ -43,8 +41,7 @@ abstract class ExampleDesigns
 
   String? get selected_full_filename => example_is_selected ? '${directory}/${selected_filename}' : null;
 
-  String? get selected_full_filename_no_ext =>
-      example_is_selected ? '${directory}/${selected_filename_no_ext}' : null;
+  String? get selected_full_filename_no_ext => example_is_selected ? '${directory}/${selected_filename_no_ext}' : null;
 
   /// url of currently selected file
   String? get url => selected_full_filename;
@@ -56,11 +53,8 @@ abstract class ExampleDesigns
 
   static Serializer<ExampleDesigns> get serializer => _$exampleDesignsSerializer;
 
-  factory ExampleDesigns({
-    required BuiltList<String> filenames,
-    required String directory,
-    required int selected_idx,
-  }) = _$ExampleDesigns._;
+  factory ExampleDesigns({required BuiltList<String> filenames, required String directory, required int selected_idx}) =
+      _$ExampleDesigns._;
 
   @memoized
   int get hashCode;

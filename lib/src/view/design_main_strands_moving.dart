@@ -15,10 +15,7 @@ import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_strands_moving.over_react.g.dart';
 
-DesignMainStrandsMovingProps set_design_main_strands_moving_props(
-  DesignMainStrandsMovingProps elt,
-  AppState state,
-) {
+DesignMainStrandsMovingProps set_design_main_strands_moving_props(DesignMainStrandsMovingProps elt, AppState state) {
   HelixGroup? current_group = null;
   BuiltMap<int, int>? original_helices_view_order_inverse = null;
   bool selected_strands_on_multiple_groups = false;

@@ -17,8 +17,7 @@ abstract class ContextMenu with BuiltJsonSerializable implements Built<ContextMe
 
   static Serializer<ContextMenu> get serializer => _$contextMenuSerializer;
 
-  factory ContextMenu({required BuiltList<ContextMenuItem> items, required Point<double> position}) =
-      _$ContextMenu._;
+  factory ContextMenu({required BuiltList<ContextMenuItem> items, required Point<double> position}) = _$ContextMenu._;
 
   @memoized
   int get hashCode;
@@ -30,9 +29,7 @@ abstract class ContextMenu with BuiltJsonSerializable implements Built<ContextMe
   Point<double> get position;
 }
 
-abstract class ContextMenuItem
-    with BuiltJsonSerializable
-    implements Built<ContextMenuItem, ContextMenuItemBuilder> {
+abstract class ContextMenuItem with BuiltJsonSerializable implements Built<ContextMenuItem, ContextMenuItemBuilder> {
   factory ContextMenuItem.from([void Function(ContextMenuItemBuilder) updates]) = _$ContextMenuItem;
 
   ContextMenuItem._();

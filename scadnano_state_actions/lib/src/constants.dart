@@ -88,8 +88,7 @@ const context_menu_event_name = 'contextmenu';
 
 const KEY_CODE_SHOW_POTENTIAL_HELIX = KeyCode.H;
 const KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO = KeyCode.W;
-final KEY_CODE_COMMAND_MAC =
-    browser.isFirefox ? 224 : 91; // Meta/Command: https://tosbourn.com/cmd-osx-key-code/
+final KEY_CODE_COMMAND_MAC = browser.isFirefox ? 224 : 91; // Meta/Command: https://tosbourn.com/cmd-osx-key-code/
 final KEY_CODE_TOGGLE_SELECT_MAC = KEY_CODE_COMMAND_MAC;
 const KEY_CODE_SELECT = KeyCode.SHIFT;
 const KEY_CODE_TOGGLE_SELECT = KeyCode.CTRL;
@@ -226,8 +225,7 @@ const helices_key = 'helices';
 const helices_view_order_key = 'helices_view_order';
 const potential_helices_key = 'potential_helices';
 const strands_key = 'strands';
-const design_modifications_key =
-    'modifications_in_design'; // legacy key for when we stored all mods in one map
+const design_modifications_key = 'modifications_in_design'; // legacy key for when we stored all mods in one map
 const design_modifications_5p_key = 'modifications_5p_in_design';
 const design_modifications_3p_key = 'modifications_3p_in_design';
 const design_modifications_int_key = 'modifications_int_in_design';
@@ -257,13 +255,7 @@ const minor_groove_angle_key = 'minor_groove_angle';
 const legacy_minor_groove_angle_keys = ['groove_angle'];
 const inter_helix_gap_key = 'inter_helix_gap';
 final geometry_keys =
-    [
-      rise_per_base_pair_key,
-      helix_radius_key,
-      bases_per_turn_key,
-      minor_groove_angle_key,
-      inter_helix_gap_key,
-    ] +
+    [rise_per_base_pair_key, helix_radius_key, bases_per_turn_key, minor_groove_angle_key, inter_helix_gap_key] +
     legacy_minor_groove_angle_keys +
     legacy_rise_per_base_pair_keys;
 
@@ -351,13 +343,7 @@ const legacy_mod_vendor_code_keys = ['idt_text'];
 const mod_allowed_bases_key = 'allowed_bases';
 const mod_connector_length_key = 'connector_length';
 final modification_keys =
-    [
-      mod_location_key,
-      mod_display_text_key,
-      mod_vendor_code_key,
-      mod_allowed_bases_key,
-      mod_connector_length_key,
-    ] +
+    [mod_location_key, mod_display_text_key, mod_vendor_code_key, mod_allowed_bases_key, mod_connector_length_key] +
     legacy_mod_vendor_code_keys;
 
 // VendorFields keys
@@ -366,13 +352,7 @@ const vendor_scale_key = 'scale';
 const vendor_purification_key = 'purification';
 const vendor_plate_key = 'plate';
 const vendor_well_key = 'well';
-const vendor_keys = [
-  vendor_name_key,
-  vendor_scale_key,
-  vendor_purification_key,
-  vendor_plate_key,
-  vendor_well_key,
-];
+const vendor_keys = [vendor_name_key, vendor_scale_key, vendor_purification_key, vendor_plate_key, vendor_well_key];
 
 // Domain keys
 const helix_idx_key = 'helix';
@@ -383,17 +363,7 @@ const end_key = 'end';
 const deletions_key = 'deletions';
 const insertions_key = 'insertions';
 final domain_keys =
-    [
-      helix_idx_key,
-      forward_key,
-      start_key,
-      end_key,
-      deletions_key,
-      insertions_key,
-      label_key,
-      name_key,
-      color_key,
-    ] +
+    [helix_idx_key, forward_key, start_key, end_key, deletions_key, insertions_key, label_key, name_key, color_key] +
     legacy_forward_keys;
 
 // Loopout keys

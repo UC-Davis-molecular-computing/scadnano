@@ -95,8 +95,7 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> map = {};
-    var design_to_store =
-        this.maybe_design != null ? design.to_json_serializable(suppress_indent: false) : null;
+    var design_to_store = this.maybe_design != null ? design.to_json_serializable(suppress_indent: false) : null;
     map['design'] = design_to_store;
     map['ui_state'] = ui_state.toJson();
     map['error_message'] = error_message;

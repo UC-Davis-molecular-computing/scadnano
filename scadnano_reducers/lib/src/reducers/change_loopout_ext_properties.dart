@@ -202,10 +202,7 @@ Strand extension_num_bases_change_reducer(Strand strand, actions.ExtensionNumBas
   return strand;
 }
 
-Strand extension_display_length_angle_change_reducer(
-  Strand strand,
-  actions.ExtensionDisplayLengthAngleSet action,
-) {
+Strand extension_display_length_angle_change_reducer(Strand strand, actions.ExtensionDisplayLengthAngleSet action) {
   int idx = strand.substrands.indexOf(action.ext);
   var substrands_builder = strand.substrands.toBuilder();
   if (action.display_length <= 0) {

@@ -49,9 +49,7 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
         Helix helix_5p = props.helices[domain.helix]!;
         var group = props.groups[helix_5p.group]!;
         var geometry = group.geometry ?? props.geometry;
-        bool selected = props.selected_modifications_in_strand.contains(
-          props.strand.selectable_modification_5p,
-        );
+        bool selected = props.selected_modifications_in_strand.contains(props.strand.selectable_modification_5p);
         Extension? ext = null;
         if (props.strand.has_5p_extension) {
           ext = props.strand.substrands.first as Extension;
@@ -91,9 +89,7 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
             ..transform = transform_of_helix2(props, domain.helix)
             ..font_size = props.font_size
             ..display_connector = props.display_connector
-            ..selected = props.selected_modifications_in_strand.contains(
-              props.strand.selectable_modification_3p,
-            )
+            ..selected = props.selected_modifications_in_strand.contains(props.strand.selectable_modification_3p)
             ..geometry = geometry
             ..helix_svg_position_y = props.helix_idx_to_svg_position_y_map[helix_3p.idx]!
             ..retain_strand_color_on_selection = props.retain_strand_color_on_selection
@@ -117,8 +113,7 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
       }
 
       if (ss_with_mod is Domain) {
-        if (!props.only_display_selected_helices ||
-            props.side_selected_helix_idxs!.contains(ss_with_mod.helix)) {
+        if (!props.only_display_selected_helices || props.side_selected_helix_idxs!.contains(ss_with_mod.helix)) {
           // int ss_dna_idx = dna_idx_mod - dna_index_5p_end_of_ss_with_mod;
           // int offset = ss_with_mod.substrand_dna_idx_to_substrand_offset(ss_dna_idx, ss_with_mod.forward);
           Helix helix = props.helices[ss_with_mod.helix]!;

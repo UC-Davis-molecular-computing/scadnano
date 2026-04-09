@@ -75,11 +75,8 @@ abstract class Address with BuiltJsonSerializable implements Built<Address, Addr
 abstract class AddressDifference
     with BuiltJsonSerializable
     implements Built<AddressDifference, AddressDifferenceBuilder> {
-  factory AddressDifference({
-    required int helix_idx_delta,
-    required int offset_delta,
-    required bool forward_delta,
-  }) = _$AddressDifference._;
+  factory AddressDifference({required int helix_idx_delta, required int offset_delta, required bool forward_delta}) =
+      _$AddressDifference._;
 
   factory AddressDifference.from([void Function(AddressDifferenceBuilder) updates]) = _$AddressDifference;
 
