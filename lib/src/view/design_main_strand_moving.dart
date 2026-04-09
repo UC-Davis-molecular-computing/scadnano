@@ -131,11 +131,13 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
     var adj_helix_svg_y = props.helix_idx_to_svg_position_map[adj_helix.idx]!.y;
 
     var attached_end_svg = util_state.compute_extension_attached_end_svg(
-      ext, adj_dom, adj_helix, adj_helix_svg_y, props.geometry,
+      ext,
+      adj_dom,
+      adj_helix,
+      adj_helix_svg_y,
+      props.geometry,
     );
-    var free_end_svg = util_state.compute_extension_free_end_svg(
-      attached_end_svg, ext, adj_dom, props.geometry,
-    );
+    var free_end_svg = util_state.compute_extension_free_end_svg(attached_end_svg, ext, adj_dom, props.geometry);
 
     String classname =
         (is_5p ? 'five-prime-end-moving' : 'three-prime-end-moving') + (props.allowable ? '' : ' disallowed-end');
@@ -166,12 +168,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
     if (strand_moved.has_5p_extension) {
       Extension ext = strand_moved.substrands.first as Extension;
       var attached_end_svg = start_svg;
-      var free_end_svg = util_state.compute_extension_free_end_svg(
-        attached_end_svg,
-        ext,
-        domain_first,
-        props.geometry,
-      );
+      var free_end_svg = util_state.compute_extension_free_end_svg(attached_end_svg, ext, domain_first, props.geometry);
       path_cmds.add('M ${free_end_svg.x} ${free_end_svg.y}');
       path_cmds.add('L ${attached_end_svg.x} ${attached_end_svg.y}');
     } else {
@@ -251,12 +248,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
         last_helix_svg_y,
         props.geometry,
       );
-      var free_end_svg = util_state.compute_extension_free_end_svg(
-        attached_end_svg,
-        ext,
-        last_dom,
-        props.geometry,
-      );
+      var free_end_svg = util_state.compute_extension_free_end_svg(attached_end_svg, ext, last_dom, props.geometry);
       path_cmds.add('L ${free_end_svg.x} ${free_end_svg.y}');
     }
 

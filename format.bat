@@ -1,1 +1,1 @@
-dart format -l 110 .
+dart format -l 120 .
