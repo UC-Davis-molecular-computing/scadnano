@@ -221,7 +221,7 @@ TextElement create_portable_text(TextContentElement text_ele, int j) {
   }
   char_ele.setAttribute("x", pos.x.toString());
   char_ele.setAttribute("y", pos.y.toString());
-  char_ele.setAttribute("transform", "util_state.rotate(${rot} ${pos.x} ${pos.y})");
+  char_ele.setAttribute("transform", "rotate(${rot} ${pos.x} ${pos.y})");
   return char_ele;
 }
 
@@ -247,7 +247,7 @@ RectElement create_portable_rect(RectElement ele) {
     if (item.angle != 0) {
       portableEle.setAttribute(
         "transform",
-        "util_state.rotate(${item.angle} ${pos.x! + pos.width! / 2} ${pos.y! + pos.height! / 2})",
+        "rotate(${item.angle} ${pos.x! + pos.width! / 2} ${pos.y! + pos.height! / 2})",
       );
     }
   }

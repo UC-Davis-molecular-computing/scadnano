@@ -172,7 +172,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
               pos // TODO: why doesn't this the overreact analyzer error since pos is required?
           ..color = color
           ..forward = forward
-          ..transform = 'util_state.rotate(${rotation_degrees})'
+          ..transform = 'rotate(${rotation_degrees})'
           ..id_ = dna_end.id
           ..key = 'nonmoving-end';
 
@@ -184,7 +184,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
           ..color = color
           ..forward = forward
           ..is_5p = props.is_5p
-          ..transform = 'util_state.rotate(${rotation_degrees})'
+          ..transform = 'rotate(${rotation_degrees})'
           ..svg_position_y = props.helix_svg_position.y
           ..key = 'moving-end';
 

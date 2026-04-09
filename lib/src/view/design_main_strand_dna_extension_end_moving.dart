@@ -102,8 +102,8 @@ class ExtensionEndMovingComponent extends UiComponent2<ExtensionEndMovingProps> 
       props.geometry!,
     );
     var rotation_degrees = util_state.compute_end_rotation(display_angle.$2, props.forward!, props.is_5p!);
-    // https://stackoverflow.com/questions/15138801/util_state.rotate-rectangle-around-its-own-center-in-svg
-    end_props = end_props..transform = "util_state.rotate($rotation_degrees)";
+    // https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-center-in-svg
+    end_props = end_props..transform = "rotate($rotation_degrees)";
     return end_props();
   }
 }

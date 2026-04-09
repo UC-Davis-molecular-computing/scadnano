@@ -25,8 +25,11 @@ the [issues page](https://github.com/UC-Davis-molecular-computing/scadnano/issue
     - [Making contributions](#making-contributions)
         - [Cloning](#cloning)
         - [Installing Dart](#installing-dart)
-        - [Installing `webdev`](#installing-webdev)
+        - [Installing `webdev` and `melos`](#installing-webdev-and-melos)
         - [Running a Local Server](#running-a-local-server)
+            - [Melos scripts](#melos-scripts)
+            - [Troubleshooting](#troubleshooting)
+            - [Benefits of dartdevc](#benefits-of-dartdevc)
         - [Running Tests](#running-tests)
         - [Formatting Dart code](#formatting-dart-code)
         - [Building](#building)
@@ -541,12 +544,15 @@ Built test:test.
 00:11 +491 ~2: All tests passed!
 ```
 
-### Installing `webdev`
+### Installing `webdev` and `melos`
 
-`webdev` is used to run a local server for running scadnano in your browser for testing. Install it with:
+`webdev` is used to run a local server for running scadnano in your browser for testing.
+`melos` is used to orchestrate `build_runner` commands across workspace packages.
+Install both with:
 
 ```
 dart pub global activate webdev
+dart pub global activate melos
 ```
 
 Note that often a message like this appears:
@@ -557,34 +563,61 @@ You can fix that by adding that directory to your system's "Path" environment va
 A web search for "configure windows path" will show you how.
 ```
 
-So you may need to add the installation location of `webdev` to your PATH environment variable.
+So you may need to add the installation location of `webdev` and `melos` to your PATH environment variable.
 
 ### Running a Local Server
 
-Run
+Running a local development server requires two terminals:
 
+**Terminal 1** — watch sub-packages for `.g.dart` regeneration:
+```
+dart run melos run watch
+```
+
+**Terminal 2** — serve the web app:
 ```
 webdev serve
 ```
 
-in the top-level `scadnano` directory (the `scadnano_view_middleware` package) to compile your code
-with the [Dart dev compiler](https://dart.dev/tools/dartdevc)
-(dartdevc) and start up a [local
-server](https://dart.dev/tools/webdev#serve).
+`webdev serve` compiles all Dart code to JavaScript and runs code generation (`.g.dart` files) for the root
+package (`scadnano_view_middleware`). However, it does **not** regenerate `.g.dart` files inside sub-packages.
+That is what `dart run melos run watch` handles: it runs `build_runner watch` inside `scadnano_state_actions`
+(the only sub-package with `built_value` code generation) so that `.g.dart` files there are regenerated
+automatically when you edit `built_value` classes.
 
-**Build times:** The first compilation will take 30+ seconds, as long as several minutes on older machines, 
-because all `.g.dart` files must be generated from scratch. 
+If you are only editing files in the root package (view/middleware) and not changing `built_value` classes
+in sub-packages, you can run `webdev serve` alone.
+
+**Build times:** The first compilation will take 30+ seconds, as long as several minutes on older machines,
+because all `.g.dart` files must be generated from scratch.
 After that, incremental builds should take only a few seconds (~2-3s on faster machines) thanks to the
 [multiple-package structure](#why-multiple-packages). If incremental builds are unexpectedly slow, try running
 `./clean.sh` to clear stale caches.
 
-Sometimes it may be necessary to clean out the generated files and cache if this has an error. See the file
-`clean.sh`, which has this line: `dart run build_runner clean` that must be run in each package (top-level,
-`scadnano_state_actions`, and `scadnano_reducers`). Also see `remove_g.sh`, which removes all
-`.g.dart` files from the project, which can also help to fix compilation errors.
+#### Melos scripts
 
-If that does not work, try `dart run build_runner build --delete-conflicting-outputs`, and then run
-`webdev serve`.
+The project uses [melos](https://melos.invertase.dev/) to orchestrate commands across the workspace packages.
+Melos is configured in the root [pubspec.yaml](pubspec.yaml) under the `melos:` key. Available scripts:
+
+- `dart run melos run generate` — Build `.g.dart` files in sub-packages (one-time).
+- `dart run melos run watch` — Watch and rebuild `.g.dart` files in sub-packages continuously.
+- `dart run melos run serve` — Run `webdev serve` for the web app.
+
+You can also build all sub-packages at once without melos using:
+
+```
+dart run build_runner build --workspace
+```
+
+#### Troubleshooting
+
+Sometimes it may be necessary to clean out the generated files and cache if this has an error. See the file
+`clean.sh` (or `clean.bat`), which runs `dart run build_runner clean` in each package and removes all
+`.g.dart` files. Also see `remove_g.sh` (or `remove_g.bat`), which removes all `.g.dart` files from the
+project, which can also help to fix compilation errors.
+
+If that does not work, try `dart run build_runner build --workspace --delete-conflicting-outputs`, and then
+run `webdev serve`.
 
 Running `webdev serve --release` will compile the project in production mode (instead of development mode),
 which is claimed to be faster in principle if you are not doing development and just want to run scadnano
@@ -603,7 +636,7 @@ the code, then as a last resort, try running `./clean.sh`. This will clear out c
 files, which can sometimes become stale and need to be regenerated. If you run `./clean.sh`, and the project
 still does not compile, then it is a genuine syntax error that needs to be fixed.
 
-There are a couple benefits of using `webdev serve`:
+#### Benefits of dartdevc
 
 1. Unlike the [dart2js](https://dart.dev/tools/dart2js)
    compiler, dartdevc supports incremental compilation, so

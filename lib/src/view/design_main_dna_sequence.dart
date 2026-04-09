@@ -152,7 +152,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       ..y = '$y'
       ..textLength = '$text_length'
       // ..letterSpacing = '${(text_length - charWidth * seq_to_draw.length) / (seq_to_draw.length - 1)}'
-      ..transform = 'util_state.rotate(${rotate_degrees} ${rotate_x} ${rotate_y})'
+      ..transform = 'rotate(${rotate_degrees} ${rotate_x} ${rotate_y})'
       ..dy = '$dy')(seq_to_draw);
   }
 
@@ -369,7 +369,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
 //        'class': 'dna-base',
 //        'x': '${pos.x}',
 //        'y': '${pos.y}',
-//        'transform': 'util_state.rotate(${rotate_degrees} ${rotate_x} ${rotate_y})',
+//        'transform': 'rotate(${rotate_degrees} ${rotate_x} ${rotate_y})',
 //        'dy': dy,
 //      };
 //      seq_group.children.add(base_elt);
