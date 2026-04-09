@@ -1,4 +1,5 @@
 import 'dart:html';
+import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
@@ -7,6 +8,7 @@ import 'pure_component.dart';
 import 'design_main_strand_loopout.dart';
 import 'transform_by_helix_group.dart';
 import 'package:scadnano_state_actions/src/state/loopout.dart';
+import 'package:scadnano_state_actions/src/state/extension.dart';
 import 'package:scadnano_state_actions/src/state/group.dart';
 import 'package:scadnano_reducers/src/reducers/strands_reducer.dart';
 import 'package:scadnano_state_actions/src/state/domain.dart';
@@ -16,7 +18,10 @@ import 'package:scadnano_state_actions/src/state/helix.dart';
 import 'package:scadnano_state_actions/src/state/strand.dart';
 import '../view/design_main_strand_dna_end_moving.dart';
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
+import '3p_end.dart';
+import '5p_end.dart';
 import 'design_main_strand_paths.dart';
 
 part 'design_main_strand_moving.over_react.g.dart';
@@ -78,7 +83,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
       ..className = 'strand-moving'
       ..transform = transform_of_helix2(props, first_domain_moved.helix))([
       _draw_strand_lines_single_path(strand_moved),
-      if (!strand_moved.circular)
+      if (!strand_moved.circular && !strand_moved.has_5p_extension)
         (EndMoving()
           ..helix = first_helix_moved
           ..geometry = props.geometry
@@ -95,7 +100,9 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
                   .offset_inclusive // + props.delta_offset
           ..svg_position_y = props.helix_idx_to_svg_position_map[first_helix_moved.idx]!.y
           ..key = 'end-5p')(),
-      if (!strand_moved.circular)
+      if (!strand_moved.circular && strand_moved.has_5p_extension)
+        _build_extension_end_moving(strand_moved, is_5p: true),
+      if (!strand_moved.circular && !strand_moved.has_3p_extension)
         (EndMoving()
           ..helix = last_helix_moved
           ..geometry = props.geometry
@@ -112,7 +119,34 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
                   .offset_inclusive // + props.delta_offset
           ..svg_position_y = props.helix_idx_to_svg_position_map[last_helix_moved.idx]!.y
           ..key = 'end-3p')(),
+      if (!strand_moved.circular && strand_moved.has_3p_extension)
+        _build_extension_end_moving(strand_moved, is_5p: false),
     ]);
+  }
+
+  ReactElement _build_extension_end_moving(Strand strand_moved, {required bool is_5p}) {
+    Extension ext = (is_5p ? strand_moved.substrands.first : strand_moved.substrands.last) as Extension;
+    Domain adj_dom = is_5p ? strand_moved.first_domain : strand_moved.last_domain;
+    Helix adj_helix = props.helices[adj_dom.helix]!;
+    var adj_helix_svg_y = props.helix_idx_to_svg_position_map[adj_helix.idx]!.y;
+
+    var attached_end_svg = util_state.compute_extension_attached_end_svg(
+      ext, adj_dom, adj_helix, adj_helix_svg_y, props.geometry,
+    );
+    var free_end_svg = util_state.compute_extension_free_end_svg(
+      attached_end_svg, ext, adj_dom, props.geometry,
+    );
+
+    String classname =
+        (is_5p ? 'five-prime-end-moving' : 'three-prime-end-moving') + (props.allowable ? '' : ' disallowed-end');
+    EndEitherPrimeProps end_props = is_5p ? End5Prime() : End3Prime();
+    end_props =
+        end_props
+          ..classname = classname
+          ..pos = free_end_svg
+          ..color = props.strand.color
+          ..forward = adj_dom.forward;
+    return (end_props..key = is_5p ? 'end-5p-ext' : 'end-3p-ext')();
   }
 
   ReactElement? _draw_strand_lines_single_path(Strand strand_moved) {
@@ -126,7 +160,23 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
       helix_svg_position_y,
       props.geometry,
     );
-    var path_cmds = ['M ${start_svg.x} ${start_svg.y}'];
+    var path_cmds = <String>[];
+
+    // Handle 5' extension: start path from extension free end, draw line to attached end
+    if (strand_moved.has_5p_extension) {
+      Extension ext = strand_moved.substrands.first as Extension;
+      var attached_end_svg = start_svg;
+      var free_end_svg = util_state.compute_extension_free_end_svg(
+        attached_end_svg,
+        ext,
+        domain_first,
+        props.geometry,
+      );
+      path_cmds.add('M ${free_end_svg.x} ${free_end_svg.y}');
+      path_cmds.add('L ${attached_end_svg.x} ${attached_end_svg.y}');
+    } else {
+      path_cmds.add('M ${start_svg.x} ${start_svg.y}');
+    }
 
     var substrands = strand_moved.substrands;
     for (int i = 0; i < substrands.length; i++) {
@@ -186,6 +236,28 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
         path_cmds.add(loopout_path_desc);
         helix = props.helices[next_domain.helix]!; // need to update this for next domain line to be draw
       }
+      // Extension substrands at the beginning/end are handled outside the loop
+    }
+
+    // Handle 3' extension: draw line from last domain 3' end to extension free end
+    if (strand_moved.has_3p_extension) {
+      Extension ext = strand_moved.substrands.last as Extension;
+      Domain last_dom = strand_moved.last_domain;
+      var last_helix = props.helices[last_dom.helix]!;
+      var last_helix_svg_y = props.helix_idx_to_svg_position_map[last_dom.helix]!.y;
+      var attached_end_svg = last_helix.svg_base_pos(
+        last_dom.offset_3p,
+        last_dom.forward,
+        last_helix_svg_y,
+        props.geometry,
+      );
+      var free_end_svg = util_state.compute_extension_free_end_svg(
+        attached_end_svg,
+        ext,
+        last_dom,
+        props.geometry,
+      );
+      path_cmds.add('L ${free_end_svg.x} ${free_end_svg.y}');
     }
 
     var classname = constants.css_selector_domain;
