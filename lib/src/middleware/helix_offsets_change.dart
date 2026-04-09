@@ -1,10 +1,10 @@
 import 'dart:html';
 
 import 'package:redux/redux.dart';
-import '../state/design.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
 
-import '../actions/actions.dart' as actions;
-import '../state/app_state.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 
 /// Check whether user wants to remove helix that has strands on it.
 helix_change_offsets_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {

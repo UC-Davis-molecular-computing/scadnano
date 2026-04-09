@@ -7,20 +7,21 @@ import 'package:react/react.dart';
 import 'package:built_collection/built_collection.dart';
 
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/extension.dart';
-import 'package:scadnano/src/state/geometry.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/loopout.dart';
-import 'package:scadnano/src/state/position3d.dart';
-import 'package:scadnano/src/state/strand.dart';
-import '../state/app_state.dart';
-import '../actions/actions.dart' as actions;
-import '../state/helix.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/extension.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/loopout.dart';
+import 'package:scadnano_state_actions/src/state/position3d.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/helix.dart';
 import '../util.dart' as util;
 import 'export_cadnano_file.dart' as export_cadnano;
-import '../constants.dart' as constants;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 oxdna_export_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   if (action is actions.OxdnaExport || action is actions.OxviewExport) {
@@ -451,7 +452,7 @@ const NM_TO_OX_UNITS = 1.0 / 0.8518;
     // the Python package equivalent
     position_in_helix_group = helix.position(geometry);
   } else {
-    position_in_helix_group = util.grid_position_to_position3d(helix.grid_position!, grid, geometry);
+    position_in_helix_group = util_state.grid_position_to_position3d(helix.grid_position!, grid, geometry);
   }
 
   var position_in_helix_group_rotated =

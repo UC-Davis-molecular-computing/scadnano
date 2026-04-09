@@ -4,14 +4,15 @@ import 'dart:html';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/design.dart';
-import '../state/app_ui_state_storables.dart';
-import '../serializers.dart';
-import '../state/local_storage_design_choice.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/app_ui_state_storables.dart';
+import 'package:scadnano_state_actions/src/serializers.dart';
+import 'package:scadnano_state_actions/src/state/local_storage_design_choice.dart';
 
-import '../json_serializable.dart';
-import '../state/app_state.dart';
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/json_serializable.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/storable.dart';
 import '../util.dart' as util;
 import 'local_storage.dart';
 

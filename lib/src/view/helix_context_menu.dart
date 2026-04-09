@@ -2,15 +2,16 @@ import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
 
-import '../state/context_menu.dart';
-import '../state/dialog.dart';
-import '../state/grid.dart';
-import '../state/grid_position.dart';
-import '../state/position3d.dart';
-import '../state/helix.dart';
+import 'package:scadnano_state_actions/src/state/context_menu.dart';
+import 'package:scadnano_state_actions/src/state/dialog.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/grid_position.dart';
+import 'package:scadnano_state_actions/src/state/position3d.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
 import '../app.dart';
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import '../util.dart' as util;
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 const SET_HELIX_TICK_MARKS_SHORT_DESCRIPTION = "set helix tick marks";
 
@@ -20,7 +21,7 @@ BuiltList<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_app
     int min_set_by_domain_idx = 1;
     int apply_to_all_idx = 2;
 
-    var items = util.FixedList<DialogItem>(3);
+    var items = util_state.FixedList<DialogItem>(3);
     items[min_idx] = DialogInteger(label: 'minimum', value: helix.min_offset);
     items[min_set_by_domain_idx] = DialogCheckbox(label: 'set minimum by existing domains', value: false);
     items[apply_to_all_idx] = DialogCheckbox(label: 'apply to all helices', value: helix_change_apply_to_all);
@@ -68,7 +69,7 @@ BuiltList<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_app
     int apply_to_all_idx = 2;
     int take_max_of_all_idx = 3;
 
-    var items = util.FixedList<DialogItem>(4);
+    var items = util_state.FixedList<DialogItem>(4);
     items[max_idx] = DialogInteger(label: 'maximum', value: helix.max_offset);
     items[max_set_by_domain_idx] = DialogCheckbox(label: 'set maximum by existing domains', value: false);
     items[apply_to_all_idx] = DialogCheckbox(label: 'apply to all helices', value: helix_change_apply_to_all);
@@ -177,7 +178,7 @@ BuiltList<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_app
     int apply_to_all_idx = 7;
     int apply_to_some_idx = 8;
     int apply_to_some_helices_idx = 9;
-    var items = util.FixedList<DialogItem>(10);
+    var items = util_state.FixedList<DialogItem>(10);
     items[regular_spacing_checkbox_idx] = DialogCheckbox(
       label: 'regular spacing',
       value: helix.has_major_tick_distance,
@@ -201,7 +202,7 @@ BuiltList<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_app
     );
     items[major_ticks_distances_idx] = DialogText(
       label: 'distances (space-separated)',
-      value: helix.major_ticks == null ? '' : util.deltas(helix.major_ticks!).join(' '),
+      value: helix.major_ticks == null ? '' : util_state.deltas(helix.major_ticks!).join(' '),
     );
     items[apply_to_all_idx] = DialogCheckbox(label: 'apply to all', value: helix_change_apply_to_all);
     items[apply_to_some_idx] = DialogCheckbox(label: 'apply to some', value: helix_change_apply_to_all);

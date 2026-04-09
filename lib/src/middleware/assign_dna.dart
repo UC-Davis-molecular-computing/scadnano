@@ -1,10 +1,10 @@
 import 'dart:html';
 
 import 'package:redux/redux.dart';
-import '../reducers/assign_or_remove_dna_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/assign_or_remove_dna_reducer.dart';
 
-import '../actions/actions.dart' as actions;
-import '../state/app_state.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 
 assign_dna_middleware(Store<AppState> store, action, NextDispatcher next) {
   if (action is actions.AssignDNA &&

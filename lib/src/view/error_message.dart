@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:html';
 
-import '../constants.dart' as constants;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 
 class ErrorMessageComponent {
   DivElement root_element;

@@ -4,17 +4,18 @@ import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
 
-import '../state/context_menu.dart';
-import '../state/geometry.dart';
-import '../state/edit_mode.dart';
-import '../state/mouseover_data.dart';
-import '../state/helix.dart';
+import 'package:scadnano_state_actions/src/state/context_menu.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/edit_mode.dart';
+import 'package:scadnano_state_actions/src/state/mouseover_data.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
 import '../app.dart';
 import 'pure_component.dart';
-import '../actions/actions.dart' as actions;
-import '../constants.dart' as constants;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import '../util.dart' as util;
 import 'helix_context_menu.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_helix.over_react.g.dart';
 
@@ -105,7 +106,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
               props.geometry,
               helix_svg_position,
             );
-            app.dispatch(actions.StrandCreateStart(address: address, color: util.color_cycler.next()));
+            app.dispatch(actions.StrandCreateStart(address: address, color: util_state.color_cycler.next()));
           }
         }
         ..onMouseLeave = ((_) => util.mouse_leave_update_mouseover())
@@ -160,7 +161,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         actions.ContextMenuShow(
           context_menu: ContextMenu(
             items: context_menu_helix(props.helix, props.helix_change_apply_to_all),
-            position: util.from_point_num(event.page),
+            position: util_state.from_point_num(event.page),
           ),
         ),
       );

@@ -5,24 +5,26 @@ import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
-import 'package:scadnano/src/state/modification_type.dart';
-import 'package:scadnano/src/state/substrand.dart';
+import 'package:scadnano_state_actions/src/state/modification_type.dart';
+import 'package:scadnano_state_actions/src/state/substrand.dart';
 
-import '../state/strand.dart';
-import '../state/address.dart';
-import '../state/geometry.dart';
-import '../state/group.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/address.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
 import '../app.dart';
-import '../state/helix.dart';
-import '../state/domain.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
 import '../util.dart' as util;
-import '../state/selectable.dart';
+import 'package:scadnano_state_actions/src/state/selectable.dart';
+import 'selection_handler.dart';
 import 'design_main_strand.dart';
 import 'design_main_strand_dna_end.dart';
 import 'pure_component.dart';
-import '../state/context_menu.dart';
-import '../actions/actions.dart' as actions;
-import '../constants.dart' as constants;
+import 'package:scadnano_state_actions/src/state/context_menu.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_strand_domain.over_react.g.dart';
 
@@ -150,7 +152,7 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with
     if (event.button == constants.LEFT_CLICK_BUTTON) {
       if (domain_selectable(props.domain)) {
         // select/deselect
-        props.domain.handle_selection_mouse_down(event);
+        handle_selection_mouse_down(props.domain, event);
         // set up drag detection for moving domains
         var address = util.find_closest_address(
           event,
@@ -182,7 +184,7 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with
           app.state.ui_state.domains_move != null ||
           app.state.ui_state.dna_ends_are_moving;
       if (domain_selectable(props.domain) && !currently_moving) {
-        props.domain.handle_selection_mouse_up(event_syn.nativeEvent);
+        handle_selection_mouse_up(props.domain, event_syn.nativeEvent);
       }
     }
   }
@@ -239,7 +241,7 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with
       var items = props.context_menu_strand(props.strand, domain: props.domain, address: address).build();
       app.dispatch(
         actions.ContextMenuShow(
-          context_menu: ContextMenu(items: items, position: util.from_point_num(event.page)),
+          context_menu: ContextMenu(items: items, position: util_state.from_point_num(event.page)),
         ),
       );
     }

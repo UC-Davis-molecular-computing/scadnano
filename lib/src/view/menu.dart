@@ -4,29 +4,30 @@ import 'package:built_collection/built_collection.dart';
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/state/base_pair_display_type.dart';
+import 'package:scadnano_state_actions/src/state/base_pair_display_type.dart';
 
 import 'react_bootstrap.dart';
 
-import '../dna_file_type.dart';
-import '../json_serializable.dart';
+import 'package:scadnano_state_actions/src/dna_file_type.dart';
+import 'package:scadnano_state_actions/src/json_serializable.dart';
 import '../middleware/local_storage.dart';
 import '../middleware/system_clipboard.dart';
-import '../state/selectable.dart';
-import '../state/design.dart';
-import '../state/dna_end.dart';
-import '../state/export_dna_format_strand_order.dart';
-import '../state/geometry.dart';
-import '../state/undo_redo.dart';
+import 'package:scadnano_state_actions/src/state/selectable.dart';
+import 'selection_handler.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/dna_end.dart';
+import 'package:scadnano_state_actions/src/state/export_dna_format_strand_order.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/undo_redo.dart';
 import '../middleware/export_dna_sequences.dart' as export_dna_sequences;
-import '../state/dialog.dart';
-import '../state/example_designs.dart';
-import '../state/export_dna_format.dart';
-import '../state/grid.dart';
-import '../state/local_storage_design_choice.dart';
+import 'package:scadnano_state_actions/src/state/dialog.dart';
+import 'package:scadnano_state_actions/src/state/example_designs.dart';
+import 'package:scadnano_state_actions/src/state/export_dna_format.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/local_storage_design_choice.dart';
 import '../view/menu_number.dart';
 import '../view/redraw_counter_component_mixin.dart';
-import '../constants.dart' as constants;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import '../view/menu_boolean.dart';
 import '../view/menu_dropdown_item.dart';
 import '../view/menu_dropdown_right.dart';
@@ -34,9 +35,10 @@ import '../view/menu_form_file.dart';
 import 'design.dart';
 
 import '../app.dart';
-import '../actions/actions.dart' as actions;
-import '../state/app_state.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 import '../util.dart' as util;
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'menu.over_react.g.dart';
 
@@ -1584,7 +1586,7 @@ Future<void> ask_for_autobreak_parameters() async {
   int min_length_idx = 1;
   int max_length_idx = 2;
   int min_distance_to_xover_idx = 3;
-  var items = util.FixedList<DialogItem>(4);
+  var items = util_state.FixedList<DialogItem>(4);
   items[target_length_idx] = DialogInteger(label: 'target length', value: 49);
   items[min_length_idx] = DialogInteger(label: 'min length', value: 15);
   items[max_length_idx] = DialogInteger(label: 'max length', value: 60);
@@ -1624,7 +1626,7 @@ Future<void> ask_for_geometry(Geometry? geometry) async {
   int bases_per_turn_idx = 3;
   int minor_groove_angle_idx = 4;
 
-  var items = util.FixedList<DialogItem>(5);
+  var items = util_state.FixedList<DialogItem>(5);
   items[rise_per_base_pair_idx] = DialogFloat(
     label: 'rise per base pair (nm)',
     value: geometry.rise_per_base_pair,

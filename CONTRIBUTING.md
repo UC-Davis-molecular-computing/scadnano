@@ -14,6 +14,8 @@ the [issues page](https://github.com/UC-Davis-molecular-computing/scadnano/issue
     - [What should I know before I get started?](#what-should-i-know-before-i-get-started)
         - [Dart](#dart)
         - [Packages](#packages)
+            - [Key libraries](#key-libraries)
+            - [Why multiple packages?](#why-multiple-packages)
     - [Required reading and intro to scadnano architecture](#required-reading-and-intro-to-scadnano-architecture)
         - [Required reading: Dart](#required-reading-dart)
         - [git](#git)
@@ -43,31 +45,79 @@ scadnano is written in [Dart](https://dart.dev/). You will need to
 
 ### Packages
 
-scadnano uses many packages, all of which can be found in the
-[pubspec.yaml](pubspec.yaml) file.
-These packages can be installed using [`pub get`](https://dart.dev/guides/packages#getting-packages).
+The scadnano codebase is split into multiple Dart packages to minimize incremental build times
+(see [Why multiple packages?](#why-multiple-packages) below for the reasoning):
 
-Here's a list of the big ones:
+1. **[`scadnano_state_actions`](scadnano_state_actions/)** — State types, actions, and serializers.
+   Contains the [state](scadnano_state_actions/lib/src/state) classes (e.g., `AppState`, `Design`, `Strand`),
+   [actions](scadnano_state_actions/lib/src/actions.dart), and
+   [serializers](scadnano_state_actions/lib/src/serializers.dart).
+   This is the lowest-level package with no dependency on the other two.
 
-- [OverReact](https://pub.dev/packages/over_react) - A Dart wrapper
+2. **[`scadnano_reducers`](scadnano_reducers/)** — Reducers only.
+   Contains all [reducer](scadnano_reducers/lib/src/reducers) functions.
+   Depends on `scadnano_state_actions` (to know about state types and actions) but not on the main package.
+
+3. **`scadnano_view_middleware`** (the **repository root directory**) — View and middleware.
+   Unlike the other two packages, this one does **not** live in a subdirectory named after it.
+   It lives at the repo root because `webdev serve` requires `web/` and `pubspec.yaml` to be in the
+   current working directory. Its package name (set by the `name:` field in the root
+   [pubspec.yaml](pubspec.yaml)) is `scadnano_view_middleware`, so imports use
+   `package:scadnano_view_middleware/...`.
+   Contains the [view](lib/src/view) components and [middleware](lib/src/middleware).
+   Depends on both `scadnano_state_actions` and `scadnano_reducers`.
+
+The dependency chain is: `scadnano_state_actions` → `scadnano_reducers` → `scadnano_view_middleware`.
+
+The three packages form a [Dart workspace](https://dart.dev/tools/pub/workspaces), configured in the root
+`pubspec.yaml`. After cloning, a single `dart pub get` in the repo root resolves dependencies for all three
+packages at once.
+
+#### Key libraries
+
+- [OverReact](https://pub.dev/packages/over_react) — A Dart wrapper
   around the JavaScript [React](https://reactjs.org/) and [React Redux](https://react-redux.js.org/)
-  libraries and is responsible for the [_view_](lib/src/view)
-  component of the application.
+  libraries, responsible for the [view](lib/src/view) component of the application.
 
-- [redux.dart](https://pub.dev/packages/redux) - A Dart wrapper
-  around the JavaScript [Redux](https://redux.js.org/) and is
-  responsible for the [_state_](lib/src/state),
-  [_reducers_](lib/src/reducers), [_action_](lib/src/actions),
-  and [_middleware_](lib/src/middleware)
-  components of the application.
+- [redux.dart](https://pub.dev/packages/redux) — A Dart wrapper
+  around the JavaScript [Redux](https://redux.js.org/), responsible for the
+  [state](scadnano_state_actions/lib/src/state),
+  [reducers](scadnano_reducers/lib/src/reducers),
+  [actions](scadnano_state_actions/lib/src/actions.dart),
+  and [middleware](lib/src/middleware) components of the application.
 
 - [built_value](https://pub.dev/packages/built_value),
-  [built_collection](https://pub.dev/packages/built_collection) -
+  [built_collection](https://pub.dev/packages/built_collection) —
   Immutable values and collections to aid with the [immutability
-  required by Redux](https://redux.js.org/faq/immutable-data#why-is-immutability-required-by-redux)
+  required by Redux](https://redux.js.org/faq/immutable-data#why-is-immutability-required-by-redux).
 
-There are many more, but this ones listed here should be sufficient
+There are many more, but the ones listed here should be sufficient
 to implement most features.
+
+#### Why multiple packages?
+
+The `built_value` library uses *code generation* — on compilation, extra Dart code (`.g.dart` files) is
+generated that implements features like serialization and equality. The tool that runs code generation,
+`build_runner`, caches the results of code generation. Specifically, it caches a digest of each source file's
+*transitive imports* (i.e., everything the file imports, and everything those files import, etc.).
+
+**Crucially, `build_runner` treats package boundaries as cache boundaries.** When a file in package A changes,
+`build_runner` does not need to re-examine or regenerate code for files in package B, even if package B depends
+on package A, as long as package A's *public API* hasn't changed. However, within a single package, changing
+any source file can invalidate the transitive import digests of many other files in that package, causing
+`build_runner` to regenerate code for all of them.
+
+When the entire codebase was a single package, changing *any* file could trigger regeneration of *all*
+`.g.dart` files — including `actions.g.dart` (which is ~38,000 lines). This made incremental builds take
+20–30+ seconds.
+
+By splitting into multiple packages:
+- Changing a **view** or **middleware** file only triggers code generation in `scadnano_view_middleware` (~2–3s).
+- Changing a **reducer** file only triggers code generation in `scadnano_reducers` (~2–3s).
+- Changing a **state** or **action** file only triggers code generation in `scadnano_state_actions` (~2–3s).
+
+The first compilation after cloning (or after running `clean.sh`) will still take 20–30+ seconds, because all
+`.g.dart` files must be generated from scratch. But subsequent incremental builds should take only ~2–3 seconds.
 
 ## Required reading and intro to scadnano architecture
 
@@ -184,12 +234,13 @@ the bug in issue [#761](https://github.com/UC-Davis-molecular-computing/scadnano
 memoized getter `Helix.calculate_major_ticks` returning a `List<int>` instead of a `BuiltList<int>`.
 
 Another disadvantage of built_value is that it (as well as OverReact) uses *code generation* (on compiling,
-first some extra code is generated that implement many of the features), and there are so many built_value and
-OverReact classes that the compilation time for the project, at the time of this writing, is 20 seconds
-minimum, and often more like 30-70 seconds, depending on your system. So although Dart's dartdevc incremental
-compiler is nice in allowing you to make one change to code, save it, and have dartdevc (run through
-`webdev serve` when developing locally) re-run and show the changed code in the browser (after a browser
-refresh), it does take a bit of time.
+first some extra code is generated that implements many of the features), and there are so many built_value and
+OverReact classes that the **first** compilation of the project takes 20–30+ seconds (and often more, depending
+on your system). However, thanks to the [multiple-package structure](#why-multiple-packages) described above,
+subsequent incremental builds should take only ~2–3 seconds, because `build_runner` caches code generation
+results across package boundaries. Dart's dartdevc incremental compiler (run through `webdev serve` when
+developing locally) allows you to make one change to code, save it, refresh your browser, and see the changed
+code quickly.
 
 Another thing to note is that many IDEs and editors come with a static analysis tool that will warn about
 errors. Prior to the code generation running, the analyzer will report many errors, because the code written
@@ -260,10 +311,9 @@ We get into more detail below.
    in order to run. Because it should be immutable, we encode the state (and all of its constituent objects)
    using the built_value and built_collection libraries.
 
-   This is implemented in scadnano as the object `app.state`. Notice that main.dart (in the root directory of
-   the repo) contains a single line of code, `app.start();` (which runs in lib/src/app.dart), which in turn
-   calls `initialize_state()`, which creates a state object (and puts it in something called the "Redux store"
-   so that Redux knows about it).
+   This is implemented in scadnano as the object `app.state`. Notice that web/main.dart contains a single line
+   of code, `app.start();` (which runs in lib/src/app.dart), which in turn calls `initialize_state()`, which
+   creates a state object (and puts it in something called the "Redux store" so that Redux knows about it).
 
    The state (of type `AppState` in scadnano) contains the whole Design describing the design the user is
    viewing/editing. The state also contains all the "UI state". UI state (of type `AppUIState` in scadnano)
@@ -403,7 +453,9 @@ for your operating system.
 <!--TODO: Find a way to use code blocks with syntax highlighting inside <details>-->
 
 <details><summary><strong>Windows</strong></summary>
-First, install <a href="https://chocolatey.org/install">Chocolatey</a> if you haven't already. If <code>choco help</code> shows a help menu for using Chocolatey, then you've set it up correctly.
+First, install <a href="https://chocolatey.org/install">Chocolatey</a> if you haven't already. If `choco help`
+shows a help menu for using Chocolatey, then you've set it up correctly. It is also possible to install Dart with Scoop 
+(`scoop install dart-sdk`), which can be faster than Chocolatey.
 
 Then, open a shell (cmd/Powershell) with Administrative privileges (go to Start type `cmd`, right-click on "
 Command Prompt", or type Powershell and right-click on "Powershell"; in both cases pick "Run as
@@ -453,12 +505,14 @@ sudo apt-get install dart
 
 After installing the Dart SDK, you should see a help menu when you run `dart`.
 
-Once you have installed Dart, install all the Dart dependencies (from the same directory `scadnano` into which
-the project was cloned by git):
+Once you have installed Dart, install all the Dart dependencies (from the repo root directory):
 
 ```
 dart pub get
 ```
+
+This resolves dependencies for all three packages at once, thanks to the
+[Dart workspace](https://dart.dev/tools/pub/workspaces) configuration.
 
 Try running the unit tests like this:
 
@@ -513,13 +567,20 @@ Run
 webdev serve
 ```
 
-in the `scadnano` directory to compile your code
+in the top-level `scadnano` directory (the `scadnano_view_middleware` package) to compile your code
 with the [Dart dev compiler](https://dart.dev/tools/dartdevc)
 (dartdevc) and start up a [local
 server](https://dart.dev/tools/webdev#serve).
 
+**Build times:** The first compilation will take 30+ seconds, as long as several minutes on older machines, 
+because all `.g.dart` files must be generated from scratch. 
+After that, incremental builds should take only a few seconds (~2-3s on faster machines) thanks to the
+[multiple-package structure](#why-multiple-packages). If incremental builds are unexpectedly slow, try running
+`./clean.sh` to clear stale caches.
+
 Sometimes it may be necessary to clean out the generated files and cache if this has an error. See the file
-`clean.sh`, which has this line: `dart run build_runner clean`. Also see `remove_g.sh`, which removes all
+`clean.sh`, which has this line: `dart run build_runner clean` that must be run in each package (top-level,
+`scadnano_state_actions`, and `scadnano_reducers`). Also see `remove_g.sh`, which removes all
 `.g.dart` files from the project, which can also help to fix compilation errors.
 
 If that does not work, try `dart run build_runner build --delete-conflicting-outputs`, and then run
@@ -548,7 +609,7 @@ There are a couple benefits of using `webdev serve`:
    compiler, dartdevc supports incremental compilation, so
    you can edit your Dart files, refresh your browser, and see your
    edits immediately. This speed is possible because dartdevc compiles
-   only updated modules. Note that the first compilation will take the longest.
+   only updated modules. After the first build, incremental builds should take only ~2–3 seconds.
 
 2. dartdevc emits modular
    JavaScript, which allows for debugging with tools such as
@@ -728,14 +789,14 @@ of
 
 - **state:** What is the current state of the program, including not only the Design, but all other aspects
   such as UI state. This is represented by an instance of `AppState`, containing other objects, all defined in
-  the directory lib/src/state.
+  the directory scadnano_state_actions/lib/src/state.
 
 - **view:** What does the visual interface look like, as a function of the model. This is represented by React
   components in the directory lib/src/view.
 
 - **update:** How should the state change in response to something, most typically the user interfacing with
   the view. This is implemented by the function `app_state_reducer` in
-  lib/src/reducers/app_state_reducer.dart.
+  scadnano_reducers/lib/src/reducers/app_state_reducer.dart.
 
 All built_value classes should use the mixin `BuiltJsonSerializable`, which is done by adding
 `with BuiltJsonSerializable`. Read more
@@ -791,19 +852,19 @@ changes to the GitHub repository, which are explained in more detail in the next
    `EditModeChoice` and `LocalStorageDesignChoice`.
 
 4. **create Action class**:
-   In lib/src/actions.dart, create a new Action class representing the new information needed to update the
+   In scadnano_state_actions/lib/src/actions.dart, create a new Action class representing the new information needed to update the
    state. In our example, this is `ModificationFontSizeSet`, and the information needed is the new font size,
    which is a field of this class. It's a strange naming convention, where the verb goes at the end, but it's
    nice when viewing an alphabetized list of all actions (e.g., in an IDE) to see the actions grouped by the
    object they modify. Otherwise, if the action were called `SetModificationFontSize`, and so were others like
    it (i.e., they all begin with the word `Set`), then everything "setting" a field would be grouped together,
-   even though the fields are unrelated. So please following this naming convention (see lib/src/actions.dart
+   even though the fields are unrelated. So please following this naming convention (see scadnano_state_actions/lib/src/actions.dart
    for more examples.)
 
    **WARNING about serialization of built types:** (Note this applies not only to Actions, but any built_value
    type you create.) Although one of the advantages of the built_value library is that it "automatically"
    creates a JSON serialization mechanism, it's not fully automatic. You must add the name of the new Action
-   to the large list of classes at the top of the file /lib/src/serializers.dart, in the annotation
+   to the large list of classes at the top of the file scadnano_state_actions/lib/src/serializers.dart, in the annotation
    `@SerializersFor(`. For some reason this cannot be automated (
    see https://github.com/google/built_value.dart/issues/758). If you don't add this, then
    using [Redux DevTools](https://github.com/Workiva/over_react/blob/master/doc/over_react_redux_documentation.md#using-redux-devtools)
@@ -924,7 +985,7 @@ changes to the GitHub repository, which are explained in more detail in the next
 
 7. **create reducer for updating state in response to Action**:
    This is the code that takes as input the old state and the Action and produces the new state. The top-level
-   reducer is a function called `app_state_reducer` in lib/src/reducers/app_state_reducer.dart. But generally
+   reducer is a function called `app_state_reducer` in scadnano_reducers/lib/src/reducers/app_state_reducer.dart. But generally
    this top-level reducer is not modified directly. Through a series of composition, all reducers are called
    indirectly when `app_state_reducer` is called. The main ones called by `app_state_reducer` are
    `design_reducer`, `design_global_reducer`, `ui_state_local_reducer`, and `ui_state_global_reducer`. See
@@ -936,7 +997,7 @@ changes to the GitHub repository, which are explained in more detail in the next
    field. In this example, we are adding a reducer for `app.state.ui_state.storables.modification_font_size`,
    so for guidance we can look and see what is the reducer for any other field in
    `app.state.ui_state.storables`. Most of them are listed under the function `app_ui_state_storable_reducer`
-   in the file lib/src/reducers/app_ui_state_storable_reducer.dart.
+   in the file scadnano_reducers/lib/src/reducers/app_ui_state_storable_reducer.dart.
 
    Not all reducers follow the same pattern as this. Some only need to access the data they are modifying,
    which we call "local" reducers. Sometimes not even that: when changing
@@ -950,7 +1011,7 @@ changes to the GitHub repository, which are explained in more detail in the next
 
    **CAUTION when writing reducers that change strands:**
    The way the scadnano data is stored, it is necessary to called `strand = strand.initialize();` whenever
-   creating a new strand. Any reducer listed in `strand_part_reducer` in reducers/strands_reducer.dart will
+   creating a new strand. Any reducer listed in `strand_part_reducer` in scadnano_reducers/lib/src/reducers/strands_reducer.dart will
    have this done automatically, but in general, be conservative and, before putting a new strand in a
    design (including one that is the result of modifying an existing strand), replace it with
    `strand.initialize()`. For reducers that only modify a single strand, consider using

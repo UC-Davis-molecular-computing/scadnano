@@ -4,20 +4,21 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
-import 'package:scadnano/src/state/dna_extensions_move.dart';
-import 'package:scadnano/src/state/extension.dart';
-import 'package:scadnano/src/state/geometry.dart';
-import 'package:scadnano/src/state/group.dart';
-import '../state/dna_end.dart';
+import 'package:scadnano_state_actions/src/state/dna_extensions_move.dart';
+import 'package:scadnano_state_actions/src/state/extension.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/dna_end.dart';
 
-import '../state/dna_ends_move.dart';
-import '../state/helix.dart';
+import 'package:scadnano_state_actions/src/state/dna_ends_move.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
 
 import '../app.dart';
 import '3p_end.dart';
 import '5p_end.dart';
 
 import '../util.dart' as util;
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_strand_dna_extension_end_moving.over_react.g.dart';
 
@@ -94,16 +95,16 @@ class ExtensionEndMovingComponent extends UiComponent2<ExtensionEndMovingProps> 
           ..pos = pos
           ..color = props.color!
           ..forward = props.forward!;
-    var display_angle = util.compute_extension_length_and_angle_from_point(
+    var display_angle = util_state.compute_extension_length_and_angle_from_point(
       pos,
       props.attached_end_svg!,
       props.ext!,
       props.ext!.adjacent_domain,
       props.geometry!,
     );
-    var rotation_degrees = util.compute_end_rotation(display_angle.$2, props.forward!, props.is_5p!);
-    // https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-center-in-svg
-    end_props = end_props..transform = "rotate($rotation_degrees)";
+    var rotation_degrees = util_state.compute_end_rotation(display_angle.$2, props.forward!, props.is_5p!);
+    // https://stackoverflow.com/questions/15138801/util_state.rotate-rectangle-around-its-own-center-in-svg
+    end_props = end_props..transform = "util_state.rotate($rotation_degrees)";
     return end_props();
   }
 }

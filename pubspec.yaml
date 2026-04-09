@@ -1,4 +1,4 @@
-name: scadnano
+name: scadnano_view_middleware
 description: A web-based scriptable DNA design tool inspired by cadnano (see https://cadnano.org/ for original cadnano developed by Shawn Douglas).
 #homepage: https://scadnano.org
 #author: David Doty <doty@ucdavis.edu>
@@ -6,7 +6,15 @@ description: A web-based scriptable DNA design tool inspired by cadnano (see htt
 environment:
   sdk: '>=3.7.0 <4.0.0'
 
+workspace:
+  - scadnano_state_actions
+  - scadnano_reducers
+
 dependencies:
+  scadnano_state_actions:
+    path: scadnano_state_actions
+  scadnano_reducers:
+    path: scadnano_reducers
   built_value: ^8.9.0
   built_collection: ^5.1.1
   collection: ^1.15.0-nullsafety.4

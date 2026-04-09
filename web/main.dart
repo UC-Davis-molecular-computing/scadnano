@@ -1,4 +1,4 @@
-import "package:scadnano/scadnano.dart";
+import "package:scadnano_view_middleware/scadnano.dart";
 
 main() {
   app = App();

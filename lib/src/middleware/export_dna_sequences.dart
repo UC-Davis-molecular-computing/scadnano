@@ -1,14 +1,14 @@
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/dialog.dart';
-import 'package:scadnano/src/state/export_dna_format.dart';
-import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
+import 'package:scadnano_state_actions/src/state/dialog.dart';
+import 'package:scadnano_state_actions/src/state/export_dna_format.dart';
+import 'package:scadnano_state_actions/src/state/export_dna_format_strand_order.dart';
 
 import '../app.dart';
-import '../state/strand.dart';
-import '../actions/actions.dart' as actions;
-import '../state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 import '../util.dart' as util;
-import '../util.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 String get_cause(Object e) {
   if (e is Exception) {
@@ -32,7 +32,7 @@ export_dna_sequences_middleware(Store<AppState> store, action, NextDispatcher ne
     strands.removeWhere((strand) => strand.is_scaffold);
 
     String filename = 'cando_sequences.csv';
-    util.BlobType blob_type = util.BlobType.text;
+    util_state.BlobType blob_type = util_state.BlobType.text;
 
     try {
       String result = cando_compatible_csv_export(strands);
@@ -65,7 +65,7 @@ export_dna_sequences_middleware(Store<AppState> store, action, NextDispatcher ne
     }
 
     String filename = 'sequences.' + action.export_dna_format.extension();
-    util.BlobType blob_type = action.export_dna_format.blob_type();
+    util_state.BlobType blob_type = action.export_dna_format.blob_type();
 
     try {
       var result = action.export_dna_format.export(
@@ -124,7 +124,7 @@ Future<void> export_dna() async {
   int idx_column_major_strand = 8;
   int idx_strand_order_str = 9;
 
-  FixedList<DialogItem> items = FixedList<DialogItem>(idx_strand_order_str + 1);
+  util_state.FixedList<DialogItem> items = util_state.FixedList<DialogItem>(idx_strand_order_str + 1);
 
   items[idx_delimiter] = DialogText(
     label: 'delimiter between IDT fields',

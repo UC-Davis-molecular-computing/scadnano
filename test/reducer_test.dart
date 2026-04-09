@@ -2,44 +2,45 @@ import 'dart:math';
 import 'dart:convert';
 import 'dart:html';
 
-import 'package:scadnano/src/json_serializable.dart';
-import 'package:scadnano/src/state/group.dart';
+import 'package:scadnano_state_actions/src/json_serializable.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
 import 'package:test/test.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 
-import 'package:scadnano/src/state/geometry.dart';
-import 'package:scadnano/src/actions/actions.dart';
-import 'package:scadnano/src/reducers/app_state_reducer.dart';
-import 'package:scadnano/src/reducers/potential_crossover_reducer.dart';
-import 'package:scadnano/src/reducers/selection_reducer.dart';
-import 'package:scadnano/src/state/address.dart';
-import 'package:scadnano/src/state/crossover.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/dna_ends_move.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/edit_mode.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/grid_position.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/loopout.dart';
-import 'package:scadnano/src/state/position3d.dart';
-import 'package:scadnano/src/state/potential_crossover.dart';
-import 'package:scadnano/src/state/select_mode.dart';
-import 'package:scadnano/src/state/select_mode_state.dart';
-import 'package:scadnano/src/state/selectable.dart';
-import 'package:scadnano/src/state/selection_box.dart';
-import 'package:scadnano/src/state/strand.dart';
-import 'package:scadnano/src/state/strands_move.dart';
-import 'package:scadnano/src/state/undo_redo.dart';
-import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/state/mouseover_data.dart';
-import 'package:scadnano/src/extension_methods.dart';
-import 'package:scadnano/src/util.dart' as util;
-import 'package:scadnano/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart';
+import 'package:scadnano_reducers/src/reducers/app_state_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/potential_crossover_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/selection_reducer.dart';
+import 'package:scadnano_state_actions/src/state/address.dart';
+import 'package:scadnano_state_actions/src/state/crossover.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/dna_end.dart';
+import 'package:scadnano_state_actions/src/state/dna_ends_move.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/edit_mode.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/grid_position.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/loopout.dart';
+import 'package:scadnano_state_actions/src/state/position3d.dart';
+import 'package:scadnano_state_actions/src/state/potential_crossover.dart';
+import 'package:scadnano_state_actions/src/state/select_mode.dart';
+import 'package:scadnano_state_actions/src/state/select_mode_state.dart';
+import 'package:scadnano_state_actions/src/state/selectable.dart';
+import 'package:scadnano_state_actions/src/state/selection_box.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/strands_move.dart';
+import 'package:scadnano_state_actions/src/state/undo_redo.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/mouseover_data.dart';
+import 'package:scadnano_state_actions/src/extension_methods.dart';
+import 'package:scadnano_view_middleware/src/util.dart' as util;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 
 import 'utils.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 main() {
   test('read in color specified as decimal', () {
@@ -1792,7 +1793,7 @@ main() {
   Design two_helices_join_inner_strands = Design.from_json(jsonDecode(two_helices_join_inner_strands_json));
   test('pencil should connect a 3p end to a 5p end', () {
     AppState state = app_state_from_design(two_helices_design);
-    Map<int, Point<double>> svg_position_map = util.helices_assign_svg(
+    Map<int, Point<double>> svg_position_map = util_state.helices_assign_svg(
       two_helices_design,
       state.ui_state.invert_y,
       two_helices_design.helices,
@@ -1829,7 +1830,7 @@ main() {
   });
   test('pencil should connect a 5p end to a 3p end', () {
     AppState state = app_state_from_design(two_helices_design);
-    Map<int, Point<double>> svg_position_map = util.helices_assign_svg(
+    Map<int, Point<double>> svg_position_map = util_state.helices_assign_svg(
       two_helices_design,
       state.ui_state.invert_y,
       two_helices_design.helices,
@@ -4702,7 +4703,7 @@ main() {
     //
     // 1 [------------------->
     //   <-------------------]
-    Map<int, Point<double>> svg_position_map = util.helices_assign_svg(
+    Map<int, Point<double>> svg_position_map = util_state.helices_assign_svg(
       two_helices_design,
       false,
       two_helices_design.helices,
@@ -5747,12 +5748,12 @@ main() {
       Grid grid = Grid.none;
       state = app_state_reducer(state, GridChange(grid: grid, group_name: constants.default_group_name));
 
-      var expected_position_h0 = util.grid_position_to_position3d(
+      var expected_position_h0 = util_state.grid_position_to_position3d(
         two_helices_design.helices[0]!.grid_position!,
         Grid.square,
         two_helices_design.geometry,
       );
-      var expected_position_h1 = util.grid_position_to_position3d(
+      var expected_position_h1 = util_state.grid_position_to_position3d(
         two_helices_design.helices[1]!.grid_position!,
         Grid.square,
         two_helices_design.geometry,
@@ -5806,12 +5807,12 @@ main() {
         (b) => b.x = original_helix1.min_offset * geometry.base_width_svg,
       );
 
-      GridPosition expected_grid_position0 = util.position3d_to_grid_position(
+      GridPosition expected_grid_position0 = util_state.position3d_to_grid_position(
         expected_position0,
         grid,
         no_grid_two_helices_design.geometry,
       );
-      GridPosition expected_grid_position1 = util.position3d_to_grid_position(
+      GridPosition expected_grid_position1 = util_state.position3d_to_grid_position(
         expected_position1,
         grid,
         no_grid_two_helices_design.geometry,

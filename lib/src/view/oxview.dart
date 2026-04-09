@@ -6,7 +6,7 @@ import 'package:path/path.dart' as path;
 import '../app.dart';
 import 'view.dart';
 import '../middleware/oxview_update_view.dart';
-import '../constants.dart' as constants;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 
 class OxviewViewComponent {
   late DivElement div;

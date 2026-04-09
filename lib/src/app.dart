@@ -12,40 +12,41 @@ import 'package:platform_detect/platform_detect.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:over_react/over_react.dart' as react;
-import 'package:scadnano/src/reducers/dna_extensions_move_reducer.dart';
-import 'package:scadnano/src/state/address.dart';
-import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/dna_extensions_move.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/util.dart';
+import 'package:scadnano_reducers/src/reducers/dna_extensions_move_reducer.dart';
+import 'package:scadnano_state_actions/src/state/address.dart';
+import 'package:scadnano_state_actions/src/state/dna_end.dart';
+import 'package:scadnano_state_actions/src/state/dna_extensions_move.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
 
 import 'middleware/all_middleware.dart';
 import 'middleware/oxview_update_view.dart';
 import 'middleware/stroke_width.dart';
 import 'middleware/throttle.dart';
-import 'state/dna_ends_move.dart';
-import 'state/grid_position.dart';
-import 'state/group.dart';
-import 'state/helix_group_move.dart';
-import 'state/local_storage_design_choice.dart';
-import 'state/potential_crossover.dart';
-import 'actions/actions.dart';
-import 'reducers/dna_ends_move_reducer.dart';
-import 'reducers/helix_group_move_reducer.dart';
-import 'reducers/potential_crossover_reducer.dart';
-import 'state/app_state.dart';
-import 'state/selection_box.dart';
-import 'reducers/selection_reducer.dart';
-import 'state/selection_rope.dart';
+import 'package:scadnano_state_actions/src/state/dna_ends_move.dart';
+import 'package:scadnano_state_actions/src/state/grid_position.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/helix_group_move.dart';
+import 'package:scadnano_state_actions/src/state/local_storage_design_choice.dart';
+import 'package:scadnano_state_actions/src/state/potential_crossover.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart';
+import 'package:scadnano_reducers/src/reducers/dna_ends_move_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/helix_group_move_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/potential_crossover_reducer.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/selection_box.dart';
+import 'package:scadnano_reducers/src/reducers/selection_reducer.dart';
+import 'package:scadnano_state_actions/src/state/selection_rope.dart';
+import 'util.dart' as util;
 import 'view/design.dart';
 import 'view/view.dart';
-import 'reducers/app_state_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/app_state_reducer.dart';
 import 'middleware/local_storage.dart';
-import 'util.dart' as util;
-import 'actions/actions.dart' as actions;
-import 'constants.dart' as constants;
+import 'package:scadnano_state_actions/src/state/storable.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import 'dart:js' as js;
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 // global variable for whole program
 late App app;
@@ -270,7 +271,7 @@ class App {
     this.view.oxview_view.frame.onLoad.listen((event) {
       Blob blob_js_camera_commands = new Blob([
         'camera.up.multiplyScalar(-1)',
-      ], blob_type_to_string(BlobType.text));
+      ], util_state.blob_type_to_string(util_state.BlobType.text));
       Map<String, dynamic> message = {
         'message': 'iframe_drop',
         'files': [blob_js_camera_commands],

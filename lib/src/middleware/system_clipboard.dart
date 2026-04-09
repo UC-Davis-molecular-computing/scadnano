@@ -3,18 +3,18 @@ import 'dart:html';
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 
-import 'package:scadnano/src/json_serializable.dart';
-import 'package:scadnano/src/state/clipboard.dart';
-import 'package:scadnano/src/state/group.dart';
-import 'package:scadnano/src/state/modification.dart';
-import 'package:scadnano/src/state/strand.dart';
-import 'package:scadnano/src/reducers/strands_move_reducer.dart';
+import 'package:scadnano_state_actions/src/json_serializable.dart';
+import 'package:scadnano_state_actions/src/state/clipboard.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/modification.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_reducers/src/reducers/strands_move_reducer.dart';
 
-import '../reducers/strands_move_reducer.dart' as strands_move_reducer;
-import '../actions/actions.dart' as actions;
-import '../constants.dart' as constants;
-import '../state/app_state.dart';
-import '../reducers/strands_copy_info_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/strands_move_reducer.dart' as strands_move_reducer;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_reducers/src/reducers/strands_copy_info_reducer.dart';
 
 // unit testing points this global variable at an instance of CLIClipboard,
 // since BrowserClipboard doesn't work when running from command line

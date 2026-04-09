@@ -1,10 +1,11 @@
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/group.dart';
-import '../state/domain.dart';
-import '../state/design.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' show find_paired_domain;
 
-import '../actions/actions.dart' as actions;
-import '../state/app_state.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 
 /// Ensures that actions on insertions and deletions happen in pairs on adjacent domains.
 /// Alternately, if Ctrl is pressed when the deletion/insertion is added, then it is added to every
@@ -58,15 +59,4 @@ List<Domain> find_other_domains(Design design, Domain domain, int offset) {
     }
   }
   return other_domains;
-}
-
-Domain? find_paired_domain(Design design, Domain domain, int offset) {
-  var other_domains = design.domains_on_helix_at_offset_internal(domain.helix, offset);
-  for (var other_domain in other_domains) {
-    if (other_domain != domain) {
-      assert(other_domain.forward != domain.forward);
-      return other_domain;
-    }
-  }
-  return null;
 }

@@ -2,7 +2,7 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/over_react.dart';
 
 import '../app.dart';
-import '../state/selection_box.dart';
+import 'package:scadnano_state_actions/src/state/selection_box.dart';
 
 part 'selection_box_view.over_react.g.dart';
 

@@ -2,19 +2,20 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/dna_extensions_move.dart';
-import '../state/domain.dart';
-import '../state/design.dart';
-import '../state/dna_end.dart';
-import '../state/dna_ends_move.dart';
-import '../state/helix.dart';
-import '../state/strand.dart';
+import 'package:scadnano_state_actions/src/state/dna_extensions_move.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/dna_end.dart';
+import 'package:scadnano_state_actions/src/state/dna_ends_move.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
 
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import '../app.dart';
-import '../state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 
 import '../util.dart' as util;
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 // This is needed to gather the list of selected ends and package them into an action to start the moving
 // of selected ends. It is needed because the click on the DNAEnd that triggers the DNAEndsMoveStart action
@@ -31,7 +32,7 @@ dna_extensions_move_start_middleware(Store<AppState> store, action, NextDispatch
       var group = design.groups[helix.group]!;
       var geometry = group.geometry ?? design.geometry;
 
-      var extension_start_point = util.compute_extension_attached_end_svg(
+      var extension_start_point = util_state.compute_extension_attached_end_svg(
         extension,
         extension.adjacent_domain,
         helix,
@@ -43,7 +44,7 @@ dna_extensions_move_start_middleware(Store<AppState> store, action, NextDispatch
       // to get canvas coordinate space
       extension_start_point += group.translation(geometry);
 
-      var extension_end_point = util.compute_extension_free_end_svg(
+      var extension_end_point = util_state.compute_extension_free_end_svg(
         extension_start_point,
         extension,
         extension.adjacent_domain,

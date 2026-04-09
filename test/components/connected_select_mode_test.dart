@@ -3,12 +3,12 @@ import 'package:over_react_test/over_react_test.dart';
 import 'package:react/react_client/react_interop.dart';
 import 'package:test/test.dart';
 
-import 'package:scadnano/src/app.dart';
-import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/state/select_mode.dart';
-import 'package:scadnano/src/state/select_mode_state.dart';
-import 'package:scadnano/src/view/select_mode.dart';
-import 'package:scadnano/src/util.dart' as util;
+import 'package:scadnano_view_middleware/src/app.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/select_mode.dart';
+import 'package:scadnano_state_actions/src/state/select_mode_state.dart';
+import 'package:scadnano_view_middleware/src/view/select_mode.dart';
+import 'package:scadnano_view_middleware/src/util.dart' as util;
 
 import '../utils.dart' as utils;
 

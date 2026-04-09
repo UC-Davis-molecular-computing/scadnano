@@ -1,13 +1,13 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/over_react.dart';
-import '../state/domain.dart';
-import '../state/edit_mode.dart';
-import '../state/strand.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/edit_mode.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
 
-import '../state/helix.dart';
-import '../state/mouseover_data.dart';
-import '../state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/mouseover_data.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 
 part 'design_footer.over_react.g.dart';
 

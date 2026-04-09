@@ -2,22 +2,23 @@ import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/state/design_side_rotation_data.dart';
-import '../state/context_menu.dart';
-import '../state/edit_mode.dart';
-import '../state/geometry.dart';
-import '../state/grid.dart';
-import '../state/position3d.dart';
+import 'package:scadnano_state_actions/src/state/design_side_rotation_data.dart';
+import 'package:scadnano_state_actions/src/state/context_menu.dart';
+import 'package:scadnano_state_actions/src/state/edit_mode.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/position3d.dart';
 
-import '../state/mouseover_data.dart';
+import 'package:scadnano_state_actions/src/state/mouseover_data.dart';
 import '../app.dart';
-import '../state/helix.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
 import 'design_side_rotation.dart';
 import 'pure_component.dart';
-import '../actions/actions.dart' as actions;
-import '../constants.dart' as constants;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import '../util.dart' as util;
 import 'helix_context_menu.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_side_helix.over_react.g.dart';
 
@@ -123,7 +124,7 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
     }
 
     Position3D pos3d = props.helix.position3d(props.geometry);
-    Point<double> center = util.position3d_to_side_view_svg(pos3d, props.invert_y, props.geometry);
+    Point<double> center = util_state.position3d_to_side_view_svg(pos3d, props.invert_y, props.geometry);
 
     return (Dom.g()
       ..transform = 'translate(${center.x} ${center.y})'
@@ -167,7 +168,7 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
         actions.ContextMenuShow(
           context_menu: ContextMenu(
             items: context_menu_helix(props.helix, props.helix_change_apply_to_all),
-            position: util.from_point_num(event.page),
+            position: util_state.from_point_num(event.page),
           ),
         ),
       );

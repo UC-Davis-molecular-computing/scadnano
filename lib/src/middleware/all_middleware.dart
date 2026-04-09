@@ -1,9 +1,10 @@
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/middleware/system_clipboard.dart';
+import 'package:scadnano_view_middleware/src/middleware/system_clipboard.dart';
 
-import '../state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 import 'dna_extensions_move_start.dart';
 import 'forbid_create_circular_strand_no_crossovers_middleware.dart';
+import 'forbid_move_linker_circular_strand.dart';
 import 'helix_group_move_start.dart';
 import 'adjust_grid_position.dart';
 import 'export_cadnano_file.dart';
@@ -46,6 +47,7 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   reset_local_storage_middleware,
   local_storage_middleware,
   forbid_create_circular_strand_no_crossovers_middleware,
+  forbid_move_linker_circular_strand_middleware,
   export_svg_middleware,
   save_file_middleware,
   load_file_middleware,
