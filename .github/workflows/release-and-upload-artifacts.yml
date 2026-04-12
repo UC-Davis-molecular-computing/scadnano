@@ -83,6 +83,7 @@ jobs:
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1 # reduce from 90-day default. This is only required for passing artifacts between jobs.
           name: build-${{ matrix.os }}
           path: |
             standalone/dist/scadnano*.*
