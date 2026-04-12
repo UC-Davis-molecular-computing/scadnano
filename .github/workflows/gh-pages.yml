@@ -19,10 +19,8 @@ jobs:
           ref: gh-pages
           path: gh-pages-repo
 
-      - name: Setup Dart SDK  # Using Dart 3.8 to match pubspec.yaml constraint
-        uses: dart-lang/setup-dart@v1  # https://github.com/dart-lang/setup-dart
-        with:
-          sdk: 3.11
+      - name: Setup Dart SDK
+        uses: ./.github/actions/setup-dart
 
       - name: Install dependencies
         run: dart pub get
