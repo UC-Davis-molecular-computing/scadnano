@@ -45,10 +45,10 @@ jobs:
     steps:
       # Setup Builder
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
 
       - name: Setup Dart SDK
         uses: ./.github/actions/setup-dart
