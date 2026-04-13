@@ -1,14 +1,14 @@
 import 'dart:math';
 
-import 'package:scadnano/src/state/grid_position.dart';
-import 'package:scadnano/src/state/group.dart';
-import 'package:scadnano/src/state/position3d.dart';
+import 'package:scadnano_state_actions/src/state/grid_position.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/position3d.dart';
 import 'package:test/test.dart';
 
-import 'package:scadnano/src/middleware/oxdna_export.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/design.dart';
+import 'package:scadnano_view_middleware/src/middleware/oxdna_export.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
 
 /// Split a string by whitespace
 List<String> split_ws(String str) => str.trim().split(RegExp('\\s+'));
@@ -36,8 +36,7 @@ main() {
       RISE_PER_BASE_PAIR = 0.332;
       // square of expected distance between adjacent nucleotide centers of mass
       EXPECTED_ADJ_NUC_CM_DIST2 =
-          pow(2 * OX_BASE_DIST * sin(HELIX_ANGLE / 2), 2) +
-          pow(RISE_PER_BASE_PAIR * NM_TO_OX_UNITS, 2).toDouble();
+          pow(2 * OX_BASE_DIST * sin(HELIX_ANGLE / 2), 2) + pow(RISE_PER_BASE_PAIR * NM_TO_OX_UNITS, 2).toDouble();
     });
 
     test('oxdna_export_basic_design', () {
@@ -200,16 +199,8 @@ main() {
           Helix(idx: i, max_offset: 7, grid: i < 2 ? Grid.honeycomb : Grid.square, group: i < 2 ? 'a' : 'b'),
       ];
       var groups = {
-        'a': HelixGroup(
-          grid: Grid.honeycomb,
-          position: Position3D(x: 0, y: 0, z: 0),
-          helices_view_order: [0, 1],
-        ),
-        'b': HelixGroup(
-          grid: Grid.square,
-          position: Position3D(x: 100, y: 0, z: 0),
-          helices_view_order: [2, 3],
-        ),
+        'a': HelixGroup(grid: Grid.honeycomb, position: Position3D(x: 0, y: 0, z: 0), helices_view_order: [0, 1]),
+        'b': HelixGroup(grid: Grid.square, position: Position3D(x: 100, y: 0, z: 0), helices_view_order: [2, 3]),
       };
       var design = Design(helices: helices, grid: Grid.square, groups: groups);
       design = design.draw_strand(0, 0).to(7).cross(1).move(-7).commit();

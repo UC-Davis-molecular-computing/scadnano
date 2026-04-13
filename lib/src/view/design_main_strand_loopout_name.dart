@@ -1,11 +1,11 @@
 import 'package:over_react/over_react.dart';
 
-import '../state/geometry.dart';
-import '../state/domain.dart';
-import '../state/loopout.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/loopout.dart';
 import 'pure_component.dart';
 import '../util.dart' as util;
-import '../constants.dart' as constants;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 
 part 'design_main_strand_loopout_name.over_react.g.dart';
 
@@ -22,8 +22,7 @@ mixin DesignMainStrandLoopoutTextProps on UiProps {
   late double font_size;
 }
 
-class DesignMainStrandLoopoutTextComponent extends UiComponent2<DesignMainStrandLoopoutTextProps>
-    with PureComponent {
+class DesignMainStrandLoopoutTextComponent extends UiComponent2<DesignMainStrandLoopoutTextProps> with PureComponent {
   @override
   render() {
     var start_offset = '50%';

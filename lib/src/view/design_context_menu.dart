@@ -3,12 +3,12 @@ import 'dart:html';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 
-import '../state/app_state.dart';
-import '../state/context_menu.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/context_menu.dart';
 import '../app.dart';
 import 'pure_component.dart';
-import '../actions/actions.dart' as actions;
-import '../constants.dart' as constants;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 
 part 'design_context_menu.over_react.g.dart';
 
@@ -87,10 +87,8 @@ class DesignContextMenuComponent extends UiStatefulComponent2<DesignContextMenuP
   Point<double> calculate_menu_position() {
     double left = props.context_menu!.position.x, top = props.context_menu!.position.y;
 
-    if (left + state.width > window.innerWidth!)
-      left -= left + state.width - window.innerWidth! + MENU_PADDING;
-    if (top + state.height > window.innerHeight!)
-      top -= top + state.height - window.innerHeight! + MENU_PADDING;
+    if (left + state.width > window.innerWidth!) left -= left + state.width - window.innerWidth! + MENU_PADDING;
+    if (top + state.height > window.innerHeight!) top -= top + state.height - window.innerHeight! + MENU_PADDING;
 
     return Point(left, top);
   }
@@ -125,8 +123,7 @@ mixin DesignContextSubmenuState on UiState {
   late Ref<DivElement?> submenu_HTML_element_ref;
 }
 
-class DesignContextSubmenuComponent
-    extends UiStatefulComponent2<DesignContextSubmenuProps, DesignContextSubmenuState>
+class DesignContextSubmenuComponent extends UiStatefulComponent2<DesignContextSubmenuProps, DesignContextSubmenuState>
     with PureComponent {
   @override
   Map get initialState =>
@@ -250,11 +247,11 @@ ReactElement context_menu_to_ul(ContextMenu menu) {
                   }
                   : null
           ..className =
-              'context-menu-item' +
-              (item.disabled ? " " + constants.css_selector_context_menu_item_disabled : ""))(item.title),
+              'context-menu-item' + (item.disabled ? " " + constants.css_selector_context_menu_item_disabled : ""))(
+          item.title,
+        ),
         item.nested != null
-            ? (DesignContextSubmenu()
-              ..context_menu = ContextMenu(items: item.nested!, position: menu.position))()
+            ? (DesignContextSubmenu()..context_menu = ContextMenu(items: item.nested!, position: menu.position))()
             : null,
       ),
   ]);

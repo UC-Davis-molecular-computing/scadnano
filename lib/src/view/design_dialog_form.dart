@@ -1,12 +1,12 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/view/pure_component.dart';
-import '../state/dialog.dart';
+import 'package:scadnano_view_middleware/src/view/pure_component.dart';
+import 'package:scadnano_state_actions/src/state/dialog.dart';
 
 import '../app.dart';
-import '../state/app_state.dart';
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
 part 'design_dialog_form.over_react.g.dart';
 
@@ -106,8 +106,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
 
       // disable if radio button in disable_when_any_radio_button_selected to which this has forbidden value
       if (dialog.disable_when_any_radio_button_selected.containsKey(component_idx)) {
-        BuiltMap<int, BuiltList<String>> radio_idx_maps =
-            dialog.disable_when_any_radio_button_selected[component_idx]!;
+        BuiltMap<int, BuiltList<String>> radio_idx_maps = dialog.disable_when_any_radio_button_selected[component_idx]!;
         for (int radio_idx in radio_idx_maps.keys) {
           BuiltList<String> forbidden_values = radio_idx_maps[radio_idx]!;
           DialogRadio radio = current_responses[radio_idx] as DialogRadio;
@@ -332,8 +331,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         radio_idx++;
       }
       // return (Dom.div()..className = 'radio-left')('${item.label}: ', components);
-      return (Dom.div()
-        ..className = 'radio-left')(((Dom.label()..title = item.tooltip)('${item.label}:')), components);
+      return (Dom.div()..className = 'radio-left')(((Dom.label()..title = item.tooltip)('${item.label}:')), components);
     } else if (item is DialogRadio && !item.radio) {
       var current_responses = state.current_responses!;
       int radio_idx = 0;

@@ -3,18 +3,18 @@ import 'dart:html';
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 
-import 'package:scadnano/src/json_serializable.dart';
-import 'package:scadnano/src/state/clipboard.dart';
-import 'package:scadnano/src/state/group.dart';
-import 'package:scadnano/src/state/modification.dart';
-import 'package:scadnano/src/state/strand.dart';
-import 'package:scadnano/src/reducers/strands_move_reducer.dart';
+import 'package:scadnano_state_actions/src/json_serializable.dart';
+import 'package:scadnano_state_actions/src/state/clipboard.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/modification.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_reducers/src/reducers/strands_move_reducer.dart';
 
-import '../reducers/strands_move_reducer.dart' as strands_move_reducer;
-import '../actions/actions.dart' as actions;
-import '../constants.dart' as constants;
-import '../state/app_state.dart';
-import '../reducers/strands_copy_info_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/strands_move_reducer.dart' as strands_move_reducer;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_reducers/src/reducers/strands_copy_info_reducer.dart';
 
 // unit testing points this global variable at an instance of CLIClipboard,
 // since BrowserClipboard doesn't work when running from command line
@@ -40,11 +40,7 @@ system_clipboard_middleware(Store<AppState> store, action, NextDispatcher next) 
   }
 }
 
-void handle_manual_paste_initiate(
-  Store<AppState> store,
-  actions.ManualPasteInitiate action,
-  NextDispatcher next,
-) {
+void handle_manual_paste_initiate(Store<AppState> store, actions.ManualPasteInitiate action, NextDispatcher next) {
   // This re-does some of the work of manual_paste_initiate_reducer in the call to next(action) below,
   // but it keeps the side effect of printing an error message out of the reducer.
   if (paste_is_impossible_from_clipboard(action.clipboard_content, action.in_browser)) return;
@@ -105,16 +101,11 @@ void handle_autopaste_initiate(Store<AppState> store, actions.AutoPasteInitiate 
     }
   }
   if (new_strand_moving_details['status'] == constants.strand_bounds_status.in_bounds ||
-      new_strand_moving_details['status'] ==
-          constants.strand_bounds_status.in_bounds_with_min_offset_changes ||
-      new_strand_moving_details['status'] ==
-          constants.strand_bounds_status.in_bounds_with_max_offset_changes) {
+      new_strand_moving_details['status'] == constants.strand_bounds_status.in_bounds_with_min_offset_changes ||
+      new_strand_moving_details['status'] == constants.strand_bounds_status.in_bounds_with_max_offset_changes) {
     var paste_commit_action = actions.StrandsMoveCommit(strands_move: strands_move, autopaste: true);
     batch_actions_list.add(paste_commit_action);
-    var batch_action = actions.BatchAction(
-      batch_actions_list,
-      'Changing helix offsets and then executing autopaste',
-    );
+    var batch_action = actions.BatchAction(batch_actions_list, 'Changing helix offsets and then executing autopaste');
     store.dispatch(batch_action);
   }
 }

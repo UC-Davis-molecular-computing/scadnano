@@ -4,20 +4,18 @@ import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
 
-import '../state/group.dart';
-import '../state/geometry.dart';
-import '../state/helix.dart';
-import '../state/strands_move.dart';
-import '../state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/strands_move.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 import '../util.dart' as util;
 import 'design_main_strand_moving.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_strands_moving.over_react.g.dart';
 
-DesignMainStrandsMovingProps set_design_main_strands_moving_props(
-  DesignMainStrandsMovingProps elt,
-  AppState state,
-) {
+DesignMainStrandsMovingProps set_design_main_strands_moving_props(DesignMainStrandsMovingProps elt, AppState state) {
   HelixGroup? current_group = null;
   BuiltMap<int, int>? original_helices_view_order_inverse = null;
   bool selected_strands_on_multiple_groups = false;
@@ -25,7 +23,7 @@ DesignMainStrandsMovingProps set_design_main_strands_moving_props(
   var geometry = state.design.geometry;
   if (strands_move != null) {
     original_helices_view_order_inverse = strands_move.original_helices_view_order_inverse;
-    current_group = util.current_group_from_strands_move(state.design, strands_move);
+    current_group = util_state.current_group_from_strands_move(state.design, strands_move);
     // Need to check this here, because we need to allow the middleware to let through the strands_move
     // object so that view/design.dart can issue a warning to the user on a mousemove event when the
     // left-click is depressed. But if we allow the strands_move to propagate to the view it throws

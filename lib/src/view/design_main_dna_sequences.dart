@@ -2,16 +2,15 @@ import 'dart:html';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/geometry.dart';
-import 'package:scadnano/src/state/group.dart';
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import '../app.dart';
-import '../state/helix.dart';
-import '../util.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
 
-import '../state/strand.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
 import 'pure_component.dart';
-import '../constants.dart' as constants;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import '../util.dart' as util;
 import 'design_main_dna_sequence.dart';
 
@@ -55,7 +54,7 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
 
   @override
   render() {
-    bool should_use_png_dna_sequence = use_png(
+    bool should_use_png_dna_sequence = util.use_png(
       props.dna_sequence_png_uri,
       props.is_zoom_above_threshold,
       props.export_svg_action_delayed_for_png_cache,

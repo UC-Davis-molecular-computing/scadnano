@@ -2,42 +2,43 @@ import 'dart:convert';
 import 'dart:html';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
-import 'package:scadnano/src/json_serializable.dart';
-import 'package:scadnano/src/reducers/insertion_deletion_reducer.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/geometry.dart';
-import 'package:scadnano/src/state/grid_position.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/loopout.dart';
-import 'package:scadnano/src/state/modification.dart';
-import 'package:scadnano/src/state/position3d.dart';
-import 'package:scadnano/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/json_serializable.dart';
+import 'package:scadnano_reducers/src/reducers/insertion_deletion_reducer.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/grid_position.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/loopout.dart';
+import 'package:scadnano_state_actions/src/state/modification.dart';
+import 'package:scadnano_state_actions/src/state/position3d.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
 import 'package:test/test.dart';
-import 'package:scadnano/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/util.dart' as util;
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_view_middleware/src/util.dart' as util;
 
 import 'utils.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 main() {
-  test('util.position3d_to_grid_position', () {
+  test('util_state.position3d_to_grid_position', () {
     var grid = Grid.square;
     var geometry = Geometry(helix_radius: 2.0, inter_helix_gap: 1.0);
 
     var position11 = Position3D(x: 0.0, y: 3.0, z: 3.0);
-    var grid_position11_actual = util.position3d_to_grid_position(position11, grid, geometry);
+    var grid_position11_actual = util_state.position3d_to_grid_position(position11, grid, geometry);
     var grid_position11_expected = GridPosition(1, 1);
     expect(grid_position11_expected, grid_position11_actual);
 
     var position00 = Position3D(x: 0.0, y: 0.0, z: 0.0);
-    var grid_position00_actual = util.position3d_to_grid_position(position00, grid, geometry);
+    var grid_position00_actual = util_state.position3d_to_grid_position(position00, grid, geometry);
     var grid_position00_expected = GridPosition(0, 0);
     expect(grid_position00_expected, grid_position00_actual);
 
     var position21 = Position3D(x: 0.0, y: 2.5, z: 5.0);
-    var grid_position21_actual = util.position3d_to_grid_position(position21, grid, geometry);
+    var grid_position21_actual = util_state.position3d_to_grid_position(position21, grid, geometry);
     var grid_position21_expected = GridPosition(1, 1);
     expect(grid_position21_expected, grid_position21_actual);
   });
@@ -168,21 +169,21 @@ main() {
   test('util_deltas_starting_0', () {
     List<int> nums = [0, 2, 3, 5, 7, 11, 13];
     List<int> expected_deltas = [0, 2, 1, 2, 2, 4, 2];
-    List<int> actual_deltas = util.deltas(nums);
+    List<int> actual_deltas = util_state.deltas(nums);
     expect(actual_deltas, expected_deltas);
   });
 
   test('util_deltas_starting_positive', () {
     List<int> nums = [2, 3, 5, 7, 11, 13];
     List<int> expected_deltas = [2, 1, 2, 2, 4, 2];
-    List<int> actual_deltas = util.deltas(nums);
+    List<int> actual_deltas = util_state.deltas(nums);
     expect(actual_deltas, expected_deltas);
   });
 
   test('util_deltas_starting_negative', () {
     List<int> nums = [-5, 2, 3, 5, 7, 11, 13];
     List<int> expected_deltas = [-5, 7, 1, 2, 2, 4, 2];
-    List<int> actual_deltas = util.deltas(nums);
+    List<int> actual_deltas = util_state.deltas(nums);
     expect(actual_deltas, expected_deltas);
   });
 

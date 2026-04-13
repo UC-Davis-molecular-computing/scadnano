@@ -3,19 +3,19 @@ import 'dart:html';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../state/domain_name_mismatch.dart';
-import '../state/design.dart';
-import '../state/domain.dart';
-import '../state/helix.dart';
-import '../state/group.dart';
+import 'package:scadnano_state_actions/src/state/domain_name_mismatch.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
 import 'pure_component.dart';
 import 'design_main_warning_star.dart';
 import '../util.dart' as util;
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_domain_name_mismatches.over_react.g.dart';
 
-UiFactory<DesignMainDomainNameMismatchesProps> DesignMainDomainNameMismatches =
-    _$DesignMainDomainNameMismatches;
+UiFactory<DesignMainDomainNameMismatchesProps> DesignMainDomainNameMismatches = _$DesignMainDomainNameMismatches;
 
 mixin DesignMainDomainNameMismatchesProps on UiProps {
   late Design design;
@@ -78,7 +78,7 @@ class DesignMainDomainNameMismatchesComponent extends UiComponent2<DesignMainDom
           (Dom.g()
             ..transform = transform_str
             ..className = 'mismatch-domain-names-group'
-            ..key = util.id_helix(helix))(untransformed_mismatch_components),
+            ..key = util_state.id_helix(helix))(untransformed_mismatch_components),
         );
       }
     }

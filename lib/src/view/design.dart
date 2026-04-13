@@ -11,25 +11,26 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
 import 'package:over_react/components.dart' as over_react_components;
 import 'package:platform_detect/platform_detect.dart';
-import 'package:scadnano/src/middleware/system_clipboard.dart';
-import 'package:scadnano/src/state/domains_move.dart';
-import 'package:scadnano/src/state/geometry.dart';
-import 'package:scadnano/src/state/helix_group_move.dart';
-import 'package:scadnano/src/state/dna_extensions_move.dart';
-import 'package:scadnano/src/state/selectable.dart';
-import 'package:scadnano/src/state/selection_rope.dart';
-import 'package:scadnano/src/view/axis_arrows_main.dart';
-import 'package:scadnano/src/view/strand_color_picker.dart';
+import 'package:scadnano_view_middleware/src/middleware/system_clipboard.dart';
+import 'package:scadnano_state_actions/src/state/domains_move.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/helix_group_move.dart';
+import 'package:scadnano_state_actions/src/state/dna_extensions_move.dart';
+import 'package:scadnano_state_actions/src/state/selectable.dart';
+import 'selection_handler.dart';
+import 'package:scadnano_state_actions/src/state/selection_rope.dart';
+import 'package:scadnano_view_middleware/src/view/axis_arrows_main.dart';
+import 'package:scadnano_view_middleware/src/view/strand_color_picker.dart';
 
-import '../state/address.dart';
-import '../state/dna_ends_move.dart';
-import '../state/edit_mode.dart';
-import '../state/helix.dart';
-import '../state/select_mode.dart';
-import '../state/strand_creation.dart';
-import '../state/strands_move.dart';
+import 'package:scadnano_state_actions/src/state/address.dart';
+import 'package:scadnano_state_actions/src/state/dna_ends_move.dart';
+import 'package:scadnano_state_actions/src/state/edit_mode.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/select_mode.dart';
+import 'package:scadnano_state_actions/src/state/strand_creation.dart';
+import 'package:scadnano_state_actions/src/state/strands_move.dart';
 
-import '../state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 import '../app.dart';
 import 'design_context_menu.dart';
 import 'design_dialog_form.dart';
@@ -45,8 +46,9 @@ import 'design_footer.dart';
 import 'svg_filters.dart';
 import 'error_message.dart';
 import '../middleware/local_storage.dart' as local_storage;
-import '../constants.dart' as constants;
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 const DEBUG_PRINT_SIDE_VIEW_MOUSE_POSITION = false;
 //const DEBUG_PRINT_SIDE_VIEW_MOUSE_POSITION = true;
@@ -82,8 +84,7 @@ class DesignViewComponent {
   DivElement context_menu_container = DivElement()..attributes = {'id': 'context-menu-container'};
   DivElement dialog_form_container = DivElement()..attributes = {'class': 'dialog-form-container'};
   DivElement dialog_loading_container = DivElement()..attributes = {'class': 'dialog-loading-container'};
-  DivElement strand_color_picker_container =
-      DivElement()..attributes = {'id': 'strand-color-picker-container'};
+  DivElement strand_color_picker_container = DivElement()..attributes = {'id': 'strand-color-picker-container'};
 
   late svg.SvgSvgElement side_view_svg;
   late svg.SvgSvgElement main_view_svg;
@@ -100,27 +101,16 @@ class DesignViewComponent {
 
   DesignViewComponent(this.root_element) {
     this.side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
-    var side_main_separator =
-        DivElement()..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
+    var side_main_separator = DivElement()..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
     this.main_pane = DivElement()..attributes = {'id': 'main-pane', 'class': 'split'};
 
     side_view_svg =
         svg.SvgSvgElement()
-          ..attributes = {
-            'id': SIDE_VIEW_SVG_ID,
-            'class': PANZOOMABLE_CLASS,
-            'width': '100%',
-            'height': '100%',
-          };
+          ..attributes = {'id': SIDE_VIEW_SVG_ID, 'class': PANZOOMABLE_CLASS, 'width': '100%', 'height': '100%'};
 
     main_view_svg =
         svg.SvgSvgElement()
-          ..attributes = {
-            'id': MAIN_VIEW_SVG_ID,
-            'class': PANZOOMABLE_CLASS,
-            'width': '100%',
-            'height': '100%',
-          };
+          ..attributes = {'id': MAIN_VIEW_SVG_ID, 'class': PANZOOMABLE_CLASS, 'width': '100%', 'height': '100%'};
     add_shadow_filter(main_view_svg);
 
     var main_arrows =
@@ -179,10 +169,7 @@ class DesignViewComponent {
     main_pane.setAttribute('style', 'width: $main_pane_width');
   }
 
-  Map<DraggableComponent, Draggable?> draggables = {
-    DraggableComponent.main: null,
-    DraggableComponent.side: null,
-  };
+  Map<DraggableComponent, Draggable?> draggables = {DraggableComponent.main: null, DraggableComponent.side: null};
 
   handle_keyboard_mouse_events() {
     document.onClick.listen((MouseEvent event) {
@@ -205,7 +192,7 @@ class DesignViewComponent {
 
     side_view_svg.onMouseLeave.listen((_) => side_view_mouse_leave_update_mouseover());
     side_view_svg.onMouseMove.listen((event) {
-      side_view_mouse_position = util.from_point_num(event.client);
+      side_view_mouse_position = util_state.from_point_num(event.client);
       side_view_update_position(event: event);
     });
 
@@ -229,10 +216,10 @@ class DesignViewComponent {
 
     main_view_svg.onMouseMove.listen((MouseEvent event) {
       // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/buttons
-      bool left_mouse_button_is_down = util.left_mouse_button_pressed_during_mouse_event(event);
+      bool left_mouse_button_is_down = util_state.left_mouse_button_pressed_during_mouse_event(event);
 
       // move potential crossover
-      main_view_mouse_position = util.from_point_num(event.client);
+      main_view_mouse_position = util_state.from_point_num(event.client);
       main_view_move_potential_crossover(event);
 
       // redraw potential next point for selection rope
@@ -425,9 +412,7 @@ class DesignViewComponent {
           strand_creation_helix,
           {strand_creation.helix.group: group}.build(),
           geometry,
-          {
-            strand_creation.helix.idx: app.state.helix_idx_to_svg_position_map[strand_creation.helix.idx]!,
-          }.build(),
+          {strand_creation.helix.idx: app.state.helix_idx_to_svg_position_map[strand_creation.helix.idx]!}.build(),
           strand_creation,
         );
         app.dispatch(actions.StrandCreateAdjustOffset(offset: updated_function_offset.offset));
@@ -513,7 +498,7 @@ class DesignViewComponent {
       bool is_main_view = (svg_elt == main_view_svg);
       svg_elt.onMouseDown.listen((MouseEvent event) {
         // listen for clicks in rope select view to add points
-        bool left_click = util.left_mouse_button_caused_mouse_event(event);
+        bool left_click = util_state.left_mouse_button_caused_mouse_event(event);
         bool selection_rope_exists = app.state.ui_state.selection_rope != null;
         if (selection_rope_exists && left_click && edit_mode_is_rope_select()) {
           Point<double> point = util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
@@ -532,7 +517,7 @@ class DesignViewComponent {
 
       // open grabbing hand if mouse key is going up
       svg_elt.onMouseUp.listen((MouseEvent event) {
-        if (util.left_mouse_button_caused_mouse_event(event)) {
+        if (util_state.left_mouse_button_caused_mouse_event(event)) {
           svg_elt.classes.remove(DRAGGING_CLASS);
         }
       });
@@ -660,10 +645,7 @@ class DesignViewComponent {
     }
 
     // Ctrl+A for select all
-    if ((ev.ctrlKey || ev.metaKey) &&
-        !(ev.altKey) &&
-        key == KeyCode.A &&
-        edit_mode_is_select_or_rope_select()) {
+    if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey) && key == KeyCode.A && edit_mode_is_select_or_rope_select()) {
       ev.preventDefault();
       // Ctrl+Shift+A for current helix group only
       app.dispatch(actions.SelectAllSelectable(current_helix_group_only: ev.shiftKey));
@@ -795,8 +777,7 @@ class DesignViewComponent {
   render_loading_dialog(AppState state) {
     react_dom.render(
       over_react_components.ErrorBoundary()(
-        (ReduxProvider()
-          ..store = app.store)(set_design_loading_dialog_props(ConnectedLoadingDialog(), state)()),
+        (ReduxProvider()..store = app.store)(set_design_loading_dialog_props(ConnectedLoadingDialog(), state)()),
       ),
       this.dialog_loading_container,
     );
@@ -873,9 +854,7 @@ class DesignViewComponent {
                 ..context = app.context_selection_rope)(
                 (ReduxProvider()
                   ..store = app.store_selection_box
-                  ..context = app.context_selection_box)(
-                  set_design_side_props(ConnectedDesignSide(), state)(),
-                ),
+                  ..context = app.context_selection_box)(set_design_side_props(ConnectedDesignSide(), state)()),
               ),
             ),
           ),
@@ -969,18 +948,14 @@ class DesignViewComponent {
 
   void render_context_menu() {
     react_dom.render(
-      over_react_components.ErrorBoundary()(
-        (ReduxProvider()..store = app.store)(ConnectedDesignContextMenu()()),
-      ),
+      over_react_components.ErrorBoundary()((ReduxProvider()..store = app.store)(ConnectedDesignContextMenu()())),
       this.context_menu_container,
     );
   }
 
   void render_dialog_form() {
     react_dom.render(
-      over_react_components.ErrorBoundary()(
-        (ReduxProvider()..store = app.store)(ConnectedDesignDialogForm()()),
-      ),
+      over_react_components.ErrorBoundary()((ReduxProvider()..store = app.store)(ConnectedDesignDialogForm()())),
       this.dialog_form_container,
     );
   }

@@ -44,11 +44,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       # Setup Builder
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-      - uses: dart-lang/setup-dart@v1
-        with:
-          sdk: 3.8
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+
+      - name: Setup Dart SDK
+        uses: ./.github/actions/setup-dart
 
       - name: Install ImageMagick
         shell: bash
@@ -80,6 +83,7 @@ jobs:
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 1 # reduce from 90-day default. This is only required for passing artifacts between jobs.
           name: build-${{ matrix.os }}
           path: |
             standalone/dist/scadnano*.*

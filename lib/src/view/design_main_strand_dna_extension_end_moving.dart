@@ -4,50 +4,50 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
-import 'package:scadnano/src/state/dna_extensions_move.dart';
-import 'package:scadnano/src/state/extension.dart';
-import 'package:scadnano/src/state/geometry.dart';
-import 'package:scadnano/src/state/group.dart';
-import '../state/dna_end.dart';
+import 'package:scadnano_state_actions/src/state/dna_extensions_move.dart';
+import 'package:scadnano_state_actions/src/state/extension.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/dna_end.dart';
 
-import '../state/dna_ends_move.dart';
-import '../state/helix.dart';
+import 'package:scadnano_state_actions/src/state/dna_ends_move.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
 
 import '../app.dart';
 import '3p_end.dart';
 import '5p_end.dart';
 
 import '../util.dart' as util;
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_strand_dna_extension_end_moving.over_react.g.dart';
 
 typedef PointerDownHandler = void Function(react.SyntheticPointerEvent);
 typedef MouseUpHandler = void Function(react.SyntheticMouseEvent);
 
-UiFactory<ExtensionEndMovingProps> ConnectedExtensionEndMoving =
-    connect<DNAExtensionsMove?, ExtensionEndMovingProps>(
-      mapStateToPropsWithOwnProps: (dna_extensions_move, props) {
-        if (dna_extensions_move == null || props.dna_end == null) {
-          return ExtensionEndMoving()..render = false;
-        }
-        Point<double>? current_point = dna_extensions_move.current_point_of(props.dna_end!);
-        if (current_point == null) {
-          return ExtensionEndMoving()..render = false;
-        }
-        return ExtensionEndMoving()
-          ..current_point = current_point
-          ..dna_end = dna_extensions_move.ends_moving.first
-          ..ext = dna_extensions_move.moves.first.extension
-          ..geometry = props.geometry
-          ..helix = props.helix
-          ..group = props.group
-          ..color = props.color
-          ..forward = props.dna_end!.forward
-          ..is_5p = props.dna_end!.is_5p
-          ..attached_end_svg = props.attached_end_svg;
-      },
-      context: app.context_extensions_move,
-    )(ExtensionEndMoving);
+UiFactory<ExtensionEndMovingProps> ConnectedExtensionEndMoving = connect<DNAExtensionsMove?, ExtensionEndMovingProps>(
+  mapStateToPropsWithOwnProps: (dna_extensions_move, props) {
+    if (dna_extensions_move == null || props.dna_end == null) {
+      return ExtensionEndMoving()..render = false;
+    }
+    Point<double>? current_point = dna_extensions_move.current_point_of(props.dna_end!);
+    if (current_point == null) {
+      return ExtensionEndMoving()..render = false;
+    }
+    return ExtensionEndMoving()
+      ..current_point = current_point
+      ..dna_end = dna_extensions_move.ends_moving.first
+      ..ext = dna_extensions_move.moves.first.extension
+      ..geometry = props.geometry
+      ..helix = props.helix
+      ..group = props.group
+      ..color = props.color
+      ..forward = props.dna_end!.forward
+      ..is_5p = props.dna_end!.is_5p
+      ..attached_end_svg = props.attached_end_svg;
+  },
+  context: app.context_extensions_move,
+)(ExtensionEndMoving);
 
 UiFactory<ExtensionEndMovingProps> ExtensionEndMoving = _$ExtensionEndMoving;
 
@@ -94,14 +94,14 @@ class ExtensionEndMovingComponent extends UiComponent2<ExtensionEndMovingProps> 
           ..pos = pos
           ..color = props.color!
           ..forward = props.forward!;
-    var display_angle = util.compute_extension_length_and_angle_from_point(
+    var display_angle = util_state.compute_extension_length_and_angle_from_point(
       pos,
       props.attached_end_svg!,
       props.ext!,
       props.ext!.adjacent_domain,
       props.geometry!,
     );
-    var rotation_degrees = util.compute_end_rotation(display_angle.$2, props.forward!, props.is_5p!);
+    var rotation_degrees = util_state.compute_end_rotation(display_angle.$2, props.forward!, props.is_5p!);
     // https://stackoverflow.com/questions/15138801/rotate-rectangle-around-its-own-center-in-svg
     end_props = end_props..transform = "rotate($rotation_degrees)";
     return end_props();

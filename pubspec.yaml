@@ -1,4 +1,4 @@
-name: scadnano
+name: scadnano_view_middleware
 description: A web-based scriptable DNA design tool inspired by cadnano (see https://cadnano.org/ for original cadnano developed by Shawn Douglas).
 #homepage: https://scadnano.org
 #author: David Doty <doty@ucdavis.edu>
@@ -6,7 +6,15 @@ description: A web-based scriptable DNA design tool inspired by cadnano (see htt
 environment:
   sdk: '>=3.7.0 <4.0.0'
 
+workspace:
+  - scadnano_state_actions
+  - scadnano_reducers
+
 dependencies:
+  scadnano_state_actions:
+    path: scadnano_state_actions
+  scadnano_reducers:
+    path: scadnano_reducers
   built_value: ^8.9.0
   built_collection: ^5.1.1
   collection: ^1.15.0-nullsafety.4
@@ -30,5 +38,22 @@ dev_dependencies:
   build_test: ^3.0.0
   build_web_compilers: ^4.0.11
   built_value_generator: ^8.9.0
+  melos: ^7.5.0
   over_react_test: ^3.0.0
   redux_dev_tools: ^0.7.0
+
+melos:
+  scripts:
+    generate:
+      description: Build generated .g.dart files in sub-packages
+      exec: dart run build_runner build --delete-conflicting-outputs
+      packageFilters:
+        dependsOn: built_value_generator
+    watch:
+      description: Watch and rebuild .g.dart files in sub-packages
+      exec: dart run build_runner watch --delete-conflicting-outputs
+      packageFilters:
+        dependsOn: built_value_generator
+    serve:
+      description: Run webdev serve for the web app
+      run: webdev serve

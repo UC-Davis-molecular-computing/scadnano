@@ -1,15 +1,15 @@
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../reducers/strands_move_reducer.dart' as strands_move_reducer;
-import '../state/design.dart';
-import '../state/address.dart';
-import '../state/domain.dart';
-import '../state/dna_end.dart';
-import '../state/strand.dart';
-import '../state/strands_move.dart';
-import '../actions/actions.dart' as actions;
-import '../state/app_state.dart';
+import 'package:scadnano_reducers/src/reducers/strands_move_reducer.dart' as strands_move_reducer;
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/address.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/dna_end.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/strands_move.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 
 reselect_moved_copied_strands_middleware(Store<AppState> store, action, NextDispatcher next) {
   if (( //action is actions.StrandsAutoPaste ||
@@ -38,8 +38,7 @@ reselect_moved_copied_strands_middleware(Store<AppState> store, action, NextDisp
     // var old_group = design.groups[old_helix.group];
 
     BuiltList<int> new_helices_view_order = new_group.helices_view_order;
-    BuiltMap<int, int> old_helices_view_order_inverse =
-        action.strands_move.original_helices_view_order_inverse;
+    BuiltMap<int, int> old_helices_view_order_inverse = action.strands_move.original_helices_view_order_inverse;
 
     // first collect old addresses while design.end_to_substrand is still valid, convert them to
     // their new addresses so we can look them up

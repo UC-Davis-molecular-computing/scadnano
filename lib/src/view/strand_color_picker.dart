@@ -3,13 +3,13 @@ import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/actions/actions.dart' as actions;
-import 'package:scadnano/src/state/substrand.dart';
-import 'package:scadnano/src/view/react_color.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/substrand.dart';
+import 'package:scadnano_view_middleware/src/view/react_color.dart';
 
 import '../app.dart';
-import '../state/app_state.dart';
-import '../state/strand.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
 
 part 'strand_color_picker.over_react.g.dart';
 
@@ -33,8 +33,7 @@ StrandOrSubstrandColorPickerProps set_strand_or_substrand_color_picker_props(
 
 UiFactory<StrandOrSubstrandColorPickerProps> ConnectedStrandOrSubstrandColorPicker =
     connect<AppState, StrandOrSubstrandColorPickerProps>(
-      mapStateToProps:
-          (state) => set_strand_or_substrand_color_picker_props(StrandOrSubstrandColorPicker(), state),
+      mapStateToProps: (state) => set_strand_or_substrand_color_picker_props(StrandOrSubstrandColorPicker(), state),
     )(StrandOrSubstrandColorPicker);
 
 UiFactory<StrandOrSubstrandColorPickerProps> StrandOrSubstrandColorPicker = _$StrandOrSubstrandColorPicker;
@@ -155,9 +154,7 @@ class StrandOrSubstrandColorPickerComponent
       if (!selected_strands.contains(strand)) {
         selected_strands = selected_strands.rebuild((b) => b.add(strand));
       }
-      action = actions.BatchAction([
-        for (var strand in selected_strands) action_creator(strand),
-      ], "set strands color");
+      action = actions.BatchAction([for (var strand in selected_strands) action_creator(strand)], "set strands color");
     }
     return action;
   }
@@ -169,8 +166,7 @@ class StrandOrSubstrandColorPickerComponent
     List<Substrand> selected_substrands,
   ) {
     actions.UndoableAction action;
-    if (selected_substrands.isEmpty ||
-        selected_substrands.length == 1 && selected_substrands.first == substrand) {
+    if (selected_substrands.isEmpty || selected_substrands.length == 1 && selected_substrands.first == substrand) {
       // set for single substrand if nothing is selected, or exactly this strand is selected
       action = action_creator(strand, substrand);
     } else {

@@ -2,25 +2,27 @@ import 'dart:html';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/dialog.dart';
-import '../state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/dialog.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
 
 import 'transform_by_helix_group.dart';
-import '../state/group.dart';
-import '../state/context_menu.dart';
-import '../state/helix.dart';
-import '../state/crossover.dart';
-import '../state/mouseover_data.dart';
-import '../state/strand.dart';
-import '../state/domain.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/context_menu.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/crossover.dart';
+import 'package:scadnano_state_actions/src/state/mouseover_data.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
 import 'design_main_strand_loopout.dart';
 import 'design_main_strand_paths.dart';
 import '../app.dart';
 import 'pure_component.dart';
-import '../state/selectable.dart';
-import '../actions/actions.dart' as actions;
-import '../constants.dart' as constants;
+import 'package:scadnano_state_actions/src/state/selectable.dart';
+import 'selection_handler.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import '../util.dart' as util;
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_strand_crossover.over_react.g.dart';
 
@@ -75,8 +77,7 @@ class DesignMainStrandCrossoverComponent
 
     // Want to display crossovers within a helix a little darker since it's hard to see them;
     // This is for "crossovers" that really are just buffered space between domains on the same helix.
-    if (props.prev_domain.helix == props.next_domain.helix &&
-        props.prev_domain.forward == props.next_domain.forward) {
+    if (props.prev_domain.helix == props.next_domain.helix && props.prev_domain.forward == props.next_domain.forward) {
       classname += ' ' + constants.css_selector_crossover_same_helix;
     }
 
@@ -134,12 +135,12 @@ class DesignMainStrandCrossoverComponent
           }
           ..onPointerDown = ((ev) {
             if (crossover_selectable(props.crossover)) {
-              props.crossover.handle_selection_mouse_down(ev.nativeEvent);
+              handle_selection_mouse_down(props.crossover, ev.nativeEvent);
             }
           })
           ..onPointerUp = ((ev) {
             if (crossover_selectable(props.crossover)) {
-              props.crossover.handle_selection_mouse_up(ev.nativeEvent);
+              handle_selection_mouse_up(props.crossover, ev.nativeEvent);
             }
           })
           ..id = id
@@ -197,7 +198,7 @@ class DesignMainStrandCrossoverComponent
         actions.ContextMenuShow(
           context_menu: ContextMenu(
             items: context_menu_crossover(props.strand).build(),
-            position: util.from_point_num(event.page),
+            position: util_state.from_point_num(event.page),
           ),
         ),
       );

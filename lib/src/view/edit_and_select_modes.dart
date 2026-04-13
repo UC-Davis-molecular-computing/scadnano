@@ -1,15 +1,15 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/state/selectable.dart';
-import '../state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/selectable.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 import '../view/redraw_counter_component_mixin.dart';
 
 import '../app.dart';
-import '../state/edit_mode.dart';
-import '../state/select_mode.dart';
-import '../state/select_mode_state.dart';
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/edit_mode.dart';
+import 'package:scadnano_state_actions/src/state/select_mode.dart';
+import 'package:scadnano_state_actions/src/state/select_mode_state.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import 'edit_mode.dart';
 import 'select_mode.dart';
 import 'view.dart';
@@ -45,8 +45,7 @@ class EditAndSelectModesComponent extends UiComponent2<EditAndSelectModesProps>
   @override
   render() {
     bool select_mode =
-        props.edit_modes.contains(EditModeChoice.select) ||
-        props.edit_modes.contains(EditModeChoice.rope_select);
+        props.edit_modes.contains(EditModeChoice.select) || props.edit_modes.contains(EditModeChoice.rope_select);
     return [
       if (select_mode && props.edit_mode_menu_visible)
         (SelectMode()

@@ -4,17 +4,18 @@ import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
 
-import '../state/context_menu.dart';
-import '../state/geometry.dart';
-import '../state/edit_mode.dart';
-import '../state/mouseover_data.dart';
-import '../state/helix.dart';
+import 'package:scadnano_state_actions/src/state/context_menu.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/edit_mode.dart';
+import 'package:scadnano_state_actions/src/state/mouseover_data.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
 import '../app.dart';
 import 'pure_component.dart';
-import '../actions/actions.dart' as actions;
-import '../constants.dart' as constants;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import '../util.dart' as util;
 import 'helix_context_menu.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_helix.over_react.g.dart';
 
@@ -98,14 +99,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
             if (event.button != constants.LEFT_CLICK_BUTTON) return;
             var group = app.state.design.groups[props.helix.group]!;
             var helix_svg_position = app.state.helix_idx_to_svg_position_map[props.helix.idx]!;
-            var address = util.get_address_on_helix(
-              event,
-              props.helix,
-              group,
-              props.geometry,
-              helix_svg_position,
-            );
-            app.dispatch(actions.StrandCreateStart(address: address, color: util.color_cycler.next()));
+            var address = util.get_address_on_helix(event, props.helix, group, props.geometry, helix_svg_position);
+            app.dispatch(actions.StrandCreateStart(address: address, color: util_state.color_cycler.next()));
           }
         }
         ..onMouseLeave = ((_) => util.mouse_leave_update_mouseover())
@@ -113,17 +108,11 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         // this ensures that when subsequent mouse events happen, the most recent mouseover_datas is examined,
         // otherwise the callback is not updated until render executes again
         ..onMouseEnter =
-            ((event) => util.update_mouseover(
-              event,
-              props.helix,
-              app.state.helix_idx_to_svg_position_map[props.helix.idx]!,
-            ))
+            ((event) =>
+                util.update_mouseover(event, props.helix, app.state.helix_idx_to_svg_position_map[props.helix.idx]!))
         ..onMouseMove =
-            ((event) => util.update_mouseover(
-              event,
-              props.helix,
-              app.state.helix_idx_to_svg_position_map[props.helix.idx]!,
-            ))
+            ((event) =>
+                util.update_mouseover(event, props.helix, app.state.helix_idx_to_svg_position_map[props.helix.idx]!))
         ..x = props.helix_svg_position.x
         ..y = props.helix_svg_position.y
         ..width = '$width'
@@ -160,7 +149,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         actions.ContextMenuShow(
           context_menu: ContextMenu(
             items: context_menu_helix(props.helix, props.helix_change_apply_to_all),
-            position: util.from_point_num(event.page),
+            position: util_state.from_point_num(event.page),
           ),
         ),
       );

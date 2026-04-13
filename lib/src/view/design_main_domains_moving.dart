@@ -2,24 +2,22 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/reducers/domains_move_reducer.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/domains_move.dart';
-import 'package:scadnano/src/view/pure_component.dart';
+import 'package:scadnano_reducers/src/reducers/domains_move_reducer.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/domains_move.dart';
+import 'package:scadnano_view_middleware/src/view/pure_component.dart';
 
-import '../state/group.dart';
-import '../state/geometry.dart';
-import '../state/helix.dart';
-import '../state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 import '../util.dart' as util;
 import 'design_main_domain_moving.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_domains_moving.over_react.g.dart';
 
-DesignMainDomainsMovingProps set_design_main_domains_moving_props(
-  DesignMainDomainsMovingProps elt,
-  AppState state,
-) {
+DesignMainDomainsMovingProps set_design_main_domains_moving_props(DesignMainDomainsMovingProps elt, AppState state) {
   if (state.ui_state.domains_move == null) {
     return elt
       ..domains_move = null
@@ -33,11 +31,8 @@ DesignMainDomainsMovingProps set_design_main_domains_moving_props(
       ..geometry = Geometry();
   }
 
-  HelixGroup original_group = util.original_group_from_domains_move(
-    state.design,
-    state.ui_state.domains_move!,
-  );
-  HelixGroup current_group = util.current_group_from_domains_move(state.design, state.ui_state.domains_move!);
+  HelixGroup original_group = util_state.original_group_from_domains_move(state.design, state.ui_state.domains_move!);
+  HelixGroup current_group = util_state.current_group_from_domains_move(state.design, state.ui_state.domains_move!);
 
   // Need to check this here, because we need to allow the middleware to let through the domains_move
   // object so that view/design.dart can issue a warning to the user on a mousemove event when the
@@ -128,8 +123,7 @@ class DesignMainDomainsMovingComponent extends UiComponent2<DesignMainDomainsMov
       );
     }
 
-    return (Dom.g()..className = 'domains-moving-main-view' + (domains_move.allowable ? '' : ' disallowed'))(
-      domains_moving,
-    );
+    return (Dom.g()
+      ..className = 'domains-moving-main-view' + (domains_move.allowable ? '' : ' disallowed'))(domains_moving);
   }
 }

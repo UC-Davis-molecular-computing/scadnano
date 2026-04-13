@@ -2,15 +2,15 @@ import 'dart:html';
 import 'dart:math' as Math;
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/group.dart';
-import 'package:scadnano/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
 
 import '../app.dart';
-import '../actions/actions.dart' as actions;
-import '../state/design.dart';
-import '../state/geometry.dart';
-import '../state/strand.dart';
-import '../state/domain.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
 import 'pure_component.dart';
 import 'design_main_warning_star.dart';
 import '../util.dart' as util;
@@ -57,8 +57,7 @@ class DesignMainSliceBarComponent extends UiComponent2<DesignMainSliceBarProps> 
     // Add slicebar if needed
     var geometry = props.geometry;
     var slice_bar_svg_width = geometry.base_width_svg;
-    var slice_bar_svg_height =
-        displayed_helices_max_y - displayed_helices_min_y + geometry.helix_diameter_svg;
+    var slice_bar_svg_height = displayed_helices_max_y - displayed_helices_min_y + geometry.helix_diameter_svg;
     var helix = props.helices[helix_idxs_in_group.first]!;
     var slice_bar_svg_base_center_pos = helix.svg_base_pos(
       props.slice_bar_offset,

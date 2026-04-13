@@ -5,9 +5,10 @@ import 'package:over_react/src/component/error_boundary_api.dart';
 import 'package:over_react/src/component/error_boundary_recoverable.dart';
 
 import '../app.dart';
-import '../constants.dart' as constants;
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import '../util.dart' as util;
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_error_boundary.over_react.g.dart';
 
@@ -25,10 +26,7 @@ mixin DesignMainErrorBoundaryStateMixin on UiState {
 class DesignMainErrorBoundaryState = UiState with ErrorBoundaryState, DesignMainErrorBoundaryStateMixin;
 
 @Component2(isWrapper: true, isErrorBoundary: true)
-class DesignMainErrorBoundaryComponent<
-  T extends DesignMainErrorBoundaryProps,
-  S extends DesignMainErrorBoundaryState
->
+class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps, S extends DesignMainErrorBoundaryState>
     extends UiStatefulComponent2<T, S>
     with ErrorBoundaryApi<T, S> {
   @override
@@ -70,7 +68,7 @@ class DesignMainErrorBoundaryComponent<
       var error = state.error;
       //      var escaper = HtmlEscape();
       var escaped_error_message =
-          util.ASSERTION_ERROR_MESSAGE +
+          util_state.ASSERTION_ERROR_MESSAGE +
           '\n\n' +
           '${error.toString()}\n\nstack trace:\n${error.stackTrace}' //escaper.convert(
       //  )

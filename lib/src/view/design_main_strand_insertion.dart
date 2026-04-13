@@ -4,19 +4,21 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:platform_detect/platform_detect.dart';
-import 'package:scadnano/src/state/context_menu.dart';
-import 'package:scadnano/src/state/dialog.dart';
-import 'package:scadnano/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/context_menu.dart';
+import 'package:scadnano_state_actions/src/state/dialog.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
 
-import '../state/selectable.dart';
-import '../state/helix.dart';
+import 'package:scadnano_state_actions/src/state/selectable.dart';
+import 'selection_handler.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
 import '../app.dart';
-import '../state/domain.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
 import 'pure_component.dart';
 import '../util.dart' as util;
-import '../constants.dart' as constants;
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import 'design_main_strand_loopout.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_strand_insertion.over_react.g.dart';
 
@@ -37,8 +39,7 @@ mixin DesignMainStrandInsertionProps on UiProps {
   late Geometry geometry;
 }
 
-class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandInsertionProps>
-    with PureComponent {
+class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandInsertionProps> with PureComponent {
   Insertion get insertion => props.selectable_insertion.insertion;
 
   Domain get domain => props.selectable_insertion.domain;
@@ -71,12 +72,12 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       ..className = classname
       ..onPointerDown = ((ev) {
         if (insertion_selectable(props.selectable_insertion)) {
-          props.selectable_insertion.handle_selection_mouse_down(ev.nativeEvent);
+          handle_selection_mouse_down(props.selectable_insertion, ev.nativeEvent);
         }
       })
       ..onPointerUp = ((ev) {
         if (insertion_selectable(props.selectable_insertion)) {
-          props.selectable_insertion.handle_selection_mouse_up(ev.nativeEvent);
+          handle_selection_mouse_up(props.selectable_insertion, ev.nativeEvent);
         }
       })
       ..transform = props.transform)(insertion_path, insertion_background, text_num_insertions);
@@ -87,12 +88,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
     int offset = this.insertion.offset;
     Color color = props.color;
 
-    Point<double> pos = props.helix.svg_base_pos(
-      offset,
-      this.domain.forward,
-      props.svg_position_y,
-      props.geometry,
-    );
+    Point<double> pos = props.helix.svg_base_pos(offset, this.domain.forward, props.svg_position_y, props.geometry);
 
     num dx1 = geometry.base_width_svg;
     num dx2 = 0.5 * geometry.base_width_svg;
@@ -166,7 +162,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
     SvgProps text_path_props =
         Dom.textPath()
           ..startOffset = '50%'
-          //      ..href = '#${util.id_insertion(substrand, offset)}'
+          //      ..href = '#${util_state.id_insertion(substrand, offset)}'
           ..xlinkHref = '#${props.selectable_insertion.id}'
           ..className = 'insertion-length';
 
@@ -237,7 +233,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
         actions.ContextMenuShow(
           context_menu: ContextMenu(
             items: context_menu_insertion().build(),
-            position: util.from_point_num(event.page),
+            position: util_state.from_point_num(event.page),
           ),
         ),
       );
@@ -273,11 +269,7 @@ So for example an insertion length of 1 would represent at that offset
       var domains = [for (var selected_insertion in selected_insertions) selected_insertion.domain];
       action = actions.InsertionsLengthChange(insertions: insertions, domains: domains, length: new_length);
     } else {
-      action = actions.InsertionLengthChange(
-        domain: this.domain,
-        insertion: this.insertion,
-        length: new_length,
-      );
+      action = actions.InsertionLengthChange(domain: this.domain, insertion: this.insertion, length: new_length);
     }
 
     app.dispatch(action);

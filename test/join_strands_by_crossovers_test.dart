@@ -1,17 +1,17 @@
-import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
-import 'package:scadnano/src/reducers/delete_reducer.dart';
-import 'package:scadnano/src/reducers/design_reducer.dart';
-import 'package:scadnano/src/reducers/nick_ligate_join_by_crossover_reducers.dart';
-import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/loopout.dart';
-import 'package:scadnano/src/state/select_mode.dart';
+import 'package:scadnano_reducers/src/reducers/change_loopout_ext_properties.dart';
+import 'package:scadnano_reducers/src/reducers/delete_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/design_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/nick_ligate_join_by_crossover_reducers.dart';
+import 'package:scadnano_state_actions/src/state/dna_end.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/loopout.dart';
+import 'package:scadnano_state_actions/src/state/select_mode.dart';
 import 'package:test/test.dart';
 
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
 import 'utils.dart';
 
@@ -44,12 +44,7 @@ main() {
           design = design.draw_strand(0, 0).to(right_end).as_scaffold().commit();
         } else {
           design = design.draw_strand(helix, scaffold_5p).move(scaffold_move).as_scaffold().commit();
-          design =
-              design
-                  .draw_strand(helix, scaffold_5p + scaffold_move)
-                  .move(scaffold_move)
-                  .as_scaffold()
-                  .commit();
+          design = design.draw_strand(helix, scaffold_5p + scaffold_move).move(scaffold_move).as_scaffold().commit();
         }
       }
 

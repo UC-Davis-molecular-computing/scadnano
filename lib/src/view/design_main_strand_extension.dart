@@ -6,25 +6,27 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
 
-import 'package:scadnano/src/state/modification_type.dart';
+import 'package:scadnano_state_actions/src/state/modification_type.dart';
 
-import '../state/strand.dart';
-import '../state/dialog.dart';
-import '../state/address.dart';
-import '../state/geometry.dart';
-import '../state/group.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/dialog.dart';
+import 'package:scadnano_state_actions/src/state/address.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
 import '../app.dart';
-import '../state/helix.dart';
-import '../state/domain.dart';
-import '../state/extension.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/extension.dart';
 import '../util.dart' as util;
-import '../state/selectable.dart';
+import 'package:scadnano_state_actions/src/state/selectable.dart';
+import 'selection_handler.dart';
 import 'design_main_strand_dna_end.dart';
 import 'design_main_strand.dart' as design_main_strand;
 import 'pure_component.dart';
-import '../state/context_menu.dart';
-import '../actions/actions.dart' as actions;
-import '../constants.dart' as constants;
+import 'package:scadnano_state_actions/src/state/context_menu.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_strand_extension.over_react.g.dart';
 
@@ -61,7 +63,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     var adj_helix = props.adjacent_helix;
     var adj_helix_svg_y = props.adjacent_helix_svg_position.y;
 
-    Point<double> extension_attached_end_svg = util.compute_extension_attached_end_svg(
+    Point<double> extension_attached_end_svg = util_state.compute_extension_attached_end_svg(
       ext,
       adj_dom,
       adj_helix,
@@ -69,7 +71,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
       props.geometry,
     );
 
-    Point<double> extension_free_end_svg = util.compute_extension_free_end_svg(
+    Point<double> extension_free_end_svg = util_state.compute_extension_free_end_svg(
       extension_attached_end_svg,
       ext,
       adj_dom,
@@ -136,7 +138,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
     if (event.button == constants.LEFT_CLICK_BUTTON) {
       if (extension_selectable(props.ext)) {
         // select/deselect
-        props.ext.handle_selection_mouse_down(event);
+        handle_selection_mouse_down(props.ext, event);
       }
     }
   }
@@ -152,7 +154,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
           app.state.ui_state.domains_move != null ||
           app.state.ui_state.dna_ends_are_moving;
       if (extension_selectable(props.ext) && !currently_moving) {
-        props.ext.handle_selection_mouse_up(event_syn.nativeEvent);
+        handle_selection_mouse_up(props.ext, event_syn.nativeEvent);
       }
     }
   }
@@ -200,7 +202,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
         actions.ContextMenuShow(
           context_menu: ContextMenu(
             items: context_menu_extension().build(),
-            position: util.from_point_num(event.page),
+            position: util_state.from_point_num(event.page),
           ),
         ),
       );
@@ -266,11 +268,8 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
 
   extension_num_bases_change() async {
     int new_num_bases = await app.disable_keyboard_shortcuts_while(
-      () => ask_for_num_bases(
-        'change extension number of bases',
-        current_num_bases: props.ext.num_bases,
-        lower_bound: 1,
-      ),
+      () =>
+          ask_for_num_bases('change extension number of bases', current_num_bases: props.ext.num_bases, lower_bound: 1),
     );
     if (new_num_bases == props.ext.num_bases) {
       return;
@@ -297,7 +296,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
 
   Future<void> ask_for_extension_name() async {
     int name_idx = 0;
-    var items = util.FixedList<DialogItem>(1);
+    var items = util_state.FixedList<DialogItem>(1);
     items[name_idx] = DialogText(label: 'name', value: props.ext.name ?? '');
     var dialog = Dialog(title: 'set extension name', items: items, type: DialogType.set_extension_name);
 
@@ -324,7 +323,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
   Future<void> ask_for_extension_display_length_and_angle() async {
     int display_length_idx = 0;
     int display_angle_idx = 1;
-    var items = util.FixedList<DialogItem>(2);
+    var items = util_state.FixedList<DialogItem>(2);
     items[display_length_idx] = DialogFloat(label: 'display length (nm)', value: props.ext.display_length);
     items[display_angle_idx] = DialogFloat(label: 'display angle (degrees)', value: props.ext.display_angle);
     var dialog = Dialog(
@@ -371,10 +370,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
         ContextMenuItem(
           title: 'remove extension name',
           on_click: () {
-            var exts = util.add_if_not_null(
-              app.state.ui_state.selectables_store.selected_extensions,
-              props.ext,
-            );
+            var exts = util_state.add_if_not_null(app.state.ui_state.selectables_store.selected_extensions, props.ext);
             var action =
                 exts.length > 1
                     ? actions.BatchAction(
@@ -390,10 +386,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
         ContextMenuItem(
           title: 'remove extension label',
           on_click: () {
-            var exts = util.add_if_not_null(
-              app.state.ui_state.selectables_store.selected_extensions,
-              props.ext,
-            );
+            var exts = util_state.add_if_not_null(app.state.ui_state.selectables_store.selected_extensions, props.ext);
             var action =
                 exts.length > 1
                     ? actions.BatchAction(
@@ -407,9 +400,7 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
       ContextMenuItem(
         title: 'set extension color',
         on_click:
-            () => app.dispatch(
-              actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: props.ext),
-            ),
+            () => app.dispatch(actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: props.ext)),
       ),
       if (props.ext.color != null)
         ContextMenuItem(
@@ -430,20 +421,11 @@ tooltip_text(Extension ext) =>
     (ext.name == null ? "" : "\n    name=${ext.name}") +
     (ext.label == null ? "" : "\n    label=${ext.label.toString()}");
 
-Future<int> ask_for_num_bases(
-  String title, {
-  required int current_num_bases,
-  required int lower_bound,
-}) async {
+Future<int> ask_for_num_bases(String title, {required int current_num_bases, required int lower_bound}) async {
   int num_bases_idx = 0;
-  var items = util.FixedList<DialogItem>(1);
+  var items = util_state.FixedList<DialogItem>(1);
   items[num_bases_idx] = DialogInteger(label: 'number of bases:', value: current_num_bases);
-  var dialog = Dialog(
-    title: title,
-    type: DialogType.set_extension_num_bases,
-    items: items,
-    use_saved_response: false,
-  );
+  var dialog = Dialog(title: title, type: DialogType.set_extension_num_bases, items: items, use_saved_response: false);
 
   List<DialogItem>? results = await util.dialog(dialog);
   if (results == null) return current_num_bases;

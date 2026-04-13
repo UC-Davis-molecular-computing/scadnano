@@ -2,25 +2,25 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/json_serializable.dart';
-import 'package:scadnano/src/reducers/app_state_reducer.dart';
-import 'package:scadnano/src/reducers/helices_reducer.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/extension.dart';
-import 'package:scadnano/src/state/group.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/position3d.dart';
+import 'package:scadnano_state_actions/src/json_serializable.dart';
+import 'package:scadnano_reducers/src/reducers/app_state_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/helices_reducer.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/extension.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/position3d.dart';
 import 'package:test/test.dart';
 
-import 'package:scadnano/src/actions/actions.dart';
-import 'package:scadnano/src/reducers/design_reducer.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/grid_position.dart';
-import 'package:scadnano/src/extension_methods.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart';
+import 'package:scadnano_reducers/src/reducers/design_reducer.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/grid_position.dart';
+import 'package:scadnano_state_actions/src/extension_methods.dart';
 
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/constants.dart' as constants;
-import 'package:scadnano/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
 import 'utils.dart';
 
@@ -51,9 +51,7 @@ main() {
     });
 
     test('change_helix_idx_with_nondefault_helices_view_order', () {
-      var helices = [
-        for (int i = 0; i < 3; i++) Helix(idx: i, grid: Grid.square, grid_position: GridPosition(0, i)),
-      ];
+      var helices = [for (int i = 0; i < 3; i++) Helix(idx: i, grid: Grid.square, grid_position: GridPosition(0, i))];
       var groups = {
         "default_group": HelixGroup(helices_view_order: [2, 1, 0], grid: Grid.square),
       };

@@ -1,15 +1,16 @@
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
 
-import '../state/domain.dart';
-import '../state/helix.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
 import '../app.dart';
 import 'pure_component.dart';
-import '../constants.dart' as constants;
-import '../actions/actions.dart' as actions;
-import '../state/selectable.dart';
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/selectable.dart';
+import 'selection_handler.dart';
 
 part 'design_main_strand_deletion.over_react.g.dart';
 
@@ -30,8 +31,7 @@ mixin DesignMainStrandDeletionPropsMixin on UiProps {
 class DesignMainStrandDeletionProps = UiProps with DesignMainStrandDeletionPropsMixin;
 
 @Component2()
-class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDeletionProps>
-    with PureComponent {
+class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDeletionProps> with PureComponent {
   Domain get domain => props.selectable_deletion.domain;
 
   int get deletion => props.selectable_deletion.offset;
@@ -42,12 +42,7 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
     Domain domain = this.domain;
     int deletion_offset = this.deletion;
 
-    Point<double> pos = props.helix.svg_base_pos(
-      deletion_offset,
-      domain.forward,
-      props.svg_position_y,
-      props.geometry,
-    );
+    Point<double> pos = props.helix.svg_base_pos(deletion_offset, domain.forward, props.svg_position_y, props.geometry);
 
     // deletion
     var width = 0.8 * geometry.base_width_svg;
@@ -80,12 +75,12 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
       ..className = classname
       ..onPointerDown = ((ev) {
         if (deletion_selectable(props.selectable_deletion)) {
-          props.selectable_deletion.handle_selection_mouse_down(ev.nativeEvent);
+          handle_selection_mouse_down(props.selectable_deletion, ev.nativeEvent);
         }
       })
       ..onPointerUp = ((ev) {
         if (deletion_selectable(props.selectable_deletion)) {
-          props.selectable_deletion.handle_selection_mouse_up(ev.nativeEvent);
+          handle_selection_mouse_up(props.selectable_deletion, ev.nativeEvent);
         }
       })
       ..transform = props.transform)(

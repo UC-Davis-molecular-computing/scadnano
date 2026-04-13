@@ -2,31 +2,29 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/json_serializable.dart';
-import 'package:scadnano/src/reducers/app_state_reducer.dart';
-import 'package:scadnano/src/reducers/helices_reducer.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/position3d.dart';
+import 'package:scadnano_state_actions/src/json_serializable.dart';
+import 'package:scadnano_reducers/src/reducers/app_state_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/helices_reducer.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/position3d.dart';
 import 'package:test/test.dart';
 
-import 'package:scadnano/src/actions/actions.dart';
-import 'package:scadnano/src/reducers/design_reducer.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/grid_position.dart';
-import 'package:scadnano/src/extension_methods.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart';
+import 'package:scadnano_reducers/src/reducers/design_reducer.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/grid_position.dart';
+import 'package:scadnano_state_actions/src/extension_methods.dart';
 
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/constants.dart' as constants;
-import 'package:scadnano/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
 import 'utils.dart';
 
 main() {
   group('helices_view_order__after_removing_helices', () {
     test('remove_2_helices__same_group__helix_idx_in_numerical_order', () {
-      var helices = [
-        for (int i = 0; i < 6; i++) Helix(idx: i, grid: Grid.square, grid_position: GridPosition(0, i)),
-      ];
+      var helices = [for (int i = 0; i < 6; i++) Helix(idx: i, grid: Grid.square, grid_position: GridPosition(0, i))];
       var design = Design(helices: helices, grid: Grid.square);
       var state = app_state_from_design(design);
 
@@ -51,10 +49,7 @@ main() {
       }
       var design = Design(helices: helices, grid: Grid.square);
       var state = app_state_from_design(design);
-      state = app_state_reducer(
-        state,
-        MoveHelicesToGroup(helix_idxs: [0, 1, 2].build(), group_name: "Second"),
-      );
+      state = app_state_reducer(state, MoveHelicesToGroup(helix_idxs: [0, 1, 2].build(), group_name: "Second"));
       design = state.design;
 
       expect(design.groups["First"]!.helices_view_order.toList(), [3, 4]);
@@ -85,10 +80,7 @@ main() {
       }
       var design = Design(helices: helices, grid: Grid.square);
       var state = app_state_from_design(design);
-      state = app_state_reducer(
-        state,
-        MoveHelicesToGroup(helix_idxs: [0, 1, 2].build(), group_name: "First"),
-      );
+      state = app_state_reducer(state, MoveHelicesToGroup(helix_idxs: [0, 1, 2].build(), group_name: "First"));
       design = state.design;
 
       expect(design.groups["First"]!.helices_view_order.toList(), [0, 1, 2, 3, 4]);
@@ -121,10 +113,7 @@ main() {
       }
       var design = Design(helices: helices, grid: Grid.square);
       var state = app_state_from_design(design);
-      state = app_state_reducer(
-        state,
-        MoveHelicesToGroup(helix_idxs: [0, 1, 2, 5, 6].build(), group_name: "Third"),
-      );
+      state = app_state_reducer(state, MoveHelicesToGroup(helix_idxs: [0, 1, 2, 5, 6].build(), group_name: "Third"));
       design = state.design;
 
       expect(design.groups["First"]!.helices_view_order.toList(), [3, 4]);
@@ -168,10 +157,7 @@ main() {
       }
       var design = Design(helices: helices, grid: Grid.square);
       var state = app_state_from_design(design);
-      state = app_state_reducer(
-        state,
-        MoveHelicesToGroup(helix_idxs: [0, 1, 2, 5, 6].build(), group_name: "First"),
-      );
+      state = app_state_reducer(state, MoveHelicesToGroup(helix_idxs: [0, 1, 2, 5, 6].build(), group_name: "First"));
       design = state.design;
 
       expect(design.groups["First"]!.helices_view_order.toList(), [0, 1, 2, 3, 4, 5, 6]);

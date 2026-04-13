@@ -1,0 +1,11 @@
+name: Setup Dart SDK
+inputs:
+  sdk:
+    default: "3.11"
+    description: The Dart SDK to use. Defaults to 3.11 if none is provided.
+runs:
+  using: composite
+  steps:
+    - uses: dart-lang/setup-dart@v1
+      with:
+        sdk: ${{ inputs.sdk }}

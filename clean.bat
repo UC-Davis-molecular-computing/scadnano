@@ -1,4 +1,4 @@
 dart run build_runner clean
-dart run build_runner build --delete-conflicting-outputs
-
-
+cd scadnano_state_actions && dart run build_runner clean && cd ..
+cd scadnano_reducers && dart run build_runner clean && cd ..
+call remove_g.bat

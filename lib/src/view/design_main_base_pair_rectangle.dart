@@ -2,17 +2,17 @@ import 'dart:html';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/scadnano.dart';
-import 'package:scadnano/src/state/group.dart';
-import 'package:scadnano/src/state/helix.dart';
+import 'package:scadnano_view_middleware/scadnano.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
 
-import '../state/design.dart';
-import '../state/strand.dart';
-import '../state/domain.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
 import 'pure_component.dart';
 import 'design_main_warning_star.dart';
 import '../util.dart' as util;
-import '../constants.dart' as constants;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 
 part 'design_main_base_pair_rectangle.over_react.g.dart';
 
@@ -26,8 +26,7 @@ mixin DesignMainBasePairRectangleProps on UiProps {
   late BuiltMap<int, num> helix_idx_to_svg_position_y_map;
 }
 
-class DesignMainBasePairRectangleComponent extends UiComponent2<DesignMainBasePairRectangleProps>
-    with PureComponent {
+class DesignMainBasePairRectangleComponent extends UiComponent2<DesignMainBasePairRectangleProps> with PureComponent {
   @override
   render() {
     List<ReactElement> base_pair_lines_components = this.create_base_pair_lines_components(

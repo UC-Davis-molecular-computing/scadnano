@@ -7,32 +7,34 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/linker.dart';
-import 'package:scadnano/src/state/loopout.dart';
-import 'package:scadnano/src/state/modification_type.dart';
-import 'package:scadnano/src/view/design_main_strand_dna_extension_end_moving.dart';
+import 'package:scadnano_state_actions/src/state/linker.dart';
+import 'package:scadnano_state_actions/src/state/loopout.dart';
+import 'package:scadnano_state_actions/src/state/modification_type.dart';
+import 'package:scadnano_view_middleware/src/view/design_main_strand_dna_extension_end_moving.dart';
 
-import '../state/address.dart';
-import '../state/context_menu.dart';
-import '../state/geometry.dart';
-import '../state/group.dart';
-import '../state/strand.dart';
-import '../state/selectable.dart';
-import '../state/dna_end.dart';
-import '../state/helix.dart';
-import '../state/potential_crossover.dart';
-import '../state/domain.dart';
-import '../state/substrand.dart';
-import '../state/extension.dart';
+import 'package:scadnano_state_actions/src/state/address.dart';
+import 'package:scadnano_state_actions/src/state/context_menu.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/selectable.dart';
+import 'selection_handler.dart';
+import 'package:scadnano_state_actions/src/state/dna_end.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/potential_crossover.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/substrand.dart';
+import 'package:scadnano_state_actions/src/state/extension.dart';
 import '../app.dart';
 import '5p_end.dart';
 import '3p_end.dart';
 import 'design_main_strand.dart';
 import 'design_main_strand_dna_end_moving.dart';
 import 'pure_component.dart';
-import '../actions/actions.dart' as actions;
-import '../constants.dart' as constants;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import '../util.dart' as util;
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_strand_dna_end.over_react.g.dart';
 
@@ -67,9 +69,7 @@ class DesignMainDNAEndProps = UiProps with DesignMainDNAEndPropsMixin;
 @Component2()
 class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with PureComponent {
   DNAEnd get dna_end =>
-      props.domain != null
-          ? (props.is_5p ? props.domain!.dnaend_5p : props.domain!.dnaend_3p)
-          : props.ext!.dnaend_free;
+      props.domain != null ? (props.is_5p ? props.domain!.dnaend_5p : props.domain!.dnaend_3p) : props.ext!.dnaend_free;
 
   bool get is_first => props.domain != null ? props.domain!.is_first && props.is_5p : props.is_5p;
 
@@ -139,14 +139,14 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       forward = ext.adjacent_domain.forward;
       dna_end = ext.dnaend_free;
 
-      extension_attached_end_svg = util.compute_extension_attached_end_svg(
+      extension_attached_end_svg = util_state.compute_extension_attached_end_svg(
         ext,
         ext.adjacent_domain,
         props.helix,
         props.helix_svg_position.y,
         props.geometry,
       );
-      pos = util.compute_extension_free_end_svg(
+      pos = util_state.compute_extension_free_end_svg(
         extension_attached_end_svg,
         ext,
         ext.adjacent_domain,
@@ -251,11 +251,10 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
                       props.strand,
                       domain: domain,
                       address: address,
-                      modification_type:
-                          (props.is_5p ? ModificationType.five_prime : ModificationType.three_prime),
+                      modification_type: (props.is_5p ? ModificationType.five_prime : ModificationType.three_prime),
                     )
                     .build(),
-            position: util.from_point_num(event.page),
+            position: util_state.from_point_num(event.page),
           ),
         ),
       );
@@ -273,7 +272,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         if (event.button == constants.RIGHT_CLICK_BUTTON || event.button == constants.MIDDLE_CLICK_BUTTON) {
           return;
         }
-        dna_end.handle_selection_mouse_down(event);
+        handle_selection_mouse_down(dna_end, event);
         // set up drag detection for moving DNA ends
         app.dispatch(actions.DNAEndsMoveStart(offset: dna_end.offset_inclusive, helix: props.helix));
       } else {
@@ -286,9 +285,9 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         if (event.button == constants.RIGHT_CLICK_BUTTON || event.button == constants.MIDDLE_CLICK_BUTTON) {
           return;
         }
-        dna_end.handle_selection_mouse_down(event);
+        handle_selection_mouse_down(dna_end, event);
         // set up drag detection for moving DNA ends
-        Point<double> extension_attached_end_svg = util.compute_extension_attached_end_svg(
+        Point<double> extension_attached_end_svg = util_state.compute_extension_attached_end_svg(
           ext,
           ext.adjacent_domain,
           props.helix,
@@ -300,7 +299,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         // to get canvas coordinate space
         extension_attached_end_svg += props.group.translation(props.geometry);
 
-        Point<double> pos = util.compute_extension_free_end_svg(
+        Point<double> pos = util_state.compute_extension_free_end_svg(
           extension_attached_end_svg,
           ext,
           ext.adjacent_domain,
@@ -318,7 +317,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       if (event.button == constants.RIGHT_CLICK_BUTTON || event.button == constants.MIDDLE_CLICK_BUTTON) {
         return;
       }
-      dna_end.handle_selection_mouse_up(event);
+      handle_selection_mouse_up(dna_end, event);
     }
   }
 
@@ -436,9 +435,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
           ),
         );
       } else if (potential_crossover.linker != null) {
-        app.dispatch(
-          actions.MoveLinker(potential_crossover: potential_crossover, dna_end_second_click: dna_end),
-        );
+        app.dispatch(actions.MoveLinker(potential_crossover: potential_crossover, dna_end_second_click: dna_end));
       }
     } else if (edit_mode_is_ligate() && (is_first || is_last)) {
       app.dispatch(actions.Ligate(dna_end: dna_end));

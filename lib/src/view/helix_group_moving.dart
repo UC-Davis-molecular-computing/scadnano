@@ -3,30 +3,26 @@ import 'dart:math';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/helix_group_move.dart';
-import 'package:scadnano/src/state/position3d.dart';
+import 'package:scadnano_state_actions/src/state/helix_group_move.dart';
+import 'package:scadnano_state_actions/src/state/position3d.dart';
 
 import '../app.dart';
-import '../state/group.dart';
-import '../state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
 import 'design_main_helix.dart';
-import '../state/helix.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
 import 'pure_component.dart';
-import '../extension_methods.dart';
+import 'package:scadnano_state_actions/src/extension_methods.dart';
 
 part 'helix_group_moving.over_react.g.dart';
 
-HelixGroupMovingProps set_helix_group_moving_props(
-  HelixGroupMovingProps elt,
-  HelixGroupMove? helix_group_move,
-) {
+HelixGroupMovingProps set_helix_group_moving_props(HelixGroupMovingProps elt, HelixGroupMove? helix_group_move) {
   return elt..helix_group_move = helix_group_move;
 }
 
 UiFactory<HelixGroupMovingProps> ConnectedHelixGroupMoving = connect<HelixGroupMove?, HelixGroupMovingProps>(
   mapStateToProps:
-      (HelixGroupMove? helix_group_move) =>
-          set_helix_group_moving_props(HelixGroupMoving(), helix_group_move),
+      (HelixGroupMove? helix_group_move) => set_helix_group_moving_props(HelixGroupMoving(), helix_group_move),
   context: app.context_helix_group_move,
 )(HelixGroupMoving);
 

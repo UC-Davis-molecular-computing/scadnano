@@ -1,9 +1,9 @@
-import 'package:scadnano/src/actions/actions.dart';
-import 'package:scadnano/src/reducers/app_state_reducer.dart';
-import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/undo_redo.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart';
+import 'package:scadnano_reducers/src/reducers/app_state_reducer.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/undo_redo.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:test/test.dart';
 

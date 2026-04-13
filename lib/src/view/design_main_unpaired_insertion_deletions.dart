@@ -2,16 +2,17 @@ import 'dart:html';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/address.dart';
-import 'package:scadnano/src/state/group.dart';
-import 'package:scadnano/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/address.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
 
-import '../state/design.dart';
-import '../state/strand.dart';
-import '../state/domain.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
 import 'pure_component.dart';
 import 'design_main_warning_star.dart';
 import '../util.dart' as util;
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_unpaired_insertion_deletions.over_react.g.dart';
 
@@ -25,8 +26,7 @@ mixin DesignMainUnpairedInsertionDeletionsProps on UiProps {
   late BuiltMap<int, num> helix_idx_to_svg_position_y_map;
 }
 
-class DesignMainUnpairedInsertionDeletionsComponent
-    extends UiComponent2<DesignMainUnpairedInsertionDeletionsProps>
+class DesignMainUnpairedInsertionDeletionsComponent extends UiComponent2<DesignMainUnpairedInsertionDeletionsProps>
     with PureComponent {
   @override
   render() {
@@ -56,10 +56,7 @@ class DesignMainUnpairedInsertionDeletionsComponent
                   (DesignMainWarningStar()
                     ..base_svg_pos =
                         base_svg_pos +
-                        Point(
-                          0,
-                          is_insertion ? geometry.base_height_svg * 2 * (unpaired.forward ? 1 : -1) : 0,
-                        )
+                        Point(0, is_insertion ? geometry.base_height_svg * 2 * (unpaired.forward ? 1 : -1) : 0)
                     ..geometry = geometry
                     ..forward = domain.forward
                     ..color = 'green'
@@ -78,7 +75,7 @@ class DesignMainUnpairedInsertionDeletionsComponent
             (Dom.g()
               ..transform = transform_str
               ..className = 'mismatch-components-in-domain'
-              ..key = util.id_domain(domain))(domain_components),
+              ..key = util_state.id_domain(domain))(domain_components),
           );
         }
       }

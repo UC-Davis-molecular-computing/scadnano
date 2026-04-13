@@ -3,12 +3,12 @@ import 'dart:html';
 import 'package:built_collection/src/set.dart';
 import 'package:redux/redux.dart';
 
-import '../state/app_state.dart';
-import '../state/design.dart';
-import '../state/edit_mode.dart';
-import '../state/select_mode.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/edit_mode.dart';
+import 'package:scadnano_state_actions/src/state/select_mode.dart';
 
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import '../util.dart' as util;
 
 const selectable_css_style_non_domain_or_end = {
@@ -57,8 +57,7 @@ set_selectables_css_style_rules(
   bool staple_parts_selectable =
       edit_mode_is_select_or_rope && (design.is_origami && select_modes.contains(SelectModeChoice.staple));
   bool all_parts_selectable =
-      edit_mode_is_select_or_rope &&
-      (!design.is_origami || (scaffold_parts_selectable && staple_parts_selectable));
+      edit_mode_is_select_or_rope && (!design.is_origami || (scaffold_parts_selectable && staple_parts_selectable));
 
   for (var select_mode_choice in [SelectModeChoice.strand] + SelectModeChoice.strand_parts.toList()) {
     set_strand_part_selectable_css_style_rules(
@@ -96,8 +95,7 @@ set_strand_part_selectable_css_style_rules(
   var all_strand_selector = '.${select_mode_choice.css_selector()}:hover';
   var staple_only_selector =
       ':not(.${SelectModeChoice.scaffold.css_selector()}).${select_mode_choice.css_selector()}:hover';
-  var scaffold_selector =
-      '.${SelectModeChoice.scaffold.css_selector()}.${select_mode_choice.css_selector()}:hover';
+  var scaffold_selector = '.${SelectModeChoice.scaffold.css_selector()}.${select_mode_choice.css_selector()}:hover';
 
   if (!edit_mode_is_select_or_rope_select || !select_mode_contains_part) {
     css_class_remove_style(all_strand_selector);

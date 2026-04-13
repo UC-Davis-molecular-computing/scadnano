@@ -4,30 +4,27 @@ import 'dart:math';
 import 'package:meta/meta.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/group.dart';
-import '../state/crossover.dart';
-import '../state/design.dart';
-import '../state/domain.dart';
-import '../state/geometry.dart';
-import '../state/helix.dart';
-import '../state/position3d.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/crossover.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/position3d.dart';
 
-import '../state/address.dart';
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/address.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import '../app.dart';
 import '../util.dart' as util;
-import '../constants.dart' as constants;
-import '../state/app_state.dart';
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 /// Set positions of helices based on crossovers, assuming all helices are parallel.
 /// Dispatches a normal HelixPositionSet action (many of them batched).
 /// Also changes the roll of each Helix to point those crossovers at each other in the new positions.
-helix_positions_set_based_on_crossovers_middleware(
-  Store<AppState> store,
-  dynamic action,
-  NextDispatcher next,
-) {
+helix_positions_set_based_on_crossovers_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   next(action);
   if (action is actions.HelicesPositionsSetBasedOnCrossovers) {
     var all_actions = get_helix_position_and_roll_actions(store.state);
@@ -88,9 +85,7 @@ List<Helix> _get_helices_to_process(AppState state, HelixGroup group) {
   } else {
     helices = [for (var helix_idx in selected_helix_idxs) design.helices[helix_idx]!];
   }
-  helices.sort(
-    (h1, h2) => group.helices_view_order_inverse[h1.idx]! - group.helices_view_order_inverse[h2.idx]!,
-  );
+  helices.sort((h1, h2) => group.helices_view_order_inverse[h1.idx]! - group.helices_view_order_inverse[h2.idx]!);
   return helices;
 }
 
@@ -102,16 +97,18 @@ List<Helix> _get_helices_to_process(AppState state, HelixGroup group) {
 List<(Address, Address)>? _get_addresses_to_process(AppState state, List<Helix> helices) {
   var design = state.design;
   var selected_crossovers = state.ui_state.selectables_store.selected_crossovers;
-  var addresses_of_selected_crossovers_by_prev_helix_idx =
-      _get_addresses_of_selected_crossovers_by_prev_helix_idx(selected_crossovers, helices, design);
+  var addresses_of_selected_crossovers_by_prev_helix_idx = _get_addresses_of_selected_crossovers_by_prev_helix_idx(
+    selected_crossovers,
+    helices,
+    design,
+  );
 
   List<(Address, Address)> addresses = [];
   for (int i = 0; i < helices.length - 1; i++) {
     var helix_top = helices[i];
     var helix_bot = helices[i + 1];
     (int, int) helix_idx_top_bot = (helix_top.idx, helix_bot.idx);
-    var addresses_crossovers_this_helices_pair =
-        addresses_of_selected_crossovers_by_prev_helix_idx[helix_idx_top_bot]!;
+    var addresses_crossovers_this_helices_pair = addresses_of_selected_crossovers_by_prev_helix_idx[helix_idx_top_bot]!;
 
     Address address_top, address_bot;
 
@@ -172,15 +169,11 @@ Please select only one, or select none to default to the first crossover between
   // if not using scaffold or crossovers when finding leftmost, filter those out
   if (!use_scaffold) {
     address_crossovers_on_bot =
-        address_crossovers_on_bot
-            .where((address_crossover) => !address_crossover.$2.is_scaffold)
-            .toBuiltList();
+        address_crossovers_on_bot.where((address_crossover) => !address_crossover.$2.is_scaffold).toBuiltList();
   }
   if (!use_staple) {
     address_crossovers_on_bot =
-        address_crossovers_on_bot
-            .where((address_crossover) => address_crossover.$2.is_scaffold)
-            .toBuiltList();
+        address_crossovers_on_bot.where((address_crossover) => address_crossover.$2.is_scaffold).toBuiltList();
   }
 
   // find first crossover on h1 that also goes to h2
@@ -322,7 +315,7 @@ List<RollXY> _calculate_rolls_and_positions(
 
     var degrees_top = design.helix_rotation_at(address_top, roll);
     // 0 is straight up, not right as in Cartesian rotation, so we have to convert
-    var radians_top_cartesian = util.to_radians(degrees_top - 90);
+    var radians_top_cartesian = util_state.to_radians(degrees_top - 90);
     var next_x = x + cos(radians_top_cartesian) * geometry.distance_between_helices_nm;
     var next_y = y + sin(radians_top_cartesian) * geometry.distance_between_helices_nm;
 

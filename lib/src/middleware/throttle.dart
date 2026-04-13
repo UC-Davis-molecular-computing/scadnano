@@ -1,6 +1,6 @@
 import 'package:redux/redux.dart';
 
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
 // indicates time an action of given type was last dispatched.
 final Map<Type, int> _throttled_types = {};

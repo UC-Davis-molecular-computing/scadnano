@@ -8,16 +8,17 @@ import 'package:xml/xml.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/middleware/system_clipboard.dart';
-import 'package:scadnano/src/state/base_pair_display_type.dart';
-import 'package:scadnano/src/state/strand.dart';
-import 'package:scadnano/src/view/design_main_dna_sequence.dart';
+import 'package:scadnano_view_middleware/src/middleware/system_clipboard.dart';
+import 'package:scadnano_state_actions/src/state/base_pair_display_type.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_view_middleware/src/view/design_main_dna_sequence.dart';
 
 import '../app.dart';
-import '../state/app_state.dart';
-import '../actions/actions.dart' as actions;
-import '../constants.dart' as constants;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import '../util.dart' as util;
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 export_svg_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   if (action is actions.ExportSvg || action is actions.CopySelectedStandsToClipboardImage) {
@@ -93,14 +94,10 @@ List<Element> get_selected_svg_elements(AppState state) {
   BuiltSet<Strand> selected_strands = state.ui_state.selectables_store.selected_strands;
   List<Element> selected_elts = [];
   if (app.state.ui_state.base_pair_display_type != BasePairDisplayType.none) {
-    bool export_bp_if_other_not_selected =
-        app.state.ui_state.export_base_pair_lines_if_other_strand_not_selected;
+    bool export_bp_if_other_not_selected = app.state.ui_state.export_base_pair_lines_if_other_strand_not_selected;
     var base_pairs =
         state.ui_state.show_base_pair_lines_with_mismatches
-            ? state.design.selected_base_pairs_with_mismatches(
-              selected_strands,
-              export_bp_if_other_not_selected,
-            )
+            ? state.design.selected_base_pairs_with_mismatches(selected_strands, export_bp_if_other_not_selected)
             : state.design.selected_base_pairs(selected_strands, export_bp_if_other_not_selected);
     selected_elts.addAll(get_svg_elements_of_base_pairs(base_pairs));
   }
@@ -215,13 +212,7 @@ TextElement create_portable_text(TextContentElement text_ele, int j) {
   char_ele.style.setProperty("dominant-baseline", "");
   char_ele.style.setProperty("text-anchor", "start");
   if (text_ele.classes.any(
-    [
-      "loopout-extension-length",
-      "dna-seq-insertion",
-      "dna-seq-loopout",
-      "dna-seq-extension",
-      "dna-seq",
-    ].contains,
+    ["loopout-extension-length", "dna-seq-insertion", "dna-seq-loopout", "dna-seq-extension", "dna-seq"].contains,
   )) {
     char_ele.style.setProperty(
       "text-shadow", // doesn't work in PowerPoint
@@ -299,8 +290,7 @@ SvgSvgElement make_portable(SvgSvgElement src) {
 }
 
 SvgSvgElement get_cloned_svg_element_with_style(List<Element> selected_elts, bool separate_text) {
-  var cloned_svg_element_with_style =
-      SvgSvgElement()..children = selected_elts.map(clone_and_apply_style).toList();
+  var cloned_svg_element_with_style = SvgSvgElement()..children = selected_elts.map(clone_and_apply_style).toList();
 
   // Remove 5'/3' ends BEFORE make_portable, because make_portable replaces <rect> elements
   // with new ones that don't preserve CSS classes (so querySelectorAll can't find them after).
@@ -333,17 +323,13 @@ void _remove_end_elements_if_needed(Element svg_element, {required bool export_5
   if (!export_5p) {
     // 5' ends are <rect> elements with class five-prime-end or five-prime-end-first-substrand
     svg_element
-        .querySelectorAll(
-          '.${constants.css_selector_end_5p_domain}, .${constants.css_selector_end_5p_strand}',
-        )
+        .querySelectorAll('.${constants.css_selector_end_5p_domain}, .${constants.css_selector_end_5p_strand}')
         .forEach((e) => e.remove());
   }
   if (!export_3p) {
     // 3' ends are <polygon> elements with class three-prime-end or three-prime-end-last-substrand
     svg_element
-        .querySelectorAll(
-          '.${constants.css_selector_end_3p_domain}, .${constants.css_selector_end_3p_strand}',
-        )
+        .querySelectorAll('.${constants.css_selector_end_3p_domain}, .${constants.css_selector_end_3p_strand}')
         .forEach((e) => e.remove());
   }
 }
@@ -355,7 +341,7 @@ _export_svg(svg.SvgSvgElement svg_element, String filename_append) {
   filename = filename.substring(0, filename.lastIndexOf('.'));
   filename += '_${filename_append}.svg';
 
-  util.save_file(filename, source, blob_type: util.BlobType.image);
+  util.save_file(filename, source, blob_type: util_state.BlobType.image);
 }
 
 _copy_from_elements(List<Element> svg_elements) {

@@ -3,25 +3,26 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:quiver/iterables.dart';
-import 'package:scadnano/src/reducers/app_state_reducer.dart';
-import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/state/geometry.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/position3d.dart';
+import 'package:scadnano_reducers/src/reducers/app_state_reducer.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/position3d.dart';
 import 'package:test/test.dart';
 
-import 'package:scadnano/src/actions/actions.dart';
-import 'package:scadnano/src/reducers/design_reducer.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/grid_position.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart';
+import 'package:scadnano_reducers/src/reducers/design_reducer.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/grid_position.dart';
 
-import 'package:scadnano/src/middleware/helices_positions_set_based_on_crossovers.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/constants.dart' as constants;
-import 'package:scadnano/src/util.dart' as util;
-import 'package:scadnano/src/actions/actions.dart' as actions;
+import 'package:scadnano_view_middleware/src/middleware/helices_positions_set_based_on_crossovers.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
+import 'package:scadnano_view_middleware/src/util.dart' as util;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
 import 'utils.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 main() {
   num eps = 0.0001;
@@ -60,8 +61,8 @@ main() {
       expect(helix1.grid_position, GridPosition(0, 1));
       expect(helix2.grid_position, GridPosition(0, 2));
 
-      expect(util.rotation_between_helices(helix0, helix1, true, design_vert.geometry), 180);
-      expect(util.rotation_between_helices(helix1, helix2, true, design_vert.geometry), 180);
+      expect(util_state.rotation_between_helices(helix0, helix1, true, design_vert.geometry), 180);
+      expect(util_state.rotation_between_helices(helix1, helix2, true, design_vert.geometry), 180);
 
       for (int i in Iterable<int>.generate(5)) {
         expect(design_vert.helix_rotation_forward(0, i), closeTo(i * 360 / 10.5, eps));
@@ -85,10 +86,7 @@ main() {
       int anchor = 0;
       var roll_action_h0 = actions.HelixRollSetAtOther(0, 1, false, anchor);
       var roll_action_h1 = actions.HelixRollSetAtOther(1, 0, true, anchor);
-      var batch_action = actions.BatchAction([
-        roll_action_h0,
-        roll_action_h1,
-      ], "unstrain backbone at crossover");
+      var batch_action = actions.BatchAction([roll_action_h0, roll_action_h1], "unstrain backbone at crossover");
       var state_after = app_state_reducer(state_vert, batch_action);
 
       expect(state_after.design.helix_rotation_reverse(0, 0), closeTo(180, eps));
@@ -110,10 +108,7 @@ main() {
       int anchor = 5;
       var roll_action_h1 = actions.HelixRollSetAtOther(1, 2, true, anchor);
       var roll_action_h2 = actions.HelixRollSetAtOther(2, 1, false, anchor);
-      var batch_action = actions.BatchAction([
-        roll_action_h1,
-        roll_action_h2,
-      ], "unstrain backbone at crossover");
+      var batch_action = actions.BatchAction([roll_action_h1, roll_action_h2], "unstrain backbone at crossover");
       var state_after = app_state_reducer(state_vert, batch_action);
 
       expect(state_after.design.helix_rotation_forward(1, 5), closeTo(180, eps));
@@ -159,8 +154,8 @@ main() {
       expect(helix1.grid_position, GridPosition(1, 0));
       expect(helix2.grid_position, GridPosition(2, 0));
 
-      expect(util.rotation_between_helices(helix0, helix1, true, design_horz.geometry), 90);
-      expect(util.rotation_between_helices(helix1, helix2, true, design_horz.geometry), 90);
+      expect(util_state.rotation_between_helices(helix0, helix1, true, design_horz.geometry), 90);
+      expect(util_state.rotation_between_helices(helix1, helix2, true, design_horz.geometry), 90);
 
       for (int i in Iterable<int>.generate(5)) {
         expect(design_horz.helix_rotation_forward(0, i), closeTo(i * 360 / 10.5, eps));
@@ -182,10 +177,7 @@ main() {
       int anchor = 0;
       var roll_action_h0 = actions.HelixRollSetAtOther(0, 1, false, anchor);
       var roll_action_h1 = actions.HelixRollSetAtOther(1, 0, true, anchor);
-      var batch_action = actions.BatchAction([
-        roll_action_h0,
-        roll_action_h1,
-      ], "unstrain backbone at crossover");
+      var batch_action = actions.BatchAction([roll_action_h0, roll_action_h1], "unstrain backbone at crossover");
       var state_after = app_state_reducer(state_horz, batch_action);
 
       expect(state_after.design.helix_rotation_reverse(0, 0), closeTo(90, eps));
@@ -205,10 +197,7 @@ main() {
       int anchor = 5;
       var roll_action_h1 = actions.HelixRollSetAtOther(1, 2, true, anchor);
       var roll_action_h2 = actions.HelixRollSetAtOther(2, 1, false, anchor);
-      var batch_action = actions.BatchAction([
-        roll_action_h1,
-        roll_action_h2,
-      ], "unstrain backbone at crossover");
+      var batch_action = actions.BatchAction([roll_action_h1, roll_action_h2], "unstrain backbone at crossover");
       var state_after = app_state_reducer(state_horz, batch_action);
 
       expect(state_after.design.helix_rotation_forward(1, 5), closeTo(90, eps));
@@ -240,12 +229,7 @@ main() {
       var helices = [
         Helix(idx: 0, grid: Grid.none, position: Position3D(x: 0, z: 0, y: 0), roll: 0),
         Helix(idx: 1, grid: Grid.none, position: Position3D(x: helix_dist, z: 0, y: helix_dist), roll: 0),
-        Helix(
-          idx: 2,
-          grid: Grid.none,
-          position: Position3D(x: 2 * helix_dist, z: 0, y: 2 * helix_dist),
-          roll: 0,
-        ),
+        Helix(idx: 2, grid: Grid.none, position: Position3D(x: 2 * helix_dist, z: 0, y: 2 * helix_dist), roll: 0),
       ];
       design = Design(grid: Grid.none, helices: helices, geometry: geometry);
       design = design.draw_strand(1, 5).to(0).cross(0).to(5).commit();
@@ -267,8 +251,8 @@ main() {
       expect(helix1.position(design.geometry), Position3D(x: helix_dist, z: 0, y: helix_dist));
       expect(helix2.position(design.geometry), Position3D(x: 2 * helix_dist, z: 0, y: 2 * helix_dist));
 
-      expect(util.rotation_between_helices(helix0, helix1, true, design.geometry), 90 + 45);
-      expect(util.rotation_between_helices(helix1, helix2, true, design.geometry), 90 + 45);
+      expect(util_state.rotation_between_helices(helix0, helix1, true, design.geometry), 90 + 45);
+      expect(util_state.rotation_between_helices(helix1, helix2, true, design.geometry), 90 + 45);
 
       expect(design.groups.length, 1);
       expect(design.groups.keys, contains(constants.default_group_name));
@@ -306,7 +290,7 @@ main() {
       expect(helix1.position(geometry).y, closeTo(y1, eps));
       expect(helix1.position(geometry).z, closeTo(0, eps));
 
-      num radians_60_deg = util.to_radians(60);
+      num radians_60_deg = util_state.to_radians(60);
       num x2 = cos(radians_60_deg) * design.geometry.distance_between_helices_nm;
       num y2 = -sin(radians_60_deg) * design.geometry.distance_between_helices_nm;
       expect(helix2.position(geometry).x, closeTo(x1 + x2, eps));

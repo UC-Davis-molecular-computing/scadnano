@@ -3,15 +3,15 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/view/pure_component.dart';
-import 'package:scadnano/src/view/transform_by_helix_group.dart';
+import 'package:scadnano_view_middleware/src/view/pure_component.dart';
+import 'package:scadnano_view_middleware/src/view/transform_by_helix_group.dart';
 
-import '../state/geometry.dart';
-import '../state/group.dart';
-import '../state/helix.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
 import '3p_end.dart';
 import '5p_end.dart';
-import '../constants.dart' as constants;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 
 part 'design_main_strand_creating.over_react.g.dart';
 
@@ -30,8 +30,7 @@ mixin DesignMainStrandCreatingProps on UiProps implements TransformByHelixGroupP
   late num svg_position_y;
 }
 
-class DesignMainStrandCreatingComponent extends UiComponent2<DesignMainStrandCreatingProps>
-    with PureComponent {
+class DesignMainStrandCreatingComponent extends UiComponent2<DesignMainStrandCreatingProps> with PureComponent {
   @override
   render() {
     Point<double> start_svg = props.helix.svg_base_pos(

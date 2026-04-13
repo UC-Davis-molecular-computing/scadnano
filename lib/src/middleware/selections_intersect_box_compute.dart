@@ -4,17 +4,18 @@ import 'dart:svg' as svg;
 
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/selection_rope.dart';
+import 'package:scadnano_state_actions/src/state/selection_rope.dart';
 
-import '../state/select_mode.dart';
-import '../state/selection_box.dart';
+import 'package:scadnano_state_actions/src/state/select_mode.dart';
+import 'package:scadnano_state_actions/src/state/selection_box.dart';
 import '../app.dart';
-import '../state/selectable.dart';
+import 'package:scadnano_state_actions/src/state/selectable.dart';
 import '../view/design.dart';
-import '../state/app_state.dart';
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import '../util.dart' as util;
-import '../extension_methods.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
+import 'package:scadnano_state_actions/src/extension_methods.dart';
 
 //XXX: This seems to require middleware to handle cleanly.
 // It seems difficult to put enough state into AppState to reliably detect when one SVG element
@@ -144,7 +145,7 @@ generalized_intersection_list_polygon(
     // getBBox uses SVG coordinates, same as those in the polygon, whereas get getBoundingClientRect()
     // uses coordinates within the "viewport"
     svg.Rect elt_bbox_svg_rect = elt.getBBox();
-    Rectangle<num> elt_bbox = util.svg_rect_to_rectangle(elt_bbox_svg_rect);
+    Rectangle<num> elt_bbox = util_state.svg_rect_to_rectangle(elt_bbox_svg_rect);
     if (overlap(polygon, elt_bbox)) {
       elts_intersecting.add(elt);
     }
@@ -328,8 +329,7 @@ List<svg.GraphicsElement> find_selectable_elements(Iterable<SelectModeChoice> se
 
   List<String> selectors = [];
   if (is_origami &&
-      (!select_modes.contains(SelectModeChoice.scaffold) ||
-          !select_modes.contains(SelectModeChoice.staple))) {
+      (!select_modes.contains(SelectModeChoice.scaffold) || !select_modes.contains(SelectModeChoice.staple))) {
     if (select_modes.contains(SelectModeChoice.scaffold)) {
       for (var mode in select_modes_not_scaffold_or_staple) {
         selectors.add('.${SelectModeChoice.scaffold.css_selector()}.${mode.css_selector()}');
@@ -352,100 +352,7 @@ List<svg.GraphicsElement> find_selectable_elements(Iterable<SelectModeChoice> se
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// intersection geometry
-
-class Box {
-  num height = -1; // This is guaranteed to be assigned but Dart can't tell that.
-  num width = -1; // This is guaranteed to be assigned but Dart can't tell that.
-  num x;
-  num y;
-
-  factory Box.from(svg.Rect svg_rect) =>
-      Box(svg_rect.x!, svg_rect.y!, width: svg_rect.width!, height: svg_rect.height!);
-
-  factory Box.from_selection_box(SelectionBox box) => Box(box.x, box.y, width: box.width, height: box.height);
-
-  Box(this.x, this.y, {num? height = null, num? width = null, num? x2 = null, num? y2 = null}) {
-    if (width == null && x2 == null) {
-      throw ArgumentError('at least one of width or x2 must be non-null');
-    } else if (x2 == null) {
-      // width cannot be null by the logic of these if statements
-      this.width = width!;
-    } else if (width == null) {
-      this.width = x2 - x;
-    } else {
-      throw AssertionError("unreachable");
-    }
-
-    if (height == null && y2 == null) {
-      throw ArgumentError('at least one of height or x2 must be non-null');
-    } else if (y2 == null) {
-      // height cannot be null by the logic of these if statements
-      this.height = height!;
-    } else if (height == null) {
-      this.height = y2 - y;
-    } else {
-      throw AssertionError("unreachable");
-    }
-  }
-
-  num get x2 => x + width;
-
-  num get y2 => y + height;
-
-  set x2(num x2new) {
-    width = x2new - x;
-  }
-
-  set y2(num y2new) {
-    height = y2new - y;
-  }
-}
-
-// gets list of elements associated to Selectables that intersect select_box_bbox
-List<E> intersection_list<E>(List<E> elts, List<Box> bboxes, Box select_box) =>
-    generalized_intersection_list(elts, bboxes, select_box, intervals_overlap);
-
-// gets list of elements associated to Selectables that intersect select_box_bbox
-List<E> enclosure_list<E>(Iterable<E> elts, List<Box> bboxes, Box select_box) =>
-    generalized_intersection_list(elts, bboxes, select_box, interval_contained);
-
-// indicates if (l1,h1) intersect (l2,h2) \neq empty
-bool intervals_overlap(num l1, num h1, num l2, num h2) {
-  return h1 >= l2 && h2 >= l1;
-}
-
-List<E> generalized_intersection_list<E>(
-  Iterable<E> elts,
-  List<Box> bboxes,
-  Box select_box,
-  bool overlap(num l1, num h1, num l2, num h2),
-) {
-  if (elts.length != bboxes.length) {
-    throw ArgumentError(
-      'elts (length ${elts.length}) and bboxes (length ${bboxes.length}) must have same length',
-    );
-  }
-  List<E> elts_intersecting = [];
-  //  for (int i = 0; i < elts.length; i++) {
-  int i = 0;
-  for (E elt in elts) {
-    Box elt_bbox = bboxes[i++];
-    if (boxes_intersect_generalized(elt_bbox, select_box, overlap)) {
-      elts_intersecting.add(elt);
-    }
-  }
-  return elts_intersecting;
-}
-
-bool boxes_intersect_generalized(Box elt_bbox, Box select_box, bool overlap(num l1, num h1, num l2, num h2)) {
-  num elt_x2 = elt_bbox.x + elt_bbox.width;
-  num select_box_x2 = select_box.x + select_box.width;
-  num elt_y2 = elt_bbox.y + elt_bbox.height;
-  num select_box_y2 = select_box.y + select_box.height;
-  return overlap(elt_bbox.x, elt_x2, select_box.x, select_box_x2) &&
-      overlap(elt_bbox.y, elt_y2, select_box.y, select_box_y2);
-}
+// intersection geometry — Box, enclosure_list, intersection_list etc. are now in util_state.dart
 
 //XXX: It's simpler to check whether the bounding rectangle in "browser viewport coordinates",
 // i.e., elt.getBoundingClientRect()

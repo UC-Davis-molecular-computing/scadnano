@@ -10,7 +10,7 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/components.dart' as over_react_components;
 import '../view/edit_and_select_modes.dart';
 
-import '../state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 import 'design.dart';
 import 'menu.dart';
 import 'oxview.dart';
@@ -18,7 +18,7 @@ import '../app.dart';
 import '../util.dart' as util;
 import '../middleware/local_storage.dart' as local_storage;
 
-import '../constants.dart' as constants;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 
 @JS(constants.js_function_name_setup_svg_panzoom)
 external setup_svg_panzoom_js(
@@ -96,9 +96,7 @@ class View {
     var store = app.store;
 
     react_dom.render(
-      over_react_components.ErrorBoundary()(
-        (ReduxProvider()..store = store)(set_menu_props(ConnectedMenu(), state)()),
-      ),
+      over_react_components.ErrorBoundary()((ReduxProvider()..store = store)(set_menu_props(ConnectedMenu(), state)())),
       this.menu_element,
     );
 
@@ -106,8 +104,7 @@ class View {
 
     react_dom.render(
       over_react_components.ErrorBoundary()(
-        (ReduxProvider()
-          ..store = store)(set_edit_and_select_mode_props(ConnectedEditAndSelectModes(), state)()),
+        (ReduxProvider()..store = store)(set_edit_and_select_mode_props(ConnectedEditAndSelectModes(), state)()),
       ),
       this.edit_and_select_modes_element,
     );

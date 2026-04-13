@@ -1,30 +1,30 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:scadnano/src/actions/actions.dart';
-import 'package:scadnano/src/json_serializable.dart';
-import 'package:scadnano/src/reducers/app_state_reducer.dart';
-import 'package:scadnano/src/reducers/assign_or_remove_dna_reducer.dart';
-import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
-import 'package:scadnano/src/reducers/delete_reducer.dart';
-import 'package:scadnano/src/reducers/nick_ligate_join_by_crossover_reducers.dart';
-import 'package:scadnano/src/reducers/assign_domain_names_reducer.dart';
-import 'package:scadnano/src/state/address.dart';
-import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/state/crossover.dart';
-import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/loopout.dart';
-import 'package:scadnano/src/state/potential_crossover.dart';
-import 'package:scadnano/src/state/select_mode.dart';
-import 'package:scadnano/src/state/strand.dart';
-import 'package:scadnano/src/state/dna_assign_options.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart';
+import 'package:scadnano_state_actions/src/json_serializable.dart';
+import 'package:scadnano_reducers/src/reducers/app_state_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/assign_or_remove_dna_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/change_loopout_ext_properties.dart';
+import 'package:scadnano_reducers/src/reducers/delete_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/nick_ligate_join_by_crossover_reducers.dart';
+import 'package:scadnano_reducers/src/reducers/assign_domain_names_reducer.dart';
+import 'package:scadnano_state_actions/src/state/address.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/crossover.dart';
+import 'package:scadnano_state_actions/src/state/dna_end.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/loopout.dart';
+import 'package:scadnano_state_actions/src/state/potential_crossover.dart';
+import 'package:scadnano_state_actions/src/state/select_mode.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/dna_assign_options.dart';
 import 'package:test/test.dart';
 
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
 import 'utils.dart';
 
@@ -51,15 +51,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design =
-          design
-              .draw_strand(0, 0)
-              .move(4)
-              .cross(1)
-              .move(-4)
-              .cross(2)
-              .move(4)
-              .with_sequence('AAAACCCCGGGG')
-              .commit();
+          design.draw_strand(0, 0).move(4).cross(1).move(-4).cross(2).move(4).with_sequence('AAAACCCCGGGG').commit();
       design = design.draw_strand(3, 0).move(4).with_sequence('TTTT').commit();
       AppState state = app_state_from_design(design);
       Strand strand1 = design.strands[0];
@@ -136,15 +128,7 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design =
-          design
-              .draw_strand(0, 0)
-              .move(4)
-              .cross(1)
-              .move(-4)
-              .cross(2)
-              .move(4)
-              .with_sequence('AAAACCCCGGGG')
-              .commit();
+          design.draw_strand(0, 0).move(4).cross(1).move(-4).cross(2).move(4).with_sequence('AAAACCCCGGGG').commit();
       design = design.draw_strand(3, 0).move(4).with_sequence('TTTT').commit();
       AppState state = app_state_from_design(design);
       Strand strand1 = design.strands[0];

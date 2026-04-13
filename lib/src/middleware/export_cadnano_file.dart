@@ -7,19 +7,19 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/loopout.dart';
-import 'package:scadnano/src/state/strand.dart';
-import 'package:scadnano/src/state/substrand.dart';
-import '../state/design.dart';
-import '../state/extension.dart';
-import '../state/grid.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/loopout.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/substrand.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/extension.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
 
-import '../json_serializable.dart';
-import '../actions/actions.dart' as actions;
-import '../state/app_state.dart';
-import '../constants.dart' as constants;
+import 'package:scadnano_state_actions/src/json_serializable.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import '../util.dart' as util;
 
 export_cadnano_file_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
@@ -158,12 +158,7 @@ int _get_multiple_of_x_sup_closest_to_y(int x, int y) {
 }
 
 /// Creates blank cadnanov2 helices in and initialized all their fields.
-Map<int, int> _cadnano_v2_fill_blank(
-  Design design,
-  Map<String, dynamic> dct,
-  int num_bases,
-  Grid design_grid,
-) {
+Map<int, int> _cadnano_v2_fill_blank(Design design, Map<String, dynamic> dct, int num_bases, Grid design_grid) {
   Map<int, int> helices_ids_reverse = new HashMap();
   int i = 0;
   for (Helix helix in design.helices.values) {
@@ -207,9 +202,7 @@ void _cadnano_v2_place_strand(Strand strand, Map<String, dynamic> dct, Map<int, 
   for (int i = 0; i < strand.domains.length; i++) {
     Domain domain = strand.domains[i];
     if (domain is Loopout) {
-      throw new IllegalCadnanoDesignError(
-        'cannot convert Strand ${strand} to cadnanov2 format, since it has Loopouts',
-      );
+      throw new IllegalCadnanoDesignError('cannot convert Strand ${strand} to cadnanov2 format, since it has Loopouts');
     }
 
     int which_helix_id = helices_ids_reverse[domain.helix]!;

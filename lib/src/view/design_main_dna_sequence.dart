@@ -3,17 +3,18 @@ import 'dart:math';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:platform_detect/platform_detect.dart';
-import 'package:scadnano/src/state/group.dart';
-import 'package:scadnano/src/view/transform_by_helix_group.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_view_middleware/src/view/transform_by_helix_group.dart';
 
-import '../state/helix.dart';
-import 'package:scadnano/src/state/geometry.dart';
-import '../state/strand.dart';
-import '../state/domain.dart';
-import '../state/loopout.dart';
-import '../state/extension.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/loopout.dart';
+import 'package:scadnano_state_actions/src/state/extension.dart';
 import 'pure_component.dart';
 import '../util.dart' as util;
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_dna_sequence.over_react.g.dart';
 
@@ -31,11 +32,8 @@ mixin DesignMainDNASequenceProps on UiProps implements TransformByHelixGroupProp
   late BuiltMap<int, Point<double>> helix_idx_to_svg_position_map;
 }
 
-bool should_draw_domain(
-  Domain ss,
-  BuiltSet<int> side_selected_helix_idxs,
-  bool only_display_selected_helices,
-) => !only_display_selected_helices || side_selected_helix_idxs.contains(ss.helix);
+bool should_draw_domain(Domain ss, BuiltSet<int> side_selected_helix_idxs, bool only_display_selected_helices) =>
+    !only_display_selected_helices || side_selected_helix_idxs.contains(ss.helix);
 
 class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceProps> with PureComponent {
   @override
@@ -59,7 +57,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
             (Dom.g()
               ..transform = transform_of_helix2(props, domain.helix)
               ..className = 'dna-seq-on-domain-group'
-              ..key = util.id_domain(domain))(domain_elts),
+              ..key = util_state.id_domain(domain))(domain_elts),
           );
         }
       } else if (substrand is Loopout) {
@@ -75,11 +73,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       } else if (substrand is Extension) {
         assert(i == 0 || i == props.strand.substrands.length - 1);
         Extension ext = substrand;
-        if (should_draw_domain(
-          ext.adjacent_domain,
-          side_selected_helix_idxs,
-          props.only_display_selected_helices,
-        )) {
+        if (should_draw_domain(ext.adjacent_domain, side_selected_helix_idxs, props.only_display_selected_helices)) {
           dna_sequence_elts.add(this._dna_sequence_on_extension(ext));
         }
       } else {
@@ -142,7 +136,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       }
     }
 
-    var id = 'dna-${util.id_domain(domain)}';
+    var id = 'dna-${util_state.id_domain(domain)}';
 
     // textLength is the more robust way to space out the letter than letterSpacing
     // (e.g., in Firefox it displays poorly with letterSpacing),
@@ -176,9 +170,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     var start_offset = '50%';
     var dy = '${0.1 * geometry.base_width_svg}';
 
-    var (letter_spacing, font_size) = _calculate_letter_spacing_and_font_size_insertion(
-      length,
-    ); // (double?, int)
+    var (letter_spacing, font_size) = _calculate_letter_spacing_and_font_size_insertion(length); // (double?, int)
 
     Map<String, dynamic> style_map;
     if (letter_spacing != null) {
@@ -196,12 +188,12 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
           ..className = classname_dna_sequence + '-insertion'
           //XXX: xlink:href is deprecated, but this is needed for exporting SVG, due to a bug in Inkscape
           // https://gitlab.com/inkscape/inbox/issues/1763
-          ..xlinkHref = '#${util.id_insertion(domain, offset)}'
+          ..xlinkHref = '#${util_state.id_insertion(domain, offset)}'
           ..startOffset = start_offset
           ..style = style_map);
 
     return (Dom.text()
-      ..key = 'textelt-${util.id_insertion(domain, offset)}'
+      ..key = 'textelt-${util_state.id_insertion(domain, offset)}'
       ..dy = dy)(text_path_props(subseq));
   }
 
@@ -216,7 +208,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     var dy = '${0.1 * geometry.base_height_svg}';
 
     (double?, int) ls_fs;
-    if (util.is_hairpin(prev_domain, next_domain)) {
+    if (util_state.is_hairpin(prev_domain, next_domain)) {
       ls_fs = _calculate_letter_spacing_and_font_size_hairpin(length);
     } else {
       ls_fs = _calculate_letter_spacing_and_font_size_loopout(length);

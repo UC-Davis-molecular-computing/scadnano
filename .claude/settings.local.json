@@ -1,6 +1,7 @@
 {
   "permissions": {
     "allow": [
+      "Bash(*)",
       "Bash(grep:*)",
       "Bash(dart pub:*)",
       "Bash(dart analyze:*)",

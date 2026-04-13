@@ -7,20 +7,21 @@ import 'package:react/react.dart';
 import 'package:built_collection/built_collection.dart';
 
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/extension.dart';
-import 'package:scadnano/src/state/geometry.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/loopout.dart';
-import 'package:scadnano/src/state/position3d.dart';
-import 'package:scadnano/src/state/strand.dart';
-import '../state/app_state.dart';
-import '../actions/actions.dart' as actions;
-import '../state/helix.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/extension.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/loopout.dart';
+import 'package:scadnano_state_actions/src/state/position3d.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/helix.dart';
 import '../util.dart' as util;
 import 'export_cadnano_file.dart' as export_cadnano;
-import '../constants.dart' as constants;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 oxdna_export_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   if (action is actions.OxdnaExport || action is actions.OxviewExport) {
@@ -184,12 +185,7 @@ String to_oxview_format(Design design, List<Strand> strands_to_export) {
   // Warning logic moved to oxdna_export middleware
 
   //TODO: this hasn't been tested well
-  var base_pairs_map = design.base_pairs_with_domain_strand(
-    false,
-    true,
-    strands_to_export.toSet().build(),
-    true,
-  );
+  var base_pairs_map = design.base_pairs_with_domain_strand(false, true, strands_to_export.toSet().build(), true);
   for (int helix in base_pairs_map.keys) {
     for (var offset_dom_strands in base_pairs_map[helix]!) {
       // (int, Domain, Domain, Strand, Strand)
@@ -451,7 +447,7 @@ const NM_TO_OX_UNITS = 1.0 / 0.8518;
     // the Python package equivalent
     position_in_helix_group = helix.position(geometry);
   } else {
-    position_in_helix_group = util.grid_position_to_position3d(helix.grid_position!, grid, geometry);
+    position_in_helix_group = util_state.grid_position_to_position3d(helix.grid_position!, grid, geometry);
   }
 
   var position_in_helix_group_rotated =
@@ -504,8 +500,7 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand>? strands
 
   // for efficiency just calculate each helix's vector once
   var helix_vectors = {
-    for (var idx_helix in design.helices.entries)
-      idx_helix.key: oxdna_get_helix_vectors(design, idx_helix.value),
+    for (var idx_helix in design.helices.entries) idx_helix.key: oxdna_get_helix_vectors(design, idx_helix.value),
   };
 
   for (var strand in strands_to_export) {
@@ -555,9 +550,7 @@ OxdnaSystem convert_design_to_oxdna_system(Design design, [List<Strand>? strands
             if (insertions.containsKey(offset)) {
               int num = insertions[offset]!;
               for (int i = 0; i < num; i++) {
-                var cen =
-                    origin +
-                    forward * (offset + mod - num + i) * geometry.rise_per_base_pair * NM_TO_OX_UNITS;
+                var cen = origin + forward * (offset + mod - num + i) * geometry.rise_per_base_pair * NM_TO_OX_UNITS;
                 var norm = normal.rotate(step_rot * (offset + mod - num + i), forward);
                 var forw = domain.forward ? -forward : forward;
                 var nuc = OxdnaNucleotide(cen, norm, forw, seq[index]);

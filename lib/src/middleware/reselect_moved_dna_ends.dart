@@ -1,12 +1,12 @@
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../state/domain.dart';
-import '../state/dna_end.dart';
-import '../state/dna_ends_move.dart';
-import '../state/address.dart';
-import '../actions/actions.dart' as actions;
-import '../state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/dna_end.dart';
+import 'package:scadnano_state_actions/src/state/dna_ends_move.dart';
+import 'package:scadnano_state_actions/src/state/address.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 
 reselect_moved_dna_ends_middleware(Store<AppState> store, action, NextDispatcher next) {
   if (action is actions.DNAEndsMoveCommit && action.dna_ends_move.moves.length > 1) {
@@ -20,9 +20,7 @@ reselect_moved_dna_ends_middleware(Store<AppState> store, action, NextDispatcher
       DNAEnd old_end = move.dna_end;
       Domain old_substrand = store.state.design.end_to_domain[old_end]!;
       int new_offset = action.dna_ends_move.current_capped_offset_of(old_end)!;
-      addresses.add(
-        Address(helix_idx: old_substrand.helix, offset: new_offset, forward: old_substrand.forward),
-      );
+      addresses.add(Address(helix_idx: old_substrand.helix, offset: new_offset, forward: old_substrand.forward));
     }
 
     // then apply action

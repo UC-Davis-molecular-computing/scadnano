@@ -13,13 +13,16 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v4
 
-      - name: Setup Dart SDK  # Using Dart 3.8 to match pubspec.yaml constraint
-        uses: dart-lang/setup-dart@v1  # https://github.com/dart-lang/setup-dart
-        with:
-          sdk: 3.9
+      - name: Setup Dart SDK
+        uses: ./.github/actions/setup-dart
 
       - name: Install dependencies
         run: dart pub get
+
+      - name: Build generated files for sub-packages
+        run: |
+          cd scadnano_state_actions && dart run build_runner build --delete-conflicting-outputs && cd ..
+          cd scadnano_reducers && dart run build_runner build --delete-conflicting-outputs && cd ..
 
       - name: Run Tests
         run: dart run build_runner test

@@ -1,18 +1,18 @@
 import 'package:color/color.dart';
-import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
-import 'package:scadnano/src/reducers/delete_reducer.dart';
-import 'package:scadnano/src/reducers/nick_ligate_join_by_crossover_reducers.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/loopout.dart';
-import 'package:scadnano/src/state/extension.dart';
-import 'package:scadnano/src/state/select_mode.dart';
-import 'package:scadnano/src/state/strand.dart';
+import 'package:scadnano_reducers/src/reducers/change_loopout_ext_properties.dart';
+import 'package:scadnano_reducers/src/reducers/delete_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/nick_ligate_join_by_crossover_reducers.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/loopout.dart';
+import 'package:scadnano_state_actions/src/state/extension.dart';
+import 'package:scadnano_state_actions/src/state/select_mode.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
 import 'package:test/test.dart';
 
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
 import 'utils.dart';
 
@@ -111,14 +111,7 @@ main() {
     });
 
     test('extension_3p_with_label', () {
-      design =
-          design
-              .draw_strand(0, 0)
-              .to(10)
-              .extension_3p(5)
-              .with_domain_label('ext1')
-              .with_color(color)
-              .commit();
+      design = design.draw_strand(0, 0).to(10).extension_3p(5).with_domain_label('ext1').with_color(color).commit();
 
       var domain = Domain(helix: 0, forward: true, start: 0, end: 10, is_first: true, is_last: false);
       var expected_strand = Strand([
@@ -130,14 +123,7 @@ main() {
     });
 
     test('extension_5p_with_label', () {
-      design =
-          design
-              .draw_strand(0, 0)
-              .extension_5p(5)
-              .with_domain_label('ext1')
-              .to(10)
-              .with_color(color)
-              .commit();
+      design = design.draw_strand(0, 0).extension_5p(5).with_domain_label('ext1').to(10).with_color(color).commit();
 
       var domain = Domain(helix: 0, forward: true, start: 0, end: 10, is_first: false, is_last: true);
       var expected_strand = Strand([
@@ -150,13 +136,7 @@ main() {
 
     test('with_sequence_on_3p_extension', () {
       design =
-          design
-              .draw_strand(0, 0)
-              .to(10)
-              .extension_3p(5)
-              .with_sequence("A" * 10 + "G" * 5)
-              .with_color(color)
-              .commit();
+          design.draw_strand(0, 0).to(10).extension_3p(5).with_sequence("A" * 10 + "G" * 5).with_color(color).commit();
 
       var domain = Domain(
         helix: 0,
@@ -177,13 +157,7 @@ main() {
 
     test('with_sequence_on_5p_extension', () {
       design =
-          design
-              .draw_strand(0, 0)
-              .extension_5p(5)
-              .to(10)
-              .with_sequence("C" * 5 + "T" * 10)
-              .with_color(color)
-              .commit();
+          design.draw_strand(0, 0).extension_5p(5).to(10).with_sequence("C" * 5 + "T" * 10).with_color(color).commit();
 
       var domain = Domain(
         helix: 0,
@@ -203,14 +177,7 @@ main() {
     });
 
     test('with_domain_sequence_on_extension', () {
-      design =
-          design
-              .draw_strand(0, 0)
-              .to(10)
-              .extension_3p(5)
-              .with_domain_sequence("G" * 5)
-              .with_color(color)
-              .commit();
+      design = design.draw_strand(0, 0).to(10).extension_3p(5).with_domain_sequence("G" * 5).with_color(color).commit();
 
       var domain = Domain(
         helix: 0,
@@ -254,8 +221,7 @@ main() {
     });
 
     test('extension_with_name', () {
-      design =
-          design.draw_strand(0, 0).to(10).extension_3p(5).with_domain_name('ext1').with_color(color).commit();
+      design = design.draw_strand(0, 0).to(10).extension_3p(5).with_domain_name('ext1').with_color(color).commit();
 
       var domain = Domain(helix: 0, forward: true, start: 0, end: 10, is_first: true, is_last: false);
       var expected_strand = Strand([
@@ -295,13 +261,7 @@ main() {
       var first_domain = Domain(helix: 0, forward: true, start: 0, end: 16);
       var last_domain = Domain(helix: 2, forward: true, start: 0, end: 16);
       var expected_strand = Strand([
-        Extension(
-          num_bases: 5,
-          display_length: 2,
-          display_angle: 30,
-          adjacent_domain: first_domain,
-          is_5p: true,
-        ),
+        Extension(num_bases: 5, display_length: 2, display_angle: 30, adjacent_domain: first_domain, is_5p: true),
         first_domain,
         Domain(helix: 1, forward: false, start: 0, end: 16),
         Loopout(loopout_num_bases: 3, prev_domain_idx: 2),

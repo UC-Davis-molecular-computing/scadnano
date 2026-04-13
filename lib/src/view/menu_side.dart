@@ -6,20 +6,21 @@ import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:quiver/collection.dart';
 
-import '../state/geometry.dart';
-import '../state/position3d.dart';
-import '../state/grid.dart';
-import '../state/dialog.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/position3d.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/dialog.dart';
 import '../view/redraw_counter_component_mixin.dart';
 import '../view/react_bootstrap.dart';
-import '../state/group.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
 
 import '../app.dart';
-import '../actions/actions.dart' as actions;
-import '../state/app_state.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 import '../util.dart' as util;
-import '../constants.dart' as constants;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import 'menu_dropdown_item.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'menu_side.over_react.g.dart';
 
@@ -114,8 +115,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
             ..display = grid.toString()
             ..active = grid == groups[props.displayed_group_name]!.grid
             ..disabled = grid == groups[props.displayed_group_name]!.grid
-            ..on_click =
-                ((ev) => app.dispatch(actions.GridChange(grid: grid, group_name: props.displayed_group_name)))
+            ..on_click = ((ev) => app.dispatch(actions.GridChange(grid: grid, group_name: props.displayed_group_name)))
             ..key = grid.toString())(),
       ],
     );
@@ -171,7 +171,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
     int roll_idx = 5;
     int yaw_idx = 6;
     int helices_view_order_idx = 7;
-    var items = util.FixedList<DialogItem>(8);
+    var items = util_state.FixedList<DialogItem>(8);
     items[name_idx] = DialogText(label: 'name', value: props.displayed_group_name);
     items[position_x_idx] = DialogFloat(label: 'x', value: group.position.x);
     items[position_y_idx] = DialogFloat(label: 'y', value: group.position.y);
@@ -272,9 +272,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
       yaw: yaw,
     );
 
-    app.dispatch(
-      actions.GroupChange(old_name: props.displayed_group_name, new_name: new_name, new_group: new_group),
-    );
+    app.dispatch(actions.GroupChange(old_name: props.displayed_group_name, new_name: new_name, new_group: new_group));
   }
 
   Future<void> ask_new_helix_indices_for_current_group(BuiltMap<String, HelixGroup> groups) async {
@@ -325,11 +323,8 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
     int bases_per_turn_idx = 3;
     int minor_groove_angle_idx = 4;
 
-    var items = util.FixedList<DialogItem>(5);
-    items[rise_per_base_pair_idx] = DialogFloat(
-      label: 'rise per base pair (nm)',
-      value: geometry.rise_per_base_pair,
-    );
+    var items = util_state.FixedList<DialogItem>(5);
+    items[rise_per_base_pair_idx] = DialogFloat(label: 'rise per base pair (nm)', value: geometry.rise_per_base_pair);
     items[helix_radius_idx] = DialogFloat(label: 'helix radius (nm)', value: geometry.helix_radius);
     items[inter_helix_gap_idx] = DialogFloat(label: 'inter helix gap (nm)', value: geometry.inter_helix_gap);
     items[bases_per_turn_idx] = DialogFloat(label: 'bases per turn', value: geometry.bases_per_turn);
@@ -360,8 +355,6 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> {
       bases_per_turn: bases_per_turn,
       minor_groove_angle: minor_groove_angle,
     );
-    app.dispatch(
-      actions.GeometryHelixGroupSet(group_name: props.displayed_group_name, geometry: new_geometry),
-    );
+    app.dispatch(actions.GeometryHelixGroupSet(group_name: props.displayed_group_name, geometry: new_geometry));
   }
 }

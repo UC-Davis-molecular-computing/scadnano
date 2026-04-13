@@ -2,25 +2,27 @@ import 'dart:html';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/modification_type.dart';
-import 'package:scadnano/src/state/substrand.dart';
+import 'package:scadnano_state_actions/src/state/dna_end.dart';
+import 'package:scadnano_state_actions/src/state/modification_type.dart';
+import 'package:scadnano_state_actions/src/state/substrand.dart';
 
-import '../state/domain.dart';
-import '../state/extension.dart';
-import '../state/context_menu.dart';
-import '../state/dialog.dart';
-import '../state/geometry.dart';
-import '../state/selectable.dart';
-import '../state/address.dart';
-import '../state/modification.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/extension.dart';
+import 'package:scadnano_state_actions/src/state/context_menu.dart';
+import 'package:scadnano_state_actions/src/state/dialog.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/selectable.dart';
+import 'selection_handler.dart';
+import 'package:scadnano_state_actions/src/state/address.dart';
+import 'package:scadnano_state_actions/src/state/modification.dart';
 import '../app.dart';
-import '../actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 import '../util.dart' as util;
-import '../state/strand.dart';
-import '../state/helix.dart';
-import '../constants.dart' as constants;
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
 import 'design_main_strand.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_strand_modification.over_react.g.dart';
 
@@ -72,14 +74,14 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
       var adj_dom = ext.adjacent_domain;
       var adj_helix = props.helix;
       var adj_helix_svg_y = props.helix_svg_position_y;
-      Point<double> extension_attached_end_svg = util.compute_extension_attached_end_svg(
+      Point<double> extension_attached_end_svg = util_state.compute_extension_attached_end_svg(
         ext,
         adj_dom,
         adj_helix,
         adj_helix_svg_y,
         props.geometry,
       );
-      pos = util.compute_extension_free_end_svg(extension_attached_end_svg, ext, adj_dom, props.geometry);
+      pos = util_state.compute_extension_free_end_svg(extension_attached_end_svg, ext, adj_dom, props.geometry);
     }
     bool display_connector = props.display_connector;
 
@@ -114,12 +116,12 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
     return (Dom.g()
       ..onPointerDown = ((ev) {
         if (modification_selectable(props.selectable_modification)) {
-          props.selectable_modification.handle_selection_mouse_down(ev.nativeEvent);
+          handle_selection_mouse_down(props.selectable_modification, ev.nativeEvent);
         }
       })
       ..onPointerUp = ((ev) {
         if (modification_selectable(props.selectable_modification)) {
-          props.selectable_modification.handle_selection_mouse_up(ev.nativeEvent);
+          handle_selection_mouse_up(props.selectable_modification, ev.nativeEvent);
         }
       })
       ..className = classname
@@ -149,7 +151,7 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
         actions.ContextMenuShow(
           context_menu: ContextMenu(
             items: context_menu_modification(this.strand).build(),
-            position: util.from_point_num(event.page),
+            position: util_state.from_point_num(event.page),
           ),
         ),
       );
@@ -161,18 +163,12 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
     ContextMenuItem(
       title: 'edit modification',
       on_click:
-          () => edit_modification(
-            this.modification,
-            props.selectable_modification,
-            this.strand,
-            props.dna_idx_mod,
-          ),
+          () => edit_modification(this.modification, props.selectable_modification, this.strand, props.dna_idx_mod),
     ),
   ];
 
   remove_modification() {
-    List<SelectableModification> selectable_mods =
-        app.state.ui_state.selectables_store.selected_modifications.toList();
+    List<SelectableModification> selectable_mods = app.state.ui_state.selectables_store.selected_modifications.toList();
     if (!selectable_mods.contains(props.selectable_modification)) {
       selectable_mods.add(props.selectable_modification);
     }
@@ -214,12 +210,7 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
       ..key = 'connector')();
   }
 
-  ReactElement _modification_svg(
-    Point<double> pos,
-    bool forward,
-    bool display_connector,
-    int connector_length,
-  ) {
+  ReactElement _modification_svg(Point<double> pos, bool forward, bool display_connector, int connector_length) {
     num y_delta = y_delta_mod();
     double y_del_small = (forward ? -y_delta : y_delta).toDouble();
     double font_size = props.font_size;
@@ -273,7 +264,7 @@ Future<void> ask_for_add_modification(
   int index_of_dna_base_idx = 4;
   int attached_to_base_idx = 5;
   int allowed_bases_idx = 6;
-  var items = util.FixedList<DialogItem>(7);
+  var items = util_state.FixedList<DialogItem>(7);
   items[modification_type_idx] = DialogRadio(
     label: 'modification type',
     options: {"3'", "5'", "internal"},
@@ -375,23 +366,14 @@ Future<void> ask_for_add_modification(
 
   Modification mod;
   if (modification_type == "3'") {
-    mod = Modification3Prime(
-      display_text: display_text,
-      vendor_code: vendor_code,
-      connector_length: connector_length,
-    );
+    mod = Modification3Prime(display_text: display_text, vendor_code: vendor_code, connector_length: connector_length);
   } else if (modification_type == "5'") {
-    mod = Modification5Prime(
-      display_text: display_text,
-      vendor_code: vendor_code,
-      connector_length: connector_length,
-    );
+    mod = Modification5Prime(display_text: display_text, vendor_code: vendor_code, connector_length: connector_length);
   } else {
     var allowed_bases = null;
     if (attached_to_base) {
       allowed_bases_str = allowed_bases_str.replaceAll(RegExp(r'[^(ACGTacgt)]'), '');
-      allowed_bases =
-          {for (int i = 0; i < allowed_bases_str.length; i++) allowed_bases_str[i].toUpperCase()}.build();
+      allowed_bases = {for (int i = 0; i < allowed_bases_str.length; i++) allowed_bases_str[i].toUpperCase()}.build();
     }
     mod = ModificationInternal(
       display_text: display_text,
@@ -452,7 +434,7 @@ edit_modification(
 
   bool is_internal = modification is ModificationInternal;
   int num_items = is_internal ? 5 : 3;
-  var items = util.FixedList<DialogItem>(num_items);
+  var items = util_state.FixedList<DialogItem>(num_items);
   items[display_text_idx] = DialogText(
     label: 'display text',
     value: modification.display_text,
@@ -477,8 +459,7 @@ edit_modification(
       tooltip: tooltip_attached_to_base_checkbox,
     );
 
-    var allowed_bases_old =
-        modification.allowed_bases != null ? modification.allowed_bases!.join('') : 'ACGT';
+    var allowed_bases_old = modification.allowed_bases != null ? modification.allowed_bases!.join('') : 'ACGT';
     items[allowed_bases_idx] = DialogText(
       label: 'allowed bases',
       value: allowed_bases_old,
@@ -525,8 +506,7 @@ edit_modification(
     if (attached_to_base) {
       // remove all symbols other than ACGTacgt
       allowed_bases_str = allowed_bases_str.replaceAll(RegExp(r'[^(ACGTacgt)]'), '');
-      allowed_bases =
-          {for (int i = 0; i < allowed_bases_str.length; i++) allowed_bases_str[i].toUpperCase()}.build();
+      allowed_bases = {for (int i = 0; i < allowed_bases_str.length; i++) allowed_bases_str[i].toUpperCase()}.build();
     }
     new_mod = ModificationInternal(
       display_text: display_text,
@@ -559,10 +539,7 @@ edit_modification(
       var selectable_mods_int = List<SelectableModificationInternal>.from(
         selectable_mods.where((mod) => mod is SelectableModificationInternal),
       );
-      action = actions.ModificationsInternalEdit(
-        modifications: selectable_mods_int,
-        new_modification: new_mod,
-      );
+      action = actions.ModificationsInternalEdit(modifications: selectable_mods_int, new_modification: new_mod);
     } else {
       throw AssertionError('should be unreachable');
     }

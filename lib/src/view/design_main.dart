@@ -5,22 +5,22 @@ import 'dart:html';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/state/app_ui_state.dart';
-import 'package:scadnano/src/state/base_pair_display_type.dart';
-import 'package:scadnano/src/view/design_main_unpaired_insertion_deletions.dart';
-import 'package:scadnano/src/view/design_main_slice_bar.dart';
-import 'package:scadnano/src/view/potential_extensions_view.dart';
+import 'package:scadnano_state_actions/src/state/app_ui_state.dart';
+import 'package:scadnano_state_actions/src/state/base_pair_display_type.dart';
+import 'package:scadnano_view_middleware/src/view/design_main_unpaired_insertion_deletions.dart';
+import 'package:scadnano_view_middleware/src/view/design_main_slice_bar.dart';
+import 'package:scadnano_view_middleware/src/view/potential_extensions_view.dart';
 
-import '../state/selection_rope.dart';
+import 'package:scadnano_state_actions/src/state/selection_rope.dart';
 import 'design_main_base_pair_rectangle.dart';
 import 'design_main_domains_moving.dart';
 import 'selection_rope_view.dart';
-import '../actions/actions.dart' as actions;
-import '../state/design.dart';
-import '../state/edit_mode.dart';
-import '../state/potential_vertical_crossover.dart';
-import '../state/strand_creation.dart';
-import '../state/strands_move.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/edit_mode.dart';
+import 'package:scadnano_state_actions/src/state/potential_vertical_crossover.dart';
+import 'package:scadnano_state_actions/src/state/strand_creation.dart';
+import 'package:scadnano_state_actions/src/state/strands_move.dart';
 import 'design_main_domain_name_mismatches.dart';
 import 'design_main_loopout_extension_lengths.dart';
 import 'design_main_strand_creating.dart';
@@ -30,7 +30,7 @@ import 'design_main_helices.dart';
 import 'design_main_potential_vertical_crossovers.dart';
 import 'design_main_strands.dart';
 import 'design_main_dna_sequences.dart';
-import '../state/app_state.dart';
+import 'package:scadnano_state_actions/src/state/app_state.dart';
 import 'design_main_strands_moving.dart';
 import 'helix_group_moving.dart';
 import 'potential_crossover_view.dart';
@@ -167,9 +167,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..color = ui_state.strand_creation!.color
           ..helices = {ui_state.strand_creation!.helix.idx: ui_state.strand_creation!.helix}.build()
           ..groups =
-              {
-                ui_state.strand_creation!.helix.group: design.groups[ui_state.strand_creation!.helix.group]!,
-              }.build()
+              {ui_state.strand_creation!.helix.group: design.groups[ui_state.strand_creation!.helix.group]!}.build()
           ..geometry = design.geometry
           ..svg_position_y = state.helix_idx_to_svg_position_map[ui_state.strand_creation!.helix.idx]!.y
           ..key = 'strand-creating')(),
@@ -244,16 +242,10 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..show_domain_labels = ui_state.show_domain_labels
           ..key = 'helix-group-moving')(),
 
-      (set_design_main_strands_moving_props(
-        ConnectedDesignMainStrandsMoving()..key = 'strands-moving',
-        state,
-      ))(),
+      (set_design_main_strands_moving_props(ConnectedDesignMainStrandsMoving()..key = 'strands-moving', state))(),
 
       // (ConnectedDesignMainDomainsMoving()..key = 'domains-moving')(),
-      (set_design_main_domains_moving_props(
-        ConnectedDesignMainDomainsMoving()..key = 'domains-moving',
-        state,
-      ))(),
+      (set_design_main_domains_moving_props(ConnectedDesignMainDomainsMoving()..key = 'domains-moving', state))(),
     ]);
 
     // if (USING_REACT_DND) {

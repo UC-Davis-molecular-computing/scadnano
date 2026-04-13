@@ -2,21 +2,20 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/over_react.dart';
 
 import '../app.dart';
-import '../state/selection_rope.dart';
+import 'package:scadnano_state_actions/src/state/selection_rope.dart';
 
 part 'selection_rope_view.over_react.g.dart';
 
-UiFactory<SelectionRopeViewProps> ConnectedSelectionRopeView =
-    connect<SelectionRope?, SelectionRopeViewProps>(
-      mapStateToPropsWithOwnProps: (SelectionRope? rope, SelectionRopeViewProps props) {
-        return SelectionRopeView()
-          ..selection_rope = rope
-          ..stroke_width_getter = props.stroke_width_getter
-          ..id_ = props.id_
-          ..is_main = props.is_main;
-      },
-      context: app.context_selection_rope,
-    )(SelectionRopeView);
+UiFactory<SelectionRopeViewProps> ConnectedSelectionRopeView = connect<SelectionRope?, SelectionRopeViewProps>(
+  mapStateToPropsWithOwnProps: (SelectionRope? rope, SelectionRopeViewProps props) {
+    return SelectionRopeView()
+      ..selection_rope = rope
+      ..stroke_width_getter = props.stroke_width_getter
+      ..id_ = props.id_
+      ..is_main = props.is_main;
+  },
+  context: app.context_selection_rope,
+)(SelectionRopeView);
 
 UiFactory<SelectionRopeViewProps> SelectionRopeView = _$SelectionRopeView;
 

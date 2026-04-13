@@ -30,8 +30,7 @@ mixin MenuDropdownRightState on UiState {
   late Ref<DivElement?> HTML_element;
 }
 
-class MenuDropdownRightComponent
-    extends UiStatefulComponent2<MenuDropdownRightProps, MenuDropdownRightState> {
+class MenuDropdownRightComponent extends UiStatefulComponent2<MenuDropdownRightProps, MenuDropdownRightState> {
   @override
   Map get initialState =>
       (newState()
@@ -75,10 +74,7 @@ class MenuDropdownRightComponent
       /* set some custom CSS props so dropright divs know how much to shift themselves upwards */
       'style':
           state.top != null
-              ? {
-                '--offset-top': '${state.top}px',
-                '--overflow-y': props.disallow_overflow == true ? 'auto' : 'visible',
-              }
+              ? {'--offset-top': '${state.top}px', '--overflow-y': props.disallow_overflow == true ? 'auto' : 'visible'}
               : {},
     }, props.children);
 

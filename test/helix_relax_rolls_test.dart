@@ -1,25 +1,26 @@
 import 'package:color/color.dart';
-import 'package:scadnano/src/reducers/change_loopout_ext_properties.dart';
-import 'package:scadnano/src/reducers/delete_reducer.dart';
-import 'package:scadnano/src/reducers/nick_ligate_join_by_crossover_reducers.dart';
-import 'package:scadnano/src/state/address.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/grid_position.dart';
-import 'package:scadnano/src/state/group.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/loopout.dart';
-import 'package:scadnano/src/state/extension.dart';
-import 'package:scadnano/src/state/position3d.dart';
-import 'package:scadnano/src/state/select_mode.dart';
-import 'package:scadnano/src/state/strand.dart';
+import 'package:scadnano_reducers/src/reducers/change_loopout_ext_properties.dart';
+import 'package:scadnano_reducers/src/reducers/delete_reducer.dart';
+import 'package:scadnano_reducers/src/reducers/nick_ligate_join_by_crossover_reducers.dart';
+import 'package:scadnano_state_actions/src/state/address.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/grid_position.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/grid.dart';
+import 'package:scadnano_state_actions/src/state/loopout.dart';
+import 'package:scadnano_state_actions/src/state/extension.dart';
+import 'package:scadnano_state_actions/src/state/position3d.dart';
+import 'package:scadnano_state_actions/src/state/select_mode.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
 import 'package:test/test.dart';
 
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/actions/actions.dart' as actions;
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
 
-import 'package:scadnano/src/util.dart' as util;
-import 'package:scadnano/src/constants.dart' as constants;
+import 'package:scadnano_view_middleware/src/util.dart' as util;
+import 'package:scadnano_state_actions/src/constants.dart' as constants;
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 main() {
   group('HelixRollRelax', () {
@@ -40,9 +41,7 @@ main() {
                              (26-21)/10.5 = 5/10.5
       */
       design2h = Design(
-        helices: [
-          for (int i = 0; i < 2; i++) Helix(max_offset: 50, idx: i, grid_position: GridPosition(0, i)),
-        ],
+        helices: [for (int i = 0; i < 2; i++) Helix(max_offset: 50, idx: i, grid_position: GridPosition(0, i))],
         grid: Grid.square,
       );
       // helix 0 forward
@@ -59,9 +58,7 @@ main() {
       2      <--------+
       */
       design3helix3strand = Design(
-        helices: [
-          for (int i = 0; i < 3; i++) Helix(max_offset: 50, idx: i, grid_position: GridPosition(0, i)),
-        ],
+        helices: [for (int i = 0; i < 3; i++) Helix(max_offset: 50, idx: i, grid_position: GridPosition(0, i))],
         grid: Grid.square,
       );
       // helix 0 forward
@@ -588,9 +585,7 @@ main() {
        */
       var group2name = 'group 2';
 
-      var helices = [
-        for (int i = 0; i < 3; i++) Helix(max_offset: 50, idx: i, grid_position: GridPosition(0, i)),
-      ];
+      var helices = [for (int i = 0; i < 3; i++) Helix(max_offset: 50, idx: i, grid_position: GridPosition(0, i))];
       helices[2] = helices[2].rebuild((b) => b..group = group2name);
       var design = Design(helices: helices, grid: Grid.square);
       design = design.draw_strand(0, 0).move(5).cross(1).move(-5).commit();
@@ -639,42 +634,42 @@ main() {
 
     test('minimum_strain_angle_0_10_20_relative_to_0', () {
       List<(double, double)> relative_angles = [(0, 0), (10, 0), (20, 0)];
-      var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
+      var act_min_strain_angle = util_state.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 350.0;
       expect(act_min_strain_angle, closeTo(exp_min_strain_angle, epsilon));
     });
 
     test('minimum_strain_angle_0_10_50_relative_to_0', () {
       List<(double, double)> relative_angles = [(0, 0), (10, 0), (50, 0)];
-      var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
+      var act_min_strain_angle = util_state.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 340.0;
       expect(act_min_strain_angle, closeTo(exp_min_strain_angle, epsilon));
     });
 
     test('minimum_strain_angle_0_10_80_relative_to_0', () {
       List<(double, double)> relative_angles = [(0, 0), (10, 0), (80, 0)];
-      var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
+      var act_min_strain_angle = util_state.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 330.0;
       expect(act_min_strain_angle, closeTo(exp_min_strain_angle, epsilon));
     });
 
     test('minimum_strain_angle_350_0_10_relative_to_0', () {
       List<(double, double)> relative_angles = [(350, 0), (0, 0), (10, 0)];
-      var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
+      var act_min_strain_angle = util_state.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 0.0;
       expect(act_min_strain_angle, closeTo(exp_min_strain_angle, epsilon));
     });
 
     test('minimum_strain_angle_350_0_40_relative_to_0', () {
       List<(double, double)> relative_angles = [(350, 0), (0, 0), (40, 0)];
-      var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
+      var act_min_strain_angle = util_state.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 350.0;
       expect(act_min_strain_angle, closeTo(exp_min_strain_angle, epsilon));
     });
 
     test('minimum_strain_angle_350_10_60_relative_to_0', () {
       List<(double, double)> relative_angles = [(350, 0), (10, 0), (60, 0)];
-      var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
+      var act_min_strain_angle = util_state.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 340.0;
       expect(act_min_strain_angle, closeTo(exp_min_strain_angle, epsilon));
     });
@@ -691,105 +686,105 @@ main() {
         ///////////////////////////////// ave to -10
         ///////////////////////////////// total average is (20-10)/2 = 5, so 355 (-5) to correct it
       ];
-      var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
+      var act_min_strain_angle = util_state.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 355.0;
       expect(act_min_strain_angle, closeTo(exp_min_strain_angle, epsilon));
     });
 
     test('minimum_strain_angle_179_181_relative_to_0', () {
       List<(double, double)> relative_angles = [(179, 0), (181, 0)];
-      var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
+      var act_min_strain_angle = util_state.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 180.0;
       expect(act_min_strain_angle, closeTo(exp_min_strain_angle, epsilon));
     });
 
     test('minimum_strain_angle_181_183_relative_to_0', () {
       List<(double, double)> relative_angles = [(181, 0), (183, 0)];
-      var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
+      var act_min_strain_angle = util_state.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 178.0;
       expect(act_min_strain_angle, closeTo(exp_min_strain_angle, epsilon));
     });
 
     test('minimum_strain_angle_174_179_184_relative_to_0', () {
       List<(double, double)> relative_angles = [(174, 0), (179, 0), (184, 0)];
-      var act_min_strain_angle = util.minimum_strain_angle(relative_angles);
+      var act_min_strain_angle = util_state.minimum_strain_angle(relative_angles);
       var exp_min_strain_angle = 181.0;
       expect(act_min_strain_angle, closeTo(exp_min_strain_angle, epsilon));
     });
 
     test('average_angle_1_359', () {
       var angles = [1.0, 359.0];
-      var act_ave_angle = util.average_angle(angles);
+      var act_ave_angle = util_state.average_angle(angles);
       var exp_ave_angle = 0.0;
       expect(act_ave_angle, closeTo(exp_ave_angle, epsilon));
     });
 
     test('average_angle_10_350', () {
       var angles = [10.0, 350.0];
-      var act_ave_angle = util.average_angle(angles);
+      var act_ave_angle = util_state.average_angle(angles);
       var exp_ave_angle = 0.0;
       expect(act_ave_angle, closeTo(exp_ave_angle, epsilon));
     });
 
     test('average_angle_30_350', () {
       var angles = [30.0, 350.0];
-      var act_ave_angle = util.average_angle(angles);
+      var act_ave_angle = util_state.average_angle(angles);
       var exp_ave_angle = 10.0;
       expect(act_ave_angle, closeTo(exp_ave_angle, epsilon));
     });
 
     test('average_angle_0_10_20', () {
       var angles = [0.0, 10.0, 20.0];
-      var act_ave_angle = util.average_angle(angles);
+      var act_ave_angle = util_state.average_angle(angles);
       var exp_ave_angle = 10.0;
       expect(act_ave_angle, closeTo(exp_ave_angle, epsilon));
     });
 
     test('average_angle_0_0_90', () {
       var angles = [0.0, 0.0, 90.0];
-      var act_ave_angle = util.average_angle(angles);
+      var act_ave_angle = util_state.average_angle(angles);
       var exp_ave_angle = 30.0;
       expect(act_ave_angle, closeTo(exp_ave_angle, epsilon));
     });
 
     test('average_angle_0_45_90', () {
       var angles = [0.0, 45.0, 90.0];
-      var act_ave_angle = util.average_angle(angles);
+      var act_ave_angle = util_state.average_angle(angles);
       var exp_ave_angle = 45.0;
       expect(act_ave_angle, closeTo(exp_ave_angle, epsilon));
     });
 
     test('average_angle_0_10_50', () {
       var angles = [0.0, 10.0, 50.0];
-      var act_ave_angle = util.average_angle(angles);
+      var act_ave_angle = util_state.average_angle(angles);
       var exp_ave_angle = 20.0;
       expect(act_ave_angle, closeTo(exp_ave_angle, epsilon));
     });
 
     test('average_angle_0_10_80', () {
       var angles = [0.0, 10.0, 80.0];
-      var act_ave_angle = util.average_angle(angles);
+      var act_ave_angle = util_state.average_angle(angles);
       var exp_ave_angle = 30.0;
       expect(act_ave_angle, closeTo(exp_ave_angle, epsilon));
     });
 
     test('average_angle_350_0_40', () {
       var angles = [350.0, 0.0, 40.0];
-      var act_ave_angle = util.average_angle(angles);
+      var act_ave_angle = util_state.average_angle(angles);
       var exp_ave_angle = 10.0;
       expect(act_ave_angle, closeTo(exp_ave_angle, epsilon));
     });
 
     test('average_angle_330_40_50', () {
       var angles = [330.0, 40.0, 50.0];
-      var act_ave_angle = util.average_angle(angles);
+      var act_ave_angle = util_state.average_angle(angles);
       var exp_ave_angle = 20.0;
       expect(act_ave_angle, closeTo(exp_ave_angle, epsilon));
     });
 
     test('average_angle_330_40_80', () {
       var angles = [330.0, 40.0, 80.0];
-      var act_ave_angle = util.average_angle(angles);
+      var act_ave_angle = util_state.average_angle(angles);
       var exp_ave_angle = 30.0;
       expect(act_ave_angle, closeTo(exp_ave_angle, epsilon));
     });

@@ -3,23 +3,23 @@ import 'dart:math';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/substrand.dart';
+import 'package:scadnano_state_actions/src/state/substrand.dart';
 
-import '../state/modification_type.dart';
+import 'package:scadnano_state_actions/src/state/modification_type.dart';
 import 'design_main_strand.dart';
 import 'transform_by_helix_group.dart';
-import '../state/group.dart';
-import '../state/context_menu.dart';
-import '../state/dna_end.dart';
-import '../state/geometry.dart';
-import '../state/helix.dart';
-import '../state/design.dart';
-import '../state/strand.dart';
-import '../state/domain.dart';
-import '../state/crossover.dart';
-import '../state/loopout.dart';
-import '../state/extension.dart';
-import '../state/address.dart';
+import 'package:scadnano_state_actions/src/state/group.dart';
+import 'package:scadnano_state_actions/src/state/context_menu.dart';
+import 'package:scadnano_state_actions/src/state/dna_end.dart';
+import 'package:scadnano_state_actions/src/state/geometry.dart';
+import 'package:scadnano_state_actions/src/state/helix.dart';
+import 'package:scadnano_state_actions/src/state/design.dart';
+import 'package:scadnano_state_actions/src/state/strand.dart';
+import 'package:scadnano_state_actions/src/state/domain.dart';
+import 'package:scadnano_state_actions/src/state/crossover.dart';
+import 'package:scadnano_state_actions/src/state/loopout.dart';
+import 'package:scadnano_state_actions/src/state/extension.dart';
+import 'package:scadnano_state_actions/src/state/address.dart';
 import '../util.dart' as util;
 import 'design_main_strand_dna_end.dart';
 import 'design_main_strand_domain.dart';
@@ -27,6 +27,7 @@ import 'design_main_strand_loopout.dart';
 import 'design_main_strand_extension.dart';
 import 'design_main_strand_crossover.dart';
 import 'pure_component.dart';
+import 'package:scadnano_state_actions/src/util_state.dart' as util_state;
 
 part 'design_main_strand_paths.over_react.g.dart';
 
@@ -58,11 +59,8 @@ mixin DesignMainStrandPathsProps on UiProps implements TransformByHelixGroupProp
 }
 
 /// [side_selected_helix_idxs] is null if [only_display_selected_helices] is false
-bool should_draw_domain(
-  int helix_idx,
-  BuiltSet<int>? side_selected_helix_idxs,
-  bool only_display_selected_helices,
-) => !only_display_selected_helices || side_selected_helix_idxs!.contains(helix_idx);
+bool should_draw_domain(int helix_idx, BuiltSet<int>? side_selected_helix_idxs, bool only_display_selected_helices) =>
+    !only_display_selected_helices || side_selected_helix_idxs!.contains(helix_idx);
 
 /// [side_selected_helix_idxs] is null if [only_display_selected_helices] is false
 bool should_draw_loopout(
@@ -335,7 +333,7 @@ String crossover_path_description_between_groups(
   end_svg = next_group.transform_point_main_view(end_svg, geometry);
 
   var vector_start_to_end = end_svg - start_svg;
-  var normal_vector = util.rotate(vector_start_to_end, 90);
+  var normal_vector = util_state.rotate(vector_start_to_end, 90);
   var unit_normal_vector = normal_vector * (1.0 / normal_vector.magnitude);
   var scaled_normal_vector = unit_normal_vector * vector_start_to_end.magnitude * (1.0 / 10);
   var control = start_svg + (vector_start_to_end * 0.5) + scaled_normal_vector;
@@ -408,12 +406,7 @@ Point<double> control_point_for_crossover_bezier_curve(
     from_helix_svg_position_y,
     geometry,
   );
-  var end_pos = to_helix.svg_base_pos(
-    to_ss.offset_5p + delta,
-    to_ss.forward,
-    to_helix_svg_position_y,
-    geometry,
-  );
+  var end_pos = to_helix.svg_base_pos(to_ss.offset_5p + delta, to_ss.forward, to_helix_svg_position_y, geometry);
   bool from_strand_below = from_helix_svg_position_y > to_helix_svg_position_y;
   double midX = (start_pos.x + end_pos.x) / 2;
   double midY = (start_pos.y + end_pos.y) / 2;
