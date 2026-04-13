@@ -1048,10 +1048,14 @@ There are two ways to run scadnano offline, so that no internet connection is ne
 
 ### Standalone Executable
 
-One version is with the standalone executable, for which you can download the latest version 
-[here](https://github.com/UC-Davis-molecular-computing/scadnano/releases/latest).
+One version is with the standalone executable. Pre-built executables are available for download (no build
+step required):
 
-See the [README](standalone/README.md) in the standalone directory for usage instructions.
+- **Latest release (stable):** https://github.com/UC-Davis-molecular-computing/scadnano/releases/latest
+- **Latest dev build (prerelease):** https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/dev-latest
+
+See the [README](standalone/README.md) in the standalone directory for installation instructions and for
+building the executable from source.
 
 ### Offline Development
 

@@ -2,6 +2,18 @@
 
 If you have not yet already, please read the main [README.md](../README.md).
 
+## Downloading the executable
+
+**You do not need to build anything to run scadnano offline.** Pre-built executables are published on GitHub:
+
+- **Latest release (stable):** https://github.com/UC-Davis-molecular-computing/scadnano/releases/latest
+- **Latest dev build (prerelease):** https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/dev-latest
+
+Download the file matching your platform and architecture, then see [Installing](#installing) below.
+
+The rest of this document describes how to **build** the executable from source, which is only needed if you
+are contributing to scadnano or want to run a locally modified version.
+
 ## Development
 
 To run the development version of scadnano standalone, run the following commands in the `scadnano/standalone` directory.
