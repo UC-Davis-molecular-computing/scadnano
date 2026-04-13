@@ -29,21 +29,40 @@ jobs:
           #   npm_command: npm run build:mac
           #   artifact_glob: scadnano-mac-*.*
     runs-on: ${{ matrix.os }}
+    env:
+      ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
+      ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: standalone/package-lock.json
 
       - name: Setup Dart SDK
         uses: ./.github/actions/setup-dart
 
-      - name: Install ImageMagick (Windows)
-        if: matrix.os == 'windows-latest'
-        run: choco install imagemagick -y
+      - name: Cache Dart pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-pub-
+
+      - name: Cache Electron downloads
+        uses: actions/cache@v4
+        with:
+          path: |
+            .cache/electron
+            .cache/electron-builder
+          key: ${{ runner.os }}-electron-${{ hashFiles('standalone/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-electron-
+
+      # ImageMagick is pre-installed on windows-latest runners.
       # Uncomment when enabling Linux:
       # - name: Install ImageMagick (Linux)
       #   if: matrix.os == 'ubuntu-latest'
@@ -55,7 +74,7 @@ jobs:
 
       - name: Install npm dependencies
         working-directory: ./standalone
-        run: npm install
+        run: npm ci
 
       - name: Generate icons
         working-directory: ./standalone
@@ -68,7 +87,7 @@ jobs:
         run: ${{ matrix.npm_command }}
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: build-${{ matrix.os }}
           path: standalone/dist/${{ matrix.artifact_glob }}
@@ -80,7 +99,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           path: ./release-files
 
