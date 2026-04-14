@@ -1,9 +1,30 @@
-const { app, BrowserWindow, dialog } = require('electron');
+const { app, BrowserWindow, Menu, dialog } = require('electron');
 const path = require('path');
 const os = require('os');
 
 app.setPath('userData', path.join(os.homedir(), '.scadnano/data'));
 app.setPath('cache', path.join(os.homedir(), '.scadnano/cache'));
+
+const menuTemplate = [
+    {
+        label: 'Window',
+        submenu: [
+            { role: 'minimize' },
+            { type: 'separator' },
+            { role: 'reload' },
+            { role: 'forceReload' },
+            { role: 'toggleDevTools' },
+            { type: 'separator' },
+            { role: 'resetZoom' },
+            { role: 'zoomIn' },
+            { role: 'zoomOut' },
+            { type: 'separator' },
+            { role: 'togglefullscreen' },
+        ],
+    },
+];
+
+Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
 
 let win;
 

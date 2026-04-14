@@ -1,0 +1,84 @@
+name: Dart Unit Tests and Formatting
+
+# PR gate. Runs on every non-draft pull request (and when a draft PR is marked
+# ready-for-review). Draft PRs are explicitly failed by the `fail_if_pull_request_is_draft`
+# job, so the checks visibly block merging until the author marks the PR ready — at which
+# point the real jobs (`unit_tests` and `formatting`) take over. Both real jobs run in
+# parallel and share the pub-cache via actions/cache keyed on pubspec.lock.
+#
+# Jobs:
+#   1. unit_tests                   — runs `dart run build_runner test` after building
+#                                     generated files for the scadnano_state_actions and
+#                                     scadnano_reducers sub-packages.
+#   2. formatting                   — runs `dart format -l 120 --output=none
+#                                     --set-exit-if-changed .` to block merges that
+#                                     contain unformatted code.
+#   3. fail_if_pull_request_is_draft — only runs on draft PRs; exits non-zero so the
+#                                      required-checks gate keeps the PR un-mergeable
+#                                      until it is marked ready for review.
+
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened, ready_for_review ]
+
+jobs:
+  unit_tests:
+    name: Unit tests
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v5
+
+      - name: Setup Dart SDK
+        uses: ./.github/actions/setup-dart
+
+      - name: Cache Dart pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-pub-
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Build generated files for sub-packages
+        run: |
+          cd scadnano_state_actions && dart run build_runner build --delete-conflicting-outputs && cd ..
+          cd scadnano_reducers && dart run build_runner build --delete-conflicting-outputs && cd ..
+
+      - name: Run tests
+        run: dart run build_runner test
+
+  formatting:
+    name: Formatting
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v5
+
+      - name: Setup Dart SDK
+        uses: ./.github/actions/setup-dart
+
+      - name: Cache Dart pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-pub-
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Verify formatting
+        run: dart format -l 120 --output=none --set-exit-if-changed .
+
+  fail_if_pull_request_is_draft:
+    name: Block draft PRs
+    if: github.event.pull_request.draft == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fails to indicate that the PR must be marked as ready to review before tests and formatting will run.
+        run: exit 1

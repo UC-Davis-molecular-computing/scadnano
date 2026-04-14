@@ -149,6 +149,15 @@ replacing the current design. Uncheck to suppress this popup window confirmation
               ))
           ..key = 'confirm-before-replacing-design')(),
         DropdownDivider({'key': 'divider-save'}),
+        DropdownItem({
+          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/main/standalone/README.md',
+          'target': '_blank',
+          'key': 'download-scadnano-executable',
+          'title':
+              'Open instructions for downloading and installing the scadnano offline/standalone executable '
+              '(Windows, macOS, Linux).',
+        }, '⬇️ Download scadnano executable'),
+        DropdownDivider({'key': 'divider-download-executable'}),
         (MenuFormFile()
           ..id_ = 'import-cadnano-form-file'
           ..accept = '.json'
