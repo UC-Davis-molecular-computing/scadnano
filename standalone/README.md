@@ -4,7 +4,7 @@ If you have not yet already, please read the main [README.md](../README.md).
 
 ## Downloading and installing the executable
 
-You hopefully do not need to build anything to run scadnano offline. Pre-built executables are published on GitHub:
+You hopefully do not need to build anything to run scadnano offline. Pre-built executables are published on GitHub, under the "Assets" section of the following releases:
 
 - **Latest release (stable):** https://github.com/UC-Davis-molecular-computing/scadnano/releases/latest
 - **Latest dev build (prerelease):** https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/dev-latest
@@ -42,7 +42,7 @@ Three package formats are provided. **Pick one** based on your distribution and 
      - Debian/Ubuntu: `sudo apt install libfuse2`
      - Fedora: `sudo dnf install fuse-libs`
 
-- **`.deb` (Debian, Ubuntu, Linux Mint, etc.).**
+- **`.deb` (distributions using the APT / dpkg package manager: Debian, Ubuntu, Linux Mint, Pop!\_OS, elementary OS, Raspberry Pi OS, Kali, etc.).**
   1. Download `scadnano-linux-amd64.deb` (x86_64) or `scadnano-linux-arm64.deb` (ARM64).
   2. Install:
      ```shell
@@ -50,7 +50,7 @@ Three package formats are provided. **Pick one** based on your distribution and 
      ```
   3. Launch from your application menu or run `scadnano` from the terminal.
 
-- **`.rpm` (Fedora, RHEL, openSUSE, etc.).**
+- **`.rpm` (distributions using the RPM / DNF / YUM package manager: Fedora, RHEL, CentOS, Rocky Linux, AlmaLinux, openSUSE, Oracle Linux, etc.).**
   1. Download `scadnano-linux-x86_64.rpm` (x86_64) or `scadnano-linux-aarch64.rpm` (ARM64).
   2. Install:
      ```shell
