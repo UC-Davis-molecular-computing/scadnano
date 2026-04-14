@@ -28,12 +28,15 @@ the [issues page](https://github.com/UC-Davis-molecular-computing/scadnano/issue
         - [Installing `webdev` and `melos`](#installing-webdev-and-melos)
         - [Running a Local Server](#running-a-local-server)
             - [Melos scripts](#melos-scripts)
-            - [Troubleshooting](#troubleshooting)
+            - [Troubleshooting local server](#troubleshooting-local-server)
             - [Benefits of dartdevc](#benefits-of-dartdevc)
         - [Running Tests](#running-tests)
         - [Formatting Dart code](#formatting-dart-code)
         - [Building](#building)
         - [Troubleshooting](#troubleshooting)
+    - [Running in Docker](#running-in-docker)
+        - [Installing Docker](#installing-docker)
+        - [Clone and run using Docker](#clone-and-run-using-docker)
     - [General recipe for adding features](#general-recipe-for-adding-features)
     - [Pushing to the repository dev branch and documenting changes (done on all updates)](#pushing-to-the-repository-dev-branch-and-documenting-changes-done-on-all-updates)
     - [Pushing to the repository main branch and documenting changes (done less frequently)](#pushing-to-the-repository-main-branch-and-documenting-changes-done-less-frequently)
@@ -609,7 +612,7 @@ You can also build all sub-packages at once without melos using:
 dart run build_runner build --workspace
 ```
 
-#### Troubleshooting
+#### Troubleshooting local server
 
 Sometimes it may be necessary to clean out the generated files and cache if this has an error. See the file
 `clean.sh` (or `clean.bat`), which runs `dart run build_runner clean` in each package and removes all
