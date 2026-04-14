@@ -132,7 +132,8 @@ jobs:
       # ImageMagick is pre-installed on windows-latest runners.
       - name: Install Linux build deps
         if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get update && sudo apt-get install -y imagemagick rpm
+        # ImageMagick is pre-installed on ubuntu-latest; only rpm is needed (for electron-builder's .rpm target).
+        run: sudo apt-get install -y rpm
       - name: Install macOS build deps
         if: matrix.os == 'macos-latest'
         run: brew install imagemagick
