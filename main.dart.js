@@ -25504,7 +25504,7 @@
     Design__initializeBuilder(b) {
       var t1, t2,
         _s13_ = "default_group";
-      b.get$_design0$_$this()._version = "0.20.4";
+      b.get$_design0$_$this()._version = "0.20.5";
       t1 = new A.GeometryBuilder();
       t1._geometry$_$v = $.$get$default_geometry();
       b.get$_design0$_$this()._geometry = t1;
@@ -25877,7 +25877,7 @@
         _s23_ = "modifications_in_design";
       A.Design__check_mutually_exclusive_fields(json_map);
       t1 = type$.String;
-      version1 = A.get_version(A.optional_field(json_map, "version", "0.20.4", B.List_empty0, null, null, t1, type$.dynamic));
+      version1 = A.get_version(A.optional_field(json_map, "version", "0.20.5", B.List_empty0, null, null, t1, type$.dynamic));
       version2 = A.get_version("0.13.0");
       t2 = version1.major;
       t3 = version2.major;
@@ -104656,7 +104656,7 @@
         _s18_ = "helices_view_order",
         t1 = type$.String,
         t2 = type$.dynamic,
-        json_map = A.LinkedHashMap_LinkedHashMap$_literal(["version", "0.20.4"], t1, t2),
+        json_map = A.LinkedHashMap_LinkedHashMap$_literal(["version", "0.20.5"], t1, t2),
         t3 = _this.unused_fields;
       json_map.addAll$1(0, new A.CopyOnWriteMap(t3._mapFactory, t3._map$_map, t3.$ti._eval$1("CopyOnWriteMap<1,2>")));
       if (_this.has_default_groups$0())
@@ -139685,37 +139685,29 @@
       return t1.call$18(t3, t4, t5, t6, t7, t9, t8, t11, t12, t13, t14, t15, t16, t17, t2, t10, t18, t19.call$0());
     },
     help_menu$0() {
-      var t1, t2, t3, first, _i, version, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14,
-        version_dropdown_items = A._setArrayType([], type$.JSArray_ReactElement);
-      for (t1 = $.$get$scadnano_versions_to_link(), t2 = t1.length, t3 = type$.dynamic, first = true, _i = 0; _i < t1.length; t1.length === t2 || (0, A.throwConcurrentModificationError)(t1), ++_i, first = false) {
-        version = t1[_i];
-        t4 = $.$get$DropdownItem();
-        t5 = A.LinkedHashMap_LinkedHashMap$_literal(["href", "https://scadnano.org/v" + version + "/index.html", "target", "_blank", "key", version, "title", "    Version v" + version + " of scadnano, located at https://scadnano.org/v" + version + "/index.html."], t3, t3);
-        t6 = first ? " (current version)" : "";
-        B.JSArray_methods.add$1(version_dropdown_items, t4.call$2(t5, "v" + version + t6));
-      }
-      t1 = $.$get$NavDropdown();
-      t2 = A.LinkedHashMap_LinkedHashMap$_literal(["title", "Help", "id", "help-nav-dropdown"], t3, t3);
-      t4 = $.$get$DropdownItem();
-      t5 = t4.call$2(A.LinkedHashMap_LinkedHashMap$_literal(["href", "https://github.com/UC-Davis-molecular-computing/scadnano#readme", "target", "_blank"], t3, t3), "help (web interface)");
-      t6 = t4.call$2(A.LinkedHashMap_LinkedHashMap$_literal(["href", "https://github.com/UC-Davis-molecular-computing/scadnano/blob/main/tutorial/tutorial.md", "target", "_blank"], t3, t3), "tutorial (web interface)");
-      t7 = t4.call$2(A.LinkedHashMap_LinkedHashMap$_literal(["href", "https://github.com/UC-Davis-molecular-computing/scadnano-python-package#readme", "target", "_blank"], t3, t3), "help (Python scripting)");
-      t8 = t4.call$2(A.LinkedHashMap_LinkedHashMap$_literal(["href", "https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/main/tutorial/tutorial.md", "target", "_blank"], t3, t3), "tutorial (Python scripting)");
-      t9 = t4.call$2(A.LinkedHashMap_LinkedHashMap$_literal(["href", "https://scadnano-python-package.readthedocs.io", "target", "_blank"], t3, t3), "Python scripting API");
-      t10 = t4.call$2(A.LinkedHashMap_LinkedHashMap$_literal(["href", "https://github.com/UC-Davis-molecular-computing/scadnano/issues", "target", "_blank", "title", 'To file a bug report or feature request for the scadnano web interface, \nclick on "New issue" on the top right of the Issues page on at the \nscadnano Github repository.\n\nIf it is a bug report, please include as much detailed information as \npossible, including screenshots if applicable, and a copy of the .sc file \nthat caused the error, and an exact description of the steps needed to\nhelp us reproduce the error.\n\nNote that you cannot upload a .sc file directly to GitHub, but if you put \nthe .sc file in a .zip file, then it can be uploaded.'], t3, t3), "Bug report/feature request (web interface)");
-      t11 = t4.call$2(A.LinkedHashMap_LinkedHashMap$_literal(["href", "https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues", "target", "_blank", "title", 'To file a bug report or feature request for the Python scripting library, \nclick on "New issue" on the top right of the Issues page on at the \nscadnano-python-package Github repository.\n\nIf it is a bug report, please include as much detailed information as \npossible, including a copy of the .sc file that caused the error, and an \nexact description of the steps needed to help us reproduce the error.\n\nNote that you cannot upload a .sc file directly to GitHub, but if you put \nthe .sc file in a .zip file, then it can be uploaded.'], t3, t3), "Bug report/feature request (Python scripting)");
-      t12 = t4.call$2(A.LinkedHashMap_LinkedHashMap$_literal(["href", "https://github.com/UC-Davis-molecular-computing/scadnano/releases", "target", "_blank"], t3, t3), "Release notes (web interface)");
-      t13 = t4.call$2(A.LinkedHashMap_LinkedHashMap$_literal(["href", "https://github.com/UC-Davis-molecular-computing/scadnano-python-package/releases", "target", "_blank"], t3, t3), "Release notes (Python scripting)");
-      t14 = A.menu_dropdown_right___$MenuDropdownRight$closure().call$0();
+      var t1 = $.$get$NavDropdown(),
+        t2 = type$.dynamic,
+        t3 = A.LinkedHashMap_LinkedHashMap$_literal(["title", "Help", "id", "help-nav-dropdown"], t2, t2),
+        t4 = $.$get$DropdownItem(),
+        t5 = t4.call$2(A.LinkedHashMap_LinkedHashMap$_literal(["href", "https://github.com/UC-Davis-molecular-computing/scadnano#readme", "target", "_blank"], t2, t2), "help (web interface)"),
+        t6 = t4.call$2(A.LinkedHashMap_LinkedHashMap$_literal(["href", "https://github.com/UC-Davis-molecular-computing/scadnano/blob/main/tutorial/tutorial.md", "target", "_blank"], t2, t2), "tutorial (web interface)"),
+        t7 = t4.call$2(A.LinkedHashMap_LinkedHashMap$_literal(["href", "https://github.com/UC-Davis-molecular-computing/scadnano-python-package#readme", "target", "_blank"], t2, t2), "help (Python scripting)"),
+        t8 = t4.call$2(A.LinkedHashMap_LinkedHashMap$_literal(["href", "https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/main/tutorial/tutorial.md", "target", "_blank"], t2, t2), "tutorial (Python scripting)"),
+        t9 = t4.call$2(A.LinkedHashMap_LinkedHashMap$_literal(["href", "https://scadnano-python-package.readthedocs.io", "target", "_blank"], t2, t2), "Python scripting API"),
+        t10 = t4.call$2(A.LinkedHashMap_LinkedHashMap$_literal(["href", "https://github.com/UC-Davis-molecular-computing/scadnano/issues", "target", "_blank", "title", 'To file a bug report or feature request for the scadnano web interface, \nclick on "New issue" on the top right of the Issues page on at the \nscadnano Github repository.\n\nIf it is a bug report, please include as much detailed information as \npossible, including screenshots if applicable, and a copy of the .sc file \nthat caused the error, and an exact description of the steps needed to\nhelp us reproduce the error.\n\nNote that you cannot upload a .sc file directly to GitHub, but if you put \nthe .sc file in a .zip file, then it can be uploaded.'], t2, t2), "Bug report/feature request (web interface)"),
+        t11 = t4.call$2(A.LinkedHashMap_LinkedHashMap$_literal(["href", "https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues", "target", "_blank", "title", 'To file a bug report or feature request for the Python scripting library, \nclick on "New issue" on the top right of the Issues page on at the \nscadnano-python-package Github repository.\n\nIf it is a bug report, please include as much detailed information as \npossible, including a copy of the .sc file that caused the error, and an \nexact description of the steps needed to help us reproduce the error.\n\nNote that you cannot upload a .sc file directly to GitHub, but if you put \nthe .sc file in a .zip file, then it can be uploaded.'], t2, t2), "Bug report/feature request (Python scripting)"),
+        t12 = t4.call$2(A.LinkedHashMap_LinkedHashMap$_literal(["href", "https://github.com/UC-Davis-molecular-computing/scadnano/releases", "target", "_blank"], t2, t2), "Release notes (web interface)"),
+        t13 = t4.call$2(A.LinkedHashMap_LinkedHashMap$_literal(["href", "https://github.com/UC-Davis-molecular-computing/scadnano-python-package/releases", "target", "_blank"], t2, t2), "Release notes (Python scripting)"),
+        t14 = A.menu_dropdown_right___$MenuDropdownRight$closure().call$0();
       t14.set$title_("Other versions");
       t14.set$id_("older-version-dropdown");
       t14.set$disallow_overflow(true);
       t14.set$tooltip('Older versions of scadnano, as well as the newest development version.\n\nStarting from v0.12.1, every released (master branch) version of scadnano \nis deployed to https://scadnano.org/{version}. \n\nhttps://scadnano.org/dev is the newest version, containing newer features \n(those marked "closed in dev" on the scadnano issues page: \nhttps://github.com/UC-Davis-molecular-computing/scadnano/issues), \nbut it may be less stable than the current version.');
-      t3 = t14.call$1(A._setArrayType([t4.call$2(A.LinkedHashMap_LinkedHashMap$_literal(["href", "https://scadnano.org/dev", "target", "_blank", "key", "dev", "title", "Development version of scadnano, located at https://scadnano.org/dev.\n\nThis site is updated more frequently than the main site at https://scadnano.org.\n\nThis includes open issues that have been handled in the dev branch but not the main branch:\nhttps://github.com/UC-Davis-molecular-computing/scadnano/labels/closed%20in%20dev\n\nHowever, it may be less stable than the main site."], t3, t3), "dev"), version_dropdown_items], type$.JSArray_Object));
+      t2 = t14.call$1(A._setArrayType([t4.call$2(A.LinkedHashMap_LinkedHashMap$_literal(["href", "https://scadnano.org/dev", "target", "_blank", "key", "dev", "title", "Development version of scadnano, located at https://scadnano.org/dev.\n\nThis site is updated more frequently than the main site at https://scadnano.org.\n\nThis includes open issues that have been handled in the dev branch but not the main branch:\nhttps://github.com/UC-Davis-molecular-computing/scadnano/labels/closed%20in%20dev\n\nHowever, it may be less stable than the main site."], t2, t2), "dev")], type$.JSArray_ReactElement));
       t4 = A.menu_dropdown_item___$MenuDropdownItem$closure().call$0();
       t4.set$on_click(new A.MenuComponent_help_menu_closure());
       J.set$display$z(t4, "About");
-      return t1.call$12(t2, t5, t6, t7, t8, t9, t10, t11, t12, t13, t3, t4.call$0());
+      return t1.call$12(t3, t5, t6, t7, t8, t9, t10, t11, t12, t13, t2, t4.call$0());
     },
     load_example_dialog$0() {
       var $async$goto = 0,
@@ -140690,7 +140682,7 @@
       type$.SyntheticMouseEvent._as(__wc0_formal);
       t1 = window;
       t1.toString;
-      return B.Window_methods.alert$1(t1, "scadnano version 0.20.4\n\nscadnano is a program for designing synthetic DNA structures such as DNA origami. \n\nscadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group. Though similar in design, scadnano is distinct from cadnano (https://cadnano.org), which is developed and maintained by the Douglas lab (https://bionano.ucsf.edu/) at UCSF.");
+      return B.Window_methods.alert$1(t1, "scadnano version 0.20.5\n\nscadnano is a program for designing synthetic DNA structures such as DNA origami. \n\nscadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group. Though similar in design, scadnano is distinct from cadnano (https://cadnano.org), which is developed and maintained by the Douglas lab (https://bionano.ucsf.edu/) at UCSF.");
     },
     $signature: 526
   };
@@ -154241,7 +154233,6 @@
     $._operatingSystem = null;
     $.OperatingSystem_navigator = null;
     $._isJsApiValid = false;
-    $.scadnano_older_versions_to_link = A._setArrayType(["0.19.5", "0.18.10", "0.17.14", "0.16.3", "0.15.3", "0.14.0", "0.13.4", "0.12.2"], type$.JSArray_String);
     $.__app = A._Cell$named("app");
     $.timer = null;
     $._throttled_types = A.LinkedHashMap_LinkedHashMap$_empty(type$.Type, type$.int);
@@ -155092,7 +155083,6 @@
     _lazy($, "_$oxviewExportSerializer", "$get$_$oxviewExportSerializer", () => new A._$OxviewExportSerializer());
     _lazy($, "_$oxExportOnlySelectedStrandsSetSerializer", "$get$_$oxExportOnlySelectedStrandsSetSerializer", () => new A._$OxExportOnlySelectedStrandsSetSerializer());
     _lazy($, "_$convertExtensionsToBoundDomainsSerializer", "$get$_$convertExtensionsToBoundDomainsSerializer", () => new A._$ConvertExtensionsToBoundDomainsSerializer());
-    _lazyFinal($, "scadnano_versions_to_link", "$get$scadnano_versions_to_link", () => B.JSArray_methods.$add(A._setArrayType(["0.20.4"], type$.JSArray_String), $.scadnano_older_versions_to_link));
     _lazyFinal($, "KEY_CODE_COMMAND_MAC", "$get$KEY_CODE_COMMAND_MAC", () => A.browser().get$isFirefox() ? 224 : 91);
     _lazyFinal($, "KEY_CODE_TOGGLE_SELECT_MAC", "$get$KEY_CODE_TOGGLE_SELECT_MAC", () => $.$get$KEY_CODE_COMMAND_MAC());
     _lazyFinal($, "default_geometry", "$get$default_geometry", () => A.Geometry_Geometry(10.5, 1, 1, 150, 0.332));
