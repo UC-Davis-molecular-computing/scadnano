@@ -6,48 +6,32 @@ import 'package:platform_detect/platform_detect.dart';
 import 'state/geometry.dart';
 import 'state/grid.dart';
 
-// WARNING: Do not modify line below, except for the version string
-//          (and also add new version string to scadnano_versions_to_link).
-const String CURRENT_VERSION = "0.20.4";
+// WARNING: Do not modify line below, except for the version string.
+const String CURRENT_VERSION = "0.20.5";
 const String INITIAL_VERSION = "0.1.0";
 
-// scadnano versions that we deploy so that older versions can be used.
-final scadnano_older_versions_to_link = [
-  "0.19.5",
-  "0.18.10",
-  "0.17.14",
-  // "0.17.13",
-  // "0.17.12",
-  // "0.17.11",
-  // "0.17.10",
-  // "0.17.9",
-  // "0.17.8",
-  // "0.17.7",
-  // "0.17.6",
-  // "0.17.5",
-  // "0.17.4",
-  // // "0.17.3", // accidentally skipped this version
-  // "0.17.2",
-  // "0.17.1",
-  // "0.17.0",
-  "0.16.3",
-  // "0.16.2",
-  // "0.16.1",
-  // "0.16.0",
-  "0.15.3",
-  // "0.15.2",
-  // "0.15.1",
-  // "0.15.0",
-  "0.14.0",
-  "0.13.4",
-  // "0.13.3",
-  // "0.13.2",
-  // "0.13.1",
-  // "0.13.0",
-  "0.12.2",
-  // "0.12.1",
-];
-final scadnano_versions_to_link = [CURRENT_VERSION] + scadnano_older_versions_to_link;
+// Older-versions-deploy feature removed 2026-04-14 — the accumulated per-version
+// webdev builds on the gh-pages branch were pushing the Pages artifact past the 1 GB
+// limit (warning "Uploaded artifact size of 1168314670 bytes exceeds the allowed size
+// of 1 GB"). The code below is kept (commented) in case we want to resurrect the
+// feature later (e.g. by archiving old versions to a separate branch/repo).
+// To resurrect: uncomment this block, uncomment the version-dropdown loop and its
+// inclusion in the "Other versions" submenu in lib/src/view/menu.dart, and
+// re-introduce the VERSION-extraction + `v$VERSION/` subdir copy in the
+// deploy-gh-pages-main job of .github/workflows/build-and-deploy.yml.
+//
+// // scadnano versions that we deploy so that older versions can be used.
+// final scadnano_older_versions_to_link = [
+//   "0.19.5",
+//   "0.18.10",
+//   "0.17.14",
+//   "0.16.3",
+//   "0.15.3",
+//   "0.14.0",
+//   "0.13.4",
+//   "0.12.2",
+// ];
+// final scadnano_versions_to_link = [CURRENT_VERSION] + scadnano_older_versions_to_link;
 
 const BUG_REPORT_URL = 'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
 const NO_DESIGN_MESSAGE_HTML = r'''\
