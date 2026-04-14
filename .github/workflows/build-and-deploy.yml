@@ -144,7 +144,7 @@ jobs:
       - name: Generate icons
         working-directory: ./standalone
         shell: bash
-        run: ./generate-icons.sh ../web/images/origami-icon-thin-seam.png
+        run: bash ./generate-icons.sh ../web/images/origami-icon-thin-seam.png
 
       - name: Build executable
         working-directory: ./standalone

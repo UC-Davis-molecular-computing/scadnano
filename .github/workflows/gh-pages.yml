@@ -33,18 +33,20 @@ jobs:
       - name: Activate webdev
         run: dart pub global activate webdev
 
-      - name: Build into gh-pages repo
-        run: dart pub global run webdev build -o web:/tmp/scadnano ; cp -r /tmp/scadnano/* gh-pages-repo
-
       - name: Retrieve version
         run: echo "VERSION=$(cat lib/src/constants.dart | grep 'const String CURRENT_VERSION = .*' | grep -oP '\d+\.\d+\.\d+')" >> $GITHUB_ENV
 
-      - name: Build into gh-pages-repo/VERSION
+      - name: Build web app (once)
+        run: dart pub global run webdev build -o web:/tmp/scadnano
+
+      - name: Deploy to gh-pages root and versioned directory
         run: |
-          if [ "$VERSION" != "" ]; then
-             dart pub global run webdev build -o web:gh-pages-repo/v$VERSION
+          cp -r /tmp/scadnano/. gh-pages-repo/
+          if [ -n "$VERSION" ]; then
+             mkdir -p "gh-pages-repo/v$VERSION"
+             cp -r /tmp/scadnano/. "gh-pages-repo/v$VERSION/"
           else
-             echo "::warning deploying VERSION skipped because VERSION number could not be found"
+             echo "::warning::deploying VERSION skipped because VERSION number could not be found"
           fi
 
       - name: Deploy

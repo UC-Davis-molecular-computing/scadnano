@@ -1,0 +1,67 @@
+name: Dart Unit Tests and Formatting
+
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened, ready_for_review ]
+
+jobs:
+  unit_tests:
+    name: Unit tests
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v5
+
+      - name: Setup Dart SDK
+        uses: ./.github/actions/setup-dart
+
+      - name: Cache Dart pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-pub-
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Build generated files for sub-packages
+        run: |
+          cd scadnano_state_actions && dart run build_runner build --delete-conflicting-outputs && cd ..
+          cd scadnano_reducers && dart run build_runner build --delete-conflicting-outputs && cd ..
+
+      - name: Run tests
+        run: dart run build_runner test
+
+  formatting:
+    name: Formatting
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v5
+
+      - name: Setup Dart SDK
+        uses: ./.github/actions/setup-dart
+
+      - name: Cache Dart pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-pub-
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Verify formatting
+        run: dart format -l 120 --output=none --set-exit-if-changed .
+
+  fail_if_pull_request_is_draft:
+    name: Block draft PRs
+    if: github.event.pull_request.draft == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fails to indicate that the PR must be marked as ready to review before tests and formatting will run.
+        run: exit 1
