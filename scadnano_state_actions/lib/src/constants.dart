@@ -7,7 +7,7 @@ import 'state/geometry.dart';
 import 'state/grid.dart';
 
 // WARNING: Do not modify line below, except for the version string.
-const String CURRENT_VERSION = "0.20.5";
+const String CURRENT_VERSION = "0.20.6";
 const String INITIAL_VERSION = "0.1.0";
 
 // Older-versions-deploy feature removed 2026-04-14 — the accumulated per-version
