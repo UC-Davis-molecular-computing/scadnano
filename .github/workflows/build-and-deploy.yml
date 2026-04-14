@@ -1,19 +1,51 @@
 name: build and deploy
 
-# This workflow handles both:
-#   - deploying the compiled web app to the gh-pages branch (at /dev) on pushes to dev
-#   - building the Electron standalone executable on pushes to dev and on v* tags
+# This workflow builds the web app, the Electron executables, and handles all
+# deployments/releases. It runs on every push to `dev`, every push to `main`, and every
+# push of a `v*` tag.
 #
-# The Dart compile step (produces build/) is done once in build-web-app and shared
-# with both downstream jobs via an artifact, avoiding duplicate Dart setup + compile.
+# Jobs and their trigger conditions:
+#   1. build-web-app          — always. Compiles the Dart/webdev web app ONCE and uploads
+#                               the result (build/) as an artifact shared with every
+#                               downstream job, so Dart setup + compile is not repeated.
+#   2. deploy-gh-pages-dev    — only on push to dev. Downloads the web-build artifact and
+#                               publishes it to the `dev/` subdir of the gh-pages branch
+#                               (→ https://scadnano.org/dev/).
+#   3. deploy-gh-pages-main   — only on push to main. Downloads the web-build artifact,
+#                               extracts VERSION from constants.dart, and publishes the
+#                               build to BOTH the root of the gh-pages branch
+#                               (→ https://scadnano.org/) AND the `v$VERSION/` subdir
+#                               (→ https://scadnano.org/v0.20.4/) so old versions remain
+#                               accessible.
+#   4. build-executables      — always. Matrix build (windows/ubuntu/macos) that downloads
+#                               the web-build artifact and packages it via electron-builder
+#                               into platform-specific executables (.exe / .dmg /
+#                               .AppImage / .deb / .rpm), uploaded as per-OS artifacts.
+#   5. release                — always. Downloads the per-OS executable artifacts and
+#                               attaches them to a GitHub release, with different behavior
+#                               depending on the trigger:
+#                                 • push to dev  → rolling prerelease `dev-latest`,
+#                                                  deleted + recreated on every push.
+#                                 • push to main → creates release `v$VERSION` (tag + title
+#                                                  " v$VERSION [TODO: add possible release
+#                                                  notes]") with --generate-notes
+#                                                  (auto-changelog from previous tag).
+#                                                  If release already exists, just
+#                                                  re-uploads binaries with --clobber.
+#                                 • push of v* tag → uploads binaries to the existing
+#                                                    v$VERSION release, or creates it if
+#                                                    missing.
 #
-# The workflow for pushes to main is a separate file (gh-pages.yml) because it has
-# different logic (deploying to the root of gh-pages plus a versioned subdirectory).
+# Dependency graph:
+#   build-web-app ─┬─ deploy-gh-pages-dev  (if dev)
+#                  ├─ deploy-gh-pages-main (if main)
+#                  └─ build-executables ── release
 
 on:
   push:
     branches:
       - dev
+      - main
     tags:
       - 'v*'
 
@@ -76,6 +108,46 @@ jobs:
         with:
           name: web-build
           path: gh-pages-repo/dev
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: gh-pages-repo
+
+  deploy-gh-pages-main:
+    name: Deploy web app to gh-pages root and v$VERSION
+    needs: build-web-app
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (for constants.dart)
+        uses: actions/checkout@v5
+
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v5
+        with:
+          ref: gh-pages
+          path: gh-pages-repo
+
+      - name: Download web build artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: web-build
+          path: /tmp/scadnano
+
+      - name: Extract version
+        run: echo "VERSION=$(grep 'const String CURRENT_VERSION = ' scadnano_state_actions/lib/src/constants.dart | grep -oP '\d+\.\d+\.\d+')" >> $GITHUB_ENV
+
+      - name: Copy build to gh-pages root and versioned subdir
+        run: |
+          cp -r /tmp/scadnano/. gh-pages-repo/
+          if [ -n "$VERSION" ]; then
+            mkdir -p "gh-pages-repo/v$VERSION"
+            cp -r /tmp/scadnano/. "gh-pages-repo/v$VERSION/"
+          else
+            echo "::warning::deploying VERSION skipped because VERSION number could not be found"
+          fi
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
@@ -182,6 +254,10 @@ jobs:
     needs: build-executables
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout (for version extraction on main)
+        if: github.ref == 'refs/heads/main'
+        uses: actions/checkout@v5
+
       - name: Download executable artifacts
         uses: actions/download-artifact@v5
         with:
@@ -210,6 +286,28 @@ jobs:
               gh release create "$TAG" \
                 --title "$TAG" \
                 --notes "Automated build for $TAG (commit $GITHUB_SHA)." \
+                --target "$GITHUB_SHA" \
+                --repo "$GITHUB_REPOSITORY" \
+                $FILES
+            fi
+          elif [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
+            # Push to main: extract version from constants.dart, create v$VERSION
+            # tag/release with auto-generated notes, attach binaries.
+            VERSION=$(grep 'const String CURRENT_VERSION = ' scadnano_state_actions/lib/src/constants.dart | grep -oP '\d+\.\d+\.\d+')
+            if [[ -z "$VERSION" ]]; then
+              echo "ERROR: could not extract version from scadnano_state_actions/lib/src/constants.dart"
+              exit 1
+            fi
+            TAG="v$VERSION"
+            TITLE=" $TAG [TODO: add possible release notes]"
+            if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+              echo "Release $TAG already exists; uploading binaries with --clobber."
+              gh release upload "$TAG" $FILES --clobber --repo "$GITHUB_REPOSITORY"
+            else
+              echo "Creating release $TAG."
+              gh release create "$TAG" \
+                --title "$TITLE" \
+                --generate-notes \
                 --target "$GITHUB_SHA" \
                 --repo "$GITHUB_REPOSITORY" \
                 $FILES
