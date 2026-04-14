@@ -170,7 +170,7 @@ jobs:
             artifact_glob: scadnano-linux-*.*
           - os: macos-latest
             npm_command: npm run build:electron:mac
-            artifact_glob: scadnano-mac-*.*
+            artifact_glob: scadnano-mac.*
     runs-on: ${{ matrix.os }}
     env:
       ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron

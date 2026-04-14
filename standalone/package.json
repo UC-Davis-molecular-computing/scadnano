@@ -36,6 +36,7 @@
       "target": [
         { "target": "dmg", "arch": ["universal"] }
       ],
+      "artifactName": "${productName}-${os}.${ext}",
       "icon": "icon.icns"
     },
     "nsis": {

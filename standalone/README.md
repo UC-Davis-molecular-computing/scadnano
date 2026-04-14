@@ -19,7 +19,7 @@ Follow the instructions for your platform below.
 
 ### macOS
 
-1. Download `scadnano-mac-universal.dmg` (works on both Intel and Apple Silicon Macs).
+1. Download `scadnano-mac.dmg` (universal build — works on both Intel and Apple Silicon Macs).
 2. Double-click the `.dmg` and drag the `scadnano` app into your **Applications** folder.
 3. Because the app is not yet signed by Apple, macOS will refuse to open it until you remove the quarantine flag. Open Terminal and run:
    ```shell
