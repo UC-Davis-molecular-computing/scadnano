@@ -50,7 +50,7 @@ jobs:
         run: dart pub global activate webdev
 
       - name: Build web app
-        run: dart pub global run webdev build --delete-conflicting-outputs
+        run: dart pub global run webdev build -- --delete-conflicting-outputs
 
       - name: Upload web build artifact
         uses: actions/upload-artifact@v5
