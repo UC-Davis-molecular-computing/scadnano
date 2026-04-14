@@ -1,0 +1,231 @@
+name: build and deploy
+
+# This workflow handles both:
+#   - deploying the compiled web app to the gh-pages branch (at /dev) on pushes to dev
+#   - building the Electron standalone executable on pushes to dev and on v* tags
+#
+# The Dart compile step (produces build/) is done once in build-web-app and shared
+# with both downstream jobs via an artifact, avoiding duplicate Dart setup + compile.
+#
+# The workflow for pushes to main is a separate file (gh-pages.yml) because it has
+# different logic (deploying to the root of gh-pages plus a versioned subdirectory).
+
+on:
+  push:
+    branches:
+      - dev
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-web-app:
+    name: Build scadnano web app
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Dart SDK
+        uses: ./.github/actions/setup-dart
+
+      - name: Cache Dart pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-pub-
+
+      - name: Install Dart dependencies
+        run: dart pub get
+
+      - name: Build generated files for sub-packages
+        run: |
+          cd scadnano_state_actions && dart run build_runner build --delete-conflicting-outputs && cd ..
+          cd scadnano_reducers && dart run build_runner build --delete-conflicting-outputs && cd ..
+
+      - name: Install webdev
+        run: dart pub global activate webdev
+
+      - name: Build web app
+        run: dart pub global run webdev build --delete-conflicting-outputs
+
+      - name: Upload web build artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: web-build
+          path: build/
+          retention-days: 1
+
+  deploy-gh-pages-dev:
+    name: Deploy web app to gh-pages/dev
+    needs: build-web-app
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v5
+        with:
+          ref: gh-pages
+          path: gh-pages-repo
+
+      - name: Download web build artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: web-build
+          path: gh-pages-repo/dev
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: gh-pages-repo
+
+  build-executables:
+    name: Build executable on ${{ matrix.os }}
+    needs: build-web-app
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            npm_command: npm run build:electron:win
+            artifact_glob: scadnano-win-*.exe
+          - os: ubuntu-latest
+            npm_command: npm run build:electron:lin
+            artifact_glob: scadnano-linux-*.*
+          # Uncomment to also build macOS (dmg):
+          # - os: macos-latest
+          #   npm_command: npm run build:electron:mac
+          #   artifact_glob: scadnano-mac-*.*
+    runs-on: ${{ matrix.os }}
+    env:
+      ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
+      ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: standalone/package-lock.json
+
+      - name: Cache Electron downloads
+        uses: actions/cache@v4
+        with:
+          path: |
+            .cache/electron
+            .cache/electron-builder
+          key: ${{ runner.os }}-electron-${{ hashFiles('standalone/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-electron-
+
+      - name: Download web build artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: web-build
+          path: build/
+
+      # ImageMagick is pre-installed on windows-latest runners.
+      - name: Install Linux build deps
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get update && sudo apt-get install -y imagemagick rpm
+      # Uncomment when enabling macOS:
+      # - name: Install ImageMagick (macOS)
+      #   if: matrix.os == 'macos-latest'
+      #   run: brew install imagemagick
+
+      - name: Install npm dependencies
+        working-directory: ./standalone
+        run: npm ci
+
+      - name: Generate icons
+        working-directory: ./standalone
+        shell: bash
+        run: ./generate-icons.sh ../web/images/origami-icon-thin-seam.png
+
+      - name: Build executable
+        working-directory: ./standalone
+        shell: bash
+        run: ${{ matrix.npm_command }}
+
+      # -------------------------------------------------------------------
+      # SignPath code-signing step goes here. Pending approval of SignPath
+      # Foundation application at https://about.signpath.io/signing-for-open-source-projects
+      # Once approved, SignPath will provide values for the inputs below and
+      # you will set SIGNPATH_API_TOKEN as a repo secret.
+      #
+      # - name: Submit signing request to SignPath
+      #   if: matrix.os == 'windows-latest'
+      #   uses: signpath/github-action-submit-signing-request@v1
+      #   with:
+      #     api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+      #     organization-id: <your-signpath-org-id>
+      #     project-slug: scadnano
+      #     signing-policy-slug: release-signing
+      #     github-artifact-id: ${{ steps.upload-unsigned.outputs.artifact-id }}
+      #     wait-for-completion: true
+      #     output-artifact-directory: standalone/dist
+      # -------------------------------------------------------------------
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: build-${{ matrix.os }}
+          path: standalone/dist/${{ matrix.artifact_glob }}
+          retention-days: 1
+
+  release:
+    name: Publish release
+    needs: build-executables
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download executable artifacts
+        uses: actions/download-artifact@v5
+        with:
+          path: ./release-files
+          pattern: build-*
+
+      - name: Publish to GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          FILES=$(find ./release-files -type f)
+          echo "Files to upload:"
+          echo "$FILES"
+
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
+            # Tagged release (e.g. v0.19.15): preserve forever, attach exes to the release.
+            TAG="$GITHUB_REF_NAME"
+            if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+              echo "Release $TAG exists; uploading executables with --clobber."
+              gh release upload "$TAG" $FILES --clobber --repo "$GITHUB_REPOSITORY"
+            else
+              echo "Creating release $TAG."
+              gh release create "$TAG" \
+                --title "$TAG" \
+                --notes "Automated build for $TAG (commit $GITHUB_SHA)." \
+                --target "$GITHUB_SHA" \
+                --repo "$GITHUB_REPOSITORY" \
+                $FILES
+            fi
+          else
+            # Rolling dev prerelease: overwrite each push.
+            TAG="dev-latest"
+            echo "Refreshing rolling prerelease $TAG."
+            gh release delete "$TAG" --cleanup-tag --yes --repo "$GITHUB_REPOSITORY" 2>/dev/null || true
+            gh release create "$TAG" \
+              --title "Latest dev build" \
+              --notes "Rolling build from dev branch (commit $GITHUB_SHA). This release is overwritten on every push to dev." \
+              --target "$GITHUB_SHA" \
+              --prerelease \
+              --repo "$GITHUB_REPOSITORY" \
+              $FILES
+          fi

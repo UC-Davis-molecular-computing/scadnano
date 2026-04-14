@@ -51,9 +51,12 @@
     "setup:reducers": "cd .. && dart pub get && cd scadnano_reducers && dart run build_runner build --delete-conflicting-outputs",
     "dev": "npm run init && electron-forge start",
     "package": "electron-builder --dir",
-    "build:win": "npm run init && electron-builder --win --publish never && node -e \"require('fs').rmSync('dist/scadnano-win.exe', {force: true})\"",
-    "build:mac": "npm run init && electron-builder --mac --publish never",
-    "build:lin": "npm run init && electron-builder --linux --publish never"
+    "build:electron:win": "electron-builder --win --publish never && node -e \"require('fs').rmSync('dist/scadnano-win.exe', {force: true})\"",
+    "build:electron:mac": "electron-builder --mac --publish never",
+    "build:electron:lin": "electron-builder --linux --publish never",
+    "build:win": "npm run init && npm run build:electron:win",
+    "build:mac": "npm run init && npm run build:electron:mac",
+    "build:lin": "npm run init && npm run build:electron:lin"
   },
   "repository": {
     "type": "git",
