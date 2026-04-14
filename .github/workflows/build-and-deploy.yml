@@ -96,10 +96,9 @@ jobs:
           - os: ubuntu-latest
             npm_command: npm run build:electron:lin
             artifact_glob: scadnano-linux-*.*
-          # Uncomment to also build macOS (dmg):
-          # - os: macos-latest
-          #   npm_command: npm run build:electron:mac
-          #   artifact_glob: scadnano-mac-*.*
+          - os: macos-latest
+            npm_command: npm run build:electron:mac
+            artifact_glob: scadnano-mac-*.*
     runs-on: ${{ matrix.os }}
     env:
       ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
@@ -134,10 +133,9 @@ jobs:
       - name: Install Linux build deps
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install -y imagemagick rpm
-      # Uncomment when enabling macOS:
-      # - name: Install ImageMagick (macOS)
-      #   if: matrix.os == 'macos-latest'
-      #   run: brew install imagemagick
+      - name: Install macOS build deps
+        if: matrix.os == 'macos-latest'
+        run: brew install imagemagick
 
       - name: Install npm dependencies
         working-directory: ./standalone
