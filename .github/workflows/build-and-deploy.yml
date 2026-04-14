@@ -11,12 +11,12 @@ name: build and deploy
 #   2. deploy-gh-pages-dev    — only on push to dev. Downloads the web-build artifact and
 #                               publishes it to the `dev/` subdir of the gh-pages branch
 #                               (→ https://scadnano.org/dev/).
-#   3. deploy-gh-pages-main   — only on push to main. Downloads the web-build artifact,
-#                               extracts VERSION from constants.dart, and publishes the
-#                               build to BOTH the root of the gh-pages branch
-#                               (→ https://scadnano.org/) AND the `v$VERSION/` subdir
-#                               (→ https://scadnano.org/v0.20.4/) so old versions remain
-#                               accessible.
+#   3. deploy-gh-pages-main   — only on push to main. Downloads the web-build artifact
+#                               and publishes it to the root of the gh-pages branch
+#                               (→ https://scadnano.org/).  NOTE: as of 2026-04-14 we
+#                               no longer create a per-version `v$VERSION/` subdir —
+#                               accumulated versioned builds were pushing the Pages
+#                               artifact past GitHub's 1 GB limit.
 #   4. build-executables      — always. Matrix build (windows/ubuntu/macos) that downloads
 #                               the web-build artifact and packages it via electron-builder
 #                               into platform-specific executables (.exe / .dmg /
@@ -116,14 +116,16 @@ jobs:
           publish_dir: gh-pages-repo
 
   deploy-gh-pages-main:
-    name: Deploy web app to gh-pages root and v$VERSION
+    name: Deploy web app to gh-pages root
     needs: build-web-app
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    # NOTE: as of 2026-04-14 we no longer create per-version subdirectories
+    # (gh-pages/v0.X.Y/). Accumulated versioned builds had pushed the Pages
+    # artifact past GitHub's 1 GB limit. To resurrect the feature, see the
+    # commented block for scadnano_older_versions_to_link in
+    # scadnano_state_actions/lib/src/constants.dart.
     steps:
-      - name: Checkout (for constants.dart)
-        uses: actions/checkout@v5
-
       - name: Checkout gh-pages branch
         uses: actions/checkout@v5
         with:
@@ -136,18 +138,8 @@ jobs:
           name: web-build
           path: /tmp/scadnano
 
-      - name: Extract version
-        run: echo "VERSION=$(grep 'const String CURRENT_VERSION = ' scadnano_state_actions/lib/src/constants.dart | grep -oP '\d+\.\d+\.\d+')" >> $GITHUB_ENV
-
-      - name: Copy build to gh-pages root and versioned subdir
-        run: |
-          cp -r /tmp/scadnano/. gh-pages-repo/
-          if [ -n "$VERSION" ]; then
-            mkdir -p "gh-pages-repo/v$VERSION"
-            cp -r /tmp/scadnano/. "gh-pages-repo/v$VERSION/"
-          else
-            echo "::warning::deploying VERSION skipped because VERSION number could not be found"
-          fi
+      - name: Copy build to gh-pages root
+        run: cp -r /tmp/scadnano/. gh-pages-repo/
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3

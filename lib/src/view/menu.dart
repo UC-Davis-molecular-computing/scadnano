@@ -1386,19 +1386,21 @@ When selected, only selected strands will be exported to oxDNA or oxView formats
   // help menu
 
   help_menu() {
-    List<ReactElement> version_dropdown_items = [];
-    bool first = true;
-    for (var version in constants.scadnano_versions_to_link) {
-      var version_dropdown_item = DropdownItem({
-        'href': 'https://scadnano.org/v${version}/index.html',
-        'target': '_blank',
-        'key': version,
-        'title': '''\
-    Version v${version} of scadnano, located at https://scadnano.org/v${version}/index.html.''',
-      }, 'v${version}' + (first ? ' (current version)' : ''));
-      first = false;
-      version_dropdown_items.add(version_dropdown_item);
-    }
+    // Older-versions-deploy feature removed 2026-04-14. See constants.dart
+    // (scadnano_older_versions_to_link) for the reason and resurrection recipe.
+    // List<ReactElement> version_dropdown_items = [];
+    // bool first = true;
+    // for (var version in constants.scadnano_versions_to_link) {
+    //   var version_dropdown_item = DropdownItem({
+    //     'href': 'https://scadnano.org/v${version}/index.html',
+    //     'target': '_blank',
+    //     'key': version,
+    //     'title': '''\
+    // Version v${version} of scadnano, located at https://scadnano.org/v${version}/index.html.''',
+    //   }, 'v${version}' + (first ? ' (current version)' : ''));
+    //   first = false;
+    //   version_dropdown_items.add(version_dropdown_item);
+    // }
 
     return NavDropdown(
       {'title': 'Help', 'id': 'help-nav-dropdown'},
@@ -1491,7 +1493,7 @@ https://github.com/UC-Davis-molecular-computing/scadnano/labels/closed%20in%20de
 
 However, it may be less stable than the main site.''',
         }, 'dev'),
-        version_dropdown_items,
+        // version_dropdown_items,  // older-versions-deploy feature removed 2026-04-14
       ]),
       (MenuDropdownItem()
         ..on_click =
