@@ -1054,8 +1054,7 @@ step required):
 - **Latest release (stable):** https://github.com/UC-Davis-molecular-computing/scadnano/releases/latest
 - **Latest dev build (prerelease):** https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/dev-latest
 
-See the [README](standalone/README.md) in the standalone directory for installation instructions and for
-building the executable from source.
+See the [README](standalone/README.md) in the standalone directory for installation instructions and for building the executable from source.
 
 ### Offline Development
 
