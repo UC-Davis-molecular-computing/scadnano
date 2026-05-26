@@ -1053,32 +1053,20 @@ One version is with the standalone executable. Pre-built executables are availab
 - **Latest release (stable):** https://github.com/UC-Davis-molecular-computing/scadnano/releases/latest
 - **Latest dev build (prerelease):** https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/dev-latest
 
-See the [README](standalone/README.md) in the standalone directory for installation instructions and for building the executable from source.
+Pick the file matching your platform and CPU architecture:
+
+- **Windows:** `scadnano-win-x64.exe` for most PCs, or `scadnano-win-arm64.exe` for ARM-based PCs (e.g. some Surface devices).
+- **macOS:** `scadnano-mac.dmg` (universal build — works on both Intel and Apple Silicon Macs).
+- **Linux:** three package formats are provided; pick one based on your distribution:
+  - [`.AppImage`](https://appimage.org/) — runs on any Linux distro without installation. Choose `scadnano-linux-x86_64.AppImage` (most PCs) or `scadnano-linux-arm64.AppImage` (ARM64, e.g. Raspberry Pi 4+).
+  - [`.deb`](https://en.wikipedia.org/wiki/Deb_(file_format)) — for distributions using the APT / dpkg package manager (Debian, Ubuntu, Linux Mint, Pop!_OS, elementary OS, Raspberry Pi OS, Kali, etc.). Choose `scadnano-linux-amd64.deb` (x86_64) or `scadnano-linux-arm64.deb` (ARM64).
+  - [`.rpm`](https://en.wikipedia.org/wiki/RPM_Package_Manager) — for distributions using the RPM / DNF / YUM package manager (Fedora, RHEL, CentOS, Rocky Linux, AlmaLinux, openSUSE, Oracle Linux, etc.). Choose `scadnano-linux-x86_64.rpm` (x86_64) or `scadnano-linux-aarch64.rpm` (ARM64).
+
+See the [README](standalone/README.md) in the standalone directory for installation instructions for each platform and for building the executable from source.
 
 ### Offline Development
 
-Another way is to run the development version offline.
-To do this, you can follow the [instructions](CONTRIBUTING.md#making-contributions) for running a local server
-in the CONTRIBUTING document, which involves three steps:
-
-- [Clone](CONTRIBUTING.md#cloning) the scadnano repository from GitHub.
-
-- [Install](CONTRIBUTING.md#installing-dart) the Dart SDK.
-
-- [Run](CONTRIBUTING.md#running-a-local-server) a local server.
-
-Alternatively, you can run scadnano as a [Docker](https://www.docker.com/) container. This can be used for
-contributing to or running scadnano without having to install everything manually. This is confirmed working
-on Linux, but other platforms like Apple Silicon may recieve errors. Docker support is experimental and
-maintained by @headblockhead - please reference them in any issues encountered.
-
-To run using Docker:
-
-- [Clone](CONTRIBUTING.md#cloning) the scadnano repository from GitHub.
-
-- [Install](CONTRIBUTING.md#installing-docker) Docker.
-
-- [Run](CONTRIBUTING.md#clone-and-run-using-docker) the Dockerfile.
+Another way is to run the development version offline. See the [Making contributions](CONTRIBUTING.md#making-contributions) section of the CONTRIBUTING document for instructions (covering both running a local server and [running in Docker](CONTRIBUTING.md#running-in-docker)).
 
 ## Performance tips
 
