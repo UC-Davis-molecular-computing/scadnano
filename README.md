@@ -1064,6 +1064,33 @@ Pick the file matching your platform and CPU architecture:
 
 See the [README](standalone/README.md) in the standalone directory for installation instructions for each platform and for building the executable from source.
 
+#### Installing on macOS
+
+The `scadnano-mac.dmg` file is an Apple **disk image** — a single-file container that macOS mounts as if it were an external disk. To install:
+
+1. Double-click `scadnano-mac.dmg`. A new Finder window opens showing the disk's contents, which includes a file named `scadnano.app` (the actual application).
+2. Drag `scadnano.app` into your **Applications** folder. (The window usually shows a shortcut to the Applications folder right next to the app icon, so you can drag from one to the other within the same window.)
+3. Eject the mounted disk image: in Finder's sidebar, click the eject button next to the `scadnano` disk (or drag its icon from the Desktop to the Trash).
+4. After this, the installed app lives at `/Applications/scadnano.app`. You can launch it from the Applications folder or via Spotlight (press Cmd+Space, type `scadnano`, press Enter). You can also delete the downloaded `.dmg` file if you wish — it is no longer needed.
+
+#### Bypassing security warnings
+
+The scadnano executables are not signed with a paid code-signing certificate, so Windows and macOS will display a warning the first time you try to run them. (Linux typically does not display such a warning.) The executables are safe to run; here is how to get past the warning on each platform.
+
+- **Windows:** When you double-click the `.exe`, you may see a popup titled "Windows protected your PC" (from Microsoft Defender SmartScreen). Click **More info**, then click the **Run anyway** button that appears.
+
+- **macOS:** When you first try to open scadnano, macOS may show a warning that it "cannot be opened because Apple cannot check it for malicious software" (or that it "is damaged and can't be opened"). To allow it to run:
+  1. Click **Done** (or **Cancel**) to dismiss the warning.
+  2. Open **System Settings** (on older macOS, **System Preferences**) and go to **Privacy & Security**.
+  3. Scroll down to the **Security** section. You should see a message saying that scadnano was blocked. Click **Open Anyway** next to it.
+  4. You may be prompted for your password, and then a final dialog will appear with an **Open** button — click it. After this, scadnano will open normally on subsequent launches.
+
+  If the steps above do not work, you can instead open a Terminal and run the following command (replacing the path with the actual location of the app), which removes the quarantine attribute that triggers the warning:
+  ```
+  xattr -dr com.apple.quarantine /Applications/scadnano.app
+  ```
+  This is especially useful if you see the variant "scadnano.app is damaged and can't be opened" — in that case the **Open Anyway** button typically does not appear, and the `xattr` command is the only way to bypass the block. (This variant is more common on Apple Silicon Macs and on macOS Sequoia and later.) Like the GUI flow, the `xattr` command only has to be run once per installed copy of the app.
+
 ### Offline Development
 
 Another way is to run the development version offline. See the [Making contributions](CONTRIBUTING.md#making-contributions) section of the CONTRIBUTING document for instructions (covering both running a local server and [running in Docker](CONTRIBUTING.md#running-in-docker)).
