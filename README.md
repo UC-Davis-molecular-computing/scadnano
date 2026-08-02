@@ -149,13 +149,17 @@ The scadnano dev version matches what is on
 the [dev branch of the web interface code repository](https://github.com/UC-Davis-molecular-computing/scadnano/tree/dev).
 
 Releases of the stable version are explained on
-the [releases page](https://github.com/UC-Davis-molecular-computing/scadnano/releases).
+the [releases page](https://github.com/UC-Davis-molecular-computing/scadnano/releases), and the notes from
+every release are also collected in [CHANGELOG.md](CHANGELOG.md).
 When [issues](https://github.com/UC-Davis-molecular-computing/scadnano/issues) are handled in a release, they
 are closed at the time the changes make their way to the main branch.
-If an issue is handled in the dev branch, the issue remains open, but you will see a comment that looks
-something like this:
+If an issue has been handled in the dev branch but not yet released, it remains open and is given the
+label [`closed in dev`](https://github.com/UC-Davis-molecular-computing/scadnano/labels/closed%20in%20dev);
+to see everything that is fixed but not yet released,
+search [`is:open label:"closed in dev"`](https://github.com/UC-Davis-molecular-computing/scadnano/issues?q=is%3Aopen+label%3A%22closed+in+dev%22).
+You will also see a comment on the issue that looks something like this:
 "*dave-doty added a commit that referenced this issue 17 hours ago @dave-doty make width of File menu just
-enough to fit all entries on one line; fixes #339*". These comments can help you decide if you want to use the
+enough to fit all entries on one line; fixes #339*". These can help you decide if you want to use the
 latest version of scadnano (https://scadnano.org/dev), which has fixed an issue, before it makes its way to
 the stable version (https://scadnano.org).
 
@@ -1053,32 +1057,47 @@ One version is with the standalone executable. Pre-built executables are availab
 - **Latest release (stable):** https://github.com/UC-Davis-molecular-computing/scadnano/releases/latest
 - **Latest dev build (prerelease):** https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/dev-latest
 
-See the [README](standalone/README.md) in the standalone directory for installation instructions and for building the executable from source.
+Pick the file matching your platform and CPU architecture:
+
+- **Windows:** `scadnano-win-x64.exe` for most PCs, or `scadnano-win-arm64.exe` for ARM-based PCs (e.g. some Surface devices).
+- **macOS:** `scadnano-mac.dmg` (universal build — works on both Intel and Apple Silicon Macs).
+- **Linux:** three package formats are provided; pick one based on your distribution:
+  - [`.AppImage`](https://appimage.org/) — runs on any Linux distro without installation. Choose `scadnano-linux-x86_64.AppImage` (most PCs) or `scadnano-linux-arm64.AppImage` (ARM64, e.g. Raspberry Pi 4+).
+  - [`.deb`](https://en.wikipedia.org/wiki/Deb_(file_format)) — for distributions using the APT / dpkg package manager (Debian, Ubuntu, Linux Mint, Pop!_OS, elementary OS, Raspberry Pi OS, Kali, etc.). Choose `scadnano-linux-amd64.deb` (x86_64) or `scadnano-linux-arm64.deb` (ARM64).
+  - [`.rpm`](https://en.wikipedia.org/wiki/RPM_Package_Manager) — for distributions using the RPM / DNF / YUM package manager (Fedora, RHEL, CentOS, Rocky Linux, AlmaLinux, openSUSE, Oracle Linux, etc.). Choose `scadnano-linux-x86_64.rpm` (x86_64) or `scadnano-linux-aarch64.rpm` (ARM64).
+
+See the [README](standalone/README.md) in the standalone directory for installation instructions for each platform and for building the executable from source.
+
+#### Installing on macOS
+
+The `scadnano-mac.dmg` file is an Apple **disk image** — a single-file container that macOS mounts as if it were an external disk. To install:
+
+1. Double-click `scadnano-mac.dmg`. A new Finder window opens showing the disk's contents, which includes a file named `scadnano.app` (the actual application).
+2. Drag `scadnano.app` into your **Applications** folder. (The window usually shows a shortcut to the Applications folder right next to the app icon, so you can drag from one to the other within the same window.)
+3. Eject the mounted disk image: in Finder's sidebar, click the eject button next to the `scadnano` disk (or drag its icon from the Desktop to the Trash).
+4. After this, the installed app lives at `/Applications/scadnano.app`. You can launch it from the Applications folder or via Spotlight (press Cmd+Space, type `scadnano`, press Enter). You can also delete the downloaded `.dmg` file if you wish — it is no longer needed.
+
+#### Bypassing security warnings
+
+The scadnano executables are not signed with a paid code-signing certificate, so Windows and macOS will display a warning the first time you try to run them. (Linux typically does not display such a warning.) The executables are safe to run; here is how to get past the warning on each platform.
+
+- **Windows:** When you double-click the `.exe`, you may see a popup titled "Windows protected your PC" (from Microsoft Defender SmartScreen). Click **More info**, then click the **Run anyway** button that appears.
+
+- **macOS:** When you first try to open scadnano, macOS may show a warning that it "cannot be opened because Apple cannot check it for malicious software" (or that it "is damaged and can't be opened"). To allow it to run:
+  1. Click **Done** (or **Cancel**) to dismiss the warning.
+  2. Open **System Settings** (on older macOS, **System Preferences**) and go to **Privacy & Security**.
+  3. Scroll down to the **Security** section. You should see a message saying that scadnano was blocked. Click **Open Anyway** next to it.
+  4. You may be prompted for your password, and then a final dialog will appear with an **Open** button — click it. After this, scadnano will open normally on subsequent launches.
+
+  If the steps above do not work, you can instead open a Terminal and run the following command (replacing the path with the actual location of the app), which removes the quarantine attribute that triggers the warning:
+  ```
+  xattr -dr com.apple.quarantine /Applications/scadnano.app
+  ```
+  This is especially useful if you see the variant "scadnano.app is damaged and can't be opened" — in that case the **Open Anyway** button typically does not appear, and the `xattr` command is the only way to bypass the block. (This variant is more common on Apple Silicon Macs and on macOS Sequoia and later.) Like the GUI flow, the `xattr` command only has to be run once per installed copy of the app.
 
 ### Offline Development
 
-Another way is to run the development version offline.
-To do this, you can follow the [instructions](CONTRIBUTING.md#making-contributions) for running a local server
-in the CONTRIBUTING document, which involves three steps:
-
-- [Clone](CONTRIBUTING.md#cloning) the scadnano repository from GitHub.
-
-- [Install](CONTRIBUTING.md#installing-dart) the Dart SDK.
-
-- [Run](CONTRIBUTING.md#running-a-local-server) a local server.
-
-Alternatively, you can run scadnano as a [Docker](https://www.docker.com/) container. This can be used for
-contributing to or running scadnano without having to install everything manually. This is confirmed working
-on Linux, but other platforms like Apple Silicon may recieve errors. Docker support is experimental and
-maintained by @headblockhead - please reference them in any issues encountered.
-
-To run using Docker:
-
-- [Clone](CONTRIBUTING.md#cloning) the scadnano repository from GitHub.
-
-- [Install](CONTRIBUTING.md#installing-docker) Docker.
-
-- [Run](CONTRIBUTING.md#clone-and-run-using-docker) the Dockerfile.
+Another way is to run the development version offline. See the [Making contributions](CONTRIBUTING.md#making-contributions) section of the CONTRIBUTING document for instructions (covering both running a local server and [running in Docker](CONTRIBUTING.md#running-in-docker)).
 
 ## Performance tips
 

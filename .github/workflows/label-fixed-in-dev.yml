@@ -1,0 +1,74 @@
+name: "label issues fixed in dev"
+
+# When a commit saying "fixes #123" lands on dev, the fix exists but is not released: users use the
+# web app at https://scadnano.org and download standalone executables from the releases page, both
+# of which are published only from main. This adds the "closed in dev" label to such issues so that
+# state is visible, and leaves them OPEN. (The fix IS live at https://scadnano.org/dev and in the
+# `dev-latest` prerelease executables, which is what makes the distinction worth surfacing.)
+#
+# GitHub's own auto-close only acts on the default branch (main), so nothing closes these issues
+# here. They are closed by GitHub itself once the release carries the same commits to main.
+#
+# The label is never removed, so it accumulates on closed issues. That is fine:
+# `is:open label:"closed in dev"` finds exactly the fixes that are merged but not yet released,
+# because released ones are closed.
+
+on:
+  push:
+    branches:
+      - "dev"
+
+jobs:
+  label:
+    name: "Add 'closed in dev' to issues fixed by this push"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read   # actions/checkout
+      issues: write    # add the label
+    env:
+      GH_TOKEN: ${{ github.token }}   # do NOT replace with a PAT (see build-and-deploy.yml)
+      BEFORE: ${{ github.event.before }}
+      AFTER: ${{ github.event.after }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0   # need history to walk the pushed range
+
+      - name: Label issues referenced by closing keywords in the pushed commits
+        run: |
+          # On a branch creation, or if the previous head is no longer present
+          # (force push, or a commit that has since been garbage collected),
+          # `before` is unusable; fall back to just the tip commit rather than
+          # walking all of history and re-labeling every issue ever fixed.
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ] \
+             || ! git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
+            echo "No usable 'before' commit ($BEFORE); inspecting only $AFTER."
+            range="$AFTER -1"
+          else
+            range="$BEFORE..$AFTER"
+          fi
+
+          # GitHub's closing keywords, optional colon, case-insensitive, matching
+          # what GitHub itself acts on when these commits later reach main.
+          # shellcheck disable=SC2086
+          issues=$(git log --format=%B $range \
+            | grep -oiE '\b(close[sd]?|fix(e[sd])?|resolve[sd]?):?[[:space:]]+#[0-9]+' \
+            | grep -oE '[0-9]+' | sort -un) || true
+
+          if [ -z "$issues" ]; then
+            echo "No closing keywords in range '$range'; nothing to label."
+            exit 0
+          fi
+
+          for n in $issues; do
+            # `gh issue view` fails for a pull request number or a nonexistent
+            # issue; skip those rather than failing the run.
+            state=$(gh issue view "$n" --json state --jq .state 2>/dev/null) \
+              || { echo "#$n is not an issue (probably a PR reference); skipping"; continue; }
+            if [ "$state" != "OPEN" ]; then
+              echo "#$n is already closed; not labeling."
+              continue
+            fi
+            echo "#$n: fixed in dev but not released; adding 'closed in dev'."
+            gh issue edit "$n" --add-label "closed in dev" > /dev/null
+          done

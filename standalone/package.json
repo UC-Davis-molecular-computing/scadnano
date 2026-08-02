@@ -39,6 +39,9 @@
       "artifactName": "${productName}-${os}.${ext}",
       "icon": "icon.icns"
     },
+    "dmg": {
+      "writeUpdateInfo": false
+    },
     "nsis": {
       "oneClick": false,
       "perMachine": false,

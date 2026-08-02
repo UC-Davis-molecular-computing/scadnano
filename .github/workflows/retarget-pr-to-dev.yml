@@ -1,0 +1,77 @@
+name: "retarget PRs to dev"
+
+# main is the default branch, so GitHub proposes `main` as the base for every
+# new pull request. But changes belong on `dev`; `main` receives changes only
+# through a release PR. Rather than relying on everyone remembering to change
+# the base, this switches it automatically.
+#
+# Left alone deliberately:
+#   - PRs whose head is `dev` IN THIS REPOSITORY: that is the release PR, which
+#     must target main. A fork branch named `dev` is not exempt.
+#   - PRs already targeting dev (or anything other than main).
+#
+# To intentionally send a PR straight to main, just change the base back after
+# this has run: the workflow only fires when a PR is opened, never on edits.
+#
+# Uses pull_request_target rather than pull_request because a pull_request run
+# triggered by a fork gets a read-only token, which cannot change the base
+# branch -- and fork PRs are exactly the ones most likely to target main by
+# mistake. This is the safe use of pull_request_target: it never checks out or
+# executes any code from the pull request, it only calls the API.
+
+on:
+  pull_request_target:
+    types: [opened]
+
+jobs:
+  retarget:
+    name: "Point the PR at dev"
+    runs-on: ubuntu-latest
+    # Skip anything not aimed at main, and skip the release PR. The release PR
+    # is recognized as `dev` IN THIS REPOSITORY: a fork's branch can also be
+    # named `dev` (CONTRIBUTING.md tells contributors to check out `dev`), and
+    # such a PR is an ordinary contribution that must be retargeted. If the head
+    # fork was deleted, head.repo is null, the comparison is false, and the PR is
+    # retargeted -- the safe direction.
+    if: >-
+      github.event.pull_request.base.ref == 'main' &&
+      !(github.event.pull_request.head.ref == 'dev' &&
+      github.event.pull_request.head.repo.full_name == github.repository)
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            core.info(`#${pr.number}: opened against main from '${pr.head.ref}'; retargeting to dev.`);
+
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              base: 'dev',
+            });
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              body: [
+                'Retargeted this pull request from `main` to `dev`.',
+                '',
+                'In this repository all changes go to `dev` first. The `main` branch holds',
+                'released versions only: every push to `main` deploys the web app to',
+                '[scadnano.org](https://scadnano.org) and publishes a new GitHub release with the',
+                'standalone executables, so it receives changes solely through a release pull',
+                'request from `dev`. Changes merged to `dev` go live at',
+                '[scadnano.org/dev](https://scadnano.org/dev).',
+                '',
+                '**Note:** any checks that already started when this pull request was opened were',
+                'computed against `main`. Push another commit, or ask a maintainer to press',
+                '"Re-run all jobs", so that they run against `dev` before this is merged.',
+                '',
+                'If you really did mean to target `main`, simply change the base back --',
+                'this only runs when a pull request is first opened.',
+              ].join('\n'),
+            });
