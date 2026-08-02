@@ -53,9 +53,9 @@
   },
   "scripts": {
     "init": "npm run setup:state_actions && npm run setup:reducers && npm run setup:webdev",
-    "setup:webdev": "cd .. && dart pub get && dart pub global activate webdev && webdev build -- --delete-conflicting-outputs",
-    "setup:state_actions": "cd .. && dart pub get && cd scadnano_state_actions && dart run build_runner build --delete-conflicting-outputs",
-    "setup:reducers": "cd .. && dart pub get && cd scadnano_reducers && dart run build_runner build --delete-conflicting-outputs",
+    "setup:webdev": "cd .. && dart pub get && dart pub global activate webdev && webdev build",
+    "setup:state_actions": "cd .. && dart pub get && cd scadnano_state_actions && dart run build_runner build",
+    "setup:reducers": "cd .. && dart pub get && cd scadnano_reducers && dart run build_runner build",
     "dev": "npm run init && electron-forge start",
     "package": "electron-builder --dir",
     "build:electron:win": "electron-builder --win --publish never",
