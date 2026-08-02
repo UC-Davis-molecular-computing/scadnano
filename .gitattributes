@@ -8,3 +8,11 @@
 *.txt text
 *.dna text
 *.py text
+
+# Shell scripts must keep LF in the working tree even on Windows. Under the `* text=auto` rule
+# above they would be checked out with CRLF, and bash then fails on the shebang
+# ("/usr/bin/env: 'bash\r': No such file or directory") and never terminates heredocs. This
+# matters for branch-for-issue.sh, which CONTRIBUTING.md tells Windows users to run in Git Bash,
+# and for standalone/generate-icons.sh, which build-and-deploy.yml runs with `bash`.
+*.sh text eol=lf
+*.ps1 text eol=crlf

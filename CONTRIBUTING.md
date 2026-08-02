@@ -39,7 +39,9 @@ the [issues page](https://github.com/UC-Davis-molecular-computing/scadnano/issue
         - [Clone and run using Docker](#clone-and-run-using-docker)
     - [General recipe for adding features](#general-recipe-for-adding-features)
     - [Pushing to the repository dev branch and documenting changes (done on all updates)](#pushing-to-the-repository-dev-branch-and-documenting-changes-done-on-all-updates)
+        - [What happens to the issue when you merge to dev](#what-happens-to-the-issue-when-you-merge-to-dev)
     - [Pushing to the repository main branch and documenting changes (done less frequently)](#pushing-to-the-repository-main-branch-and-documenting-changes-done-less-frequently)
+        - [CHANGELOG.md](#changelogmd)
     - [Styleguide](#styleguide)
 
 ## What should I know before I get started?
@@ -445,7 +447,10 @@ cd scadnano
 
 Changes to scadnano should be pushed to the
 [`dev`](https://github.com/UC-Davis-molecular-computing/scadnano/tree/dev)
-branch. (This step is unnecessary if you simply wish to run scadnano locally.) So switch to the `dev` branch:
+branch. `main` is the default branch, but it holds released versions only: every push to `main` deploys the web
+app to https://scadnano.org and publishes a new GitHub release
+(see [the section on pushing to main](#pushing-to-the-repository-main-branch-and-documenting-changes-done-less-frequently)).
+(This step is unnecessary if you simply wish to run scadnano locally.) So switch to the `dev` branch:
 
 ```
 git checkout dev
@@ -778,7 +783,7 @@ Warning: The dot in the end is part of the command
 
 Building isn't necessary for the most part since the repository
 has
-a [Github Action](https://github.com/UC-Davis-molecular-computing/scadnano/actions?query=workflow%3A%22github+pages%22)
+a [GitHub Action](https://github.com/UC-Davis-molecular-computing/scadnano/actions?query=workflow%3A%22build+and+deploy%22)
 that automatically builds and deploys changes
 in the main branch.
 
@@ -848,15 +853,21 @@ Most of the steps below are about how to change the code. Before and after are s
 changes to the GitHub repository, which are explained in more detail in the next section.
 
 1. **Follow GitHub steps**:
-   Make an issue describing the feature/bug fix. Then make a new branch based off of dev named after the
-   issue. Follow the naming convention that the name of the branch starts with the number of the issue,
-   followed by its title. For example, if issue 148 is "simplify API of evaluate function in
-   constraint" (https://github.com/UC-Davis-molecular-computing/nuad/issues/148), then the branch should be
-   named `148-simplify-api-of-evaluate-function-in-constraint`. If you go to the issue on GitHub, on the right
-   side under "Development", you can click "Create a branch" to create a branch using this naming convention;
-   be sure to **change the branch source from main to dev**.
+   Make an issue describing the feature/bug fix. Then create a branch for it with the helper script in the
+   root of the repository, which takes the issue number:
+
+   ```
+   .\branch-for-issue.ps1 148      # Windows PowerShell
+   ./branch-for-issue.sh 148       # macOS / Linux / Git Bash
+   ```
+
+   It names the branch from the issue number and title, following the convention that the branch name starts
+   with the number of the issue followed by its title — for example, if issue 148 is "simplify API of evaluate
+   function in constraint", the branch is named `148-simplify-api-of-evaluate-function-in-constraint`. It
+   creates the branch from `dev` (**not** from the default branch `main`), links it to the issue, and checks
+   it out.
    See [Pushing to the repository dev branch and documenting changes (done on all updates)](#pushing-to-the-repository-dev-branch-and-documenting-changes-done-on-all-updates)
-   below for more details.
+   below for more details, including what to do if you create the branch by hand.
 
 2. **add unit tests reproducing bug**:
    If this is a bug fix, *first* add unit tests reproducing it. Depending on the exact sort of input/behavior
@@ -1160,7 +1171,8 @@ changes to the GitHub repository, which are explained in more detail in the next
     Commit changes,
     push the commit(s) to the repo,
     create a pull request (PR) from the branch into dev
-    (**NOTE**: the default is the main branch, remember to change this),
+    (GitHub proposes `main` as the base, but a workflow automatically retargets newly opened PRs from `main`
+    to `dev`, so there is nothing to remember),
     and request a code review of the PR.
     Once the PR is approved, merge the changes into dev,
     which closes the PR,
@@ -1193,14 +1205,30 @@ steps:
    example, *"problem with loading gridless design"* is a bad title. A better title is *"fix problem where
    loading gridless design with negative x coordinates throws exception"*.
 
-2. Make a new branch specifically for the issue. Base this branch off of `dev` (**WARNING**: in GitHub
-   desktop, the default is to base it off of `main`, so switch that). The title of the issue (with appropriate
-   hyphenation) is a good name for the branch. (In GitHub Desktop, if you paste the title of the issue, it
-   automatically adds the hyphens.) A good branch name is simply the issue title, preceded by the issue
-   number, e.g., "
-   issue-101-fix-problem-where-loading-gridless-design-with-negative-x-coordinates-throws-exception", although
-   abbreviating the issue title is good if it is long, e.g., "
-   issue-101-gridless-design-negative-x-coordinates".
+2. Make a new branch specifically for the issue, **based on `dev`**.
+
+    The easiest way is the helper script in the root of the repository, which takes the issue number:
+
+    ```
+    .\branch-for-issue.ps1 123      # Windows PowerShell
+    ./branch-for-issue.sh 123       # macOS / Linux / Git Bash
+    ```
+
+    It names the branch from the issue number and title, creates it from `dev`, links it to the issue (so it
+    appears in the issue's "Development" section), and checks it out. It needs the
+    [GitHub CLI](https://cli.github.com/): `winget install --id GitHub.cli -e` on Windows or `brew install gh`
+    on macOS, then `gh auth login`. (The Windows version is a `.ps1` PowerShell script rather than the `.bat`
+    used elsewhere in this repo, because `cmd.exe` cannot do what it needs.)
+
+    **Do not use the "Create a branch" link on the issue page.** It always bases the new branch on the default
+    branch, `main`, with no option to choose `dev`, and there is no equivalent issue-aware command in GitHub
+    Desktop. The script exists precisely to work around this.
+
+    If you create the branch by hand instead, make sure `dev` is checked out first, since both
+    `git checkout -b` and GitHub Desktop base a new branch on whatever is currently checked out. A good branch
+    name is simply the issue title (with appropriate hyphenation), preceded by the issue number, e.g.,
+    "101-fix-problem-where-loading-gridless-design-with-negative-x-coordinates-throws-exception", although
+    abbreviating the issue title is good if it is long, e.g., "101-gridless-design-negative-x-coordinates".
 
 3. If it is about fixing a bug, *first* add tests to reproduce the bug before working on fixing it. (This is
    so-called [test-driven development](https://www.google.com/search?q=test-driven+development))
@@ -1221,11 +1249,18 @@ steps:
    issue); this message will show up in automatically generated release notes, so this is part of the official
    documentation of what changed.
 
-8. Create a pull request (PR). **WARNING:** by default, it will want to merge into the `main` branch. Change
-   the destination branch to `dev`. Fill in the automatically provided template.
+8. Create a pull request (PR) into `dev`. GitHub will propose `main` as the base, because `main` is the
+   default branch — but **you do not need to remember to change it**: a workflow retargets any newly opened PR
+   from `main` to `dev` automatically and leaves a comment saying so. (If you ever genuinely mean to target
+   `main`, just change the base back; the workflow only runs when a PR is first opened.) Branches created with
+   `branch-for-issue` also record `dev` as their base, so `gh pr create` targets `dev` directly. Fill in the
+   automatically provided template.
 
-9. Wait for all checks to complete (see next section), and then merge the changes from the new branch into
+9. Wait for all checks to complete, and then merge the changes from the new branch into
    `dev`. This will typically require someone else to review the code first and possibly request changes.
+   (If the PR was opened against `main` and retargeted automatically, the checks that ran on opening were
+   computed against `main`. Push another commit or press "Re-run all jobs" so that they run against `dev`
+   before merging.)
 
 10. After merging, it will say that the branch you just merged from can be safely deleted. Delete the branch.
 
@@ -1233,28 +1268,43 @@ steps:
     locally, they revert back once you switch to your local `dev` branch, which needs to be synced with the
     remote repo for you to see the changes that were just merged from the now-deleted temporary branch.)
 
+### What happens to the issue when you merge to dev
+
+When a commit saying "fixes #123" reaches `dev`, issue #123 gets the
+label [`closed in dev`](https://github.com/UC-Davis-molecular-computing/scadnano/labels/closed%20in%20dev)
+and **stays open**. That is deliberate: the fix exists and is live at https://scadnano.org/dev (and in the
+`dev-latest` prerelease executables), but the stable web app at https://scadnano.org and the versioned release
+executables are published only from `main`, so the issue is not really resolved for most users yet. The label
+is applied automatically; you no longer need to remember to add it.
+
+GitHub's own "fixes #123" auto-closing only acts on commits reaching the **default** branch, which is `main`.
+That is the main reason `main` is kept as the default: it means merging a fix to `dev` does not prematurely
+tell users the issue is done.
+
+The issue is closed for good once the fix is actually released. GitHub does that itself: the release merges
+those same commits into `main`, the default branch, where its "fixes #123" handling applies, and it records the
+closing commit on the issue. Issues you close by hand are unaffected.
+
+The `closed in dev` label is not removed at that point, so to find fixes that are merged but not yet released,
+search for
+[`is:open label:"closed in dev"`](https://github.com/UC-Davis-molecular-computing/scadnano/issues?q=is%3Aopen+label%3A%22closed+in+dev%22)
+— once released, the issue is closed, so it drops out of that list.
+
 ## Pushing to the repository main branch and documenting changes (done less frequently)
 
 Less frequently, pull requests (abbreviated PR) can be made from `dev` to `main`, but make sure that `dev` is
 working before merging to `main` as all changes to `main` are automatically built and deployed
 to https://scadnano.org.
 
-**Note about Github actions deploying to website:** One thing to note is that pushing to either the `main`
-branch (as this does) or the `dev` branch causes a Github action to start that updates the
-website https://scadnano.org (and https://scadnano.org/dev). If multiple of these actions run simultaneously,
-they can interfere with each other in unexpected ways. One way this can happen is merging from another branch
-to `dev` (e.g., in a PR closing an issue) and then immediately doing a PR from `dev` to `main`. Another way is
-merging `dev` to `main` and then immediately pushing to `dev`; for example, I always immediately update the
-version in constants.dart after merging to `main`. In the last case, I'm careful to wait until the action
-deploying from `main` is complete, before pushing the new commit to `dev`, otherwise the deployment from
-`main` can be cancelled. If this does happen, typically one can fix it by waiting until all deployment actions
-are done, then just re-run the action that was cancelled.
+**Note about GitHub Actions deploying to the website:** pushing to either the `main` branch (as this does) or
+the `dev` branch starts the `build and deploy` action, which updates https://scadnano.org (or
+https://scadnano.org/dev). Both deploy to the `gh-pages` branch, so two of these must never run at once. This
+used to require manual care — waiting for one deployment to finish before pushing again — but the workflow now
+serializes all of its runs with a concurrency group, so a second push simply queues behind the first instead of
+clobbering or cancelling it.
 
-**WARNING:** Always wait for the checks to complete. This is important 1) to ensure that unit tests pass, and
-
-2) to ensure that the deployment to github pages on the dev branch does not get clobbered by the deployment on
-   the main branch. Both deploy to the gh-pages branch, so we never want two of these actions running at once.
-   They will look like this when incomplete:
+**WARNING:** Always wait for the checks to complete, to ensure that unit tests pass. They will look like this
+when incomplete:
 
 ![](images/github-CI-checks-incomplete.png)
 
@@ -1262,8 +1312,13 @@ and like this when complete:
 
 ![](images/github-CI-checks-complete.png)
 
-We have an automated release system (through a GitHub action) that automatically creates release notes when
-changes are merged into the main branch.
+We have an automated release system (the `build and deploy` GitHub Actions workflow) that, on every push to
+`main`, reads `CURRENT_VERSION` from
+[scadnano_state_actions/lib/src/constants.dart](scadnano_state_actions/lib/src/constants.dart), creates the tag
+`v{version}` at the merge commit, creates a GitHub release whose body lists every commit since the previous
+release, and attaches the standalone executables to it. The workflow does not touch issues at all: GitHub
+itself closes the issues referenced by closing keywords in those commits, because the commits reach `main`, the
+default branch.
 
 Although the GitHub web interface abbreviates long commit messages, the full commit message is included for
 each commit in a PR.
@@ -1275,10 +1330,9 @@ flag: https://stackoverflow.com/questions/16122234/how-to-commit-a-change-with-b
 So make sure that everything people should see in the automatically generated release notes is included in the
 commit message. GitHub lets
 you [automatically close](https://docs.github.com/en/enterprise/2.16/user/github/managing-your-work-on-github/closing-issues-using-keywords)
-an issue by putting a phrase such as "closes #14". Although the release notes will link to the issue that was
-closed, they [will not describe it in any other way](https://github.com/marvinpinto/actions/issues/34). So it
-is important, for the sake of having readable release notes, to describe briefly the issue that was closed in
-the commit message.
+an issue by putting a phrase such as "closes #14". The release notes link to the issue that was closed, but do
+not describe it in any other way. So it is important, for the sake of having readable release notes, to
+describe briefly the issue that was closed in the commit message.
 
 One simple way to do this is to copy/paste the title of the issue into the commit message. For this reason,
 issue titles should be stated in terms of what change should happen to handle an issue. For example, instead
@@ -1288,10 +1342,21 @@ fixed in a commit, that title can simply be copied and pasted as the description
 commit message. (But you should still add "fixes #<issue_number>" in the commit message, e.g., the full commit
 message could be *"fixes #101; display helices at the proper y-coordinate in the honeycomb grid"* .)
 
-Users can read the description by clicking on the link to the commit or the pull request, but anything is put
-there, then the commit message should say something like "click on commit/PR for more details".
+Users can read the description by clicking on the link to the commit or the pull request, but if anything is
+put there, then the commit message should say something like "click on commit/PR for more details".
 
 See here for an example: https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/v0.9.3
+
+The release PR is the one PR that really does target `main`. Since `main` is the default branch, GitHub
+proposes it as the base, so there is nothing to change. The workflow that retargets PRs to `dev` deliberately
+skips this one, recognizing it by its `dev` head branch *in this repository* (a contributor's fork may also
+have a `dev` branch, and those PRs are retargeted normally).
+
+**Every push to `main` is a release.** So you **must bump `CURRENT_VERSION` on `dev` before merging `dev` into
+`main`**. If you forget, the release workflow fails with a red X and an explanatory message within about a
+minute, and nothing is tagged, released, or deployed to https://scadnano.org; bump the version on `dev` and
+merge again to recover. (Practically, this means there is no such thing as a casual push to `main` — even a
+README typo fix rides along with a version bump, or waits for the next release.)
 
 So the steps are:
 
@@ -1301,18 +1366,20 @@ So the steps are:
    okay to put more detail in the message (but very long stuff should go in the description, or possibly
    documentation such as the README.md file).
 
-   One of the changes committed should change the version number. We
-   follow [semantic versioning](https://semver.org/). This is a string of the form `"MAJOR.MINOR.PATCH"`,
-   e.g., `"0.9.3"`
-    - For the web interface repo scadnano, this is located at the top of the
-      file https://github.com/UC-Davis-molecular-computing/scadnano/blob/main/lib/src/constants.dart
-    - For the Python library repo scadnano-python-package, this is located in two places: the bottom of the
-      file https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/main/scadnano/_version.py (
-      as `__version__ = "0.9.3"` or something similar) and the near the top of the
+2. Bump the version number on `dev`. This is **required** before every merge into `main`; the release
+   workflow fails if the version was not bumped. We follow [semantic versioning](https://semver.org/): a
+   string of the form `"MAJOR.MINOR.PATCH"`, e.g., `"0.9.3"`. Bump PATCH for bug fixes only, and MINOR for
+   backwards-compatible feature additions.
+    - For the web interface repo scadnano, there is a single source of truth: the `CURRENT_VERSION` line near
+      the top of
+      [scadnano_state_actions/lib/src/constants.dart](scadnano_state_actions/lib/src/constants.dart) (as
+      `const String CURRENT_VERSION = "0.9.3";` or something similar). Keep the
+      `// WARNING: Do not modify line below` comment and the line's exact shape intact — the release workflow
+      finds the version by matching that line.
+    - For the Python library repo scadnano-python-package, the corresponding single source of truth is the
+      `__version__` line near the top of the
       file https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/main/scadnano/scadnano.py (
-      as `__version__ = "0.9.3"` or something similar). This latter one is only there for users who do not
-      install from PyPI, and who simply download the file scadnano.py to put it in a directory with their
-      script).
+      as `__version__ = "0.9.3"` or something similar).
 
    The PATCH version numbers are not always synced between the two repos, but, they should stay synced on
    MAJOR and MINOR versions. **Note:** right now this isn't quite true since MINOR versions deal with
@@ -1323,23 +1390,47 @@ So the steps are:
 
 3. Ensure all unit tests pass.
 
-4. In the Python repo, ensure that the documentation is generated without errors. From the subfolder `doc`,
-   run the command `make html`, ensure there are no errors, and inspect the documentation it generates in the
-   folder `build`.
+4. Create a PR to merge changes from dev into main. `main` is the default base, so there is nothing to change
+   here.
 
-5. Create a PR to merge changes from dev into main.
+5. Once the PR is reviewed and approved, do the merge.
 
-6. One the PR is reviewed and approved, do the merge.
+6. The merge triggers the `build and deploy` workflow, which automatically:
+    - checks that `CURRENT_VERSION` was bumped, and fails red within about a minute if it was not (nothing
+      else runs in that case: no deployment, no executables, no release);
+    - deploys the web app to https://scadnano.org;
+    - builds the standalone Windows/macOS/Linux executables;
+    - creates the tag `v{version}` at the merge commit — **no manual tagging or retagging is needed any
+      more**;
+    - creates a release here: https://github.com/UC-Davis-molecular-computing/scadnano/releases, titled
+      `TODO: edit release notes for v{version}` (a deliberate placeholder reminding you to do the next step),
+      whose body lists every commit since the previous release, with the commit message (but not description)
+      included, and with the executables attached.
 
-7. Once the PR changes are merged, a release will be automatically created
-   here: https://github.com/UC-Davis-molecular-computing/scadnano/releases
-   or https://github.com/UC-Davis-molecular-computing/scadnano-python-package/releases. It will have a title
-   that is a placerholder, which is a reminder to change its title and tag. Each commit will be documented,
-   with the commit message (but not description) included in the release notes.
+   Issues referenced with a closing keyword in those commits are closed by GitHub itself, since the commits
+   reach `main`, the default branch; the workflow does not touch issues at all.
 
-8. Change *both* the title *and* tag to the version number with a `v` prepended, e.g., `v0.9.3`. It is
-   imperative to change the tag before the next merge into main, or else the release (which defaults to the
-   tag `latest`) will be overwritten.
+7. Edit the release: replace the placeholder title with the version number with a `v` prepended, e.g.,
+   `v0.9.3`, and write a human summary of the release above the auto-generated `## Commits` list. Breaking
+   changes belong at the top here. Saving this edit is also what regenerates `CHANGELOG.md` (see below).
+
+8. Back-merge `main` into `dev`, so that `dev` picks up the release merge commit and the `CHANGELOG.md`
+   commits.
+
+### CHANGELOG.md
+
+[CHANGELOG.md](CHANGELOG.md) is generated automatically from the GitHub releases; **never edit it by hand**,
+since the next run overwrites it. Edit the release notes instead — saving an edit to a release regenerates the
+whole file and commits it to `main`.
+
+Because the file is regenerated from scratch every time, a missed update is never permanent: go to the Actions
+tab, select the `changelog` workflow, and press "Run workflow". This is also the remedy for editing a *very
+old* release (one tagged before this automation existed), which does not trigger the workflow on its own.
+
+The `changelog` workflow commits directly to `main`, so it needs the `github-actions` app to be a bypass actor
+on `main` for required reviews, force pushes, and signed commits. Since it is triggered by *saving a release
+edit* rather than by a push, nothing else will tell you if it failed — glance at the Actions tab after editing
+a release, at least until you have seen it work once.
 
 ## Styleguide
 

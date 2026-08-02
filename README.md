@@ -149,13 +149,17 @@ The scadnano dev version matches what is on
 the [dev branch of the web interface code repository](https://github.com/UC-Davis-molecular-computing/scadnano/tree/dev).
 
 Releases of the stable version are explained on
-the [releases page](https://github.com/UC-Davis-molecular-computing/scadnano/releases).
+the [releases page](https://github.com/UC-Davis-molecular-computing/scadnano/releases), and the notes from
+every release are also collected in [CHANGELOG.md](CHANGELOG.md).
 When [issues](https://github.com/UC-Davis-molecular-computing/scadnano/issues) are handled in a release, they
 are closed at the time the changes make their way to the main branch.
-If an issue is handled in the dev branch, the issue remains open, but you will see a comment that looks
-something like this:
+If an issue has been handled in the dev branch but not yet released, it remains open and is given the
+label [`closed in dev`](https://github.com/UC-Davis-molecular-computing/scadnano/labels/closed%20in%20dev);
+to see everything that is fixed but not yet released,
+search [`is:open label:"closed in dev"`](https://github.com/UC-Davis-molecular-computing/scadnano/issues?q=is%3Aopen+label%3A%22closed+in+dev%22).
+You will also see a comment on the issue that looks something like this:
 "*dave-doty added a commit that referenced this issue 17 hours ago @dave-doty make width of File menu just
-enough to fit all entries on one line; fixes #339*". These comments can help you decide if you want to use the
+enough to fit all entries on one line; fixes #339*". These can help you decide if you want to use the
 latest version of scadnano (https://scadnano.org/dev), which has fixed an issue, before it makes its way to
 the stable version (https://scadnano.org).
 
