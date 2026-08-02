@@ -552,26 +552,19 @@ Built test:test.
 00:11 +491 ~2: All tests passed!
 ```
 
-### Installing `webdev` and `melos`
+### `webdev` and `melos`
 
 `webdev` is used to run a local server for running scadnano in your browser for testing.
 `melos` is used to orchestrate `build_runner` commands across workspace packages.
-Install both with:
 
-```
-dart pub global activate webdev
-dart pub global activate melos
-```
+**Neither needs to be installed** — both are `dev_dependencies` in [pubspec.yaml](pubspec.yaml), so `dart pub
+get` already fetched them and you run them with `dart run webdev` / `dart run melos`.
 
-Note that often a message like this appears:
-
-```
-Warning: Pub installs executables into C:\Users\pexat\AppData\Local\Pub\Cache\bin, which is not on your path.
-You can fix that by adding that directory to your system's "Path" environment variable.
-A web search for "configure windows path" will show you how.
-```
-
-So you may need to add the installation location of `webdev` and `melos` to your PATH environment variable.
+Do **not** install `webdev` with `dart pub global activate`. A globally activated `webdev` resolves its own
+dependencies independently of [pubspec.lock](pubspec.lock), but it has to agree with the `build_daemon` that
+this project locks — and when those two disagree, every build fails with `MissingPortFile`. That is exactly
+what [issue #1104](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1104) was. Running it from
+the project's own dependencies means there is only one `build_daemon` and nothing to disagree.
 
 ### Running a Local Server
 
@@ -579,13 +572,16 @@ Running a local development server requires two terminals:
 
 **Terminal 1** — watch sub-packages for `.g.dart` regeneration:
 ```
-dart run melos run watch
+./watch.sh     # or watch.bat on Windows
 ```
 
 **Terminal 2** — serve the web app:
 ```
-webdev serve
+./serve.sh     # or serve.bat on Windows
 ```
+
+Those scripts just wrap `dart run melos run watch` and `dart run webdev serve`, and print a reminder of which
+terminal is which.
 
 `webdev serve` compiles all Dart code to JavaScript and runs code generation (`.g.dart` files) for the root
 package (`scadnano_view_middleware`). However, it does **not** regenerate `.g.dart` files inside sub-packages.
