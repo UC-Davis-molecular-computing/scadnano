@@ -36,7 +36,7 @@ dev_dependencies:
   analyzer: '>=10.0.0 <11.0.0'
   build_runner: ^2.15.0
   build_test: ^3.0.0
-  build_web_compilers: ^4.0.11
+  build_web_compilers: ^4.8.0
   built_value_generator: ^8.9.0
   melos: ^7.5.0
   over_react_test: ^3.0.0
