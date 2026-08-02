@@ -25504,7 +25504,7 @@
     Design__initializeBuilder(b) {
       var t1, t2,
         _s13_ = "default_group";
-      b.get$_design0$_$this()._version = "0.20.6";
+      b.get$_design0$_$this()._version = "0.21.0";
       t1 = new A.GeometryBuilder();
       t1._geometry$_$v = $.$get$default_geometry();
       b.get$_design0$_$this()._geometry = t1;
@@ -25877,7 +25877,7 @@
         _s23_ = "modifications_in_design";
       A.Design__check_mutually_exclusive_fields(json_map);
       t1 = type$.String;
-      version1 = A.get_version(A.optional_field(json_map, "version", "0.20.6", B.List_empty0, null, null, t1, type$.dynamic));
+      version1 = A.get_version(A.optional_field(json_map, "version", "0.21.0", B.List_empty0, null, null, t1, type$.dynamic));
       version2 = A.get_version("0.13.0");
       t2 = version1.major;
       t3 = version2.major;
@@ -104656,7 +104656,7 @@
         _s18_ = "helices_view_order",
         t1 = type$.String,
         t2 = type$.dynamic,
-        json_map = A.LinkedHashMap_LinkedHashMap$_literal(["version", "0.20.6"], t1, t2),
+        json_map = A.LinkedHashMap_LinkedHashMap$_literal(["version", "0.21.0"], t1, t2),
         t3 = _this.unused_fields;
       json_map.addAll$1(0, new A.CopyOnWriteMap(t3._mapFactory, t3._map$_map, t3.$ti._eval$1("CopyOnWriteMap<1,2>")));
       if (_this.has_default_groups$0())
@@ -140682,7 +140682,7 @@
       type$.SyntheticMouseEvent._as(__wc0_formal);
       t1 = window;
       t1.toString;
-      return B.Window_methods.alert$1(t1, "scadnano version 0.20.6\n\nscadnano is a program for designing synthetic DNA structures such as DNA origami. \n\nscadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group. Though similar in design, scadnano is distinct from cadnano (https://cadnano.org), which is developed and maintained by the Douglas lab (https://bionano.ucsf.edu/) at UCSF.");
+      return B.Window_methods.alert$1(t1, "scadnano version 0.21.0\n\nscadnano is a program for designing synthetic DNA structures such as DNA origami. \n\nscadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group. Though similar in design, scadnano is distinct from cadnano (https://cadnano.org), which is developed and maintained by the Douglas lab (https://bionano.ucsf.edu/) at UCSF.");
     },
     $signature: 526
   };
