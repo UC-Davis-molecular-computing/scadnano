@@ -66,6 +66,12 @@ on:
       - main
     tags:
       - 'v*'
+  # Lets this workflow be run by hand from the Actions tab. Without it the only way to exercise
+  # a change to this file is to merge it, which is how a broken build reached dev unnoticed.
+  # Dispatching from main takes the release path, so it re-runs the version guard (which passes
+  # only if the tag for the current version does not already exist elsewhere); dispatching from
+  # dev just rebuilds and refreshes the dev-latest prerelease.
+  workflow_dispatch:
 
 # Serialize ALL runs of this workflow, deliberately NOT keyed on the ref. The dev and main
 # deployments both push to the gh-pages branch, so two of them must never run at once; this used
@@ -201,11 +207,25 @@ jobs:
           cd scadnano_state_actions && dart run build_runner build --delete-conflicting-outputs && cd ..
           cd scadnano_reducers && dart run build_runner build --delete-conflicting-outputs && cd ..
 
-      - name: Install webdev
-        run: dart pub global activate webdev
-
+      # Deliberately NOT `webdev build`. webdev is installed with `dart pub global activate`,
+      # which resolves its own dependencies INDEPENDENTLY of pubspec.lock -- yet the webdev
+      # client and the daemon it spawns (which runs on the project's locked build_daemon) have
+      # to agree on where the daemon's port file lives. Nothing enforces that.
+      #
+      # It broke on 2026-08-02: build_daemon 4.1.3 (published 2026-07-29) "put lock and config
+      # files under .dart_tool in the workspace by default". A freshly resolved webdev got
+      # 4.1.3 and looked there, while the daemon spawned from this project's locked 4.1.1 wrote
+      # to the old location, so every build died with `MissingPortFile`. It had been masked
+      # until then only because ~/.pub-cache -- including the already-activated webdev -- was
+      # being restored from the Actions cache; once dev went 2 months without a build, that
+      # cache was evicted and the next run resolved webdev afresh.
+      #
+      # build_runner does exactly the same work with no daemon and no second, unlocked
+      # resolution: build.yaml already sets the release compiler (dart2js) and
+      # -DSCADNANO_PROD=true under `release_options`, and `--output web:build` puts the result
+      # in build/ just as `webdev build` did. It is also about twice as fast.
       - name: Build web app
-        run: dart pub global run webdev build -- --delete-conflicting-outputs
+        run: dart run build_runner build --release --output web:build --delete-conflicting-outputs
 
       - name: Upload web build artifact
         uses: actions/upload-artifact@v7
