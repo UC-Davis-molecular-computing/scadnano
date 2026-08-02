@@ -69,15 +69,14 @@ class DesignMainSliceBarComponent extends UiComponent2<DesignMainSliceBarProps> 
     var slice_bar_x = slice_bar_svg_base_center_pos.x - geometry.base_width_svg / 2;
     var slice_bar_y = displayed_helices_min_y - geometry.helix_radius_svg + geometry.base_height_svg;
 
-    var slice_bar =
-        (Dom.rect()
-          ..onPointerDown = (_) {
-            app.dispatch(actions.SliceBarMoveStart());
-          }
-          ..width = slice_bar_svg_width
-          ..height = slice_bar_svg_height
-          ..x = slice_bar_x
-          ..y = slice_bar_y)();
+    var slice_bar = (Dom.rect()
+      ..onPointerDown = (_) {
+        app.dispatch(actions.SliceBarMoveStart());
+      }
+      ..width = slice_bar_svg_width
+      ..height = slice_bar_svg_height
+      ..x = slice_bar_x
+      ..y = slice_bar_y)();
 
     var offset_text = (Dom.text()
       ..x = slice_bar_svg_base_center_pos.x

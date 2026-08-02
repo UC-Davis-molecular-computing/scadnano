@@ -130,18 +130,17 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
     };
 
     return Dialog.from(
-      (b) =>
-          b
-            ..title = title
-            ..type = type
-            ..process_saved_response = process_saved_response
-            ..use_saved_response = use_saved_response
-            ..items.replace(items)
-            ..disable.replace(disable)
-            ..mutually_exclusive_checkbox_groups.replace(mutually_exclusive_checkbox_groups_half_built)
-            ..disable_when_any_radio_button_selected.replace(disable_when_any_radio_button_selected_half_built)
-            ..disable_when_any_checkboxes_on.replace(disable_when_any_checkboxes_on_half_built)
-            ..disable_when_any_checkboxes_off.replace(disable_when_any_checkboxes_off_half_built),
+      (b) => b
+        ..title = title
+        ..type = type
+        ..process_saved_response = process_saved_response
+        ..use_saved_response = use_saved_response
+        ..items.replace(items)
+        ..disable.replace(disable)
+        ..mutually_exclusive_checkbox_groups.replace(mutually_exclusive_checkbox_groups_half_built)
+        ..disable_when_any_radio_button_selected.replace(disable_when_any_radio_button_selected_half_built)
+        ..disable_when_any_checkboxes_on.replace(disable_when_any_checkboxes_on_half_built)
+        ..disable_when_any_checkboxes_off.replace(disable_when_any_checkboxes_off_half_built),
     );
   }
 
@@ -214,11 +213,10 @@ abstract class DialogInteger
 
   factory DialogInteger({required String label, required int value, String tooltip = ''}) {
     return DialogInteger.from(
-      (b) =>
-          b
-            ..label = label
-            ..value = value
-            ..tooltip = tooltip,
+      (b) => b
+        ..label = label
+        ..value = value
+        ..tooltip = tooltip,
     );
   }
 
@@ -241,11 +239,10 @@ abstract class DialogFloat with BuiltJsonSerializable implements DialogItem, Bui
 
   factory DialogFloat({required String label, required double value, String tooltip = ''}) {
     return DialogFloat.from(
-      (b) =>
-          b
-            ..label = label
-            ..value = value
-            ..tooltip = tooltip,
+      (b) => b
+        ..label = label
+        ..value = value
+        ..tooltip = tooltip,
     );
   }
 
@@ -268,12 +265,11 @@ abstract class DialogText with BuiltJsonSerializable implements DialogItem, Buil
       size = size_from_text(value);
     }
     return DialogText.from(
-      (b) =>
-          b
-            ..label = label
-            ..size = size
-            ..value = value
-            ..tooltip = tooltip,
+      (b) => b
+        ..label = label
+        ..size = size
+        ..value = value
+        ..tooltip = tooltip,
     );
   }
 
@@ -309,13 +305,12 @@ abstract class DialogTextArea
     String tooltip = '',
   }) {
     return DialogTextArea.from(
-      (b) =>
-          b
-            ..label = label
-            ..cols = cols
-            ..rows = rows
-            ..value = value
-            ..tooltip = tooltip,
+      (b) => b
+        ..label = label
+        ..cols = cols
+        ..rows = rows
+        ..value = value
+        ..tooltip = tooltip,
     );
   }
 
@@ -344,11 +339,10 @@ abstract class DialogCheckbox
 
   factory DialogCheckbox({required String label, bool value = false, String tooltip = ''}) {
     return DialogCheckbox.from(
-      (b) =>
-          b
-            ..label = label
-            ..value = value
-            ..tooltip = tooltip,
+      (b) => b
+        ..label = label
+        ..value = value
+        ..tooltip = tooltip,
     );
   }
 
@@ -399,14 +393,13 @@ abstract class DialogRadio with BuiltJsonSerializable implements DialogItem, Bui
     }
 
     return DialogRadio.from(
-      (b) =>
-          b
-            ..options.replace(options_list)
-            ..selected_idx = selected_idx
-            ..radio = radio
-            ..label = label
-            ..tooltip = tooltip
-            ..option_tooltips.replace(option_tooltips_list),
+      (b) => b
+        ..options.replace(options_list)
+        ..selected_idx = selected_idx
+        ..radio = radio
+        ..label = label
+        ..tooltip = tooltip
+        ..option_tooltips.replace(option_tooltips_list),
     );
   }
 
@@ -437,12 +430,11 @@ abstract class DialogLink with BuiltJsonSerializable implements DialogItem, Buil
 
   factory DialogLink({required String label, required String link, String tooltip = ''}) {
     return DialogLink.from(
-      (b) =>
-          b
-            ..label = label
-            ..link = link
-            ..value = ""
-            ..tooltip = tooltip,
+      (b) => b
+        ..label = label
+        ..link = link
+        ..value = ""
+        ..tooltip = tooltip,
     );
   }
 
@@ -467,11 +459,10 @@ abstract class DialogLabel with BuiltJsonSerializable implements DialogItem, Bui
 
   factory DialogLabel({required String label, String tooltip = ''}) {
     return DialogLabel.from(
-      (b) =>
-          b
-            ..label = label
-            ..value = ""
-            ..tooltip = tooltip,
+      (b) => b
+        ..label = label
+        ..value = ""
+        ..tooltip = tooltip,
     );
   }
 

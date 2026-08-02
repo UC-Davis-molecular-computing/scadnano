@@ -40,7 +40,8 @@ import 'state/strand.dart';
 import 'state/strands_move.dart';
 import 'constants.dart' as constants;
 
-const ASSERTION_ERROR_MESSAGE = '''
+const ASSERTION_ERROR_MESSAGE =
+    '''
 You have discovered a bug. Please file a bug report as a GitHub issue at
   ${constants.BUG_REPORT_URL}
 Please include as much detail as possible. For instance, it is helpful to upload the design

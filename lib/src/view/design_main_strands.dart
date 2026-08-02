@@ -91,8 +91,9 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> wi
       }
       var helices_used_in_strand = helices_used_in_strand_mutable.build();
       var group_names_in_strand = helices_used_in_strand.values.map((helix) => helix.group);
-      BuiltMap<String, HelixGroup> groups_in_strand =
-          {for (var name in group_names_in_strand) name: props.groups[name]!}.build();
+      BuiltMap<String, HelixGroup> groups_in_strand = {
+        for (var name in group_names_in_strand) name: props.groups[name]!,
+      }.build();
       var selected_ends_in_strand = props.selectables_store.selected_ends_in_strand(strand);
       var selected_crossovers_in_strand = props.selectables_store.selected_crossovers_in_strand(strand);
       var selected_loopouts_in_strand = props.selectables_store.selected_loopouts_in_strand(strand);

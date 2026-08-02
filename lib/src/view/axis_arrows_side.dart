@@ -23,10 +23,9 @@ abstract class AxisArrowsProps implements UiProps {
 // behavior in OverReact where in connected components, required props must be set not only
 // in the `mapStateToProps` function, but also when hooking up the connected component to the view
 // as in the file view/design.dart (where ConnectedAxisArrowsSide() is invoked in `react_dom.render`)
-AxisArrowsProps set_axis_arrows_props(AxisArrowsProps elt, AppState state) =>
-    elt
-      ..invert_y = state.ui_state.invert_y
-      ..show_helices_axis_arrows = state.ui_state.show_helices_axis_arrows;
+AxisArrowsProps set_axis_arrows_props(AxisArrowsProps elt, AppState state) => elt
+  ..invert_y = state.ui_state.invert_y
+  ..show_helices_axis_arrows = state.ui_state.show_helices_axis_arrows;
 // end shared between AxisArrowsMain and AxisArrowsSide
 ///////////////////////////////////////////////////////
 

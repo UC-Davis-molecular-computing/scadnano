@@ -20,10 +20,9 @@ mixin MenuBooleanProps on UiProps {
 
 class MenuBooleanComponent extends UiComponent2<MenuBooleanProps> {
   @override
-  get defaultProps =>
-      (newProps()
-        ..hide = false
-        ..tooltip = '');
+  get defaultProps => (newProps()
+    ..hide = false
+    ..tooltip = '');
 
   @override
   render() {

@@ -278,14 +278,12 @@ main() {
       var action = actions.DeleteAllSelected();
       var state = app_state_from_design(design);
       state = state.rebuild(
-        (b) =>
-            b
-              ..ui_state.update(
-                (u) =>
-                    u
-                      ..storables.select_mode_state.modes.replace([SelectModeChoice.crossover])
-                      ..selectables_store.selected_items.replace([crossover]),
-              ),
+        (b) => b
+          ..ui_state.update(
+            (u) => u
+              ..storables.select_mode_state.modes.replace([SelectModeChoice.crossover])
+              ..selectables_store.selected_items.replace([crossover]),
+          ),
       );
       var strands = delete_all_reducer(design.strands, state, action);
 
@@ -328,14 +326,12 @@ main() {
       var action = actions.DeleteAllSelected();
       var state = app_state_from_design(design);
       state = state.rebuild(
-        (b) =>
-            b
-              ..ui_state.update(
-                (u) =>
-                    u
-                      ..storables.select_mode_state.modes.replace([SelectModeChoice.crossover])
-                      ..selectables_store.selected_items.replace([crossover]),
-              ),
+        (b) => b
+          ..ui_state.update(
+            (u) => u
+              ..storables.select_mode_state.modes.replace([SelectModeChoice.crossover])
+              ..selectables_store.selected_items.replace([crossover]),
+          ),
       );
       var strands = delete_all_reducer(design.strands, state, action);
 
@@ -378,14 +374,12 @@ main() {
       var action = actions.DeleteAllSelected();
       var state = app_state_from_design(design);
       state = state.rebuild(
-        (b) =>
-            b
-              ..ui_state.update(
-                (u) =>
-                    u
-                      ..storables.select_mode_state.modes.replace([SelectModeChoice.domain])
-                      ..selectables_store.selected_items.replace([domain]),
-              ),
+        (b) => b
+          ..ui_state.update(
+            (u) => u
+              ..storables.select_mode_state.modes.replace([SelectModeChoice.domain])
+              ..selectables_store.selected_items.replace([domain]),
+          ),
       );
       var strands = delete_all_reducer(design.strands, state, action);
 
@@ -424,14 +418,12 @@ main() {
       var action = actions.DeleteAllSelected();
       var state = app_state_from_design(design);
       state = state.rebuild(
-        (b) =>
-            b
-              ..ui_state.update(
-                (u) =>
-                    u
-                      ..storables.select_mode_state.modes.replace([SelectModeChoice.domain])
-                      ..selectables_store.selected_items.replace([domain]),
-              ),
+        (b) => b
+          ..ui_state.update(
+            (u) => u
+              ..storables.select_mode_state.modes.replace([SelectModeChoice.domain])
+              ..selectables_store.selected_items.replace([domain]),
+          ),
       );
       var strands = delete_all_reducer(design.strands, state, action);
 
@@ -475,14 +467,12 @@ main() {
       var action = actions.DeleteAllSelected();
       var state = app_state_from_design(design);
       state = state.rebuild(
-        (b) =>
-            b
-              ..ui_state.update(
-                (u) =>
-                    u
-                      ..storables.select_mode_state.modes.replace([SelectModeChoice.domain])
-                      ..selectables_store.selected_items.replace([domain]),
-              ),
+        (b) => b
+          ..ui_state.update(
+            (u) => u
+              ..storables.select_mode_state.modes.replace([SelectModeChoice.domain])
+              ..selectables_store.selected_items.replace([domain]),
+          ),
       );
       var strands = delete_all_reducer(design.strands, state, action);
 
@@ -533,14 +523,12 @@ main() {
       var action = actions.DeleteAllSelected();
       var state = app_state_from_design(design);
       state = state.rebuild(
-        (b) =>
-            b
-              ..ui_state.update(
-                (u) =>
-                    u
-                      ..storables.select_mode_state.modes.replace([SelectModeChoice.domain])
-                      ..selectables_store.selected_items.replace([domain]),
-              ),
+        (b) => b
+          ..ui_state.update(
+            (u) => u
+              ..storables.select_mode_state.modes.replace([SelectModeChoice.domain])
+              ..selectables_store.selected_items.replace([domain]),
+          ),
       );
       var strands = delete_all_reducer(design.strands, state, action);
 
@@ -591,14 +579,12 @@ main() {
       var action = actions.DeleteAllSelected();
       var state = app_state_from_design(design);
       state = state.rebuild(
-        (b) =>
-            b
-              ..ui_state.update(
-                (u) =>
-                    u
-                      ..storables.select_mode_state.modes.replace([SelectModeChoice.domain])
-                      ..selectables_store.selected_items.replace([domain]),
-              ),
+        (b) => b
+          ..ui_state.update(
+            (u) => u
+              ..storables.select_mode_state.modes.replace([SelectModeChoice.domain])
+              ..selectables_store.selected_items.replace([domain]),
+          ),
       );
       var strands = delete_all_reducer(design.strands, state, action);
 
@@ -652,14 +638,12 @@ main() {
       var action = actions.DeleteAllSelected();
       var state = app_state_from_design(design);
       state = state.rebuild(
-        (b) =>
-            b
-              ..ui_state.update(
-                (u) =>
-                    u
-                      ..storables.select_mode_state.modes.replace([SelectModeChoice.loopout])
-                      ..selectables_store.selected_items.replace([loopout]),
-              ),
+        (b) => b
+          ..ui_state.update(
+            (u) => u
+              ..storables.select_mode_state.modes.replace([SelectModeChoice.loopout])
+              ..selectables_store.selected_items.replace([loopout]),
+          ),
       );
       var strands = delete_all_reducer(design.strands, state, action);
 
@@ -716,14 +700,12 @@ main() {
       var action = actions.DeleteAllSelected();
       var state = app_state_from_design(design);
       state = state.rebuild(
-        (b) =>
-            b
-              ..ui_state.update(
-                (u) =>
-                    u
-                      ..storables.select_mode_state.modes.replace([SelectModeChoice.crossover])
-                      ..selectables_store.selected_items.replace([crossover]),
-              ),
+        (b) => b
+          ..ui_state.update(
+            (u) => u
+              ..storables.select_mode_state.modes.replace([SelectModeChoice.crossover])
+              ..selectables_store.selected_items.replace([crossover]),
+          ),
       );
       var strands = delete_all_reducer(design.strands, state, action);
 

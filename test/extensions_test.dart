@@ -135,8 +135,13 @@ main() {
     });
 
     test('with_sequence_on_3p_extension', () {
-      design =
-          design.draw_strand(0, 0).to(10).extension_3p(5).with_sequence("A" * 10 + "G" * 5).with_color(color).commit();
+      design = design
+          .draw_strand(0, 0)
+          .to(10)
+          .extension_3p(5)
+          .with_sequence("A" * 10 + "G" * 5)
+          .with_color(color)
+          .commit();
 
       var domain = Domain(
         helix: 0,
@@ -156,8 +161,13 @@ main() {
     });
 
     test('with_sequence_on_5p_extension', () {
-      design =
-          design.draw_strand(0, 0).extension_5p(5).to(10).with_sequence("C" * 5 + "T" * 10).with_color(color).commit();
+      design = design
+          .draw_strand(0, 0)
+          .extension_5p(5)
+          .to(10)
+          .with_sequence("C" * 5 + "T" * 10)
+          .with_color(color)
+          .commit();
 
       var domain = Domain(
         helix: 0,

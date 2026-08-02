@@ -39,11 +39,10 @@ abstract class Insertion
 
   /************************ begin BuiltValue boilerplate ************************/
   factory Insertion(int offset, int count, [String strand_id = 'NONE YET']) => Insertion.from(
-    (b) =>
-        b
-          ..offset = offset
-          ..length = count
-          ..strand_id = strand_id,
+    (b) => b
+      ..offset = offset
+      ..length = count
+      ..strand_id = strand_id,
   );
 
   factory Insertion.from([void Function(InsertionBuilder) updates]) = _$Insertion;
@@ -97,23 +96,22 @@ abstract class Domain
       insertions = BuiltList<Insertion>();
     }
     return Domain.from(
-      (b) =>
-          b
-            ..helix = helix
-            ..forward = forward
-            ..start = start
-            ..end = end
-            ..deletions.replace(deletions!)
-            ..insertions.replace(insertions!)
-            ..name = name
-            ..label = label
-            ..dna_sequence = dna_sequence
-            ..color = color
-            ..strand_id = strand_id
-            ..is_first = is_first
-            ..is_last = is_last
-            ..is_scaffold = is_scaffold
-            ..unused_fields.replace({}),
+      (b) => b
+        ..helix = helix
+        ..forward = forward
+        ..start = start
+        ..end = end
+        ..deletions.replace(deletions!)
+        ..insertions.replace(insertions!)
+        ..name = name
+        ..label = label
+        ..dna_sequence = dna_sequence
+        ..color = color
+        ..strand_id = strand_id
+        ..is_first = is_first
+        ..is_last = is_last
+        ..is_scaffold = is_scaffold
+        ..unused_fields.replace({}),
     );
   }
 
@@ -183,17 +181,14 @@ abstract class Domain
   );
 
   @memoized
-  BuiltList<SelectableDeletion> get selectable_deletions =>
-      [
-        for (int deletion in deletions) SelectableDeletion(offset: deletion, domain: this, is_scaffold: is_scaffold),
-      ].build();
+  BuiltList<SelectableDeletion> get selectable_deletions => [
+    for (int deletion in deletions) SelectableDeletion(offset: deletion, domain: this, is_scaffold: is_scaffold),
+  ].build();
 
   @memoized
-  BuiltList<SelectableInsertion> get selectable_insertions =>
-      [
-        for (var insertion in insertions)
-          SelectableInsertion(insertion: insertion, domain: this, is_scaffold: is_scaffold),
-      ].build();
+  BuiltList<SelectableInsertion> get selectable_insertions => [
+    for (var insertion in insertions) SelectableInsertion(insertion: insertion, domain: this, is_scaffold: is_scaffold),
+  ].build();
 
   Domain set_start(int start_new) => rebuild((ss) => ss..start = start_new);
 
@@ -271,8 +266,9 @@ abstract class Domain
     var deletions = List<int>.from(util.optional_field(json_map, constants.deletions_key, []));
     var insertions = parse_json_insertions(util.optional_field(json_map, constants.insertions_key, []));
 
-    Color? color =
-        json_map.containsKey(constants.color_key) ? util.parse_json_color(json_map[constants.color_key]!) : null;
+    Color? color = json_map.containsKey(constants.color_key)
+        ? util.parse_json_color(json_map[constants.color_key]!)
+        : null;
 
     String? name = util.optional_field_with_null_default(json_map, constants.name_key);
     String? label = util.optional_field_with_null_default(json_map, constants.label_key);

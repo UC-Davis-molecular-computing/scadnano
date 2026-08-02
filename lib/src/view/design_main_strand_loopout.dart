@@ -110,29 +110,28 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
 
     var color = props.loopout.color ?? props.strand_color;
 
-    var path_props =
-        Dom.path()
-          ..className = classname
-          ..stroke = color.toHexColor().toCssString()
-          ..d = path_description
-          ..onMouseEnter = (ev) {
-            setState(newState()..mouse_hover = true);
-          }
-          ..onMouseLeave = ((_) {
-            setState(newState()..mouse_hover = false);
-          })
-          ..onPointerDown = ((ev) {
-            if (loopout_selectable(props.loopout)) {
-              handle_selection_mouse_down(props.loopout, ev.nativeEvent);
-            }
-          })
-          ..onPointerUp = ((ev) {
-            if (loopout_selectable(props.loopout)) {
-              handle_selection_mouse_up(props.loopout, ev.nativeEvent);
-            }
-          })
-          ..key = props.loopout.id
-          ..id = props.loopout.id;
+    var path_props = Dom.path()
+      ..className = classname
+      ..stroke = color.toHexColor().toCssString()
+      ..d = path_description
+      ..onMouseEnter = (ev) {
+        setState(newState()..mouse_hover = true);
+      }
+      ..onMouseLeave = ((_) {
+        setState(newState()..mouse_hover = false);
+      })
+      ..onPointerDown = ((ev) {
+        if (loopout_selectable(props.loopout)) {
+          handle_selection_mouse_down(props.loopout, ev.nativeEvent);
+        }
+      })
+      ..onPointerUp = ((ev) {
+        if (loopout_selectable(props.loopout)) {
+          handle_selection_mouse_up(props.loopout, ev.nativeEvent);
+        }
+      })
+      ..key = props.loopout.id
+      ..id = props.loopout.id;
 
     if (within_group) {
       path_props.transform = transform_of_helix2(props, props.prev_helix.idx);
@@ -202,13 +201,12 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
             app.state.ui_state.selectables_store.selected_loopouts,
             props.loopout,
           );
-          var action =
-              loopouts.length > 1
-                  ? actions.BatchAction(
-                    loopouts.map((l) => actions.SubstrandNameSet(name: null, substrand: l)),
-                    "remove loopout names",
-                  )
-                  : actions.SubstrandNameSet(name: null, substrand: props.loopout);
+          var action = loopouts.length > 1
+              ? actions.BatchAction(
+                  loopouts.map((l) => actions.SubstrandNameSet(name: null, substrand: l)),
+                  "remove loopout names",
+                )
+              : actions.SubstrandNameSet(name: null, substrand: props.loopout);
           app.dispatch(action);
         },
       ),
@@ -221,28 +219,26 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
             app.state.ui_state.selectables_store.selected_loopouts,
             props.loopout,
           );
-          var action =
-              loopouts.length > 1
-                  ? actions.BatchAction(
-                    loopouts.map((l) => actions.SubstrandLabelSet(label: null, substrand: l)),
-                    "remove loopout labels",
-                  )
-                  : actions.SubstrandLabelSet(label: null, substrand: props.loopout);
+          var action = loopouts.length > 1
+              ? actions.BatchAction(
+                  loopouts.map((l) => actions.SubstrandLabelSet(label: null, substrand: l)),
+                  "remove loopout labels",
+                )
+              : actions.SubstrandLabelSet(label: null, substrand: props.loopout);
           app.dispatch(action);
         },
       ),
     ContextMenuItem(
       title: 'set loopout color',
-      on_click:
-          () => app.dispatch(actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: props.loopout)),
+      on_click: () =>
+          app.dispatch(actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: props.loopout)),
     ),
     if (props.loopout.color != null)
       ContextMenuItem(
         title: 'remove loopout color',
-        on_click:
-            () => app.dispatch(
-              actions.StrandOrSubstrandColorSet(strand: props.strand, substrand: props.loopout, color: null),
-            ),
+        on_click: () => app.dispatch(
+          actions.StrandOrSubstrandColorSet(strand: props.strand, substrand: props.loopout, color: null),
+        ),
       ),
   ];
 
@@ -305,13 +301,12 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     var loopouts = app.state.ui_state.selectables_store.selected_loopouts.toSet();
     loopouts.add(props.loopout);
 
-    var action =
-        loopouts.isNotEmpty
-            ? actions.BatchAction(
-              loopouts.map((l) => actions.SubstrandNameSet(name: name, substrand: l)),
-              "set loopout names",
-            )
-            : actions.SubstrandNameSet(name: name, substrand: props.loopout);
+    var action = loopouts.isNotEmpty
+        ? actions.BatchAction(
+            loopouts.map((l) => actions.SubstrandNameSet(name: name, substrand: l)),
+            "set loopout names",
+          )
+        : actions.SubstrandNameSet(name: name, substrand: props.loopout);
     app.dispatch(action);
   }
 

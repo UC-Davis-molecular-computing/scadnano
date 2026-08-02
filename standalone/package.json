@@ -53,7 +53,7 @@
   },
   "scripts": {
     "init": "npm run setup:state_actions && npm run setup:reducers && npm run setup:webdev",
-    "setup:webdev": "cd .. && dart pub get && dart pub global activate webdev && webdev build",
+    "setup:webdev": "cd .. && dart pub get && dart run webdev build",
     "setup:state_actions": "cd .. && dart pub get && cd scadnano_state_actions && dart run build_runner build",
     "setup:reducers": "cd .. && dart pub get && cd scadnano_reducers && dart run build_runner build",
     "dev": "npm run init && electron-forge start",

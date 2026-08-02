@@ -162,8 +162,8 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
     ContextMenuItem(title: 'remove modification', on_click: remove_modification),
     ContextMenuItem(
       title: 'edit modification',
-      on_click:
-          () => edit_modification(this.modification, props.selectable_modification, this.strand, props.dna_idx_mod),
+      on_click: () =>
+          edit_modification(this.modification, props.selectable_modification, this.strand, props.dna_idx_mod),
     ),
   ];
 
@@ -472,12 +472,11 @@ edit_modification(
     type: DialogType.edit_modification,
     items: items,
     use_saved_response: false,
-    disable_when_any_checkboxes_off:
-        is_internal
-            ? {
-              allowed_bases_idx: [attached_to_base_idx],
-            }
-            : {},
+    disable_when_any_checkboxes_off: is_internal
+        ? {
+            allowed_bases_idx: [attached_to_base_idx],
+          }
+        : {},
   );
   List<DialogItem>? results = await util.dialog(dialog);
   if (results == null) return;

@@ -32,26 +32,24 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
     bool copy = false,
     bool keep_color = true,
   }) {
-    var strands_fixed =
-        copy
-            ? all_strands
-            : [
-              for (var strand in all_strands)
-                if (!strands_moving.contains(strand)) strand,
-            ];
+    var strands_fixed = copy
+        ? all_strands
+        : [
+            for (var strand in all_strands)
+              if (!strands_moving.contains(strand)) strand,
+          ];
     return StrandsMove.from(
-      (b) =>
-          b
-            ..strands_moving.replace(strands_moving)
-            ..strands_fixed.replace(strands_fixed)
-            ..helices.replace(helices)
-            ..groups.replace(groups)
-            ..original_helices_view_order_inverse.replace(original_helices_view_order_inverse)
-            ..original_address.replace(original_address)
-            ..current_address.replace(original_address)
-            ..copy = copy
-            ..keep_color = keep_color
-            ..allowable = true,
+      (b) => b
+        ..strands_moving.replace(strands_moving)
+        ..strands_fixed.replace(strands_fixed)
+        ..helices.replace(helices)
+        ..groups.replace(groups)
+        ..original_helices_view_order_inverse.replace(original_helices_view_order_inverse)
+        ..original_address.replace(original_address)
+        ..current_address.replace(original_address)
+        ..copy = copy
+        ..keep_color = keep_color
+        ..allowable = true,
     );
   }
 

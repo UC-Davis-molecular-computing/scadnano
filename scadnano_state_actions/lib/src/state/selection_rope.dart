@@ -12,12 +12,11 @@ abstract class SelectionRope with BuiltJsonSerializable implements Built<Selecti
   SelectionRope._();
 
   factory SelectionRope(bool toggle) => SelectionRope.from(
-    (b) =>
-        b
-          ..current_point = null
-          ..toggle = toggle
-          ..points.replace([])
-          ..is_main = null,
+    (b) => b
+      ..current_point = null
+      ..toggle = toggle
+      ..points.replace([])
+      ..is_main = null,
   );
 
   factory SelectionRope.from([void Function(SelectionRopeBuilder) updates]) = _$SelectionRope;
@@ -149,10 +148,9 @@ int f(int? i) {
 // line from (x1,y1) to (x2,y2)
 abstract class Line with BuiltJsonSerializable implements Built<Line, LineBuilder> {
   factory Line(Point<double> p1, Point<double> p2) => Line.from(
-    (b) =>
-        b
-          ..p1 = p1
-          ..p2 = p2,
+    (b) => b
+      ..p1 = p1
+      ..p2 = p2,
   );
 
   factory Line.from([void Function(LineBuilder) updates]) = _$Line;

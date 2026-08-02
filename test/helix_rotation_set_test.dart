@@ -228,8 +228,18 @@ main() {
       double helix_dist = geometry.distance_between_helices_nm;
       var helices = [
         Helix(idx: 0, grid: Grid.none, position: Position3D(x: 0, z: 0, y: 0), roll: 0),
-        Helix(idx: 1, grid: Grid.none, position: Position3D(x: helix_dist, z: 0, y: helix_dist), roll: 0),
-        Helix(idx: 2, grid: Grid.none, position: Position3D(x: 2 * helix_dist, z: 0, y: 2 * helix_dist), roll: 0),
+        Helix(
+          idx: 1,
+          grid: Grid.none,
+          position: Position3D(x: helix_dist, z: 0, y: helix_dist),
+          roll: 0,
+        ),
+        Helix(
+          idx: 2,
+          grid: Grid.none,
+          position: Position3D(x: 2 * helix_dist, z: 0, y: 2 * helix_dist),
+          roll: 0,
+        ),
       ];
       design = Design(grid: Grid.none, helices: helices, geometry: geometry);
       design = design.draw_strand(1, 5).to(0).cross(0).to(5).commit();

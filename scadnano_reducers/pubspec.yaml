@@ -2,7 +2,7 @@ name: scadnano_reducers
 description: Reducers for scadnano - extracted to a separate package to optimize built_value code generation caching.
 
 environment:
-  sdk: '>=3.7.0 <4.0.0'
+  sdk: '>=3.11.0 <4.0.0'   # see issue #1104; must match the root pubspec
 
 resolution: workspace
 

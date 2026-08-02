@@ -4,7 +4,10 @@ description: A web-based scriptable DNA design tool inspired by cadnano (see htt
 #author: David Doty <doty@ucdavis.edu>
 
 environment:
-  sdk: '>=3.7.0 <4.0.0'
+  # 3.11.0 floor: build_daemon 4.1.3 requires it, and we need 4.1.3 so that the
+  # locked build_daemon matches the one a freshly activated `webdev` resolves.
+  # See issue #1104. `test` 1.31.1 independently requires >=3.10.0.
+  sdk: '>=3.11.0 <4.0.0'
 
 workspace:
   - scadnano_state_actions
@@ -41,19 +44,21 @@ dev_dependencies:
   melos: ^8.2.2
   over_react_test: ^3.0.0
   redux_dev_tools: ^0.7.0
+  webdev: ^3.8.1
 
 melos:
   scripts:
     generate:
       description: Build generated .g.dart files in sub-packages
-      exec: dart run build_runner build --delete-conflicting-outputs
+      exec: dart run build_runner build
       packageFilters:
         dependsOn: built_value_generator
     watch:
       description: Watch and rebuild .g.dart files in sub-packages
-      exec: dart run build_runner watch --delete-conflicting-outputs
+      exec: dart run build_runner watch
       packageFilters:
         dependsOn: built_value_generator
     serve:
       description: Run webdev serve for the web app
-      run: webdev serve
+      # `dart run webdev`, not a globally activated `webdev`: see issue #1104
+      run: dart run webdev serve

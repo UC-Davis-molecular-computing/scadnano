@@ -76,20 +76,19 @@ abstract class Extension
       unused_fields = {};
     }
     return Extension.from(
-      (b) =>
-          b
-            ..num_bases = num_bases
-            ..display_length = display_length
-            ..display_angle = display_angle
-            ..is_5p = is_5p
-            ..name = name
-            ..label = label
-            ..dna_sequence = dna_sequence
-            ..color = color
-            ..is_scaffold = is_scaffold
-            ..adjacent_domain.replace(adjacent_domain)
-            ..unused_fields.replace(unused_fields!)
-            ..strand_id = strand_id,
+      (b) => b
+        ..num_bases = num_bases
+        ..display_length = display_length
+        ..display_angle = display_angle
+        ..is_5p = is_5p
+        ..name = name
+        ..label = label
+        ..dna_sequence = dna_sequence
+        ..color = color
+        ..is_scaffold = is_scaffold
+        ..adjacent_domain.replace(adjacent_domain)
+        ..unused_fields.replace(unused_fields!)
+        ..strand_id = strand_id,
     );
   }
 
@@ -131,8 +130,9 @@ abstract class Extension
 
     String? dna_sequence = util.optional_field_with_null_default(json_map, constants.dna_sequence_key);
 
-    Color? color =
-        json_map.containsKey(constants.color_key) ? util.parse_json_color(json_map[constants.color_key]!) : null;
+    Color? color = json_map.containsKey(constants.color_key)
+        ? util.parse_json_color(json_map[constants.color_key]!)
+        : null;
 
     var unused_fields = util.unused_fields_map(json_map, constants.extension_keys);
 

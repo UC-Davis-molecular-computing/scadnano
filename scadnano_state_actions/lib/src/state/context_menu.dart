@@ -44,13 +44,12 @@ abstract class ContextMenuItem with BuiltJsonSerializable implements Built<Conte
     bool disabled = false,
   }) {
     return ContextMenuItem.from(
-      (b) =>
-          b
-            ..title = title
-            ..on_click = on_click
-            ..tooltip = tooltip
-            ..nested = nested?.toBuilder()
-            ..disabled = disabled,
+      (b) => b
+        ..title = title
+        ..on_click = on_click
+        ..tooltip = tooltip
+        ..nested = nested?.toBuilder()
+        ..disabled = disabled,
     );
   }
 

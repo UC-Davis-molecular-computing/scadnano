@@ -25,14 +25,13 @@ abstract class HelixGroupMove with BuiltJsonSerializable implements Built<HelixG
       throw ArgumentError.value('helices should not be empty in a HelixGroupMove object');
     }
     return HelixGroupMove.from(
-      (b) =>
-          b
-            ..group_name = group_name
-            ..group.replace(group)
-            ..helices.replace(helices)
-            ..original_mouse_point = original_mouse_point
-            ..current_mouse_point = original_mouse_point
-            ..geometry.replace(geometry),
+      (b) => b
+        ..group_name = group_name
+        ..group.replace(group)
+        ..helices.replace(helices)
+        ..original_mouse_point = original_mouse_point
+        ..current_mouse_point = original_mouse_point
+        ..geometry.replace(geometry),
     );
   }
 
@@ -67,10 +66,9 @@ abstract class HelixGroupMove with BuiltJsonSerializable implements Built<HelixG
     var mouse_translation = delta;
     var nm_translation = mouse_translation * geometry.svg_pixels_to_nm;
     var new_position = group.position.rebuild(
-      (b) =>
-          b
-            ..z = group.position.z + nm_translation.x
-            ..y = group.position.y + nm_translation.y,
+      (b) => b
+        ..z = group.position.z + nm_translation.x
+        ..y = group.position.y + nm_translation.y,
     );
     return new_position;
   }

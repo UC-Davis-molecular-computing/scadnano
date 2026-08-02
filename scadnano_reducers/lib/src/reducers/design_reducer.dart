@@ -45,21 +45,19 @@ Design? design_global_reducer(Design? design, AppState state, action) {
 // composed: operate on slices of the DNADesign
 // local: don't need the whole AppState
 Design? design_composed_local_reducer(Design? design, action) => design?.rebuild(
-  (d) =>
-      d
-        ..groups.replace(groups_local_reducer(design.groups, action))
-        ..helices.replace(helices_local_reducer(design.helices, action))
-        ..strands.replace(strands_local_reducer(design.strands, action)),
+  (d) => d
+    ..groups.replace(groups_local_reducer(design.groups, action))
+    ..helices.replace(helices_local_reducer(design.helices, action))
+    ..strands.replace(strands_local_reducer(design.strands, action)),
 );
 
 // composed: operate on slices of the DNADesign
 // global: need the whole AppState
 Design? design_composed_global_reducer(Design? design, AppState state, action) => design?.rebuild(
-  (d) =>
-      d
-        ..groups.replace(groups_global_reducer(design.groups, state, action))
-        ..helices.replace(helices_global_reducer(design.helices, state, action))
-        ..strands.replace(strands_global_reducer(design.strands, state, action)),
+  (d) => d
+    ..groups.replace(groups_global_reducer(design.groups, state, action))
+    ..helices.replace(helices_global_reducer(design.helices, state, action))
+    ..strands.replace(strands_global_reducer(design.strands, state, action)),
 );
 
 // whole: operate on the whole DNADesign
@@ -99,10 +97,9 @@ Design? design_geometry_set_reducer(Design? design, AppState state, actions.Geom
   var new_helices = design.helices.toMap();
 
   return design.rebuild(
-    (b) =>
-        b
-          ..helices.replace(new_helices)
-          ..geometry.replace(action.geometry),
+    (b) => b
+      ..helices.replace(new_helices)
+      ..geometry.replace(action.geometry),
   );
 }
 
@@ -149,10 +146,9 @@ Design _convert_extensions_to_bound_domains(Design design, Extension extension1,
   // Step 4: Create the new helix positioned to coincide with extension1
   // Calculate the required helix length - should be the maximum of the two extensions
   // since they overlap at the connection point
-  int total_length =
-      extension2 != null
-          ? [extension1.num_bases, extension2.num_bases].reduce((a, b) => a > b ? a : b)
-          : extension1.num_bases;
+  int total_length = extension2 != null
+      ? [extension1.num_bases, extension2.num_bases].reduce((a, b) => a > b ? a : b)
+      : extension1.num_bases;
 
   var new_helix = Helix(
     idx: new_helix_idx,
@@ -209,11 +205,10 @@ Design _convert_extensions_to_bound_domains(Design design, Extension extension1,
 
   // Step 6: Build the updated design
   var result = design.rebuild(
-    (b) =>
-        b
-          ..groups.replace({...design.groups.asMap(), new_group_name: new_group})
-          ..helices.replace({...design.helices.asMap(), new_helix_idx: new_helix})
-          ..strands.replace(updated_strands),
+    (b) => b
+      ..groups.replace({...design.groups.asMap(), new_group_name: new_group})
+      ..helices.replace({...design.helices.asMap(), new_helix_idx: new_helix})
+      ..strands.replace(updated_strands),
   );
 
   return result;

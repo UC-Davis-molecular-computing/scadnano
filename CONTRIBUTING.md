@@ -25,7 +25,7 @@ the [issues page](https://github.com/UC-Davis-molecular-computing/scadnano/issue
     - [Making contributions](#making-contributions)
         - [Cloning](#cloning)
         - [Installing Dart](#installing-dart)
-        - [Installing `webdev` and `melos`](#installing-webdev-and-melos)
+        - [`webdev` and `melos`](#webdev-and-melos)
         - [Running a Local Server](#running-a-local-server)
             - [Melos scripts](#melos-scripts)
             - [Troubleshooting local server](#troubleshooting-local-server)
@@ -58,7 +58,7 @@ The scadnano codebase is split into multiple Dart packages to minimize increment
 
 1. **[`scadnano_state_actions`](scadnano_state_actions/)** — State types, actions, and serializers.
    Contains the [state](scadnano_state_actions/lib/src/state) classes (e.g., `AppState`, `Design`, `Strand`),
-   [actions](scadnano_state_actions/lib/src/actions.dart), and
+   [actions](scadnano_state_actions/lib/src/actions/actions.dart), and
    [serializers](scadnano_state_actions/lib/src/serializers.dart).
    This is the lowest-level package with no dependency on the other two.
 
@@ -91,7 +91,7 @@ packages at once.
   around the JavaScript [Redux](https://redux.js.org/), responsible for the
   [state](scadnano_state_actions/lib/src/state),
   [reducers](scadnano_reducers/lib/src/reducers),
-  [actions](scadnano_state_actions/lib/src/actions.dart),
+  [actions](scadnano_state_actions/lib/src/actions/actions.dart),
   and [middleware](lib/src/middleware) components of the application.
 
 - [built_value](https://pub.dev/packages/built_value),
@@ -458,8 +458,9 @@ git checkout dev
 
 ### Installing Dart
 
-This project requires using the latest Dart version. Click on a dropdown below for installation instructions
-for your operating system.
+This project requires **Dart 3.11 or later** (declared as `environment: sdk: '>=3.11.0 <4.0.0'` in each
+`pubspec.yaml`; CI builds with 3.11.x). Click on a dropdown below for installation instructions for your
+operating system.
 
 <!--TODO: Find a way to use code blocks with syntax highlighting inside <details>-->
 
@@ -552,26 +553,18 @@ Built test:test.
 00:11 +491 ~2: All tests passed!
 ```
 
-### Installing `webdev` and `melos`
+### `webdev` and `melos`
 
 `webdev` is used to run a local server for running scadnano in your browser for testing.
 `melos` is used to orchestrate `build_runner` commands across workspace packages.
-Install both with:
 
-```
-dart pub global activate webdev
-dart pub global activate melos
-```
+**Neither needs to be installed** — both are `dev_dependencies` in [pubspec.yaml](pubspec.yaml), so `dart pub
+get` already fetched them and you run them with `dart run webdev` / `dart run melos`.
 
-Note that often a message like this appears:
-
-```
-Warning: Pub installs executables into C:\Users\pexat\AppData\Local\Pub\Cache\bin, which is not on your path.
-You can fix that by adding that directory to your system's "Path" environment variable.
-A web search for "configure windows path" will show you how.
-```
-
-So you may need to add the installation location of `webdev` and `melos` to your PATH environment variable.
+Do **not** install `webdev` with `dart pub global activate`. A global install resolves its own dependencies
+independently of [pubspec.lock](pubspec.lock), yet it must agree with the `build_daemon` this project locks;
+when the two disagree, every build fails with `MissingPortFile`. Running `dart run webdev` keeps both from a
+single resolution, so they cannot disagree.
 
 ### Running a Local Server
 
@@ -579,13 +572,16 @@ Running a local development server requires two terminals:
 
 **Terminal 1** — watch sub-packages for `.g.dart` regeneration:
 ```
-dart run melos run watch
+./watch.sh     # or watch.bat on Windows
 ```
 
 **Terminal 2** — serve the web app:
 ```
-webdev serve
+./serve.sh     # or serve.bat on Windows
 ```
+
+Those scripts just wrap `dart run melos run watch` and `dart run webdev serve`, and print a reminder of which
+terminal is which.
 
 `webdev serve` compiles all Dart code to JavaScript and runs code generation (`.g.dart` files) for the root
 package (`scadnano_view_middleware`). However, it does **not** regenerate `.g.dart` files inside sub-packages.
@@ -594,7 +590,7 @@ That is what `dart run melos run watch` handles: it runs `build_runner watch` in
 automatically when you edit `built_value` classes.
 
 If you are only editing files in the root package (view/middleware) and not changing `built_value` classes
-in sub-packages, you can run `webdev serve` alone.
+in sub-packages, you can run `./serve.sh` alone.
 
 **Build times:** The first compilation will take 30+ seconds, as long as several minutes on older machines,
 because all `.g.dart` files must be generated from scratch.
@@ -609,7 +605,7 @@ Melos is configured in the root [pubspec.yaml](pubspec.yaml) under the `melos:` 
 
 - `dart run melos run generate` — Build `.g.dart` files in sub-packages (one-time).
 - `dart run melos run watch` — Watch and rebuild `.g.dart` files in sub-packages continuously.
-- `dart run melos run serve` — Run `webdev serve` for the web app.
+- `dart run melos run serve` — Run `dart run webdev serve` for the web app (same as `./serve.sh`).
 
 You can also build all sub-packages at once without melos using:
 
@@ -624,10 +620,10 @@ Sometimes it may be necessary to clean out the generated files and cache if this
 `.g.dart` files. Also see `remove_g.sh` (or `remove_g.bat`), which removes all `.g.dart` files from the
 project, which can also help to fix compilation errors.
 
-If that does not work, try `dart run build_runner build --workspace --delete-conflicting-outputs`, and then
-run `webdev serve`.
+If that does not work, try `dart run build_runner build --workspace`, and then run `./serve.sh`.
 
-Running `webdev serve --release` will compile the project in production mode (instead of development mode),
+Running `dart run webdev serve --release` will compile the project in production mode (instead of development
+mode),
 which is claimed to be faster in principle if you are not doing development and just want to run scadnano
 offline.
 However, in scadnano, it doesn't appear to make a big difference whether development or production mode is
@@ -738,7 +734,7 @@ Save (Ctrl/Cmd + S).
 2. Open the scadnano project on the editor.
 3. Shortcut for Preferences: (Windows) Ctrl + Alt + S or  (MacOS) Cmd + ,
 4. Navigate to Preferences -> Plugins. Search and install the Dart Plugin. (You might have to point the plugin
-   to the already installed Dart SDK v2.13)
+   to the already installed Dart SDK.)
 5. Navigate to Preferences -> Editor -> Code Style -> Dart and change the line length to 120.
 6. Navigate to Preferences -> Tools -> Actions on Save and check the Reformat code option.
 
@@ -752,8 +748,8 @@ To test that either of the two options above are working:
 2. Hit save to visually see the formatting changes being done automatically.
 3. To ensure that the file is in the required format for making the Pull Request, open a terminal / command
    prompt and run the following command:
-   Warning: It is assumed that dart (v 2.13) is already installed and can be run from the terminal using
-   ‘dart’ command.
+   Warning: It is assumed that Dart (3.11 or later) is already installed and can be run from the terminal
+   using the `dart` command.
 
 ```
 dart format -l 120 path_to_your_dart_file/filename.dart
@@ -793,10 +789,17 @@ production-specific bug. You can tell `webdev` to compile with
 the `dart2js` compiler by adding the `--release` flag:
 
 ```
+dart run webdev serve --release
+```
 
-webdev serve --release
+To produce the same artifact CI does — a release build written to `build/` — without webdev at all:
 
-````
+```
+dart run build_runner build --release --output web:build
+```
+
+That is exactly what the `build and deploy` workflow runs. `build.yaml` supplies the release compiler
+(`dart2js`) and `-DSCADNANO_PROD=true`, so the output is identical either way.
 
 ### Troubleshooting
 
@@ -899,13 +902,13 @@ changes to the GitHub repository, which are explained in more detail in the next
    `EditModeChoice` and `LocalStorageDesignChoice`.
 
 4. **create Action class**:
-   In scadnano_state_actions/lib/src/actions.dart, create a new Action class representing the new information needed to update the
+   In scadnano_state_actions/lib/src/actions/actions.dart, create a new Action class representing the new information needed to update the
    state. In our example, this is `ModificationFontSizeSet`, and the information needed is the new font size,
    which is a field of this class. It's a strange naming convention, where the verb goes at the end, but it's
    nice when viewing an alphabetized list of all actions (e.g., in an IDE) to see the actions grouped by the
    object they modify. Otherwise, if the action were called `SetModificationFontSize`, and so were others like
    it (i.e., they all begin with the word `Set`), then everything "setting" a field would be grouped together,
-   even though the fields are unrelated. So please following this naming convention (see scadnano_state_actions/lib/src/actions.dart
+   even though the fields are unrelated. So please following this naming convention (see scadnano_state_actions/lib/src/actions/actions.dart
    for more examples.)
 
    **WARNING about serialization of built types:** (Note this applies not only to Actions, but any built_value
@@ -1275,7 +1278,7 @@ label [`closed in dev`](https://github.com/UC-Davis-molecular-computing/scadnano
 and **stays open**. That is deliberate: the fix exists and is live at https://scadnano.org/dev (and in the
 `dev-latest` prerelease executables), but the stable web app at https://scadnano.org and the versioned release
 executables are published only from `main`, so the issue is not really resolved for most users yet. The label
-is applied automatically; you no longer need to remember to add it.
+is applied automatically; you do not need to add it yourself.
 
 GitHub's own "fixes #123" auto-closing only acts on commits reaching the **default** branch, which is `main`.
 That is the main reason `main` is kept as the default: it means merging a fix to `dev` does not prematurely
@@ -1298,10 +1301,9 @@ to https://scadnano.org.
 
 **Note about GitHub Actions deploying to the website:** pushing to either the `main` branch (as this does) or
 the `dev` branch starts the `build and deploy` action, which updates https://scadnano.org (or
-https://scadnano.org/dev). Both deploy to the `gh-pages` branch, so two of these must never run at once. This
-used to require manual care — waiting for one deployment to finish before pushing again — but the workflow now
-serializes all of its runs with a concurrency group, so a second push simply queues behind the first instead of
-clobbering or cancelling it.
+https://scadnano.org/dev). Both deploy to the `gh-pages` branch, so two of these must never run at once. The
+workflow serializes all of its runs with a concurrency group, so a second push simply queues behind the first
+rather than clobbering or cancelling it — you can push freely without waiting.
 
 **WARNING:** Always wait for the checks to complete, to ensure that unit tests pass. They will look like this
 when incomplete:
@@ -1446,4 +1448,6 @@ is a bit too restrictive.
 We also follow the [OverReact style guide](https://github.com/Workiva/over_react#component-formatting), in
 particular, using trailing commas so that dartfmt (Dart's formatting tool) lines up the components nicely.
 
-````
+Note that `dart format`'s style depends on the **language version** declared by `environment: sdk:` in
+`pubspec.yaml`, not on which Dart patch release you have installed. So every contributor gets identical
+formatting, and raising the SDK floor is what opts the project in to newer formatting rules.

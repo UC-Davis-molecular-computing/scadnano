@@ -23,7 +23,9 @@ GlobalReducer<StrandsMove?, AppState> strands_move_global_reducer = combineGloba
 ]);
 
 Reducer<StrandsMove?> strands_move_local_reducer = //combineReducers([
-    TypedReducer<StrandsMove?, actions.StrandsMoveStop>(strands_move_stop_reducer);
+TypedReducer<StrandsMove?, actions.StrandsMoveStop>(
+  strands_move_stop_reducer,
+);
 // ]);
 
 StrandsMove? strands_move_start_reducer(StrandsMove? _, AppState state, actions.StrandsMoveStart action) {
@@ -90,8 +92,11 @@ bool in_bounds_and_allowable(Design design, StrandsMove strands_move) {
 }
 
 bool in_bounds(Design design, StrandsMove strands_move, {Set<int>? original_helix_idxs_set = null}) {
-  constants.strand_bounds_status status =
-      get_strand_bounds_details(design, strands_move, original_helix_idxs_set: original_helix_idxs_set)['status'];
+  constants.strand_bounds_status status = get_strand_bounds_details(
+    design,
+    strands_move,
+    original_helix_idxs_set: original_helix_idxs_set,
+  )['status'];
   if (status == constants.strand_bounds_status.in_bounds ||
       status == constants.strand_bounds_status.in_bounds_with_min_offset_changes ||
       status == constants.strand_bounds_status.in_bounds_with_max_offset_changes)
@@ -156,21 +161,19 @@ Map get_strand_bounds_details(Design design, StrandsMove strands_move, {Set<int>
       if (domain.start + delta_offset < helix.min_offset)
         outOfBoundsNewMinOffset = [outOfBoundsNewMinOffset, domain.start + delta_offset].min;
       else if (domain.start + delta_offset > helix.min_offset)
-        inBoundsNewMinOffset =
-            [
-              [inBoundsNewMinOffset, domain.start + delta_offset].max,
-              originalMinOffset,
-              min_offset_of_helix,
-            ].min;
+        inBoundsNewMinOffset = [
+          [inBoundsNewMinOffset, domain.start + delta_offset].max,
+          originalMinOffset,
+          min_offset_of_helix,
+        ].min;
       if (domain.end + delta_offset > helix.max_offset)
         outOfBoundsNewMaxOffset = [outOfBoundsNewMaxOffset, domain.end + delta_offset].max;
       else if (domain.end + delta_offset < helix.max_offset)
-        inBoundsNewMaxOffset =
-            [
-              [inBoundsNewMaxOffset, domain.end + delta_offset].min,
-              originalMaxOffset,
-              max_offset_of_helix,
-            ].max;
+        inBoundsNewMaxOffset = [
+          [inBoundsNewMaxOffset, domain.end + delta_offset].min,
+          originalMaxOffset,
+          max_offset_of_helix,
+        ].max;
       // if (domain.start + delta_offset < helix.min_offset) return "min_offset_out_of_bounds";
       // if (domain.end + delta_offset > helix.max_offset) return "max_offset_out_of_bounds";
     }
@@ -275,20 +278,18 @@ bool is_allowable(Design design, StrandsMove strands_move, {Set<int>? original_h
     // if delta_forward is false (i.e., the forward bit isn't changing) then use the value of dom.forward,
     // otherwise use its negation
     for (bool forward in [true, false]) {
-      List<Point<int>> intervals_moving =
-          domains_moving
-              .where((dom) => delta_forward != (dom.forward == forward))
-              .map((dom) => Point<int>(dom.start + delta_offset, dom.end - 1 + delta_offset))
-              .toList();
+      List<Point<int>> intervals_moving = domains_moving
+          .where((dom) => delta_forward != (dom.forward == forward))
+          .map((dom) => Point<int>(dom.start + delta_offset, dom.end - 1 + delta_offset))
+          .toList();
       sort_intervals_by_start(intervals_moving);
       if (intervals_moving.isNotEmpty) {
         if (intervals_moving[0].x < new_helix.min_offset) return false;
         if (intervals_moving[intervals_moving.length - 1].y >= new_helix.max_offset) return false;
-        List<Point<int>> intervals_fixed =
-            domains_fixed
-                .where((dom) => dom.forward == forward)
-                .map((dom) => Point<int>(dom.start, dom.end - 1))
-                .toList();
+        List<Point<int>> intervals_fixed = domains_fixed
+            .where((dom) => dom.forward == forward)
+            .map((dom) => Point<int>(dom.start, dom.end - 1))
+            .toList();
         sort_intervals_by_start(intervals_fixed);
         if (intersection(intervals_moving, intervals_fixed)) return false;
       }

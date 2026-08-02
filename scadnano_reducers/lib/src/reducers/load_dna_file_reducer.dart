@@ -28,7 +28,8 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
         break;
     }
   } on IllegalDesignError catch (error, stack_trace) {
-    error_message = '''
+    error_message =
+        '''
 ******************
 * illegal design *
 ******************
@@ -61,12 +62,11 @@ ${util.stack_trace_message_bug_report(stack_trace)}''';
   AppState new_state;
   if (error_message != null) {
     new_state = state.rebuild(
-      (m) =>
-          m
-            ..undo_redo.replace(UndoRedo())
-            ..maybe_design = null
-            ..ui_state.changed_since_last_save = false
-            ..error_message = error_message,
+      (m) => m
+        ..undo_redo.replace(UndoRedo())
+        ..maybe_design = null
+        ..ui_state.changed_since_last_save = false
+        ..error_message = error_message,
     );
   } else if (design_new != null) {
     Design design = design_new;
@@ -95,20 +95,18 @@ ${util.stack_trace_message_bug_report(stack_trace)}''';
     }
 
     new_state = state.rebuild(
-      (m) =>
-          m
-            ..undo_redo.replace(UndoRedo())
-            ..maybe_design = design.toBuilder()
-            ..ui_state.update(
-              (u) =>
-                  u
-                    ..storables.replace(storables)
-                    ..selectables_store.replace(new_selectables_store)
-                    ..changed_since_last_save = false
-                    ..storables.loaded_filename = new_filename
-                    ..storables.side_selected_helix_idxs.replace(side_selected_helix_idxs),
-            )
-            ..error_message = "",
+      (m) => m
+        ..undo_redo.replace(UndoRedo())
+        ..maybe_design = design.toBuilder()
+        ..ui_state.update(
+          (u) => u
+            ..storables.replace(storables)
+            ..selectables_store.replace(new_selectables_store)
+            ..changed_since_last_save = false
+            ..storables.loaded_filename = new_filename
+            ..storables.side_selected_helix_idxs.replace(side_selected_helix_idxs),
+        )
+        ..error_message = "",
     );
   } else {
     throw AssertionError("This line should be unreachable");

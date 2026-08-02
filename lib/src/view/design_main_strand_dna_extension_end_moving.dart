@@ -69,10 +69,9 @@ mixin ExtensionEndMovingProps on UiProps {
 
 class ExtensionEndMovingComponent extends UiComponent2<ExtensionEndMovingProps> {
   @override
-  get defaultProps =>
-      (newProps()
-        ..render = true
-        ..allowable = true);
+  get defaultProps => (newProps()
+    ..render = true
+    ..allowable = true);
 
   @override
   render() {
@@ -88,12 +87,11 @@ class ExtensionEndMovingComponent extends UiComponent2<ExtensionEndMovingProps> 
     String classname =
         (props.is_5p! ? 'five-prime-end-moving' : 'three-prime-end-moving') +
         (props.allowable ? '' : ' disallowed-end');
-    end_props =
-        end_props
-          ..classname = classname
-          ..pos = pos
-          ..color = props.color!
-          ..forward = props.forward!;
+    end_props = end_props
+      ..classname = classname
+      ..pos = pos
+      ..color = props.color!
+      ..forward = props.forward!;
     var display_angle = util_state.compute_extension_length_and_angle_from_point(
       pos,
       props.attached_end_svg!,

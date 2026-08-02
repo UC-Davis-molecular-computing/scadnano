@@ -116,21 +116,19 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
     var y2 = (y0 + dy2).toStringAsFixed(2);
 
     //  String key = 'insertion-H${substrand.helix}-${offset}';
-    ReactElement insertion_path =
-        (Dom.path()
-          // ..onClick = ((_) => change_insertion_length())
-          ..className = constants.css_selector_insertion
-          ..stroke = color.toHexColor().toCssString()
-          ..fill = 'none'
-          ..id =
-              props
-                  .selectable_insertion
-                  .id // needed for SVG text to attach itself to path
-          ..d =
-              'M $x0 $y0 '
-              'C $x1 $y1, $x2 $y2, $x3 $y2 '
-              'C $x4 $y2, $x5 $y1, $x0 $y0 '
-          ..key = props.selectable_insertion.id)();
+    ReactElement insertion_path = (Dom.path()
+      // ..onClick = ((_) => change_insertion_length())
+      ..className = constants.css_selector_insertion
+      ..stroke = color.toHexColor().toCssString()
+      ..fill = 'none'
+      ..id = props
+          .selectable_insertion
+          .id // needed for SVG text to attach itself to path
+      ..d =
+          'M $x0 $y0 '
+          'C $x1 $y1, $x2 $y2, $x3 $y2 '
+          'C $x4 $y2, $x5 $y1, $x0 $y0 '
+      ..key = props.selectable_insertion.id)();
     return insertion_path;
   }
 
@@ -159,12 +157,11 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
     }
 
     String key = 'num-insertion-H${this.domain.helix}-${offset}';
-    SvgProps text_path_props =
-        Dom.textPath()
-          ..startOffset = '50%'
-          //      ..href = '#${util_state.id_insertion(substrand, offset)}'
-          ..xlinkHref = '#${props.selectable_insertion.id}'
-          ..className = 'insertion-length';
+    SvgProps text_path_props = Dom.textPath()
+      ..startOffset = '50%'
+      //      ..href = '#${util_state.id_insertion(substrand, offset)}'
+      ..xlinkHref = '#${props.selectable_insertion.id}'
+      ..className = 'insertion-length';
 
     //    return (Dom.text()
     //      ..onClick = ((_) => change_insertion_length())

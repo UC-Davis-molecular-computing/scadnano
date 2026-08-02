@@ -20,17 +20,16 @@ abstract class DNAEnd with SelectableMixin, BuiltJsonSerializable implements Bui
     required bool is_scaffold,
     required bool is_on_extension,
   }) => DNAEnd.from(
-    (b) =>
-        b
-          ..offset = offset
-          ..is_5p = is_5p
-          ..is_start = is_start
-          ..forward = forward
-          ..substrand_is_first = substrand_is_first
-          ..substrand_is_last = substrand_is_last
-          ..substrand_id = substrand_id
-          ..is_scaffold = is_scaffold
-          ..is_on_extension = is_on_extension,
+    (b) => b
+      ..offset = offset
+      ..is_5p = is_5p
+      ..is_start = is_start
+      ..forward = forward
+      ..substrand_is_first = substrand_is_first
+      ..substrand_is_last = substrand_is_last
+      ..substrand_id = substrand_id
+      ..is_scaffold = is_scaffold
+      ..is_on_extension = is_on_extension,
   );
 
   factory DNAEnd.from([void Function(DNAEndBuilder) updates]) = _$DNAEnd;

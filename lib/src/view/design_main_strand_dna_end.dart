@@ -159,48 +159,45 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       }
     }
 
-    end_props =
-        end_props
-          ..on_pointer_down = handle_end_click_select_and_or_move_start
-          ..on_pointer_up = handle_end_pointer_up_select
-          ..on_mouse_up = handle_end_click_ligate_or_potential_crossover
-          ..on_mouse_enter = handle_on_mouse_enter
-          ..on_mouse_leave = handle_on_mouse_leave
-          ..on_mouse_move = handle_on_mouse_move
-          ..classname = classname
-          ..pos =
-              pos // TODO: why doesn't this the overreact analyzer error since pos is required?
-          ..color = color
-          ..forward = forward
-          ..transform = 'rotate(${rotation_degrees})'
-          ..id_ = dna_end.id
-          ..key = 'nonmoving-end';
+    end_props = end_props
+      ..on_pointer_down = handle_end_click_select_and_or_move_start
+      ..on_pointer_up = handle_end_pointer_up_select
+      ..on_mouse_up = handle_end_click_ligate_or_potential_crossover
+      ..on_mouse_enter = handle_on_mouse_enter
+      ..on_mouse_leave = handle_on_mouse_leave
+      ..on_mouse_move = handle_on_mouse_move
+      ..classname = classname
+      ..pos =
+          pos // TODO: why doesn't this the overreact analyzer error since pos is required?
+      ..color = color
+      ..forward = forward
+      ..transform = 'rotate(${rotation_degrees})'
+      ..id_ = dna_end.id
+      ..key = 'nonmoving-end';
 
     // draw avatar of moving DNA end if it is moving
-    end_moving_props =
-        end_moving_props
-          ..dna_end = dna_end
-          ..helix = props.helix
-          ..color = color
-          ..forward = forward
-          ..is_5p = props.is_5p
-          ..transform = 'rotate(${rotation_degrees})'
-          ..svg_position_y = props.helix_svg_position.y
-          ..key = 'moving-end';
+    end_moving_props = end_moving_props
+      ..dna_end = dna_end
+      ..helix = props.helix
+      ..color = color
+      ..forward = forward
+      ..is_5p = props.is_5p
+      ..transform = 'rotate(${rotation_degrees})'
+      ..svg_position_y = props.helix_svg_position.y
+      ..key = 'moving-end';
 
     // draw avatar of moving extension if it is moving
-    extension_end_moving_props =
-        extension_end_moving_props
-          ..dna_end = dna_end
-          ..ext = props.ext
-          ..geometry = props.geometry
-          ..attached_end_svg = extension_attached_end_svg
-          ..helix = props.helix
-          ..group = props.group
-          ..color = color
-          ..forward = forward
-          ..is_5p = props.is_5p
-          ..key = 'moving-extension';
+    extension_end_moving_props = extension_end_moving_props
+      ..dna_end = dna_end
+      ..ext = props.ext
+      ..geometry = props.geometry
+      ..attached_end_svg = extension_attached_end_svg
+      ..helix = props.helix
+      ..group = props.group
+      ..color = color
+      ..forward = forward
+      ..is_5p = props.is_5p
+      ..key = 'moving-extension';
 
     return (Dom.g()
       ..className = constants.css_selector_end_parent_group
@@ -245,15 +242,14 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       app.dispatch(
         actions.ContextMenuShow(
           context_menu: ContextMenu(
-            items:
-                props
-                    .context_menu_strand(
-                      props.strand,
-                      domain: domain,
-                      address: address,
-                      modification_type: (props.is_5p ? ModificationType.five_prime : ModificationType.three_prime),
-                    )
-                    .build(),
+            items: props
+                .context_menu_strand(
+                  props.strand,
+                  domain: domain,
+                  address: address,
+                  modification_type: (props.is_5p ? ModificationType.five_prime : ModificationType.three_prime),
+                )
+                .build(),
             position: util_state.from_point_num(event.page),
           ),
         ),

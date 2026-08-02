@@ -371,13 +371,12 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
           title: 'remove extension name',
           on_click: () {
             var exts = util_state.add_if_not_null(app.state.ui_state.selectables_store.selected_extensions, props.ext);
-            var action =
-                exts.length > 1
-                    ? actions.BatchAction(
-                      exts.map((l) => actions.SubstrandNameSet(name: null, substrand: l)),
-                      "remove extension names",
-                    )
-                    : actions.SubstrandNameSet(name: null, substrand: props.ext);
+            var action = exts.length > 1
+                ? actions.BatchAction(
+                    exts.map((l) => actions.SubstrandNameSet(name: null, substrand: l)),
+                    "remove extension names",
+                  )
+                : actions.SubstrandNameSet(name: null, substrand: props.ext);
             app.dispatch(action);
           },
         ),
@@ -387,28 +386,25 @@ class DesignMainExtensionComponent extends UiComponent2<DesignMainExtensionProps
           title: 'remove extension label',
           on_click: () {
             var exts = util_state.add_if_not_null(app.state.ui_state.selectables_store.selected_extensions, props.ext);
-            var action =
-                exts.length > 1
-                    ? actions.BatchAction(
-                      exts.map((l) => actions.SubstrandLabelSet(label: null, substrand: l)),
-                      "remove extension labels",
-                    )
-                    : actions.SubstrandLabelSet(label: null, substrand: props.ext);
+            var action = exts.length > 1
+                ? actions.BatchAction(
+                    exts.map((l) => actions.SubstrandLabelSet(label: null, substrand: l)),
+                    "remove extension labels",
+                  )
+                : actions.SubstrandLabelSet(label: null, substrand: props.ext);
             app.dispatch(action);
           },
         ),
       ContextMenuItem(
         title: 'set extension color',
-        on_click:
-            () => app.dispatch(actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: props.ext)),
+        on_click: () =>
+            app.dispatch(actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: props.ext)),
       ),
       if (props.ext.color != null)
         ContextMenuItem(
           title: 'remove extension color',
-          on_click:
-              () => app.dispatch(
-                actions.StrandOrSubstrandColorSet(strand: props.strand, substrand: props.ext, color: null),
-              ),
+          on_click: () =>
+              app.dispatch(actions.StrandOrSubstrandColorSet(strand: props.strand, substrand: props.ext, color: null)),
         ),
     ];
   }

@@ -36,13 +36,12 @@ abstract class Geometry with BuiltJsonSerializable, UnusedFields implements Buil
     double bases_per_turn = constants.default_bases_per_turn,
     double minor_groove_angle = constants.default_minor_groove_angle,
   }) => Geometry.from(
-    (b) =>
-        b
-          ..rise_per_base_pair = rise_per_base_pair
-          ..helix_radius = helix_radius
-          ..inter_helix_gap = inter_helix_gap
-          ..bases_per_turn = bases_per_turn
-          ..minor_groove_angle = minor_groove_angle,
+    (b) => b
+      ..rise_per_base_pair = rise_per_base_pair
+      ..helix_radius = helix_radius
+      ..inter_helix_gap = inter_helix_gap
+      ..bases_per_turn = bases_per_turn
+      ..minor_groove_angle = minor_groove_angle,
   );
 
   /// Distance in nanometers between two adjacent base pairs along the length of a DNA double helix.

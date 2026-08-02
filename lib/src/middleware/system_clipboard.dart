@@ -168,7 +168,8 @@ void put_strand_info_on_clipboard(Store<AppState> store) {
       }
     }
     var mod_json = encoder.convert(mods_map);
-    var clipboard_content = '''{
+    var clipboard_content =
+        '''{
   "${constants.strands_key}": [
     ${strands_json}
   ],

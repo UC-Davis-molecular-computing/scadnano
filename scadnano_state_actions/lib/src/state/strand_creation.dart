@@ -14,13 +14,12 @@ abstract class StrandCreation with BuiltJsonSerializable implements Built<Strand
     required int original_offset,
     required Color color,
   }) => StrandCreation.from(
-    (b) =>
-        b
-          ..helix.replace(helix)
-          ..forward = forward
-          ..original_offset = original_offset
-          ..current_offset = original_offset
-          ..color = color,
+    (b) => b
+      ..helix.replace(helix)
+      ..forward = forward
+      ..original_offset = original_offset
+      ..current_offset = original_offset
+      ..color = color,
   );
 
   factory StrandCreation.from([void Function(StrandCreationBuilder) updates]) = _$StrandCreation;

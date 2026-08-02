@@ -36,7 +36,8 @@ helix_grid_offsets_middleware(Store<AppState> store, dynamic action, NextDispatc
             var helices = store.state.design.helices;
             var pos1 = helices[h1idx]!.position3d(geometry);
             var pos2 = helices[h2idx]!.position3d(geometry);
-            var msg = '''\
+            var msg =
+                '''\
 This design cannot be automatically converted to the ${action.grid.name} grid.
 Two helices, with idx values ${h1idx} and ${h2idx}, have positions that are
 both closest to grid position (${gp1.h}, ${gp1.v}). They have positions

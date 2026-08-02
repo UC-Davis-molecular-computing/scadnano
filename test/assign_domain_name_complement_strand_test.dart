@@ -39,17 +39,16 @@ main() {
       helices = [for (int i = 0; i < num_helices; i++) Helix(idx: i, max_offset: 100, grid: Grid.square)];
       design = Design(helices: helices, grid: Grid.square);
 
-      design =
-          design
-              .draw_strand(1, 16)
-              .move(-16)
-              .cross(0)
-              .move(32)
-              .loopout(1, 3)
-              .move(-16)
-              .with_domain_name("DEF*")
-              .as_scaffold()
-              .commit();
+      design = design
+          .draw_strand(1, 16)
+          .move(-16)
+          .cross(0)
+          .move(32)
+          .loopout(1, 3)
+          .move(-16)
+          .with_domain_name("DEF*")
+          .as_scaffold()
+          .commit();
       design = design.draw_strand(1, 0).move(16).with_domain_name("ABC").cross(0).move(-16).commit();
       design = design.draw_strand(0, 32).move(-16).with_domain_name("GHI").cross(1).move(16).commit();
       design = design.draw_strand(0, 40).move(10).commit();
@@ -219,20 +218,26 @@ main() {
       helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       design = Design(helices: helices, grid: Grid.square);
 
-      design =
-          design.draw_strand(0, 0).move(8).with_domain_name("ABC").cross(0).move(-8).cross(0).as_circular().commit();
+      design = design
+          .draw_strand(0, 0)
+          .move(8)
+          .with_domain_name("ABC")
+          .cross(0)
+          .move(-8)
+          .cross(0)
+          .as_circular()
+          .commit();
       design = design.draw_strand(0, 8).move(8).cross(0).move(-8).with_domain_name("DEF").commit();
       design = design.draw_strand(0, 24).move(-8).with_domain_name("GHI").cross(0).move(8).commit();
-      design =
-          design
-              .draw_strand(0, 25)
-              .move(8)
-              .cross(0, 29)
-              .move(-3)
-              .with_domain_name("JKL*")
-              .cross(0, 25)
-              .as_circular()
-              .commit();
+      design = design
+          .draw_strand(0, 25)
+          .move(8)
+          .cross(0, 29)
+          .move(-3)
+          .with_domain_name("JKL*")
+          .cross(0, 25)
+          .as_circular()
+          .commit();
     });
 
     /* 0       8       16      24      32
@@ -316,8 +321,14 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design =
-          design.draw_strand(0, 0).move(8).with_domain_name("ABC").cross(0).move(-8).with_domain_name("XYZ").commit();
+      design = design
+          .draw_strand(0, 0)
+          .move(8)
+          .with_domain_name("ABC")
+          .cross(0)
+          .move(-8)
+          .with_domain_name("XYZ")
+          .commit();
 
       var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
       var state = app_state_from_design(design);
@@ -346,8 +357,14 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design =
-          design.draw_strand(0, 0).move(9).with_domain_name("ABC").cross(0).move(-8).with_domain_name("XYZ").commit();
+      design = design
+          .draw_strand(0, 0)
+          .move(9)
+          .with_domain_name("ABC")
+          .cross(0)
+          .move(-8)
+          .with_domain_name("XYZ")
+          .commit();
 
       var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
       var state = app_state_from_design(design);
@@ -602,17 +619,16 @@ main() {
       helices = [for (int i = 0; i < num_helices; i++) Helix(idx: i, max_offset: 100, grid: Grid.square)];
       design = Design(helices: helices, grid: Grid.square);
 
-      design =
-          design
-              .draw_strand(1, 16)
-              .move(-16)
-              .cross(0)
-              .move(32)
-              .loopout(1, 3)
-              .move(-16)
-              .with_domain_name("DEF*")
-              .as_scaffold()
-              .commit();
+      design = design
+          .draw_strand(1, 16)
+          .move(-16)
+          .cross(0)
+          .move(32)
+          .loopout(1, 3)
+          .move(-16)
+          .with_domain_name("DEF*")
+          .as_scaffold()
+          .commit();
       design = design.draw_strand(1, 0).move(16).with_domain_name("ABC").cross(0).move(-16).commit();
       design = design.draw_strand(0, 32).move(-16).with_domain_name("GHI").cross(1).move(16).commit();
       design = design.draw_strand(0, 40).move(10).cross(0).move(-10).with_domain_name("JKL").as_circular().commit();

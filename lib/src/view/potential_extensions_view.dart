@@ -39,16 +39,15 @@ class PotentialExtensionsViewComponent extends UiComponent2<PotentialExtensionsV
     // Similar issue as #655
     return (Dom.g())(
       potential_extensions.moves.map(
-        (move) =>
-            (Dom.line()
-              ..x1 = '${move.attached_end_position.x}'
-              ..y1 = '${move.attached_end_position.y}'
-              ..x2 = '${potential_extensions.current_point_of(move.dna_end)!.x}'
-              ..y2 = '${potential_extensions.current_point_of(move.dna_end)!.y}'
-              ..className = 'potential-segment'
-              ..stroke = move.color.toHexColor().toCssString()
-              ..key = '${props.id_}-${move.dna_end.id}'
-              ..id = '${props.id_}-${move.dna_end.id}')(),
+        (move) => (Dom.line()
+          ..x1 = '${move.attached_end_position.x}'
+          ..y1 = '${move.attached_end_position.y}'
+          ..x2 = '${potential_extensions.current_point_of(move.dna_end)!.x}'
+          ..y2 = '${potential_extensions.current_point_of(move.dna_end)!.y}'
+          ..className = 'potential-segment'
+          ..stroke = move.color.toHexColor().toCssString()
+          ..key = '${props.id_}-${move.dna_end.id}'
+          ..id = '${props.id_}-${move.dna_end.id}')(),
       ),
     );
   }
