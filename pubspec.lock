@@ -89,14 +89,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.1"
-  build_modules:
-    dependency: transitive
-    description:
-      name: build_modules
-      sha256: "51422a5753a74fda433d4345b11ce6ad40c2033880a26b2c6b7a8fa7e10e8f2f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.1.11"
   build_runner:
     dependency: "direct dev"
     description:
@@ -117,10 +109,10 @@ packages:
     dependency: "direct dev"
     description:
       name: build_web_compilers
-      sha256: "29d33d8b90996488f605957c59044e6f96a17dad452f38dc4dee54d88c57f769"
+      sha256: c8be4b48f09289d145c7eaa3240f1e7776c529ea1cecddf483218edd3129de3f
       url: "https://pub.dev"
     source: hosted
-    version: "4.4.17"
+    version: "4.8.0"
   built_collection:
     dependency: "direct main"
     description:
@@ -573,10 +565,10 @@ packages:
     dependency: transitive
     description:
       name: scratch_space
-      sha256: "3417e014d20b12cebc5bfb1c0b1f63806054177158596cc31cc4d9aaca767a60"
+      sha256: "55f141cf286eca871f739518b689af61cb994d671f3fd8efabd63aba7578c309"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.0"
+    version: "1.2.2"
   shelf:
     dependency: transitive
     description:
