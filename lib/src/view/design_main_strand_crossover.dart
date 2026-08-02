@@ -122,29 +122,28 @@ class DesignMainStrandCrossoverComponent
 
     // String tooltip = 'PUT TOOLTIP TEXT HERE (if we think of something)';
 
-    var path_props =
-        Dom.path()
-          ..d = path
-          ..stroke = color
-          ..className = classname
-          ..onMouseEnter = (ev) {
-            setState(newState()..mouse_hover = true);
-          }
-          ..onMouseLeave = (_) {
-            setState(newState()..mouse_hover = false);
-          }
-          ..onPointerDown = ((ev) {
-            if (crossover_selectable(props.crossover)) {
-              handle_selection_mouse_down(props.crossover, ev.nativeEvent);
-            }
-          })
-          ..onPointerUp = ((ev) {
-            if (crossover_selectable(props.crossover)) {
-              handle_selection_mouse_up(props.crossover, ev.nativeEvent);
-            }
-          })
-          ..id = id
-          ..key = id;
+    var path_props = Dom.path()
+      ..d = path
+      ..stroke = color
+      ..className = classname
+      ..onMouseEnter = (ev) {
+        setState(newState()..mouse_hover = true);
+      }
+      ..onMouseLeave = (_) {
+        setState(newState()..mouse_hover = false);
+      }
+      ..onPointerDown = ((ev) {
+        if (crossover_selectable(props.crossover)) {
+          handle_selection_mouse_down(props.crossover, ev.nativeEvent);
+        }
+      })
+      ..onPointerUp = ((ev) {
+        if (crossover_selectable(props.crossover)) {
+          handle_selection_mouse_up(props.crossover, ev.nativeEvent);
+        }
+      })
+      ..id = id
+      ..key = id;
 
     if (within_group) {
       path_props.transform = transform_of_helix2(props, props.prev_domain.helix);

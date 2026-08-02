@@ -122,8 +122,9 @@ BuiltList<Strand> move_linker_reducer(BuiltList<Strand> strands, AppState state,
     // if linker is a Loopout, we need to convert the Crossover we just made in
     // _join_strands_with_crossover to a Loopout
     if (linker is Loopout) {
-      int crossover_idx =
-          end_fixed.is_5p ? strand_to.domains.length - 1 : new_strand_connected_intermediate.domains.length - 1;
+      int crossover_idx = end_fixed.is_5p
+          ? strand_to.domains.length - 1
+          : new_strand_connected_intermediate.domains.length - 1;
       var crossover = new_strand_connected.linkers[crossover_idx] as Crossover;
       var convert_crossover_to_loopout_action = actions.ConvertCrossoverToLoopout(
         crossover,
@@ -214,16 +215,14 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
     domain_after = domain_left;
   }
   domain_before = domain_before.rebuild(
-    (b) =>
-        b
-          ..is_last = true
-          ..is_first = substrands_before.isEmpty,
+    (b) => b
+      ..is_last = true
+      ..is_first = substrands_before.isEmpty,
   );
   domain_after = domain_after.rebuild(
-    (b) =>
-        b
-          ..is_first = true
-          ..is_last = substrands_after.isEmpty,
+    (b) => b
+      ..is_first = true
+      ..is_last = substrands_after.isEmpty,
   );
   substrands_before.add(domain_before);
   substrands_after.insert(0, domain_after);
@@ -252,10 +251,9 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
   if (strand.circular) {
     var substrands = substrands_after + substrands_before;
     var strand_new = strand.rebuild(
-      (b) =>
-          b
-            ..substrands.replace(substrands)
-            ..circular = false,
+      (b) => b
+        ..substrands.replace(substrands)
+        ..circular = false,
     );
     strand_new = strand_new.initialize();
 
@@ -420,10 +418,9 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
     }
 
     var new_strand = strand.rebuild(
-      (b) =>
-          b
-            ..substrands.replace(substrands)
-            ..circular = true,
+      (b) => b
+        ..substrands.replace(substrands)
+        ..circular = true,
     );
     new_strand = new_strand.initialize();
 
@@ -663,10 +660,9 @@ BuiltList<Strand> _join_strands_with_crossover(
   Domain first_domain_5p = substrands_5p[0] as Domain;
   last_domain_3p = last_domain_3p.rebuild((b) => b..is_last = false);
   first_domain_5p = first_domain_5p.rebuild(
-    (b) =>
-        b
-          ..is_first = false
-          ..strand_id = strand_5p.id,
+    (b) => b
+      ..is_first = false
+      ..strand_id = strand_5p.id,
   );
 
   // put back into Substrand lists

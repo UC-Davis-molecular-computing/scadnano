@@ -52,7 +52,8 @@ ${msg_generic}""";
         int helix = strand.first_domain.helix;
         var offset_5p = strand.first_domain.offset_5p;
         var forward = strand.first_domain.forward;
-        var msg = """\
+        var msg =
+            """\
 The strand with 5' end at helix ${helix}, offset ${offset_5p}, forward = ${forward} 
 cannot have all of its crossovers converted to Loopouts.
 ${msg_generic}""";

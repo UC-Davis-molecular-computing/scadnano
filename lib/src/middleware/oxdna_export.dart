@@ -452,8 +452,8 @@ const NM_TO_OX_UNITS = 1.0 / 0.8518;
 
   var position_in_helix_group_rotated =
       ((pitch_axis * position_in_helix_group.x) +
-          (yaw_axis * position_in_helix_group.y) +
-          (roll_axis * position_in_helix_group.z));
+      (yaw_axis * position_in_helix_group.y) +
+      (roll_axis * position_in_helix_group.z));
 
   var helix_group_offset = OxdnaVector(group.position.x, group.position.y, group.position.z);
 

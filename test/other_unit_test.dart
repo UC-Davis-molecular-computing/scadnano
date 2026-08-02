@@ -251,14 +251,13 @@ main() {
 
       Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild(
-        (s) =>
-            s
-              ..strands.add(
-                Strand([
-                  Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
-                  Domain(helix: 1, forward: false, start: 5, end: 10, is_scaffold: false),
-                ], color: Color.rgb(247, 67, 8)),
-              ),
+        (s) => s
+          ..strands.add(
+            Strand([
+              Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
+              Domain(helix: 1, forward: false, start: 5, end: 10, is_scaffold: false),
+            ], color: Color.rgb(247, 67, 8)),
+          ),
       );
       expect(actual_design.strands, expected_design.strands);
     });
@@ -268,14 +267,13 @@ main() {
 
       Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild(
-        (s) =>
-            s
-              ..strands.add(
-                Strand([
-                  Domain(helix: 1, forward: true, start: 5, end: 10, is_scaffold: false),
-                  Domain(helix: 0, forward: false, start: 0, end: 10, is_scaffold: false),
-                ], color: Color.rgb(247, 67, 8)),
-              ),
+        (s) => s
+          ..strands.add(
+            Strand([
+              Domain(helix: 1, forward: true, start: 5, end: 10, is_scaffold: false),
+              Domain(helix: 0, forward: false, start: 0, end: 10, is_scaffold: false),
+            ], color: Color.rgb(247, 67, 8)),
+          ),
       );
       expect(actual_design.strands, expected_design.strands);
     });
@@ -285,16 +283,15 @@ main() {
 
       Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild(
-        (s) =>
-            s
-              ..strands.add(
-                Strand([
-                  Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
-                  Domain(helix: 1, forward: false, start: 5, end: 10, is_scaffold: false),
-                  Loopout(loopout_num_bases: 3, prev_domain_idx: 0, is_scaffold: false),
-                  Domain(helix: 2, forward: true, start: 5, end: 15, is_scaffold: false),
-                ], color: Color.rgb(247, 67, 8)),
-              ),
+        (s) => s
+          ..strands.add(
+            Strand([
+              Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
+              Domain(helix: 1, forward: false, start: 5, end: 10, is_scaffold: false),
+              Loopout(loopout_num_bases: 3, prev_domain_idx: 0, is_scaffold: false),
+              Domain(helix: 2, forward: true, start: 5, end: 15, is_scaffold: false),
+            ], color: Color.rgb(247, 67, 8)),
+          ),
       );
       expect(actual_design.strands, expected_design.strands);
     });
@@ -304,15 +301,14 @@ main() {
 
       Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild(
-        (s) =>
-            s
-              ..strands.add(
-                Strand([
-                  Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
-                  Domain(helix: 1, forward: true, start: 10, end: 15, is_scaffold: false),
-                  Domain(helix: 2, forward: true, start: 15, end: 20, is_scaffold: false),
-                ], color: Color.rgb(247, 67, 8)),
-              ),
+        (s) => s
+          ..strands.add(
+            Strand([
+              Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
+              Domain(helix: 1, forward: true, start: 10, end: 15, is_scaffold: false),
+              Domain(helix: 2, forward: true, start: 15, end: 20, is_scaffold: false),
+            ], color: Color.rgb(247, 67, 8)),
+          ),
       );
       expect(actual_design.strands, expected_design.strands);
       expected_design = expected_design.rebuild((s) => s..strands.clear());
@@ -323,15 +319,14 @@ main() {
 
       Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild(
-        (s) =>
-            s
-              ..strands.add(
-                Strand([
-                  Domain(helix: 0, forward: false, start: 10, end: 20, is_scaffold: false),
-                  Domain(helix: 1, forward: false, start: 5, end: 10, is_scaffold: false),
-                  Domain(helix: 2, forward: false, start: 0, end: 5, is_scaffold: false),
-                ], color: Color.rgb(247, 67, 8)),
-              ),
+        (s) => s
+          ..strands.add(
+            Strand([
+              Domain(helix: 0, forward: false, start: 10, end: 20, is_scaffold: false),
+              Domain(helix: 1, forward: false, start: 5, end: 10, is_scaffold: false),
+              Domain(helix: 2, forward: false, start: 0, end: 5, is_scaffold: false),
+            ], color: Color.rgb(247, 67, 8)),
+          ),
       );
       expect(actual_design.strands, expected_design.strands);
     });
@@ -342,24 +337,22 @@ main() {
 
       Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild(
-        (s) =>
-            s
-              ..strands.add(
-                Strand([
-                  Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
-                  Domain(helix: 1, forward: false, start: 0, end: 10, is_scaffold: false),
-                ], color: Color.rgb(247, 67, 8)),
-              ),
+        (s) => s
+          ..strands.add(
+            Strand([
+              Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
+              Domain(helix: 1, forward: false, start: 0, end: 10, is_scaffold: false),
+            ], color: Color.rgb(247, 67, 8)),
+          ),
       );
       expected_design = expected_design.rebuild(
-        (s) =>
-            s
-              ..strands.add(
-                Strand([
-                  Domain(helix: 0, forward: false, start: 10, end: 20, is_scaffold: false),
-                  Domain(helix: 1, forward: true, start: 10, end: 20, is_scaffold: false),
-                ], color: Color.rgb(247, 67, 8)),
-              ),
+        (s) => s
+          ..strands.add(
+            Strand([
+              Domain(helix: 0, forward: false, start: 10, end: 20, is_scaffold: false),
+              Domain(helix: 1, forward: true, start: 10, end: 20, is_scaffold: false),
+            ], color: Color.rgb(247, 67, 8)),
+          ),
       );
       expect(actual_design.strands, expected_design.strands);
     });
@@ -370,101 +363,91 @@ main() {
 
       Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild(
-        (s) =>
-            s
-              ..strands.add(
-                Strand([
-                  Domain(helix: 0, forward: false, start: 10, end: 20, is_scaffold: false),
-                  Domain(helix: 1, forward: true, start: 10, end: 20, is_scaffold: false),
-                ], color: Color.rgb(247, 67, 8)),
-              ),
+        (s) => s
+          ..strands.add(
+            Strand([
+              Domain(helix: 0, forward: false, start: 10, end: 20, is_scaffold: false),
+              Domain(helix: 1, forward: true, start: 10, end: 20, is_scaffold: false),
+            ], color: Color.rgb(247, 67, 8)),
+          ),
       );
       expected_design = expected_design.rebuild(
-        (s) =>
-            s
-              ..strands.add(
-                Strand([
-                  Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
-                  Domain(helix: 1, forward: false, start: 0, end: 10, is_scaffold: false),
-                ], color: Color.rgb(247, 67, 8)),
-              ),
+        (s) => s
+          ..strands.add(
+            Strand([
+              Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
+              Domain(helix: 1, forward: false, start: 0, end: 10, is_scaffold: false),
+            ], color: Color.rgb(247, 67, 8)),
+          ),
       );
       expect(actual_design.strands, expected_design.strands);
     });
     test('test_strand__multiple_strands_overlap_no_error', () {
       Design actual_design = new Design(grid: Grid.square, helices: helices);
-      actual_design =
-          actual_design
-              .draw_strand(0, 0)
-              .to(10)
-              .cross(1)
-              .to(0)
-              .as_scaffold()
-              .with_modification_internal(
-                5,
-                ModificationInternal(
+      actual_design = actual_design
+          .draw_strand(0, 0)
+          .to(10)
+          .cross(1)
+          .to(0)
+          .as_scaffold()
+          .with_modification_internal(
+            5,
+            ModificationInternal(
+              display_text: 'Cy3',
+              vendor_code: '/iCy3/',
+              allowed_bases: null,
+              unused_fields: BuiltMap<String, dynamic>(),
+            ),
+          )
+          .commit();
+      actual_design = actual_design
+          .draw_strand(0, 10)
+          .to(0)
+          .cross(1)
+          .to(10)
+          .with_modification_5p(
+            Modification5Prime(display_text: 'B', vendor_code: '/5Biosg/', unused_fields: BuiltMap<String, dynamic>()),
+          )
+          .commit();
+
+      Design expected_design = new Design(grid: Grid.square, helices: helices);
+      expected_design = expected_design.rebuild(
+        (s) => s
+          ..strands.add(
+            Strand(
+              [
+                Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
+                Domain(helix: 1, forward: false, start: 0, end: 10, is_scaffold: false),
+              ],
+              color: Color.rgb(247, 67, 8),
+              modifications_int: {
+                5: ModificationInternal(
                   display_text: 'Cy3',
                   vendor_code: '/iCy3/',
                   allowed_bases: null,
                   unused_fields: BuiltMap<String, dynamic>(),
                 ),
-              )
-              .commit();
-      actual_design =
-          actual_design
-              .draw_strand(0, 10)
-              .to(0)
-              .cross(1)
-              .to(10)
-              .with_modification_5p(
-                Modification5Prime(
-                  display_text: 'B',
-                  vendor_code: '/5Biosg/',
-                  unused_fields: BuiltMap<String, dynamic>(),
-                ),
-              )
-              .commit();
-
-      Design expected_design = new Design(grid: Grid.square, helices: helices);
-      expected_design = expected_design.rebuild(
-        (s) =>
-            s
-              ..strands.add(
-                Strand(
-                  [
-                    Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
-                    Domain(helix: 1, forward: false, start: 0, end: 10, is_scaffold: false),
-                  ],
-                  color: Color.rgb(247, 67, 8),
-                  modifications_int: {
-                    5: ModificationInternal(
-                      display_text: 'Cy3',
-                      vendor_code: '/iCy3/',
-                      allowed_bases: null,
-                      unused_fields: BuiltMap<String, dynamic>(),
-                    ),
-                  },
-                  is_scaffold: true,
-                ),
-              ),
+              },
+              is_scaffold: true,
+            ),
+          ),
       );
       expected_design = expected_design.rebuild(
-        (s) =>
-            s
-              ..strands.add(
-                Strand(
-                  [
-                    Domain(helix: 0, forward: false, start: 0, end: 10, is_scaffold: false),
-                    Domain(helix: 1, forward: true, start: 0, end: 10, is_scaffold: false),
-                  ],
-                  color: Color.rgb(247, 67, 8),
-                  modification_5p: Modification5Prime(
-                    display_text: 'B',
-                    vendor_code: '/5Biosg/',
-                    unused_fields: BuiltMap<String, dynamic>(),
-                  ),
-                ),
+        (s) => s
+          ..strands.add(
+            Strand(
+              [
+                Domain(helix: 0, forward: false, start: 0, end: 10, is_scaffold: false),
+                Domain(helix: 1, forward: true, start: 0, end: 10, is_scaffold: false),
+              ],
+              color: Color.rgb(247, 67, 8),
+              modification_5p: Modification5Prime(
+                display_text: 'B',
+                vendor_code: '/5Biosg/',
+                unused_fields: BuiltMap<String, dynamic>(),
               ),
+            ),
+          ),
       );
       expect(actual_design.strands, expected_design.strands);
     });
@@ -474,15 +457,14 @@ main() {
 
       Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild(
-        (s) =>
-            s
-              ..strands.add(
-                Strand([
-                  Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
-                  Domain(helix: 1, forward: false, start: 5, end: 10, is_scaffold: false),
-                  Domain(helix: 1, forward: false, start: 0, end: 5, is_scaffold: false),
-                ], color: Color.rgb(247, 67, 8)),
-              ),
+        (s) => s
+          ..strands.add(
+            Strand([
+              Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
+              Domain(helix: 1, forward: false, start: 5, end: 10, is_scaffold: false),
+              Domain(helix: 1, forward: false, start: 0, end: 5, is_scaffold: false),
+            ], color: Color.rgb(247, 67, 8)),
+          ),
       );
       expect(actual_design.strands, expected_design.strands);
     });

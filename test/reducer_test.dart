@@ -1900,10 +1900,9 @@ main() {
 
     BuiltList<Strand> new_strands = two_helices_design.strands.rebuild((b) => b..removeRange(0, 2));
     Design expected_design = two_helices_design.rebuild(
-      (b) =>
-          b
-            ..helices.replace({1: helix1})
-            ..strands.replace(new_strands),
+      (b) => b
+        ..helices.replace({1: helix1})
+        ..strands.replace(new_strands),
     );
 
     expect_design_equal(final_design, expected_design);
@@ -2578,10 +2577,9 @@ main() {
 
     // First Undo.
     expected_undo_redo = UndoRedo().rebuild(
-      (b) =>
-          b
-            ..undo_stack.add(new UndoRedoItem("move DNA ends", simple_helix_no_seq_design))
-            ..redo_stack.add(new UndoRedoItem("move DNA ends", final_state.design)),
+      (b) => b
+        ..undo_stack.add(new UndoRedoItem("move DNA ends", simple_helix_no_seq_design))
+        ..redo_stack.add(new UndoRedoItem("move DNA ends", final_state.design)),
     );
     AppState state_undo_1 = app_state_reducer(final_state, Undo(1));
 
@@ -2691,10 +2689,9 @@ main() {
 
     // First Undo.
     expected_undo_redo = UndoRedo().rebuild(
-      (b) =>
-          b
-            ..undo_stack.add(new UndoRedoItem("move DNA ends", simple_helix_no_seq_design))
-            ..redo_stack.add(new UndoRedoItem("move DNA ends", final_state.design)),
+      (b) => b
+        ..undo_stack.add(new UndoRedoItem("move DNA ends", simple_helix_no_seq_design))
+        ..redo_stack.add(new UndoRedoItem("move DNA ends", final_state.design)),
     );
     AppState state_undo_1 = app_state_reducer(final_state, Undo(1));
 
@@ -3201,10 +3198,9 @@ main() {
       ]);
       SelectablesStore selectables_store = SelectablesStore().select(two_helices_design.strands[0].dnaend_3p);
       AppState initial_state = app_state_from_design(two_helices_design).rebuild(
-        (b) =>
-            b
-              ..ui_state.storables.select_mode_state.replace(modes)
-              ..ui_state.selectables_store.replace(selectables_store),
+        (b) => b
+          ..ui_state.storables.select_mode_state.replace(modes)
+          ..ui_state.selectables_store.replace(selectables_store),
       );
 
       AppState final_state = app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.end_3p_strand));
@@ -4217,10 +4213,9 @@ main() {
 
     test('Helix selection clears after load', () {
       AppState initial_state = app_state_from_design(simple_strand_design).rebuild(
-        (b) =>
-            b
-              ..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([0, 2])
-              ..ui_state.storables.clear_helix_selection_when_loading_new_design = true,
+        (b) => b
+          ..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([0, 2])
+          ..ui_state.storables.clear_helix_selection_when_loading_new_design = true,
       );
       AppState final_state = app_state_reducer(
         initial_state,
@@ -4231,10 +4226,9 @@ main() {
 
     test('Helix selection saved after load', () {
       AppState initial_state = app_state_from_design(simple_strand_design).rebuild(
-        (b) =>
-            b
-              ..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([0, 2])
-              ..ui_state.storables.clear_helix_selection_when_loading_new_design = false,
+        (b) => b
+          ..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([0, 2])
+          ..ui_state.storables.clear_helix_selection_when_loading_new_design = false,
       );
       AppState final_state = app_state_reducer(
         initial_state,
@@ -4245,10 +4239,9 @@ main() {
 
     test('Helix selection saved after load (remove extraneous selected helices)', () {
       AppState initial_state = app_state_from_design(simple_strand_design).rebuild(
-        (b) =>
-            b
-              ..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([0, 2])
-              ..ui_state.storables.clear_helix_selection_when_loading_new_design = false,
+        (b) => b
+          ..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([0, 2])
+          ..ui_state.storables.clear_helix_selection_when_loading_new_design = false,
       );
       AppState final_state = app_state_reducer(
         initial_state,
@@ -4717,19 +4710,18 @@ main() {
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design =
-          design
-              .draw_strand(0, 0)
-              .move(9)
-              .commit()
-              .draw_strand(1, 0)
-              .move(9)
-              .commit()
-              .draw_strand(0, 10)
-              .move(9)
-              .cross(1)
-              .move(-9)
-              .commit();
+      design = design
+          .draw_strand(0, 0)
+          .move(9)
+          .commit()
+          .draw_strand(1, 0)
+          .move(9)
+          .commit()
+          .draw_strand(0, 10)
+          .move(9)
+          .cross(1)
+          .move(-9)
+          .commit();
       var default_group_strand = design.strands.first;
       var action = SelectAllSelectable(current_helix_group_only: true);
       var state = app_state_from_design(design);
@@ -4870,10 +4862,9 @@ main() {
       bool forward = true;
       Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
       StrandsMove expected_strands_move = state.ui_state.strands_move!.rebuild(
-        (b) =>
-            b
-              ..allowable = true
-              ..current_address.replace(address),
+        (b) => b
+          ..allowable = true
+          ..current_address.replace(address),
       );
       state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
 
@@ -5148,10 +5139,9 @@ main() {
 
       // Check address after adjusting:
       expected_strands_move = state.ui_state.strands_move!.rebuild(
-        (b) =>
-            b
-              ..allowable = true
-              ..current_address.replace(address),
+        (b) => b
+          ..allowable = true
+          ..current_address.replace(address),
       );
       expect(state.ui_state.strands_move, expected_strands_move);
     });
@@ -5197,10 +5187,9 @@ main() {
 
       // Check address after adjusting:
       var expected_strands_move = state.ui_state.strands_move!.rebuild(
-        (b) =>
-            b
-              ..allowable = true
-              ..current_address.replace(address),
+        (b) => b
+          ..allowable = true
+          ..current_address.replace(address),
       );
       expect(state.ui_state.strands_move, expected_strands_move);
     });
@@ -5363,10 +5352,9 @@ main() {
       address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
       state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
       expected_strands_move = state.ui_state.strands_move!.rebuild(
-        (b) =>
-            b
-              ..allowable = true
-              ..current_address.replace(address),
+        (b) => b
+          ..allowable = true
+          ..current_address.replace(address),
       );
 
       // Check address after adjusting (should be same as before since new one would not be valid):
@@ -5629,8 +5617,10 @@ main() {
       AppState state = app_state_from_design(two_helices_design);
       state = app_state_reducer(state, GridChange(grid: Grid.hex, group_name: constants.default_group_name));
 
-      List<HelixBuilder> helices_builder =
-          two_helices_design.helices.map_values((_, h) => h.toBuilder()).values.toList();
+      List<HelixBuilder> helices_builder = two_helices_design.helices
+          .map_values((_, h) => h.toBuilder())
+          .values
+          .toList();
       for (int i = 0; i < helices_builder.length; i++) {
         helices_builder[i].grid = Grid.hex;
       }
@@ -5698,18 +5688,16 @@ main() {
       );
 
       Helix new_helix0 = no_grid_two_helices_design.helices.values.first.rebuild(
-        (b) =>
-            b
-              ..grid = grid
-              ..position_ = null
-              ..grid_position.replace(expected_grid_position0),
+        (b) => b
+          ..grid = grid
+          ..position_ = null
+          ..grid_position.replace(expected_grid_position0),
       );
       Helix new_helix1 = no_grid_two_helices_design.helices.values.last.rebuild(
-        (b) =>
-            b
-              ..grid = grid
-              ..position_ = null
-              ..grid_position.replace(expected_grid_position1),
+        (b) => b
+          ..grid = grid
+          ..position_ = null
+          ..grid_position.replace(expected_grid_position1),
       );
 
       Map<int, Helix> new_helices = {0: new_helix0, 1: new_helix1};
@@ -7448,7 +7436,10 @@ main() {
     // Add empty helix group
     AppState state = app_state_reducer(
       initial_state,
-      GroupAdd(name: 'test', group: HelixGroup(helices_view_order: [])),
+      GroupAdd(
+        name: 'test',
+        group: HelixGroup(helices_view_order: []),
+      ),
     );
     // Display new helix group
     AppState final_state = app_state_reducer(state, GroupDisplayedChange(group_name: 'test'));
@@ -7832,10 +7823,9 @@ main() {
     Helix helix2 = Helix(idx: 2, grid_position: GridPosition(1, 0));
     Design design = Design(helices: [helix0, helix1, helix2], grid: Grid.square);
     AppState state = app_state_from_design(design).rebuild(
-      (b) =>
-          b
-            ..ui_state.storables.side_selected_helix_idxs.replace([0, 2])
-            ..ui_state.storables.only_display_selected_helices = false,
+      (b) => b
+        ..ui_state.storables.side_selected_helix_idxs.replace([0, 2])
+        ..ui_state.storables.only_display_selected_helices = false,
     );
 
     // Action
@@ -7876,11 +7866,10 @@ main() {
     // Setup:
     Helix helix0 = Helix(idx: 0, grid_position: GridPosition(0, 0), max_offset: 8);
     Helix helix1 = Helix(idx: 1, grid_position: GridPosition(0, 1), max_offset: 8);
-    Design design =
-        Design(
-          helices: [helix0, helix1],
-          grid: Grid.square,
-        ).draw_strand(0, 0).to(8).cross(1).to(0).with_sequence('AAAAAAAAGGGGGGGG').commit();
+    Design design = Design(
+      helices: [helix0, helix1],
+      grid: Grid.square,
+    ).draw_strand(0, 0).to(8).cross(1).to(0).with_sequence('AAAAAAAAGGGGGGGG').commit();
     AppState state = app_state_from_design(design);
 
     // Action:
@@ -7923,11 +7912,10 @@ main() {
     // Setup:
     Helix helix0 = Helix(idx: 0, grid_position: GridPosition(0, 0), max_offset: 16);
     Helix helix1 = Helix(idx: 1, grid_position: GridPosition(0, 1), max_offset: 16);
-    Design design =
-        Design(
-          helices: [helix0, helix1],
-          grid: Grid.square,
-        ).draw_strand(1, 8).to(0).cross(0).to(8).with_sequence('GGGGGGGGAAAAAAAA').commit();
+    Design design = Design(
+      helices: [helix0, helix1],
+      grid: Grid.square,
+    ).draw_strand(1, 8).to(0).cross(0).to(8).with_sequence('GGGGGGGGAAAAAAAA').commit();
     AppState state = app_state_from_design(design);
 
     // Action:

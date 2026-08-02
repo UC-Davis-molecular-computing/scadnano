@@ -50,8 +50,15 @@ main() {
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design =
-          design.draw_strand(0, 0).move(4).cross(1).move(-4).cross(2).move(4).with_sequence('AAAACCCCGGGG').commit();
+      design = design
+          .draw_strand(0, 0)
+          .move(4)
+          .cross(1)
+          .move(-4)
+          .cross(2)
+          .move(4)
+          .with_sequence('AAAACCCCGGGG')
+          .commit();
       design = design.draw_strand(3, 0).move(4).with_sequence('TTTT').commit();
       AppState state = app_state_from_design(design);
       Strand strand1 = design.strands[0];
@@ -127,8 +134,15 @@ main() {
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design =
-          design.draw_strand(0, 0).move(4).cross(1).move(-4).cross(2).move(4).with_sequence('AAAACCCCGGGG').commit();
+      design = design
+          .draw_strand(0, 0)
+          .move(4)
+          .cross(1)
+          .move(-4)
+          .cross(2)
+          .move(4)
+          .with_sequence('AAAACCCCGGGG')
+          .commit();
       design = design.draw_strand(3, 0).move(4).with_sequence('TTTT').commit();
       AppState state = app_state_from_design(design);
       Strand strand1 = design.strands[0];
@@ -203,16 +217,15 @@ main() {
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design =
-          design
-              .draw_strand(0, 0)
-              .move(4)
-              .loopout(1, 1)
-              .move(-4)
-              .loopout(2, 1)
-              .move(4)
-              .with_sequence('AAAAGCCCCTGGGG')
-              .commit();
+      design = design
+          .draw_strand(0, 0)
+          .move(4)
+          .loopout(1, 1)
+          .move(-4)
+          .loopout(2, 1)
+          .move(4)
+          .with_sequence('AAAAGCCCCTGGGG')
+          .commit();
       design = design.draw_strand(3, 0).move(4).with_sequence('TTTT').commit();
       AppState state = app_state_from_design(design);
       Strand strand1 = design.strands[0];
@@ -291,16 +304,15 @@ main() {
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design =
-          design
-              .draw_strand(0, 0)
-              .move(4)
-              .loopout(1, 1)
-              .move(-4)
-              .loopout(2, 1)
-              .move(4)
-              .with_sequence('AAAAGCCCCTGGGG')
-              .commit();
+      design = design
+          .draw_strand(0, 0)
+          .move(4)
+          .loopout(1, 1)
+          .move(-4)
+          .loopout(2, 1)
+          .move(4)
+          .with_sequence('AAAAGCCCCTGGGG')
+          .commit();
       design = design.draw_strand(3, 0).move(4).with_sequence('TTTT').commit();
       AppState state = app_state_from_design(design);
       Strand strand1 = design.strands[0];

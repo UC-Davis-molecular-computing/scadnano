@@ -21,11 +21,10 @@ mixin MenuDropdownItemProps on UiProps {
 
 class MenuDropdownItemComponent extends UiComponent2<MenuDropdownItemProps> {
   @override
-  get defaultProps =>
-      (newProps()
-        ..disabled = false
-        ..active = false
-        ..tooltip = '');
+  get defaultProps => (newProps()
+    ..disabled = false
+    ..active = false
+    ..tooltip = '');
 
   @override
   render() {

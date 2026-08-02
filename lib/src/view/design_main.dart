@@ -166,8 +166,9 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..end = ui_state.strand_creation!.end
           ..color = ui_state.strand_creation!.color
           ..helices = {ui_state.strand_creation!.helix.idx: ui_state.strand_creation!.helix}.build()
-          ..groups =
-              {ui_state.strand_creation!.helix.group: design.groups[ui_state.strand_creation!.helix.group]!}.build()
+          ..groups = {
+            ui_state.strand_creation!.helix.group: design.groups[ui_state.strand_creation!.helix.group]!,
+          }.build()
           ..geometry = design.geometry
           ..svg_position_y = state.helix_idx_to_svg_position_map[ui_state.strand_creation!.helix.idx]!.y
           ..key = 'strand-creating')(),

@@ -34,16 +34,14 @@ bool shallow_state_equal(Map map1, Map map2) {
 }
 
 bool deep_props_equal(Map map1, Map map2) {
-  var map1_modified =
-      Map.of(map1)
-        ..remove('key')
-        ..remove('ref')
-        ..remove('children');
-  var map2_modified =
-      Map.of(map2)
-        ..remove('key')
-        ..remove('ref')
-        ..remove('children');
+  var map1_modified = Map.of(map1)
+    ..remove('key')
+    ..remove('ref')
+    ..remove('children');
+  var map2_modified = Map.of(map2)
+    ..remove('key')
+    ..remove('ref')
+    ..remove('children');
   for (var key in map1_modified.keys) {
     var val1 = map1_modified[key];
     var val2 = map2_modified[key];

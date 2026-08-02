@@ -277,11 +277,10 @@ main() {
         |         |       |       |
     0   [------------------------->
         */
-      design =
-          design.draw_strand(0, 0).move(24).with_deletion(19).with_insertions([
-            Insertion(5, 2),
-            Insertion(11, 1),
-          ]).commit();
+      design = design.draw_strand(0, 0).move(24).with_deletion(19).with_insertions([
+        Insertion(5, 2),
+        Insertion(11, 1),
+      ]).commit();
       design = inline_insertions_deletions_reducer(design, action)!;
       helix0_strand0_inlined_test(design, max_offset: 26, major_ticks: [0, 10, 19, 26], start: 0, end: 26);
     });
@@ -299,11 +298,10 @@ main() {
         | . . . . . . . . | . . . . . . . . | . . . . . . |
          [ - - - - - - - - - - - - - - > [ - - - - - - - >
         */
-      design =
-          design.draw_strand(0, 0).move(14).with_deletion(2).with_insertions([
-            Insertion(5, 2),
-            Insertion(10, 1),
-          ]).commit();
+      design = design.draw_strand(0, 0).move(14).with_deletion(2).with_insertions([
+        Insertion(5, 2),
+        Insertion(10, 1),
+      ]).commit();
       design = design.draw_strand(0, 14).to(24).with_deletion(19).commit();
       design = inline_insertions_deletions_reducer(design, action)!;
       expect(design.helices.length, 1);

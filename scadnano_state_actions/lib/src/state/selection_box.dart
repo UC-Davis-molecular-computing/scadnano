@@ -15,12 +15,11 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
   SelectionBox._();
 
   factory SelectionBox(Point<double> start, bool toggle, bool is_main) => SelectionBox.from(
-    (b) =>
-        b
-          ..start = start
-          ..toggle = toggle
-          ..is_main = is_main
-          ..current = start,
+    (b) => b
+      ..start = start
+      ..toggle = toggle
+      ..is_main = is_main
+      ..current = start,
   );
 
   factory SelectionBox.from([void Function(SelectionBoxBuilder) updates]) = _$SelectionBox;

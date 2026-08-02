@@ -26,10 +26,9 @@ Design? inline_insertions_deletions_reducer(Design? design, actions.InlineInsert
     strands[i] = strands[i].initialize();
   }
   return design.rebuild(
-    (b) =>
-        b
-          ..helices.replace(helices_new)
-          ..strands.replace(strands),
+    (b) => b
+      ..helices.replace(helices_new)
+      ..strands.replace(strands),
   );
 }
 
@@ -56,8 +55,9 @@ _inline_deletions_insertions_on_helix(
   ];
 
   // change max offset
-  int insertions_length =
-      insertions.isEmpty ? 0 : [for (var insertion in insertions) insertion.length].reduce((a, b) => a + b);
+  int insertions_length = insertions.isEmpty
+      ? 0
+      : [for (var insertion in insertions) insertion.length].reduce((a, b) => a + b);
   int delta_length = insertions_length - deletions.length;
 
   // combined collection of deletions/insertions into one dict mapping offset --> None/len, where
@@ -121,12 +121,11 @@ _inline_deletions_insertions_on_helix(
       delta_acc += substrand.dna_length() - substrand.visual_length;
       int new_end = substrand.end + delta_acc;
       Domain new_substrand = substrand.rebuild(
-        (b) =>
-            b
-              ..start = new_start
-              ..end = new_end
-              ..insertions.replace([])
-              ..deletions.replace([]),
+        (b) => b
+          ..start = new_start
+          ..end = new_end
+          ..insertions.replace([])
+          ..deletions.replace([]),
       );
 
       // find strand where this substrand resides and replace it

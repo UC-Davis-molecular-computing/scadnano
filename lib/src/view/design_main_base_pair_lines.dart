@@ -37,10 +37,9 @@ class DesignMainBasePairLinesComponent extends UiComponent2<DesignMainBasePairLi
 
   List<ReactElement> create_base_pair_lines_components(BuiltSet<Strand> strands) {
     List<ReactElement> base_pair_lines_components = [];
-    BuiltMap<int, BuiltList<int>> base_pairs =
-        props.with_mismatches
-            ? props.design.selected_base_pairs_with_mismatches(strands, true)
-            : props.design.selected_base_pairs(strands, true);
+    BuiltMap<int, BuiltList<int>> base_pairs = props.with_mismatches
+        ? props.design.selected_base_pairs_with_mismatches(strands, true)
+        : props.design.selected_base_pairs(strands, true);
 
     for (int helix_idx in base_pairs.keys) {
       if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(helix_idx)) {
@@ -57,17 +56,16 @@ class DesignMainBasePairLinesComponent extends UiComponent2<DesignMainBasePairLi
           var svg_position_y = props.helix_idx_to_svg_position_y_map[helix_idx]!;
           var base_svg_forward_pos = helix.svg_base_pos(offset, true, svg_position_y, geometry);
           var base_svg_reverse_pos = helix.svg_base_pos(offset, false, svg_position_y, geometry);
-          var base_pair_line =
-              (Dom.line()
-                ..id = 'base_pair-${helix_idx}-${offset}'
-                ..x1 = base_svg_forward_pos.x
-                ..y1 = base_svg_forward_pos.y
-                ..x2 = base_svg_reverse_pos.x
-                ..y2 = base_svg_reverse_pos.y
-                ..className = constants.css_selector_base_pair_line
-                ..stroke = 'black'
-                ..transform = transform_str
-                ..key = 'base-pair-line-H${helix_idx}-${offset}')();
+          var base_pair_line = (Dom.line()
+            ..id = 'base_pair-${helix_idx}-${offset}'
+            ..x1 = base_svg_forward_pos.x
+            ..y1 = base_svg_forward_pos.y
+            ..x2 = base_svg_reverse_pos.x
+            ..y2 = base_svg_reverse_pos.y
+            ..className = constants.css_selector_base_pair_line
+            ..stroke = 'black'
+            ..transform = transform_str
+            ..key = 'base-pair-line-H${helix_idx}-${offset}')();
           helix_components.add(base_pair_line);
         }
         var helix_dom_group = (Dom.g()

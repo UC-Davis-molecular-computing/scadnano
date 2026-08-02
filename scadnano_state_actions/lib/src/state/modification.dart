@@ -69,12 +69,11 @@ abstract class Modification5Prime
   }) {
     var unused_fields_to_assign = unused_fields ?? BuiltMap<String, dynamic>();
     return Modification5Prime.from(
-      (b) =>
-          b
-            ..display_text = display_text
-            ..vendor_code = vendor_code
-            ..connector_length = connector_length
-            ..unused_fields.replace(unused_fields_to_assign),
+      (b) => b
+        ..display_text = display_text
+        ..vendor_code = vendor_code
+        ..connector_length = connector_length
+        ..unused_fields.replace(unused_fields_to_assign),
     );
   }
 
@@ -140,12 +139,11 @@ abstract class Modification3Prime
   }) {
     var unused_fields_to_assign = unused_fields ?? BuiltMap<String, dynamic>();
     return Modification3Prime.from(
-      (b) =>
-          b
-            ..display_text = display_text
-            ..vendor_code = vendor_code
-            ..connector_length = connector_length
-            ..unused_fields.replace(unused_fields_to_assign),
+      (b) => b
+        ..display_text = display_text
+        ..vendor_code = vendor_code
+        ..connector_length = connector_length
+        ..unused_fields.replace(unused_fields_to_assign),
     );
   }
 
@@ -212,13 +210,12 @@ abstract class ModificationInternal
   }) {
     var unused_fields_to_assign = unused_fields ?? BuiltMap<String, dynamic>();
     return ModificationInternal.from(
-      (b) =>
-          b
-            ..display_text = display_text
-            ..vendor_code = vendor_code
-            ..connector_length = connector_length
-            ..allowed_bases = allowed_bases?.toBuilder()
-            ..unused_fields.replace(unused_fields_to_assign),
+      (b) => b
+        ..display_text = display_text
+        ..vendor_code = vendor_code
+        ..connector_length = connector_length
+        ..allowed_bases = allowed_bases?.toBuilder()
+        ..unused_fields.replace(unused_fields_to_assign),
     );
   }
 
@@ -249,8 +246,9 @@ abstract class ModificationInternal
     var ret = Modification.mod_to_json_serializable(this, suppress_indent);
     ret[constants.mod_location_key] = "internal";
     if (allowed_bases != null) {
-      ret[constants.mod_allowed_bases_key] =
-          suppress_indent ? NoIndent(allowed_bases!.toList()) : allowed_bases!.toList();
+      ret[constants.mod_allowed_bases_key] = suppress_indent
+          ? NoIndent(allowed_bases!.toList())
+          : allowed_bases!.toList();
     }
     return ret;
   }

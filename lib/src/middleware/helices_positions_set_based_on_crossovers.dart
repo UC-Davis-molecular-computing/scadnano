@@ -114,7 +114,8 @@ List<(Address, Address)>? _get_addresses_to_process(AppState state, List<Helix> 
 
     // first try selected crossovers, but ensure there's at most one per pair of helices
     if (addresses_crossovers_this_helices_pair.length > 1) {
-      var msg = '''You can select at most one crossover between any pair of adjacent helices.
+      var msg =
+          '''You can select at most one crossover between any pair of adjacent helices.
 But you have selected multiple crossovers between helices ${helix_top.idx} and ${helix_bot.idx}.
 Please select only one, or select none to default to the first crossover between the helices.
 ''';
@@ -168,12 +169,14 @@ Please select only one, or select none to default to the first crossover between
 
   // if not using scaffold or crossovers when finding leftmost, filter those out
   if (!use_scaffold) {
-    address_crossovers_on_bot =
-        address_crossovers_on_bot.where((address_crossover) => !address_crossover.$2.is_scaffold).toBuiltList();
+    address_crossovers_on_bot = address_crossovers_on_bot
+        .where((address_crossover) => !address_crossover.$2.is_scaffold)
+        .toBuiltList();
   }
   if (!use_staple) {
-    address_crossovers_on_bot =
-        address_crossovers_on_bot.where((address_crossover) => address_crossover.$2.is_scaffold).toBuiltList();
+    address_crossovers_on_bot = address_crossovers_on_bot
+        .where((address_crossover) => address_crossover.$2.is_scaffold)
+        .toBuiltList();
   }
 
   // find first crossover on h1 that also goes to h2

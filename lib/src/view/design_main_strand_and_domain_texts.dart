@@ -130,21 +130,20 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
       if (props.show_dna) num_stacked++;
       if (props.show_domain_names) num_stacked++;
       if (props.show_domain_labels) num_stacked++;
-      strand_name_component =
-          (DesignMainStrandDomainText()
-            ..strand = props.strand
-            ..domain = domain_5p
-            ..text = props.strand.name!
-            ..num_stacked = num_stacked
-            ..css_selector_text = constants.css_selector_strand_name
-            ..font_size = props.strand_name_font_size
-            ..helix = helix
-            ..helix_groups = props.groups
-            ..geometry = props.geometry
-            ..transform = transform_of_helix2(props, domain_5p.helix)
-            ..helix_svg_position = helix_svg_position
-            ..context_menu_strand = props.context_menu_strand
-            ..key = "strand-name")();
+      strand_name_component = (DesignMainStrandDomainText()
+        ..strand = props.strand
+        ..domain = domain_5p
+        ..text = props.strand.name!
+        ..num_stacked = num_stacked
+        ..css_selector_text = constants.css_selector_strand_name
+        ..font_size = props.strand_name_font_size
+        ..helix = helix
+        ..helix_groups = props.groups
+        ..geometry = props.geometry
+        ..transform = transform_of_helix2(props, domain_5p.helix)
+        ..helix_svg_position = helix_svg_position
+        ..context_menu_strand = props.context_menu_strand
+        ..key = "strand-name")();
     }
     return strand_name_component;
   }
@@ -174,21 +173,20 @@ class DesignMainStrandAndDomainTextsComponent extends UiComponent2<DesignMainStr
       if (props.show_strand_names) num_stacked++;
       if (props.show_domain_names) num_stacked++;
       if (props.show_domain_labels) num_stacked++;
-      strand_label_component =
-          (DesignMainStrandDomainText()
-            ..strand = props.strand
-            ..domain = domain_5p
-            ..text = props.strand.label!
-            ..num_stacked = num_stacked
-            ..css_selector_text = constants.css_selector_strand_label
-            ..font_size = props.strand_label_font_size
-            ..helix = helix
-            ..helix_groups = props.groups
-            ..geometry = props.geometry
-            ..transform = transform_of_helix2(props, domain_5p.helix)
-            ..helix_svg_position = helix_svg_position
-            ..context_menu_strand = props.context_menu_strand
-            ..key = "strand-label")();
+      strand_label_component = (DesignMainStrandDomainText()
+        ..strand = props.strand
+        ..domain = domain_5p
+        ..text = props.strand.label!
+        ..num_stacked = num_stacked
+        ..css_selector_text = constants.css_selector_strand_label
+        ..font_size = props.strand_label_font_size
+        ..helix = helix
+        ..helix_groups = props.groups
+        ..geometry = props.geometry
+        ..transform = transform_of_helix2(props, domain_5p.helix)
+        ..helix_svg_position = helix_svg_position
+        ..context_menu_strand = props.context_menu_strand
+        ..key = "strand-label")();
     }
     return strand_label_component;
   }

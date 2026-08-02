@@ -44,7 +44,8 @@ class DesignMainWarningStarComponent extends UiComponent2<DesignMainWarningStarP
     String tooltip_text;
     DomainNameMismatch? domain_name_mismatch = props.domain_name_mismatch;
     if (domain_name_mismatch != null) {
-      tooltip_text = '''\
+      tooltip_text =
+          '''\
 Domain name mismatch:
 ${domain_name_mismatch.forward_domain.toString()} vs.
 ${domain_name_mismatch.reverse_domain.toString()}

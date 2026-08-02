@@ -27,12 +27,11 @@ class MenuNumberProps = UiProps with MenuNumberPropsMixin;
 
 class MenuNumberComponent extends UiComponent2<MenuNumberProps> {
   @override
-  get defaultProps =>
-      (newProps()
-        ..min_value = 1.0
-        ..hide = false
-        ..tooltip = ''
-        ..step = 1.0);
+  get defaultProps => (newProps()
+    ..min_value = 1.0
+    ..hide = false
+    ..tooltip = ''
+    ..step = 1.0);
 
   @override
   render() {

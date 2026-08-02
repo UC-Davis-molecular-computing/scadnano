@@ -73,19 +73,18 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
       major_tick_periodic_distances = [];
     }
     return Helix.from(
-      (b) =>
-          b
-            ..idx = idx
-            ..group = group
-            ..grid = grid
-            ..grid_position = grid_position?.toBuilder()
-            ..position_ = position?.toBuilder()
-            ..roll = roll
-            ..min_offset = min_offset
-            ..max_offset = max_offset
-            ..major_tick_start = major_tick_start
-            ..major_tick_periodic_distances.replace(major_tick_periodic_distances!)
-            ..unused_fields.replace({}),
+      (b) => b
+        ..idx = idx
+        ..group = group
+        ..grid = grid
+        ..grid_position = grid_position?.toBuilder()
+        ..position_ = position?.toBuilder()
+        ..roll = roll
+        ..min_offset = min_offset
+        ..max_offset = max_offset
+        ..major_tick_start = major_tick_start
+        ..major_tick_periodic_distances.replace(major_tick_periodic_distances!)
+        ..unused_fields.replace({}),
     );
   }
 
@@ -242,8 +241,9 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
     if (has_major_tick_periodic_distances) {
       var distances = major_tick_periodic_distances.toList();
-      json_map[constants.major_tick_periodic_distances_key] =
-          suppress_indent && !use_no_indent ? NoIndent(distances) : distances;
+      json_map[constants.major_tick_periodic_distances_key] = suppress_indent && !use_no_indent
+          ? NoIndent(distances)
+          : distances;
     }
 
     json_map.addAll(unused_fields.toMap());
@@ -380,10 +380,9 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
         ticks.add(tick);
       }
     } else {
-      int distance =
-          major_tick_distance != null && this.major_tick_distance! > 0
-              ? this.major_tick_distance!
-              : grid.default_major_tick_distance;
+      int distance = major_tick_distance != null && this.major_tick_distance! > 0
+          ? this.major_tick_distance!
+          : grid.default_major_tick_distance;
       if (distance > 0) {
         ticks = [for (int tick = major_tick_start; tick <= max_offset; tick += distance) tick];
       }

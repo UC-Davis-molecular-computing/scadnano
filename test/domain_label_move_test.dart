@@ -46,8 +46,14 @@ main() {
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design =
-          design.draw_strand(0, 0).move(8).with_domain_name("ABC").cross(1).move(-8).with_domain_name("XYZ").commit();
+      design = design
+          .draw_strand(0, 0)
+          .move(8)
+          .with_domain_name("ABC")
+          .cross(1)
+          .move(-8)
+          .with_domain_name("XYZ")
+          .commit();
 
       AppState state = app_state_from_design(design);
       //Select Strands
@@ -115,15 +121,14 @@ main() {
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design =
-          design
-              .draw_strand(0, 0)
-              .move(8)
-              .with_domain_name("ABC")
-              .loopout(1, 2)
-              .move(-8)
-              .with_domain_name("XYZ")
-              .commit();
+      design = design
+          .draw_strand(0, 0)
+          .move(8)
+          .with_domain_name("ABC")
+          .loopout(1, 2)
+          .move(-8)
+          .with_domain_name("XYZ")
+          .commit();
 
       AppState state = app_state_from_design(design);
       //Select Strands
@@ -190,16 +195,15 @@ main() {
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design =
-          design
-              .draw_strand(0, 0)
-              .move(8)
-              .with_domain_name("ABC")
-              .cross(1)
-              .move(-8)
-              .with_domain_name("XYZ")
-              .as_circular()
-              .commit();
+      design = design
+          .draw_strand(0, 0)
+          .move(8)
+          .with_domain_name("ABC")
+          .cross(1)
+          .move(-8)
+          .with_domain_name("XYZ")
+          .as_circular()
+          .commit();
       AppState state = app_state_from_design(design);
       //Select Strands
       BuiltList<Selectable> selectables = [design.strands[0]].toBuiltList();
@@ -266,16 +270,15 @@ main() {
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design =
-          design
-              .draw_strand(0, 0)
-              .move(8)
-              .with_domain_name("ABC")
-              .loopout(1, 2)
-              .move(-8)
-              .with_domain_name("XYZ")
-              .as_circular()
-              .commit();
+      design = design
+          .draw_strand(0, 0)
+          .move(8)
+          .with_domain_name("ABC")
+          .loopout(1, 2)
+          .move(-8)
+          .with_domain_name("XYZ")
+          .as_circular()
+          .commit();
       AppState state = app_state_from_design(design);
       //Select Strands
       BuiltList<Selectable> selectables = [design.strands[0]].toBuiltList();
@@ -338,8 +341,14 @@ main() {
       ];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design =
-          design.draw_strand(0, 0).move(8).with_domain_name("ABC").cross(1).move(-8).with_domain_name("XYZ").commit();
+      design = design
+          .draw_strand(0, 0)
+          .move(8)
+          .with_domain_name("ABC")
+          .cross(1)
+          .move(-8)
+          .with_domain_name("XYZ")
+          .commit();
 
       AppState state = app_state_from_design(design);
       //Select Strands

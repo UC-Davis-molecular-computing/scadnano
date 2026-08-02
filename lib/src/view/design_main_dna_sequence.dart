@@ -183,14 +183,13 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       style_map['dominantBaseline'] = 'hanging';
     }
 
-    SvgProps text_path_props =
-        (Dom.textPath()
-          ..className = classname_dna_sequence + '-insertion'
-          //XXX: xlink:href is deprecated, but this is needed for exporting SVG, due to a bug in Inkscape
-          // https://gitlab.com/inkscape/inbox/issues/1763
-          ..xlinkHref = '#${util_state.id_insertion(domain, offset)}'
-          ..startOffset = start_offset
-          ..style = style_map);
+    SvgProps text_path_props = (Dom.textPath()
+      ..className = classname_dna_sequence + '-insertion'
+      //XXX: xlink:href is deprecated, but this is needed for exporting SVG, due to a bug in Inkscape
+      // https://gitlab.com/inkscape/inbox/issues/1763
+      ..xlinkHref = '#${util_state.id_insertion(domain, offset)}'
+      ..startOffset = start_offset
+      ..style = style_map);
 
     return (Dom.text()
       ..key = 'textelt-${util_state.id_insertion(domain, offset)}'
@@ -223,12 +222,11 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       style_map = {'fontSize': '${font_size}px'};
     }
 
-    SvgProps text_path_props =
-        (Dom.textPath()
-          ..className = classname_dna_sequence + '-loopout'
-          ..xlinkHref = '#${loopout.id}'
-          ..startOffset = start_offset
-          ..style = style_map);
+    SvgProps text_path_props = (Dom.textPath()
+      ..className = classname_dna_sequence + '-loopout'
+      ..xlinkHref = '#${loopout.id}'
+      ..startOffset = start_offset
+      ..style = style_map);
     return (Dom.text()
       ..key =
           'loopout-dna'
@@ -250,12 +248,11 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
 
     Map<String, dynamic> style_map = {'letterSpacing': '${letter_spacing}em', 'fontSize': '${font_size}px'};
 
-    SvgProps text_path_props =
-        (Dom.textPath()
-          ..className = classname_dna_sequence + '-extension'
-          ..xlinkHref = '#${ext.id}'
-          ..startOffset = start_offset
-          ..style = style_map);
+    SvgProps text_path_props = (Dom.textPath()
+      ..className = classname_dna_sequence + '-extension'
+      ..xlinkHref = '#${ext.id}'
+      ..startOffset = start_offset
+      ..style = style_map);
     return (Dom.text()
       ..key =
           'extension-dna-${ext.is_5p ? "5'" : "3'"}'

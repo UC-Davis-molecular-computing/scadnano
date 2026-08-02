@@ -285,7 +285,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
   focus_base_oxview(Strand strand, Domain domain, Address address, ModificationType type) {
     int strand_idx = app.state.design.strands.indexOf(strand);
     int nt_idx_in_strand = clicked_strand_dna_idx(domain, address, strand);
-    String js_highlight_base = '''\
+    String js_highlight_base =
+        '''\
 let base = systems[0].strands[${strand_idx}].getMonomers()[${nt_idx_in_strand}];
 api.findElement(base);
 api.selectElements([base]);''';
@@ -346,8 +347,8 @@ api.selectElements([base]);''';
     return paths.isEmpty
         ? null
         : (Dom.g()
-          ..key = 'insertions'
-          ..className = 'insertions')(paths);
+            ..key = 'insertions'
+            ..className = 'insertions')(paths);
   }
 
   /// Assuming props contain helices mapping idx to Helix, groups mapping group names to groups,
@@ -386,8 +387,8 @@ api.selectElements([base]);''';
     return paths.isEmpty
         ? null
         : (Dom.g()
-          ..key = 'deletions'
-          ..className = 'deletions')(paths);
+            ..key = 'deletions'
+            ..className = 'deletions')(paths);
   }
 
   remove_dna() {
@@ -442,26 +443,25 @@ api.selectElements([base]);''';
     var items = [
       ContextMenuItem(
         title: 'edit DNA',
-        nested:
-            [
-              ContextMenuItem(
-                title: 'assign DNA',
-                tooltip: '''\
+        nested: [
+          ContextMenuItem(
+            title: 'assign DNA',
+            tooltip: '''\
 Assign a specific DNA sequence to this strand (and optionally assign complementary
 sequence to strands bound to it).
 ''',
-                on_click: assign_dna,
-              ),
-              ContextMenuItem(
-                title: 'assign DNA complement from bound strands',
-                tooltip: '''\
+            on_click: assign_dna,
+          ),
+          ContextMenuItem(
+            title: 'assign DNA complement from bound strands',
+            tooltip: '''\
 If other strands bound to this strand (or the selected strands) have DNA already 
 assigned, assign the complementary DNA sequence to this strand.
 ''',
-                on_click: assign_dna_complement_from_bound_strands,
-              ),
-              if (strand.dna_sequence != null) ContextMenuItem(title: 'remove DNA', on_click: remove_dna),
-            ].build(),
+            on_click: assign_dna_complement_from_bound_strands,
+          ),
+          if (strand.dna_sequence != null) ContextMenuItem(title: 'remove DNA', on_click: remove_dna),
+        ].build(),
       ),
       ContextMenuItem(title: 'add modification', on_click: () => add_modification(domain, address, modification_type)),
       if (app.state.ui_state.show_oxview)
@@ -471,161 +471,139 @@ assigned, assign the complementary DNA sequence to this strand.
         ),
       ContextMenuItem(
         title: 'edit vendor fields',
-        nested:
-            [
-              ContextMenuItem(title: 'assign scale/purification fields', on_click: assign_scale_purification_fields),
-              ContextMenuItem(
-                title: 'assign plate/well fields',
-                on_click: assign_plate_well_fields,
-                disabled:
-                    app.state.ui_state.selectables_store.selected_strands.toList().any(
-                      (element) => element.vendor_fields == null,
-                    ) ||
-                    props.strand.vendor_fields == null,
-              ),
-              if (app.state.ui_state.selectables_store.selected_strands.toList().any(
-                    (element) => element.vendor_fields != null,
-                  ) ||
-                  props.strand.vendor_fields != null)
-                ContextMenuItem(title: 'remove all vendor fields', on_click: () => remove_vendor_fields()),
-              if (app.state.ui_state.selectables_store.selected_strands.toList().any(
-                    (element) => element.vendor_fields?.plate != null && element.vendor_fields?.well != null,
-                  ) ||
-                  props.strand.vendor_fields?.well != null && props.strand.vendor_fields?.purification != null)
-                ContextMenuItem(title: 'remove plate/well vendor fields', on_click: () => remove_plate_well_fields()),
-            ].build(),
+        nested: [
+          ContextMenuItem(title: 'assign scale/purification fields', on_click: assign_scale_purification_fields),
+          ContextMenuItem(
+            title: 'assign plate/well fields',
+            on_click: assign_plate_well_fields,
+            disabled:
+                app.state.ui_state.selectables_store.selected_strands.toList().any(
+                  (element) => element.vendor_fields == null,
+                ) ||
+                props.strand.vendor_fields == null,
+          ),
+          if (app.state.ui_state.selectables_store.selected_strands.toList().any(
+                (element) => element.vendor_fields != null,
+              ) ||
+              props.strand.vendor_fields != null)
+            ContextMenuItem(title: 'remove all vendor fields', on_click: () => remove_vendor_fields()),
+          if (app.state.ui_state.selectables_store.selected_strands.toList().any(
+                (element) => element.vendor_fields?.plate != null && element.vendor_fields?.well != null,
+              ) ||
+              props.strand.vendor_fields?.well != null && props.strand.vendor_fields?.purification != null)
+            ContextMenuItem(title: 'remove plate/well vendor fields', on_click: () => remove_plate_well_fields()),
+        ].build(),
       ),
       ContextMenuItem(title: strand.is_scaffold ? 'set as non-scaffold' : 'set as scaffold', on_click: set_scaffold),
       ContextMenuItem(
         title: 'color',
-        nested:
-            [
-              ContextMenuItem(
-                title: 'set strand color',
-                on_click:
-                    () => app.dispatch(actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: null)),
-              ),
-              ContextMenuItem(
-                title: 'set domain color',
-                on_click:
-                    () =>
-                        app.dispatch(actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: domain)),
-              ),
-              if (domain.color != null)
-                ContextMenuItem(
-                  title: 'remove domain color',
-                  on_click:
-                      () => app.dispatch(
-                        actions.StrandOrSubstrandColorSet(strand: props.strand, substrand: domain, color: null),
-                      ),
-                ),
-            ].build(),
+        nested: [
+          ContextMenuItem(
+            title: 'set strand color',
+            on_click: () =>
+                app.dispatch(actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: null)),
+          ),
+          ContextMenuItem(
+            title: 'set domain color',
+            on_click: () =>
+                app.dispatch(actions.StrandOrSubstrandColorPickerShow(strand: props.strand, substrand: domain)),
+          ),
+          if (domain.color != null)
+            ContextMenuItem(
+              title: 'remove domain color',
+              on_click: () =>
+                  app.dispatch(actions.StrandOrSubstrandColorSet(strand: props.strand, substrand: domain, color: null)),
+            ),
+        ].build(),
       ),
       ContextMenuItem(
         title: 'edit name',
-        nested:
-            [
-              ContextMenuItem(title: 'set strand name', on_click: set_strand_name),
-              if (props.strand.name != null)
-                ContextMenuItem(
-                  title: 'remove strand name',
-                  on_click:
-                      () => app.dispatch(
-                        batch_if_multiple_selected(
-                          (strand) => actions.StrandNameSet(name: null, strand: strand),
-                          props.strand,
-                          app.state.ui_state.selectables_store.selected_strands,
-                          'remove strand name',
-                        ),
-                      ),
+        nested: [
+          ContextMenuItem(title: 'set strand name', on_click: set_strand_name),
+          if (props.strand.name != null)
+            ContextMenuItem(
+              title: 'remove strand name',
+              on_click: () => app.dispatch(
+                batch_if_multiple_selected(
+                  (strand) => actions.StrandNameSet(name: null, strand: strand),
+                  props.strand,
+                  app.state.ui_state.selectables_store.selected_strands,
+                  'remove strand name',
                 ),
-              ContextMenuItem(
-                title: 'set domain name',
-                on_click:
-                    () => set_domain_names(
-                      util_state.add_if_not_null(app.state.ui_state.selectables_store.selected_domains, domain),
-                    ),
               ),
-              ContextMenuItem(
-                title: 'assign domain name complement from bound strands',
-                tooltip: '''\
+            ),
+          ContextMenuItem(
+            title: 'set domain name',
+            on_click: () => set_domain_names(
+              util_state.add_if_not_null(app.state.ui_state.selectables_store.selected_domains, domain),
+            ),
+          ),
+          ContextMenuItem(
+            title: 'assign domain name complement from bound strands',
+            tooltip: '''\
 If other strands bound to this strand (or the selected strands) have domain names already 
 assigned, assign the complementary domain names sequence to this strand.
 
 To use this feature for individual domains instead of all domains on the strand, 
 set select mode to domain. Then only clicked and selected domains will be affected.''',
-                on_click: () => assign_domain_name_complement_from_bound_strands(domain),
-              ),
-              if (domain.name != null)
-                ContextMenuItem(
-                  title: 'remove domain name',
-                  on_click: () {
-                    var domains = util_state.add_if_not_null(
-                      app.state.ui_state.selectables_store.selected_domains,
-                      domain,
-                    );
-                    var action =
-                        domains.length > 1
-                            ? actions.BatchAction(
-                              domains.map((d) => actions.SubstrandNameSet(name: null, substrand: d)).toList(),
-                              'remove domain names',
-                            )
-                            : actions.SubstrandNameSet(name: null, substrand: domain);
-                    app.dispatch(action);
-                  },
-                ),
-            ].build(),
+            on_click: () => assign_domain_name_complement_from_bound_strands(domain),
+          ),
+          if (domain.name != null)
+            ContextMenuItem(
+              title: 'remove domain name',
+              on_click: () {
+                var domains = util_state.add_if_not_null(app.state.ui_state.selectables_store.selected_domains, domain);
+                var action = domains.length > 1
+                    ? actions.BatchAction(
+                        domains.map((d) => actions.SubstrandNameSet(name: null, substrand: d)).toList(),
+                        'remove domain names',
+                      )
+                    : actions.SubstrandNameSet(name: null, substrand: domain);
+                app.dispatch(action);
+              },
+            ),
+        ].build(),
       ),
       ContextMenuItem(
         title: 'edit label',
-        nested:
-            [
-              ContextMenuItem(title: 'set strand label', on_click: set_strand_label),
-              if (props.strand.label != null)
-                ContextMenuItem(
-                  title: 'remove strand label',
-                  on_click:
-                      () => app.dispatch(
-                        batch_if_multiple_selected(
-                          (strand) => actions.StrandLabelSet(label: null, strand: strand),
-                          props.strand,
-                          app.state.ui_state.selectables_store.selected_strands,
-                          'remove strand label',
-                        ),
-                      ),
+        nested: [
+          ContextMenuItem(title: 'set strand label', on_click: set_strand_label),
+          if (props.strand.label != null)
+            ContextMenuItem(
+              title: 'remove strand label',
+              on_click: () => app.dispatch(
+                batch_if_multiple_selected(
+                  (strand) => actions.StrandLabelSet(label: null, strand: strand),
+                  props.strand,
+                  app.state.ui_state.selectables_store.selected_strands,
+                  'remove strand label',
                 ),
-              ContextMenuItem(
-                title: 'set domain label',
-                on_click: () => set_domain_labels(domain, get_selected_domains()),
               ),
-              if (domain.label != null)
-                ContextMenuItem(
-                  title: 'remove domain label',
-                  on_click: () {
-                    var domains = util_state.add_if_not_null(
-                      app.state.ui_state.selectables_store.selected_domains,
-                      domain,
-                    );
-                    var action =
-                        domains.length > 1
-                            ? actions.BatchAction(
-                              domains.map((d) => actions.SubstrandLabelSet(label: null, substrand: d)).toList(),
-                              'remove domain labels',
-                            )
-                            : actions.SubstrandLabelSet(label: null, substrand: domain);
-                    app.dispatch(action);
-                  },
-                ),
-            ].build(),
+            ),
+          ContextMenuItem(title: 'set domain label', on_click: () => set_domain_labels(domain, get_selected_domains())),
+          if (domain.label != null)
+            ContextMenuItem(
+              title: 'remove domain label',
+              on_click: () {
+                var domains = util_state.add_if_not_null(app.state.ui_state.selectables_store.selected_domains, domain);
+                var action = domains.length > 1
+                    ? actions.BatchAction(
+                        domains.map((d) => actions.SubstrandLabelSet(label: null, substrand: d)).toList(),
+                        'remove domain labels',
+                      )
+                    : actions.SubstrandLabelSet(label: null, substrand: domain);
+                app.dispatch(action);
+              },
+            ),
+        ].build(),
       ),
       ContextMenuItem(
         title: 'reflect',
-        nested:
-            [
-              ContextMenuItem(
-                title: 'reflect horizontally',
-                on_click: () => reflect(true, false),
-                tooltip: '''\
+        nested: [
+          ContextMenuItem(
+            title: 'reflect horizontally',
+            on_click: () => reflect(true, false),
+            tooltip: '''\
 replace strand(s) with horizontal mirror image, 
 without reversing polarity "vertically"
 
@@ -637,11 +615,11 @@ after:
   strand's 5' end on helix 0
   strand's 3' end on helix 1\
 ''',
-              ),
-              ContextMenuItem(
-                title: 'reflect horizontally (reverse vertical polarity)',
-                on_click: () => reflect(true, true),
-                tooltip: '''\
+          ),
+          ContextMenuItem(
+            title: 'reflect horizontally (reverse vertical polarity)',
+            on_click: () => reflect(true, true),
+            tooltip: '''\
 replace strand(s) with horizontal mirror image, 
 with polarity reversed "vertically" 
 
@@ -653,11 +631,11 @@ after:
   strand's 5' end on helix 1
   strand's 3' end on helix 0\
 ''',
-              ),
-              ContextMenuItem(
-                title: 'reflect vertically',
-                on_click: () => reflect(false, false),
-                tooltip: '''\
+          ),
+          ContextMenuItem(
+            title: 'reflect vertically',
+            on_click: () => reflect(false, false),
+            tooltip: '''\
 replace strand(s) with vertical mirror image, 
 without reversing polarity "vertically"
 
@@ -667,11 +645,11 @@ before:
 after:
   strand's 5' end is still on a helix below that of the strand's 3' end\
 ''',
-              ),
-              ContextMenuItem(
-                title: 'reflect vertically (reverse vertical polarity)',
-                on_click: () => reflect(false, true),
-                tooltip: '''\
+          ),
+          ContextMenuItem(
+            title: 'reflect vertically (reverse vertical polarity)',
+            on_click: () => reflect(false, true),
+            tooltip: '''\
 replace strand(s) with vertical mirror image, 
 with polarity reversed "vertically"
 
@@ -681,15 +659,14 @@ before:
 after:
   strand's 5' end is now on a helix above that of the strand's 3' end\
 ''',
-              ),
-            ].build(),
+          ),
+        ].build(),
       ),
       ContextMenuItem(
         title: 'add extension',
-        on_click:
-            () => app.disable_keyboard_shortcuts_while(
-              () => ask_for_add_extension(strand, (modification_type == ModificationType.five_prime)),
-            ),
+        on_click: () => app.disable_keyboard_shortcuts_while(
+          () => ask_for_add_extension(strand, (modification_type == ModificationType.five_prime)),
+        ),
         disabled: strand.has_5p_extension && strand.has_3p_extension,
       ),
     ];
@@ -858,14 +835,13 @@ after:
 PU : PAGE Ultramer™
 25nmS : 5 nmole Sameday
 """,
-      selected_idx:
-          all_strands.length > 1
-              ? select_scale_index_for_multiple_strands(all_strands, options_scale)
-              : select_index_for_one_strand(
-                props.strand.vendor_fields?.scale,
-                options_scale,
-                all_strands.every((element) => element.vendor_fields == null),
-              ),
+      selected_idx: all_strands.length > 1
+          ? select_scale_index_for_multiple_strands(all_strands, options_scale)
+          : select_index_for_one_strand(
+              props.strand.vendor_fields?.scale,
+              options_scale,
+              all_strands.every((element) => element.vendor_fields == null),
+            ),
     );
 
     items[scale_custom_idx] = DialogText(
@@ -887,14 +863,13 @@ RNASE : RNase Free HPLC
 DUALHPLC : Dual HPLC
 PAGEHPLC : Dual PAGE & HPLC
 """,
-      selected_idx:
-          all_strands.length > 1
-              ? select_purification_index_for_multiple_strands(all_strands, options_purification)
-              : select_index_for_one_strand(
-                props.strand.vendor_fields?.purification,
-                options_purification,
-                all_strands.every((element) => element.vendor_fields == null),
-              ),
+      selected_idx: all_strands.length > 1
+          ? select_purification_index_for_multiple_strands(all_strands, options_purification)
+          : select_index_for_one_strand(
+              props.strand.vendor_fields?.purification,
+              options_purification,
+              all_strands.every((element) => element.vendor_fields == null),
+            ),
     );
 
     items[purification_custom_idx] = DialogText(
@@ -935,8 +910,9 @@ PAGEHPLC : Dual PAGE & HPLC
       for (var strand in all_strands) {
         var vendor_fields = VendorFields(
           scale: (scale == "" && strand.vendor_fields != null) ? strand.vendor_fields!.scale : scale,
-          purification:
-              (purification == "" && strand.vendor_fields != null) ? strand.vendor_fields!.purification : purification,
+          purification: (purification == "" && strand.vendor_fields != null)
+              ? strand.vendor_fields!.purification
+              : purification,
           plate: strand.vendor_fields?.plate,
           well: strand.vendor_fields?.well,
         );

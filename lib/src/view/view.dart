@@ -56,10 +56,10 @@ class View {
   DivElement nonmenu_panes_container_element = DivElement()..attributes = {'id': NONMENU_PANES_CONTAINED_ID};
   DivElement design_element = DivElement()..attributes = {'id': DESIGN_ID};
 
-  DivElement design_and_modes_buttons_container_element =
-      DivElement()..attributes = {'id': DESIGN_AND_MODES_BUTTONS_CONTAINER_ID, 'class': 'split'};
-  DivElement design_oxview_separator =
-      DivElement()..attributes = {'id': 'design-oxview-separator', 'class': 'draggable-separator'};
+  DivElement design_and_modes_buttons_container_element = DivElement()
+    ..attributes = {'id': DESIGN_AND_MODES_BUTTONS_CONTAINER_ID, 'class': 'split'};
+  DivElement design_oxview_separator = DivElement()
+    ..attributes = {'id': 'design-oxview-separator', 'class': 'draggable-separator'};
 
   late DesignViewComponent design_view;
   late OxviewViewComponent oxview_view;

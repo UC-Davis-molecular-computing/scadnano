@@ -25,11 +25,10 @@ abstract class MouseoverParams with BuiltJsonSerializable implements Built<Mouse
 
   /************************ begin BuiltValue boilerplate ************************/
   factory MouseoverParams(int helix_idx, int offset, bool forward) => MouseoverParams.from(
-    (b) =>
-        b
-          ..helix_idx = helix_idx
-          ..offset = offset
-          ..forward = forward,
+    (b) => b
+      ..helix_idx = helix_idx
+      ..offset = offset
+      ..forward = forward,
   );
 
   factory MouseoverParams.from([void Function(MouseoverParamsBuilder) updates]) = _$MouseoverParams;
@@ -121,16 +120,15 @@ abstract class MouseoverData with BuiltJsonSerializable implements Built<Mouseov
     double roll_forward,
     double minor_groove_angle,
   ) => MouseoverData.from(
-    (b) =>
-        b
-          ..helix.replace(helix)
-          ..domain = domain?.toBuilder()
-          ..offset = offset
-          ..strand_idx = strand_idx
-          ..color_forward = color_forward
-          ..color_reverse = color_reverse
-          ..roll_forward = roll_forward
-          ..minor_groove_angle = minor_groove_angle,
+    (b) => b
+      ..helix.replace(helix)
+      ..domain = domain?.toBuilder()
+      ..offset = offset
+      ..strand_idx = strand_idx
+      ..color_forward = color_forward
+      ..color_reverse = color_reverse
+      ..roll_forward = roll_forward
+      ..minor_groove_angle = minor_groove_angle,
   );
 
   factory MouseoverData.from([void Function(MouseoverDataBuilder) updates]) = _$MouseoverData;

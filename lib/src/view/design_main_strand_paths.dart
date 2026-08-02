@@ -134,10 +134,9 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
           if (!props.strand.circular) {
             bool is_5p = true;
             for (DNAEnd end in [domain.dnaend_5p, domain.dnaend_3p]) {
-              String key =
-                  is_5p
-                      ? "5'-end-$i${domain.is_first ? '-is_first' : ''}"
-                      : "3'-end-$i${domain.is_last ? '-is_last' : ''}";
+              String key = is_5p
+                  ? "5'-end-$i${domain.is_first ? '-is_first' : ''}"
+                  : "3'-end-$i${domain.is_last ? '-is_last' : ''}";
               bool end_selected = props.selected_ends_in_strand.contains(end);
               ends.add(
                 (DesignMainDNAEnd()
@@ -231,10 +230,9 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
               ..key = "extension-${is_5p_str}-$i")(),
           );
           DNAEnd end = ext.dnaend_free;
-          String key =
-              ext.is_5p
-                  ? "5'-end-$i${ext.is_5p ? '-ext-is_first' : ''}"
-                  : "3'-end-$i${!ext.is_5p ? '-ext-is_last' : ''}";
+          String key = ext.is_5p
+              ? "5'-end-$i${ext.is_5p ? '-ext-is_first' : ''}"
+              : "3'-end-$i${!ext.is_5p ? '-ext-is_last' : ''}";
           bool end_selected = props.selected_ends_in_strand.contains(end);
           ends.add(
             (DesignMainDNAEnd()

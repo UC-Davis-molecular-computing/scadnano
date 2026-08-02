@@ -68,10 +68,9 @@ abstract class GridPosition with BuiltJsonSerializable implements Built<GridPosi
 
   /************************ begin BuiltValue boilerplate ************************/
   factory GridPosition(int h, int v) => GridPosition.from(
-    (g) =>
-        g
-          ..h = h
-          ..v = v,
+    (g) => g
+      ..h = h
+      ..v = v,
   );
 
   factory GridPosition.from([void Function(GridPositionBuilder) updates]) = _$GridPosition;

@@ -70,15 +70,14 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
     }
 
     // these aren't defined if slice bar is not showing, so check for null
-    var forward_angle =
-        props.slice_bar_offset != null
-            ? props.helix.backbone_angle_at_offset(props.slice_bar_offset!, true, props.geometry)
-            : null;
-    var reverse_angle =
-        props.slice_bar_offset != null
-            ? props.helix.backbone_angle_at_offset(props.slice_bar_offset!, false, props.geometry)
-            : null;
-    var tooltip = '''\
+    var forward_angle = props.slice_bar_offset != null
+        ? props.helix.backbone_angle_at_offset(props.slice_bar_offset!, true, props.geometry)
+        : null;
+    var reverse_angle = props.slice_bar_offset != null
+        ? props.helix.backbone_angle_at_offset(props.slice_bar_offset!, false, props.geometry)
+        : null;
+    var tooltip =
+        '''\
 position:  ${position_str}
 roll:      ${props.helix.roll.toStringAsFixed(precision)}
 backbone angles at current slice bar offset = ${props.slice_bar_offset}:
@@ -113,13 +112,12 @@ backbone angles at current slice bar offset = ${props.slice_bar_offset}:
 
     if (props.rotation_data != null) {
       assert(props.rotation_data!.helix.idx == this.props.helix.idx);
-      var rot_component =
-          (DesignSideRotation()
-            ..radius = props.geometry.helix_radius_svg
-            ..data = props.rotation_data!
-            ..invert_y = props.invert_y
-            ..className = '$SIDE_VIEW_PREFIX-helix-rotation'
-            ..key = 'rotation')();
+      var rot_component = (DesignSideRotation()
+        ..radius = props.geometry.helix_radius_svg
+        ..data = props.rotation_data!
+        ..invert_y = props.invert_y
+        ..className = '$SIDE_VIEW_PREFIX-helix-rotation'
+        ..key = 'rotation')();
       children.add(rot_component);
     }
 

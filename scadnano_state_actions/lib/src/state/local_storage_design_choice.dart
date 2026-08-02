@@ -33,10 +33,9 @@ abstract class LocalStorageDesignChoice
     LocalStorageDesignOption option = LocalStorageDesignOption.on_edit,
     int period_seconds = _default_period,
   ]) => LocalStorageDesignChoice.from(
-    (b) =>
-        b
-          ..option = option
-          ..period_seconds = period_seconds,
+    (b) => b
+      ..option = option
+      ..period_seconds = period_seconds,
   );
 
   factory LocalStorageDesignChoice.from([void Function(LocalStorageDesignChoiceBuilder) updates]) =

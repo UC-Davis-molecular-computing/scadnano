@@ -661,16 +661,15 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design.draw_strand(1, 0).move(6).cross(0).move(-6).add_deletion(0, 3).commit();
-      design =
-          design
-              .draw_strand(0, 2)
-              .move(8)
-              .add_deletion(0, 3)
-              .add_deletion(0, 8)
-              .cross(1)
-              .move(-8)
-              .add_deletion(1, 8)
-              .commit();
+      design = design
+          .draw_strand(0, 2)
+          .move(8)
+          .add_deletion(0, 3)
+          .add_deletion(0, 8)
+          .cross(1)
+          .move(-8)
+          .add_deletion(1, 8)
+          .commit();
       design = design.draw_strand(0, 12).move(-6).add_deletion(0, 8).commit();
       design = design.draw_strand(1, 6).move(6).add_deletion(1, 8).commit();
 
@@ -738,8 +737,14 @@ main() {
       var design = Design(helices: helices, grid: Grid.square);
 
       design = design.draw_strand(1, 0).move(6).cross(0).move(-6).commit();
-      design =
-          design.draw_strand(0, 2).move(8).add_insertion(0, 8, 1).cross(1).move(-8).add_insertion(1, 8, 1).commit();
+      design = design
+          .draw_strand(0, 2)
+          .move(8)
+          .add_insertion(0, 8, 1)
+          .cross(1)
+          .move(-8)
+          .add_insertion(1, 8, 1)
+          .commit();
       design = design.draw_strand(0, 12).move(-6).add_insertion(0, 8, 1).commit();
       design = design.draw_strand(1, 6).move(6).add_insertion(1, 8, 1).commit();
 
@@ -1061,19 +1066,18 @@ main() {
       var helices = [Helix(idx: 0, max_offset: 6, grid: Grid.square), Helix(idx: 1, max_offset: 6, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
 
-      design =
-          design
-              .draw_strand(1, 3)
-              .move(-3)
-              .add_deletion(1, 1)
-              .cross(0)
-              .move(6)
-              .add_deletion(0, 1)
-              .add_deletion(0, 4)
-              .cross(1)
-              .move(-3)
-              .add_deletion(1, 4)
-              .commit();
+      design = design
+          .draw_strand(1, 3)
+          .move(-3)
+          .add_deletion(1, 1)
+          .cross(0)
+          .move(6)
+          .add_deletion(0, 1)
+          .add_deletion(0, 4)
+          .cross(1)
+          .move(-3)
+          .add_deletion(1, 4)
+          .commit();
       design = design.draw_strand(1, 0).move(3).add_deletion(1, 1).cross(0).move(-3).add_deletion(0, 1).commit();
       design = design.draw_strand(0, 6).move(-3).add_deletion(0, 4).cross(1).move(3).add_deletion(1, 4).commit();
 

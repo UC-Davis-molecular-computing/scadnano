@@ -30,10 +30,9 @@ check_reflect_strands_legal_middleware(Store<AppState> store, action, NextDispat
     String group_name = group_names.first;
     HelixGroup group = design.groups[group_name]!;
 
-    List<Strand> reflected_strands =
-        action.horizontal
-            ? horizontal_reflection_of_strands(design, strands_to_reflect, action.reverse_polarity)
-            : vertical_reflection_of_strands(group, strands_to_reflect, action.reverse_polarity);
+    List<Strand> reflected_strands = action.horizontal
+        ? horizontal_reflection_of_strands(design, strands_to_reflect, action.reverse_polarity)
+        : vertical_reflection_of_strands(group, strands_to_reflect, action.reverse_polarity);
 
     var altered_design = design.remove_strands(strands_to_reflect);
     altered_design = altered_design.add_strands(reflected_strands);
@@ -67,16 +66,14 @@ check_reflect_strands_legal_middleware(Store<AppState> store, action, NextDispat
 //XXX: it's critical that these functions return strands in the same order they were received because
 // the ReplaceStrands action replaces them "in place" where the index of the original strand was.
 List<Strand> horizontal_reflection_of_strands(Design design, List<Strand> strands_to_mirror, bool reverse_polarity) {
-  int min_offset =
-      [
-        for (var strand in strands_to_mirror)
-          for (var domain in strand.domains) domain.start,
-      ].min;
-  int max_offset =
-      [
-        for (var strand in strands_to_mirror)
-          for (var domain in strand.domains) domain.end,
-      ].max;
+  int min_offset = [
+    for (var strand in strands_to_mirror)
+      for (var domain in strand.domains) domain.start,
+  ].min;
+  int max_offset = [
+    for (var strand in strands_to_mirror)
+      for (var domain in strand.domains) domain.end,
+  ].max;
 
   List<Strand> mirrored_strands = [];
   for (var strand in strands_to_mirror) {
@@ -94,15 +91,14 @@ List<Strand> horizontal_reflection_of_strands(Design design, List<Strand> strand
         bool is_last = (i == 0 && reverse_polarity) || (i == mirrored_substrands.length - 1 && !reverse_polarity);
 
         mirrored_substrands[i] = domain.rebuild(
-          (b) =>
-              b
-                ..start = reflected_end
-                ..end = reflected_start
-                ..forward = reverse_polarity ? domain.forward : !domain.forward
-                ..deletions.replace(reflected_deletions)
-                ..insertions.replace(reflected_insertions)
-                ..is_first = is_first
-                ..is_last = is_last,
+          (b) => b
+            ..start = reflected_end
+            ..end = reflected_start
+            ..forward = reverse_polarity ? domain.forward : !domain.forward
+            ..deletions.replace(reflected_deletions)
+            ..insertions.replace(reflected_insertions)
+            ..is_first = is_first
+            ..is_last = is_last,
         );
       }
     }
@@ -168,12 +164,11 @@ List<Strand> vertical_reflection_of_strands(HelixGroup group, List<Strand> stran
         bool is_last = (i == 0 && !reverse_polarity) || (i == mirrored_substrands.length - 1 && reverse_polarity);
 
         mirrored_substrands[i] = domain.rebuild(
-          (b) =>
-              b
-                ..helix = reflected_helix_idx
-                ..forward = reverse_polarity ? domain.forward : !domain.forward
-                ..is_first = is_first
-                ..is_last = is_last,
+          (b) => b
+            ..helix = reflected_helix_idx
+            ..forward = reverse_polarity ? domain.forward : !domain.forward
+            ..is_first = is_first
+            ..is_last = is_last,
         );
       }
     }

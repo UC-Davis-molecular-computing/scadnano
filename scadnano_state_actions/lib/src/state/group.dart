@@ -56,15 +56,14 @@ abstract class HelixGroup with BuiltJsonSerializable implements Built<HelixGroup
       position = Position3D.origin;
     }
     return HelixGroup.from(
-      (b) =>
-          b
-            ..grid = grid
-            ..helices_view_order.replace(helices_view_order)
-            ..position.replace(position!)
-            ..pitch = pitch
-            ..yaw = yaw
-            ..roll = roll
-            ..geometry = geometry?.toBuilder(),
+      (b) => b
+        ..grid = grid
+        ..helices_view_order.replace(helices_view_order)
+        ..position.replace(position!)
+        ..pitch = pitch
+        ..yaw = yaw
+        ..roll = roll
+        ..geometry = geometry?.toBuilder(),
     );
   }
 
@@ -89,8 +88,9 @@ abstract class HelixGroup with BuiltJsonSerializable implements Built<HelixGroup
 
     if (!util.helices_view_order_is_default(helix_idxs_built, this)) {
       var helices_view_order_to_write = helices_view_order.toList();
-      json_map[constants.helices_view_order_key] =
-          suppress_indent ? NoIndent(helices_view_order_to_write) : helices_view_order_to_write;
+      json_map[constants.helices_view_order_key] = suppress_indent
+          ? NoIndent(helices_view_order_to_write)
+          : helices_view_order_to_write;
     }
 
     if (this.geometry != null) {

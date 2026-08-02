@@ -61,8 +61,9 @@ reselect_moved_copied_strands_middleware(Store<AppState> store, action, NextDisp
     List<Strand> new_strands = [];
     Design new_design = store.state.design;
     // if strand polarity switched, the 3' end of each strand will now be where the 5' end was
-    BuiltMap<Address, Strand> address_to_strand =
-        strands_move.delta_forward ? new_design.address_3p_to_strand : new_design.address_5p_to_strand;
+    BuiltMap<Address, Strand> address_to_strand = strands_move.delta_forward
+        ? new_design.address_3p_to_strand
+        : new_design.address_5p_to_strand;
     for (var address in addresses) {
       Strand new_strand = address_to_strand[address]!;
       new_strands.add(new_strand);

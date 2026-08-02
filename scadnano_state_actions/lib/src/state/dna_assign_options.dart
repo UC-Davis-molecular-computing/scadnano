@@ -26,13 +26,12 @@ abstract class DNAAssignOptions with BuiltJsonSerializable implements Built<DNAA
     int m13_rotation = 5587,
   }) {
     return DNAAssignOptions.from(
-      (b) =>
-          b
-            ..dna_sequence = dna_sequence
-            ..use_predefined_dna_sequence = use_predefined_dna_sequence
-            ..assign_complements = assign_complements
-            ..disable_change_sequence_bound_strand = disable_change_sequence_bound_strand
-            ..m13_rotation = m13_rotation,
+      (b) => b
+        ..dna_sequence = dna_sequence
+        ..use_predefined_dna_sequence = use_predefined_dna_sequence
+        ..assign_complements = assign_complements
+        ..disable_change_sequence_bound_strand = disable_change_sequence_bound_strand
+        ..m13_rotation = m13_rotation,
     );
   }
 

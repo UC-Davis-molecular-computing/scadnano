@@ -30,24 +30,21 @@ class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps, S
     extends UiStatefulComponent2<T, S>
     with ErrorBoundaryApi<T, S> {
   @override
-  get defaultProps =>
-      (newProps()
-        ..identicalErrorFrequencyTolerance = Duration(seconds: 5)
-        ..loggerName = constants.default_error_boundary_logger_name
-        ..shouldLogErrors = true);
+  get defaultProps => (newProps()
+    ..identicalErrorFrequencyTolerance = Duration(seconds: 5)
+    ..loggerName = constants.default_error_boundary_logger_name
+    ..shouldLogErrors = true);
 
   @override
-  get initialState =>
-      (newState()
-        ..hasError = false
-        ..showFallbackUIOnError = true);
+  get initialState => (newState()
+    ..hasError = false
+    ..showFallbackUIOnError = true);
 
   @override
-  Map getDerivedStateFromError(error) =>
-      (newState()
-        ..hasError = true
-        ..error = error
-        ..showFallbackUIOnError = true);
+  Map getDerivedStateFromError(error) => (newState()
+    ..hasError = true
+    ..error = error
+    ..showFallbackUIOnError = true);
 
   @override
   void componentDidCatch(error, ReactErrorInfo info) {

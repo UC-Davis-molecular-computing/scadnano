@@ -41,14 +41,12 @@ BuiltList<Strand> delete_all_reducer(BuiltList<Strand> strands, AppState state, 
     strands = remove_domains(strands, state, domains);
   } else if (select_mode_state.deletions_selectable || select_mode_state.insertions_selectable) {
     // deletions/insertions
-    List<SelectableDeletion> deletions =
-        select_mode_state.deletions_selectable
-            ? List<SelectableDeletion>.from(items.where((item) => item is SelectableDeletion))
-            : [];
-    List<SelectableInsertion> insertions =
-        select_mode_state.insertions_selectable
-            ? List<SelectableInsertion>.from(items.where((item) => item is SelectableInsertion))
-            : [];
+    List<SelectableDeletion> deletions = select_mode_state.deletions_selectable
+        ? List<SelectableDeletion>.from(items.where((item) => item is SelectableDeletion))
+        : [];
+    List<SelectableInsertion> insertions = select_mode_state.insertions_selectable
+        ? List<SelectableInsertion>.from(items.where((item) => item is SelectableInsertion))
+        : [];
     strands = remove_deletions_and_insertions(strands, state, deletions, insertions);
   } else if (select_mode_state.modifications_selectable) {
     // modifications
@@ -168,10 +166,9 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
   // Find DNA sequences of new Strands.
   //XXX: This must go before updating substrands below with is_first and is_last or else they cannot be
   // found as substrands of strand by method Strand.dna_sequence_in(), called by _dna_seq
-  var dna_sequences =
-      strand.dna_sequence == null
-          ? [for (var _ in substrands_list) null]
-          : [for (var substrands in substrands_list) _dna_seq(substrands, strand)];
+  var dna_sequences = strand.dna_sequence == null
+      ? [for (var _ in substrands_list) null]
+      : [for (var substrands in substrands_list) _dna_seq(substrands, strand)];
 
   Modification5Prime? mod_5p = null;
   Modification3Prime? mod_3p = null;
@@ -413,10 +410,9 @@ BuiltList<Strand> remove_deletions_and_insertions(
           deletions_existing.removeWhere((offset) => deletions_offsets_to_remove.contains(offset));
           insertions_existing.removeWhere((insertion) => insertions_offsets_to_remove.contains(insertion.offset));
           domain = domain.rebuild(
-            (b) =>
-                b
-                  ..deletions.replace(deletions_existing)
-                  ..insertions.replace(insertions_existing),
+            (b) => b
+              ..deletions.replace(deletions_existing)
+              ..insertions.replace(insertions_existing),
           );
           substrands[j] = domain;
         }
