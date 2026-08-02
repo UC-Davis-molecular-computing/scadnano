@@ -1,0 +1,89 @@
+name: "changelog"
+
+# Regenerates CHANGELOG.md from ALL GitHub releases and commits it directly to
+# main whenever a release is published, edited, or deleted.
+#
+# Interactions to be aware of:
+#   - build-and-deploy.yml creates releases with GITHUB_TOKEN, whose events do
+#     not trigger workflows, so `published` does NOT run this. CHANGELOG.md
+#     updates when a maintainer EDITS the release (replacing the placeholder
+#     title and notes) -- exactly when the notes become worth recording.
+#   - Editing a release whose tag predates this file produces NO run (release
+#     events use the workflow file at the tagged commit). Remedy: run this
+#     workflow manually via workflow_dispatch (Actions tab -> changelog -> Run
+#     workflow); every run regenerates the entire file, so one run heals all.
+#   - For the same reason, a release-triggered run uses the `args` and `header`
+#     frozen at THAT tag, not the current ones on dev. So after changing the
+#     formatting below, make a workflow_dispatch run the LAST run: an `edited`
+#     event on an older release would otherwise rewrite CHANGELOG.md in the old
+#     format. (workflow_dispatch always uses the branch you dispatch from.)
+#   - The push below uses GITHUB_TOKEN so it does NOT trigger build-and-deploy.yml.
+#     NEVER substitute a PAT here: that would trigger a full (and pointless)
+#     build-and-deploy run on every changelog commit, which would end in a no-op
+#     re-upload of the executables.
+#   - The action commits and then `git push --force`es to the branch checked out
+#     below, i.e. main, which is protected. The "github-actions" app therefore
+#     needs to be a bypass actor for whichever of these rules are enabled on
+#     main: required pull request reviews, blocked force pushes, and required
+#     signed commits (the commit it makes is unsigned, and is attributed to
+#     whoever triggered the run). The same workflow already pushes successfully
+#     to main in the sibling repo scadnano-python-package, so mirroring that
+#     repo's bypass configuration is sufficient. If a rule does block it, the run
+#     fails at the push -- and it is triggered by a release EDIT, when nobody is
+#     necessarily watching the Actions tab, so check that the run went green
+#     after editing a release.
+#   - Because the push is forced, anything landing on main between this job's
+#     checkout and its push is discarded. In practice main only ever receives
+#     release merges, and `cancel-in-progress` above collapses back-to-back
+#     changelog runs, so the window is small -- but do not merge a release PR
+#     while a changelog run is in flight.
+
+on:
+  release:
+    types: [published, edited, deleted]
+  workflow_dispatch:
+
+# A retitle + notes edit can emit two `edited` events back to back; keep only
+# the newest run. Safe because each run regenerates the whole file from scratch.
+concurrency:
+  group: changelog
+  cancel-in-progress: true
+
+jobs:
+  changelog:
+    name: "Regenerate CHANGELOG.md from releases"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # Always regenerate and commit on main, whatever triggered us. This is
+          # load-bearing: on a `release` event checkout would otherwise leave a
+          # detached HEAD, and the action pushes the *current branch*.
+          ref: main
+      - uses: rhysd/changelog-from-release/action@v3
+        with:
+          file: CHANGELOG.md
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          commit_summary_template: 'update CHANGELOG.md for release %s'
+          # -l 2: release titles become "##" headings; -d=false: exclude drafts;
+          # -i: ignore the two floating tags that are not real releases --
+          #     `dev-latest` (the rolling prerelease that build-and-deploy.yml
+          #     deletes and recreates on every push to dev) and `latest` (a
+          #     legacy non-prerelease release left over from the archived
+          #     marvinpinto/action-automatic-releases).
+          #     `dev-latest` is in fact already excluded because prereleases are
+          #     skipped, but that is not documented, so name it here explicitly.
+          # NOTE: do NOT quote the regex. The action word-splits the args without
+          # quote removal, so quotes would become literal pattern characters.
+          # -i takes ONE regex (a second -i overwrites the first), hence the
+          # alternation, and it is an unanchored match, hence the ^...$.
+          args: -l 2 -d=false -i ^(latest|dev-latest)$
+          header: |
+            # Changelog
+
+            This file is generated automatically from the project's
+            [GitHub releases](https://github.com/UC-Davis-molecular-computing/scadnano/releases)
+            by [changelog-from-release](https://github.com/rhysd/changelog-from-release).
+            Do not edit it manually; edit the release notes instead.

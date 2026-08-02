@@ -5,41 +5,59 @@ name: build and deploy
 # push of a `v*` tag.
 #
 # Jobs and their trigger conditions:
-#   1. build-web-app          — always. Compiles the Dart/webdev web app ONCE and uploads
+#   1. version-guard          — only on push to main. Reads CURRENT_VERSION from
+#                               scadnano_state_actions/lib/src/constants.dart and FAILS RED if
+#                               the version was not bumped (i.e. tag v$VERSION already exists at
+#                               a different commit). Everything else on the main path depends on
+#                               it, so an un-bumped version costs ~30 s instead of a 45-minute
+#                               matrix build. It also computes the previous release tag, used
+#                               below to build the commit list.
+#   2. build-web-app          — always. Compiles the Dart/webdev web app ONCE and uploads
 #                               the result (build/) as an artifact shared with every
 #                               downstream job, so Dart setup + compile is not repeated.
-#   2. deploy-gh-pages-dev    — only on push to dev. Downloads the web-build artifact and
+#   3. deploy-gh-pages-dev    — only on push to dev. Downloads the web-build artifact and
 #                               publishes it to the `dev/` subdir of the gh-pages branch
 #                               (→ https://scadnano.org/dev/).
-#   3. deploy-gh-pages-main   — only on push to main. Downloads the web-build artifact
+#   4. deploy-gh-pages-main   — only on push to main. Downloads the web-build artifact
 #                               and publishes it to the root of the gh-pages branch
 #                               (→ https://scadnano.org/).  NOTE: as of 2026-04-14 we
 #                               no longer create a per-version `v$VERSION/` subdir —
 #                               accumulated versioned builds were pushing the Pages
 #                               artifact past GitHub's 1 GB limit.
-#   4. build-executables      — always. Matrix build (windows/ubuntu/macos) that downloads
+#   5. build-executables      — always. Matrix build (windows/ubuntu/macos) that downloads
 #                               the web-build artifact and packages it via electron-builder
 #                               into platform-specific executables (.exe / .dmg /
 #                               .AppImage / .deb / .rpm), uploaded as per-OS artifacts.
-#   5. release                — always. Downloads the per-OS executable artifacts and
+#   6. release                — always. Downloads the per-OS executable artifacts and
 #                               attaches them to a GitHub release, with different behavior
 #                               depending on the trigger:
 #                                 • push to dev  → rolling prerelease `dev-latest`,
 #                                                  deleted + recreated on every push.
-#                                 • push to main → creates release `v$VERSION` (tag + title
-#                                                  " v$VERSION [TODO: add possible release
-#                                                  notes]") with --generate-notes
-#                                                  (auto-changelog from previous tag).
-#                                                  If release already exists, just
-#                                                  re-uploads binaries with --clobber.
-#                                 • push of v* tag → uploads binaries to the existing
-#                                                    v$VERSION release, or creates it if
-#                                                    missing.
+#                                 • push to main → creates the tag v$VERSION at the merge
+#                                                  commit and the release `v$VERSION`, titled
+#                                                  "TODO: edit release notes for v$VERSION"
+#                                                  (a deliberate placeholder), whose body lists
+#                                                  every commit since the previous release,
+#                                                  with the executables attached.
+#                                 • push of v* tag → uploads executables to the release that
+#                                                    already exists for that tag; errors if
+#                                                    there is none.
 #
 # Dependency graph:
-#   build-web-app ─┬─ deploy-gh-pages-dev  (if dev)
-#                  ├─ deploy-gh-pages-main (if main)
-#                  └─ build-executables ── release
+#   version-guard (if main) ── build-web-app ─┬─ deploy-gh-pages-dev  (if dev)
+#                                             ├─ deploy-gh-pages-main (if main)
+#                                             └─ build-executables ── release
+#
+# INVARIANT: every push to main is a release. If CURRENT_VERSION in
+# scadnano_state_actions/lib/src/constants.dart was not bumped, this workflow FAILS (red X) on
+# purpose, and nothing is tagged, released, or deployed to https://scadnano.org.
+#
+# NEVER substitute a personal access token (PAT) for GITHUB_TOKEN anywhere in this file.
+# Actions taken with GITHUB_TOKEN do not trigger other workflows, and three things depend on that:
+#   - the tag v$VERSION created below does NOT re-trigger this workflow via its `tags: v*` filter;
+#   - the release created below does NOT trigger changelog.yml, which is correct, because at
+#     creation time its title is still the "TODO" placeholder;
+#   - the CHANGELOG.md commit that changelog.yml pushes to main does NOT re-trigger this workflow.
 
 on:
   push:
@@ -49,12 +67,117 @@ on:
     tags:
       - 'v*'
 
+# Serialize ALL runs of this workflow, deliberately NOT keyed on the ref. The dev and main
+# deployments both push to the gh-pages branch, so two of them must never run at once; this used
+# to be maintained by hand (see CONTRIBUTING.md) and is now enforced here. Queued, not cancelled:
+# every push to main must produce (or loudly fail to produce) a release.
+# `queue: max` rather than the default `queue: single`, under which only ONE run may be pending
+# and a third run silently cancels the pending one — for the sole creator of releases that would
+# mean a lost release with no red X.
+concurrency:
+  group: build-and-deploy
+  cancel-in-progress: false
+  queue: max
+
 permissions:
   contents: write
 
 jobs:
+  version-guard:
+    name: Check version bump
+    # Only pushes to main are releases. On dev and on v* tag pushes this job is skipped, and the
+    # downstream `if: ${{ !cancelled() && ... }}` conditions let those paths proceed anyway.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # gh CLI reads this; do NOT replace with a PAT
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      create_release: ${{ steps.guard.outputs.create_release }}
+      prev_ref: ${{ steps.prev.outputs.prev_ref }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0   # full history + all tags, needed by the guard and by `git log`
+
+      - name: Extract version from scadnano_state_actions/lib/src/constants.dart
+        id: version
+        run: |
+          version=$(sed -nE 's/^const String CURRENT_VERSION = "([^"]+)";.*$/\1/p' \
+            scadnano_state_actions/lib/src/constants.dart | head -1)
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error file=scadnano_state_actions/lib/src/constants.dart::could not extract semantic version from the CURRENT_VERSION line (got: '$version')"
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Fail loudly if version was not bumped (unless this is a re-run)
+        id: guard
+        run: |
+          version='${{ steps.version.outputs.version }}'
+          if git rev-parse -q --verify "refs/tags/v$version^{commit}" > /dev/null; then
+            tag_commit=$(git rev-parse "refs/tags/v$version^{commit}")
+            if [ "$tag_commit" = "$GITHUB_SHA" ]; then
+              echo "Tag v$version already exists at this exact commit: re-run of a partially failed workflow. Skipping release creation."
+              echo "create_release=false" >> "$GITHUB_OUTPUT"
+            else
+              echo "::error file=scadnano_state_actions/lib/src/constants.dart::Tag v$version already exists (at $tag_commit) but this push is $GITHUB_SHA. CURRENT_VERSION in scadnano_state_actions/lib/src/constants.dart was not bumped before merging to main. Bump it on dev and merge dev to main again (see CONTRIBUTING.md); this red X is the intended reminder."
+              exit 1
+            fi
+          else
+            echo "create_release=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Determine previous release tag
+        id: prev
+        run: |
+          version='${{ steps.version.outputs.version }}'
+          # The network call is its OWN assignment so that `set -e` (the default shell here is
+          # `bash -e {0}`) sees a nonzero exit and fails the step. Do NOT fold it back into the
+          # pipeline below: `head -1` as the last stage makes the pipeline status always 0, so a
+          # failing `gh release list` would be indistinguishable from "no previous release".
+          # `gh release list` returns newest-first.
+          releases=$(gh release list --exclude-drafts --exclude-pre-releases \
+            --limit 50 --json tagName --jq '.[].tagName')
+
+          # Newest published release whose tag looks like v<semver>, excluding the release this
+          # run creates (which matters on re-runs).
+          #   --exclude-pre-releases  drops the rolling `dev-latest` prerelease.
+          #   the ^v[0-9]+... filter  drops the legacy floating tag `latest`, a NON-prerelease
+          #                           release left over from the archived automatic-release
+          #                           action, which would otherwise be picked as the previous
+          #                           release and produce an empty or wrong commit list.
+          # `|| true` is safe here: this pipeline is purely local, and grep exits 1 on no match.
+          prev_ref=$(printf '%s\n' "$releases" \
+            | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' \
+            | grep -vx "v$version" \
+            | head -1) || true
+
+          # This repo has ~70 vX.Y.Z releases, so an empty prev_ref is never legitimate: it means
+          # the query returned something unexpected. Without this check the release job would fall
+          # back to range="HEAD" and dump the entire repository history into the release body.
+          if [ -z "$prev_ref" ] && git tag --list 'v[0-9]*.[0-9]*.[0-9]*' | grep -q .; then
+            echo "::error::Could not determine the previous release tag, but vX.Y.Z tags exist. Refusing to continue, because the release notes would otherwise contain the entire repository history. Check the 'gh release list' output above."
+            exit 1
+          fi
+
+          echo "Previous release tag: '$prev_ref'"
+          echo "prev_ref=$prev_ref" >> "$GITHUB_OUTPUT"
+
   build-web-app:
     name: Build scadnano web app
+    needs: [version-guard]
+    # version-guard is skipped on dev and on v* tag pushes; proceed in that case. If it FAILED
+    # (version not bumped), this and everything downstream is skipped, so a push to main with no
+    # version bump neither deploys to scadnano.org nor builds executables — a push to main either
+    # produces a complete release or produces nothing at all.
+    # A status-check function is required here, or the implicit success() would skip this job
+    # whenever version-guard is skipped. Use !cancelled() rather than always(): always() returns
+    # true even for a run the maintainer has cancelled, which would let a cancelled run go on to
+    # create a tag and a release. (The ${{ }} wrapper is required: a bare leading `!` is the YAML
+    # tag indicator and will not parse.)
+    if: ${{ !cancelled() && (needs.version-guard.result == 'success' || needs.version-guard.result == 'skipped') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -243,12 +366,26 @@ jobs:
 
   release:
     name: Publish release
-    needs: build-executables
+    needs: [build-executables, version-guard]
+    # A status-check function is required because version-guard is skipped on dev and on v* tag
+    # pushes; without one the implicit success() would skip this job too. !cancelled() rather than
+    # always() so that cancelling the run really does abort release creation — with always() a
+    # cancelled run would still tag the commit and publish the release. If version-guard FAILED,
+    # build-executables is skipped, the check below is false, and this job is skipped as well.
+    if: ${{ !cancelled() && needs.build-executables.result == 'success' }}
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # do NOT replace with a PAT (see header)
+      VERSION: ${{ needs.version-guard.outputs.version }}
+      CREATE_RELEASE: ${{ needs.version-guard.outputs.create_release }}
+      PREV_REF: ${{ needs.version-guard.outputs.prev_ref }}
     steps:
-      - name: Checkout (for version extraction on main)
+      - name: Checkout (for the commit list on main)
         if: github.ref == 'refs/heads/main'
         uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}   # pin: main may have moved during the ~40 min build
+          fetch-depth: 0           # full history + tags, needed for `git log <prev>..HEAD`
 
       - name: Download executable artifacts
         uses: actions/download-artifact@v5
@@ -257,55 +394,72 @@ jobs:
           pattern: build-*
 
       - name: Publish to GitHub release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
           set -euo pipefail
 
+          # $FILES is left unquoted below on purpose: word-splitting is what turns this
+          # newline-separated list into separate arguments to gh. No filename contains a space.
           FILES=$(find ./release-files -type f)
           echo "Files to upload:"
           echo "$FILES"
 
           if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
-            # Tagged release (e.g. v0.19.15): preserve forever, attach exes to the release.
+            # A v* tag pushed by hand. Releases are no longer created here: creation belongs
+            # solely to the push-to-main path, which alone runs the version-bump guard and builds
+            # the commit list. This branch exists only to rebuild and re-attach the executables.
             TAG="$GITHUB_REF_NAME"
             if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
               echo "Release $TAG exists; uploading executables with --clobber."
               gh release upload "$TAG" $FILES --clobber --repo "$GITHUB_REPOSITORY"
             else
-              echo "Creating release $TAG."
-              gh release create "$TAG" \
-                --title "$TAG" \
-                --notes "Automated build for $TAG (commit $GITHUB_SHA)." \
-                --target "$GITHUB_SHA" \
-                --repo "$GITHUB_REPOSITORY" \
-                $FILES
-            fi
-          elif [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
-            # Push to main: extract version from constants.dart, create v$VERSION
-            # tag/release with auto-generated notes, attach binaries.
-            VERSION=$(grep 'const String CURRENT_VERSION = ' scadnano_state_actions/lib/src/constants.dart | grep -oP '\d+\.\d+\.\d+')
-            if [[ -z "$VERSION" ]]; then
-              echo "ERROR: could not extract version from scadnano_state_actions/lib/src/constants.dart"
+              echo "::error::No GitHub release exists for tag $TAG. Releases are created only by pushes to main, which read CURRENT_VERSION and create the tag themselves. Merge dev into main instead of pushing a tag by hand (see CONTRIBUTING.md)."
               exit 1
             fi
+
+          elif [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
+            # Push to main = a release. version-guard already validated $VERSION, decided
+            # whether this is a fresh release or a re-run, and found the previous release tag.
             TAG="v$VERSION"
-            TITLE=" $TAG [TODO: add possible release notes]"
-            if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-              echo "Release $TAG already exists; uploading binaries with --clobber."
-              gh release upload "$TAG" $FILES --clobber --repo "$GITHUB_REPOSITORY"
-            else
+            if [[ "$CREATE_RELEASE" == "true" ]]; then
+              if [ -n "$PREV_REF" ]; then range="$PREV_REF..HEAD"; else range="HEAD"; fi
+
+              # The commit list is built here with `git log` rather than with GitHub's own
+              # `gh release create --generate-notes`. Do NOT "simplify" this to --generate-notes:
+              # that generator is PR-based only. It lists the titles of merged pull requests and
+              # silently omits commits pushed directly to a branch, of which this repo has many.
+              # Losing those from the release notes is the regression this was written to avoid.
+              #
+              # --invert-grep drops the "update CHANGELOG.md for release vX.Y.Z" commits that
+              # changelog.yml pushes to main between releases; they are bot noise, not changes.
+              # Keep this pattern in sync with commit_summary_template in changelog.yml.
+              {
+                echo "TODO: describe this release here, then retitle the release to \"$TAG\"."
+                echo
+                echo "## Commits"
+                echo
+                git log --format='- %h: %s (%an)' \
+                        --invert-grep --grep='^update CHANGELOG\.md for release ' "$range"
+              } > "$RUNNER_TEMP/release-notes.md"
+
               echo "Creating release $TAG."
               gh release create "$TAG" \
-                --title "$TITLE" \
-                --generate-notes \
                 --target "$GITHUB_SHA" \
+                --title "TODO: edit release notes for $TAG" \
+                --notes-file "$RUNNER_TEMP/release-notes.md" \
                 --repo "$GITHUB_REPOSITORY" \
                 $FILES
+            else
+              # version-guard found the tag already pointing at this exact commit: this is a
+              # re-run of a partially failed workflow. Do not touch the title or the notes (a
+              # maintainer may already have edited them); just re-attach the executables. This
+              # is what makes the whole workflow safely re-runnable.
+              echo "Release $TAG already exists at this commit (re-run); uploading executables with --clobber."
+              gh release upload "$TAG" $FILES --clobber --repo "$GITHUB_REPOSITORY"
             fi
+
           else
-            # Rolling dev prerelease: overwrite each push.
+            # Rolling dev prerelease: overwrite on each push.
             TAG="dev-latest"
             echo "Refreshing rolling prerelease $TAG."
             gh release delete "$TAG" --cleanup-tag --yes --repo "$GITHUB_REPOSITORY" 2>/dev/null || true
