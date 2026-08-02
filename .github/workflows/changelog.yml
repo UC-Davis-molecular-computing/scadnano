@@ -32,11 +32,12 @@ name: "changelog"
 #     fails at the push -- and it is triggered by a release EDIT, when nobody is
 #     necessarily watching the Actions tab, so check that the run went green
 #     after editing a release.
-#   - Because the push is forced, anything landing on main between this job's
-#     checkout and its push is discarded. In practice main only ever receives
-#     release merges, and `cancel-in-progress` above collapses back-to-back
-#     changelog runs, so the window is small -- but do not merge a release PR
-#     while a changelog run is in flight.
+#   - The push is forced, but main has "allow force pushes" disabled, which is
+#     what we want: in normal operation the changelog commit sits on top of main
+#     and the push is a fast-forward, so --force changes nothing; and if main HAS
+#     moved since checkout, the non-fast-forward push is rejected rather than
+#     silently discarding the commits that landed in between. That turns a
+#     data-loss window into a failed run. Re-run the workflow to recover.
 
 on:
   release:
