@@ -561,11 +561,10 @@ Built test:test.
 **Neither needs to be installed** — both are `dev_dependencies` in [pubspec.yaml](pubspec.yaml), so `dart pub
 get` already fetched them and you run them with `dart run webdev` / `dart run melos`.
 
-Do **not** install `webdev` with `dart pub global activate`. A globally activated `webdev` resolves its own
-dependencies independently of [pubspec.lock](pubspec.lock), but it has to agree with the `build_daemon` that
-this project locks — and when those two disagree, every build fails with `MissingPortFile`. That is exactly
-what [issue #1104](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1104) was. Running it from
-the project's own dependencies means there is only one `build_daemon` and nothing to disagree.
+Do **not** install `webdev` with `dart pub global activate`. A global install resolves its own dependencies
+independently of [pubspec.lock](pubspec.lock), yet it must agree with the `build_daemon` this project locks;
+when the two disagree, every build fails with `MissingPortFile`. Running `dart run webdev` keeps both from a
+single resolution, so they cannot disagree.
 
 ### Running a Local Server
 
@@ -622,10 +621,6 @@ Sometimes it may be necessary to clean out the generated files and cache if this
 project, which can also help to fix compilation errors.
 
 If that does not work, try `dart run build_runner build --workspace`, and then run `./serve.sh`.
-
-(If you have seen `--delete-conflicting-outputs` in older instructions: build_runner removed that flag, and
-now deletes conflicting outputs on its own. Passing it just logs `These options have been removed and were
-ignored`. `./clean.sh` is what to reach for instead.)
 
 Running `dart run webdev serve --release` will compile the project in production mode (instead of development
 mode),
@@ -1283,7 +1278,7 @@ label [`closed in dev`](https://github.com/UC-Davis-molecular-computing/scadnano
 and **stays open**. That is deliberate: the fix exists and is live at https://scadnano.org/dev (and in the
 `dev-latest` prerelease executables), but the stable web app at https://scadnano.org and the versioned release
 executables are published only from `main`, so the issue is not really resolved for most users yet. The label
-is applied automatically; you no longer need to remember to add it.
+is applied automatically; you do not need to add it yourself.
 
 GitHub's own "fixes #123" auto-closing only acts on commits reaching the **default** branch, which is `main`.
 That is the main reason `main` is kept as the default: it means merging a fix to `dev` does not prematurely
@@ -1306,10 +1301,9 @@ to https://scadnano.org.
 
 **Note about GitHub Actions deploying to the website:** pushing to either the `main` branch (as this does) or
 the `dev` branch starts the `build and deploy` action, which updates https://scadnano.org (or
-https://scadnano.org/dev). Both deploy to the `gh-pages` branch, so two of these must never run at once. This
-used to require manual care — waiting for one deployment to finish before pushing again — but the workflow now
-serializes all of its runs with a concurrency group, so a second push simply queues behind the first instead of
-clobbering or cancelling it.
+https://scadnano.org/dev). Both deploy to the `gh-pages` branch, so two of these must never run at once. The
+workflow serializes all of its runs with a concurrency group, so a second push simply queues behind the first
+rather than clobbering or cancelling it — you can push freely without waiting.
 
 **WARNING:** Always wait for the checks to complete, to ensure that unit tests pass. They will look like this
 when incomplete:
