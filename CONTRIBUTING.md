@@ -783,7 +783,7 @@ Warning: The dot in the end is part of the command
 
 Building isn't necessary for the most part since the repository
 has
-a [Github Action](https://github.com/UC-Davis-molecular-computing/scadnano/actions?query=workflow%3A%22build+and+deploy%22)
+a [GitHub Action](https://github.com/UC-Davis-molecular-computing/scadnano/actions?query=workflow%3A%22build+and+deploy%22)
 that automatically builds and deploys changes
 in the main branch.
 

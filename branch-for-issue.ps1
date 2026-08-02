@@ -51,11 +51,12 @@ then restart your shell and run:
     exit 1
 }
 
-# `gh issue develop` needs to know which repo it is acting on; it infers this
-# from the current directory, so fail early with a clear message if we are not
-# in the working copy.
-if (-not (Test-Path (Join-Path $PSScriptRoot '.git'))) {
-    Write-Error "Run this script from inside the scadnano working copy."
+# `gh issue develop` needs to know which repo it is acting on, and it infers that from the
+# CURRENT directory -- not from where this script happens to live. So test the current
+# directory, and fail early with a clear message rather than letting gh fail confusingly.
+git rev-parse --git-dir 2>&1 | Out-Null
+if ($LASTEXITCODE -ne 0) {
+    Write-Error "Run this script from inside the scadnano working copy (the current directory is not a git repository)."
     exit 1
 }
 

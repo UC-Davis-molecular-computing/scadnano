@@ -28,7 +28,9 @@ if [ -z "$issue" ]; then
   exit 2
 fi
 
-if ! [[ "$issue" =~ ^[0-9]+$ ]]; then
+# Positive integer, no leading zeros: issue 0 does not exist, and `gh issue develop 007`
+# would fail confusingly later. (The .ps1 gets this from [ValidateRange(1, ...)].)
+if ! [[ "$issue" =~ ^[1-9][0-9]*$ ]]; then
   echo "error: issue number must be a positive integer (got '$issue')" >&2
   exit 2
 fi
