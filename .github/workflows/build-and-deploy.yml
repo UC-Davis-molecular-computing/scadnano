@@ -91,9 +91,16 @@ permissions:
 jobs:
   version-guard:
     name: Check version bump
-    # Only pushes to main are releases. On dev and on v* tag pushes this job is skipped, and the
-    # downstream `if: ${{ !cancelled() && ... }}` conditions let those paths proceed anyway.
-    if: github.ref == 'refs/heads/main'
+    # Only pushes to main are releases, but this job deliberately has NO job-level `if:`. It
+    # always runs and, off main, every step is skipped so it succeeds having done nothing.
+    #
+    # That is load-bearing. A SKIPPED job propagates "skipped" transitively to everything that
+    # needs it, directly or not -- and a status-check function on an intermediate job rescues
+    # only that job, not its dependents. When this job was skipped on dev, `build-web-app` ran
+    # (it had `!cancelled()`) and then deploy-gh-pages-dev, build-executables and release all
+    # skipped anyway, so pushes to dev silently stopped deploying. Keeping this job always
+    # successful means no skip ever enters the graph, and every downstream job can use the
+    # plain implicit success().
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # gh CLI reads this; do NOT replace with a PAT
@@ -103,11 +110,13 @@ jobs:
       prev_ref: ${{ steps.prev.outputs.prev_ref }}
     steps:
       - name: Checkout
+        if: github.ref == 'refs/heads/main'
         uses: actions/checkout@v7
         with:
           fetch-depth: 0   # full history + all tags, needed by the guard and by `git log`
 
       - name: Extract version from scadnano_state_actions/lib/src/constants.dart
+        if: github.ref == 'refs/heads/main'
         id: version
         run: |
           version=$(sed -nE 's/^const String CURRENT_VERSION = "([^"]+)";.*$/\1/p' \
@@ -119,6 +128,7 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
       - name: Fail loudly if version was not bumped (unless this is a re-run)
+        if: github.ref == 'refs/heads/main'
         id: guard
         run: |
           version='${{ steps.version.outputs.version }}'
@@ -136,6 +146,7 @@ jobs:
           fi
 
       - name: Determine previous release tag
+        if: github.ref == 'refs/heads/main'
         id: prev
         run: |
           version='${{ steps.version.outputs.version }}'
@@ -174,16 +185,10 @@ jobs:
   build-web-app:
     name: Build scadnano web app
     needs: [version-guard]
-    # version-guard is skipped on dev and on v* tag pushes; proceed in that case. If it FAILED
-    # (version not bumped), this and everything downstream is skipped, so a push to main with no
-    # version bump neither deploys to scadnano.org nor builds executables — a push to main either
-    # produces a complete release or produces nothing at all.
-    # A status-check function is required here, or the implicit success() would skip this job
-    # whenever version-guard is skipped. Use !cancelled() rather than always(): always() returns
-    # true even for a run the maintainer has cancelled, which would let a cancelled run go on to
-    # create a tag and a release. (The ${{ }} wrapper is required: a bare leading `!` is the YAML
-    # tag indicator and will not parse.)
-    if: ${{ !cancelled() && (needs.version-guard.result == 'success' || needs.version-guard.result == 'skipped') }}
+    # No `if:` needed. version-guard always runs and always succeeds except when the version was
+    # not bumped on main, in which case the implicit success() skips this job and, transitively,
+    # the gh-pages deploy, the executables and the release — so a push to main with a stale
+    # version produces a complete release or produces nothing at all.
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -387,12 +392,9 @@ jobs:
   release:
     name: Publish release
     needs: [build-executables, version-guard]
-    # A status-check function is required because version-guard is skipped on dev and on v* tag
-    # pushes; without one the implicit success() would skip this job too. !cancelled() rather than
-    # always() so that cancelling the run really does abort release creation — with always() a
-    # cancelled run would still tag the commit and publish the release. If version-guard FAILED,
-    # build-executables is skipped, the check below is false, and this job is skipped as well.
-    if: ${{ !cancelled() && needs.build-executables.result == 'success' }}
+    # No `if:` needed: version-guard always succeeds off main, so the implicit success() reduces
+    # to "the executables built". It also means cancelling the run genuinely aborts the release,
+    # which an `always()` here would not have done.
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # do NOT replace with a PAT (see header)
