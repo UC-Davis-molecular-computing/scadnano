@@ -97,7 +97,7 @@ jobs:
       prev_ref: ${{ steps.prev.outputs.prev_ref }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0   # full history + all tags, needed by the guard and by `git log`
 
@@ -181,13 +181,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Setup Dart SDK
         uses: ./.github/actions/setup-dart
 
       - name: Cache Dart pub dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.pub-cache
           key: ${{ runner.os }}-pub-${{ hashFiles('pubspec.lock') }}
@@ -208,7 +208,7 @@ jobs:
         run: dart pub global run webdev build -- --delete-conflicting-outputs
 
       - name: Upload web build artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: web-build
           path: build/
@@ -221,19 +221,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout gh-pages branch
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           ref: gh-pages
           path: gh-pages-repo
 
       - name: Download web build artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: web-build
           path: gh-pages-repo/dev
 
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: gh-pages-repo
@@ -250,13 +250,13 @@ jobs:
     # scadnano_state_actions/lib/src/constants.dart.
     steps:
       - name: Checkout gh-pages branch
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           ref: gh-pages
           path: gh-pages-repo
 
       - name: Download web build artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: web-build
           path: /tmp/scadnano
@@ -265,7 +265,7 @@ jobs:
         run: cp -r /tmp/scadnano/. gh-pages-repo/
 
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: gh-pages-repo
@@ -292,17 +292,17 @@ jobs:
       ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Setup Node
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v7
         with:
           node-version: '24'
           cache: 'npm'
           cache-dependency-path: standalone/package-lock.json
 
       - name: Cache Electron downloads
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             .cache/electron
@@ -311,7 +311,7 @@ jobs:
           restore-keys: ${{ runner.os }}-electron-
 
       - name: Download web build artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: web-build
           path: build/
@@ -346,7 +346,7 @@ jobs:
       #
       # - name: Submit signing request to SignPath
       #   if: matrix.os == 'windows-latest'
-      #   uses: signpath/github-action-submit-signing-request@v1
+      #   uses: signpath/github-action-submit-signing-request@v2
       #   with:
       #     api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
       #     organization-id: <your-signpath-org-id>
@@ -358,7 +358,7 @@ jobs:
       # -------------------------------------------------------------------
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: build-${{ matrix.os }}
           path: standalone/dist/${{ matrix.artifact_glob }}
@@ -382,13 +382,13 @@ jobs:
     steps:
       - name: Checkout (for the commit list on main)
         if: github.ref == 'refs/heads/main'
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.sha }}   # pin: main may have moved during the ~40 min build
           fetch-depth: 0           # full history + tags, needed for `git log <prev>..HEAD`
 
       - name: Download executable artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           path: ./release-files
           pattern: build-*

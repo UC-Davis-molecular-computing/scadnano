@@ -57,7 +57,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           # Always regenerate and commit on main, whatever triggered us. This is
           # load-bearing: on a `release` event checkout would otherwise leave a
