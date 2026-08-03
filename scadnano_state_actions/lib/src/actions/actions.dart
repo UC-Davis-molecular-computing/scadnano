@@ -1,4 +1,3 @@
-@JS()
 library actions2;
 
 import 'dart:math';
@@ -6,7 +5,6 @@ import 'dart:math';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
-import 'package:js/js.dart';
 import 'package:built_collection/built_collection.dart';
 import '../dna_file_type.dart';
 import '../state/dna_assign_options.dart';
