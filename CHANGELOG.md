@@ -5,6 +5,61 @@ This file is generated automatically from the project's
 by [changelog-from-release](https://github.com/rhysd/changelog-from-release).
 Do not edit it manually; edit the release notes instead.
 
+<a id="v0.21.1"></a>
+## [v0.21.1](https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/v0.21.1) - 2026-08-03
+
+Mostly internal updates that should not affect users; one exception is dropping support for MacOS 11 for the local/offline executable.
+
+## Commits
+
+- 186b6fac: Merge pull request [#1117](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1117) from UC-Davis-molecular-computing/dev (David Doty)
+- b28ecea3: bumped version (David Doty)
+- 1b3099d3: Merge pull request [#1115](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1115) from UC-Davis-molecular-computing/bump-electron-39 (David Doty)
+- 01088384: bump electron from 35.1.3 to 39.8.x in standalone (David Doty)
+- 520f2d3a: Merge pull request [#1090](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1090) from UC-Davis-molecular-computing/dependabot/pub/dev/test-1.31.1 (David Doty)
+- bd802579: Merge pull request [#1113](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1113) from UC-Davis-molecular-computing/1104-fix-local-webdev-serve-broken-by-build_daemon-413-moving-the-daemon-port-file (David Doty)
+- 4c8bf822: CONTRIBUTING: state current practice only, without the history (David Doty)
+- a0a629d6: CONTRIBUTING: full pass for today's toolchain changes (David Doty)
+- b695e28a: reformat for the Dart 3.11 language version (David Doty)
+- 542fefd3: run webdev from the project instead of activating it globally (David Doty)
+- 2e8acf68: merge dev (David Doty)
+- 1343cfad: remove --delete-conflicting-outputs, which build_runner no longer accepts (David Doty)
+- 0b8547e2: fixes [#1104](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1104): raise the Dart floor to 3.11 so build_daemon matches webdev (David Doty)
+- e2abd32b: Merge pull request [#1107](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1107) from UC-Davis-molecular-computing/dependabot/npm_and_yarn/standalone/dev/electron/fuses-2.1.3 (David Doty)
+- d0181a04: Merge pull request [#1108](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1108) from UC-Davis-molecular-computing/dependabot/npm_and_yarn/standalone/dev/electron-forge/cli-7.11.2 (David Doty)
+- cebdfa7c: Bump @electron-forge/cli from 7.8.0 to 7.11.2 in /standalone (dependabot[bot])
+- 5a3d1267: Merge pull request [#1106](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1106) from UC-Davis-molecular-computing/dependabot/npm_and_yarn/standalone/dev/electron-forge/maker-deb-7.11.2 (David Doty)
+- 0bc49daa: Bump @electron-forge/maker-deb from 7.8.0 to 7.11.2 in /standalone (dependabot[bot])
+- c8603b33: Merge pull request [#1109](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1109) from UC-Davis-molecular-computing/dependabot/npm_and_yarn/standalone/dev/electron-forge/maker-rpm-7.11.2 (David Doty)
+- caa448e7: Bump @electron-forge/maker-rpm from 7.8.0 to 7.11.2 in /standalone (dependabot[bot])
+- 553a198a: Merge pull request [#1111](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1111) from UC-Davis-molecular-computing/dependabot/npm_and_yarn/standalone/dev/electron-forge/maker-squirrel-7.11.2 (David Doty)
+- b5074f85: Merge pull request [#1087](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1087) from UC-Davis-molecular-computing/dependabot/npm_and_yarn/standalone/xmldom/xmldom-0.8.13 (David Doty)
+- 37fa340f: Merge pull request [#1101](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1101) from UC-Davis-molecular-computing/dependabot/npm_and_yarn/standalone/js-yaml-4.3.0 (David Doty)
+- 4ab210ef: Merge pull request [#1094](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1094) from UC-Davis-molecular-computing/dependabot/npm_and_yarn/standalone/multi-8b8c83898a (David Doty)
+- 31326989: Merge pull request [#1099](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1099) from UC-Davis-molecular-computing/dependabot/npm_and_yarn/standalone/tmp-0.2.6 (David Doty)
+- df1c4c63: Merge pull request [#1100](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1100) from UC-Davis-molecular-computing/dependabot/npm_and_yarn/standalone/form-data-4.0.6 (David Doty)
+- 3bbdce2b: Merge pull request [#1098](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1098) from UC-Davis-molecular-computing/dependabot/npm_and_yarn/standalone/tootallnate/once-2.0.1 (David Doty)
+- ab7d7d4f: Merge pull request [#1110](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1110) from UC-Davis-molecular-computing/dependabot/pub/dev/melos-8.2.2 (David Doty)
+- ca1ac07f: Bump melos from 7.5.1 to 8.2.2 (dependabot[bot])
+- 96449a7e: Merge pull request [#1112](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1112) from UC-Davis-molecular-computing/dependabot/pub/dev/build_web_compilers-4.8.0 (David Doty)
+- 99b6b8ff: Bump build_web_compilers from 4.4.17 to 4.8.0 (dependabot[bot])
+- cad47883: Merge pull request [#1096](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1096) from UC-Davis-molecular-computing/dependabot/pub/dev/build_runner-2.15.0 (David Doty)
+- 31c82987: stop building the throwaway universal Windows executable (David Doty)
+- 5be5da24: Bump @electron-forge/maker-squirrel from 7.8.0 to 7.11.2 in /standalone (dependabot[bot])
+- 63c9289c: Bump @electron/fuses from 1.8.0 to 2.1.3 in /standalone (dependabot[bot])
+- 6c3a049e: Bump js-yaml from 4.1.1 to 4.3.0 in /standalone (dependabot[bot])
+- 7a047348: Bump form-data from 4.0.5 to 4.0.6 in /standalone (dependabot[bot])
+- f597091e: Bump tmp from 0.2.3 to 0.2.6 in /standalone (dependabot[bot])
+- c7a1326e: Bump @tootallnate/once from 2.0.0 to 2.0.1 in /standalone (dependabot[bot])
+- 58bc5372: Bump build_runner from 2.13.1 to 2.15.0 (dependabot[bot])
+- 43de903c: Bump ip-address and socks in /standalone (dependabot[bot])
+- 5dfbdc07: Bump test from 1.31.0 to 1.31.1 (dependabot[bot])
+- 54bd4463: Bump @xmldom/xmldom from 0.8.10 to 0.8.13 in /standalone (dependabot[bot])
+
+
+[Changes][v0.21.1]
+
+
 <a id="v0.21.0"></a>
 ## [v0.21.0](https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/v0.21.0) - 2026-08-02
 
@@ -2917,6 +2972,7 @@ See https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/README.
 [Changes][v0.8.0]
 
 
+[v0.21.1]: https://github.com/UC-Davis-molecular-computing/scadnano/compare/v0.21.0...v0.21.1
 [v0.21.0]: https://github.com/UC-Davis-molecular-computing/scadnano/compare/v0.20.5...v0.21.0
 [v0.20.5]: https://github.com/UC-Davis-molecular-computing/scadnano/compare/v0.20.4...v0.20.5
 [v0.20.4]: https://github.com/UC-Davis-molecular-computing/scadnano/compare/v0.20.2...v0.20.4
