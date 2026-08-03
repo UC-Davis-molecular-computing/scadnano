@@ -34,14 +34,13 @@ DesignSideProps set_design_side_props(DesignSideProps elt, AppState state) {
     ..geometry = geometry
     ..helix_change_apply_to_all = state.ui_state.helix_change_apply_to_all
     ..helix_idxs_selected = state.ui_state.side_selected_helix_idxs
-    ..rotation_datas =
-        state.ui_state.show_slice_bar
-            ? util_state.rotation_datas_at_offset_in_group(
-              state.ui_state.slice_bar_offset,
-              state.design,
-              state.ui_state.displayed_group_name,
-            )
-            : BuiltList<DesignSideRotationData>()
+    ..rotation_datas = state.ui_state.show_slice_bar
+        ? util_state.rotation_datas_at_offset_in_group(
+            state.ui_state.slice_bar_offset,
+            state.design,
+            state.ui_state.displayed_group_name,
+          )
+        : BuiltList<DesignSideRotationData>()
     ..slice_bar_offset = state.ui_state.slice_bar_offset
     ..edit_modes = state.ui_state.edit_modes
     ..displayed_group = displayed_group

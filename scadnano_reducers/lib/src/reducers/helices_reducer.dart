@@ -158,11 +158,10 @@ Design? helix_idx_change_reducer(Design? design, AppState state, actions.HelixId
   }
 
   design = design.rebuild(
-    (b) =>
-        b
-          ..groups.replace(new_groups)
-          ..helices.replace(helices)
-          ..strands.replace(strands),
+    (b) => b
+      ..groups.replace(new_groups)
+      ..helices.replace(helices)
+      ..strands.replace(strands),
   );
 
   return design;
@@ -220,10 +219,9 @@ Helix helix_offset_change_reducer(Helix helix, AppState _, actions.HelixOffsetCh
     _change_offset_one_helix(helix, action.min_offset, action.max_offset);
 
 Helix _change_offset_one_helix(Helix helix, int? min_offset, int? max_offset) => helix.rebuild(
-  (b) =>
-      b
-        ..min_offset = min_offset ?? helix.min_offset
-        ..max_offset = max_offset ?? helix.max_offset,
+  (b) => b
+    ..min_offset = min_offset ?? helix.min_offset
+    ..max_offset = max_offset ?? helix.max_offset,
 );
 
 BuiltMap<int, Helix> helix_offset_change_all_with_moving_strands_reducer(
@@ -479,10 +477,9 @@ Helix helix_major_ticks_change_reducer(Helix helix, AppState _, actions.HelixMaj
     _change_major_ticks_one_helix(helix, action.major_ticks);
 
 Helix _change_major_tick_distance_one_helix(Helix helix, int major_tick_distance) => helix.rebuild(
-  (b) =>
-      b
-        ..major_tick_periodic_distances.replace([major_tick_distance])
-        ..major_ticks = null,
+  (b) => b
+    ..major_tick_periodic_distances.replace([major_tick_distance])
+    ..major_ticks = null,
 );
 
 Helix _change_major_tick_start_one_helix(Helix helix, int major_tick_start) =>
@@ -490,17 +487,15 @@ Helix _change_major_tick_start_one_helix(Helix helix, int major_tick_start) =>
 
 Helix _change_major_tick_periodic_distances_one_helix(Helix helix, Iterable<int> major_tick_periodic_distances) =>
     helix.rebuild(
-      (b) =>
-          b
-            ..major_tick_periodic_distances.replace(major_tick_periodic_distances)
-            ..major_ticks = null,
+      (b) => b
+        ..major_tick_periodic_distances.replace(major_tick_periodic_distances)
+        ..major_ticks = null,
     );
 
 Helix _change_major_ticks_one_helix(Helix helix, BuiltList<int> major_ticks) => helix.rebuild(
-  (b) =>
-      b
-        ..major_ticks.replace(major_ticks)
-        ..major_tick_periodic_distances.replace([]),
+  (b) => b
+    ..major_ticks.replace(major_ticks)
+    ..major_tick_periodic_distances.replace([]),
 );
 
 Helix helix_roll_set_reducer(Helix helix, AppState _, actions.HelixRollSet action) =>
@@ -579,10 +574,9 @@ Design? helix_add_design_reducer(Design? design, AppState state, actions.HelixAd
   Map<int, Helix> new_helices = design.helices.toMap();
   new_helices[helix.idx] = helix;
   return design.rebuild(
-    (d) =>
-        d
-          ..helices.replace(new_helices)
-          ..groups.replace(new_groups),
+    (d) => d
+      ..helices.replace(new_helices)
+      ..groups.replace(new_groups),
   );
 }
 
@@ -603,11 +597,10 @@ Design? helix_remove_design_global_reducer(Design? design, AppState state, actio
   new_groups[state.ui_state.displayed_group_name] = new_group;
 
   return design.rebuild(
-    (d) =>
-        d
-          ..helices.replace(new_helices)
-          ..groups.replace(new_groups)
-          ..strands.replace(strands_with_substrands_removed),
+    (d) => d
+      ..helices.replace(new_helices)
+      ..groups.replace(new_groups)
+      ..strands.replace(strands_with_substrands_removed),
   );
 }
 
@@ -639,11 +632,10 @@ Design? helix_remove_all_selected_design_global_reducer(
   }
 
   return design.rebuild(
-    (d) =>
-        d
-          ..helices.replace(new_helices)
-          ..groups.replace(new_groups)
-          ..strands.replace(strands_with_substrands_removed),
+    (d) => d
+      ..helices.replace(new_helices)
+      ..groups.replace(new_groups)
+      ..strands.replace(strands_with_substrands_removed),
   );
 }
 
@@ -695,16 +687,18 @@ BuiltMap<int, Helix> helix_grid_change_reducer(
     HelixBuilder helix_builder = helix.toBuilder();
     helix_builder.grid = action.grid;
     if (!action.grid.is_none && helix.grid_position == null) {
-      helix_builder.grid_position =
-          util.position3d_to_grid_position(helix.position(geometry), action.grid, geometry).toBuilder();
+      helix_builder.grid_position = util
+          .position3d_to_grid_position(helix.position(geometry), action.grid, geometry)
+          .toBuilder();
       helix_builder.position_ = null;
     }
     if (action.grid.is_none && helix.position_ == null) {
       helix_builder.grid_position = null;
       //NOTE: it's important to use helix.grid (i.e., the OLD grid, since util.grid_to_position3d will crash
       // if given the none grid)
-      helix_builder.position_ =
-          util.grid_position_to_position3d(helix.grid_position!, helix.grid, geometry).toBuilder();
+      helix_builder.position_ = util
+          .grid_position_to_position3d(helix.grid_position!, helix.grid, geometry)
+          .toBuilder();
     }
     new_helices[idx] = helix_builder.build();
   }
@@ -747,10 +741,9 @@ BuiltMap<int, Helix> helix_group_change_reducer(
 // change helix position
 
 Helix helix_individual_grid_position_set_reducer(Helix helix, actions.HelixGridPositionSet action) => helix.rebuild(
-  (b) =>
-      b
-        ..position_ = null
-        ..grid_position.replace(action.grid_position),
+  (b) => b
+    ..position_ = null
+    ..grid_position.replace(action.grid_position),
 );
 
 BuiltMap<int, Helix> helix_grid_position_set_reducer(
@@ -770,10 +763,9 @@ BuiltMap<int, Helix> helix_grid_position_set_reducer(
 }
 
 Helix helix_individual_position_set_reducer(Helix helix, actions.HelixPositionSet action) => helix.rebuild(
-  (b) =>
-      b
-        ..position_.replace(action.position)
-        ..grid_position = null,
+  (b) => b
+    ..position_.replace(action.position)
+    ..grid_position = null,
 );
 
 BuiltMap<int, Helix> helix_position_set_reducer(

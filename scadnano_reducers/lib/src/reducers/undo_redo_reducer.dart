@@ -45,18 +45,16 @@ AppState create_new_state_with_new_design_and_undo_redo(
   bool changed_since_last_save = new_undo_stack.isNotEmpty;
 
   AppState new_model = old_state.rebuild(
-    (m) =>
-        m
-          ..ui_state.replace(old_state.ui_state.rebuild((u) => u..changed_since_last_save = changed_since_last_save))
-          ..maybe_design.replace(new_design)
-          ..undo_redo.replace(
-            old_state.undo_redo.rebuild(
-              (u) =>
-                  u
-                    ..undo_stack = new_undo_stack
-                    ..redo_stack = new_redo_stack,
-            ),
-          ),
+    (m) => m
+      ..ui_state.replace(old_state.ui_state.rebuild((u) => u..changed_since_last_save = changed_since_last_save))
+      ..maybe_design.replace(new_design)
+      ..undo_redo.replace(
+        old_state.undo_redo.rebuild(
+          (u) => u
+            ..undo_stack = new_undo_stack
+            ..redo_stack = new_redo_stack,
+        ),
+      ),
   );
   return new_model;
 }
@@ -77,18 +75,16 @@ AppState redo_reducer(AppState state, actions.Redo action) {
     bool changed_since_last_save = undo_stack.isNotEmpty;
 
     AppState new_model = state.rebuild(
-      (m) =>
-          m
-            ..ui_state.replace(state.ui_state.rebuild((u) => u..changed_since_last_save = changed_since_last_save))
-            ..maybe_design.replace(new_design)
-            ..undo_redo.replace(
-              undo_redo.rebuild(
-                (u) =>
-                    u
-                      ..undo_stack = undo_stack
-                      ..redo_stack = redo_stack,
-              ),
-            ),
+      (m) => m
+        ..ui_state.replace(state.ui_state.rebuild((u) => u..changed_since_last_save = changed_since_last_save))
+        ..maybe_design.replace(new_design)
+        ..undo_redo.replace(
+          undo_redo.rebuild(
+            (u) => u
+              ..undo_stack = undo_stack
+              ..redo_stack = redo_stack,
+          ),
+        ),
     );
 
     return new_model;
@@ -110,14 +106,12 @@ AppState undo_redo_clear_reducer(AppState state, actions.UndoRedoClear action) =
     state.rebuild((m) => m..undo_redo.replace(UndoRedo()));
 
 AppState undoable_action_typed_reducer(AppState state, actions.UndoableAction action) => state.rebuild(
-  (m) =>
-      m
-        ..undo_redo.replace(
-          state.undo_redo.rebuild(
-            (u) =>
-                u
-                  ..undo_stack.add(new UndoRedoItem(action.short_description(), state.design))
-                  ..redo_stack.clear(),
-          ),
-        ),
+  (m) => m
+    ..undo_redo.replace(
+      state.undo_redo.rebuild(
+        (u) => u
+          ..undo_stack.add(new UndoRedoItem(action.short_description(), state.design))
+          ..redo_stack.clear(),
+      ),
+    ),
 );

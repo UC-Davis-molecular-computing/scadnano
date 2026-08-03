@@ -61,22 +61,21 @@ class DesignMainPotentialVerticalCrossoverComponent extends UiComponent2<DesignM
 
     String tooltip = 'click to add a crossover';
 
-    var path_props =
-        Dom.path()
-          ..d = path
-          ..stroke = color
-          ..className = classname_this_curve
-          ..transform = transform_of_helix2(props, prev_domain.helix)
-          ..onPointerDown = ((ev) {
-            if (ev.nativeEvent.button == constants.LEFT_CLICK_BUTTON) {
-              app.dispatch(
-                actions.JoinStrandsByCrossover(
-                  dna_end_first_click: crossover.dna_end_top,
-                  dna_end_second_click: crossover.dna_end_bot,
-                ),
-              );
-            }
-          });
+    var path_props = Dom.path()
+      ..d = path
+      ..stroke = color
+      ..className = classname_this_curve
+      ..transform = transform_of_helix2(props, prev_domain.helix)
+      ..onPointerDown = ((ev) {
+        if (ev.nativeEvent.button == constants.LEFT_CLICK_BUTTON) {
+          app.dispatch(
+            actions.JoinStrandsByCrossover(
+              dna_end_first_click: crossover.dna_end_top,
+              dna_end_second_click: crossover.dna_end_bot,
+            ),
+          );
+        }
+      });
 
     return path_props(Dom.svgTitle()(tooltip));
   }

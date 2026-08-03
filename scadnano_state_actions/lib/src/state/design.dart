@@ -109,13 +109,12 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     Map<int, Helix> helices_map = {for (var helix in helices) helix.idx: helix};
 
     var design = Design.from(
-      (b) =>
-          b
-            ..geometry.replace(geometry!)
-            ..groups.replace(groups!)
-            ..helices.replace(helices_map)
-            ..strands.replace(strands)
-            ..unused_fields.replace(unused_fields),
+      (b) => b
+        ..geometry.replace(geometry!)
+        ..groups.replace(groups!)
+        ..helices.replace(helices_map)
+        ..strands.replace(strands)
+        ..unused_fields.replace(unused_fields),
     );
 
     design._check_legal_design();
@@ -257,10 +256,9 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     // convert to proper return type by dropping the offset
     Map<int, BuiltList<Crossover>> builder = {
       for (int idx in address_crossover_pairs_by_helix_idx.keys)
-        idx:
-            address_crossover_pairs_by_helix_idx[idx]!
-                .map((address_crossover_pair) => address_crossover_pair.$2)
-                .toBuiltList(),
+        idx: address_crossover_pairs_by_helix_idx[idx]!
+            .map((address_crossover_pair) => address_crossover_pair.$2)
+            .toBuiltList(),
     };
 
     return builder.build();
@@ -1217,8 +1215,10 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
           group_json[constants.yaw_key] = new_yaw;
           group_json[constants.position_key] = group.position.build().to_json_serializable();
           group_json[constants.grid_key] = group.grid!.to_json;
-          new_groups[new_group_name] =
-              HelixGroup.from_json(group_json, helix_idxs: helix_list.map((hb) => hb.idx!)).toBuilder();
+          new_groups[new_group_name] = HelixGroup.from_json(
+            group_json,
+            helix_idxs: helix_list.map((hb) => hb.idx!),
+          ).toBuilder();
 
           // Move helices into new group
           for (HelixBuilder helix in helix_list) {
@@ -1950,11 +1950,10 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   @memoized
-  BuiltList<Domain> get all_domains =>
-      [
-        for (var strand in strands)
-          for (var domain in strand.domains) domain,
-      ].build();
+  BuiltList<Domain> get all_domains => [
+    for (var strand in strands)
+      for (var domain in strand.domains) domain,
+  ].build();
 
   //  Set<Domain> substrands_on_helix_at(int helix_idx, int offset) => helix_idx_to_substrands[helix_idx];
 
@@ -2220,13 +2219,12 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     bool include_base_pair_lines_if_other_strand_not_selected,
   ) {
     var base_pairs_with_domain_strand = Map<int, BuiltList<(int, Domain, Domain, Strand, Strand)>>();
-    BuiltSet<Domain> selected_domains =
-        selected_strands
-            .map((s) => s.substrands)
-            .expand((x) => x)
-            .where((x) => x is Domain)
-            .map((x) => x as Domain)
-            .toBuiltSet();
+    BuiltSet<Domain> selected_domains = selected_strands
+        .map((s) => s.substrands)
+        .expand((x) => x)
+        .where((x) => x is Domain)
+        .map((x) => x as Domain)
+        .toBuiltSet();
     for (int idx in this.helices.keys) {
       List<(int, Domain, Domain, Strand, Strand)> offsets_and_domain_strand = [];
       List<(Domain, Domain)> overlapping_domains = find_overlapping_domains_on_helix(idx);
@@ -2411,12 +2409,11 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     for (Map<String, dynamic> cadnano_helix in cadnano_v2_design['vstrands']) {
       int col = cadnano_helix['col'], row = cadnano_helix['row'];
       int n = cadnano_helix['num'];
-      HelixBuilder helix =
-          HelixBuilder()
-            ..idx = n
-            ..max_offset = num_bases
-            ..grid_position = GridPosition(col, row).toBuilder()
-            ..group = constants.default_group_name;
+      HelixBuilder helix = HelixBuilder()
+        ..idx = n
+        ..max_offset = num_bases
+        ..grid_position = GridPosition(col, row).toBuilder()
+        ..group = constants.default_group_name;
       helix_builders[n] = helix;
     }
 
@@ -2656,10 +2653,9 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     if (domains.first.helix != domains.last.helix) return;
 
     Domain new_domain_0 = domains[0].rebuild(
-      (b) =>
-          b
-            ..start = min(domains[0].start, domains.last.start)
-            ..end = max(domains[0].end, domains.last.end),
+      (b) => b
+        ..start = min(domains[0].start, domains.last.start)
+        ..end = max(domains[0].end, domains.last.end),
     );
     domains[0] = new_domain_0;
 
@@ -2762,11 +2758,10 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var ret = this.helix_to_crossover_addresses.toMap();
     for (int helix_idx in ret.keys) {
       var addresses_with_intrahelix_crossovers = ret[helix_idx]!;
-      var addresses_without_intrahelix_crossovers =
-          [
-            for (var address in addresses_with_intrahelix_crossovers)
-              if (address.helix_idx != helix_idx) address,
-          ].build();
+      var addresses_without_intrahelix_crossovers = [
+        for (var address in addresses_with_intrahelix_crossovers)
+          if (address.helix_idx != helix_idx) address,
+      ].build();
       ret[helix_idx] = addresses_without_intrahelix_crossovers;
     }
     return ret.build();
@@ -2778,11 +2773,10 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var ret = this.helix_to_crossover_addresses_disallow_intrahelix.toMap();
     for (int helix_idx in ret.keys) {
       var addresses_with_intergroup_crossovers = ret[helix_idx]!;
-      var addresses_without_intergroup_crossovers =
-          [
-            for (var address in addresses_with_intergroup_crossovers)
-              if (this.helices[address.helix_idx]!.group == this.helices[helix_idx]!.group) address,
-          ].build();
+      var addresses_without_intergroup_crossovers = [
+        for (var address in addresses_with_intergroup_crossovers)
+          if (this.helices[address.helix_idx]!.group == this.helices[helix_idx]!.group) address,
+      ].build();
       ret[helix_idx] = addresses_without_intergroup_crossovers;
     }
     return ret.build();
@@ -2807,15 +2801,13 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   (List<Domain>, List<Domain>) get_strand_sets() {
-    final stapSS =
-        this.all_domains
-            .where((domain) => (domain.helix % 2 == 0 && !domain.forward) || (domain.helix % 2 == 1 && domain.forward))
-            .toList();
+    final stapSS = this.all_domains
+        .where((domain) => (domain.helix % 2 == 0 && !domain.forward) || (domain.helix % 2 == 1 && domain.forward))
+        .toList();
 
-    final scafSS =
-        this.all_domains
-            .where((domain) => (domain.helix % 2 == 0 && domain.forward) || (domain.helix % 2 == 1 && !domain.forward))
-            .toList();
+    final scafSS = this.all_domains
+        .where((domain) => (domain.helix % 2 == 0 && domain.forward) || (domain.helix % 2 == 1 && !domain.forward))
+        .toList();
 
     return (stapSS, scafSS);
   }
@@ -2938,10 +2930,12 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   (List<Domain>, List<Domain>) _get_strand_sets_for_helix(Helix helix) {
     final domains = domains_on_helix(helix.idx);
-    final stapSS =
-        domains.where((d) => (helix.idx % 2 == 0 && !d.forward) || (helix.idx % 2 == 1 && d.forward)).toList();
-    final scafSS =
-        domains.where((d) => (helix.idx % 2 == 0 && d.forward) || (helix.idx % 2 == 1 && !d.forward)).toList();
+    final stapSS = domains
+        .where((d) => (helix.idx % 2 == 0 && !d.forward) || (helix.idx % 2 == 1 && d.forward))
+        .toList();
+    final scafSS = domains
+        .where((d) => (helix.idx % 2 == 0 && d.forward) || (helix.idx % 2 == 1 && !d.forward))
+        .toList();
     return (stapSS, scafSS);
   }
 

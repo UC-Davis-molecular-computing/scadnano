@@ -138,19 +138,18 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
     var strand_name = 's1';
     var helices = [for (int i = 0; i < 6; i++) Helix(idx: i, max_offset: 100, grid: Grid.square)];
     var design = Design(helices: helices, grid: Grid.square);
-    design =
-        design
-            .draw_strand(0, 0)
-            .move(5)
-            .with_domain_sequence('AAAAA')
-            .cross(1)
-            .move(-5)
-            .with_domain_sequence('CCCCC')
-            .cross(2)
-            .move(5)
-            .with_domain_sequence('GGGGG')
-            .with_name(strand_name)
-            .commit();
+    design = design
+        .draw_strand(0, 0)
+        .move(5)
+        .with_domain_sequence('AAAAA')
+        .cross(1)
+        .move(-5)
+        .with_domain_sequence('CCCCC')
+        .cross(2)
+        .move(5)
+        .with_domain_sequence('GGGGG')
+        .with_name(strand_name)
+        .commit();
 
     var strand = design.strands[0];
     var strand_idt_dna_sequence = strand.vendor_dna_sequence(domain_delimiter: ' ');
@@ -168,22 +167,21 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
 
     var helices = [for (int i = 0; i < 6; i++) Helix(idx: i, max_offset: 100, grid: Grid.square)];
     var design = Design(helices: helices, grid: Grid.square);
-    design =
-        design
-            .draw_strand(0, 0)
-            .move(5)
-            .with_domain_sequence('AAAAA')
-            .cross(1)
-            .move(-5)
-            .with_domain_sequence('CCCCT')
-            .cross(2)
-            .move(5)
-            .with_domain_sequence('GGGGG')
-            .with_name(strand_name)
-            .with_modification_5p(mod_5)
-            .with_modification_internal(9, mod_i)
-            .with_modification_3p(mod_3)
-            .commit();
+    design = design
+        .draw_strand(0, 0)
+        .move(5)
+        .with_domain_sequence('AAAAA')
+        .cross(1)
+        .move(-5)
+        .with_domain_sequence('CCCCT')
+        .cross(2)
+        .move(5)
+        .with_domain_sequence('GGGGG')
+        .with_name(strand_name)
+        .with_modification_5p(mod_5)
+        .with_modification_internal(9, mod_i)
+        .with_modification_3p(mod_3)
+        .commit();
 
     var strand = design.strands[0];
     var strand_idt_dna_sequence = strand.vendor_dna_sequence(domain_delimiter: ' ');
@@ -199,20 +197,19 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
 
     var helices = [for (int i = 0; i < 6; i++) Helix(idx: i, max_offset: 100, grid: Grid.square)];
     var design = Design(helices: helices, grid: Grid.square);
-    design =
-        design
-            .draw_strand(0, 0)
-            .move(5)
-            .with_domain_sequence('AAAAA')
-            .cross(1)
-            .move(-5)
-            .with_domain_sequence('CCCCT')
-            .cross(2)
-            .move(5)
-            .with_domain_sequence('GGGGG')
-            .with_name(strand_name)
-            .with_modification_internal(8, mod_i)
-            .commit();
+    design = design
+        .draw_strand(0, 0)
+        .move(5)
+        .with_domain_sequence('AAAAA')
+        .cross(1)
+        .move(-5)
+        .with_domain_sequence('CCCCT')
+        .cross(2)
+        .move(5)
+        .with_domain_sequence('GGGGG')
+        .with_name(strand_name)
+        .with_modification_internal(8, mod_i)
+        .commit();
 
     var strand = design.strands[0];
     var strand_idt_dna_sequence = strand.vendor_dna_sequence(domain_delimiter: ' ');

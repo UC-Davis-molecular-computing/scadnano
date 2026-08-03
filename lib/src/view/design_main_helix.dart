@@ -107,12 +107,10 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         //XXX: it matters that we reference props.mouseover_datas, not a local variable
         // this ensures that when subsequent mouse events happen, the most recent mouseover_datas is examined,
         // otherwise the callback is not updated until render executes again
-        ..onMouseEnter =
-            ((event) =>
-                util.update_mouseover(event, props.helix, app.state.helix_idx_to_svg_position_map[props.helix.idx]!))
-        ..onMouseMove =
-            ((event) =>
-                util.update_mouseover(event, props.helix, app.state.helix_idx_to_svg_position_map[props.helix.idx]!))
+        ..onMouseEnter = ((event) =>
+            util.update_mouseover(event, props.helix, app.state.helix_idx_to_svg_position_map[props.helix.idx]!))
+        ..onMouseMove = ((event) =>
+            util.update_mouseover(event, props.helix, app.state.helix_idx_to_svg_position_map[props.helix.idx]!))
         ..x = props.helix_svg_position.x
         ..y = props.helix_svg_position.y
         ..width = '$width'

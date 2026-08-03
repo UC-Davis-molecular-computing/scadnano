@@ -56,8 +56,9 @@ reselect_moved_domains_middleware(Store<AppState> store, action, NextDispatcher 
     List<Domain> new_domains = [];
     Design new_design = store.state.design;
     // if domain polarity switched, the 3' end of each domain will now be where the 5' end was
-    BuiltMap<Address, Domain> address_to_domain =
-        domains_move.delta_forward ? new_design.address_3p_to_domain : new_design.address_5p_to_domain;
+    BuiltMap<Address, Domain> address_to_domain = domains_move.delta_forward
+        ? new_design.address_3p_to_domain
+        : new_design.address_5p_to_domain;
     for (var address in addresses) {
       Domain new_domain = address_to_domain[address]!;
       new_domains.add(new_domain);

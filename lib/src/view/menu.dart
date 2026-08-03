@@ -59,10 +59,9 @@ mixin MenuProps on UiProps {
 class MenuComponent extends UiComponent2<MenuProps> {
   bool get enable_copy => props.state.ui_state.selectables_store.selected_strands.isNotEmpty;
 
-  bool get no_grid_is_none =>
-      props.state.maybe_design == null
-          ? false
-          : props.state.design.groups.values.every((group) => group.grid != Grid.none);
+  bool get no_grid_is_none => props.state.maybe_design == null
+      ? false
+      : props.state.design.groups.values.every((group) => group.grid != Grid.none);
 
   /*
   // this is needed in case the user selects the same filename, to reload the file in case it has changed.
@@ -133,8 +132,8 @@ class MenuComponent extends UiComponent2<MenuProps> {
 If checked, before attempting to close or refresh the page, if the design has 
 changed since it was last saved, a warning dialog is displayed to ask if you
 really want to exit without saving.'''
-          ..on_change =
-              ((_) => app.dispatch(actions.WarnOnExitIfUnsavedSet(warn: !props.state.ui_state.warn_on_exit_if_unsaved)))
+          ..on_change = ((_) =>
+              app.dispatch(actions.WarnOnExitIfUnsavedSet(warn: !props.state.ui_state.warn_on_exit_if_unsaved)))
           ..key = 'warn-on-exit-if-unsaved')(),
         (MenuBoolean()
           ..value = props.state.ui_state.confirm_before_replacing_design
@@ -143,10 +142,9 @@ really want to exit without saving.'''
 If checked, when dragging a file to the scadnano browser tab, if a design is
 currently loaded, then a confirmation window will display to ask before 
 replacing the current design. Uncheck to suppress this popup window confirmation.'''
-          ..on_change =
-              ((_) => app.dispatch(
-                actions.ConfirmBeforeReplacingDesignSet(confirm: !props.state.ui_state.confirm_before_replacing_design),
-              ))
+          ..on_change = ((_) => app.dispatch(
+            actions.ConfirmBeforeReplacingDesignSet(confirm: !props.state.ui_state.confirm_before_replacing_design),
+          ))
           ..key = 'confirm-before-replacing-design')(),
         DropdownDivider({'key': 'divider-save'}),
         DropdownItem({
@@ -185,12 +183,11 @@ Clear the stored design, reset all local settings, and reload the page.'''
         (MenuBoolean()
           ..value = props.state.ui_state.clear_helix_selection_when_loading_new_design
           ..display = 'Clear helix selection when loading new design'
-          ..on_change =
-              ((_) => app.dispatch(
-                actions.ClearHelixSelectionWhenLoadingNewDesignSet(
-                  clear: !props.state.ui_state.clear_helix_selection_when_loading_new_design,
-                ),
-              ))
+          ..on_change = ((_) => app.dispatch(
+            actions.ClearHelixSelectionWhenLoadingNewDesignSet(
+              clear: !props.state.ui_state.clear_helix_selection_when_loading_new_design,
+            ),
+          ))
           ..tooltip = '''\
 If checked, the selected helices will be clear when loading a new design.
 Otherwise, helix selection is not cleared, meaning that all the selected helices in the current
@@ -200,75 +197,71 @@ design will be selected (based on helix index) on the loaded design.'''
     );
   }
 
-  ReactElement file_menu_save_design_local_storage_options() => (MenuDropdownRight()
-    ..title_ = 'Local storage design save options'
-    ..id_ = 'file_menu_local-storage-options'
-    ..key = 'file_menu_local-storage-options'
-    ..className = 'submenu_item')([
-    (MenuBoolean()
-      ..value = props.state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.on_edit
-      ..display = 'Save design in localStorage on every edit'
-      ..tooltip = '''\
+  ReactElement file_menu_save_design_local_storage_options() =>
+      (MenuDropdownRight()
+        ..title_ = 'Local storage design save options'
+        ..id_ = 'file_menu_local-storage-options'
+        ..key = 'file_menu_local-storage-options'
+        ..className = 'submenu_item')([
+        (MenuBoolean()
+          ..value = props.state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.on_edit
+          ..display = 'Save design in localStorage on every edit'
+          ..tooltip = '''\
 On every edit, save current design in localStorage (in your web browser).
 
 Disabling this minimizes the time needed to render large designs.'''
-      ..on_change =
-          ((_) => app.dispatch(
+          ..on_change = ((_) => app.dispatch(
             actions.LocalStorageDesignChoiceSet(choice: props.state.ui_state.local_storage_design_choice.to_on_edit()),
           ))
-      ..key = 'save-dna-design-in-local-storage')(),
-    (MenuBoolean()
-      ..value = props.state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.on_exit
-      ..display = 'Save design in localStorage before exiting'
-      ..tooltip = '''\
+          ..key = 'save-dna-design-in-local-storage')(),
+        (MenuBoolean()
+          ..value = props.state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.on_exit
+          ..display = 'Save design in localStorage before exiting'
+          ..tooltip = '''\
 Before exiting, save current design in localStorage (in your web browser). 
 For large designs, this is faster than saving on every edit, but if the browser crashes, 
 all changes made will be lost, so it is not as safe as storing on every edit.'''
-      ..on_change =
-          ((_) => app.dispatch(
+          ..on_change = ((_) => app.dispatch(
             actions.LocalStorageDesignChoiceSet(choice: props.state.ui_state.local_storage_design_choice.to_on_exit()),
           ))
-      ..key = 'save-dna-design-in-local-storage-on-exit')(),
-    (MenuBoolean()
-      ..value = props.state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.never
-      ..display = 'Do not save design in localStorage'
-      ..tooltip = '''\
+          ..key = 'save-dna-design-in-local-storage-on-exit')(),
+        (MenuBoolean()
+          ..value = props.state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.never
+          ..display = 'Do not save design in localStorage'
+          ..tooltip = '''\
 Never saves the design in localStorage.
 
 WARNING: you must save your design manually by pressing Ctrl+S or selecting 
 File-->Save, or your design will be lost when you close the browser tab.'''
-      ..on_change =
-          ((_) => app.dispatch(
+          ..on_change = ((_) => app.dispatch(
             actions.LocalStorageDesignChoiceSet(choice: props.state.ui_state.local_storage_design_choice.to_never()),
           ))
-      ..key = 'never-save-dna-design-in-local-storage')(),
-    (MenuBoolean()
-      ..value = props.state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.periodic
-      ..display = 'Save design in localStorage periodically'
-      ..tooltip = '''\
+          ..key = 'never-save-dna-design-in-local-storage')(),
+        (MenuBoolean()
+          ..value = props.state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.periodic
+          ..display = 'Save design in localStorage periodically'
+          ..tooltip = '''\
 Every <period> seconds, save current design in localStorage (in your web browser). 
 Also saves before exiting.
 This is safer than never saving, or saving only before exiting, but will not save edits
 that occurred between the last save and a browser crash.'''
-      ..on_change =
-          ((_) => app.dispatch(
+          ..on_change = ((_) => app.dispatch(
             actions.LocalStorageDesignChoiceSet(choice: props.state.ui_state.local_storage_design_choice.to_periodic()),
           ))
-      ..key = 'save-dna-design-in-local-storage-periodically')(),
-    (MenuNumber()
-      ..display = 'period (seconds)'
-      ..min_value = 1
-      ..default_value = props.state.ui_state.local_storage_design_choice.period_seconds
-      ..hide = props.state.ui_state.local_storage_design_choice.option != LocalStorageDesignOption.periodic
-      ..tooltip = 'Number of seconds between saving design to localStorage.'
-      ..on_new_value =
-          ((num period) => app.dispatch(
+          ..key = 'save-dna-design-in-local-storage-periodically')(),
+        (MenuNumber()
+          ..display = 'period (seconds)'
+          ..min_value = 1
+          ..default_value = props.state.ui_state.local_storage_design_choice.period_seconds
+          ..hide = props.state.ui_state.local_storage_design_choice.option != LocalStorageDesignOption.periodic
+          ..tooltip = 'Number of seconds between saving design to localStorage.'
+          ..on_new_value = ((num period) => app.dispatch(
             actions.LocalStorageDesignChoiceSet(
               choice: LocalStorageDesignChoice(LocalStorageDesignOption.periodic, period.toInt()),
             ),
           ))
-      ..key = 'period-of-save-dna-design-in-local-storage-periodically')(),
-  ]);
+          ..key = 'period-of-save-dna-design-in-local-storage-periodically')(),
+      ]);
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // edit menu
@@ -298,12 +291,9 @@ Expand helices dynamically when strand(s) is moved or created according to the s
 If checked, helices will update with strand movement'''
         ..name = 'dynamically-update-helices'
         ..key = 'dynamically-update-helices'
-        ..on_change =
-            ((_) => app.dispatch(
-              actions.DynamicHelixUpdateSet(
-                dynamically_update_helices: !props.state.ui_state.dynamically_update_helices,
-              ),
-            ))
+        ..on_change = ((_) => app.dispatch(
+          actions.DynamicHelixUpdateSet(dynamically_update_helices: !props.state.ui_state.dynamically_update_helices),
+        ))
         ..value = props.state.ui_state.dynamically_update_helices)(),
 
       DropdownDivider({}),
@@ -343,10 +333,11 @@ to the first end e2 after it in this order, if
       // Set geometric parameters
       DropdownDivider({}),
       (MenuDropdownItem()
-        ..on_click =
-            ((_) => app.disable_keyboard_shortcuts_while(() => ask_for_geometry(props.state.maybe_design?.geometry)))
+        ..on_click = ((_) =>
+            app.disable_keyboard_shortcuts_while(() => ask_for_geometry(props.state.maybe_design?.geometry)))
         ..display = 'Set geometric parameters'
-        ..tooltip = '''\
+        ..tooltip =
+            '''\
 Set geometric parameters affecting how the design is displayed.
 
 - rise per base pair: This is the number of nanometers a single base pair occupies (i.e., width in main view)
@@ -517,19 +508,17 @@ If unchecked, select any object *entirely contained within* the selection shape.
 
 If checked, select any object *intersecting* the selection shape, even if some parts lie 
 outside the selection shape.'''
-        ..on_change =
-            ((_) => app.dispatch(
-              actions.SelectionBoxIntersectionRuleSet(intersect: !props.state.ui_state.selection_box_intersection),
-            )))(),
+        ..on_change = ((_) => app.dispatch(
+          actions.SelectionBoxIntersectionRuleSet(intersect: !props.state.ui_state.selection_box_intersection),
+        )))(),
       (MenuBoolean()
         ..value = props.state.ui_state.strand_paste_keep_color
         ..display = 'Pasted strands keep original color'
         ..tooltip = '''\
 If checked, when copying and pasting a strand, the color is preserved.
 If unchecked, then a new color is generated.'''
-        ..on_change =
-            ((_) =>
-                app.dispatch(actions.StrandPasteKeepColorSet(keep: !props.state.ui_state.strand_paste_keep_color))))(),
+        ..on_change = ((_) =>
+            app.dispatch(actions.StrandPasteKeepColorSet(keep: !props.state.ui_state.strand_paste_keep_color))))(),
     );
   }
 
@@ -564,7 +553,8 @@ but changes the rolls only of selected helices.''')(),
         ..on_click = ((_) => app.dispatch(actions.HelicesPositionsSetBasedOnCrossovers()))
         ..display = 'Set helix coordinates based on crossovers'
         ..disabled = this.no_grid_is_none
-        ..tooltip = '''\
+        ..tooltip =
+            '''\
 The grid must be set to none to enable this.${this.no_grid_is_none ? " (Currently disabled since the grid is not none.)" : ""}
 
 Select some crossovers and some helices. If no helices are selected, then all
@@ -740,12 +730,11 @@ strand at the same (helix,offset).'''
 If checked, when oxView view is open and unassigned DNA sequences are detected, 
 a warning popup will appear. This warning only appears when oxView is open.
 If unchecked, the warning will not appear.'''
-        ..on_change =
-            ((_) => app.dispatch(
-              actions.WarnAboutUnassignedDnaAndOxviewOpenSet(
-                warn: !props.state.ui_state.warn_about_unassigned_dna_and_oxview_open,
-              ),
-            ))
+        ..on_change = ((_) => app.dispatch(
+          actions.WarnAboutUnassignedDnaAndOxviewOpenSet(
+            warn: !props.state.ui_state.warn_about_unassigned_dna_and_oxview_open,
+          ),
+        ))
         ..key = 'warn-about-unassigned-dna')(),
       (MenuBoolean()
         ..value = props.state.ui_state.warn_about_unassigned_dna_on_export
@@ -754,12 +743,11 @@ If unchecked, the warning will not appear.'''
 If checked, when exporting to oxView or oxDNA and unassigned DNA sequences are detected, 
 a warning popup will appear.
 If unchecked, the warning will not appear.'''
-        ..on_change =
-            ((_) => app.dispatch(
-              actions.WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet(
-                warn: !props.state.ui_state.warn_about_unassigned_dna_on_export,
-              ),
-            ))
+        ..on_change = ((_) => app.dispatch(
+          actions.WarnAboutUnassignedDnaOnOxViewOrOxDNAExportSet(
+            warn: !props.state.ui_state.warn_about_unassigned_dna_on_export,
+          ),
+        ))
         ..key = 'warn-about-unassigned-dna-on-export')(),
     ]);
   }
@@ -781,8 +769,8 @@ If unchecked, the warning will not appear.'''
         ..default_value = props.state.ui_state.strand_name_font_size
         ..hide = !props.state.ui_state.show_strand_names
         ..tooltip = 'Adjust the font size of strand names.'
-        ..on_new_value =
-            ((num font_size) => app.dispatch(actions.StrandNameFontSizeSet(font_size: font_size.toDouble())))
+        ..on_new_value = ((num font_size) =>
+            app.dispatch(actions.StrandNameFontSizeSet(font_size: font_size.toDouble())))
         ..key = 'strand-name-font-size')(),
       (MenuBoolean()
         ..value = props.state.ui_state.show_strand_labels
@@ -795,8 +783,8 @@ If unchecked, the warning will not appear.'''
         ..default_value = props.state.ui_state.strand_label_font_size
         ..hide = !props.state.ui_state.show_strand_labels
         ..tooltip = 'Adjust the font size of strand labels.'
-        ..on_new_value =
-            ((num font_size) => app.dispatch(actions.StrandLabelFontSizeSet(font_size: font_size.toDouble())))
+        ..on_new_value = ((num font_size) =>
+            app.dispatch(actions.StrandLabelFontSizeSet(font_size: font_size.toDouble())))
         ..key = 'strand-label-font-size')(),
       (MenuBoolean()
         ..value = props.state.ui_state.show_domain_names
@@ -809,8 +797,8 @@ If unchecked, the warning will not appear.'''
         ..default_value = props.state.ui_state.domain_name_font_size
         ..hide = !props.state.ui_state.show_domain_names
         ..tooltip = 'Adjust the font size of domain/loopout/extension names.'
-        ..on_new_value =
-            ((num font_size) => app.dispatch(actions.DomainNameFontSizeSet(font_size: font_size.toDouble())))
+        ..on_new_value = ((num font_size) =>
+            app.dispatch(actions.DomainNameFontSizeSet(font_size: font_size.toDouble())))
         ..key = 'domain-name-font-size')(),
       (MenuBoolean()
         ..value = props.state.ui_state.show_domain_labels
@@ -823,8 +811,8 @@ If unchecked, the warning will not appear.'''
         ..default_value = props.state.ui_state.domain_label_font_size
         ..hide = !props.state.ui_state.show_domain_labels
         ..tooltip = 'Adjust the font size of domain labels.'
-        ..on_new_value =
-            ((num font_size) => app.dispatch(actions.DomainLabelFontSizeSet(font_size: font_size.toDouble())))
+        ..on_new_value = ((num font_size) =>
+            app.dispatch(actions.DomainLabelFontSizeSet(font_size: font_size.toDouble())))
         ..key = 'domain-label-font-size')(),
     ]);
   }
@@ -839,8 +827,8 @@ If unchecked, the warning will not appear.'''
         ..display = 'Stroke width'
         ..default_value = props.state.ui_state.stroke_width
         ..tooltip = 'Adjust the width of lines representing stands (e.g., domains, crossovers, loopouts, etc.)'
-        ..on_new_value =
-            ((num stroke_width) => app.dispatch(actions.StrokeWidthSet(stroke_width: stroke_width.toDouble())))
+        ..on_new_value = ((num stroke_width) =>
+            app.dispatch(actions.StrokeWidthSet(stroke_width: stroke_width.toDouble())))
         ..key = 'stroke-width')(),
       (MenuNumber()
         ..display = 'Crossover opacity'
@@ -852,8 +840,8 @@ If unchecked, the warning will not appear.'''
         ..display = 'Crossover opacity (same helix)'
         ..default_value = props.state.ui_state.crossover_opacity_same_helix
         ..tooltip = 'Adjust the opacity of crossover curves between domains on the same helix and same direction.'
-        ..on_new_value =
-            ((num opacity) => app.dispatch(actions.CrossoverOpacitySameHelixSet(opacity: opacity.toDouble())))
+        ..on_new_value = ((num opacity) =>
+            app.dispatch(actions.CrossoverOpacitySameHelixSet(opacity: opacity.toDouble())))
         ..key = 'crossover-opacity-same-helix')(),
     ]);
   }
@@ -882,10 +870,8 @@ If this is unchecked, then the modification is displayed directly on top of
 the 5'/3' end or the base. This is useful for visualizing the exact position
 of the modifications, e.g., to see where a pattern of biotins will appear on
 the surface of a DNA origami."""
-        ..on_change =
-            ((_) => app.dispatch(
-              actions.SetModificationDisplayConnector(!props.state.ui_state.modification_display_connector),
-            ))
+        ..on_change = ((_) =>
+            app.dispatch(actions.SetModificationDisplayConnector(!props.state.ui_state.modification_display_connector)))
         ..key = 'display-mod-connector')(),
       (MenuNumber()
         ..display = 'Modification font size'
@@ -908,10 +894,8 @@ the surface of a DNA origami."""
         ..display = 'Display only selected helices'
         ..tooltip = 'Only helices selected in the side view are displayed in the main view.'
         ..name = 'display-only-selected-helices'
-        ..on_change =
-            ((_) => app.dispatch(
-              actions.SetOnlyDisplaySelectedHelices(!props.state.ui_state.only_display_selected_helices),
-            ))
+        ..on_change = ((_) =>
+            app.dispatch(actions.SetOnlyDisplaySelectedHelices(!props.state.ui_state.only_display_selected_helices)))
         ..key = 'display-only-selected-helices')(),
       (MenuBoolean()
         ..value = props.state.ui_state.show_helix_components_main_view
@@ -921,12 +905,11 @@ Shows helix representation in main view. Hiding them hides all view elements
 associated with a helix: grid lines depicting offsets, circles with helix index,
 major tick offsets.'''
         ..name = 'show-helix-components-main-view'
-        ..on_change =
-            ((_) => app.dispatch(
-              actions.ShowHelixComponentsMainViewSet(
-                show_helix_components: !props.state.ui_state.show_helix_components_main_view,
-              ),
-            ))
+        ..on_change = ((_) => app.dispatch(
+          actions.ShowHelixComponentsMainViewSet(
+            show_helix_components: !props.state.ui_state.show_helix_components_main_view,
+          ),
+        ))
         ..key = 'show-helix-components-main-view')(),
       (MenuBoolean()
         ..value = props.state.ui_state.show_helix_circles_main_view
@@ -938,12 +921,11 @@ designs that have overlapping non-parallel helices.
 To hide all view elements associated with helices (e.g., major ticks),
 toggle "Show main view helices".'''
         ..name = 'show-helix-circles-main-view'
-        ..on_change =
-            ((_) => app.dispatch(
-              actions.ShowHelixCirclesMainViewSet(
-                show_helix_circles_main_view: !props.state.ui_state.show_helix_circles_main_view,
-              ),
-            ))
+        ..on_change = ((_) => app.dispatch(
+          actions.ShowHelixCirclesMainViewSet(
+            show_helix_circles_main_view: !props.state.ui_state.show_helix_circles_main_view,
+          ),
+        ))
         ..key = 'show-helix-circles-main-view')(),
       (MenuBoolean()
         ..value = props.state.ui_state.show_grid_coordinates_side_view
@@ -952,12 +934,11 @@ toggle "Show main view helices".'''
 Displays coordinates of each helix in the side view (either grid coordinates 
 or real coordinates in nanometers, depending on whether a grid is selected).'''
         ..name = 'show-grid-coordinates-side-view'
-        ..on_change =
-            ((_) => app.dispatch(
-              actions.ShowGridCoordinatesSideViewSet(
-                show_grid_coordinates_side_view: !props.state.ui_state.show_grid_coordinates_side_view,
-              ),
-            ))
+        ..on_change = ((_) => app.dispatch(
+          actions.ShowGridCoordinatesSideViewSet(
+            show_grid_coordinates_side_view: !props.state.ui_state.show_grid_coordinates_side_view,
+          ),
+        ))
         ..key = 'show-grid-coordinates-side-view')(),
     ]);
   }
@@ -972,22 +953,20 @@ or real coordinates in nanometers, depending on whether a grid is selected).'''
         ..value = props.state.ui_state.display_base_offsets_of_major_ticks
         ..display = 'Display major tick offsets'
         ..tooltip = 'Display the integer base offset to the right of each major tick, on the first helix.'
-        ..on_change =
-            ((_) => app.dispatch(
-              actions.DisplayMajorTicksOffsetsSet(!props.state.ui_state.display_base_offsets_of_major_ticks),
-            ))
+        ..on_change = ((_) => app.dispatch(
+          actions.DisplayMajorTicksOffsetsSet(!props.state.ui_state.display_base_offsets_of_major_ticks),
+        ))
         ..key = 'display-major-tick-offsets')(),
       (MenuBoolean()
         ..value = !props.state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
         ..hide = !props.state.ui_state.display_base_offsets_of_major_ticks
         ..display = '... on all helices'
         ..tooltip = 'Display the integer base offset to the right of each major tick, for all helices.'
-        ..on_change =
-            ((_) => app.dispatch(
-              actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(
-                !props.state.ui_state.display_base_offsets_of_major_ticks_only_first_helix,
-              ),
-            ))
+        ..on_change = ((_) => app.dispatch(
+          actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(
+            !props.state.ui_state.display_base_offsets_of_major_ticks_only_first_helix,
+          ),
+        ))
         ..key = 'display-major-tick-offsets-on-all-helices')(),
       (MenuNumber()
         ..display = 'major tick offset font size'
@@ -1001,18 +980,17 @@ or real coordinates in nanometers, depending on whether a grid is selected).'''
         ..value = props.state.ui_state.display_major_tick_widths
         ..display = 'Display major tick widths'
         ..tooltip = 'Display the number of bases between each adjacent pair of major ticks, on the first helix.'
-        ..on_change =
-            ((_) => app.dispatch(actions.SetDisplayMajorTickWidths(!props.state.ui_state.display_major_tick_widths)))
+        ..on_change = ((_) =>
+            app.dispatch(actions.SetDisplayMajorTickWidths(!props.state.ui_state.display_major_tick_widths)))
         ..key = 'display-major-tick-widths')(),
       (MenuBoolean()
         ..value = props.state.ui_state.display_major_tick_widths_all_helices
         ..hide = !props.state.ui_state.display_major_tick_widths
         ..display = '...on all helices'
         ..tooltip = 'Display the number of bases between each adjacent pair of major ticks, on all helices.'
-        ..on_change =
-            ((_) => app.dispatch(
-              actions.SetDisplayMajorTickWidthsAllHelices(!props.state.ui_state.display_major_tick_widths_all_helices),
-            ))
+        ..on_change = ((_) => app.dispatch(
+          actions.SetDisplayMajorTickWidthsAllHelices(!props.state.ui_state.display_major_tick_widths_all_helices),
+        ))
         ..key = 'display-major-tick-widths-on-all-helices')(),
       (MenuNumber()
         ..display = 'Major tick width font size'
@@ -1051,13 +1029,12 @@ Edit-->Copy/Paste/Select-->Copy image (Ctrl+I), or through
 Export-->SVG of selected strands, where it is possible that some strands are not selected,
 but are bound to strands that are selected, this determines whether to export the base pair 
 lines connecting the exported strand to the other (non-exported) strand.'''
-        ..on_change =
-            ((_) => app.dispatch(
-              actions.ExportBasePairLinesIfOtherStrandNotSelectedSet(
-                export_base_pair_lines_if_other_strand_not_selected:
-                    !props.state.ui_state.export_base_pair_lines_if_other_strand_not_selected,
-              ),
-            ))
+        ..on_change = ((_) => app.dispatch(
+          actions.ExportBasePairLinesIfOtherStrandNotSelectedSet(
+            export_base_pair_lines_if_other_strand_not_selected:
+                !props.state.ui_state.export_base_pair_lines_if_other_strand_not_selected,
+          ),
+        ))
         ..key = 'display-major-tick-offsets-on-all-helices')(),
       (MenuBoolean()
         ..value = props.state.ui_state.base_pair_display_type.toIndex() == 2
@@ -1079,12 +1056,11 @@ lines connecting the exported strand to the other (non-exported) strand.'''
 Lines are drawn between all pairs of bases at the same offset on the same helix, 
 regardless of whether the bases are complementary. If unchecked then lines are 
 only shown between pairs of complementary bases.'''
-        ..on_change =
-            (_) => app.dispatch(
-              actions.ShowBasePairLinesWithMismatchesSet(
-                show_base_pair_lines_with_mismatches: !props.state.ui_state.show_base_pair_lines_with_mismatches,
-              ),
-            ))(),
+        ..on_change = (_) => app.dispatch(
+          actions.ShowBasePairLinesWithMismatchesSet(
+            show_base_pair_lines_with_mismatches: !props.state.ui_state.show_base_pair_lines_with_mismatches,
+          ),
+        ))(),
     ]);
   }
 
@@ -1187,10 +1163,9 @@ Red : X-axis
 Green : Y-axis
 Blue : Z-axis'''
         ..name = 'show-helices-axis-arrows'
-        ..on_change =
-            ((_) => app.dispatch(
-              actions.ShowAxisArrowsSet(show_helices_axis_arrows: !props.state.ui_state.show_helices_axis_arrows),
-            ))
+        ..on_change = ((_) => app.dispatch(
+          actions.ShowAxisArrowsSet(show_helices_axis_arrows: !props.state.ui_state.show_helices_axis_arrows),
+        ))
         ..key = 'show-helices-axis-arrows')(),
       (MenuBoolean()
         ..value = props.state.ui_state.show_loopout_extension_length
@@ -1198,10 +1173,9 @@ Blue : Z-axis'''
         ..tooltip = '''\
 When selected, the length of each loopout and extension is displayed next to it.'''
         ..name = 'show-loopout-extension-length'
-        ..on_change =
-            ((_) => app.dispatch(
-              actions.ShowLoopoutExtensionLengthSet(show_length: !props.state.ui_state.show_loopout_extension_length),
-            ))
+        ..on_change = ((_) => app.dispatch(
+          actions.ShowLoopoutExtensionLengthSet(show_length: !props.state.ui_state.show_loopout_extension_length),
+        ))
         ..key = 'show-loopout-extension-length')(),
       (MenuBoolean()
         ..value = props.state.ui_state.show_slice_bar
@@ -1350,18 +1324,16 @@ cadnano files that have whitespace. ("Bad .json file format is detected in
         ..key = 'export-cadnano-no-whitespace')(),
       DropdownDivider({'key': 'divider-cadnano'}),
       (MenuDropdownItem()
-        ..on_click =
-            ((_) => app.dispatch(
-              actions.OxviewExport(selected_strands_only: props.state.ui_state.ox_export_only_selected_strands),
-            ))
+        ..on_click = ((_) => app.dispatch(
+          actions.OxviewExport(selected_strands_only: props.state.ui_state.ox_export_only_selected_strands),
+        ))
         ..tooltip = "Export design to oxView files, which can be loaded in oxView."
         ..display = 'oxView'
         ..key = 'export-oxview')(),
       (MenuDropdownItem()
-        ..on_click =
-            ((_) => app.dispatch(
-              actions.OxdnaExport(selected_strands_only: props.state.ui_state.ox_export_only_selected_strands),
-            ))
+        ..on_click = ((_) => app.dispatch(
+          actions.OxdnaExport(selected_strands_only: props.state.ui_state.ox_export_only_selected_strands),
+        ))
         ..tooltip = "Export design to oxDNA .dat and .top files, which can be loaded in oxDNA or oxView."
         ..display = 'oxDNA'
         ..key = 'export-oxdna')(),
@@ -1496,15 +1468,14 @@ However, it may be less stable than the main site.''',
         // version_dropdown_items,  // older-versions-deploy feature removed 2026-04-14
       ]),
       (MenuDropdownItem()
-        ..on_click =
-            ((_) => window.alert(
-              ''
-              'scadnano version ${constants.CURRENT_VERSION}'
-              '\n\nscadnano is a program for designing synthetic DNA structures such as DNA origami. '
-              '\n\nscadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group. '
-              'Though similar in design, scadnano is distinct from cadnano (https://cadnano.org), '
-              'which is developed and maintained by the Douglas lab (https://bionano.ucsf.edu/) at UCSF.',
-            ))
+        ..on_click = ((_) => window.alert(
+          ''
+          'scadnano version ${constants.CURRENT_VERSION}'
+          '\n\nscadnano is a program for designing synthetic DNA structures such as DNA origami. '
+          '\n\nscadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group. '
+          'Though similar in design, scadnano is distinct from cadnano (https://cadnano.org), '
+          'which is developed and maintained by the Douglas lab (https://bionano.ucsf.edu/) at UCSF.',
+        ))
         ..display = 'About')(),
       //       DropdownItem(
       //         {

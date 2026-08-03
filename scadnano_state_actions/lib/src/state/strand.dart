@@ -58,19 +58,18 @@ abstract class Strand
     }
 
     var strand = Strand.from(
-      (b) =>
-          b
-            ..color = color
-            ..circular = circular
-            ..substrands.replace(substrands)
-            ..vendor_fields = vendor_fields?.toBuilder()
-            ..modification_5p = modification_5p?.toBuilder()
-            ..modification_3p = modification_3p?.toBuilder()
-            ..modifications_int.replace(modifications_int)
-            ..is_scaffold = is_scaffold
-            ..name = name
-            ..label = label
-            ..unused_fields = MapBuilder<String, Object>({}),
+      (b) => b
+        ..color = color
+        ..circular = circular
+        ..substrands.replace(substrands)
+        ..vendor_fields = vendor_fields?.toBuilder()
+        ..modification_5p = modification_5p?.toBuilder()
+        ..modification_3p = modification_3p?.toBuilder()
+        ..modifications_int.replace(modifications_int)
+        ..is_scaffold = is_scaffold
+        ..name = name
+        ..label = label
+        ..unused_fields = MapBuilder<String, Object>({}),
     );
 
     if (dna_sequence != null) {
@@ -160,34 +159,31 @@ abstract class Strand
     bool is_first = idx == 0;
     bool is_last = idx == strand.substrands.length - 1;
     return domain.rebuild(
-      (b) =>
-          b
-            ..strand_id = strand.id
-            ..is_first = is_first
-            ..is_last = is_last
-            ..is_scaffold = is_scaffold,
+      (b) => b
+        ..strand_id = strand.id
+        ..is_first = is_first
+        ..is_last = is_last
+        ..is_scaffold = is_scaffold,
     );
   }
 
   _rebuild_loopout_with_new_fields_based_on_strand(Loopout loopout, int idx, Strand strand) {
     return loopout.rebuild(
-      (b) =>
-          b
-            ..is_scaffold = is_scaffold
-            ..strand_id = strand.id
-            ..prev_domain_idx = idx - 1,
+      (b) => b
+        ..is_scaffold = is_scaffold
+        ..strand_id = strand.id
+        ..prev_domain_idx = idx - 1,
     );
   }
 
   _rebuild_extension_with_new_fields_based_on_strand(Extension ext, bool is_5p, Strand strand) {
     Domain adjacent_domain = is_5p ? strand.first_domain : strand.last_domain;
     return ext.rebuild(
-      (b) =>
-          b
-            ..is_scaffold = is_scaffold
-            ..strand_id = strand.id
-            ..adjacent_domain.replace(adjacent_domain)
-            ..is_5p = is_5p,
+      (b) => b
+        ..is_scaffold = is_scaffold
+        ..strand_id = strand.id
+        ..adjacent_domain.replace(adjacent_domain)
+        ..is_5p = is_5p,
     );
   }
 
@@ -389,8 +385,8 @@ abstract class Strand
           if (!mod.allowed_bases!.contains(base)) {
             var msg =
                 ('internal modification ${mod} can only replace one of these bases: '
-                    '${mod.allowed_bases!.join(",")}, '
-                    'but the base at position ${strand_pos} is ${base}');
+                '${mod.allowed_bases!.join(",")}, '
+                'but the base at position ${strand_pos} is ${base}');
             throw IllegalDesignError(msg);
           }
           new_seq_list.last = vendor_code_with_delim; // replace base with modified base
@@ -416,18 +412,16 @@ abstract class Strand
   Address get address_3p => last_domain.address_3p;
 
   @memoized
-  BuiltList<SelectableDeletion> get selectable_deletions =>
-      [
-        for (var domain in domains)
-          for (var deletion in domain.selectable_deletions) deletion,
-      ].build();
+  BuiltList<SelectableDeletion> get selectable_deletions => [
+    for (var domain in domains)
+      for (var deletion in domain.selectable_deletions) deletion,
+  ].build();
 
   @memoized
-  BuiltList<SelectableInsertion> get selectable_insertions =>
-      [
-        for (var domain in domains)
-          for (var insertion in domain.selectable_insertions) insertion,
-      ].build();
+  BuiltList<SelectableInsertion> get selectable_insertions => [
+    for (var domain in domains)
+      for (var insertion in domain.selectable_insertions) insertion,
+  ].build();
 
   @memoized
   SelectableModification5Prime? get selectable_modification_5p =>
@@ -658,11 +652,10 @@ abstract class Strand
       'strand-H${helix}-${offset}-${forward ? 'forward' : 'reverse'}';
 
   @memoized
-  BuiltList<Domain> get domains =>
-      List<Domain>.from([
-        for (var ss in this.substrands)
-          if (ss.is_domain()) ss as Domain,
-      ]).build();
+  BuiltList<Domain> get domains => List<Domain>.from([
+    for (var ss in this.substrands)
+      if (ss.is_domain()) ss as Domain,
+  ]).build();
 
   @memoized
   BuiltList<DNAEnd> get ends_5p_not_first =>
@@ -939,10 +932,9 @@ abstract class Strand
       legacy_keys: constants.legacy_dna_sequence_keys,
     );
 
-    Color color =
-        json_map.containsKey(constants.color_key)
-            ? util.parse_json_color(json_map[constants.color_key])
-            : DEFAULT_STRAND_COLOR;
+    Color color = json_map.containsKey(constants.color_key)
+        ? util.parse_json_color(json_map[constants.color_key])
+        : DEFAULT_STRAND_COLOR;
 
     String? name = util.optional_field_with_null_default(json_map, constants.name_key);
 

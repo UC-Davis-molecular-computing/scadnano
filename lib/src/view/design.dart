@@ -73,8 +73,8 @@ class DesignViewComponent {
   DivElement root_element;
 
   DivElement design_above_footer_pane = DivElement()..attributes = {'id': 'design'};
-  DivElement footer_separator =
-      DivElement()..attributes = {'id': 'design-footer-separator', 'class': 'fixed-separator'};
+  DivElement footer_separator = DivElement()
+    ..attributes = {'id': 'design-footer-separator', 'class': 'fixed-separator'};
   DivElement footer_element = DivElement()..attributes = {'id': FOOTER_ID};
   DivElement modes_element = DivElement()..attributes = {'id': MODES_ID};
   DivElement error_message_pane = DivElement()..attributes = {'id': 'error-message-pane'};
@@ -104,20 +104,18 @@ class DesignViewComponent {
     var side_main_separator = DivElement()..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
     this.main_pane = DivElement()..attributes = {'id': 'main-pane', 'class': 'split'};
 
-    side_view_svg =
-        svg.SvgSvgElement()
-          ..attributes = {'id': SIDE_VIEW_SVG_ID, 'class': PANZOOMABLE_CLASS, 'width': '100%', 'height': '100%'};
+    side_view_svg = svg.SvgSvgElement()
+      ..attributes = {'id': SIDE_VIEW_SVG_ID, 'class': PANZOOMABLE_CLASS, 'width': '100%', 'height': '100%'};
 
-    main_view_svg =
-        svg.SvgSvgElement()
-          ..attributes = {'id': MAIN_VIEW_SVG_ID, 'class': PANZOOMABLE_CLASS, 'width': '100%', 'height': '100%'};
+    main_view_svg = svg.SvgSvgElement()
+      ..attributes = {'id': MAIN_VIEW_SVG_ID, 'class': PANZOOMABLE_CLASS, 'width': '100%', 'height': '100%'};
     add_shadow_filter(main_view_svg);
 
-    var main_arrows =
-        svg.SvgSvgElement()..attributes = {'id': MAIN_VIEW_ARROWS_SVG_ID, 'width': '85px', 'height': '85px'};
+    var main_arrows = svg.SvgSvgElement()
+      ..attributes = {'id': MAIN_VIEW_ARROWS_SVG_ID, 'width': '85px', 'height': '85px'};
 
-    var side_arrows =
-        svg.SvgSvgElement()..attributes = {'id': SIDE_VIEW_ARROWS_SVG_ID, 'width': '85px', 'height': '85px'};
+    var side_arrows = svg.SvgSvgElement()
+      ..attributes = {'id': SIDE_VIEW_ARROWS_SVG_ID, 'width': '85px', 'height': '85px'};
 
     var side_view_svg_viewport = svg.GElement()..attributes = {'id': SIDE_VIEW_SVG_VIEWPORT_GROUP};
     var main_view_svg_viewport = svg.GElement()..attributes = {'id': MAIN_VIEW_SVG_VIEWPORT_GROUP};
@@ -125,12 +123,10 @@ class DesignViewComponent {
     side_view_svg.children.add(side_view_svg_viewport);
     main_view_svg.children.add(main_view_svg_viewport);
 
-    var side_view_dummy_elt =
-        svg.CircleElement()
-          ..attributes = {'id': 'dummy-elt-side-view', 'r': '100', 'cx': '100', 'cy': '50', 'fill': 'white'};
-    var main_view_dummy_elt =
-        svg.CircleElement()
-          ..attributes = {'id': 'dummy-elt-main-view', 'r': '200', 'cx': '100', 'cy': '100', 'fill': 'white'};
+    var side_view_dummy_elt = svg.CircleElement()
+      ..attributes = {'id': 'dummy-elt-side-view', 'r': '100', 'cx': '100', 'cy': '50', 'fill': 'white'};
+    var main_view_dummy_elt = svg.CircleElement()
+      ..attributes = {'id': 'dummy-elt-main-view', 'r': '200', 'cx': '100', 'cy': '100', 'fill': 'white'};
     side_view_svg_viewport.children.add(side_view_dummy_elt);
     main_view_svg_viewport.children.add(main_view_dummy_elt);
 
@@ -272,16 +268,15 @@ class DesignViewComponent {
             Helix helix = moves_store.helix;
             var group = app.state.design.groups[helix.group]!;
             var geometry = group.geometry ?? app.state.design.geometry;
-            int offset =
-                util
-                    .get_address_on_helix(
-                      event,
-                      helix,
-                      group,
-                      geometry,
-                      app.state.helix_idx_to_svg_position_map[helix.idx]!,
-                    )
-                    .offset;
+            int offset = util
+                .get_address_on_helix(
+                  event,
+                  helix,
+                  group,
+                  geometry,
+                  app.state.helix_idx_to_svg_position_map[helix.idx]!,
+                )
+                .offset;
             int old_offset = moves_store.current_offset;
             if (offset != old_offset) {
               app.dispatch(actions.DNAEndsMoveAdjustOffset(offset: offset));
@@ -339,13 +334,12 @@ class DesignViewComponent {
           }
           if (can_paste) {
             var old_address = strands_move.current_address;
-            var visible_helices =
-                app.state.ui_state.only_display_selected_helices
-                    ? [
-                      for (var helix in app.state.design.helices.values)
-                        if (app.state.ui_state.side_selected_helix_idxs.contains(helix.idx)) helix,
-                    ]
-                    : app.state.design.helices.values;
+            var visible_helices = app.state.ui_state.only_display_selected_helices
+                ? [
+                    for (var helix in app.state.design.helices.values)
+                      if (app.state.ui_state.side_selected_helix_idxs.contains(helix.idx)) helix,
+                  ]
+                : app.state.design.helices.values;
             var group = app.state.design.groups[app.state.ui_state.displayed_group_name]!;
             var geometry = group.geometry ?? app.state.design.geometry;
             var address = util.find_closest_address(
@@ -374,13 +368,12 @@ class DesignViewComponent {
             window.alert(msg);
           } else {
             var old_address = domains_move.current_address;
-            var visible_helices =
-                app.state.ui_state.only_display_selected_helices
-                    ? [
-                      for (var helix in app.state.design.helices.values)
-                        if (app.state.ui_state.side_selected_helix_idxs.contains(helix.idx)) helix,
-                    ]
-                    : app.state.design.helices.values;
+            var visible_helices = app.state.ui_state.only_display_selected_helices
+                ? [
+                    for (var helix in app.state.design.helices.values)
+                      if (app.state.ui_state.side_selected_helix_idxs.contains(helix.idx)) helix,
+                  ]
+                : app.state.design.helices.values;
             var group = app.state.design.groups[app.state.ui_state.displayed_group_name]!;
             var geometry = group.geometry ?? app.state.design.geometry;
             var address = util.find_closest_address(

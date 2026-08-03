@@ -81,11 +81,10 @@ Future<List<DialogItem>?> dialog(Dialog dialog) async {
   // https://api.dart.dev/stable/2.7.0/dart-async/Completer-class.html
   Completer<List<DialogItem>?> completer = Completer<List<DialogItem>?>();
   dialog = dialog.rebuild(
-    (b) =>
-        b
-          ..on_submit = (List<DialogItem>? items) {
-            completer.complete(items);
-          },
+    (b) => b
+      ..on_submit = (List<DialogItem>? items) {
+        completer.complete(items);
+      },
   );
   app.dispatch(actions.DialogShow(dialog: dialog));
   return completer.future;
@@ -491,10 +490,9 @@ save_file(
     String blob_type_string = blob_type_to_string(blob_type);
     Blob blob = new Blob([content], blob_type_string);
     String url = Url.createObjectUrlFromBlob(blob);
-    var link =
-        new AnchorElement()
-          ..href = url
-          ..download = default_filename;
+    var link = new AnchorElement()
+      ..href = url
+      ..download = default_filename;
 
     if (browser.isFirefox) {
       document.body!.children.add(link);

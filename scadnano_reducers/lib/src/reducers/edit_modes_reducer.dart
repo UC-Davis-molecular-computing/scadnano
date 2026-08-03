@@ -16,10 +16,9 @@ BuiltSet<EditModeChoice> toggle_edit_mode_reducer(BuiltSet<EditModeChoice> modes
     new_modes = modes.rebuild((m) => m..remove(mode));
   } else {
     new_modes = modes.rebuild(
-      (m) =>
-          m
-            ..add(mode)
-            ..removeAll(mode.excluded_modes),
+      (m) => m
+        ..add(mode)
+        ..removeAll(mode.excluded_modes),
     );
   }
   return new_modes;

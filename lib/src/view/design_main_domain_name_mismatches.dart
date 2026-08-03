@@ -58,14 +58,13 @@ class DesignMainDomainNameMismatchesComponent extends UiComponent2<DesignMainDom
           var svg_position_y = props.helix_idx_to_svg_position_y_map[helix.idx]!;
           var base_svg_pos = helix.svg_base_pos(mid, domain.forward, svg_position_y, geometry);
           String key = '${domain.helix};${domain.forward};${domain.start};${mid};${domain.end}';
-          var mismatch_component =
-              (DesignMainWarningStar()
-                ..base_svg_pos = base_svg_pos
-                ..geometry = geometry
-                ..forward = domain.forward
-                ..color = 'magenta'
-                ..domain_name_mismatch = domain_name_mismatch
-                ..key = key)();
+          var mismatch_component = (DesignMainWarningStar()
+            ..base_svg_pos = base_svg_pos
+            ..geometry = geometry
+            ..forward = domain.forward
+            ..color = 'magenta'
+            ..domain_name_mismatch = domain_name_mismatch
+            ..key = key)();
           untransformed_mismatch_components.add(mismatch_component);
         }
       }

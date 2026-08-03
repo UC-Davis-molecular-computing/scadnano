@@ -32,11 +32,10 @@ mixin DesignDialogFormState on UiState {
 class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormProps, DesignDialogFormState>
     with PureComponent {
   @override
-  Map get initialState =>
-      (newState()
-        ..current_responses = null
-        ..dialog_type = null
-        ..saved_responses = new BuiltMap<DialogType, BuiltList<DialogItem>>());
+  Map get initialState => (newState()
+    ..current_responses = null
+    ..dialog_type = null
+    ..saved_responses = new BuiltMap<DialogType, BuiltList<DialogItem>>());
 
   // This executes when the Dialog first pops up, and also whenever the user changes input fields,
   // which we respond to by setting a new React state, which re-renders the dialog view to show
@@ -57,10 +56,9 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         assert(dialog.process_saved_response != null);
         var dialog_type = dialog.type;
         return newState()
-          ..current_responses =
-              prev_state.saved_responses.containsKey(dialog_type) && dialog.use_saved_response
-                  ? dialog.process_saved_response!(prev_state.saved_responses[dialog_type]!)
-                  : dialog.items
+          ..current_responses = prev_state.saved_responses.containsKey(dialog_type) && dialog.use_saved_response
+              ? dialog.process_saved_response!(prev_state.saved_responses[dialog_type]!)
+              : dialog.items
           ..dialog_type = dialog.type
           ..saved_responses = prev_state.saved_responses;
       } else {

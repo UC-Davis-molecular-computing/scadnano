@@ -217,10 +217,9 @@ BuiltSet<int> helix_selections_adjust_reducer(
   var all_helices_in_displayed_group = state.design.helices_in_group(group_name);
   var group = state.design.groups[group_name]!;
   var geometry = group.geometry ?? state.design.geometry;
-  List<util.Box> all_bboxes =
-      all_helices_in_displayed_group.values
-          .map((helix) => helix_to_box(helix, geometry, state.ui_state.invert_y))
-          .toList();
+  List<util.Box> all_bboxes = all_helices_in_displayed_group.values
+      .map((helix) => helix_to_box(helix, geometry, state.ui_state.invert_y))
+      .toList();
   var selection_box_as_box = util.Box.from_selection_box(selection_box);
   List<Helix> helices_overlapping = util.enclosure_list(
     all_helices_in_displayed_group.values,

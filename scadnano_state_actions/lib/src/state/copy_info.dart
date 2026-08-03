@@ -56,16 +56,14 @@ abstract class CopyInfo with BuiltJsonSerializable implements Built<CopyInfo, Co
   AddressDifference? get translation;
 
   // next address to paste into (no strands exist at this Address yet)
-  Address? get next_paste_address =>
-      this.translation == null || this.prev_paste_address == null
-          ? null
-          : prev_paste_address!.sum(this.translation!, helices_view_order, helices_view_order_inverse);
+  Address? get next_paste_address => this.translation == null || this.prev_paste_address == null
+      ? null
+      : prev_paste_address!.sum(this.translation!, helices_view_order, helices_view_order_inverse);
 
   // first address to paste into based on translation
-  Address? get first_paste_address =>
-      this.translation == null
-          ? null
-          : copied_address.sum(this.translation!, helices_view_order, helices_view_order_inverse);
+  Address? get first_paste_address => this.translation == null
+      ? null
+      : copied_address.sum(this.translation!, helices_view_order, helices_view_order_inverse);
 
   BuiltList<int> get helices_view_order;
 
@@ -79,13 +77,12 @@ abstract class CopyInfo with BuiltJsonSerializable implements Built<CopyInfo, Co
     required BuiltMap<int, int> helices_view_order_inverse,
   }) {
     return CopyInfo.from(
-      (b) =>
-          b
-            ..strands.replace(strands)
-            ..copied_address.replace(copied_address)
-            ..translation = translation?.toBuilder()
-            ..helices_view_order.replace(helices_view_order)
-            ..helices_view_order_inverse.replace(helices_view_order_inverse),
+      (b) => b
+        ..strands.replace(strands)
+        ..copied_address.replace(copied_address)
+        ..translation = translation?.toBuilder()
+        ..helices_view_order.replace(helices_view_order)
+        ..helices_view_order_inverse.replace(helices_view_order_inverse),
     );
   }
 

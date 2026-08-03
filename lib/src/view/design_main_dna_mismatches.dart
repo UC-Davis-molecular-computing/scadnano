@@ -53,13 +53,12 @@ class DesignMainDNAMismatchesComponent extends UiComponent2<DesignMainDNAMismatc
             if (!keys.contains(key)) {
               // otherwise, already rendered mismatch for this insertion
               keys.add(key);
-              var mismatch_component =
-                  (DesignMainWarningStar()
-                    ..base_svg_pos = base_svg_pos
-                    ..geometry = geometry
-                    ..forward = domain.forward
-                    ..color = 'red'
-                    ..key = key)();
+              var mismatch_component = (DesignMainWarningStar()
+                ..base_svg_pos = base_svg_pos
+                ..geometry = geometry
+                ..forward = domain.forward
+                ..color = 'red'
+                ..key = key)();
               untransformed_mismatch_components.add(mismatch_component);
             }
           }

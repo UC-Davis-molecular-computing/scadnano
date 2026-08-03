@@ -89,15 +89,13 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
           ..geometry = props.geometry
           ..dna_end = end_5p_moved
           ..color = props.strand.color
-          ..forward =
-              first_domain_moved
-                  .forward //first_domain_moved.forward != props.delta_forward
+          ..forward = first_domain_moved
+              .forward //first_domain_moved.forward != props.delta_forward
           ..is_5p =
               true //true != props.delta_forward
           ..allowable = props.allowable
-          ..current_offset =
-              end_5p_moved
-                  .offset_inclusive // + props.delta_offset
+          ..current_offset = end_5p_moved
+              .offset_inclusive // + props.delta_offset
           ..svg_position_y = props.helix_idx_to_svg_position_map[first_helix_moved.idx]!.y
           ..key = 'end-5p')(),
       if (!strand_moved.circular && strand_moved.has_5p_extension)
@@ -108,15 +106,13 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
           ..geometry = props.geometry
           ..dna_end = end_3p_moved
           ..color = props.strand.color
-          ..forward =
-              last_domain_moved
-                  .forward //props.delta_forward != last_domain_moved.forward
+          ..forward = last_domain_moved
+              .forward //props.delta_forward != last_domain_moved.forward
           ..is_5p =
               false //false != props.delta_forward
           ..allowable = props.allowable
-          ..current_offset =
-              end_3p_moved
-                  .offset_inclusive // + props.delta_offset
+          ..current_offset = end_3p_moved
+              .offset_inclusive // + props.delta_offset
           ..svg_position_y = props.helix_idx_to_svg_position_map[last_helix_moved.idx]!.y
           ..key = 'end-3p')(),
       if (!strand_moved.circular && strand_moved.has_3p_extension)
@@ -142,12 +138,11 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
     String classname =
         (is_5p ? 'five-prime-end-moving' : 'three-prime-end-moving') + (props.allowable ? '' : ' disallowed-end');
     EndEitherPrimeProps end_props = is_5p ? End5Prime() : End3Prime();
-    end_props =
-        end_props
-          ..classname = classname
-          ..pos = free_end_svg
-          ..color = props.strand.color
-          ..forward = adj_dom.forward;
+    end_props = end_props
+      ..classname = classname
+      ..pos = free_end_svg
+      ..color = props.strand.color
+      ..forward = adj_dom.forward;
     return (end_props..key = is_5p ? 'end-5p-ext' : 'end-3p-ext')();
   }
 
@@ -258,13 +253,12 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
     }
 
     int key = 0;
-    var path =
-        (Dom.path()
-          ..className = classname
-          ..stroke = props.strand.color.toHexColor().toCssString()
-          ..fill = 'none'
-          ..d = path_cmds.join(' ')
-          ..key = key++)();
+    var path = (Dom.path()
+      ..className = classname
+      ..stroke = props.strand.color.toHexColor().toCssString()
+      ..fill = 'none'
+      ..d = path_cmds.join(' ')
+      ..key = key++)();
 
     return path;
   }

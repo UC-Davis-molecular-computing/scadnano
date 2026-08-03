@@ -209,8 +209,8 @@ jobs:
 
       - name: Build generated files for sub-packages
         run: |
-          cd scadnano_state_actions && dart run build_runner build --delete-conflicting-outputs && cd ..
-          cd scadnano_reducers && dart run build_runner build --delete-conflicting-outputs && cd ..
+          cd scadnano_state_actions && dart run build_runner build && cd ..
+          cd scadnano_reducers && dart run build_runner build && cd ..
 
       # Deliberately NOT `webdev build`. webdev is installed with `dart pub global activate`,
       # which resolves its own dependencies INDEPENDENTLY of pubspec.lock -- yet the webdev
@@ -230,7 +230,7 @@ jobs:
       # -DSCADNANO_PROD=true under `release_options`, and `--output web:build` puts the result
       # in build/ just as `webdev build` did. It is also about twice as fast.
       - name: Build web app
-        run: dart run build_runner build --release --output web:build --delete-conflicting-outputs
+        run: dart run build_runner build --release --output web:build
 
       - name: Upload web build artifact
         uses: actions/upload-artifact@v7

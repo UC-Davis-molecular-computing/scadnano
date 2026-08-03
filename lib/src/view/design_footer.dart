@@ -14,8 +14,9 @@ part 'design_footer.over_react.g.dart';
 DesignFooterProps set_design_footer_props(DesignFooterProps elt, AppState state) {
   BuiltList<MouseoverData> mouseover_datas = state.ui_state.mouseover_datas;
   MouseoverData? first_mouseover_data = mouseover_datas.isNotEmpty ? mouseover_datas.first : null;
-  Strand? strand_first_mouseover_data =
-      mouseover_datas.isNotEmpty ? state.design.substrand_to_strand[first_mouseover_data!.domain] : null;
+  Strand? strand_first_mouseover_data = mouseover_datas.isNotEmpty
+      ? state.design.substrand_to_strand[first_mouseover_data!.domain]
+      : null;
   String loaded_filename = state.ui_state.loaded_filename;
   return elt
     ..mouseover_datas = mouseover_datas
@@ -54,12 +55,12 @@ class DesignFooterComponent extends UiComponent2<DesignFooterProps> {
         Strand? strand = props.strand_first_mouseover_data;
         text +=
             (', strand DNA index: ${mouseover_data.strand_idx}' +
-                ', domain length: ${domain_length}' +
-                ', strand length: ${strand?.dna_length}' +
-                (domain.name != null ? ', domain name: ${domain.name}' : '') +
-                (domain.label != null ? ', domain label: ${domain.label}' : '') +
-                (strand?.name != null ? ', strand name: ${strand!.name}' : '') +
-                (strand?.label != null ? ', strand label: ${strand!.label}' : ''));
+            ', domain length: ${domain_length}' +
+            ', strand length: ${strand?.dna_length}' +
+            (domain.name != null ? ', domain name: ${domain.name}' : '') +
+            (domain.label != null ? ', domain label: ${domain.label}' : '') +
+            (strand?.name != null ? ', strand name: ${strand!.name}' : '') +
+            (strand?.label != null ? ', strand label: ${strand!.label}' : ''));
         ;
       }
     } else {

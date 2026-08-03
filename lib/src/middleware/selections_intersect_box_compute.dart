@@ -45,14 +45,13 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
       // basically had to implement it myself based on bounding boxes.
 
       bool selection_box_intersection = store.state.ui_state.selection_box_intersection;
-      elts_overlapping =
-          elements_intersecting_box(
-            MAIN_VIEW_SVG_ID,
-            select_box_bbox,
-            select_modes,
-            is_origami,
-            selection_box_intersection,
-          ).toSet();
+      elts_overlapping = elements_intersecting_box(
+        MAIN_VIEW_SVG_ID,
+        select_box_bbox,
+        select_modes,
+        is_origami,
+        selection_box_intersection,
+      ).toSet();
     } else {
       // use selection rope
       svg.PolygonElement? rope_elt = querySelector('#selection-rope-main') as svg.PolygonElement?;
@@ -63,14 +62,13 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
 
       List<Point<double>> points = points_of_polygon_elt(rope_elt);
       bool selection_box_intersection = store.state.ui_state.selection_box_intersection;
-      elts_overlapping =
-          elements_intersecting_polygon(
-            MAIN_VIEW_SVG_ID,
-            points,
-            select_modes,
-            is_origami,
-            selection_box_intersection,
-          ).toSet();
+      elts_overlapping = elements_intersecting_polygon(
+        MAIN_VIEW_SVG_ID,
+        points,
+        select_modes,
+        is_origami,
+        selection_box_intersection,
+      ).toSet();
     }
 
     var selectable_by_id = state.design.selectable_by_id;

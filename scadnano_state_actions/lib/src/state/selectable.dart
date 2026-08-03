@@ -125,38 +125,33 @@ abstract class SelectablesStore with BuiltJsonSerializable implements Built<Sele
     return rebuild((s) => s..selected_items = selected_items_builder);
   }
 
-  BuiltSet<DNAEnd> selected_ends_in_strand(Strand strand) =>
-      {
-        for (var domain in strand.domains)
-          for (var end in [domain.dnaend_5p, domain.dnaend_3p])
-            if (selected_dna_ends.contains(end)) end,
-        for (var ext in strand.extensions)
-          if (selected_dna_ends.contains(ext.dnaend_free)) ext.dnaend_free,
-      }.build();
+  BuiltSet<DNAEnd> selected_ends_in_strand(Strand strand) => {
+    for (var domain in strand.domains)
+      for (var end in [domain.dnaend_5p, domain.dnaend_3p])
+        if (selected_dna_ends.contains(end)) end,
+    for (var ext in strand.extensions)
+      if (selected_dna_ends.contains(ext.dnaend_free)) ext.dnaend_free,
+  }.build();
 
-  BuiltSet<Crossover> selected_crossovers_in_strand(Strand strand) =>
-      {
-        for (var crossover in strand.crossovers)
-          if (selected_crossovers.contains(crossover)) crossover,
-      }.build();
+  BuiltSet<Crossover> selected_crossovers_in_strand(Strand strand) => {
+    for (var crossover in strand.crossovers)
+      if (selected_crossovers.contains(crossover)) crossover,
+  }.build();
 
-  BuiltSet<Loopout> selected_loopouts_in_strand(Strand strand) =>
-      {
-        for (var loopout in strand.loopouts)
-          if (selected_loopouts.contains(loopout)) loopout,
-      }.build();
+  BuiltSet<Loopout> selected_loopouts_in_strand(Strand strand) => {
+    for (var loopout in strand.loopouts)
+      if (selected_loopouts.contains(loopout)) loopout,
+  }.build();
 
-  BuiltSet<Extension> selected_extensions_in_strand(Strand strand) =>
-      {
-        for (var ext in strand.extensions)
-          if (selected_extensions.contains(ext)) ext,
-      }.build();
+  BuiltSet<Extension> selected_extensions_in_strand(Strand strand) => {
+    for (var ext in strand.extensions)
+      if (selected_extensions.contains(ext)) ext,
+  }.build();
 
-  BuiltSet<Domain> selected_domains_in_strand(Strand strand) =>
-      {
-        for (var domain in strand.domains)
-          if (selected_domains.contains(domain)) domain,
-      }.build();
+  BuiltSet<Domain> selected_domains_in_strand(Strand strand) => {
+    for (var domain in strand.domains)
+      if (selected_domains.contains(domain)) domain,
+  }.build();
 
   BuiltSet<SelectableDeletion> selected_deletions_in_strand(Strand strand) {
     Set<SelectableDeletion> deletions = {};

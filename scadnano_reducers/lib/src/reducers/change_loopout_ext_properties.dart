@@ -209,10 +209,9 @@ Strand extension_display_length_angle_change_reducer(Strand strand, actions.Exte
     throw ArgumentError('extension must have positive display_angle');
   }
   Extension ext_new = action.ext.rebuild(
-    (b) =>
-        b
-          ..display_length = action.display_length
-          ..display_angle = action.display_angle,
+    (b) => b
+      ..display_length = action.display_length
+      ..display_angle = action.display_angle,
   );
   substrands_builder[idx] = ext_new;
   strand = strand.rebuild((s) => s..substrands = substrands_builder);

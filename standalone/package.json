@@ -42,6 +42,9 @@
     "dmg": {
       "writeUpdateInfo": false
     },
+    "portable": {
+      "buildUniversalInstaller": false
+    },
     "nsis": {
       "oneClick": false,
       "perMachine": false,
@@ -50,12 +53,12 @@
   },
   "scripts": {
     "init": "npm run setup:state_actions && npm run setup:reducers && npm run setup:webdev",
-    "setup:webdev": "cd .. && dart pub get && dart pub global activate webdev && webdev build -- --delete-conflicting-outputs",
-    "setup:state_actions": "cd .. && dart pub get && cd scadnano_state_actions && dart run build_runner build --delete-conflicting-outputs",
-    "setup:reducers": "cd .. && dart pub get && cd scadnano_reducers && dart run build_runner build --delete-conflicting-outputs",
+    "setup:webdev": "cd .. && dart pub get && dart run webdev build",
+    "setup:state_actions": "cd .. && dart pub get && cd scadnano_state_actions && dart run build_runner build",
+    "setup:reducers": "cd .. && dart pub get && cd scadnano_reducers && dart run build_runner build",
     "dev": "npm run init && electron-forge start",
     "package": "electron-builder --dir",
-    "build:electron:win": "electron-builder --win --publish never && node -e \"require('fs').rmSync('dist/scadnano-win.exe', {force: true})\"",
+    "build:electron:win": "electron-builder --win --publish never",
     "build:electron:mac": "electron-builder --mac --publish never",
     "build:electron:lin": "electron-builder --linux --publish never",
     "build:win": "npm run init && npm run build:electron:win",
@@ -75,15 +78,15 @@
   },
   "homepage": "https://github.com/UC-Davis-molecular-computing/scadnano#readme",
   "devDependencies": {
-    "@electron-forge/cli": "^7.7.0",
-    "@electron-forge/maker-deb": "^7.7.0",
-    "@electron-forge/maker-rpm": "^7.7.0",
-    "@electron-forge/maker-squirrel": "^7.7.0",
+    "@electron-forge/cli": "^7.11.2",
+    "@electron-forge/maker-deb": "^7.11.2",
+    "@electron-forge/maker-rpm": "^7.11.2",
+    "@electron-forge/maker-squirrel": "^7.11.2",
     "@electron-forge/maker-zip": "^7.7.0",
     "@electron-forge/plugin-auto-unpack-natives": "^7.7.0",
     "@electron-forge/plugin-fuses": "^7.7.0",
-    "@electron/fuses": "^1.8.0",
-    "electron": "^35.0.0",
+    "@electron/fuses": "^2.1.3",
+    "electron": "^39.8.5",
     "electron-builder": "^26.8.1"
   },
   "dependencies": {

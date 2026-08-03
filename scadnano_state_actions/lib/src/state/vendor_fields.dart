@@ -20,13 +20,12 @@ abstract class VendorFields
     String? plate = null,
     String? well = null,
   }) => VendorFields.from(
-    (b) =>
-        b
-          ..scale = scale
-          ..purification = purification
-          ..plate = plate
-          ..well = well
-          ..unused_fields = MapBuilder<String, dynamic>({}),
+    (b) => b
+      ..scale = scale
+      ..purification = purification
+      ..plate = plate
+      ..well = well
+      ..unused_fields = MapBuilder<String, dynamic>({}),
   );
 
   factory VendorFields.from([void Function(VendorFieldsBuilder) updates]) = _$VendorFields;
@@ -102,5 +101,5 @@ abstract class VendorFields
       (plate == null
           ? ''
           : '      plate: $plate\n'
-              '      well: $well');
+                '      well: $well');
 }

@@ -349,7 +349,10 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
       title: 'set helix grid position',
       use_saved_response: false,
       type: DialogType.set_helix_grid_position,
-      items: [DialogInteger(label: 'h', value: grid_position.h), DialogInteger(label: 'v', value: grid_position.v)],
+      items: [
+        DialogInteger(label: 'h', value: grid_position.h),
+        DialogInteger(label: 'v', value: grid_position.v),
+      ],
     );
 
     List<DialogItem>? results = await util.dialog(dialog);
@@ -385,7 +388,12 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
     double z = (results[2] as DialogFloat).value;
 
     // TODO: (check validity)
-    app.dispatch(actions.HelixPositionSet(helix_idx: helix.idx, position: Position3D(x: x, y: y, z: z)));
+    app.dispatch(
+      actions.HelixPositionSet(
+        helix_idx: helix.idx,
+        position: Position3D(x: x, y: y, z: z),
+      ),
+    );
   }
 
   Future<void> dialog_helix_set_group() async {
@@ -449,10 +457,9 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
     app.disable_keyboard_shortcuts_while(dialog_helix_set_group);
   }
 
-  ContextMenuItem context_menu_item_set_position =
-      (helix.grid == Grid.none)
-          ? ContextMenuItem(title: 'set position', on_click: helix_set_position)
-          : ContextMenuItem(title: 'set grid position', on_click: helix_set_grid_position);
+  ContextMenuItem context_menu_item_set_position = (helix.grid == Grid.none)
+      ? ContextMenuItem(title: 'set position', on_click: helix_set_position)
+      : ContextMenuItem(title: 'set grid position', on_click: helix_set_grid_position);
 
   return [
     ContextMenuItem(title: 'set min offset', on_click: helix_set_min_offset),
@@ -514,8 +521,11 @@ positive offsets from the previous tick mark''');
 }
 
 List<int>? parse_major_tick_distances_and_check_validity(String major_tick_distances_str) {
-  List<String> major_tick_distances_strs =
-      major_tick_distances_str.trim().split(' ').where((token) => token.isNotEmpty).toList();
+  List<String> major_tick_distances_strs = major_tick_distances_str
+      .trim()
+      .split(' ')
+      .where((token) => token.isNotEmpty)
+      .toList();
   List<int> major_tick_distances = [];
   for (var major_tick_distance_str in major_tick_distances_strs) {
     int? major_tick_distance = int.tryParse(major_tick_distance_str);

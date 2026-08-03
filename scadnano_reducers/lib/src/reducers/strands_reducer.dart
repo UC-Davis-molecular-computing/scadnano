@@ -285,18 +285,17 @@ Strand? move_strand({
       }
 
       Domain domain_moved = substrand.rebuild(
-        (b) =>
-            b
-              ..is_first = i == 0
-              ..is_last = i == substrands.length - 1
-              ..helix = new_helix_idx
-              ..forward = (delta_forward != substrand.forward)
-              ..start = substrand.start + delta_offset
-              ..end = substrand.end + delta_offset
-              ..deletions.replace(substrand.deletions.map((d) => d + delta_offset))
-              ..insertions.replace(
-                substrand.insertions.map((i) => i.rebuild((ib) => ib..offset = i.offset + delta_offset)),
-              ),
+        (b) => b
+          ..is_first = i == 0
+          ..is_last = i == substrands.length - 1
+          ..helix = new_helix_idx
+          ..forward = (delta_forward != substrand.forward)
+          ..start = substrand.start + delta_offset
+          ..end = substrand.end + delta_offset
+          ..deletions.replace(substrand.deletions.map((d) => d + delta_offset))
+          ..insertions.replace(
+            substrand.insertions.map((i) => i.rebuild((ib) => ib..offset = i.offset + delta_offset)),
+          ),
       );
       new_substrand = domain_moved;
     }
@@ -438,10 +437,9 @@ BuiltList<Strand> strands_dna_extensions_move_commit_reducer(
     );
 
     Extension ext_new = extension.rebuild(
-      (b) =>
-          b
-            ..display_length = length_and_angle.$1
-            ..display_angle = length_and_angle.$2,
+      (b) => b
+        ..display_length = length_and_angle.$1
+        ..display_angle = length_and_angle.$2,
     );
 
     substrands_builder[substrand_idx] = ext_new;
@@ -485,8 +483,10 @@ class InsertionDeletionRecord {
 
           //XXX: make sure to record deletions and insertions before bound_ss changes
           List<int> deletions_removed = bound_ss.deletions.where((d) => !remaining_deletions.contains(d)).toList();
-          List<int> insertion_offsets_removed =
-              bound_ss.insertions.where((i) => !remaining_insertions.contains(i)).map((i) => i.offset).toList();
+          List<int> insertion_offsets_removed = bound_ss.insertions
+              .where((i) => !remaining_insertions.contains(i))
+              .map((i) => i.offset)
+              .toList();
           for (var offset in deletions_removed + insertion_offsets_removed) {
             var other_dom = util.find_paired_domain(design, bound_ss, offset);
             if (other_dom != null) {
@@ -503,10 +503,9 @@ class InsertionDeletionRecord {
             (b) => dnaend == substrand.dnaend_start ? (b..start = new_offset) : (b..end = new_offset + 1),
           );
           bound_ss = bound_ss.rebuild(
-            (b) =>
-                b
-                  ..deletions.replace(remaining_deletions)
-                  ..insertions.replace(remaining_insertions),
+            (b) => b
+              ..deletions.replace(remaining_deletions)
+              ..insertions.replace(remaining_insertions),
           );
         }
       }
@@ -521,10 +520,9 @@ class InsertionDeletionRecord {
 List<int> get_remaining_deletions(Domain substrand, int new_offset, DNAEnd dnaend) =>
     substrand.deletions.where((d) => (substrand.dnaend_start == dnaend ? new_offset < d : new_offset > d)).toList();
 
-List<Insertion> get_remaining_insertions(Domain substrand, int new_offset, DNAEnd dnaend) =>
-    substrand.insertions
-        .where((i) => (substrand.dnaend_start == dnaend ? new_offset < i.offset : new_offset > i.offset))
-        .toList();
+List<Insertion> get_remaining_insertions(Domain substrand, int new_offset, DNAEnd dnaend) => substrand.insertions
+    .where((i) => (substrand.dnaend_start == dnaend ? new_offset < i.offset : new_offset > i.offset))
+    .toList();
 
 int adjust_offset(DNAEnd end, DNAEndMove move, int delta) {
   int new_offset = end.offset_inclusive + delta;
@@ -625,10 +623,9 @@ Strand plate_well_vendor_fields_remove_reducer(Strand strand, actions.PlateWellV
   if (strand.vendor_fields != null) {
     Strand strand_with_new_vendor_fields;
     strand_with_new_vendor_fields = strand.rebuild(
-      (m) =>
-          m.vendor_fields
-            ..plate = null
-            ..well = null,
+      (m) => m.vendor_fields
+        ..plate = null
+        ..well = null,
     );
     return strand_with_new_vendor_fields;
   } else {
@@ -732,10 +729,9 @@ Strand modification_edit_reducer(Strand strand, actions.ModificationEdit action)
 Strand scaffold_set_reducer(Strand strand, actions.ScaffoldSet action) {
   Color new_color = action.is_scaffold ? util.ColorCycler.scaffold_color : util.color_cycler.next();
   strand = strand.rebuild(
-    (b) =>
-        b
-          ..is_scaffold = action.is_scaffold
-          ..color = new_color,
+    (b) => b
+      ..is_scaffold = action.is_scaffold
+      ..color = new_color,
   );
   return strand;
 }

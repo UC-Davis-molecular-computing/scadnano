@@ -30,18 +30,16 @@ main() {
       ]);
 
       HelixGroup group_south = HelixGroup.from(
-        (b) =>
-            b
-              ..position.replace(Position3D(x: 0, y: 10, z: 0))
-              ..grid = Grid.square
-              ..helices_view_order = ListBuilder([0, 1]),
+        (b) => b
+          ..position.replace(Position3D(x: 0, y: 10, z: 0))
+          ..grid = Grid.square
+          ..helices_view_order = ListBuilder([0, 1]),
       );
       HelixGroup group_east = HelixGroup.from(
-        (b) =>
-            b
-              ..position.replace(Position3D(x: 10, y: 0, z: 0))
-              ..grid = Grid.square
-              ..helices_view_order = ListBuilder([2, 3]),
+        (b) => b
+          ..position.replace(Position3D(x: 10, y: 0, z: 0))
+          ..grid = Grid.square
+          ..helices_view_order = ListBuilder([2, 3]),
       );
 
       Map<String, HelixGroup> groups = {e: group_east, s: group_south};
@@ -65,18 +63,16 @@ main() {
       ]);
 
       HelixGroup group_south = HelixGroup.from(
-        (b) =>
-            b
-              ..position.replace(Position3D(x: 0, y: 10, z: 0))
-              ..grid = Grid.square
-              ..helices_view_order = ListBuilder([0, 1]),
+        (b) => b
+          ..position.replace(Position3D(x: 0, y: 10, z: 0))
+          ..grid = Grid.square
+          ..helices_view_order = ListBuilder([0, 1]),
       );
       HelixGroup group_east = HelixGroup.from(
-        (b) =>
-            b
-              ..position.replace(Position3D(x: 10, y: 0, z: 0))
-              ..grid = Grid.honeycomb
-              ..helices_view_order = ListBuilder([2, 3]),
+        (b) => b
+          ..position.replace(Position3D(x: 10, y: 0, z: 0))
+          ..grid = Grid.honeycomb
+          ..helices_view_order = ListBuilder([2, 3]),
       );
 
       Map<String, HelixGroup> groups = {e: group_east, s: group_south};
@@ -133,28 +129,27 @@ main() {
       design = design.draw_strand(0, 32).move(-16).cross(1).move(16).commit();
 
       // scaffold
-      design =
-          design
-              .draw_strand(1, 16)
-              .move(-16)
-              .cross(0)
-              .move(32)
-              .cross(1)
-              .move(-16)
-              .as_scaffold()
-              // also assigns complement to strands other than scaf bound to it
-              .with_sequence('AACGT' * 18)
-              // deletions and insertions added to design so they can be added to both strands on a helix
-              .add_deletion(0, 11)
-              .add_deletion(0, 12)
-              .add_deletion(0, 24)
-              .add_deletion(1, 12)
-              .add_deletion(1, 24)
-              .add_insertion(0, 6, 1)
-              .add_insertion(0, 18, 2)
-              .add_insertion(1, 6, 3)
-              .add_insertion(1, 18, 4)
-              .commit();
+      design = design
+          .draw_strand(1, 16)
+          .move(-16)
+          .cross(0)
+          .move(32)
+          .cross(1)
+          .move(-16)
+          .as_scaffold()
+          // also assigns complement to strands other than scaf bound to it
+          .with_sequence('AACGT' * 18)
+          // deletions and insertions added to design so they can be added to both strands on a helix
+          .add_deletion(0, 11)
+          .add_deletion(0, 12)
+          .add_deletion(0, 24)
+          .add_deletion(1, 12)
+          .add_deletion(1, 24)
+          .add_insertion(0, 6, 1)
+          .add_insertion(0, 18, 2)
+          .add_insertion(1, 6, 3)
+          .add_insertion(1, 18, 4)
+          .commit();
 
       String output_json = to_cadnano_v2_json(design);
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
@@ -245,10 +240,9 @@ main() {
 
     test('test_6_helix_origami_rectangle', () async {
       String filename = 'test_6_helix_origami_rectangle.sc';
-      Design design =
-          Design.from_json_str(
-            await util_state.get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
-          )!;
+      Design design = Design.from_json_str(
+        await util_state.get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
+      )!;
 
       String output_json = to_cadnano_v2_json(design);
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
@@ -257,10 +251,9 @@ main() {
 
     test('test_6_helix_bundle_honeycomb', () async {
       String filename = 'test_6_helix_bundle_honeycomb.sc';
-      Design design =
-          Design.from_json_str(
-            await util_state.get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
-          )!;
+      Design design = Design.from_json_str(
+        await util_state.get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
+      )!;
 
       String output_json = to_cadnano_v2_json(design);
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
@@ -269,10 +262,9 @@ main() {
 
     test('test_16_helix_origami_rectangle_no_twist', () async {
       String filename = 'test_16_helix_origami_rectangle_no_twist.sc';
-      Design design =
-          Design.from_json_str(
-            await util_state.get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
-          )!;
+      Design design = Design.from_json_str(
+        await util_state.get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
+      )!;
 
       String output_json = to_cadnano_v2_json(design);
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
@@ -294,10 +286,9 @@ main() {
 
     test('test_big_circular_staples_hex', () async {
       String filename = 'test_big_circular_staples_hex.sc';
-      Design design =
-          Design.from_json_str(
-            await util_state.get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
-          )!;
+      Design design = Design.from_json_str(
+        await util_state.get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
+      )!;
 
       String output_json = to_cadnano_v2_json(design);
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
@@ -306,10 +297,9 @@ main() {
 
     test('test_big_circular_staples', () async {
       String filename = 'test_big_circular_staples.sc';
-      Design design =
-          Design.from_json_str(
-            await util_state.get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
-          )!;
+      Design design = Design.from_json_str(
+        await util_state.get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
+      )!;
 
       String output_json = to_cadnano_v2_json(design);
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
@@ -318,10 +308,9 @@ main() {
 
     test('test_paranemic_crossover', () async {
       String filename = 'test_paranemic_crossover.sc';
-      Design design =
-          Design.from_json_str(
-            await util_state.get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
-          )!;
+      Design design = Design.from_json_str(
+        await util_state.get_text_file_content('../test/tests_inputs/cadnano_v2_export/${filename}'),
+      )!;
 
       String output_json = to_cadnano_v2_json(design);
       Design output_design = Design.from_cadnano_v2_json_str(output_json);
@@ -379,22 +368,21 @@ main() {
       design = design.draw_strand(0, 40).move(-16).cross(1).move(16).commit();
 
       // scaffold
-      design =
-          design
-              .draw_strand(1, 24)
-              .move(-16)
-              .cross(0)
-              .move(32)
-              .loopout(1, 3)
-              .move(-16)
-              .as_scaffold()
-              // also assigns complement to strands other than scaf bound to it
-              .with_sequence('AACGT' * 18)
-              // deletions and insertions added to design so they can be added to both strands on a helix
-              .add_deletion(1, 20)
-              .add_insertion(0, 14, 1)
-              .add_insertion(0, 26, 2)
-              .commit();
+      design = design
+          .draw_strand(1, 24)
+          .move(-16)
+          .cross(0)
+          .move(32)
+          .loopout(1, 3)
+          .move(-16)
+          .as_scaffold()
+          // also assigns complement to strands other than scaf bound to it
+          .with_sequence('AACGT' * 18)
+          // deletions and insertions added to design so they can be added to both strands on a helix
+          .add_deletion(1, 20)
+          .add_insertion(0, 14, 1)
+          .add_insertion(0, 26, 2)
+          .commit();
 
       try {
         to_cadnano_v2_json(design);

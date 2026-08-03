@@ -32,10 +32,9 @@ helix_remove_middleware(Store<AppState> store, dynamic action, NextDispatcher ne
     if (helix_idx_with_substrands.isNotEmpty) {
       var helix_idx_string = helix_idx_with_substrands.join(', ');
 
-      var first_line_string =
-          (helix_idx_with_substrands.length == 1)
-              ? 'Selected helix ${helix_idx_string} has domains on it. '
-              : 'Selected helices: ${helix_idx_string} have domains on them. ';
+      var first_line_string = (helix_idx_with_substrands.length == 1)
+          ? 'Selected helix ${helix_idx_string} has domains on it. '
+          : 'Selected helices: ${helix_idx_string} have domains on them. ';
 
       var confirm_remove = window.confirm(
         '${first_line_string}'

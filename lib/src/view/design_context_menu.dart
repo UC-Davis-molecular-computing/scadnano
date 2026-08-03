@@ -35,11 +35,10 @@ class DesignContextMenuComponent extends UiStatefulComponent2<DesignContextMenuP
   final num MENU_PADDING = 20;
 
   @override
-  Map get initialState =>
-      (newState()
-        ..width = 0
-        ..height = 0
-        ..menu_HTML_element_ref = createRef<DivElement>());
+  Map get initialState => (newState()
+    ..width = 0
+    ..height = 0
+    ..menu_HTML_element_ref = createRef<DivElement>());
 
   // how to find width and height of a React element:
   // https://stackoverflow.com/a/43824598
@@ -126,13 +125,12 @@ mixin DesignContextSubmenuState on UiState {
 class DesignContextSubmenuComponent extends UiStatefulComponent2<DesignContextSubmenuProps, DesignContextSubmenuState>
     with PureComponent {
   @override
-  Map get initialState =>
-      (newState()
-        ..width = 0
-        ..height = 0
-        ..left = 0
-        ..top = 0
-        ..submenu_HTML_element_ref = createRef<DivElement>());
+  Map get initialState => (newState()
+    ..width = 0
+    ..height = 0
+    ..left = 0
+    ..top = 0
+    ..submenu_HTML_element_ref = createRef<DivElement>());
 
   // how to find width and height of a React element (same links as DesignContextMenuComponent):
   // https://stackoverflow.com/a/43824598
@@ -239,13 +237,12 @@ ReactElement context_menu_to_ul(ContextMenu menu) {
         ..className = (item.nested != null ? 'has-submenu' : ''))(
         (Dom.span()
           ..title = item.tooltip
-          ..onClick =
-              item.on_click != null
-                  ? (_) {
-                    app.dispatch(actions.ContextMenuHide());
-                    item.on_click!();
-                  }
-                  : null
+          ..onClick = item.on_click != null
+              ? (_) {
+                  app.dispatch(actions.ContextMenuHide());
+                  item.on_click!();
+                }
+              : null
           ..className =
               'context-menu-item' + (item.disabled ? " " + constants.css_selector_context_menu_item_disabled : ""))(
           item.title,

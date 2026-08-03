@@ -21,8 +21,8 @@ HelixGroupMovingProps set_helix_group_moving_props(HelixGroupMovingProps elt, He
 }
 
 UiFactory<HelixGroupMovingProps> ConnectedHelixGroupMoving = connect<HelixGroupMove?, HelixGroupMovingProps>(
-  mapStateToProps:
-      (HelixGroupMove? helix_group_move) => set_helix_group_moving_props(HelixGroupMoving(), helix_group_move),
+  mapStateToProps: (HelixGroupMove? helix_group_move) =>
+      set_helix_group_moving_props(HelixGroupMoving(), helix_group_move),
   context: app.context_helix_group_move,
 )(HelixGroupMoving);
 
