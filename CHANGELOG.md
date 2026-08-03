@@ -5,6 +5,27 @@ This file is generated automatically from the project's
 by [changelog-from-release](https://github.com/rhysd/changelog-from-release).
 Do not edit it manually; edit the release notes instead.
 
+<a id="v0.21.2"></a>
+## [v0.21.2](https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/v0.21.2) - 2026-08-03
+
+Minor updates of some package versions.
+
+## Commits
+
+- 89407e98: Merge pull request [#1121](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1121) from UC-Davis-molecular-computing/dev (David Doty)
+- e0959654: Merge branch 'dev' of https://github.com/UC-Davis-molecular-computing/scadnano into dev (David Doty)
+- 2a1669ff: bumped version (David Doty)
+- 585a72e1: Merge pull request [#1120](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1120) from UC-Davis-molecular-computing/dependabot/npm_and_yarn/standalone/multi-39e388854b (David Doty)
+- d6ed820e: Merge pull request [#1119](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1119) from UC-Davis-molecular-computing/dependabot/npm_and_yarn/standalone/multi-1eabd13797 (David Doty)
+- 03685f2c: Merge pull request [#1118](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1118) from UC-Davis-molecular-computing/dependabot/npm_and_yarn/standalone/lodash-4.18.1 (David Doty)
+- 976422f0: Bump app-builder-lib and electron-builder in /standalone (dependabot[bot])
+- 2e98e073: Bump builder-util-runtime and electron-builder in /standalone (dependabot[bot])
+- 83a37f42: Bump lodash from 4.17.21 to 4.18.1 in /standalone (dependabot[bot])
+
+
+[Changes][v0.21.2]
+
+
 <a id="v0.21.1"></a>
 ## [v0.21.1](https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/v0.21.1) - 2026-08-03
 
@@ -2972,6 +2993,7 @@ See https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/README.
 [Changes][v0.8.0]
 
 
+[v0.21.2]: https://github.com/UC-Davis-molecular-computing/scadnano/compare/v0.21.1...v0.21.2
 [v0.21.1]: https://github.com/UC-Davis-molecular-computing/scadnano/compare/v0.21.0...v0.21.1
 [v0.21.0]: https://github.com/UC-Davis-molecular-computing/scadnano/compare/v0.20.5...v0.21.0
 [v0.20.5]: https://github.com/UC-Davis-molecular-computing/scadnano/compare/v0.20.4...v0.20.5
