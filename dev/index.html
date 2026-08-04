@@ -140,9 +140,6 @@
     // selection box to moving a HelixGroup.
     function before_pan(oldPan, newPan) {
         var allow = true;
-        if (document.body.classList.contains('dnd-drag-occurring')) {
-            allow = false;
-        }
         if (!allow_pan) {
             allow = false;
         }
@@ -277,9 +274,6 @@
         // This is needed to prevent zooming unless Alt key is pressed
         function before_zoom(oldZoom, newZoom) {
             var allow = true;
-            if (document.body.classList.contains('dnd-drag-occurring')) {
-                allow = false;
-            }
             if (!allow_zoom) {
                 allow = false;
             }
