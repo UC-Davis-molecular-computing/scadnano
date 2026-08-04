@@ -1,7 +1,8 @@
 # Migrating off `dart:html` / `dart:svg` / `dart:js` (issue #1029)
 
-**Status as of 2026-08-03: blocked upstream. Not starting. This document records why, what was
-verified, and what to do when the situation changes.**
+**Status: the migration itself is blocked upstream (verified 2026-08-03) and is not starting. The
+no-regret prep work in §6 is proceeding independently — the first item landed 2026-08-04. This
+document records why we are blocked, what was verified, and what to do when that changes.**
 
 Related: [issue #1029](https://github.com/UC-Davis-molecular-computing/scadnano/issues/1029),
 [Workiva/over_react#981](https://github.com/Workiva/over_react/issues/981),
@@ -225,25 +226,37 @@ until OverReact's API surface changes).
 
 ## 6. No-regret prep work (safe to do any time, independent of upstream)
 
-Current inventory of `dart:html` importers, excluding generated `.g.dart` (verified 2026-08-03):
+Current inventory of `dart:html` importers, excluding generated `.g.dart` (updated 2026-08-04):
 
 | Category | Files | Movable today? |
 |---|---|---|
-| **Dead imports** — no `dart:html` identifier used at all | **14** | **Yes, zero risk** |
+| ~~Dead / near-dead imports~~ | ~~14~~ | **DONE 2026-08-04** |
 | `window.alert` / `confirm` only | 15 | Yes — one small shim |
 | Independent I/O (localStorage, file save/load, HTTP, clipboard, CSS, iframe, global key listeners) | ~13 | Yes in principle |
 | **Pinned by OverReact** (`SyntheticEvent.nativeEvent`, `Ref<DivElement>`, `react_dom.render`, `e.target`) | **~25** | **No** |
 
-Totals: 71 files import `dart:html`, 6 `dart:svg`, 3 `dart:js`, 11 `package:js/js.dart`; **0** use
-`package:web`. These shrink the eventual migration from ~63 files to a handful, and are wins on their
-own terms:
+Totals now: **57** files import `dart:html` (down from 71), 6 `dart:svg`, 3 `dart:js`, 10
+`package:js/js.dart`; **0** use `package:web`. The remaining items shrink the eventual migration
+further and are wins on their own terms:
 
-1. **Delete the 14 dead `dart:html` imports.** Verified: no `dart:html` identifier appears outside the
-   import line — the only `Element` references are `ReactElement`, and the lone `PathElement` in
-   [design_main_strand_paths.dart:455](lib/src/view/design_main_strand_paths.dart#L455) is in a
-   commented-out line. Representative: [design_main.dart](lib/src/view/design_main.dart),
-   [design_main_strands.dart](lib/src/view/design_main_strands.dart),
-   [zoom_speed.dart](lib/src/middleware/zoom_speed.dart).
+1. ~~**Delete the 14 dead `dart:html` imports.**~~ **Done 2026-08-04** — but only 9 were actually
+   dead. `dart analyze` rejected the other 5, because **`dart:html` re-exports `Point` and `Rectangle`
+   from `dart:math`** (`html_dart2js.dart:77`: `export 'dart:math' show Rectangle, Point;`). Those
+   five — `design_main_dna_sequences`, `design_main_slice_bar`, `design_main_strands`,
+   `design_main_strands_moving`, `design_main_unpaired_insertion_deletions` — were reaching
+   `dart:math`'s `Point` through `dart:html`, and were repointed at `import 'dart:math';` (or
+   `Math.Point` in `design_main_slice_bar.dart`, which already imports `dart:math as Math`).
+
+   > ⚠️ **Audit trap for the remaining work.** A grep for `dart:html` *identifiers* undercounts,
+   > because `dart:html` re-exports symbols that don't look like DOM types at all:
+   > ```
+   > export 'dart:math'               show Rectangle, Point;   // :77
+   > export 'dart:html_common'        show promiseToFuture;    // :76
+   > export 'dart:_internal'          show HttpStatus;         // :75
+   > export 'dart:_native_typed_data' show SharedArrayBuffer;  // :49
+   > ```
+   > Always confirm with `dart analyze`, not grep. Removing an import is self-verifying — an
+   > undefined name is an error — so this is cheap to check and expensive to assume.
 2. **Add an `alert`/`confirm` shim** and route the 15 files that use `dart:html` for nothing else
    through it — e.g. [assign_dna.dart](lib/src/middleware/assign_dna.dart),
    [helix_remove.dart](lib/src/middleware/helix_remove.dart),
