@@ -1,4 +1,3 @@
-
 import 'package:redux/redux.dart';
 
 import 'package:scadnano_state_actions/src/actions/actions.dart' as actions;
