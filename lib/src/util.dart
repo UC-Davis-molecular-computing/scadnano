@@ -49,6 +49,9 @@ make_dart_function_available_to_js(String js_function_name, Function dart_func) 
 external void set_allow_pan(bool allow);
 
 @JS()
+external void set_allow_zoom(bool allow);
+
+@JS()
 external void set_zoom_speed(double speed);
 
 // END interop between Dart and JS

@@ -22,7 +22,6 @@ dependencies:
   built_collection: ^5.1.1
   collection: ^1.19.1
   color: ^3.0.0
-  dnd: ^2.0.1
   http: ^1.6.0
   meta: ^1.19.0
   quiver: ^3.2.2

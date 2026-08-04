@@ -1,4 +1,3 @@
-
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano_state_actions/src/state/group.dart';
