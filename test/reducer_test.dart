@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'dart:convert';
-import 'dart:html';
 
 import 'package:scadnano_state_actions/src/json_serializable.dart';
 import 'package:scadnano_state_actions/src/state/group.dart';

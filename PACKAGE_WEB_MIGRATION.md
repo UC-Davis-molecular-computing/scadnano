@@ -247,16 +247,35 @@ further and are wins on their own terms:
    `dart:math`'s `Point` through `dart:html`, and were repointed at `import 'dart:math';` (or
    `Math.Point` in `design_main_slice_bar.dart`, which already imports `dart:math as Math`).
 
-   > ⚠️ **Audit trap for the remaining work.** A grep for `dart:html` *identifiers* undercounts,
-   > because `dart:html` re-exports symbols that don't look like DOM types at all:
+   To be clear, **`dart:math` is not part of this migration** — it is not deprecated, is not going
+   away, and is Wasm-compatible. A file that used `dart:html` only to reach `Point` was never doing
+   anything DOM-related; it just needs the honest import. That is a one-line fix with no dependency
+   on OverReact whatsoever.
+
+   > **Audit note.** Deciding *which* `dart:html` imports are removable cannot be done by grepping
+   > for DOM-looking identifiers, because `dart:html` re-exports four things that don't look like DOM
+   > symbols at all:
    > ```
-   > export 'dart:math'               show Rectangle, Point;   // :77
+   > export 'dart:math'               show Rectangle, Point;   // html_dart2js.dart:77
    > export 'dart:html_common'        show promiseToFuture;    // :76
    > export 'dart:_internal'          show HttpStatus;         // :75
    > export 'dart:_native_typed_data' show SharedArrayBuffer;  // :49
    > ```
-   > Always confirm with `dart analyze`, not grep. Removing an import is self-verifying — an
-   > undefined name is an error — so this is cheap to check and expensive to assume.
+   > Confirm with `dart analyze`, not grep — removing an import is self-verifying, since anything
+   > still needed becomes an undefined-name error.
+
+   **This shortcut is now exhausted.** Measured 2026-08-04 by bulk-swapping
+   `import 'dart:html';` → `import 'dart:math';` across all 49 remaining files that had a plain
+   `dart:html` import (excluding those also importing `dart:svg`/`dart:js`) and running `dart analyze`:
+   **47 still fail** — they genuinely use DOM APIs. Exactly two were convertible, both tests, and
+   both were done 2026-08-04:
+   - [test/reducer_test.dart](test/reducer_test.dart) — already imported `dart:math` on line 1, so its
+     `dart:html` was purely dead (26 `Point` uses, zero DOM); import deleted.
+   - [test/other_unit_test.dart](test/other_unit_test.dart) — one `Point` use, zero DOM; import
+     swapped to `dart:math`.
+
+   The remaining 55 files all genuinely touch the DOM, so items 2–5 below are the actual path
+   forward. No further "free" import removals exist.
 2. **Add an `alert`/`confirm` shim** and route the 15 files that use `dart:html` for nothing else
    through it — e.g. [assign_dna.dart](lib/src/middleware/assign_dna.dart),
    [helix_remove.dart](lib/src/middleware/helix_remove.dart),
