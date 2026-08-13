@@ -18,7 +18,7 @@ dependencies:
     path: scadnano_state_actions
   scadnano_reducers:
     path: scadnano_reducers
-  built_value: ^8.12.6
+  built_value: ^8.12.7
   built_collection: ^5.1.1
   collection: ^1.19.1
   color: ^3.0.0
