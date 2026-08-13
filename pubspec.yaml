@@ -52,7 +52,7 @@ dev_dependencies:
   melos: ^8.2.2
   over_react_test: ^3.0.4
   redux_dev_tools: ^0.7.0
-  webdev: ^3.8.1
+  webdev: ^4.0.1
 
 melos:
   scripts:
