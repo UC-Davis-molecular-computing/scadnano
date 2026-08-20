@@ -49,7 +49,7 @@ dev_dependencies:
   # >=3.13.0-107.0.dev; latest stable Dart is 3.12.2. Revisit when 3.13 goes stable.
   build_web_compilers: ^4.8.0
   built_value_generator: ^8.12.5
-  melos: ^8.2.2
+  melos: ^8.3.0
   over_react_test: ^3.0.4
   redux_dev_tools: ^0.7.0
   webdev: ^3.8.1
