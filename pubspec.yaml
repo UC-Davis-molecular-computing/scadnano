@@ -47,7 +47,7 @@ dev_dependencies:
   build_test: ^3.5.16
   # build_web_compilers 4.8.1+ and webdev 4.0.0 (via dwds 27.1.2) both require Dart SDK
   # >=3.13.0-107.0.dev; latest stable Dart is 3.12.2. Revisit when 3.13 goes stable.
-  build_web_compilers: ^4.8.0
+  build_web_compilers: ^4.8.5
   built_value_generator: ^8.12.5
   melos: ^8.6.0
   over_react_test: ^3.0.4
