@@ -1,0 +1,56 @@
+name: Standalone dependencies
+
+# PR gate for the Electron standalone app's npm dependencies.
+#
+# Why this exists: the other PR gate (dart_unit_tests_and_formatting.yml) only runs Dart
+# tests and formatting -- it never enters standalone/ and never runs npm. The only workflow
+# that runs `npm ci` is build-and-deploy.yml, which triggers on `push` to dev/main, so a
+# dependency change could not be exercised until after it was merged.
+#
+# That gap is not hypothetical. Two individually-fine dependabot PRs (#1107 raising
+# @electron/fuses to 2.x, then #1125 raising @electron-forge/plugin-fuses to 7.11.2, whose
+# peer range is ^1.0.0) were jointly unsatisfiable. Both passed their checks, and the
+# standalone build then failed on every push to dev from 2026-08-10 until 2026-09-03 --
+# three weeks, because nothing looked at standalone/ before a merge.
+#
+# What this job does and does NOT do: it resolves and installs the dependency tree, which
+# is the step that actually broke (`npm ci` takes 7-21s; ERESOLVE fails instantly). It does
+# NOT package the executables -- that is the slow part (86-259s per platform) and is left to
+# build-and-deploy. So this catches peer-dependency conflicts, a package-lock.json out of
+# sync with package.json, and unresolvable versions. It will not catch an electron-builder
+# packaging failure.
+#
+# --ignore-scripts skips postinstall, so Electron's ~150 MB binary is never downloaded.
+# Resolution happens before scripts run, so the checks above are unaffected.
+#
+# Deliberately NOT filtered on paths: a `paths:` filter would skip this job on PRs that do
+# not touch standalone/, and a skipped job never reports a status -- so if this check is
+# ever marked required in branch protection, those PRs would block forever waiting on a
+# status that cannot arrive. The job is cheap enough to just always run.
+
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened, ready_for_review ]
+
+jobs:
+  standalone_deps:
+    name: Install standalone deps
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: standalone/package-lock.json
+
+      # Mirrors the "Install npm dependencies" step in build-and-deploy.yml, which is the
+      # step this job exists to protect. Keep the two in sync: if that one gains flags,
+      # this one should too, or this gate stops predicting it.
+      - name: Install npm dependencies
+        working-directory: ./standalone
+        run: npm ci --ignore-scripts
