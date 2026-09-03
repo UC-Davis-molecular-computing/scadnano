@@ -1,4 +1,3 @@
-import 'dart:html';
 import 'dart:math' as Math;
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
@@ -28,7 +27,7 @@ mixin DesignMainSliceBarProps on UiProps {
   late BuiltMap<String, BuiltList<int>> helix_idxs_in_group;
   late BuiltSet<int> side_selected_helix_idxs;
   late bool only_display_selected_helices;
-  late BuiltMap<int, Point<double>> helix_idx_to_svg_position_map;
+  late BuiltMap<int, Math.Point<double>> helix_idx_to_svg_position_map;
 }
 
 class DesignMainSliceBarComponent extends UiComponent2<DesignMainSliceBarProps> with PureComponent {

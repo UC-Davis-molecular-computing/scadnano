@@ -9,3 +9,11 @@ runs:
     - uses: dart-lang/setup-dart@v1
       with:
         sdk: ${{ inputs.sdk }}
+        # setup-dart 1.8.0 added a `dart analyze` problem matcher, but it resolves
+        # dart-analyzer.json against the *calling* action's directory. When setup-dart is
+        # wrapped in a local composite action (as here) that path is
+        # .github/actions/setup-dart/dart-analyzer.json, which does not exist, and the step
+        # fails. Upstream bug: https://github.com/dart-lang/setup-dart/issues/198
+        # No workflow in this repo runs `dart analyze`, so the matcher is of no use to us;
+        # once the upstream bug is fixed this line can simply be removed.
+        problem-matcher: "false"

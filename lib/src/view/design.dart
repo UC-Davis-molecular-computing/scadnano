@@ -5,7 +5,6 @@ import 'dart:html';
 import 'dart:svg' as svg;
 
 import 'package:built_collection/built_collection.dart';
-import 'package:dnd/dnd.dart';
 import 'package:js/js.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
@@ -44,6 +43,7 @@ import '../util.dart' as util;
 import 'design_main.dart';
 import 'design_footer.dart';
 import 'svg_filters.dart';
+import 'svg_drag_handler.dart';
 import 'error_message.dart';
 import '../middleware/local_storage.dart' as local_storage;
 import 'package:scadnano_state_actions/src/constants.dart' as constants;
@@ -165,9 +165,47 @@ class DesignViewComponent {
     main_pane.setAttribute('style', 'width: $main_pane_width');
   }
 
-  Map<DraggableComponent, Draggable?> draggables = {DraggableComponent.main: null, DraggableComponent.side: null};
+  /// Installed once in [handle_keyboard_mouse_events] and never uninstalled. Unlike the
+  /// `package:dnd` `Draggable` these replaced, these are inert unless [SvgDragHandler.should_start]
+  /// says otherwise, so they do not interfere with svg-pan-zoom. See issue #1123.
+  final Map<DraggableComponent, SvgDragHandler> drag_handlers = {};
+
+  /// True while either view has a pointer gesture in progress that we have taken over.
+  bool get drag_gesture_in_progress => drag_handlers.values.any((h) => h.gesture_in_progress);
+
+  /// Mirrors when the old code called `install_draggable`: a modifier key is held, and the edit
+  /// mode is one where dragging draws a selection box or moves a helix group. Rope-select mode
+  /// deliberately does not qualify — it needs plain clicks to add points.
+  bool _should_start_drag(PointerEvent event, bool is_main_view) =>
+      (event.ctrlKey || event.metaKey || event.shiftKey) &&
+      (edit_mode_is_select() || (is_main_view && edit_mode_is_move_group()));
+
+  install_drag_handlers() {
+    for (var (is_main_view, view_svg) in [(true, main_view_svg), (false, side_view_svg)]) {
+      var component = is_main_view ? DraggableComponent.main : DraggableComponent.side;
+      drag_handlers[component] = SvgDragHandler(
+        view_svg,
+        should_start: (event) => _should_start_drag(event, is_main_view),
+        on_drag_start: (event) {
+          // Stop svg-pan-zoom from panning/zooming for the duration of the drag. This replaces
+          // the `.dnd-drag-occurring` body class that package:dnd used to set (and leak).
+          util.set_allow_pan(false);
+          util.set_allow_zoom(false);
+          drag_start(event, view_svg, is_main_view);
+        },
+        on_drag: (event) => drag(event, view_svg, is_main_view),
+        on_drag_end: (event) {
+          drag_end(event, view_svg, is_main_view);
+          util.set_allow_pan(true);
+          util.set_allow_zoom(true);
+        },
+      );
+    }
+  }
 
   handle_keyboard_mouse_events() {
+    install_drag_handlers();
+
     document.onClick.listen((MouseEvent event) {
       Element target = event.target as Element;
       // put away context menu if click occurred anywhere outside of it
@@ -195,6 +233,10 @@ class DesignViewComponent {
     // disable pan in svg-pan-zoom unless background SVG object was clicked
     for (var view_svg in [main_view_svg, side_view_svg]) {
       view_svg.onMouseDown.listen((event) {
+        // A drag handler that has taken over this gesture already called set_allow_pan(false);
+        // don't clobber it. (pointerdown fires before mousedown, and we preventDefault there, but
+        // whether that suppresses the compatibility mousedown varies by browser, so guard here.)
+        if (drag_gesture_in_progress) return;
         util.set_allow_pan(event.target is svg.SvgSvgElement);
       });
       //XXX: Dart doesn't have onPointerUp, so we have to trigger from JS,
@@ -412,8 +454,6 @@ class DesignViewComponent {
       }
     });
 
-    // need to install and uninstall Draggable on each cycle of Ctrl/Shift key-down/up,
-    // because while installed, Draggable stops the mouse events that the svg-pan-zoom library listens to.
     window.onKeyDown.listen((ev) {
       int key = ev.which!;
 
@@ -430,8 +470,18 @@ class DesignViewComponent {
     });
 
     end_select_mode() {
-      uninstall_draggable(true, DraggableComponent.main);
-      uninstall_draggable(false, DraggableComponent.side);
+      // Abort any drag in progress. The modifier key is gone, so the gesture can't be completed;
+      // tear down the selection box the same way uninstall_draggable used to.
+      for (var is_main_view in [true, false]) {
+        var component = is_main_view ? DraggableComponent.main : DraggableComponent.side;
+        if (drag_handlers[component]?.cancel() ?? false) {
+          util.set_allow_pan(true);
+          util.set_allow_zoom(true);
+        }
+        if (app.store_selection_box.state != null) {
+          app.dispatch(actions.SelectionBoxRemove(is_main_view));
+        }
+      }
 
       // restore panzoomable class to change CSS cursor
       for (var svg_elt in [this.main_view_svg, this.side_view_svg]) {
@@ -572,14 +622,11 @@ class DesignViewComponent {
         (key == constants.KEY_CODE_TOGGLE_SELECT ||
             key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
             key == constants.KEY_CODE_SELECT)) {
-      //NOTE: we don't want to install_draggable in rope select mode, because that disrupts the
+      //NOTE: the drag handlers are installed once at construction and are gated by
+      // [_should_start_drag], which excludes rope select mode — dragging there would disrupt the
       // event handlers for mouse clicks needed to detect when clicking to add a point.
       // So we repeat the logic for adding SELECTION_BOX_DRAWABLE_CLASS and removing PANZOOMABLE_CLASS
-      // in an else if clause below
-
-      // start drag mode to either draw selection box or translate helix group
-      install_draggable(true, DraggableComponent.main, main_view_svg);
-      install_draggable(false, DraggableComponent.side, side_view_svg);
+      // in an else if clause below.
 
       // remove panzoomable class to change CSS cursor
       for (var svg_elt in [this.main_view_svg, this.side_view_svg]) {
@@ -605,8 +652,8 @@ class DesignViewComponent {
         (key == constants.KEY_CODE_TOGGLE_SELECT ||
             key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
             key == constants.KEY_CODE_SELECT)) {
-      // Below repeats some logic from above just after calling install_draggable,
-      // but we don't want the draggable installed in rope select mode.
+      // Below repeats some logic from the branch above, but in rope select mode the drag handlers
+      // stay inert (see [_should_start_drag]).
       // remove panzoomable class to change CSS cursor
       for (var svg_elt in [this.main_view_svg, this.side_view_svg]) {
         svg_elt.classes.remove(PANZOOMABLE_CLASS);
@@ -680,31 +727,7 @@ class DesignViewComponent {
     }
   }
 
-  uninstall_draggable(bool is_main_view, DraggableComponent draggable_component) {
-    if (draggables[draggable_component] != null) {
-      draggables[draggable_component]!.destroy();
-      draggables[draggable_component] = null;
-      // class .dnd-drag-occurring not removed if Shift or Ctrl key depressed while mouse is lifted,
-      // so we need to remove it manually just in case
-      document.body!.classes.remove('dnd-drag-occurring');
-      if (app.store_selection_box.state != null) {
-        app.dispatch(actions.SelectionBoxRemove(is_main_view));
-      }
-    }
-  }
-
-  install_draggable(bool is_main_view, DraggableComponent draggable_component, svg.SvgSvgElement view_svg) {
-    if (draggables[draggable_component] != null) {
-      return;
-    }
-    var draggable = draggables[draggable_component] = Draggable(view_svg);
-    draggable.onDragStart.listen((ev) => drag_start(ev, view_svg, is_main_view));
-    draggable.onDrag.listen((ev) => drag(ev, view_svg, is_main_view));
-    draggable.onDragEnd.listen((ev) => drag_end(ev, view_svg, is_main_view));
-  }
-
-  drag_start(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
-    MouseEvent event = draggable_event.originalEvent as MouseEvent;
+  drag_start(PointerEvent event, svg.SvgSvgElement view_svg, bool is_main_view) {
     Point<double> point = util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
       event,
       is_main_view,
@@ -725,8 +748,7 @@ class DesignViewComponent {
     }
   }
 
-  drag(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
-    MouseEvent event = draggable_event.originalEvent as MouseEvent;
+  drag(PointerEvent event, svg.SvgSvgElement view_svg, bool is_main_view) {
     Point<double> point = util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
       event,
       is_main_view,
@@ -745,7 +767,7 @@ class DesignViewComponent {
     }
   }
 
-  drag_end(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
+  drag_end(PointerEvent event, svg.SvgSvgElement view_svg, bool is_main_view) {
     if (edit_mode_is_select()) {
       if (app.store_selection_box.state == null) {
         return;
@@ -763,7 +785,7 @@ class DesignViewComponent {
       app.dispatch(action_adjust);
       app.dispatch(action_remove);
     } else if (is_main_view && edit_mode_is_move_group()) {
-      app.dispatch(actions.HelixGroupMoveStop());
+      stop_and_commit_helix_group_move();
     }
   }
 
@@ -1050,6 +1072,24 @@ BuiltSet<String> group_names_of_ends(DNAEndsMove ends_move) =>
 BuiltSet<String> group_names_of_extensions(DNAExtensionsMove extensions_move) =>
     app.state.design.group_names_of_ends(extensions_move.ends_moving);
 
+/// Ends an in-progress helix group move, committing it if it actually moved.
+///
+/// Both [DesignViewComponent.drag_end] and [main_view_pointer_up] can be the first to observe the
+/// pointer going up: they listen on the same element, and which runs first depends on listener
+/// registration order. Since [actions.HelixGroupMoveStop] clears `store_helix_group_move`,
+/// whichever runs first has to commit as well, or the move is silently discarded — that was the
+/// regression in issue #1123. Calling this from both makes the order irrelevant: the second call
+/// sees a null store and does nothing.
+stop_and_commit_helix_group_move() {
+  HelixGroupMove? helix_group_move = app.store_helix_group_move.state;
+  if (helix_group_move != null) {
+    app.dispatch(actions.HelixGroupMoveStop());
+    if (helix_group_move.is_nontrivial) {
+      app.dispatch(actions.HelixGroupMoveCommit(helix_group_move: helix_group_move));
+    }
+  }
+}
+
 main_view_pointer_up(MouseEvent event) {
   //  util.set_allow_pan(true);
   if (app.state.ui_state.slice_bar_is_moving) {
@@ -1072,13 +1112,7 @@ main_view_pointer_up(MouseEvent event) {
     }
   }
 
-  HelixGroupMove? helix_group_move = app.store_helix_group_move.state;
-  if (helix_group_move != null) {
-    app.dispatch(actions.HelixGroupMoveStop());
-    if (helix_group_move.is_nontrivial) {
-      app.dispatch(actions.HelixGroupMoveCommit(helix_group_move: helix_group_move));
-    }
-  }
+  stop_and_commit_helix_group_move();
 
   StrandsMove? strands_move = app.state.ui_state.strands_move;
   if (strands_move != null) {

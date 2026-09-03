@@ -11,5 +11,5 @@ dependencies:
     path: ../scadnano_state_actions
   built_collection: ^5.1.1
   color: ^3.0.0
-  collection: ^1.15.0-nullsafety.4
+  collection: ^1.19.1
   redux: ^5.0.0
