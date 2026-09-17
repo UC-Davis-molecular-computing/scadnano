@@ -54,7 +54,7 @@ dev_dependencies:
   # 4.8.1+ requires Dart >=3.13.0-107.0.dev, which CI installs; see the SDK note above.
   build_web_compilers: ^4.8.5
   built_value_generator: ^8.12.5
-  melos: ^8.6.0
+  melos: ^8.7.0
   over_react_test: ^3.0.4
   redux_dev_tools: ^0.7.0
   # 4.0.0+ pulls dwds 27.1.2, which also requires Dart >=3.13.0-107.0.dev.
