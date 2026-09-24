@@ -48,7 +48,7 @@ dev_dependencies:
   # 2.15.x (2.16.0 needs analyzer >=13.3.0), built_value_generator at 8.12.5 (8.12.6 needs
   # analyzer ^13.0.0), and build_test at 3.5.x (3.5.19 pins build_runner 2.16.0).
   # See issue #1029 and https://github.com/Workiva/over_react/issues/981.
-  analyzer: '>=10.0.0 <11.0.0'
+  analyzer: ^14.4.0
   build_runner: ^2.15.1
   build_test: ^3.5.16
   # 4.8.1+ requires Dart >=3.13.0-107.0.dev, which CI installs; see the SDK note above.
