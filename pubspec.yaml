@@ -58,7 +58,7 @@ dev_dependencies:
   over_react_test: ^3.0.4
   redux_dev_tools: ^0.7.0
   # 4.0.0+ pulls dwds 27.1.2, which also requires Dart >=3.13.0-107.0.dev.
-  webdev: ^4.0.2
+  webdev: ^4.0.3
 
 melos:
   scripts:
