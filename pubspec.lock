@@ -893,10 +893,10 @@ packages:
     dependency: "direct dev"
     description:
       name: webdev
-      sha256: c143dbf2afbea438ccd641ddd7f588879ddeeed8beb26a6a79e30ae9d788bd5e
+      sha256: "263f4a8f20c04f218b2e45c1eb8824d64d6abbccb2d6eaeb8c8cd3e257a62e35"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.2"
+    version: "4.0.3"
   webkit_inspection_protocol:
     dependency: transitive
     description:
