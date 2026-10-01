@@ -35,7 +35,7 @@ dependencies:
   platform_detect: ^2.1.6
   react: ^7.3.2
   redux: ^5.0.0
-  over_react: ^5.7.0
+  over_react: ^5.8.0
   spreadsheet_decoder: ^2.3.0
   # xml is held at 6.x by spreadsheet_decoder, which declares xml ^6.5.0 as of 2.3.0 (latest).
   xml: ^6.6.1
