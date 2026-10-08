@@ -9,7 +9,7 @@ resolution: workspace
 dependencies:
   scadnano_state_actions:
     path: ../scadnano_state_actions
-  built_collection: ^5.1.1
+  built_collection: ^5.1.2
   color: ^3.0.0
   collection: ^1.19.1
   redux: ^5.0.0
